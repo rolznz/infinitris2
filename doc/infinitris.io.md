@@ -1,4 +1,4 @@
-Infinitris.io
+# Infinitris.io
 
 # About
 Infinitris is a massively multiplayer falling block puzzle game. Place blocks on a giant grid that expands and contracts based on the number of players ingame. Score points by helping to create and clear lines, and chat with other players in real time. Cooperate or sabotage? it's up to you.
@@ -18,6 +18,7 @@ https://infinitrisblog.wordpress.com/
 
 # Forum Posts
 [TIG Forums](https://forums.tigsource.com/index.php?topic=59335)
+
 [HTML5 Game Devs](http://www.html5gamedevs.com/topic/27504-phaser-infinitrisio/)
 
 # Abandoned

@@ -35,3 +35,13 @@ Allowing 10+ players on a single grid created many challenges, some which were s
 * Slow performance (Inefficient game rendering and React state updates)
 
 Worst of all, most users wanted to play on their own. This completely defeated the point of Infinitris.io.
+
+# Credits
+
+Development: rolznz
+
+Art: Rob Hayes
+
+Game Design: rolznz, AL
+
+Also thanks to: Zorg, Ploblitz, Momo, Nick666101, Sven, Tabnir, Matt Rollit, Ricky, Adam, Dan, marcgfx, Jono, Sven, Intergen CHC team, Seth, Eugene

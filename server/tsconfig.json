@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+        "target": "es5", 
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "allowJs": false,
+        "baseUrl": "../",
+        "paths": {
+            "@core/*": [
+                "server/src/core/*"
+            ],
+            "@src/*": [
+                "server/src/*"
+            ]
+        },
+    },
+    "exclude": [
+        "node_modules",
+    ]
+}

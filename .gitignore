@@ -1,0 +1,5 @@
+*.ts.map
+dist
+node_modules
+client/src/core
+server/src/core

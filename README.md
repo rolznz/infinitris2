@@ -3,6 +3,10 @@ Infinitris 2 is a massively multiplayer falling block puzzle game. Place blocks 
 
 More information can be found in our [Wiki](https://github.com/rolznz/infinitris2/wiki/Home).
 
+# Installation
+`./install.sh`
+Please see the [Server Readme](server/README.md) and the [Client Readme](client/README.md)
+
 # Sequel
 Infinitris 2 attempts to deal with many issues raised in [Infinitris.io](https://github.com/rolznz/infinitris2/wiki/infinitris.io) by providing simpler and more intuitive mechanics and a power balance which rewards skilled players.
 

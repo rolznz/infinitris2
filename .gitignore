@@ -3,3 +3,5 @@ dist
 node_modules
 client/src/core
 server/src/core
+client/docs
+server/docs

@@ -8,3 +8,6 @@
 `npm run dev-server`
 
 Open [http://localhost:8080](http://localhost:8080)
+
+# Generate Documentation
+`npm run docs`

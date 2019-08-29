@@ -11,3 +11,6 @@ NB: When inserting a breakpoint in the core code, make sure to breakpoint it fro
 
 # Run
 `npm start`
+
+# Generate Documentation
+`npm run docs`

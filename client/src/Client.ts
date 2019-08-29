@@ -1,11 +1,17 @@
 import Simulation from "@core/Simulation";
 import "../styles/client.css";
+import Renderer from "./rendering/Renderer";
+import MinimalRenderer from "./rendering/renderers/minimal/MinimalRenderer";
 
 export default class Client
 {
+    private _renderer: Renderer;
+    private _simulation: Simulation;
     constructor()
     {
-        const simulation = new Simulation();  // just testing
+        this._simulation = new Simulation();
+        this._renderer = new MinimalRenderer();
+
         const url = "ws://127.0.0.1:9001";  // TODO: use wss://
         const ws = new WebSocket(url);
         ws.onopen = () => {

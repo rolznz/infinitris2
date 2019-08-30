@@ -5,11 +5,28 @@
     ],
     "jsRules": {},
     "rules": {
-        "semicolon": [true, "always"],
+        "semicolon": [
+            true,
+            "always"
+        ],
         "eofline": false,
-        "quotemark": [true, "double", "avoid-escape"],
+        "quotemark": [
+            true,
+            "double",
+            "avoid-escape"
+        ],
         "one-line": false,
-        "arrow-parens": false
+        "arrow-parens": false,
+        "ordered-imports": false,
+        "variable-name": {
+            "options": [
+                "ban-keywords",
+                "check-format",
+                "allow-leading-underscore"
+            ]
+        },
+        "no-console": false,
+        "member-access": false
     },
     "rulesDirectory": []
 }

@@ -7,7 +7,7 @@
     "clean": "rm -rf dist",
     "build": "webpack",
     "watch": "webpack --watch",
-    "start": "node dist/bundle.js",
+    "start": "node -r source-map-support/register dist/bundle.js",
     "debug": "node --nolazy --inspect-brk dist/bundle.js",
     "docs": "typedoc --out docs src",
     "tslint": "tslint --project ./tsconfig.json"
@@ -30,6 +30,7 @@
     "@types/ws": "^6.0.3",
     "awesome-typescript-loader": "^5.2.1",
     "replace-in-file-webpack-plugin": "^1.0.6",
+    "source-map-support": "^0.5.13",
     "tslint": "^5.19.0",
     "typedoc": "^0.15.0",
     "typescript": "^3.5.3",

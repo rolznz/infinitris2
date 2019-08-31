@@ -1,37 +1,50 @@
 import Simulation from "@core/Simulation";
 import "../styles/client.css";
-import Renderer from "./rendering/Renderer";
+import IRenderer from "./rendering/IRenderer";
 import MinimalRenderer from "./rendering/renderers/minimal/MinimalRenderer";
+import ClientSocket from "./networking/ClientSocket";
+import IServerMessage from "@core/networking/server/IServerMessage";
+import IClientSocketEventListener from "./networking/IClientSocketEventListener";
+import ClientMessageType from "@core/networking/client/ClientMessageType";
+import ServerMessageType from "@core/networking/server/ServerMessageType";
 
-export default class Client
+export default class Client implements IClientSocketEventListener
 {
-    private _renderer: Renderer;
+    private _socket: ClientSocket;
+    private _renderer: IRenderer;
     private _simulation: Simulation;
-    constructor()
+    constructor(url: string)
     {
-        this._simulation = new Simulation();
+        this._socket = new ClientSocket(url, this);
         this._renderer = new MinimalRenderer();
+        this._simulation = new Simulation(this._renderer);
+    }
 
-        const url = "ws://127.0.0.1:9001";  // TODO: use wss://
-        const ws = new WebSocket(url);
-        ws.onopen = () => {
-            console.log("Connected.");
-        };
-
-        ws.onclose = () => {
-            console.log("Disconnected");
-        };
-
-        ws.onmessage = event => {
-            console.log("Received message:", event.data);
-            ws.send("Thanks");
-        };
+    onConnect()
+    {
+        console.log("Connected");
+        this._socket.sendMessage({type: ClientMessageType.JOIN_ROOM_REQUEST});
+    }
+    onDisconnect()
+    {
+        console.log("Disconnected");
+    }
+    onMessage(message: IServerMessage)
+    {
+        console.log("Received message: ", message);
+        if (message.type === ServerMessageType.JOIN_ROOM_RESPONSE)
+        {
+            this._simulation.start();
+        }
     }
 }
 
 // entry point
-// tslint:disable-next-line: no-unused-expression
-new Client();
+(() => {
+    const url = "ws://127.0.0.1:9001";  // TODO: use wss://
+    // tslint:disable-next-line: no-unused-expression
+    new Client(url);
+})();
 
 if (module.hot) {
     module.hot.accept();

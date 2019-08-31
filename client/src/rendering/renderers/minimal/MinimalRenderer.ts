@@ -1,7 +1,7 @@
-import Renderer from "../../Renderer";
+import IRenderer from "../../IRenderer";
 import { Application, Sprite } from "pixi.js-legacy";
 
-export default class MinimalRenderer implements Renderer
+export default class MinimalRenderer implements IRenderer
 {
     private _app: Application;
     private _logo: Sprite;
@@ -20,19 +20,20 @@ export default class MinimalRenderer implements Renderer
     private async _create()
     {
         this._app = new Application({
-            resizeTo: window
+            resizeTo: window,
         });
         document.body.appendChild(this._app.view);
-        
+
         // load the texture we need
         await new Promise(resolve => {
-            this._app.loader.add('logo', 'images/logo-sm.png').load((_, resources) => {
+            this._app.loader.add("logo", "images/logo-sm.png").load((_, resources) => {
                 this._logo = new Sprite(resources.logo.texture);
                 this._app.stage.addChild(this._logo);
                 resolve();
             });
-        })
-        window.addEventListener('resize', this._resize);
+        });
+
+        window.addEventListener("resize", this._resize);
         this._resize();
     }
 

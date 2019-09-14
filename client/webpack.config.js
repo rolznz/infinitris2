@@ -9,7 +9,7 @@ module.exports = {
     mode: "development",
     devtool: 'source-map',
     entry: [
-        './src/Client',
+        './src/Index',
         'webpack/hot/dev-server',
         'webpack-dev-server/client?http://localhost:8080/',
     ],
@@ -38,7 +38,9 @@ module.exports = {
         new CopyPlugin([
             { from: 'www', to: './' },
         ]),
-        new HtmlWebpackPlugin(),
+        new HtmlWebpackPlugin({
+            title: "Infinitris 2"
+        }),
         new webpack.HotModuleReplacementPlugin()
     ]
 };

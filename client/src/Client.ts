@@ -7,6 +7,7 @@ import IServerMessage from "@core/networking/server/IServerMessage";
 import IClientSocketEventListener from "./networking/IClientSocketEventListener";
 import ClientMessageType from "@core/networking/client/ClientMessageType";
 import ServerMessageType from "@core/networking/server/ServerMessageType";
+import Grid from "@core/grid/Grid";
 
 export default class Client implements IClientSocketEventListener
 {
@@ -34,18 +35,7 @@ export default class Client implements IClientSocketEventListener
         console.log("Received message: ", message);
         if (message.type === ServerMessageType.JOIN_ROOM_RESPONSE)
         {
-            this._simulation.start();
+            this._simulation.start(new Grid(undefined, undefined, this._simulation));
         }
     }
-}
-
-// entry point
-(() => {
-    const url = "ws://127.0.0.1:9001";  // TODO: use wss://
-    // tslint:disable-next-line: no-unused-expression
-    new Client(url);
-})();
-
-if (module.hot) {
-    module.hot.accept();
 }

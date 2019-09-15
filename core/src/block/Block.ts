@@ -154,8 +154,10 @@ export default class Block
                 if (rotatedLayout[r][c] === 1)
                 {
                     const cellRow = row + r;
-                    const cellColumn = (((column + c - centreColumn) % gridCells[0].length + gridCells[0].length) % gridCells[0].length);
-                    const gridCell: Cell | null = cellRow > -1 && cellRow < gridCells.length ? gridCells[cellRow][cellColumn] : null;
+                    const numColumns = gridCells[0].length;
+                    const cellColumn = (((column + c - centreColumn) % numColumns + numColumns) % numColumns);
+                    const gridCell: Cell | null = cellRow > -1 && cellRow < gridCells.length ?
+                        gridCells[cellRow][cellColumn] : null;
                     cellEvent(gridCell);
                 }
             }

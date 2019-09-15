@@ -33,7 +33,7 @@ export default class Grid
         const rowsToClear = rows
             .filter(row => this._cells[row].findIndex(cell => cell.isEmpty) < 0)
             .sort((a, b) => b - a); // clear lowest row first
-        
+
         for (let i = 0; i < rowsToClear.length; i++)
         {
             for (let j = rowsToClear[i] + i; j >= 0; j--)

@@ -1,14 +1,18 @@
 language: node_js
 node_js:
   - "8"
-script:
-  - echo 'Installing'
-  - cd core
-  - npm i
-  - echo 'Building'
-  - npm run build
-  - echo 'Running tslint'
-  - npm run tslint
-  - echo 'Testing'
-  - npm test
-  - echo 'Done'
+
+jobs:
+  include:
+    - stage: core
+      script:
+        - echo 'Installing'
+        - cd core
+        - npm i
+        - echo 'Building'
+        - npm run build
+        - echo 'Running tslint'
+        - npm run tslint
+        - echo 'Testing'
+        - npm test
+        - echo 'Done'

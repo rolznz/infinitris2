@@ -16,3 +16,23 @@ jobs:
         - echo 'Testing'
         - npm test
         - echo 'Done'
+    - stage: client
+      script:
+        - echo 'Installing'
+        - cd client
+        - npm i
+        - echo 'Building'
+        - npm run build
+        - echo 'Running tslint'
+        - npm run tslint
+        - echo 'Testing'
+    - stage: server
+      script:
+        - echo 'Installing'
+        - cd server
+        - npm i
+        - echo 'Building'
+        - npm run build
+        - echo 'Running tslint'
+        - npm run tslint
+        - echo 'Testing'

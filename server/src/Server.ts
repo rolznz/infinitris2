@@ -39,7 +39,7 @@ export default class Server implements IServerSocketEventListener
             if (message.type === ClientMessageType.JOIN_ROOM_REQUEST)
             {
                 socket.roomId = 0;
-                this._rooms[socket.roomId].addPlayer(new NetworkPlayer(socket.id));
+                this._rooms[socket.roomId].addPlayer(socket.id);
                 console.log("Client " + socket.id + " joined room " + socket.roomId);
             }
             else

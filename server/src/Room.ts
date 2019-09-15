@@ -7,6 +7,8 @@ import ServerMessageType from "@core/networking/server/ServerMessageType";
 import IJoinRoomResponse, { JoinRoomResponseStatus } from "@core/networking/server/IJoinRoomResponse";
 import IPlayerConnectedEvent from "@core/networking/server/IPlayerConnectedEvent";
 import IPlayerDisconnectedEvent from "@core/networking/server/IPlayerDisconnectedEvent";
+import Grid from "@core/grid/Grid";
+import Block from "@core/block/Block";
 
 export default class Room implements ISimulationEventListener
 {
@@ -17,11 +19,12 @@ export default class Room implements ISimulationEventListener
     {
         this._sendMessage = sendMessage;
         this._simulation = new Simulation(this);
-        this._simulation.start();
+        this._simulation.start(new Grid(undefined, undefined, this._simulation));
     }
 
-    addPlayer(player: NetworkPlayer)
+    addPlayer(playerId: number)
     {
+        const player = new NetworkPlayer(playerId, this._simulation);
         const currentPlayerIds: number[] = this._simulation.getPlayerIds();
         this._simulation.addPlayer(player);
 
@@ -58,5 +61,26 @@ export default class Room implements ISimulationEventListener
     onClientMessage(playerId: number, message: IClientMessage)
     {
         console.log("Room received message from player " + playerId + ":", message);
+    }
+
+    onSimulationStarted(grid: Grid)
+    // tslint:disable-next-line: no-empty
+    {
+    }
+    onBlockCreated(block: Block)
+    // tslint:disable-next-line: no-empty
+    {
+    }
+    onBlockPlaced(block: Block)
+    // tslint:disable-next-line: no-empty
+    {
+    }
+    onBlockMoved(block: Block)
+    // tslint:disable-next-line: no-empty
+    {
+    }
+    onLineCleared(row: number)
+    // tslint:disable-next-line: no-empty
+    {
     }
 }

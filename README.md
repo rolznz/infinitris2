@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/rolznz/infinitris2.svg?branch=master)](https://travis-ci.com/rolznz/infinitris2)
+
 # Infinitris 2
 Infinitris 2 is a massively multiplayer falling block puzzle game. Place blocks on a giant grid that expands and contracts based on the number of players in-game. Gain score by stealing cells and helping to clear lines in an unending power struggle.
 

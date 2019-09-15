@@ -11,9 +11,6 @@
             ],
             "port": 9229,
             "cwd": "${workspaceFolder}/server",
-            "outFiles": [
-                "${workspaceFolder}/server/dist/*.js"
-            ],
         },
     ]
 }

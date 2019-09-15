@@ -6,15 +6,9 @@
         "esModuleInterop": true,
         "sourceMap": true,
         "allowJs": false,
-        "baseUrl": "../",
-        "paths": {
-            "@core/*": [
-                "core/src/*"
-            ],
-            "@src/*": [
-                "client/src/*"
-            ]
-        },
+        "composite": true,
+        "declarationMap": true,
+        "types": ["node"],
         "plugins": [
             {
                 "name": "typescript-tslint-plugin",
@@ -27,8 +21,5 @@
     },
     "exclude": [
         "node_modules"
-    ],
-    "references": [
-        { "path": "../core" }
     ]
 }

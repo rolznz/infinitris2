@@ -5,3 +5,8 @@ client/src/core
 server/src/core
 client/docs
 server/docs
+
+core/**/*.js
+core/**/*.js.map
+core/**/*.d.ts
+*.tsbuildinfo

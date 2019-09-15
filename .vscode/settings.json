@@ -1,7 +1,10 @@
 {
     "files.exclude": {
         "**/dist": true,
-        "core": true,
         "**/node_modules": true,
+        "core/**/*.js": true,
+        "core/**/*.js.map": true,
+        "core/**/*.d.ts": true,
+        "core/**/*.d.ts.map": true,
     },
 }

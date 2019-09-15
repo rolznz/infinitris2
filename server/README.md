@@ -7,7 +7,9 @@
 # Debugging (vscode)
 Select the "Debug Server" configuration and press F5.
 
-NB: When inserting a breakpoint in the core code, make sure to breakpoint it from the server symlink (server/src/core)
+NB: Currently the core typescript code cannot be debugged through VS Code.
+If you have a solution to this, please send a pull request.
+For now, you'll need to set breakpoints within dist/bundle.js.
 
 # Run
 `npm start`

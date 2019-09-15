@@ -6,9 +6,7 @@ More information can be found in our [Wiki](https://github.com/rolznz/infinitris
 # Installation
 
 Please see the [Server Readme](server/README.md) and the [Client Readme](client/README.md)
+NB: Infinitris is currently in design phase. A minimal prototype to test our ideas will hopefully be coming soon.
 
 # Sequel
 Infinitris 2 attempts to deal with many issues raised in [Infinitris.io](https://github.com/rolznz/infinitris2/wiki/infinitris.io) by providing simpler and more intuitive mechanics and a power balance which rewards skilled players.
-
-# Prototype
-Infinitris is currently in design phase. A minimal prototype to test our ideas will hopefully be coming soon.

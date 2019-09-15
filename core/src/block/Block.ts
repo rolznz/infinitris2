@@ -1,6 +1,7 @@
 import Cell from "../grid/cell/Cell";
 import Layout from "./layout/Layout";
 import IBlockEventListener from "./IBlockEventListener";
+import LayoutUtils from "./layout/LayoutUtils";
 
 type LoopCellEvent = (cell: Cell | undefined) => void;
 
@@ -144,7 +145,7 @@ export default class Block
 
     private _loopCells(gridCells: Cell[][], column: number, row: number, rotation: number, cellEvent: LoopCellEvent)
     {
-        const rotatedLayout = this._rotateLayout(this._layout, rotation);
+        const rotatedLayout = LayoutUtils.rotate(this._layout, rotation);
         const centreColumn = Math.floor(rotatedLayout[0].length / 2);
 
         for (let r = 0; r < rotatedLayout.length; r++)
@@ -162,29 +163,5 @@ export default class Block
                 }
             }
         }
-    }
-
-    private _rotateLayout(layout: Layout, rotation: number)
-    {
-        rotation = (rotation % 4 + 4) % 4;
-
-        let prev = layout;
-        for (let i = 0; i < rotation; i++)
-        {
-            const rotatedCells: number[][] = [];
-
-            for (let row: number = 0; row < layout.length; ++row)
-            {
-                rotatedCells.push(new Array<number>(layout.length));
-
-                for (let col: number = 0; col < layout.length; ++col)
-                {
-                    rotatedCells[row][col] = prev[layout.length - col - 1][row];
-                }
-            }
-            prev = rotatedCells;
-        }
-
-        return prev;
     }
 }

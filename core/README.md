@@ -6,6 +6,3 @@
 
 # Tests
 `npm test`
-
-# Generate Documentation
-`npm run docs`

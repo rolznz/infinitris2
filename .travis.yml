@@ -5,6 +5,10 @@ script:
   - echo 'Installing'
   - cd core
   - npm i
+  - echo 'Building'
+  - npm run build
+  - echo 'Running tslint'
+  - npm run tslint
   - echo 'Testing'
-  - npm run test
+  - npm test
   - echo 'Done'

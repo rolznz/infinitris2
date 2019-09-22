@@ -16,3 +16,8 @@ More information can be found in our [Wiki](https://github.com/rolznz/infinitris
 Infinitris is currently in design phase. A minimal prototype to test our ideas will hopefully be coming soon.
 
 Please see the [Server Readme](server/README.md) and the [Client Readme](client/README.md)
+
+# Documentation
+
+* [Server Documentation](https://rolznz.github.io/infinitris2-server-docs/)
+* [Client Documentation](https://rolznz.github.io/infinitris2-client-docs/)

@@ -28,6 +28,8 @@ jobs:
         - echo 'Testing'
         - echo 'Generating Documentation'
         - npm run docs
+        - cd docs
+        - touch .nojekyll
       deploy:
         provider: pages
         skip_cleanup: true
@@ -51,6 +53,8 @@ jobs:
         - echo 'Testing'
         - echo 'Generating Documentation'
         - npm run docs
+        - cd docs
+        - touch .nojekyll
       deploy:
         provider: pages
         skip_cleanup: true

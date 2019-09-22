@@ -50,4 +50,3 @@ jobs:
         - echo 'Testing'
         - echo 'Generating Documentation'
         - npm run docs
-        - cp -r docs/* ../docs/server

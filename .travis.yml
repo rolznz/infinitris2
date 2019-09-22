@@ -51,3 +51,13 @@ jobs:
         - echo 'Testing'
         - echo 'Generating Documentation'
         - npm run docs
+      deploy:
+        provider: pages
+        skip_cleanup: true
+        github_token: $DEPLOY_GITHUB_PAGES
+        keep_history: true
+        local_dir: server/docs
+        repo: rolznz/infinitris2-server-docs
+        on:
+          branch: master
+        target_branch: master

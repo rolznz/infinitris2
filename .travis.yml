@@ -37,7 +37,6 @@ jobs:
         repo: "rolznz/infinitris2-client-docs"
         on:
           branch: master
-        target_branch: "docs-client"
 
     - stage: server
       script:

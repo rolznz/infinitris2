@@ -4,6 +4,10 @@ node_js:
 
 jobs:
   include:
+    - stage: init
+      script:
+        - mkdir -p docs/client
+        - mkdir -p docs/server
     - stage: core
       script:
         - echo 'Installing'
@@ -26,6 +30,10 @@ jobs:
         - echo 'Running tslint'
         - npm run tslint
         - echo 'Testing'
+        - echo 'Generating Documentation'
+        - npm run docs
+        - cp -r docs/* ../docs/client
+
     - stage: server
       script:
         - echo 'Installing'
@@ -36,3 +44,14 @@ jobs:
         - echo 'Running tslint'
         - npm run tslint
         - echo 'Testing'
+        - echo 'Generating Documentation'
+        - npm run docs
+        - cp -r docs/* ../docs/server
+deploy:
+  provider: pages
+  skip_cleanup: true
+  github_token: $DEPLOY_GITHUB_PAGES
+  keep_history: true
+  local_dir: "docs"
+  on:
+    branch: master

@@ -3,12 +3,13 @@ import { Application, Sprite, Graphics } from "pixi.js-legacy";
 import Grid from "@core/grid/Grid";
 import Block from "@core/block/Block";
 import Cell from "@core/grid/cell/Cell";
+import ISimulationEventListener from "@core/ISimulationEventListener";
 
 interface IRenderableGrid { grid: Grid; graphics: Graphics; }
 interface IRenderableBlock { block: Block; graphics: Graphics; }
 interface IRenderableCell { cell: Cell; graphics: Graphics; }
 
-export default class MinimalRenderer implements IRenderer
+export default class MinimalRenderer implements IRenderer, ISimulationEventListener
 {
     private _grid: IRenderableGrid;
     private _app: Application;
@@ -16,6 +17,9 @@ export default class MinimalRenderer implements IRenderer
     private _blocks: {[playerId: number]: IRenderableBlock};
     private _cells: {[cellId: number]: IRenderableCell};
 
+    /**
+     * @inheritdoc
+     */
     async create()
     {
         this._app = new Application({
@@ -30,13 +34,19 @@ export default class MinimalRenderer implements IRenderer
         this._resize();
     }
 
+    /**
+     * @inheritdoc
+     */
     destroy()
     {
         window.removeEventListener("resize", this._resize);
         this._app.destroy(true);
     }
 
-    onSimulationStarted = (grid: Grid) =>
+    /**
+     * @inheritdoc
+     */
+    onSimulationStarted(grid: Grid)
     {
         this._app.stage.removeChildren();
 
@@ -50,7 +60,10 @@ export default class MinimalRenderer implements IRenderer
         this._resize();
     }
 
-    onBlockCreated = (block: Block) =>
+    /**
+     * @inheritdoc
+     */
+    onBlockCreated(block: Block)
     {
         const renderableBlock: IRenderableBlock = {
             graphics: new Graphics(),
@@ -61,18 +74,27 @@ export default class MinimalRenderer implements IRenderer
         this._renderBlock(block);
     }
 
-    onBlockMoved = (block: Block) =>
+    /**
+     * @inheritdoc
+     */
+    onBlockMoved(block: Block)
     {
         this._renderBlock(block);
     }
 
-    onBlockPlaced = (block: Block) =>
+    /**
+     * @inheritdoc
+     */
+    onBlockPlaced(block: Block)
     {
         this._renderCells(block.cells);
         this._app.stage.removeChild(this._blocks[block.id].graphics);
         delete this._blocks[block.id];
     }
 
+    /**
+     * @inheritdoc
+     */
     onLineCleared(row: number)
     {
         this._renderCells([].concat.apply([], this._grid.grid.cells), true);

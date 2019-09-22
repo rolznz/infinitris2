@@ -45,6 +45,13 @@ export default class Block
     get isReadyToLock(): boolean { return this._lockTimer <= 0; }
     get opacity(): number { return 1; }
 
+    /**
+     * Mark a block as dropping.
+     *
+     * A dropping block is locked at its current rotation and column,
+     * and will fall one row per frame. It will also lock immediately on contact
+     * with the ground.
+     */
     drop()
     {
         this._isDropping = true;
@@ -52,11 +59,24 @@ export default class Block
         this._fallTimer = 0;
     }
 
+    /**
+     * Determines whether the block can move down one row.
+     *
+     * @param gridCells the cells of the grid.
+     */
     canFall(gridCells: Cell[][])
     {
         return this.canMove(gridCells, 0, 1, 0);
     }
 
+    /**
+     * Determines whether the block can move to a new position.
+     *
+     * @param gridCells the cells of the grid.
+     * @param dx the delta of the x position (column).
+     * @param dy the delta of the x position (row).
+     * @param dr the delta of the rotation.
+     */
     canMove(gridCells: Cell[][], dx: number, dy: number, dr: number): boolean
     {
         let canMove: boolean = true;
@@ -72,6 +92,17 @@ export default class Block
         return canMove;
     }
 
+    /**
+     * Attempts to move a block into a new position.
+     *
+     * @param gridCells the cells of the grid.
+     * @param dx the delta of the x position (column).
+     * @param dy the delta of the x position (row).
+     * @param dr the delta of the rotation.
+     * @param force force the block to move, even if the destination is occupied.
+     *
+     * @returns true if the block was moved.
+     */
     move(gridCells: Cell[][], dx: number, dy: number, dr: number, force: boolean = false): boolean
     {
         const canMove = force || this.canMove(gridCells, dx, dy, dr);
@@ -86,6 +117,14 @@ export default class Block
         return canMove;
     }
 
+    /**
+     * Attempt to move the block down by a single row.
+     *
+     * If the block is obstructed, decrease its lock timer. Otherwise,
+     * reset its movement timers.
+     *
+     * @param gridCells
+     */
     fall(gridCells: Cell[][]): boolean
     {
         const fell = this.move(gridCells, 0, 1, 0);
@@ -100,11 +139,21 @@ export default class Block
         return fell;
     }
 
+    /**
+     * Places a block on the grid.
+     *
+     * The block's opacity will be transferred into the cells it currently occupies.
+     */
     place()
     {
         this._cells.forEach(cell => cell.opacity += 1);
     }
 
+    /**
+     * Updates a block.
+     *
+     * Timers will be updated, triggering the block to fall or be placed if possible.
+     */
     update(gridCells: Cell[][])
     {
         --this._fallTimer;

@@ -26,6 +26,9 @@ export default class Input
         document.addEventListener("keydown", this._onKeyDown);
     }
 
+    /**
+     * Removes all input listeners.
+     */
     destroy()
     {
         document.removeEventListener("keydown", this._onKeyDown);

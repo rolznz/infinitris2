@@ -28,6 +28,11 @@ export default class Grid
     get numColumns(): number { return this._cells[0].length; }
     get numRows(): number { return this._cells.length; }
 
+    /**
+     * Check for and clear full rows.
+     *
+     * @param rows a list of rows affected by a change (e.g. block placement).
+     */
     checkLineClears(rows: number[])
     {
         const rowsToClear = rows

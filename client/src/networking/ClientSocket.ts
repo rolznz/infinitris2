@@ -18,11 +18,18 @@ export default class ClientSocket
         this._socket.onmessage = this._onMessage;
     }
 
+    /**
+     * Closes this socket's connection to the server.
+     */
     disconnect()
     {
         this._socket.close();
     }
 
+    /**
+     * Sends a message to the server.
+     * @param message the message to send.
+     */
     sendMessage(message: ValidClientMessage)
     {
         this._socket.send(JSON.stringify(message));

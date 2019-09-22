@@ -20,6 +20,16 @@ export default abstract class Player implements IBlockEventListener
     get id(): number { return this._id; }
     get block(): LoopCellEvent { return this._block; }
 
+    /**
+     * Update a player.
+     *
+     * If the player doesn't have a block (Because they just spawned or placed one),
+     * create a new block.
+     *
+     * Otherwise, update the player's block.
+     *
+     * @param gridCells The cells within the grid.
+     */
     update(gridCells: Cell[][])
     {
         if (!this._block)
@@ -35,15 +45,26 @@ export default abstract class Player implements IBlockEventListener
         }
     }
 
-    onBlockCreated = (block: Block) =>
+    /**
+     * @inheritdoc
+     */
+    onBlockCreated(block: Block)
     {
         this._eventListener.onBlockCreated(block);
     }
-    onBlockMoved = (block: Block) =>
+
+    /**
+     * @inheritdoc
+     */
+    onBlockMoved(block: Block)
     {
         this._eventListener.onBlockMoved(block);
     }
-    onBlockPlaced = (block: Block) =>
+
+    /**
+     * @inheritdoc
+     */
+    onBlockPlaced(block: Block)
     {
         this._lastPlacementColumn = this._block.column;
         this._block = null;

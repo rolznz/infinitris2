@@ -2,6 +2,12 @@ import Layout from "./Layout";
 
 export default class LayoutUtils
 {
+    /**
+     * Rotates a block layout by the given rotation value.
+     *
+     * @param layout the layout to rotate.
+     * @param rotation the number of 90 degree rotations to apply.
+     */
     static rotate(layout: Layout, rotation: number)
     {
         if (layout.length !== layout[0].length)

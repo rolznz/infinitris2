@@ -22,6 +22,11 @@ export default class Room implements ISimulationEventListener
         this._simulation.start(new Grid(undefined, undefined, this._simulation));
     }
 
+    /**
+     * Creates a player and adds it to the room and the room's simulation.
+     *
+     * @param playerId the id of the player to add.
+     */
     addPlayer(playerId: number)
     {
         const player = new NetworkPlayer(playerId, this._simulation);
@@ -47,6 +52,11 @@ export default class Room implements ISimulationEventListener
         this._sendMessage(newPlayerMessage, ...currentPlayerIds);
     }
 
+    /**
+     * Removes a player from the room and the room's simulation.
+     *
+     * @param playerId the id of the player to remove.
+     */
     removePlayer(playerId: number)
     {
         this._simulation.removePlayer(playerId);
@@ -58,27 +68,52 @@ export default class Room implements ISimulationEventListener
         this._sendMessage(playerDisconnectedMessage, ...playerIds);
     }
 
+    /**
+     * Triggered when a message is received from a client.
+     *
+     * @param playerId the id of the player.
+     * @param message the message the client sent.
+     */
     onClientMessage(playerId: number, message: IClientMessage)
     {
         console.log("Room received message from player " + playerId + ":", message);
     }
 
+    /**
+     * @inheritdoc
+     */
     onSimulationStarted(grid: Grid)
     // tslint:disable-next-line: no-empty
     {
     }
+
+    /**
+     * @inheritdoc
+     */
     onBlockCreated(block: Block)
     // tslint:disable-next-line: no-empty
     {
     }
+
+    /**
+     * @inheritdoc
+     */
     onBlockPlaced(block: Block)
     // tslint:disable-next-line: no-empty
     {
     }
+
+    /**
+     * @inheritdoc
+     */
     onBlockMoved(block: Block)
     // tslint:disable-next-line: no-empty
     {
     }
+
+    /**
+     * @inheritdoc
+     */
     onLineCleared(row: number)
     // tslint:disable-next-line: no-empty
     {

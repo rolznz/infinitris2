@@ -17,12 +17,18 @@ export default class Server implements IServerSocketEventListener
         this._rooms = [new Room(this._socket.sendMessage)];
     }
 
-    onClientConnect = (socket: IClientSocket) =>
+    /**
+     * @inheritdoc
+     */
+    onClientConnect(socket: IClientSocket)
     {
         console.log("Client " + socket.id + " connected");
     }
 
-    onClientDisconnect = (socket: IClientSocket) =>
+    /**
+     * @inheritdoc
+     */
+    onClientDisconnect(socket: IClientSocket)
     {
         console.log("Client " + socket.id + " disconnected");
         if (socket.roomId !== undefined)
@@ -31,7 +37,10 @@ export default class Server implements IServerSocketEventListener
         }
     }
 
-    onClientMessage = (socket: IClientSocket, message: IClientMessage) =>
+    /**
+     * @inheritdoc
+     */
+    onClientMessage(socket: IClientSocket, message: IClientMessage)
     {
         console.log("Received message from client " + socket.id + ":", message);
         if (socket.roomId === undefined)

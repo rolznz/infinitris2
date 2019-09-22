@@ -28,7 +28,26 @@
         "no-console": false,
         "member-access": false,
         "comment-format": false,
-        "object-literal-sort-keys": false
+        "object-literal-sort-keys": false,
+        "completed-docs": [
+            true,
+            {
+                "constructors": true,
+                "variables": {"visibilities": ["exported"]},
+                "functions": {
+                    "visibilities": [
+                        "exported"
+                    ]
+                },
+                "methods": {
+                    "privacies": ["public"],
+                    "tags": {
+                        "content": {},
+                        "existence": ["inheritdoc"]
+                    }
+                }
+            }
+        ]
     },
     "rulesDirectory": []
 }

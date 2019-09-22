@@ -21,15 +21,26 @@ export default class Client implements IClientSocketEventListener
         this._simulation = new Simulation(this._renderer);
     }
 
+    /**
+     * @inheritdoc
+     */
     onConnect()
     {
         console.log("Connected");
         this._socket.sendMessage({type: ClientMessageType.JOIN_ROOM_REQUEST});
     }
+
+    /**
+     * @inheritdoc
+     */
     onDisconnect()
     {
         console.log("Disconnected");
     }
+
+    /**
+     * @inheritdoc
+     */
     onMessage(message: IServerMessage)
     {
         console.log("Received message: ", message);

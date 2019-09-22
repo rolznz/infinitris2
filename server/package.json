@@ -9,7 +9,7 @@
     "watch": "webpack --watch",
     "start": "node -r source-map-support/register dist/bundle.js",
     "debug": "node --nolazy --inspect-brk dist/bundle.js",
-    "docs": "typedoc --out docs src",
+    "docs": "typedoc --out docs --readme README.md src",
     "tslint": "tslint --project ./tsconfig.json"
   },
   "repository": {

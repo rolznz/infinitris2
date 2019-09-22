@@ -7,7 +7,7 @@
     "clean": "rm -rf dist",
     "build": "webpack",
     "dev-server": "webpack-dev-server --content-base=dist --inline --watch --hot",
-    "docs": "typedoc --out docs src",
+    "docs": "typedoc --out docs --readme README.md src",
     "tslint": "tslint --project ./tsconfig.json"
   },
   "repository": {

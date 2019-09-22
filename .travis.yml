@@ -33,7 +33,8 @@ jobs:
         skip_cleanup: true
         github_token: $DEPLOY_GITHUB_PAGES
         keep_history: true
-        local_dir: "docs"
+        local_dir: "client/docs"
+        repo: "rolznz/infinitris2-client-docs"
         on:
           branch: master
         target_branch: "docs-client"

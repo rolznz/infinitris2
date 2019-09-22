@@ -5,7 +5,6 @@ client/src/core
 server/src/core
 client/docs
 server/docs
-core/docs
 
 core/**/*.js
 core/**/*.js.map

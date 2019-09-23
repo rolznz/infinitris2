@@ -9,4 +9,5 @@ server/docs
 core/**/*.js
 core/**/*.js.map
 core/**/*.d.ts
+core/coverage
 *.tsbuildinfo

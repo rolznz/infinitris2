@@ -1,6 +1,8 @@
 language: node_js
 node_js:
   - "8"
+install:
+  - npm install -g codecov
 
 jobs:
   include:
@@ -15,7 +17,8 @@ jobs:
         - npm run tslint
         - echo 'Testing'
         - npm test
-        - echo 'Done'
+        - npm run coverage
+        - codecov
     - stage: client
       script:
         - echo 'Installing'

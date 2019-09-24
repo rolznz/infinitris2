@@ -18,7 +18,7 @@ jobs:
         - echo 'Testing'
         - npm test
         - npm run coverage
-        - codecov --root .. --disable gcov -t $CODECOV_TOKEN
+        - codecov --disable gcov -t $CODECOV_TOKEN
     - stage: client
       script:
         - echo 'Installing'

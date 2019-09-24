@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "test": "node_modules/.bin/jasmine",
-    "coverage": "istanbul --include-all-sources cover node_modules/.bin/jasmine",
+    "coverage": "istanbul --include-all-sources cover node_modules/.bin/jasmine  --reporter lcovonly -- -R spec/**/*.js",
     "build": "tsc",
     "watch": "tsc -w",
     "tslint": "tslint --project ./tsconfig.json"

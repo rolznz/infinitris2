@@ -1,12 +1,8 @@
 ![Travis (.org)](https://img.shields.io/travis/rolznz/infinitris2?style=for-the-badge)
+&nbsp; ![Codecov](https://img.shields.io/codecov/c/github/rolznz/infinitris2?style=for-the-badge&token=2c88db22c3d94abab31fbc58ffa5864b)
 &nbsp; ![GitHub contributors](https://img.shields.io/github/contributors/rolznz/infinitris2?style=for-the-badge)
 &nbsp; ![GitHub issues](https://img.shields.io/github/issues/rolznz/infinitris2?style=for-the-badge)
 &nbsp; ![GitHub](https://img.shields.io/github/license/rolznz/infinitris2?style=for-the-badge)
-
-
-![Server Documentation](https://img.shields.io/badge/documentation-server-ff69b4?style=for-the-badge&link=https://rolznz.github.io/infinitris2-server-docs)
-&nbsp; ![Client Documentation](https://img.shields.io/badge/documentation-client-69b4FF?style=for-the-badge&link=https://rolznz.github.io/infinitris2-client-docs/)
-
 
 # Infinitris 2
 Infinitris 2 is a massively multiplayer falling block puzzle game. Place blocks on a giant grid that expands and contracts based on the number of players in-game. Gain score by stealing cells and helping to clear lines in an unending power struggle.
@@ -20,3 +16,8 @@ More information can be found in our [Wiki](https://github.com/rolznz/infinitris
 Infinitris is currently in design phase. A minimal prototype to test our ideas will hopefully be coming soon.
 
 Please see the [Server Readme](server/README.md) and the [Client Readme](client/README.md)
+
+# Documentation
+
+* [Server Documentation](https://rolznz.github.io/infinitris2-server-docs)
+* [Client Documentation](https://rolznz.github.io/infinitris2-client-docs)

@@ -1,8 +1,8 @@
-![Travis (.org)](https://img.shields.io/travis/rolznz/infinitris2?style=for-the-badge)
-&nbsp; ![Codecov](https://img.shields.io/codecov/c/github/rolznz/infinitris2?style=for-the-badge&token=2c88db22c3d94abab31fbc58ffa5864b)
-&nbsp; ![GitHub contributors](https://img.shields.io/github/contributors/rolznz/infinitris2?style=for-the-badge)
-&nbsp; ![GitHub issues](https://img.shields.io/github/issues/rolznz/infinitris2?style=for-the-badge)
-&nbsp; ![GitHub](https://img.shields.io/github/license/rolznz/infinitris2?style=for-the-badge)
+![Travis (.org)](https://img.shields.io/travis/rolznz/infinitris2?style=for-the-badge)&nbsp;
+![Coveralls github](https://img.shields.io/coveralls/github/rolznz/infinitris2?style=for-the-badge)&nbsp;
+![GitHub contributors](https://img.shields.io/github/contributors/rolznz/infinitris2?style=for-the-badge)&nbsp;
+![GitHub issues](https://img.shields.io/github/issues/rolznz/infinitris2?style=for-the-badge)&nbsp;
+![GitHub](https://img.shields.io/github/license/rolznz/infinitris2?style=for-the-badge)&nbsp;
 
 # Infinitris 2
 Infinitris 2 is a massively multiplayer falling block puzzle game. Place blocks on a giant grid that expands and contracts based on the number of players in-game. Gain score by stealing cells and helping to clear lines in an unending power struggle.

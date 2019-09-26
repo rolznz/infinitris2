@@ -16,8 +16,6 @@ jobs:
         - echo 'Testing'
         - npm test
         - npm run coverage
-      after_success:
-        - bash <(curl -s https://codecov.io/bash) -d
     - stage: client
       script:
         - echo 'Installing'

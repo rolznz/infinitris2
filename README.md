@@ -1,5 +1,6 @@
-[![Travis (.org)](https://img.shields.io/travis/rolznz/infinitris2?style=for-the-badge)](https://travis-ci.com/rolznz/infinitris2)&nbsp;
-[![Coveralls github](https://img.shields.io/coveralls/github/rolznz/infinitris2?style=for-the-badge)](https://coveralls.io/github/rolznz/infinitris2)&nbsp;
+[![Build Status](https://travis-ci.com/rolznz/infinitris2.svg?branch=master)](https://travis-ci.com/rolznz/infinitris2)&nbsp;
+[![Coverage Status](https://coveralls.io/repos/github/rolznz/infinitris2/badge.svg)](https://coveralls.io/github/rolznz/infinitris2)&nbsp;
+[![codecov](https://codecov.io/gh/rolznz/infinitris2/branch/master/graph/badge.svg)](https://codecov.io/gh/rolznz/infinitris2)&nbsp;
 
 # Infinitris 2
 Infinitris 2 is a massively multiplayer falling block puzzle game. Place blocks on a giant grid that expands and contracts based on the number of players in-game. Gain score by stealing cells and helping to clear lines in an unending power struggle.

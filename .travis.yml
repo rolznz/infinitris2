@@ -1,3 +1,4 @@
+dist: bionic
 language: node_js
 node_js:
   - "10.15.3"
@@ -49,7 +50,6 @@ jobs:
         - echo 'Installing'
         - cd server
         - npm i
-        - npm update
         - echo 'Building'
         - npm run build
         - echo 'Running tslint'

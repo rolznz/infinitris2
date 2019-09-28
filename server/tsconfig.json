@@ -15,6 +15,7 @@
                 "server/src/*"
             ]
         },
+        "types": ["node"],
         "plugins": [
             {
                 "name": "typescript-tslint-plugin",

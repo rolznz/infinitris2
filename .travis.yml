@@ -1,6 +1,9 @@
 language: node_js
 node_js:
-  - "node"
+  - "lts"
+cache:
+  npm: false
+
 install:
   - npm install -g codecov coveralls
 jobs:

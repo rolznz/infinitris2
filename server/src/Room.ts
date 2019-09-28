@@ -22,6 +22,8 @@ export default class Room implements ISimulationEventListener
         this._simulation.start(new Grid(undefined, undefined, this._simulation));
     }
 
+    get simulation(): Simulation { return this._simulation; }
+
     /**
      * Creates a player and adds it to the room and the room's simulation.
      *

@@ -73,7 +73,7 @@ export default class Simulation implements IBlockEventListener, IGridEventListen
      */
     getPlayerIds(): number[]
     {
-        return Array.from(Object.entries(this._players).keys());
+        return Object.values(this._players).map(player => player.id);
     }
 
     /**

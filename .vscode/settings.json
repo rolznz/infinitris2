@@ -5,6 +5,10 @@
         "core/**/*.js": true,
         "core/**/*.js.map": true,
         "core/**/*.d.ts": true,
-        "core/**/*.d.ts.map": true
+        "core/**/*.d.ts.map": true,
+        "server/**/*.js": true,
+        "server/**/*.js.map": true,
+        "server/**/*.d.ts": true,
+        "server/**/*.d.ts.map": true
     },
 }

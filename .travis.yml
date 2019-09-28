@@ -53,6 +53,9 @@ jobs:
         - echo 'Running tslint'
         - npm run tslint
         - echo 'Testing'
+        - npm run coverage
+        - cat ./coverage/lcov.info | coveralls
+        - codecov
         - echo 'Generating Documentation'
         - npm run docs
         - cd docs

@@ -3,14 +3,28 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf dist && find src spec -name \"*.js\" -o -name \"*.d.*\" -type f -delete",
+    "test": "tsc --build && ts-node node_modules/jasmine/bin/jasmine --config=spec/support/jasmine.json",
+    "coverage": "nyc --cache false -r lcov -r text npm run test",
     "build": "webpack",
     "watch": "webpack --watch",
     "start": "node -r source-map-support/register dist/bundle.js",
     "debug": "node --nolazy --inspect-brk dist/bundle.js",
     "docs": "typedoc --out docs --readme README.md src",
     "tslint": "tslint --project ./tsconfig.json"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "spec/**/*",
+      "coverage/**/*",
+      "dist/**/*",
+      "docs/**/*",
+      "webpack.config.js"
+    ],
+    "all": true
   },
   "repository": {
     "type": "git",
@@ -28,6 +42,8 @@
   "homepage": "https://github.com/rolznz/infinitris2#readme",
   "devDependencies": {
     "@types/ws": "^6.0.3",
+    "@types/jasmine": "^3.4.0",
+    "@types/node": "^12.7.5",
     "awesome-typescript-loader": "^5.2.1",
     "source-map-support": "^0.5.13",
     "tslint": "^5.19.0",
@@ -35,7 +51,11 @@
     "typescript": "^3.5.3",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.7",
-    "webpack-dev-server": "^3.8.0"
+    "webpack-dev-server": "^3.8.0",
+    "nyc": "^14.1.1",
+    "ts-node": "^8.4.1",
+    "jasmine": "^3.5.0",
+    "module-alias": "^2.2.1"
   },
   "dependencies": {
     "ws": "^7.1.2"
@@ -43,5 +63,9 @@
   "optionalDependencies": {
     "bufferutil": "^4.0.1",
     "utf-8-validate": "^5.0.2"
+  },
+  "_moduleAliases": {
+    "@core": "../core/src",
+    "@src": "src"
   }
 }

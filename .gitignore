@@ -1,8 +1,9 @@
 *.ts.map
 dist
 node_modules
-client/src/core
-server/src/core
+*.tsbuildinfo
+.nyc_output
+
 client/docs
 server/docs
 
@@ -10,5 +11,8 @@ core/**/*.js
 core/**/*.js.map
 core/**/*.d.ts
 core/coverage
-*.tsbuildinfo
-.nyc_output
+
+server/**/*.js
+server/**/*.js.map
+server/**/*.d.ts
+server/coverage

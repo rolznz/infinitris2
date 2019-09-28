@@ -11,3 +11,4 @@ core/**/*.js.map
 core/**/*.d.ts
 core/coverage
 *.tsbuildinfo
+.nyc_output

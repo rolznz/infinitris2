@@ -1,7 +1,8 @@
 language: node_js
 node_js:
   - "8"
-
+install:
+  - npm install -g codecov coveralls
 jobs:
   include:
     - stage: core
@@ -14,8 +15,9 @@ jobs:
         - echo 'Running tslint'
         - npm run tslint
         - echo 'Testing'
-        - npm test
         - npm run coverage
+        - cat ./coverage/lcov.info | coveralls
+        - codecov
     - stage: client
       script:
         - echo 'Installing'

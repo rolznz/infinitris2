@@ -48,7 +48,10 @@ jobs:
     - stage: server
       script:
         - echo 'Installing'
-        - cd server
+        - cd core
+        - npm i
+        - npm run build
+        - cd ../server
         - npm i
         - echo 'Building'
         - npm run build

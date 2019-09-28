@@ -4,7 +4,7 @@
   "description": "",
   "scripts": {
     "clean": "rm -rf dist && find src spec -name \"*.js\" -o -name \"*.d.*\" -type f -delete",
-    "test": "tsc --build && ts-node node_modules/jasmine/bin/jasmine --config=spec/support/jasmine.json",
+    "test": "tsc && ts-node node_modules/jasmine/bin/jasmine --config=spec/support/jasmine.json",
     "coverage": "nyc --cache false -r lcov -r text npm run test",
     "build": "webpack",
     "watch": "webpack --watch",

@@ -4,7 +4,6 @@ import IServerSocketEventListener from "./networking/IServerSocketEventListener"
 import IClientMessage from "@core/networking/client/IClientMessage";
 import IClientSocket from "./networking/IClientSocket";
 import ClientMessageType from "@core/networking/client/ClientMessageType";
-import NetworkPlayer from "@core/player/NetworkPlayer";
 
 export default class Server implements IServerSocketEventListener
 {

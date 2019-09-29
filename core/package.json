@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "clean": "rm -rf ts-out",
+    "clean": "rm -rf ts-out && find src spec -name \"*.js\" -delete && find src spec -name \"*.js.map\" -delete && find src spec -name \"*.d.ts\" -delete && find src spec -name \"*.d.ts.map\" -delete",
     "test": "ts-node node_modules/jasmine/bin/jasmine --config=spec/support/jasmine.json",
-    "coverage": "nyc --cache false -r lcov -r text -e .ts -x \"spec/**/*.ts\" -x \"coverage\" npm run test",
+    "coverage": "nyc --cache false -r lcov -r text npm run test",
     "build": "tsc",
     "watch": "tsc -w",
     "tslint": "tslint --project ./tsconfig.json"
@@ -15,11 +15,10 @@
       ".ts"
     ],
     "exclude": [
-      "**/*.d.ts"
+      "spec/**/*",
+      "coverage/**/*"
     ],
-    "reporter": [
-      "html"
-    ],
+    "instrument": true,
     "all": true
   },
   "repository": {

@@ -2,7 +2,10 @@
     "files.exclude": {
         "**/dist": true,
         "**/node_modules": true,
-        "core/ts-out": true,
+        "core/**/*.js": true,
+        "core/**/*.js.map": true,
+        "core/**/*.d.ts.map": true,
+        "core/**/*.d.ts": true,
         "server/ts-out": true
     },
 }

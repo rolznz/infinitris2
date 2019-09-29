@@ -7,7 +7,15 @@ node_modules
 client/docs
 server/docs
 
-core/ts-out
+core/src/**/*.js
+core/src/**/*.js.map
+core/src/**/*.d.ts
+core/src/**/*.d.ts.map
+core/spec/**/*.js
+core/spec/**/*.js.map
+core/spec/**/*.d.ts
+core/spec/**/*.d.ts.map
+
 core/coverage
 
 server/ts-out

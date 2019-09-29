@@ -18,7 +18,6 @@ jobs:
         - npm run tslint
         - echo 'Testing'
         - npm test
-        - npm run clean
         - npm run coverage
         - cat ./coverage/lcov.info | coveralls
         - codecov

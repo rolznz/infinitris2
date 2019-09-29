@@ -9,6 +9,7 @@
         "composite": true,
         "declarationMap": true,
         "types": ["node"],
+        "outDir": "ts-out/",
         "plugins": [
             {
                 "name": "typescript-tslint-plugin",

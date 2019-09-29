@@ -14,5 +14,8 @@ For now, you'll need to set breakpoints within dist/bundle.js.
 # Run
 `npm start`
 
+# Run tests
+`npm run build-tests && npm test`
+
 # Generate Documentation
 `npm run docs`

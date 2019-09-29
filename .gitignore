@@ -7,12 +7,10 @@ node_modules
 client/docs
 server/docs
 
-core/**/*.js
-core/**/*.js.map
-core/**/*.d.ts
+core/ts-out
 core/coverage
 
-server/**/*.js
-server/**/*.js.map
-server/**/*.d.ts
+server/ts-out
 server/coverage
+
+client/coverage

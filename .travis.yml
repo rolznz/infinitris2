@@ -17,6 +17,7 @@ jobs:
         - echo 'Running tslint'
         - npm run tslint
         - echo 'Testing'
+        - npm test
         - npm run coverage
         - cat ./coverage/lcov.info | coveralls
         - codecov
@@ -58,6 +59,8 @@ jobs:
         - echo 'Running tslint'
         - npm run tslint
         - echo 'Testing'
+        - npm run build-tests
+        - npm test
         - npm run coverage
         - cat ./coverage/lcov.info | coveralls
         - codecov

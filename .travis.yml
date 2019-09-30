@@ -19,7 +19,7 @@ jobs:
         - echo 'Testing'
         - npm test
         - npm run coverage
-        - cat ./coverage/lcov.info | coveralls
+        - cat ./coverage/lcov.info | coveralls ../
         - codecov
     - stage: client
       script:
@@ -62,7 +62,7 @@ jobs:
         - npm run build-tests
         - npm test
         - npm run coverage
-        - cat ./coverage/lcov.info | coveralls
+        - cat ./coverage/lcov.info | coveralls ../
         - codecov
         - echo 'Generating Documentation'
         - npm run docs

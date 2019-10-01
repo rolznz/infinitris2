@@ -25,6 +25,15 @@ module.exports = {
                 use: ['awesome-typescript-loader'],
             },
             {
+                test: /\.ts$/,
+                exclude: [ path.resolve(__dirname, "spec") ],
+                enforce: 'post',
+                use: {
+                  loader: 'istanbul-instrumenter-loader',
+                  options: { esModules: true }
+                }
+            },
+            {
                 test:/\.css$/,
                 use:['style-loader','css-loader']
             }
@@ -39,7 +48,8 @@ module.exports = {
             { from: 'www', to: './' },
         ]),
         new HtmlWebpackPlugin({
-            title: "Infinitris 2"
+            title: "Infinitris 2",
+            template: "src/Index.ejs",
         }),
         new webpack.HotModuleReplacementPlugin()
     ]

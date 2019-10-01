@@ -1,5 +1,4 @@
 import Simulation from "@core/Simulation";
-import "../styles/client.css";
 import IRenderer from "./rendering/IRenderer";
 import MinimalRenderer from "./rendering/renderers/minimal/MinimalRenderer";
 import ControllablePlayer from "./ControllablePlayer";

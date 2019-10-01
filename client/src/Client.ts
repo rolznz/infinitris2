@@ -1,5 +1,4 @@
 import Simulation from "@core/Simulation";
-import "../styles/client.css";
 import IRenderer from "./rendering/IRenderer";
 import MinimalRenderer from "./rendering/renderers/minimal/MinimalRenderer";
 import ClientSocket from "./networking/ClientSocket";
@@ -41,11 +40,12 @@ export default class Client implements IClientSocketEventListener
     /**
      * @inheritdoc
      */
-    onMessage(message: IServerMessage)
+    async onMessage(message: IServerMessage)
     {
         console.log("Received message: ", message);
         if (message.type === ServerMessageType.JOIN_ROOM_RESPONSE)
         {
+            await this._renderer.create();
             this._simulation.start(new Grid(undefined, undefined, this._simulation));
         }
     }

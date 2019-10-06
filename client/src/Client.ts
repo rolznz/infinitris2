@@ -1,21 +1,22 @@
 import Simulation from "@core/Simulation";
 import IRenderer from "./rendering/IRenderer";
 import MinimalRenderer from "./rendering/renderers/minimal/MinimalRenderer";
-import ClientSocket from "./networking/ClientSocket";
 import IServerMessage from "@core/networking/server/IServerMessage";
 import IClientSocketEventListener from "./networking/IClientSocketEventListener";
 import ClientMessageType from "@core/networking/client/ClientMessageType";
 import ServerMessageType from "@core/networking/server/ServerMessageType";
 import Grid from "@core/grid/Grid";
+import IClientSocket from "./networking/IClientSocket";
 
 export default class Client implements IClientSocketEventListener
 {
-    private _socket: ClientSocket;
+    private _socket: IClientSocket;
     private _renderer: IRenderer;
     private _simulation: Simulation;
-    constructor(url: string)
+    constructor(socket: IClientSocket)
     {
-        this._socket = new ClientSocket(url, this);
+        this._socket = socket;
+        this._socket.addEventListener(this);
         this._renderer = new MinimalRenderer();
         this._simulation = new Simulation(this._renderer);
     }

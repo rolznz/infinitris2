@@ -1,17 +1,15 @@
-import IJoinRoomRequest from "@core/networking/client/IJoinRoomRequest";
 import IServerMessage from "@core/networking/server/IServerMessage";
 import IClientSocketEventListener from "./IClientSocketEventListener";
+import IClientSocket, { ValidClientMessage } from "./IClientSocket";
 
-type ValidClientMessage = IJoinRoomRequest;
-
-export default class ClientSocket
+export default class ClientSocket implements IClientSocket
 {
     private _socket: WebSocket;
     private _eventListeners: IClientSocketEventListener[];
-    constructor(url: string, ...eventListeners: IClientSocketEventListener[])
+    constructor(url: string)
     {
         this._socket = new WebSocket(url);
-        this._eventListeners = eventListeners;
+        this._eventListeners = [];
 
         this._socket.onopen = this._onConnect;
         this._socket.onclose = this._onDisconnect;
@@ -19,7 +17,15 @@ export default class ClientSocket
     }
 
     /**
-     * Closes this socket's connection to the server.
+     * @inheritdoc
+     */
+    addEventListener(eventListener: IClientSocketEventListener)
+    {
+        this._eventListeners.push(eventListener);
+    }
+
+    /**
+     * @inheritdoc
      */
     disconnect()
     {
@@ -27,8 +33,7 @@ export default class ClientSocket
     }
 
     /**
-     * Sends a message to the server.
-     * @param message the message to send.
+     * @inheritdoc
      */
     sendMessage(message: ValidClientMessage)
     {

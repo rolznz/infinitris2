@@ -2,6 +2,7 @@ import Client from "./Client";
 import SinglePlayerClient from "./SinglePlayerClient";
 import "../styles/client.css";
 import "url-search-params-polyfill";
+import ClientSocket from "./networking/ClientSocket";
 
 /**
  * Entry point
@@ -53,7 +54,7 @@ export function launchSinglePlayer()
 export function launchClient(url: string)
 {
     // tslint:disable-next-line: no-unused-expression
-    new Client(url);
+    new Client(new ClientSocket(url));
 }
 
 if (module.hot) {

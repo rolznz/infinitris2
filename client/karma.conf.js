@@ -28,7 +28,7 @@ module.exports = function(config) {
         colors: true,
         logLevel: config.LOG_INFO,
         browsers: ['PhantomJS'],
-        autoWatch: false,
-        singleRun: true,
+        autoWatch: process.argv[process.argv.length - 1] === "watch",
+        singleRun: process.argv[process.argv.length - 1] !== "watch"
     });
 };

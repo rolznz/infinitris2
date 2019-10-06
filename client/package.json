@@ -5,6 +5,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "test": "karma start karma.conf.js",
+    "test:watch": "karma start karma.conf.js watch",
     "build": "webpack",
     "dev-server": "webpack-dev-server --content-base=dist --inline --watch --hot",
     "docs": "typedoc --out docs --readme README.md src",

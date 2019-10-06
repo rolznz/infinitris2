@@ -22,6 +22,9 @@ export default class Room implements ISimulationEventListener
         this._simulation.start(new Grid(undefined, undefined, this._simulation));
     }
 
+    /**
+     * Gets the room's simulation.
+     */
     get simulation(): Simulation { return this._simulation; }
 
     /**

@@ -1,35 +1,49 @@
+import * as WebSocket from "ws";
 import IClientMessage from "@core/networking/client/IClientMessage";
-import IJoinRoomResponse from "@core/networking/server/IJoinRoomResponse";
-import IPlayerConnectedEvent from "@core/networking/server/IPlayerConnectedEvent";
-import IPlayerDisconnectedEvent from "@core/networking/server/IPlayerDisconnectedEvent";
 import IServerSocketEventListener from "./IServerSocketEventListener";
 import {Server as WebSocketServer, Data as WebSocketData} from "ws";
 import IClientSocket from "./IClientSocket";
+import IServerSocket, { ValidServerMessage } from "./IServerSocket";
 
 const HEARTBEAT_TIMEOUT = 30000;
 
-export type ValidServerMessage = IJoinRoomResponse | IPlayerConnectedEvent | IPlayerDisconnectedEvent;
 export type SendServerMessageFunction = (message: ValidServerMessage, ...socketIds: number[]) => void;
 
-export default class ServerSocket
+interface ISocketWrapper extends WebSocket, IClientSocket
 {
-    private _sockets: {[id: number]: IClientSocket};
+    isAlive: boolean;
+}
+
+export default class ServerSocket implements IServerSocket
+{
+    private _sockets: {[id: number]: ISocketWrapper};
     private _nextSocketId: number;
     private _socketServer: WebSocketServer;
     private _eventListeners: IServerSocketEventListener[];
-    constructor(host: string, port: number, ...eventListeners: IServerSocketEventListener[])
+    constructor(host: string, port: number)
     {
         this._nextSocketId = 0;
         this._sockets = {};
         this._socketServer = new WebSocketServer({ host, port });
         this._socketServer.on("connection", this._onClientConnect);
-        this._eventListeners = eventListeners;
+        this._eventListeners = [];
     }
 
-    sendMessage = (message: ValidServerMessage, ...socketIds: number[]) =>
+    /**
+     * @inheritdoc
+     */
+    addEventListener(eventListener: IServerSocketEventListener)
+    {
+        this._eventListeners.push(eventListener);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    sendMessage(message: ValidServerMessage, ...socketIds: number[])
     {
         socketIds.forEach(socketId => {
-            const socket: IClientSocket | null = this._sockets[socketId];
+            const socket: ISocketWrapper | null = this._sockets[socketId];
             if (socket)
             {
                 socket.send(JSON.stringify(message));
@@ -37,7 +51,7 @@ export default class ServerSocket
         });
     }
 
-    private _onClientConnect = (socket: IClientSocket) =>
+    private _onClientConnect = (socket: ISocketWrapper) =>
     {
         socket.id = this._nextSocketId++;
         this._sockets[socket.id] = socket;
@@ -64,7 +78,7 @@ export default class ServerSocket
         this._eventListeners.forEach(listener => listener.onClientConnect(socket));
     }
 
-    private _onClientDisconnect = (socket: IClientSocket, checkHeartbeat: NodeJS.Timeout) =>
+    private _onClientDisconnect = (socket: ISocketWrapper, checkHeartbeat: NodeJS.Timeout) =>
     {
         this._eventListeners.forEach(listener => listener.onClientDisconnect(socket));
         clearInterval(checkHeartbeat);
@@ -72,7 +86,7 @@ export default class ServerSocket
         socket.terminate();
     }
 
-    private _onClientMessage = (socket: IClientSocket, event: WebSocketData) =>
+    private _onClientMessage = (socket: ISocketWrapper, event: WebSocketData) =>
     {
         const message: IClientMessage = JSON.parse(event as string);
         this._eventListeners.forEach(listener => listener.onClientMessage(socket, message));

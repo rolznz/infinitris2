@@ -1,10 +1,10 @@
 import "jasmine";
 import "module-alias/register";
 import Room from "@src/Room";
-import { ValidServerMessage } from "@src/networking/ServerSocket";
 import IJoinRoomResponse, { JoinRoomResponseStatus } from "@core/networking/server/IJoinRoomResponse";
 import ServerMessageType from "@core/networking/server/ServerMessageType";
 import IPlayerConnectedEvent from "@core/networking/server/IPlayerConnectedEvent";
+import { ValidServerMessage } from "@src/networking/IServerSocket";
 
 describe("Room", () => {
     it("will add players to the simulation", () => {

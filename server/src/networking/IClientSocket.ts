@@ -1,8 +1,5 @@
-import * as WebSocket from "ws";
-
-export default interface IClientSocket extends WebSocket
+export default interface IClientSocket
 {
     id: number;
-    isAlive: boolean;
     roomId: number;
 }

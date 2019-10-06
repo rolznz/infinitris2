@@ -4,17 +4,25 @@ import IServerSocketEventListener from "./networking/IServerSocketEventListener"
 import IClientMessage from "@core/networking/client/IClientMessage";
 import IClientSocket from "./networking/IClientSocket";
 import ClientMessageType from "@core/networking/client/ClientMessageType";
+import IServerSocket from "./networking/IServerSocket";
 
 export default class Server implements IServerSocketEventListener
 {
-    private _socket: ServerSocket;
-    private _rooms: Room[];
+    private _socket: IServerSocket;
+    private _rooms: {[id: number]: Room};
 
-    constructor(host: string, port: number)
+    constructor(socket: IServerSocket)
     {
-        this._socket = new ServerSocket(host, port, this);
-        this._rooms = [new Room(this._socket.sendMessage)];
+        this._socket = socket;
+        this._socket.addEventListener(this);
+        this._rooms = {};
+        this._rooms[0] = new Room(this._socket.sendMessage.bind(this._socket));
     }
+
+    /**
+     * Retrieves the rooms currently running within the server.
+     */
+    get rooms(): {[id: number]: Room} { return this._rooms; }
 
     /**
      * @inheritdoc
@@ -67,6 +75,6 @@ if (process.argv[process.argv.length - 1] === "launch")
 {
     (() => {
         // tslint:disable-next-line: no-unused-expression
-        new Server("127.0.0.1", 9001);
+        new Server(new ServerSocket("127.0.0.1", 9001));
     })();
 }

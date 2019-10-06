@@ -81,3 +81,12 @@ jobs:
         on:
           branch: master
         target_branch: master
+    - stage: integration
+      script:
+        - echo 'Installing'
+        - cd integration
+        - npm i
+        - echo 'Running tslint'
+        - npm run tslint
+        - echo 'Testing'
+        - npm test

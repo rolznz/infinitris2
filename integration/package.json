@@ -1,0 +1,56 @@
+{
+  "name": "infinitris2-integration",
+  "version": "1.0.0",
+  "description": "Integration tests",
+  "scripts": {
+    "test": "karma start karma.conf.js",
+    "test:watch": "karma start karma.conf.js watch",
+    "tslint": "tslint --project ./tsconfig.json"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rolznz/infinitris2.git"
+  },
+  "keywords": [
+    "infinitris2",
+    "client"
+  ],
+  "author": "rolznz <roland.bewick@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rolznz/infinitris2/issues"
+  },
+  "homepage": "https://github.com/rolznz/infinitris2#readme",
+  "devDependencies": {
+    "@types/jasmine": "^3.4.0",
+    "@types/node": "^12.7.5",
+    "@types/webpack": "^4.39.0",
+    "@types/webpack-env": "^1.14.0",
+    "@types/ws": "^6.0.3",
+    "awesome-typescript-loader": "^5.2.1",
+    "copy-webpack-plugin": "^5.0.4",
+    "css-loader": "^3.2.0",
+    "html-webpack-plugin": "^3.2.0",
+    "karma": "^4.3.0",
+    "karma-cli": "^2.0.0",
+    "karma-jasmine": "^2.0.1",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-spec-reporter": "0.0.32",
+    "karma-webpack": "^4.0.2",
+    "pixi.js-legacy": "^5.1.2",
+    "style-loader": "^1.0.0",
+    "tslint": "^5.19.0",
+    "typescript": "^3.5.3",
+    "url-search-params-polyfill": "^7.0.0",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.7",
+    "webpack-dev-server": "^3.8.0"
+  },
+  "dependencies": {
+    "ws": "^7.1.2"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.1",
+    "utf-8-validate": "^5.0.2"
+  }
+}

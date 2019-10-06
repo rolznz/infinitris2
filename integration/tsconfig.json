@@ -1,0 +1,37 @@
+{
+    "compilerOptions": {
+        "target": "es5", 
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "allowJs": false,
+        "baseUrl": "../",
+        "paths": {
+            "@core/*": [
+                "core/src/*"
+            ],
+            "@client/*": [
+                "client/src/*"
+            ],
+            "@server/*": [
+                "server/src/*"
+            ]
+        },
+        "plugins": [
+            {
+                "name": "typescript-tslint-plugin",
+                "alwaysShowRuleFailuresAsWarnings": false,
+                "ignoreDefinitionFiles": true,
+                "configFile": "../tslint.json",
+                "suppressWhileTypeErrorsPresent": false
+            }
+        ]
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "references": [
+        { "path": "../core" }
+    ]
+}

@@ -1,5 +1,4 @@
 [![Build Status](https://travis-ci.com/rolznz/infinitris2.svg?branch=master)](https://travis-ci.com/rolznz/infinitris2)&nbsp;
-[![Coverage Status](https://coveralls.io/repos/github/rolznz/infinitris2/badge.svg)](https://coveralls.io/github/rolznz/infinitris2)&nbsp;
 [![codecov](https://codecov.io/gh/rolznz/infinitris2/branch/master/graph/badge.svg)](https://codecov.io/gh/rolznz/infinitris2)&nbsp;
 
 # Infinitris 2

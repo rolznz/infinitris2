@@ -10,8 +10,8 @@
     "coverage": "nyc --cache false -r lcov -r text npm run test",
     "build": "webpack",
     "watch": "webpack --watch",
-    "start": "node -r source-map-support/register dist/bundle.js",
-    "debug": "node --nolazy --inspect-brk dist/bundle.js",
+    "start": "node -r source-map-support/register dist/bundle.js launch",
+    "debug": "node --nolazy --inspect-brk dist/bundle.js launch",
     "docs": "typedoc --out docs --readme README.md src",
     "tslint": "tslint --project ./tsconfig.json"
   },

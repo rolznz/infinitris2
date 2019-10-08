@@ -84,7 +84,11 @@ jobs:
     - stage: integration
       script:
         - echo 'Installing'
-        - cd integration
+        - cd client
+        - npm i
+        - cd ../server
+        - npm i
+        - cd ../integration
         - npm i
         - echo 'Running tslint'
         - npm run tslint

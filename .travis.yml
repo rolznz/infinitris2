@@ -9,10 +9,11 @@ jobs:
   include:
     - stage: test
       script:
-        - (cd core && npm i && npm run tslint && npm test && npm run coverage && codecov)
-        - (cd client && npm i && npm run tslint && npm test && codecov)
-        - (cd server && npm i && npm run tslint && npm run build-tests && npm test && npm run coverage && codecov)
+        - (cd core && npm i && npm run build && npm run tslint && npm test && npm run coverage)
+        - (cd client && npm i && npm run tslint && npm test)
+        - (cd server && npm i && npm run tslint && npm run build-tests && npm test && npm run coverage)
         - (cd integration && npm i && npm run tslint && npm run test)
+        - codecov
     - stage: client-docs
       script:
         (cd client && npm i && npm run docs && cd docs && touch .nojekyll)

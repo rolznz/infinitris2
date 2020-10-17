@@ -1,4 +1,3 @@
-import ClientSocket from "@src/networking/ClientSocket";
 import Client from "./Client";
 import NetworkClient from "./NetworkClient";
 import SinglePlayerClient from "./SinglePlayerClient";
@@ -6,6 +5,13 @@ import SinglePlayerClient from "./SinglePlayerClient";
 export default class InfinitrisClient
 {
   private _client: Client;
+
+  constructor()
+  {
+    console.log("Infinitris Client");
+    console.log(`Build ${__VERSION__}`);
+  }
+
   /**
    * Launches a game based on the given URL.
    * @param url the browser url, containing configuration options such as:
@@ -57,6 +63,13 @@ export default class InfinitrisClient
       this._client.destroy();
     }
     this._client = null;
+  }
+
+  /**
+   * Returns the client app version.
+   */
+  getVersion(): string {
+    return __VERSION__;
   }
 
   private _invalidUrl(url: string)

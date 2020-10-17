@@ -1,5 +1,6 @@
 const path = require('path');
 const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
+const { buildNumber } = require('../core/webpack.config');
 
 module.exports = {
   target: "node",
@@ -20,6 +21,11 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.js'],
-    plugins: [new TsConfigPathsPlugin({ baseUrl: "../" })],
+    plugins: [
+      new TsConfigPathsPlugin({ baseUrl: "../" }),
+      new webpack.DefinePlugin({
+        __VERSION__: JSON.stringify(buildNumber)
+      }),
+    ],
   },
 };

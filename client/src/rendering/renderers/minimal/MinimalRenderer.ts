@@ -1,9 +1,10 @@
 import IRenderer from "../../IRenderer";
-import { Application, Sprite, Graphics } from "pixi.js-legacy";
+import { Application, Graphics, Sprite } from "pixi.js-legacy";
 import Grid from "@core/grid/Grid";
 import Block from "@core/block/Block";
 import Cell from "@core/grid/cell/Cell";
 import ISimulationEventListener from "@core/ISimulationEventListener";
+const imagesDirectory = "client/images";
 
 interface IRenderableGrid { grid: Grid; graphics: Graphics; }
 interface IRenderableBlock { block: Block; graphics: Graphics; }
@@ -26,6 +27,16 @@ export default class MinimalRenderer implements IRenderer, ISimulationEventListe
             resizeTo: window,
         });
         document.body.appendChild(this._app.view);
+
+        this._app.loader
+          .add(`${imagesDirectory}/logo-sm.png`)
+          .load(() => {
+              //Create the cat sprite
+              const cat = new Sprite(this._app.loader.resources[`${imagesDirectory}/logo-sm.png`].texture);
+
+              //Add the cat to the stage
+              this._app.stage.addChild(cat);
+          });
 
         this._blocks = {};
         this._cells = {};

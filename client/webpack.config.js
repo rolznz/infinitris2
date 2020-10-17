@@ -3,19 +3,20 @@ const webpack = require('webpack');
 const { TsConfigPathsPlugin } = require('awesome-typescript-loader');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ManifestPlugin = require('webpack-manifest-plugin');
 
 module.exports = {
     target: 'web',
     mode: "development",
     devtool: 'source-map',
     entry: [
-        './src/Index',
+        './src/index',
         'webpack/hot/dev-server',
         'webpack-dev-server/client?http://localhost:8080/',
     ],
     output: {
         path: path.join(__dirname, 'dist'),
-        filename: 'bundle[hash].js',
+        filename: 'client/bundle.[hash].js',
         publicPath: '/',
     },
     module: {
@@ -44,13 +45,14 @@ module.exports = {
         plugins: [new TsConfigPathsPlugin({ baseUrl: "../" })],
     },
     plugins: [
-        new CopyPlugin([
-            { from: 'www', to: './' },
-        ]),
-        new HtmlWebpackPlugin({
-            title: "Infinitris 2",
-            template: "src/Index.ejs",
+        new CopyPlugin({
+          patterns: [{ from: 'www', to: './client' }],
         }),
-        new webpack.HotModuleReplacementPlugin()
+        new HtmlWebpackPlugin({
+            title: "Infinitris 2 Client",
+            template: "src/index.ejs",
+        }),
+        new webpack.HotModuleReplacementPlugin(),
+        new ManifestPlugin(),
     ]
 };

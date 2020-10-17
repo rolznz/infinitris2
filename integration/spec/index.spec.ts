@@ -1,5 +1,5 @@
 import Server from "@server/Server";
-import Client from "@client/Client";
+import NetworkClient from "@client/client/NetworkClient";
 import ClientMessageType from "@core/networking/client/ClientMessageType";
 import ServerMessageType from "@core/networking/server/ServerMessageType";
 import IJoinRoomResponse, { JoinRoomResponseStatus } from "@core/networking/server/IJoinRoomResponse";
@@ -15,7 +15,7 @@ describe("Index", () => {
         const fakeClientSocket = new FakeClientSocket();
 
         const server = new Server(fakeServerSocket);
-        const client = new Client(fakeClientSocket);
+        const client = new NetworkClient(fakeClientSocket);
 
         const clientOnConnectSpy = spyOn(client, "onConnect").and.callThrough();
         const clientOnDisconnectSpy = spyOn(client, "onDisconnect").and.callThrough();

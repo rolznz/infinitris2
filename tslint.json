@@ -15,6 +15,10 @@
             "double",
             "avoid-escape"
         ],
+        "member-ordering": [
+          false
+        ],
+        "interface-name": [false],
         "one-line": false,
         "arrow-parens": false,
         "ordered-imports": false,

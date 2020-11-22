@@ -54,7 +54,11 @@ module.exports = {
             template: "src/index.ejs",
         }),
         new webpack.HotModuleReplacementPlugin(),
-        new ManifestPlugin(),
+        new ManifestPlugin(
+          {
+            fileName: "client/manifest.json"
+          }
+        ),
         new webpack.DefinePlugin({
           __VERSION__: JSON.stringify(buildNumber)
         }),

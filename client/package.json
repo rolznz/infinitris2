@@ -6,8 +6,9 @@
     "clean": "rm -rf dist",
     "test": "karma start karma.conf.js",
     "test:watch": "karma start karma.conf.js watch",
-    "build": "npm run clean && webpack",
-    "dev-server": "webpack-dev-server --content-base=dist --inline --watch --hot",
+    "copy-infinitris-client": "rm ../app/public/client -r && mkdir -p ../app/public/client && cp dist/client/* ../app/public/client -r",
+    "build": "npm run clean && webpack && yarn copy-infinitris-client",
+    "start": "webpack-dev-server --content-base=dist --inline --watch --hot",
     "docs": "typedoc --out docs --readme README.md src",
     "tslint": "tslint --project ./tsconfig.json"
   },

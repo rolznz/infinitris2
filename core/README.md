@@ -1,8 +1,8 @@
 # Installation
-`npm i`
+`yarn install`
 
 # Build (Development)
-`npm run build` (or `npm run watch`)
+`yarn build` (or `yarn watch`)
 
 # Tests
-`npm test`
+`yarn test`

@@ -6,7 +6,7 @@ export default interface IClientSocketEventListener
      * Triggered when the client first connects to the server.
      */
     onConnect();
-
+    
     /**
      * Triggered when the client is disconnected from the server.
      *

@@ -1,10 +1,12 @@
-import Client from "./Client";
+import IClientSocketEventListener from "@src/networking/IClientSocketEventListener";
+import IClient from "./Client";
+import DemoClient from "./DemoClient";
 import NetworkClient from "./NetworkClient";
 import SinglePlayerClient from "./SinglePlayerClient";
 
 export default class InfinitrisClient
 {
-  private _client: Client;
+  private _client: IClient;
 
   constructor()
   {
@@ -21,7 +23,7 @@ export default class InfinitrisClient
   loadUrl(url: string)
   {
       const params = new URLSearchParams(url.substring(url.indexOf("?") + 1));
-      if (params.get("single-player") === "true")
+      if (params.has("single-player"))
       {
           this.launchSinglePlayer();
       }
@@ -29,10 +31,23 @@ export default class InfinitrisClient
       {
           this.launchNetworkClient(params.get("url"));
       }
+      else if (params.has("demo"))
+      {
+          this.launchDemo();
+      }
       else
       {
-          this._invalidUrl(url);
+        this._invalidUrl(url);
       }
+  }
+
+  /**
+   * Runs the game in demo mode.
+   */
+  launchDemo()
+  {
+      this.releaseClient();
+      this._client = new DemoClient();
   }
 
   /**
@@ -48,10 +63,10 @@ export default class InfinitrisClient
    * Launches the client in multiplayer mode and connects to a server.
    * @param url the url of the websocket server to connect to.
    */
-  launchNetworkClient(url: string)
+  launchNetworkClient(url: string, listener?: IClientSocketEventListener)
   {
     this.releaseClient();
-    this._client = new NetworkClient(url);
+    this._client = new NetworkClient(url, listener);
   }
 
   /**

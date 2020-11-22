@@ -51,7 +51,9 @@ export default class MinimalRenderer implements IRenderer, ISimulationEventListe
     destroy()
     {
         window.removeEventListener("resize", this._resize);
-        this._app.destroy(true);
+        if (this._app) {
+          this._app.destroy(true);
+        }
     }
 
     /**

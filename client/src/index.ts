@@ -1,4 +1,3 @@
-import "../styles/client.css";
 import "url-search-params-polyfill";
 import InfinitrisClient from "./client/InfinitrisClient";
 

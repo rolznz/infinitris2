@@ -4,9 +4,9 @@ import MinimalRenderer from "@src/rendering/renderers/minimal/MinimalRenderer";
 import ControllablePlayer from "@src/ControllablePlayer";
 import Grid from "@core/grid/Grid";
 import Input from "@src/input/Input";
-import Client from "./Client";
+import IClient from "./Client";
 
-export default class SinglePlayerClient implements Client
+export default class SinglePlayerClient implements IClient
 {
   private _renderer: IRenderer;
   private _simulation: Simulation;

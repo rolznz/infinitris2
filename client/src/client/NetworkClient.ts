@@ -7,19 +7,16 @@ import ClientMessageType from "@core/networking/client/ClientMessageType";
 import ServerMessageType from "@core/networking/server/ServerMessageType";
 import Grid from "@core/grid/Grid";
 import IClientSocket from "../networking/IClientSocket";
-import Client from "./Client";
+import IClient from "./Client";
 import ClientSocket from "@src/networking/ClientSocket";
 
 export default class NetworkClient
-  implements Client, IClientSocketEventListener {
+  implements IClient, IClientSocketEventListener {
   private _socket: IClientSocket;
   private _renderer: IRenderer;
   private _simulation: Simulation;
-  constructor(url: string) {
-    this._socket = new ClientSocket(url);
-    this._socket.addEventListener(this);
-    this._renderer = new MinimalRenderer();
-    this._simulation = new Simulation(this._renderer);
+  constructor(url: string, listener?: IClientSocketEventListener) {
+    this._socket = new ClientSocket(url, [this, listener]);
   }
 
   /**
@@ -27,6 +24,8 @@ export default class NetworkClient
    */
   onConnect() {
     console.log("Connected");
+    this._renderer = new MinimalRenderer();
+    this._simulation = new Simulation(this._renderer);
     this._socket.sendMessage({ type: ClientMessageType.JOIN_ROOM_REQUEST });
   }
 
@@ -52,7 +51,12 @@ export default class NetworkClient
    * @inheritdoc
    */
   destroy() {
-    this._socket.disconnect();
+    if (this._socket) {
+      this._socket.disconnect();
+    }
+    if (!this._simulation) {
+      return;
+    }
     this._simulation.stop();
     this._renderer.destroy();
   }

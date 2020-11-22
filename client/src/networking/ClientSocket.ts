@@ -6,11 +6,10 @@ export default class ClientSocket implements IClientSocket
 {
     private _socket: WebSocket;
     private _eventListeners: IClientSocketEventListener[];
-    constructor(url: string)
+    constructor(url: string, eventListeners: IClientSocketEventListener[])
     {
+        this._eventListeners = eventListeners.filter(listener => listener);
         this._socket = new WebSocket(url);
-        this._eventListeners = [];
-
         this._socket.onopen = this._onConnect;
         this._socket.onclose = this._onDisconnect;
         this._socket.onmessage = this._onMessage;

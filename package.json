@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "prettier": "prettier \"**/*.{ts,tsx}\" --write"
+    "prettier:write": "prettier \"**/*.{ts,tsx}\" --write",
+    "prettier:check": "prettier \"**/*.{ts,tsx}\" --check"
   },
   "devDependencies": {
     "prettier": "^2.2.1"

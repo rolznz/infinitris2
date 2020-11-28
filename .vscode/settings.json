@@ -8,4 +8,6 @@
         "core/**/*.d.ts": true,
         "server/ts-out": true
     },
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
 }

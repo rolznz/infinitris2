@@ -1,12 +1,10 @@
-import IRenderer from "@src/rendering/IRenderer";
-import IClient from "./Client";
-import DemoRenderer from "@src/rendering/renderers/demo/DemoRenderer";
+import IRenderer from '@src/rendering/IRenderer';
+import IClient from './Client';
+import DemoRenderer from '@src/rendering/renderers/demo/DemoRenderer';
 
-export default class DemoClient implements IClient
-{
+export default class DemoClient implements IClient {
   private _renderer: IRenderer;
-  constructor()
-  {
+  constructor() {
     this._create();
   }
 
@@ -17,8 +15,7 @@ export default class DemoClient implements IClient
     this._renderer.destroy();
   }
 
-  private async _create()
-  {
+  private async _create() {
     this._renderer = new DemoRenderer();
     await this._renderer.create();
   }

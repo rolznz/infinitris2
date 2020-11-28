@@ -1,13 +1,13 @@
-import IRenderer from "../../IRenderer";
+import IRenderer from '../../IRenderer';
 import {
   Application,
   ParticleContainer,
   Renderer,
   Sprite,
-} from "pixi.js-legacy";
-import Block from "@core/block/Block";
-import Grid from "@core/grid/Grid";
-const imagesDirectory = "client/images";
+} from 'pixi.js-legacy';
+import Block from '@core/block/Block';
+import Grid from '@core/grid/Grid';
+const imagesDirectory = 'client/images';
 
 type Snowflake = {
   vx: number;
@@ -33,9 +33,11 @@ export default class DemoRenderer implements IRenderer {
 
     this._app.loader.add(`${imagesDirectory}/bg.png`);
     this._app.loader.add(`${imagesDirectory}/snow.png`);
-    await new Promise(resolve => this._app.loader.load(resolve));
+    await new Promise((resolve) => this._app.loader.load(resolve));
 
-    const bg = Sprite.from(this._app.loader.resources[`${imagesDirectory}/bg.png`].texture);
+    const bg = Sprite.from(
+      this._app.loader.resources[`${imagesDirectory}/bg.png`].texture
+    );
     bg.x = 0;
     bg.y = 0;
     bg.width = this._app.view.width;
@@ -57,14 +59,16 @@ export default class DemoRenderer implements IRenderer {
     for (let i = 0; i < spriteCount; i++) {
       // create a new Sprite
       const snowflake = Sprite.from(
-        this._app.loader.resources[`${imagesDirectory}/snow.png`].texture,
+        this._app.loader.resources[`${imagesDirectory}/snow.png`].texture
       ) as Snowflake;
 
       // set the anchor point so the texture is centerd on the sprite
       snowflake.anchor.set(0.5);
 
       // scatter them all
-      snowflake.y = Math.random() * this._app.screen.height * 1.5 - this._app.screen.height * 0.5;
+      snowflake.y =
+        Math.random() * this._app.screen.height * 1.5 -
+        this._app.screen.height * 0.5;
 
       this._resetSnowflake(snowflake);
 
@@ -92,12 +96,15 @@ export default class DemoRenderer implements IRenderer {
       snowflake.transform.position.x += snowflake.vx;
       snowflake.vx += snowflake.ax;
       snowflake.alpha *= 0.9;
-      if (snowflake.transform.position.y - snowflake._height > this._app.screen.height) {
+      if (
+        snowflake.transform.position.y - snowflake._height >
+        this._app.screen.height
+      ) {
         snowflake.transform.position.y = -snowflake.height;
         this._resetSnowflake(snowflake);
       }
     }
-  }
+  };
 
   /**
    * @inheritdoc
@@ -112,34 +119,34 @@ export default class DemoRenderer implements IRenderer {
    * @inheritdoc
    */
   onSimulationStarted(grid: Grid) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   /**
    * @inheritdoc
    */
   onBlockCreated(block: Block) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   /**
    * @inheritdoc
    */
   onBlockPlaced(block: Block) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   /**
    * @inheritdoc
    */
   onBlockMoved(block: Block) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 
   /**
    * @inheritdoc
    */
   onLineCleared(row: number) {
-    throw new Error("Method not implemented.");
+    throw new Error('Method not implemented.');
   }
 }

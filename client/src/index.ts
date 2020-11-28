@@ -1,8 +1,8 @@
-import "url-search-params-polyfill";
-import InfinitrisClient from "./client/InfinitrisClient";
+import 'url-search-params-polyfill';
+import InfinitrisClient from './client/InfinitrisClient';
 
 if (module.hot) {
-    module.hot.accept();
+  module.hot.accept();
 }
 
 /**

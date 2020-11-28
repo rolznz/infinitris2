@@ -1,13 +1,11 @@
 // TODO: reuse from ../client
-export interface IClientSocketEventListener
-{
+export interface IClientSocketEventListener {
   onConnect(): void;
   onDisconnect(): void;
   onMessage(message: any): void;
 }
 
-export default interface InfinitrisClient
-{
+export default interface InfinitrisClient {
   releaseClient(): void;
   getVersion(): string;
   launchSinglePlayer(): void;

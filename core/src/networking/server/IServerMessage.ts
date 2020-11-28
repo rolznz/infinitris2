@@ -1,6 +1,5 @@
-import ServerMessageType from "./ServerMessageType";
+import ServerMessageType from './ServerMessageType';
 
-export default interface IServerMessage
-{
-    type: ServerMessageType;
+export default interface IServerMessage {
+  type: ServerMessageType;
 }

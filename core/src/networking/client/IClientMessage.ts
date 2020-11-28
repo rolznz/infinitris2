@@ -1,6 +1,5 @@
-import ClientMessageType from "./ClientMessageType";
+import ClientMessageType from './ClientMessageType';
 
-export default interface IClientMessage
-{
-    type: ClientMessageType;
+export default interface IClientMessage {
+  type: ClientMessageType;
 }

@@ -1,10 +1,6 @@
 import React from 'react';
-import useInfinitrisClient from "./client/useInfinitrisClient";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-} from "react-router-dom";
+import useInfinitrisClient from './client/useInfinitrisClient';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import HomePage from './components/pages/HomePage';
 import RoomPage from './components/pages/RoomPage';
 import Footer from './components/layout/Footer';
@@ -24,10 +20,10 @@ function App() {
     <ThemeProvider theme={theme}>
       <Box className="App" display="flex" flexDirection="column" height="100%">
         <Router>
-          <Route 
-            render={({ location }) => location.pathname.indexOf('/rooms') === 0
-                ? null
-                : <Header/>}
+          <Route
+            render={({ location }) =>
+              location.pathname.indexOf('/rooms') === 0 ? null : <Header />
+            }
           />
           <Switch>
             <Route exact path="/">
@@ -40,11 +36,11 @@ function App() {
               <RoomPage />
             </Route>
           </Switch>
-            
-          <Route 
-            render={({ location }) => location.pathname.indexOf('/rooms') === 0
-                ? null
-                : <Footer/>}
+
+          <Route
+            render={({ location }) =>
+              location.pathname.indexOf('/rooms') === 0 ? null : <Footer />
+            }
           />
         </Router>
       </Box>

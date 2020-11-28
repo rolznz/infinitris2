@@ -1,6 +1,5 @@
-enum ClientMessageType
-{
-    JOIN_ROOM_REQUEST,
+enum ClientMessageType {
+  JOIN_ROOM_REQUEST,
 }
 
 export default ClientMessageType;

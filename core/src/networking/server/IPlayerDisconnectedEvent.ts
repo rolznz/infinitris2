@@ -1,6 +1,5 @@
-import IServerMessage from "./IServerMessage";
+import IServerMessage from './IServerMessage';
 
-export default interface IPlayerDisconnectedEvent extends IServerMessage
-{
-    playerId: number;
+export default interface IPlayerDisconnectedEvent extends IServerMessage {
+  playerId: number;
 }

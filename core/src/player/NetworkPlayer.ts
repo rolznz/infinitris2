@@ -1,10 +1,8 @@
-import Player from "./Player";
-import IBlockEventListener from "../block/IBlockEventListener";
+import Player from './Player';
+import IBlockEventListener from '../block/IBlockEventListener';
 
-export default class NetworkPlayer extends Player
-{
-    constructor(playerId: number, eventListener: IBlockEventListener)
-    {
-        super(playerId, eventListener);
-    }
+export default class NetworkPlayer extends Player {
+  constructor(playerId: number, eventListener: IBlockEventListener) {
+    super(playerId, eventListener);
+  }
 }

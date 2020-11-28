@@ -12,7 +12,7 @@ const theme = createMuiTheme({
     MuiSkeleton: {
       rect: {
         borderRadius: 4,
-      }
+      },
     },
   },
 });

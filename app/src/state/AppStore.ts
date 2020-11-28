@@ -1,20 +1,24 @@
 import create from 'zustand';
 import InfinitrisClient from '../client/InfinitrisClient';
+import User, { loadUser, saveUser } from '../models/User';
 
-interface AppStore extends Record<string | number | symbol, unknown> {
-  nickname: string; // TODO: use firebase auth
-  client: InfinitrisClient | null;
+type AppStore = {
+  readonly user: User;
+  readonly client: InfinitrisClient | null;
   setClient(client: InfinitrisClient | null): void;
   setNickname(nickname: string): void;
-}
+};
 
 const useAppStore = create<AppStore>((set) => ({
-  nickname: localStorage.getItem('nickname') || '',
+  user: loadUser(),
   client: null,
   setClient: (client: InfinitrisClient) => set((_) => ({ client })),
   setNickname: (nickname: string) => {
-    localStorage.setItem('nickname', nickname);
-    set((_) => ({ nickname }));
+    set((state) => {
+      const user = { ...state.user, nickname };
+      saveUser(user);
+      return { user };
+    });
   },
 }));
 

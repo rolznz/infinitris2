@@ -1,11 +1,11 @@
 import create from 'zustand';
 
-interface RoomStore extends Record<string | number | symbol, unknown> {
+type RoomStore = {
   connected: boolean;
   setConnected(connected: boolean): void;
   disconnected: boolean;
   setDisconnected(disconnected: boolean): void;
-}
+};
 
 const useRoomStore = create<RoomStore>((set) => ({
   connected: false,

@@ -57,10 +57,11 @@ export default function RoomPage() {
     }
     if (isSinglePlayer) {
       client.launchSinglePlayer();
+      setConnected(true);
     } else {
       client.launchNetworkClient(roomUrl as string, socketEventListener);
     }
-  }, [disconnected, retryCount, roomUrl, isSinglePlayer, client]);
+  }, [disconnected, retryCount, roomUrl, isSinglePlayer, client, setConnected]);
 
   useEffect(() => {
     setDisconnected(false);

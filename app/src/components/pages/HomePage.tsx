@@ -27,7 +27,7 @@ export default function HomePage() {
             <Box flex={1} display="flex" flexDirection="column">
               <TextField
                 placeholder="Nickname"
-                value={appStore.nickname}
+                value={appStore.user.nickname}
                 onChange={(e) => appStore.setNickname(e.target.value)}
               />
               <Box mt={2} px={1} style={{ opacity: 0.5 }}>

@@ -1,0 +1,28 @@
+{
+  "name": "infinitris2-models",
+  "private": true,
+  "version": "0.1.5",
+  "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rolznz/infinitris2.git"
+  },
+  "keywords": [
+    "infinitris2",
+    "app"
+  ],
+  "author": "rolznz <roland.bewick@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rolznz/infinitris2/issues"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "~3.7.2"
+  }
+}

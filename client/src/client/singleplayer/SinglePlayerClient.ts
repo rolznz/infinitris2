@@ -4,14 +4,15 @@ import MinimalRenderer from '@src/rendering/renderers/minimal/MinimalRenderer';
 import ControllablePlayer from '@src/ControllablePlayer';
 import Grid from '@core/grid/Grid';
 import Input from '@src/input/Input';
-import IClient from './Client';
+import IClient from '../Client';
+import Tutorial from './Tutorial';
 
 export default class SinglePlayerClient implements IClient {
   private _renderer: IRenderer;
   private _simulation: Simulation;
   private _input: Input;
-  constructor() {
-    this._create();
+  constructor(tutorial?: Tutorial) {
+    this._create(tutorial);
   }
 
   /**
@@ -22,15 +23,24 @@ export default class SinglePlayerClient implements IClient {
     this._renderer.destroy();
   }
 
-  private async _create() {
+  private async _create(tutorial?: Tutorial) {
     this._renderer = new MinimalRenderer();
     await this._renderer.create();
     this._simulation = new Simulation(this._renderer);
+    const grid = new Grid(
+      tutorial?.gridWidth,
+      tutorial?.gridHeight,
+      this._simulation
+    );
+    this._simulation.setGrid(grid);
     const playerId = 0;
     const player = new ControllablePlayer(playerId, this._simulation);
     this._simulation.addPlayer(player);
-    const grid = new Grid(undefined, undefined, this._simulation);
-    this._simulation.start(grid);
+    if (tutorial) {
+      this._simulation.step();
+    } else {
+      this._simulation.start();
+    }
     this._input = new Input(grid, player);
   }
 }

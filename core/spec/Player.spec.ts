@@ -14,7 +14,7 @@ describe('Player', () => {
       // tslint:disable-next-line: no-empty
       onBlockMoved: (block: Block) => {},
     };
-    const grid = new Grid(undefined, undefined, undefined);
+    const grid = new Grid();
     const player = new DummyPlayer(1, eventListener);
     player.update(grid.cells);
     expect(player.block).toBeTruthy();

@@ -1,8 +1,8 @@
 import { Card, CardActionArea, Box, Typography, Chip } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import React from 'react';
-import Room from '../models/Room';
 import FaceIcon from '@material-ui/icons/Face';
+import { Room } from 'infinitris2-models';
 
 interface RoomCardProps {
   room?: Room;

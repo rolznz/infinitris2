@@ -1,5 +1,6 @@
 {
   "name": "infinitris2-integration",
+  "private": true,
   "version": "1.0.0",
   "description": "Integration tests",
   "scripts": {

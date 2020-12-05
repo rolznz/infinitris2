@@ -1,10 +1,10 @@
+import { InfinitrisApi } from 'infinitris2-models';
 import { useEffect } from 'react';
 import useAppStore from '../state/AppStore';
-import InfinitrisClient from './InfinitrisClient';
 
 declare global {
   interface Window {
-    infinitris2: InfinitrisClient;
+    infinitris2: InfinitrisApi;
   }
 }
 
@@ -24,7 +24,7 @@ const useInfinitrisClient = () => {
         console.log('Loaded Infinitris Client');
         window.infinitris2.launchDemo();
         useAppStore.setState({
-          client: window.infinitris2,
+          clientApi: window.infinitris2,
         });
       };
       clientScript.src = clientManifest['main.js'];

@@ -1,6 +1,7 @@
 import { Tutorial } from '../index';
 import { ClientSocketEventListener } from './ClientSocketEventListener';
 
+// TODO: rename InfinitrisApi to IInfinitrisApi
 export default interface InfinitrisApi {
   releaseClient(): void;
   getVersion(): string;

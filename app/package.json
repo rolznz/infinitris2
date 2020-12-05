@@ -1,5 +1,9 @@
 {
   "name": "infinitris2-app",
+  "private": true,
+  "workspaces": [
+    "../models"
+  ],
   "version": "0.1.0",
   "description": "",
   "dependencies": {

@@ -1,4 +1,4 @@
-import Layout from './Layout';
+import Layout from '@models/Layout';
 
 export default class LayoutUtils {
   /**

@@ -1,10 +1,12 @@
+import Tutorial, { tutorials } from '@models/Tutorial';
+import IInfinitrisApi from '@models/InfinitrisApi';
 import IClientSocketEventListener from '@src/networking/IClientSocketEventListener';
-import IClient from './Client';
-import DemoClient from './DemoClient';
-import NetworkClient from './NetworkClient';
-import SinglePlayerClient from './SinglePlayerClient';
+import IClient from '../client/Client';
+import DemoClient from '../client/DemoClient';
+import NetworkClient from '../client/NetworkClient';
+import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
 
-export default class InfinitrisClient {
+export default class InfinitrisApi implements IInfinitrisApi {
   private _client: IClient;
 
   constructor() {
@@ -26,6 +28,8 @@ export default class InfinitrisClient {
       this.launchNetworkClient(params.get('url'));
     } else if (params.has('demo')) {
       this.launchDemo();
+    } else if (params.has('tutorial')) {
+      this.launchSinglePlayer(tutorials[0]);
     } else {
       this._invalidUrl(url);
     }
@@ -42,9 +46,9 @@ export default class InfinitrisClient {
   /**
    * Runs the game in single player mode with no connection to a server.
    */
-  launchSinglePlayer() {
+  launchSinglePlayer(tutorial?: Tutorial) {
     this.releaseClient();
-    this._client = new SinglePlayerClient();
+    this._client = new SinglePlayerClient(tutorial);
   }
 
   /**

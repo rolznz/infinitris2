@@ -25,7 +25,6 @@ export default class NetworkClient
   onConnect() {
     console.log('Connected');
     this._renderer = new MinimalRenderer();
-    this._simulation = new Simulation(this._renderer);
     this._socket.sendMessage({ type: ClientMessageType.JOIN_ROOM_REQUEST });
   }
 
@@ -43,7 +42,9 @@ export default class NetworkClient
     console.log('Received message: ', message);
     if (message.type === ServerMessageType.JOIN_ROOM_RESPONSE) {
       await this._renderer.create();
-      this._simulation.start(new Grid(undefined, undefined, this._simulation));
+      this._simulation = new Simulation(new Grid());
+      this._simulation.addEventListener(this._renderer);
+      this._simulation.init();
     }
   }
 
@@ -57,7 +58,7 @@ export default class NetworkClient
     if (!this._simulation) {
       return;
     }
-    this._simulation.stop();
+    this._simulation.stopInterval();
     this._renderer.destroy();
   }
 }

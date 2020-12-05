@@ -1,5 +1,6 @@
 {
   "name": "infinitris2-client",
+  "private": true,
   "version": "1.0.0",
   "description": "",
   "scripts": {
@@ -7,7 +8,7 @@
     "test": "karma start karma.conf.js",
     "test:watch": "karma start karma.conf.js watch",
     "copy-infinitris-client": "rm ../app/public/client -r && mkdir -p ../app/public/client && cp dist/client/* ../app/public/client -r",
-    "build": "npm run clean && webpack && yarn copy-infinitris-client",
+    "build": "yarn clean && webpack && yarn copy-infinitris-client",
     "start": "webpack-dev-server --content-base=dist --inline --watch --hot",
     "docs": "typedoc --out docs --readme README.md src",
     "tslint": "tslint --project ./tsconfig.json"

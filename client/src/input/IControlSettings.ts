@@ -1,8 +1,10 @@
 export default interface IControlSettings {
-  moveLeft: number;
-  moveRight: number;
-  moveDown: number;
-  drop: number;
-  rotateClockwise: number;
-  rotateAnticlockwise: number;
+  moveLeft: string;
+  moveRight: string;
+  moveDown: string;
+  drop: string;
+  rotateClockwise: string;
+  rotateAntiClockwise: string;
+  start: string;
+  pause: string;
 }

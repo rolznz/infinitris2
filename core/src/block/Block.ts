@@ -1,5 +1,5 @@
+import Layout from '@models/Layout';
 import Cell from '../grid/cell/Cell';
-import Layout from './layout/Layout';
 import IBlockEventListener from './IBlockEventListener';
 import LayoutUtils from './layout/LayoutUtils';
 
@@ -20,19 +20,27 @@ export default class Block {
   constructor(
     playerId: number,
     layout: Layout,
+    row: number,
     column: number,
+    rotation: number,
     gridCells: Cell[][],
-    eventListener: IBlockEventListener
+    eventListener: IBlockEventListener,
+    isNetworkBlock: boolean = false
   ) {
     this._id = playerId;
     this._column = column;
-    this._row = 0;
-    this._rotation = 0;
+    this._row = row;
+    this._rotation = rotation;
     this._layout = layout;
     this._isDropping = false;
     this._eventListener = eventListener;
     this._resetTimers();
     this._updateCells(gridCells);
+    if (!isNetworkBlock) {
+      // ensure the rotated block sits on the top row
+      // TODO: find a better way to do this
+      this.move(gridCells, 0, -1, 0, false, false);
+    }
     this._eventListener.onBlockCreated(this);
   }
 
@@ -120,7 +128,8 @@ export default class Block {
     dx: number,
     dy: number,
     dr: number,
-    force: boolean = false
+    force: boolean = false,
+    fireEvent: boolean = true
   ): boolean {
     const canMove = force || this.canMove(gridCells, dx, dy, dr);
     if (canMove) {
@@ -128,7 +137,9 @@ export default class Block {
       this._row += dy;
       this._rotation += dr;
       this._updateCells(gridCells);
-      this._eventListener.onBlockMoved(this);
+      if (fireEvent) {
+        this._eventListener.onBlockMoved(this);
+      }
     }
     return canMove;
   }

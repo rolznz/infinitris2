@@ -4,7 +4,7 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import * as firebase from 'firebase/app';
 import { Box, Button, Grid, Link, TextField } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
-import Room from '../../models/Room';
+import Room from 'infinitris2-models/src/Room';
 import useAppStore from '../../state/AppStore';
 import useHomeStore from '../../state/HomeStore';
 import RoomCard from '../RoomCard';

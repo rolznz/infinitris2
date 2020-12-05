@@ -1,4 +1,5 @@
 {
+  "private": true,
   "scripts": {
     "prettier:write": "prettier \"**/*.{ts,tsx}\" --write",
     "prettier:check": "prettier \"**/*.{ts,tsx}\" --check"

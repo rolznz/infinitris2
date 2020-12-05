@@ -2,8 +2,7 @@ import firebase from 'firebase';
 import React, { useEffect, useState } from 'react';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import { useParams } from 'react-router-dom';
-import { IClientSocketEventListener } from '../../client/InfinitrisClient';
-import Room from '../../models/Room';
+import Room from 'infinitris2-models/src/Room';
 import useAppStore from '../../state/AppStore';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, IconButton, Link, Typography } from '@material-ui/core';
@@ -12,12 +11,13 @@ import Loader from 'react-loader-spinner';
 import SignalCellularConnectedNoInternet0BarIcon from '@material-ui/icons/SignalCellularConnectedNoInternet0Bar';
 import HomeIcon from '@material-ui/icons/Home';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { ClientSocketEventListener, tutorials } from 'infinitris2-models';
 
 interface RoomPageRouteParams {
   id: string;
 }
 
-const socketEventListener: IClientSocketEventListener = {
+const socketEventListener: ClientSocketEventListener = {
   onConnect: () => {
     useRoomStore.getState().setConnected(true);
   },
@@ -25,13 +25,13 @@ const socketEventListener: IClientSocketEventListener = {
     const roomState = useRoomStore.getState();
     roomState.setConnected(false);
     roomState.setDisconnected(true);
-    useAppStore.getState().client?.releaseClient();
+    useAppStore.getState().clientApi?.releaseClient();
   },
   onMessage: () => {},
 };
 
 export default function RoomPage() {
-  const client = useAppStore((store) => store.client);
+  const client = useAppStore((store) => store.clientApi);
   const [
     connected,
     setConnected,
@@ -44,7 +44,8 @@ export default function RoomPage() {
     store.setDisconnected,
   ]);
   const { id } = useParams<RoomPageRouteParams>();
-  const isSinglePlayer = id === 'singleplayer';
+  const isTutorial = true; // FIXME: check id starts with tutorial/
+  const isSinglePlayer = id === 'singleplayer' || isTutorial;
   const [room, loadingRoom] = useDocumentData<Room>(
     !isSinglePlayer ? firebase.firestore().doc(`rooms/${id}`) : undefined
   );
@@ -56,12 +57,19 @@ export default function RoomPage() {
       return;
     }
     if (isSinglePlayer) {
-      client.launchSinglePlayer();
-      setConnected(true);
+      client.launchSinglePlayer(isTutorial ? tutorials[0] : undefined);
     } else {
       client.launchNetworkClient(roomUrl as string, socketEventListener);
     }
-  }, [disconnected, retryCount, roomUrl, isSinglePlayer, client, setConnected]);
+  }, [
+    disconnected,
+    retryCount,
+    roomUrl,
+    isSinglePlayer,
+    isTutorial,
+    client,
+    setConnected,
+  ]);
 
   useEffect(() => {
     setDisconnected(false);
@@ -72,7 +80,7 @@ export default function RoomPage() {
     };
   }, [client, setConnected, setDisconnected]);
 
-  if (connected) {
+  if (connected || isSinglePlayer) {
     return null;
   }
 

@@ -17,10 +17,37 @@ export default class Simulation
   private _eventListeners: ISimulationEventListener[];
   private _interval: NodeJS.Timeout;
 
-  constructor(...eventListeners: ISimulationEventListener[]) {
-    this._eventListeners = eventListeners;
+  constructor(grid: Grid) {
+    this._eventListeners = [];
     this._players = {};
-    console.log('Simulation loaded');
+    this._grid = grid;
+    this._grid.addEventListener(this);
+  }
+
+  get grid(): Grid {
+    return this._grid;
+  }
+
+  get isRunning(): boolean {
+    return Boolean(this._interval);
+  }
+
+  get players(): Player[] {
+    return Object.values(this._players);
+  }
+
+  /**
+   * Add one or more listeners to listen to events broadcasted by this simulation.
+   */
+  addEventListener(...eventListeners: ISimulationEventListener[]) {
+    this._eventListeners.push(...eventListeners);
+  }
+
+  /**
+   * Prepares a simulation.
+   */
+  init() {
+    this._eventListeners.forEach((listener) => listener.onSimulationInit(this));
   }
 
   /**
@@ -28,25 +55,22 @@ export default class Simulation
    *
    * @param grid The grid to run the simulation on.
    */
-  start(grid: Grid) {
-    this._grid = grid;
-    this._interval = setInterval(this._step, FRAME_LENGTH);
-    this._eventListeners.forEach((listener) =>
-      listener.onSimulationStarted(this._grid)
-    );
+  startInterval() {
+    this._interval = setInterval(this.step, FRAME_LENGTH);
   }
 
   /**
    * Stop the simulation running.
    */
-  stop() {
+  stopInterval() {
     clearInterval(this._interval);
+    this._interval = null;
   }
 
   /**
    * Adds a player to the simulation.
    *
-   * This will trigger the player to be processed each frame,
+   * Players in the simulation will be processed each frame,
    * allowing the player to spawn blocks.
    *
    * @param player the player to add.
@@ -105,8 +129,12 @@ export default class Simulation
     this._eventListeners.forEach((listener) => listener.onLineCleared(row));
   }
 
-  private _step = () => {
+  /**
+   * Execute a single simulation frame
+   */
+  step = () => {
     Object.values(this._players).forEach(this._updatePlayer);
+    this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
   };
 
   private _updatePlayer = (player: Player) => {

@@ -59,7 +59,7 @@ function Footer(props: WithStyles<typeof styles>) {
           height={16}
           style={{ verticalAlign: 'sub' }}
         />{' '}
-        Build {appStore.client?.getVersion()}
+        Build {appStore.clientApi?.getVersion()}
       </Typography>
       {socialIconLinks.map((link) => (
         <Box key={link.icon} ml={0.75} mr={0.25} mt={0.25}>

@@ -7,6 +7,7 @@ import {
 } from 'pixi.js-legacy';
 import Block from '@core/block/Block';
 import Grid from '@core/grid/Grid';
+import Simulation from '@core/Simulation';
 const imagesDirectory = 'client/images';
 
 type Snowflake = {
@@ -118,7 +119,14 @@ export default class DemoRenderer implements IRenderer {
   /**
    * @inheritdoc
    */
-  onSimulationStarted(grid: Grid) {
+  onSimulationInit(simulation: Simulation) {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onSimulationStep(simulation: Simulation) {
     throw new Error('Method not implemented.');
   }
 

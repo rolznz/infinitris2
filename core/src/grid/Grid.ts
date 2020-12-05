@@ -3,14 +3,9 @@ import IGridEventListener from './IGridEventListener';
 
 export default class Grid {
   private _cells: Cell[][];
-  private _eventListener: IGridEventListener;
+  private _eventListeners: IGridEventListener[];
 
-  constructor(
-    numColumns: number = 20,
-    numRows: number = 20,
-    eventListener: IGridEventListener
-  ) {
-    this._eventListener = eventListener;
+  constructor(numColumns: number = 20, numRows: number = 20) {
     this._cells = [];
     for (let r = 0; r < numRows; r++) {
       const row: Cell[] = [];
@@ -32,6 +27,13 @@ export default class Grid {
   }
 
   /**
+   * Add one or more listeners to listen to events broadcasted by this grid.
+   */
+  addEventListener(...eventListeners: IGridEventListener[]) {
+    this._eventListeners.push(...eventListeners);
+  }
+
+  /**
    * Check for and clear full rows.
    *
    * @param rows a list of rows affected by a change (e.g. block placement).
@@ -47,7 +49,9 @@ export default class Grid {
           this._cells[j][c].opacity = j > 0 ? this._cells[j - 1][c].opacity : 0;
         }
       }
-      this._eventListener.onLineCleared(rowsToClear[i] + i);
+      this._eventListeners.forEach((eventListener) =>
+        eventListener.onLineCleared(rowsToClear[i] + i)
+      );
     }
   }
 }

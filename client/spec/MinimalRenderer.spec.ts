@@ -12,15 +12,13 @@ describe('MinimalRenderer', () => {
     minimalRenderer.destroy();
     expect(document.body.querySelector('canvas')).not.toBeTruthy();
   });
-  it('receives simulation start event', async () => {
+  it('receives simulation init event', async () => {
     const minimalRenderer = new MinimalRenderer();
     await minimalRenderer.create();
-    const onSimulationStartedSpy = spyOn(
-      minimalRenderer,
-      'onSimulationStarted'
-    );
-    const simulation = new Simulation(minimalRenderer);
-    simulation.start(new Grid(undefined, undefined, undefined));
-    expect(onSimulationStartedSpy).toHaveBeenCalled();
+    const onSimulationInitSpy = spyOn(minimalRenderer, 'onSimulationInit');
+    const simulation = new Simulation(new Grid());
+    simulation.addEventListener(minimalRenderer);
+    simulation.init();
+    expect(onSimulationInitSpy).toHaveBeenCalled();
   });
 });

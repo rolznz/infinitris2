@@ -13,7 +13,7 @@ import theme from './theme';
 function App() {
   useInfinitrisClient();
   const appStore = useAppStore();
-  if (!appStore.client) {
+  if (!appStore.clientApi) {
     return null;
   }
   return (

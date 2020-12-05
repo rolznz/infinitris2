@@ -1,5 +1,5 @@
 import create from 'zustand';
-import Room from '../models/Room';
+import Room from 'infinitris2-models/src/Room';
 
 type HomeStore = {
   readonly selectedRoom: Room | null;

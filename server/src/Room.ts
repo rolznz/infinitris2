@@ -18,8 +18,8 @@ export default class Room implements ISimulationEventListener {
 
   constructor(sendMessage: SendServerMessageFunction) {
     this._sendMessage = sendMessage;
-    this._simulation = new Simulation(this);
-    this._simulation.start(new Grid(undefined, undefined, this._simulation));
+    this._simulation = new Simulation(new Grid());
+    this._simulation.init();
   }
 
   /**
@@ -85,8 +85,15 @@ export default class Room implements ISimulationEventListener {
   /**
    * @inheritdoc
    */
-  onSimulationStarted(
-    grid: Grid // tslint:disable-next-line: no-empty
+  onSimulationInit(
+    simulation: Simulation // tslint:disable-next-line: no-empty
+  ) {}
+
+  /**
+   * @inheritdoc
+   */
+  onSimulationStep(
+    simulation: Simulation // tslint:disable-next-line: no-empty
   ) {}
 
   /**

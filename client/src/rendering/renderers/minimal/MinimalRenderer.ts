@@ -1,9 +1,11 @@
 import IRenderer from '../../IRenderer';
-import { Application, Graphics, Sprite } from 'pixi.js-legacy';
+import { Application, Graphics, Text, Container } from 'pixi.js-legacy';
 import Grid from '@core/grid/Grid';
 import Block from '@core/block/Block';
 import Cell from '@core/grid/cell/Cell';
 import ISimulationEventListener from '@core/ISimulationEventListener';
+import Simulation from '@core/Simulation';
+import Tutorial from 'models/src/Tutorial';
 const imagesDirectory = 'client/images';
 
 interface IRenderableGrid {
@@ -19,6 +21,11 @@ interface IRenderableCell {
   graphics: Graphics;
 }
 
+interface IPlayerScore {
+  playerId: number;
+  text: Text;
+}
+
 export default class MinimalRenderer
   implements IRenderer, ISimulationEventListener {
   private _grid: IRenderableGrid;
@@ -26,6 +33,14 @@ export default class MinimalRenderer
 
   private _blocks: { [playerId: number]: IRenderableBlock };
   private _cells: { [cellId: number]: IRenderableCell };
+  private _playerScores: IPlayerScore[];
+
+  private _simulation: Simulation;
+  private _tutorial: Tutorial;
+
+  constructor(tutorial?: Tutorial) {
+    this._tutorial = tutorial;
+  }
 
   /**
    * @inheritdoc
@@ -35,16 +50,6 @@ export default class MinimalRenderer
       resizeTo: window,
     });
     document.body.appendChild(this._app.view);
-
-    this._app.loader.add(`${imagesDirectory}/logo-sm.png`).load(() => {
-      //Create the cat sprite
-      const cat = new Sprite(
-        this._app.loader.resources[`${imagesDirectory}/logo-sm.png`].texture
-      );
-
-      //Add the cat to the stage
-      this._app.stage.addChild(cat);
-    });
 
     this._blocks = {};
     this._cells = {};
@@ -66,15 +71,29 @@ export default class MinimalRenderer
   /**
    * @inheritdoc
    */
-  onSimulationStarted(grid: Grid) {
+  onSimulationInit(simulation: Simulation) {
+    this._simulation = simulation;
     this._app.stage.removeChildren();
 
     this._grid = {
-      grid,
+      grid: simulation.grid,
       graphics: new Graphics(),
     };
 
     this._app.stage.addChild(this._grid.graphics);
+
+    this._playerScores = [...Array(10)].map((_, i) => ({
+      playerId: -1,
+      text: new Text('', {
+        font: 'bold italic 60px Arvo',
+        fill: '#3e1707',
+        align: 'center',
+        stroke: '#a4410e',
+        strokeThickness: 7,
+      }),
+    }));
+
+    this._app.stage.addChild(...this._playerScores.map((score) => score.text));
 
     this._resize();
   }
@@ -106,6 +125,27 @@ export default class MinimalRenderer
     this._renderCells(block.cells);
     this._app.stage.removeChild(this._blocks[block.id].graphics);
     delete this._blocks[block.id];
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onSimulationStep() {
+    // TODO: only run this once per second
+    const scores = this._simulation.players.map((p) => ({
+      id: p.id,
+      name: 'New player',
+      score: p.score,
+    }));
+    scores.sort((a, b) => b.score - a.score);
+    for (let i = 0; i < this._playerScores.length; i++) {
+      if (scores.length > i) {
+        this._playerScores[i].text.text =
+          scores[i].name + ' ' + scores[i].score;
+      } else {
+        this._playerScores[i].text.text = '';
+      }
+    }
   }
 
   /**

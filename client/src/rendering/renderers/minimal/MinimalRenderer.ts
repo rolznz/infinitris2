@@ -31,6 +31,7 @@ interface IPlayerScore {
 export default class MinimalRenderer
   implements IRenderer, ISimulationEventListener {
   private _grid: IRenderableGrid;
+  private _helperShadowGraphics: PIXI.Graphics;
   private _app: PIXI.Application;
   private _world: PIXI.Container;
 
@@ -134,10 +135,13 @@ export default class MinimalRenderer
       grid: simulation.grid,
       graphics: new PIXI.Graphics(),
     };
-
     this._app.stage.addChild(this._grid.graphics);
+
     this._world = new PIXI.Container();
     this._app.stage.addChild(this._world);
+
+    this._helperShadowGraphics = new PIXI.Graphics();
+    this._world.addChild(this._helperShadowGraphics);
 
     this._playerScores = [...Array(10)].map((_, i) => ({
       playerId: -1,
@@ -345,7 +349,29 @@ export default class MinimalRenderer
         block.playerId
       );
 
-      // TODO: render helper shadow, can use a single graphics object
+      // render helper shadow - NB: this could be done a lot more efficiently by rendering 3 lines,
+      // but for now it's easier to reuse the cell rendering code
+      this._helperShadowGraphics.clear();
+      const lowestCells = block.cells.filter(
+        (cell) =>
+          !block.cells.find(
+            (other) => other.column === cell.column && other.row > cell.row
+          )
+      );
+      lowestCells.forEach((cell) => {
+        for (let y = cell.row + 1; y < this._grid.grid.numRows; y++) {
+          if (!this._grid.grid.cells[y][cell.column].isEmpty) {
+            return;
+          }
+          this._renderCellAt(
+            this._helperShadowGraphics,
+            cell.column * cellSize,
+            y * cellSize,
+            block.opacity * 0.5,
+            0xff00000
+          );
+        }
+      });
     }
   }
 

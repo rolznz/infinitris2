@@ -263,8 +263,6 @@ export default class MinimalRenderer
         this._world.y = this._grid.graphics.y = (appHeight - gridHeight) / 2;
       }
 
-      this._grid.graphics.lineStyle(1, 0xaaaaaa, 0.5);
-
       const gridRows = this._scrollY
         ? Math.ceil(appHeight / cellSize) + 2
         : this._grid.grid.numRows;
@@ -272,14 +270,31 @@ export default class MinimalRenderer
         ? Math.ceil(appWidth / cellSize)
         : this._grid.grid.numColumns;
 
-      for (let r = 0; r < gridRows + 1; r++) {
-        this._grid.graphics.moveTo(0, r * cellSize);
-        this._grid.graphics.lineTo(gridWidth, r * cellSize);
-      }
+      for (
+        let shadowIndex = -this._shadowCount;
+        shadowIndex <= this._shadowCount;
+        shadowIndex++
+      ) {
+        this._grid.graphics.lineStyle(
+          1,
+          0xaaaaaa,
+          0.5 / (Math.abs(shadowIndex) * 0.5 + 1)
+        );
+        for (let r = 0; r < gridRows + 1; r++) {
+          this._grid.graphics.moveTo(shadowIndex * gridWidth, r * cellSize);
+          this._grid.graphics.lineTo(
+            shadowIndex * gridWidth + gridWidth,
+            r * cellSize
+          );
+        }
 
-      for (let c = 0; c < gridColumns + 1; c++) {
-        this._grid.graphics.moveTo(c * cellSize, 0);
-        this._grid.graphics.lineTo(c * cellSize, gridHeight);
+        for (let c = 0; c < gridColumns + 1; c++) {
+          this._grid.graphics.moveTo(shadowIndex * gridWidth + c * cellSize, 0);
+          this._grid.graphics.lineTo(
+            shadowIndex * gridWidth + c * cellSize,
+            gridHeight
+          );
+        }
       }
 
       this._renderCells([].concat.apply([], this._grid.grid.cells));

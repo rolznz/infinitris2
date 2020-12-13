@@ -24,7 +24,7 @@ Please see the [Server Readme](server/README.md) and the [Client Readme](client/
 
 ## models
 
-Shared model declarations and data required by the core project and React app
+Shared model declarations required by the core project and React app
 
 ## core
 

@@ -7,6 +7,7 @@ export default class Grid {
 
   constructor(numColumns: number = 20, numRows: number = 20) {
     this._cells = [];
+    this._eventListeners = [];
     for (let r = 0; r < numRows; r++) {
       const row: Cell[] = [];
       for (let c = 0; c < numColumns; c++) {
@@ -31,6 +32,10 @@ export default class Grid {
    */
   addEventListener(...eventListeners: IGridEventListener[]) {
     this._eventListeners.push(...eventListeners);
+  }
+
+  step() {
+    this._cells.forEach((row) => row.forEach((cell) => cell.step()));
   }
 
   /**

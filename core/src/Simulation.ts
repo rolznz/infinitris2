@@ -8,11 +8,12 @@ import IGridEventListener from './grid/IGridEventListener';
 /**
  * The length of a single animation frame for the simulation.
  */
-export const FRAME_LENGTH: number = 1000 / 30;
+export const FRAME_LENGTH: number = 1000 / 60;
 
 export default class Simulation
   implements IBlockEventListener, IGridEventListener {
   private _players: { [playerId: number]: Player };
+  private _followingPlayer: Player;
   private _grid: Grid;
   private _eventListeners: ISimulationEventListener[];
   private _interval: NodeJS.Timeout;
@@ -34,6 +35,15 @@ export default class Simulation
 
   get players(): Player[] {
     return Object.values(this._players);
+  }
+
+  getPlayer(playerId: number) {
+    return this._players[playerId];
+  }
+
+  // TODO: move to renderer
+  isFollowingPlayerId(playerId: number) {
+    return playerId === this._followingPlayer?.id;
   }
 
   /**
@@ -77,6 +87,11 @@ export default class Simulation
    */
   addPlayer(player: Player) {
     this._players[player.id] = player;
+  }
+
+  // TODO: move to renderer
+  followPlayer(player: Player) {
+    this._followingPlayer = player;
   }
 
   /**
@@ -135,6 +150,7 @@ export default class Simulation
   step = () => {
     Object.values(this._players).forEach(this._updatePlayer);
     this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
+    this._grid.step();
   };
 
   private _updatePlayer = (player: Player) => {

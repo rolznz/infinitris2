@@ -36,9 +36,15 @@ export default class SinglePlayerClient
    * @inheritdoc
    */
   onBlockPlaced(block: Block) {
-    if (this._tutorial) {
+    /*if (this._tutorial) {
       this._simulation.stopInterval();
-    }
+      this._input.destroy();
+
+      // FIXME: on block placed, check if line clear was triggered?
+      // line clear should be delayed, 1 s + colors changing
+      const success = this._simulation.getPlayer(block.playerId).score > 0;
+      //this._listeners.
+    }*/
   }
   /**
    * @inheritdoc
@@ -61,17 +67,35 @@ export default class SinglePlayerClient
     this._tutorial = tutorial;
     this._renderer = new MinimalRenderer(this._tutorial);
     await this._renderer.create();
-    const grid = new Grid(tutorial?.gridWidth, tutorial?.gridHeight);
-    if (tutorial) {
-      tutorial.filledRows?.forEach((r) => {
-        for (let c = 0; c < grid.cells[0].length; c++) {
-          grid.cells[r][c].opacity = 1;
-        }
-      });
 
-      tutorial.filledCellLocations?.forEach((location) => {
-        grid.cells[location.row][location.col].opacity = 1;
-      });
+    let filledLocations: boolean[][] = null;
+    if (tutorial) {
+      if (tutorial.grid) {
+        filledLocations = tutorial.grid
+          .split('\n')
+          .map((row) => row.trim())
+          .filter((row) => row)
+          .map((row) => row.split('').map((c) => c === 'X'));
+        if (
+          filledLocations.find((r) => r.length !== filledLocations[0].length)
+        ) {
+          throw new Error('Invalid tutorial grid: ' + tutorial.title);
+        }
+      }
+    }
+
+    const grid = new Grid(
+      filledLocations ? filledLocations[0].length : undefined,
+      filledLocations ? filledLocations.length : undefined
+    );
+    if (tutorial) {
+      if (filledLocations) {
+        for (let r = 0; r < grid.cells.length; r++) {
+          for (let c = 0; c < grid.cells[0].length; c++) {
+            grid.cells[r][c].opacity = filledLocations[r][c] ? 1 : 0;
+          }
+        }
+      }
     }
 
     this._simulation = new Simulation(grid);
@@ -81,6 +105,7 @@ export default class SinglePlayerClient
     const playerId = 0;
     const player = new ControllablePlayer(playerId, this._simulation);
     this._simulation.addPlayer(player);
+    this._simulation.followPlayer(player);
     if (tutorial) {
       player.nextLayout = tutorial.layout;
       player.nextLayoutRotation = tutorial.layoutRotation;

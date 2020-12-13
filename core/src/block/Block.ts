@@ -6,7 +6,7 @@ import LayoutUtils from './layout/LayoutUtils';
 type LoopCellEvent = (cell: Cell | undefined) => void;
 
 export default class Block {
-  private _id: number;
+  private _playerId: number;
   private _cells: Cell[];
   private _column: number;
   private _row: number;
@@ -24,10 +24,9 @@ export default class Block {
     column: number,
     rotation: number,
     gridCells: Cell[][],
-    eventListener: IBlockEventListener,
-    isNetworkBlock: boolean = false
+    eventListener: IBlockEventListener
   ) {
-    this._id = playerId;
+    this._playerId = playerId;
     this._column = column;
     this._row = row;
     this._rotation = rotation;
@@ -36,16 +35,11 @@ export default class Block {
     this._eventListener = eventListener;
     this._resetTimers();
     this._updateCells(gridCells);
-    if (!isNetworkBlock) {
-      // ensure the rotated block sits on the top row
-      // TODO: find a better way to do this
-      this.move(gridCells, 0, -1, 0, false, false);
-    }
     this._eventListener.onBlockCreated(this);
   }
 
-  get id(): number {
-    return this._id;
+  get playerId(): number {
+    return this._playerId;
   }
   get row(): number {
     return this._row;
@@ -64,6 +58,13 @@ export default class Block {
   }
   get opacity(): number {
     return 1;
+  }
+
+  // TODO: rename numColumns
+  get width(): number {
+    // TODO: optimize
+    const rotatedLayout = LayoutUtils.rotate(this._layout, this._rotation);
+    return rotatedLayout[0].length;
   }
 
   /**
@@ -133,7 +134,9 @@ export default class Block {
   ): boolean {
     const canMove = force || this.canMove(gridCells, dx, dy, dr);
     if (canMove) {
-      this._column += dx;
+      const numColumns = gridCells[0].length;
+      this._column =
+        (((this._column + dx) % numColumns) + numColumns) % numColumns;
       this._row += dy;
       this._rotation += dr;
       this._updateCells(gridCells);
@@ -202,8 +205,8 @@ export default class Block {
   }
 
   private _resetTimers() {
-    this._fallTimer = this._isDropping ? 0 : 30;
-    this._lockTimer = this._isDropping ? 0 : 30;
+    this._fallTimer = this._isDropping ? 0 : 90;
+    this._lockTimer = this._isDropping ? 0 : 45;
   }
 
   private _addCell = (cell: Cell | null) => {

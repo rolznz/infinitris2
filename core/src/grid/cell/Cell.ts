@@ -22,4 +22,6 @@ export default class Cell {
   get isEmpty(): boolean {
     return this._opacity < 1;
   }
+
+  step() {}
 }

@@ -1,23 +1,20 @@
 import InputAction from './InputAction';
 import Layout from './Layout';
-import blockPlacement from './tutorials/BlockPlacement';
-
-interface CellLocation {
-  readonly col: number;
-  readonly row: number;
-}
+import movement1 from './tutorials/movement1';
+import shadowTest from './tutorials/shadowTest';
+import wrapTest from './tutorials/wrapTest';
 
 export default interface Tutorial {
   readonly title: string;
   readonly description: string;
-  readonly gridWidth: number;
-  readonly gridHeight: number;
-  readonly filledCellLocations?: CellLocation[];
-  readonly filledRows?: number[];
   readonly layout?: Layout;
+  readonly grid?: string;
   readonly highlightScore?: boolean;
   readonly layoutRotation?: number;
   readonly allowedActions?: InputAction[];
+  readonly successLinesCleared?: number[];
+  //readonly blockLimit?: number;  // TODO: is this needed?
 }
 
-export const tutorials: Tutorial[] = [blockPlacement];
+// TODO: move to firebase
+export const tutorials: Tutorial[] = [shadowTest, wrapTest, movement1];

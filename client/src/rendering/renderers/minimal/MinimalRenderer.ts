@@ -1,5 +1,5 @@
 import IRenderer from '../../IRenderer';
-import * as Pixi from 'pixi.js-legacy';
+import * as PIXI from 'pixi.js-legacy';
 import Grid from '@core/grid/Grid';
 import Block from '@core/block/Block';
 import Cell from '@core/grid/cell/Cell';
@@ -11,7 +11,7 @@ import Camera from '@src/rendering/Camera';
 const minCellSize = 32;
 interface IRenderableGrid {
   grid: Grid;
-  graphics: Pixi.Graphics;
+  graphics: PIXI.Graphics;
 }
 interface IRenderableBlock {
   block: Block;
@@ -20,19 +20,19 @@ interface IRenderableBlock {
 
 interface IRenderableCell {
   cell: Cell;
-  graphics: Pixi.Graphics;
+  graphics: PIXI.Graphics;
 }
 
 interface IPlayerScore {
   playerId: number;
-  text: Pixi.Text;
+  text: PIXI.Text;
 }
 
 export default class MinimalRenderer
   implements IRenderer, ISimulationEventListener {
   private _grid: IRenderableGrid;
-  private _app: Pixi.Application;
-  private _world: Pixi.Container;
+  private _app: PIXI.Application;
+  private _world: PIXI.Container;
 
   private _blocks: { [playerId: number]: IRenderableBlock };
   private _cells: { [cellId: number]: IRenderableCell };
@@ -54,7 +54,7 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   async create() {
-    this._app = new Pixi.Application({
+    this._app = new PIXI.Application({
       resizeTo: window,
       antialias: true,
     });
@@ -132,16 +132,16 @@ export default class MinimalRenderer
 
     this._grid = {
       grid: simulation.grid,
-      graphics: new Pixi.Graphics(),
+      graphics: new PIXI.Graphics(),
     };
 
     this._app.stage.addChild(this._grid.graphics);
-    this._world = new Pixi.Container();
+    this._world = new PIXI.Container();
     this._app.stage.addChild(this._world);
 
     this._playerScores = [...Array(10)].map((_, i) => ({
       playerId: -1,
-      text: new Pixi.Text('', {
+      text: new PIXI.Text('', {
         font: 'bold italic 60px Arvo',
         fill: '#3e1707',
         align: 'center',
@@ -162,7 +162,7 @@ export default class MinimalRenderer
     const renderableBlock: IRenderableBlock = {
       cells: block.cells.map((cell) => ({
         cell,
-        graphics: new Pixi.Graphics(),
+        graphics: new PIXI.Graphics(),
       })),
       block,
     };
@@ -298,7 +298,7 @@ export default class MinimalRenderer
     if (!this._cells[cellIndex]) {
       this._cells[cellIndex] = {
         cell,
-        graphics: this._world.addChild(new Pixi.Graphics()),
+        graphics: this._world.addChild(new PIXI.Graphics()),
       };
     }
     const renderableCell: IRenderableCell = this._cells[cellIndex];
@@ -344,11 +344,13 @@ export default class MinimalRenderer
         y,
         block.playerId
       );
+
+      // TODO: render helper shadow, can use a single graphics object
     }
   }
 
   private _renderCellAt(
-    graphics: Pixi.Graphics,
+    graphics: PIXI.Graphics,
     x: number,
     y: number,
     opacity: number,

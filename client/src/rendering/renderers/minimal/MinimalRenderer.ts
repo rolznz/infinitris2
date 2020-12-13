@@ -31,7 +31,7 @@ interface IPlayerScore {
 export default class MinimalRenderer
   implements IRenderer, ISimulationEventListener {
   private _grid: IRenderableGrid;
-  private _helperShadowGraphics: PIXI.Graphics;
+  private _placementHelperShadowGraphics: PIXI.Graphics;
   private _app: PIXI.Application;
   private _world: PIXI.Container;
 
@@ -140,8 +140,8 @@ export default class MinimalRenderer
     this._world = new PIXI.Container();
     this._app.stage.addChild(this._world);
 
-    this._helperShadowGraphics = new PIXI.Graphics();
-    this._world.addChild(this._helperShadowGraphics);
+    this._placementHelperShadowGraphics = new PIXI.Graphics();
+    this._world.addChild(this._placementHelperShadowGraphics);
 
     this._playerScores = [...Array(10)].map((_, i) => ({
       playerId: -1,
@@ -349,9 +349,9 @@ export default class MinimalRenderer
         block.playerId
       );
 
-      // render helper shadow - NB: this could be done a lot more efficiently by rendering 3 lines,
+      // render placement helper shadow - NB: this could be done a lot more efficiently by rendering 3 lines,
       // but for now it's easier to reuse the cell rendering code
-      this._helperShadowGraphics.clear();
+      this._placementHelperShadowGraphics.clear();
       const lowestCells = block.cells.filter(
         (cell) =>
           !block.cells.find(
@@ -364,7 +364,7 @@ export default class MinimalRenderer
             return;
           }
           this._renderCellAt(
-            this._helperShadowGraphics,
+            this._placementHelperShadowGraphics,
             cell.column * cellSize,
             y * cellSize,
             block.opacity * 0.5,

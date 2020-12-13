@@ -47,6 +47,7 @@ export default class MinimalRenderer
   private _cellSize: number;
   private _scrollY: boolean;
   private _scrollX: boolean;
+  private _shadowCount: number;
 
   constructor(tutorial?: Tutorial) {
     this._tutorial = tutorial;
@@ -248,6 +249,10 @@ export default class MinimalRenderer
       this._scrollX = gridWidth > appWidth;
       this._scrollY = gridHeight > appHeight;
 
+      this._shadowCount = this._scrollX
+        ? 0
+        : Math.ceil(Math.floor(appWidth / gridWidth) / 2);
+
       this._camera.gridWidth = gridWidth;
 
       if (!this._scrollX) {
@@ -350,10 +355,23 @@ export default class MinimalRenderer
     x: number,
     y: number,
     opacity: number,
-    color: number
+    color: number,
+    shadowIndex: number = 0
   ) {
     const cellSize = this._getClampedCellSize();
     graphics.beginFill(color, Math.min(opacity, 1));
     graphics.drawRect(x, y, cellSize, cellSize);
+    if (shadowIndex < this._shadowCount) {
+      [-1, 1].forEach((i) =>
+        this._renderCellAt(
+          graphics,
+          x + this._gridWidth * i,
+          y,
+          opacity * 0.5,
+          color,
+          shadowIndex + 1
+        )
+      );
+    }
   }
 }

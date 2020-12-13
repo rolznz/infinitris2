@@ -17,4 +17,4 @@ export default interface Tutorial {
 }
 
 // TODO: move to firebase
-export const tutorials: Tutorial[] = [shadowTest, wrapTest, movement1];
+export const tutorials: Tutorial[] = [movement1, shadowTest, wrapTest];

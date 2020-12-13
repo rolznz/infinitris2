@@ -39,7 +39,6 @@ export default class MinimalRenderer
   private _playerScores: IPlayerScore[];
 
   private _simulation: Simulation;
-  private _tutorial: Tutorial;
 
   private _camera: Camera;
   private _gridWidth: number;
@@ -49,9 +48,7 @@ export default class MinimalRenderer
   private _scrollX: boolean;
   private _shadowCount: number;
 
-  constructor(tutorial?: Tutorial) {
-    this._tutorial = tutorial;
-  }
+  constructor() {}
 
   /**
    * @inheritdoc

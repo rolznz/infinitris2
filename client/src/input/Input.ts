@@ -22,7 +22,7 @@ export default class Input {
   _simulation: Simulation;
   _grid: Grid;
   _controls: IControlSettings;
-  _tutorial?: Tutorial;
+  _tutorial?: Tutorial; // TODO: remove dependency on tutorial
   constructor(
     simulation: Simulation,
     player: ControllablePlayer,

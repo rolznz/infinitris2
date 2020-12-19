@@ -410,8 +410,6 @@ export default class MinimalRenderer
 
   private _renderBlockPlacementShadow(block: Block) {
     const cellSize = this._getClampedCellSize();
-    // render placement helper shadow - NB: this could be done a lot more efficiently by rendering 3 lines,
-    // but for now it's easier to reuse the cell rendering code (for shadows)
     const lowestCells = block.cells.filter(
       (cell) =>
         !block.cells.find(
@@ -443,6 +441,8 @@ export default class MinimalRenderer
       }
     }
 
+    // render placement helper shadow - NB: this could be done a lot more efficiently by rendering 3 lines,
+    // but for now it's easier to reuse the cell rendering code (for shadows)
     lowestCells.forEach((cell, index) => {
       const cellDistanceFromLowestRow = lowestBlockRow - cell.row;
       const shadowGraphics = this._placementHelperShadows[index];

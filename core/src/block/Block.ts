@@ -67,6 +67,13 @@ export default class Block {
     return rotatedLayout[0].length;
   }
 
+  // TODO: rename numColumns
+  get height(): number {
+    // TODO: optimize
+    const rotatedLayout = LayoutUtils.rotate(this._layout, this._rotation);
+    return rotatedLayout.length;
+  }
+
   /**
    * Mark a block as dropping.
    *

@@ -31,7 +31,8 @@ interface IPlayerScore {
 export default class MinimalRenderer
   implements IRenderer, ISimulationEventListener {
   private _grid: IRenderableGrid;
-  private _placementHelperShadowGraphics: PIXI.Graphics;
+  private _placementHelperShadowContainer: PIXI.Container;
+  private _placementHelperShadows: PIXI.Graphics[];
   private _app: PIXI.Application;
   private _world: PIXI.Container;
 
@@ -96,23 +97,36 @@ export default class MinimalRenderer
 
     if (this._scrollX) {
       this._grid.graphics.x = (this._camera.x + visibilityX) % this._cellSize;
-      // wrap cells
-      this._world.children.forEach((child) => {
-        if (child.x + this._cellSize < -this._camera.x - visibilityX) {
-          child.x += this._gridWidth;
-        } else if (
-          child.x + this._cellSize >=
-          -this._camera.x + this._gridWidth - visibilityX
-        ) {
-          child.x -= this._gridWidth;
-        }
-      });
+      this._wrapObjects(visibilityX);
     }
     if (this._scrollY) {
       this._grid.graphics.y =
         ((cameraY + visibilityY) % this._cellSize) - this._cellSize;
     }
   };
+
+  private _wrapObjects(visibilityX: number) {
+    this._placementHelperShadows.forEach((shadow) =>
+      this._wrapObject(shadow, visibilityX)
+    );
+    this._world.children.forEach((child) => {
+      if (child === this._placementHelperShadowContainer) {
+        return;
+      }
+      this._wrapObject(child, visibilityX);
+    });
+  }
+
+  private _wrapObject(child: PIXI.DisplayObject, visibilityX: number) {
+    if (child.x + this._cellSize < -this._camera.x - visibilityX) {
+      child.x += this._gridWidth;
+    } else if (
+      child.x + this._cellSize >=
+      -this._camera.x + this._gridWidth - visibilityX
+    ) {
+      child.x -= this._gridWidth;
+    }
+  }
 
   /**
    * @inheritdoc
@@ -140,8 +154,9 @@ export default class MinimalRenderer
     this._world = new PIXI.Container();
     this._app.stage.addChild(this._world);
 
-    this._placementHelperShadowGraphics = new PIXI.Graphics();
-    this._world.addChild(this._placementHelperShadowGraphics);
+    this._placementHelperShadowContainer = new PIXI.Container();
+    this._world.addChild(this._placementHelperShadowContainer);
+    this._placementHelperShadows = [];
 
     this._playerScores = [...Array(10)].map((_, i) => ({
       playerId: -1,
@@ -365,22 +380,50 @@ export default class MinimalRenderer
       );
 
       // render placement helper shadow - NB: this could be done a lot more efficiently by rendering 3 lines,
-      // but for now it's easier to reuse the cell rendering code
-      this._placementHelperShadowGraphics.clear();
+      // but for now it's easier to reuse the cell rendering code (for shadows)
       const lowestCells = block.cells.filter(
         (cell) =>
           !block.cells.find(
             (other) => other.column === cell.column && other.row > cell.row
           )
       );
-      lowestCells.forEach((cell) => {
-        for (let y = cell.row + 1; y < this._grid.grid.numRows; y++) {
-          if (!this._grid.grid.cells[y][cell.column].isEmpty) {
-            return;
+      this._placementHelperShadows.forEach((shadow) => shadow.clear());
+      while (lowestCells.length > this._placementHelperShadows.length) {
+        const shadowColumn = new PIXI.Graphics();
+        this._placementHelperShadows.push(shadowColumn);
+        this._placementHelperShadowContainer.addChild(shadowColumn);
+      }
+
+      const lowestBlockRow = lowestCells
+        .map((cell) => cell.row)
+        .sort((a, b) => b - a)[0];
+
+      let highestPlacementRow = this._grid.grid.numRows - 1;
+
+      for (const cell of lowestCells) {
+        for (let y = cell.row + 1; y < highestPlacementRow; y++) {
+          if (!this._grid.grid.cells[y + 1][cell.column].isEmpty) {
+            highestPlacementRow = Math.min(
+              y + (lowestBlockRow - cell.row),
+              highestPlacementRow
+            );
+            continue;
           }
+        }
+      }
+
+      lowestCells.forEach((cell, index) => {
+        const cellDistanceFromLowestRow = lowestBlockRow - cell.row;
+        const shadowGraphics = this._placementHelperShadows[index];
+        shadowGraphics.x = cell.column * cellSize;
+        for (
+          let y = cell.row + 1;
+          y <= highestPlacementRow - cellDistanceFromLowestRow;
+          y++
+        ) {
           this._renderCellAt(
-            this._placementHelperShadowGraphics,
-            cell.column * cellSize,
+            shadowGraphics,
+            0,
             y * cellSize,
             block.opacity * 0.5,
             0xff00000

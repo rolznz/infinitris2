@@ -379,57 +379,7 @@ export default class MinimalRenderer
         block.playerId
       );
 
-      // render placement helper shadow - NB: this could be done a lot more efficiently by rendering 3 lines,
-      // but for now it's easier to reuse the cell rendering code (for shadows)
-      const lowestCells = block.cells.filter(
-        (cell) =>
-          !block.cells.find(
-            (other) => other.column === cell.column && other.row > cell.row
-          )
-      );
-      this._placementHelperShadows.forEach((shadow) => shadow.clear());
-      while (lowestCells.length > this._placementHelperShadows.length) {
-        const shadowColumn = new PIXI.Graphics();
-        this._placementHelperShadows.push(shadowColumn);
-        this._placementHelperShadowContainer.addChild(shadowColumn);
-      }
-
-      const lowestBlockRow = lowestCells
-        .map((cell) => cell.row)
-        .sort((a, b) => b - a)[0];
-
-      let highestPlacementRow = this._grid.grid.numRows - 1;
-
-      for (const cell of lowestCells) {
-        for (let y = cell.row + 1; y < highestPlacementRow; y++) {
-          if (!this._grid.grid.cells[y + 1][cell.column].isEmpty) {
-            highestPlacementRow = Math.min(
-              y + (lowestBlockRow - cell.row),
-              highestPlacementRow
-            );
-            continue;
-          }
-        }
-      }
-
-      lowestCells.forEach((cell, index) => {
-        const cellDistanceFromLowestRow = lowestBlockRow - cell.row;
-        const shadowGraphics = this._placementHelperShadows[index];
-        shadowGraphics.x = cell.column * cellSize;
-        for (
-          let y = cell.row + 1;
-          y <= highestPlacementRow - cellDistanceFromLowestRow;
-          y++
-        ) {
-          this._renderCellAt(
-            shadowGraphics,
-            0,
-            y * cellSize,
-            block.opacity * 0.5,
-            0xff00000
-          );
-        }
-      });
+      this._renderBlockPlacementShadow(block);
     }
   }
 
@@ -456,5 +406,60 @@ export default class MinimalRenderer
         )
       );
     }
+  }
+
+  private _renderBlockPlacementShadow(block: Block) {
+    const cellSize = this._getClampedCellSize();
+    // render placement helper shadow - NB: this could be done a lot more efficiently by rendering 3 lines,
+    // but for now it's easier to reuse the cell rendering code (for shadows)
+    const lowestCells = block.cells.filter(
+      (cell) =>
+        !block.cells.find(
+          (other) => other.column === cell.column && other.row > cell.row
+        )
+    );
+    this._placementHelperShadows.forEach((shadow) => shadow.clear());
+    while (lowestCells.length > this._placementHelperShadows.length) {
+      const shadowColumn = new PIXI.Graphics();
+      this._placementHelperShadows.push(shadowColumn);
+      this._placementHelperShadowContainer.addChild(shadowColumn);
+    }
+
+    const lowestBlockRow = lowestCells
+      .map((cell) => cell.row)
+      .sort((a, b) => b - a)[0];
+
+    let highestPlacementRow = this._grid.grid.numRows - 1;
+
+    for (const cell of lowestCells) {
+      for (let y = cell.row + 1; y < highestPlacementRow; y++) {
+        if (!this._grid.grid.cells[y + 1][cell.column].isEmpty) {
+          highestPlacementRow = Math.min(
+            y + (lowestBlockRow - cell.row),
+            highestPlacementRow
+          );
+          continue;
+        }
+      }
+    }
+
+    lowestCells.forEach((cell, index) => {
+      const cellDistanceFromLowestRow = lowestBlockRow - cell.row;
+      const shadowGraphics = this._placementHelperShadows[index];
+      shadowGraphics.x = cell.column * cellSize;
+      for (
+        let y = cell.row + 1;
+        y <= highestPlacementRow - cellDistanceFromLowestRow;
+        y++
+      ) {
+        this._renderCellAt(
+          shadowGraphics,
+          0,
+          y * cellSize,
+          block.opacity * 0.5,
+          0xff00000
+        );
+      }
+    });
   }
 }

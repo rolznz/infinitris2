@@ -430,7 +430,7 @@ export default class MinimalRenderer
     let highestPlacementRow = this._grid.grid.numRows - 1;
 
     for (const cell of lowestCells) {
-      for (let y = cell.row + 1; y < highestPlacementRow; y++) {
+      for (let y = cell.row; y < highestPlacementRow; y++) {
         if (!this._grid.grid.cells[y + 1][cell.column].isEmpty) {
           highestPlacementRow = Math.min(
             y + (lowestBlockRow - cell.row),

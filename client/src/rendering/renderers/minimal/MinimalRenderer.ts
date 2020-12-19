@@ -7,6 +7,7 @@ import ISimulationEventListener from '@core/ISimulationEventListener';
 import Simulation from '@core/Simulation';
 import Tutorial from 'models/src/Tutorial';
 import Camera from '@src/rendering/Camera';
+import CellType from '@core/grid/cell/CellType';
 
 const minCellSize = 32;
 interface IRenderableGrid {
@@ -72,6 +73,15 @@ export default class MinimalRenderer
   }
 
   private _tick = () => {
+    Object.values(this._cells).forEach((cell) => {
+      if (cell.cell.type === CellType.Laser) {
+        cell.graphics.alpha *= 0.99;
+        if (cell.graphics.alpha < 0.01) {
+          cell.graphics.alpha = 1;
+        }
+      }
+    });
+
     if (!this._scrollX && !this._scrollY) {
       return;
     }
@@ -325,9 +335,9 @@ export default class MinimalRenderer
   }
 
   private _renderCell = (cell: Cell, force: boolean = false) => {
-    if (cell.isEmpty && !force) {
+    /*if (cell.isEmpty && !force) {
       return;
-    }
+    }*/
     const cellIndex = cell.row * this._grid.grid.numColumns + cell.column;
     if (!this._cells[cellIndex]) {
       this._cells[cellIndex] = {
@@ -338,11 +348,17 @@ export default class MinimalRenderer
     const renderableCell: IRenderableCell = this._cells[cellIndex];
     const graphics = renderableCell.graphics;
     graphics.clear();
-    if (!cell.isEmpty) {
+    if (!cell.isEmpty || cell.type === CellType.Laser) {
       const cellSize = this._getClampedCellSize();
       graphics.x = renderableCell.cell.column * cellSize;
       graphics.y = renderableCell.cell.row * cellSize;
-      this._renderCellAt(graphics, 0, 0, cell.opacity, 0xaaaaaa);
+      this._renderCellAt(
+        graphics,
+        0,
+        0,
+        1,
+        cell.type === CellType.Laser ? 0xff0000 : 0xaaaaaa
+      );
     }
   };
 
@@ -351,7 +367,7 @@ export default class MinimalRenderer
 
     renderableBlock.cells.forEach((cell) => {
       cell.graphics.clear();
-      this._renderCellAt(cell.graphics, 0, 0, block.opacity, 0xff00000);
+      this._renderCellAt(cell.graphics, 0, 0, 1, block.color);
     });
 
     this._moveBlock(block);
@@ -452,13 +468,7 @@ export default class MinimalRenderer
         y <= highestPlacementRow - cellDistanceFromLowestRow;
         y++
       ) {
-        this._renderCellAt(
-          shadowGraphics,
-          0,
-          y * cellSize,
-          block.opacity * 0.5,
-          0xff00000
-        );
+        this._renderCellAt(shadowGraphics, 0, y * cellSize, 0.33, block.color);
       }
     });
   }

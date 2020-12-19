@@ -1,4 +1,5 @@
 import Cell from './cell/Cell';
+import CellType from './cell/CellType';
 import IGridEventListener from './IGridEventListener';
 
 export default class Grid {
@@ -51,7 +52,8 @@ export default class Grid {
     for (let i = 0; i < rowsToClear.length; i++) {
       for (let j = rowsToClear[i] + i; j >= 0; j--) {
         for (let c = 0; c < this._cells[0].length; c++) {
-          this._cells[j][c].opacity = j > 0 ? this._cells[j - 1][c].opacity : 0;
+          this._cells[j][c].type =
+            j > 0 ? this._cells[j - 1][c].type : CellType.Empty;
         }
       }
       this._eventListeners.forEach((eventListener) =>

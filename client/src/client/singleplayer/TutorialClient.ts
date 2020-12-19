@@ -8,6 +8,7 @@ import IClient from '../Client';
 import Tutorial from '../../../../models/src/Tutorial';
 import ISimulationEventListener from '@core/ISimulationEventListener';
 import Block from '@core/block/Block';
+import CellType from '@core/grid/cell/CellType';
 
 export default class TutorialClient
   implements IClient, ISimulationEventListener {
@@ -69,26 +70,28 @@ export default class TutorialClient
     this._renderer = new MinimalRenderer();
     await this._renderer.create();
 
-    let filledLocations: boolean[][] = null;
+    let cellTypes: CellType[][] = null;
     if (tutorial.grid) {
-      filledLocations = tutorial.grid
+      cellTypes = tutorial.grid
         .split('\n')
         .map((row) => row.trim())
-        .filter((row) => row)
-        .map((row) => row.split('').map((c) => c === 'X'));
-      if (filledLocations.find((r) => r.length !== filledLocations[0].length)) {
+        .filter((row) => row && !row.startsWith('//'))
+        .map((row) => row.split('').map((c) => c as CellType));
+      if (cellTypes.find((r) => r.length !== cellTypes[0].length)) {
         throw new Error('Invalid tutorial grid: ' + tutorial.title);
       }
     }
 
     const grid = new Grid(
-      filledLocations ? filledLocations[0].length : undefined,
-      filledLocations ? filledLocations.length : undefined
+      cellTypes ? cellTypes[0].length : undefined,
+      cellTypes ? cellTypes.length : undefined
     );
-    if (filledLocations) {
+    if (cellTypes) {
       for (let r = 0; r < grid.cells.length; r++) {
         for (let c = 0; c < grid.cells[0].length; c++) {
-          grid.cells[r][c].opacity = filledLocations[r][c] ? 1 : 0;
+          const cell = grid.cells[r][c];
+          const cellType = cellTypes[r][c];
+          cell.type = cellType;
         }
       }
     }

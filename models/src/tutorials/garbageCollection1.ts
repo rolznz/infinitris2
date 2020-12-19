@@ -1,23 +1,26 @@
 import tetrominoes from '../Tetrominoes';
 import Tutorial from '../Tutorial';
 
-const shadowTest: Tutorial = {
-  title: 'Shadow Test',
+const garbageCollection1: Tutorial = {
+  title: 'Garbage Collection 1',
   description: '',
   highlightScore: true,
   layout: tetrominoes.T,
   successLinesCleared: [2],
   grid: `
-X00000000X
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-0000000000
-X00000000X
-`,
+0000
+0000
+0000
+0000
+0000
+0000
+0XXX
+000X
+0XXX
+XX00
+X0XX
+`, // TODO: garbageRows=[5,6,7]
   layoutRotation: 2,
 };
 
-export default shadowTest;
+export default garbageCollection1;

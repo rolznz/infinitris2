@@ -8,17 +8,17 @@ const fireTest: Tutorial = {
   layout: tetrominoes.T,
   successLinesCleared: [2],
   grid: `
-000
-000
-000
-000
-000
-000
-FFF
-000
-000
-000
-000
+0000
+0000
+0000
+0000
+0000
+0000
+FFFF
+0000
+0000
+0000
+0000
 `,
   layoutRotation: 2,
 };

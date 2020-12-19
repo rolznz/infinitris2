@@ -1,5 +1,6 @@
 import Layout from '@models/Layout';
 import Cell from '../grid/cell/Cell';
+import CellType from '../grid/cell/CellType';
 import IBlockEventListener from './IBlockEventListener';
 import LayoutUtils from './layout/LayoutUtils';
 
@@ -7,6 +8,7 @@ type LoopCellEvent = (cell: Cell | undefined) => void;
 
 export default class Block {
   private _playerId: number;
+  private _color: number;
   private _cells: Cell[];
   private _column: number;
   private _row: number;
@@ -26,6 +28,7 @@ export default class Block {
     gridCells: Cell[][],
     eventListener: IBlockEventListener
   ) {
+    this._color = 0x0000ff;
     this._playerId = playerId;
     this._column = column;
     this._row = row;
@@ -47,6 +50,9 @@ export default class Block {
   get column(): number {
     return this._column;
   }
+  get color(): number {
+    return this._color;
+  }
   get cells(): Cell[] {
     return this._cells;
   }
@@ -55,9 +61,6 @@ export default class Block {
   }
   get isReadyToLock(): boolean {
     return this._lockTimer <= 0;
-  }
-  get opacity(): number {
-    return 1;
   }
 
   // TODO: rename numColumns
@@ -178,7 +181,7 @@ export default class Block {
    * The block's opacity will be transferred into the cells it currently occupies.
    */
   place() {
-    this._cells.forEach((cell) => (cell.opacity += 1));
+    this._cells.forEach((cell) => (cell.type = CellType.Full));
   }
 
   /**

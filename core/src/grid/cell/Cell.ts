@@ -1,11 +1,12 @@
+import CellType from './CellType';
+
 export default class Cell {
   private _row: number;
   private _column: number;
-  private _opacity: number;
+  private _type: CellType;
   constructor(column: number, row: number) {
     this._row = row;
     this._column = column;
-    this._opacity = 0;
   }
   get row(): number {
     return this._row;
@@ -13,14 +14,14 @@ export default class Cell {
   get column(): number {
     return this._column;
   }
-  get opacity(): number {
-    return this._opacity;
+  get type(): CellType {
+    return this._type;
   }
-  set opacity(opacity: number) {
-    this._opacity = opacity;
+  set type(type: CellType) {
+    this._type = type;
   }
   get isEmpty(): boolean {
-    return this._opacity < 1;
+    return this._type !== CellType.Full;
   }
 
   step() {}

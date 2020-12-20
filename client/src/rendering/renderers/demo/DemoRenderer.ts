@@ -19,8 +19,9 @@ type Snowflake = {
 } & Sprite;
 
 export default class DemoRenderer implements IRenderer {
-  private _app: Application;
-  private _snowflakes: Snowflake[];
+  // FIXME: restructure to not require definite assignment
+  private _app!: Application;
+  private _snowflakes!: Snowflake[];
 
   /**
    * @inheritdoc
@@ -148,6 +149,13 @@ export default class DemoRenderer implements IRenderer {
    * @inheritdoc
    */
   onBlockMoved(block: Block) {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockDied(block: Block) {
     throw new Error('Method not implemented.');
   }
 

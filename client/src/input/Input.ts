@@ -57,7 +57,7 @@ export default class Input {
       this._simulation.startInterval();
     }
 
-    const block: Block = this._player.block;
+    const block: Block | undefined = this._player.block;
     if (block) {
       if (
         (this._isActionAllowed(InputAction.MoveLeft) &&

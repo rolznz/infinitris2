@@ -1,6 +1,6 @@
 import Cell from './cell/Cell';
 import CellType from './cell/CellType';
-import IGridEventListener from './IGridEventListener';
+import IGridEventListener from '../../../models/src/IGridEventListener';
 
 export default class Grid {
   private _cells: Cell[][];
@@ -20,6 +20,9 @@ export default class Grid {
 
   get cells(): Cell[][] {
     return this._cells;
+  }
+  get reducedCells(): Cell[] {
+    return ([] as Cell[]).concat(...this._cells);
   }
   get numColumns(): number {
     return this._cells[0].length;

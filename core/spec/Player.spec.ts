@@ -13,6 +13,8 @@ describe('Player', () => {
       onBlockPlaced: (block: Block) => {},
       // tslint:disable-next-line: no-empty
       onBlockMoved: (block: Block) => {},
+      // tslint:disable-next-line: no-empty
+      onBlockDied: (block: Block) => {},
     };
     const grid = new Grid();
     const player = new DummyPlayer(1, eventListener);

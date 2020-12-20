@@ -4,5 +4,5 @@ export default interface IGridEventListener {
    *
    * @param row the index of the row that was cleared
    */
-  onLineCleared(row: number);
+  onLineCleared(row: number): void;
 }

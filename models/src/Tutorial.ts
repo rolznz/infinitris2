@@ -1,6 +1,6 @@
 import InputAction from './InputAction';
 import Layout from './Layout';
-import fireTest from './tutorials/fireTest';
+import fireTest from './tutorials/laserTest';
 import garbageCollection1 from './tutorials/garbageCollection1';
 import basicMovement from './tutorials/movement1';
 import shadowTest from './tutorials/shadowTest';
@@ -20,8 +20,8 @@ export default interface Tutorial {
 
 // TODO: move to firebase
 export const tutorials: Tutorial[] = [
-  basicMovement,
   fireTest,
+  basicMovement,
   wrapTest,
   garbageCollection1,
   shadowTest,

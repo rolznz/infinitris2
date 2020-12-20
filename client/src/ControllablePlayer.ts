@@ -1,5 +1,5 @@
 import Player from '@core/player/Player';
-import IBlockEventListener from '@core/block/IBlockEventListener';
+import IBlockEventListener from '@models/IBlockEventListener';
 
 export default class ControllablePlayer extends Player {
   constructor(playerId: number, eventListener: IBlockEventListener) {

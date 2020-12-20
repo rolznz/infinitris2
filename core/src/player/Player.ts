@@ -1,18 +1,17 @@
-import LoopCellEvent from '../block/Block';
 import Block from '../block/Block';
-import IBlockEventListener from '../block/IBlockEventListener';
 import Cell from '../grid/cell/Cell';
 import Layout from '@models/Layout';
 import tetrominoes from '@models/Tetrominoes';
+import IBlockEventListener from '@models/IBlockEventListener';
 
 export default abstract class Player implements IBlockEventListener {
   private _id: number;
-  private _block: LoopCellEvent;
+  private _block?: Block;
   private _score: number;
   private _lastPlacementColumn: number | undefined;
   private _eventListener: IBlockEventListener;
-  private _nextLayout: Layout;
-  private _nextLayoutRotation: number;
+  private _nextLayout?: Layout;
+  private _nextLayoutRotation?: number;
 
   // TODO: addEventListener to be consistent with other objects
   constructor(id: number, eventListener: IBlockEventListener) {
@@ -24,7 +23,7 @@ export default abstract class Player implements IBlockEventListener {
   get id(): number {
     return this._id;
   }
-  get block(): LoopCellEvent {
+  get block(): Block | undefined {
     return this._block;
   }
 
@@ -32,11 +31,11 @@ export default abstract class Player implements IBlockEventListener {
     return this._score;
   }
 
-  set nextLayout(nextLayout: Layout) {
+  set nextLayout(nextLayout: Layout | undefined) {
     this._nextLayout = nextLayout;
   }
 
-  set nextLayoutRotation(nextLayoutRotation: number) {
+  set nextLayoutRotation(nextLayoutRotation: number | undefined) {
     this._nextLayoutRotation = nextLayoutRotation;
   }
 
@@ -57,7 +56,7 @@ export default abstract class Player implements IBlockEventListener {
         Object.values(tetrominoes)[
           Math.floor(Math.random() * Object.values(tetrominoes).length)
         ];
-      this._nextLayout = null;
+      this._nextLayout = undefined;
       const column =
         this._lastPlacementColumn === undefined
           ? Math.floor((gridCells[0].length - layout[0].length) / 2) + 1
@@ -71,7 +70,7 @@ export default abstract class Player implements IBlockEventListener {
         gridCells,
         this
       );
-      this._nextLayoutRotation = null;
+      this._nextLayoutRotation = undefined;
     } else {
       this._block.update(gridCells);
     }
@@ -95,11 +94,26 @@ export default abstract class Player implements IBlockEventListener {
    * @inheritdoc
    */
   onBlockPlaced(block: Block) {
+    if (this._block !== block) {
+      throw new Error('Block mismatch');
+    }
     this._lastPlacementColumn = this._block.column;
-    this._block = null;
     this._eventListener.onBlockPlaced(block);
+    this._removeBlock();
 
     // TODO: improved score calculation
     this._score += 10;
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockDied(block: Block) {
+    this._eventListener.onBlockDied(block);
+    this._removeBlock();
+  }
+
+  private _removeBlock() {
+    this._block = undefined;
   }
 }

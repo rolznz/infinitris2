@@ -13,10 +13,15 @@ import ClientSocket from '@src/networking/ClientSocket';
 export default class NetworkClient
   implements IClient, IClientSocketEventListener {
   private _socket: IClientSocket;
-  private _renderer: IRenderer;
-  private _simulation: Simulation;
+  // FIXME: restructure to not require definite assignment
+  private _renderer!: IRenderer;
+  private _simulation!: Simulation;
   constructor(url: string, listener?: IClientSocketEventListener) {
-    this._socket = new ClientSocket(url, [this, listener]);
+    const eventListeners: IClientSocketEventListener[] = [this];
+    if (listener) {
+      eventListeners.push(listener);
+    }
+    this._socket = new ClientSocket(url, eventListeners);
   }
 
   /**

@@ -5,10 +5,12 @@
     "moduleResolution": "node",
     "esModuleInterop": true,
     "sourceMap": true,
+    "strict": true,
     "allowJs": false,
     "composite": true,
     "baseUrl": "../",
     "paths": {
+      "@core/*": ["core/src/*"],
       "@models/*": ["models/src/*"]
     },
     "declarationMap": true,

@@ -2,7 +2,6 @@ import firebase from 'firebase';
 import React, { useEffect, useState } from 'react';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
 import { useParams } from 'react-router-dom';
-import Room from 'infinitris2-models/src/Room';
 import useAppStore from '../../state/AppStore';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, IconButton, Link, Typography } from '@material-ui/core';
@@ -11,13 +10,20 @@ import Loader from 'react-loader-spinner';
 import SignalCellularConnectedNoInternet0BarIcon from '@material-ui/icons/SignalCellularConnectedNoInternet0Bar';
 import HomeIcon from '@material-ui/icons/Home';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { ClientSocketEventListener, tutorials } from 'infinitris2-models';
+import {
+  IClientSocketEventListener,
+  tutorials,
+  Room,
+  IBlock,
+  ISimulationEventListener,
+  ISimulation,
+} from 'infinitris2-models';
 
 interface RoomPageRouteParams {
   id: string;
 }
 
-const socketEventListener: ClientSocketEventListener = {
+const socketEventListener: IClientSocketEventListener = {
   onConnect: () => {
     useRoomStore.getState().setConnected(true);
   },
@@ -28,6 +34,32 @@ const socketEventListener: ClientSocketEventListener = {
     useAppStore.getState().clientApi?.releaseClient();
   },
   onMessage: () => {},
+};
+
+function checkTutorialFinished() {
+  //this._simulation.stopInterval();
+  //this._input.destroy();
+  // FIXME: on block placed, check if line clear was triggered?
+  // line clear should be delayed, 1 s + colors changing
+  //const success = this._simulation.getPlayer(block.playerId).score > 0;
+  //this._listeners.
+  alert('Tutorial finished');
+}
+
+const simulationEventListener: ISimulationEventListener = {
+  onSimulationInit(simulation: ISimulation) {},
+  onSimulationStep(simulation: ISimulation) {},
+
+  onBlockCreated(block: IBlock) {},
+
+  onBlockPlaced(block: IBlock) {
+    checkTutorialFinished();
+  },
+  onBlockDied(block: IBlock) {
+    checkTutorialFinished();
+  },
+  onBlockMoved(block: IBlock) {},
+  onLineCleared(row: number) {},
 };
 
 export default function RoomPage() {
@@ -56,8 +88,10 @@ export default function RoomPage() {
     if (disconnected || !client || (!isSinglePlayer && !roomUrl)) {
       return;
     }
-    if (isSinglePlayer) {
-      client.launchSinglePlayer(isTutorial ? tutorials[0] : undefined);
+    if (isTutorial) {
+      client.launchTutorial(tutorials[0], simulationEventListener);
+    } else if (isSinglePlayer) {
+      client.launchSinglePlayer();
     } else {
       client.launchNetworkClient(roomUrl as string, socketEventListener);
     }

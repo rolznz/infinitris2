@@ -5,14 +5,15 @@ import ControllablePlayer from '@src/ControllablePlayer';
 import Grid from '@core/grid/Grid';
 import Input from '@src/input/Input';
 import IClient from '../Client';
-import ISimulationEventListener from '@core/ISimulationEventListener';
+import ISimulationEventListener from '@models/ISimulationEventListener';
 import Block from '@core/block/Block';
 
 export default class SinglePlayerClient
   implements IClient, ISimulationEventListener {
-  private _renderer: IRenderer;
-  private _simulation: Simulation;
-  private _input: Input;
+  // FIXME: restructure to not require definite assignment
+  private _renderer!: IRenderer;
+  private _simulation!: Simulation;
+  private _input!: Input;
   constructor() {
     this._create();
   }
@@ -38,6 +39,10 @@ export default class SinglePlayerClient
    * @inheritdoc
    */
   onBlockMoved(block: Block) {}
+  /**
+   * @inheritdoc
+   */
+  onBlockDied(block: Block) {}
   /**
    * @inheritdoc
    */

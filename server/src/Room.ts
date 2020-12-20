@@ -1,5 +1,5 @@
 import Simulation from '@core/Simulation';
-import ISimulationEventListener from '@core/ISimulationEventListener';
+import ISimulationEventListener from 'models/src/ISimulationEventListener';
 import NetworkPlayer from '@core/player/NetworkPlayer';
 import IClientMessage from '@core/networking/client/IClientMessage';
 import { SendServerMessageFunction } from './networking/ServerSocket';

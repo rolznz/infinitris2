@@ -14,7 +14,7 @@ const fireTest: Tutorial = {
 0000
 0000
 0000
-FFFF
+LLLL
 0000
 0000
 0000

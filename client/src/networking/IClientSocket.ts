@@ -9,16 +9,16 @@ export default interface IClientSocket {
    *
    * @param eventListener the listener to add.
    */
-  addEventListener(eventListener: IClientSocketEventListener);
+  addEventListener(eventListener: IClientSocketEventListener): void;
 
   /**
    * Sends a message to the server.
    * @param message the message to send.
    */
-  sendMessage(message: ValidClientMessage);
+  sendMessage(message: ValidClientMessage): void;
 
   /**
    * Closes this socket's connection to the server.
    */
-  disconnect();
+  disconnect(): void;
 }

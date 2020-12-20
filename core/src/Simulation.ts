@@ -1,22 +1,20 @@
-import ISimulationEventListener from './ISimulationEventListener';
+import ISimulationEventListener from '../../models/src/ISimulationEventListener';
 import Grid from './grid/Grid';
 import Player from './player/Player';
 import Block from './block/Block';
-import IBlockEventListener from './block/IBlockEventListener';
-import IGridEventListener from './grid/IGridEventListener';
+import ISimulation from '@models/ISimulation';
 
 /**
  * The length of a single animation frame for the simulation.
  */
 export const FRAME_LENGTH: number = 1000 / 60;
 
-export default class Simulation
-  implements IBlockEventListener, IGridEventListener {
+export default class Simulation implements ISimulation {
   private _players: { [playerId: number]: Player };
-  private _followingPlayer: Player;
+  private _followingPlayer?: Player;
   private _grid: Grid;
   private _eventListeners: ISimulationEventListener[];
-  private _interval: NodeJS.Timeout;
+  private _interval?: NodeJS.Timeout;
 
   constructor(grid: Grid) {
     this._eventListeners = [];
@@ -73,8 +71,10 @@ export default class Simulation
    * Stop the simulation running.
    */
   stopInterval() {
-    clearInterval(this._interval);
-    this._interval = null;
+    if (this._interval) {
+      clearInterval(this._interval);
+      this._interval = undefined;
+    }
   }
 
   /**
@@ -123,6 +123,13 @@ export default class Simulation
    */
   onBlockMoved(block: Block) {
     this._eventListeners.forEach((listener) => listener.onBlockMoved(block));
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockDied(block: Block) {
+    this._eventListeners.forEach((listener) => listener.onBlockDied(block));
   }
 
   /**

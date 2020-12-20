@@ -1,13 +1,13 @@
-import ISimulationEventListener from '@core/ISimulationEventListener';
+import ISimulationEventListener from '@models/ISimulationEventListener';
 
 export default interface IRenderer extends ISimulationEventListener {
   /**
    * Creates the renderer.
    */
-  create();
+  create(): void;
 
   /**
    * Permanently destroys the renderer (Unattaching it from the DOM, removing listeners, etc).
    */
-  destroy();
+  destroy(): void;
 }

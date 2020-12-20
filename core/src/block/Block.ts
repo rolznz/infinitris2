@@ -1,15 +1,16 @@
+import IBlock from '@models/IBlock';
+import IBlockEventListener from '@models/IBlockEventListener';
 import Layout from '@models/Layout';
 import Cell from '../grid/cell/Cell';
 import CellType from '../grid/cell/CellType';
-import IBlockEventListener from './IBlockEventListener';
 import LayoutUtils from './layout/LayoutUtils';
 
-type LoopCellEvent = (cell: Cell | undefined) => void;
+type LoopCellEvent = (cell?: Cell) => void;
 
-export default class Block {
+export default class Block implements IBlock {
   private _playerId: number;
   private _color: number;
-  private _cells: Cell[];
+  private readonly _cells: Cell[];
   private _column: number;
   private _row: number;
   private _rotation: number;
@@ -17,7 +18,8 @@ export default class Block {
   private _isDropping: boolean;
   private _fallTimer: number;
   private _lockTimer: number;
-  private _eventListener: IBlockEventListener;
+  private _eventListener?: IBlockEventListener;
+  private _isAlive: boolean;
 
   constructor(
     playerId: number,
@@ -26,7 +28,7 @@ export default class Block {
     column: number,
     rotation: number,
     gridCells: Cell[][],
-    eventListener: IBlockEventListener
+    eventListener?: IBlockEventListener
   ) {
     this._color = 0x0000ff;
     this._playerId = playerId;
@@ -36,9 +38,13 @@ export default class Block {
     this._layout = layout;
     this._isDropping = false;
     this._eventListener = eventListener;
+    this._cells = [];
+    this._fallTimer = 0;
+    this._lockTimer = 0;
+    this._isAlive = true;
     this._resetTimers();
     this._updateCells(gridCells);
-    this._eventListener.onBlockCreated(this);
+    this._eventListener?.onBlockCreated(this);
   }
 
   get playerId(): number {
@@ -63,6 +69,10 @@ export default class Block {
     return this._lockTimer <= 0;
   }
 
+  get isAlive(): boolean {
+    return this._isAlive;
+  }
+
   // TODO: rename numColumns
   get width(): number {
     // TODO: optimize
@@ -75,6 +85,12 @@ export default class Block {
     // TODO: optimize
     const rotatedLayout = LayoutUtils.rotate(this._layout, this._rotation);
     return rotatedLayout.length;
+  }
+
+  die() {
+    this._isAlive = false;
+    this._removeCells();
+    this._eventListener?.onBlockDied(this);
   }
 
   /**
@@ -108,6 +124,9 @@ export default class Block {
    * @param dr the delta of the rotation.
    */
   canMove(gridCells: Cell[][], dx: number, dy: number, dr: number): boolean {
+    if (!this._isAlive) {
+      return false;
+    }
     let canMove: boolean = true;
     if (!this._isDropping || (dx === 0 && dr === 0)) {
       this._loopCells(
@@ -115,7 +134,7 @@ export default class Block {
         this._column + dx,
         this._row + dy,
         this._rotation + dr,
-        (cell) => (canMove = canMove && cell && cell.isEmpty)
+        (cell) => (canMove = Boolean(canMove && cell && cell.isEmpty))
       );
     } else {
       canMove = false;
@@ -150,8 +169,9 @@ export default class Block {
       this._row += dy;
       this._rotation += dr;
       this._updateCells(gridCells);
+      this._resetTimers();
       if (fireEvent) {
-        this._eventListener.onBlockMoved(this);
+        this._eventListener?.onBlockMoved(this);
       }
     }
     return canMove;
@@ -190,6 +210,9 @@ export default class Block {
    * Timers will be updated, triggering the block to fall or be placed if possible.
    */
   update(gridCells: Cell[][]) {
+    if (!this._isAlive) {
+      return;
+    }
     --this._fallTimer;
 
     let fell = false;
@@ -199,12 +222,17 @@ export default class Block {
 
     if (!fell && this.isReadyToLock) {
       this.place();
-      this._eventListener.onBlockPlaced(this);
+      this._eventListener?.onBlockPlaced(this);
     }
   }
 
+  private _removeCells() {
+    this._cells.forEach((cell) => cell.removeBlock(this));
+    this._cells.length = 0;
+  }
+
   private _updateCells(gridCells: Cell[][]) {
-    this._cells = [];
+    this._removeCells();
     this._loopCells(
       gridCells,
       this._column,
@@ -219,11 +247,12 @@ export default class Block {
     this._lockTimer = this._isDropping ? 0 : 45;
   }
 
-  private _addCell = (cell: Cell | null) => {
+  private _addCell = (cell?: Cell) => {
     if (!cell) {
       throw new Error('Cannot add an empty cell to a block');
     }
     this._cells.push(cell);
+    cell.addBlock(this);
   };
 
   private _loopCells(
@@ -244,10 +273,10 @@ export default class Block {
           const cellColumn =
             (((column + c - centreColumn) % numColumns) + numColumns) %
             numColumns;
-          const gridCell: Cell | null =
+          const gridCell =
             cellRow > -1 && cellRow < gridCells.length
               ? gridCells[cellRow][cellColumn]
-              : null;
+              : undefined;
           cellEvent(gridCell);
         }
       }

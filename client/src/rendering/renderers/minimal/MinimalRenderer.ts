@@ -3,11 +3,12 @@ import * as PIXI from 'pixi.js-legacy';
 import Grid from '@core/grid/Grid';
 import Block from '@core/block/Block';
 import Cell from '@core/grid/cell/Cell';
-import ISimulationEventListener from '@core/ISimulationEventListener';
+import ISimulationEventListener from '@models/ISimulationEventListener';
 import Simulation from '@core/Simulation';
 import Tutorial from 'models/src/Tutorial';
 import Camera from '@src/rendering/Camera';
 import CellType from '@core/grid/cell/CellType';
+import LaserBehaviour from '@core/grid/cell/behaviours/LaserBehaviour';
 
 const minCellSize = 32;
 interface IRenderableGrid {
@@ -31,25 +32,27 @@ interface IPlayerScore {
 
 export default class MinimalRenderer
   implements IRenderer, ISimulationEventListener {
-  private _grid: IRenderableGrid;
-  private _placementHelperShadowContainer: PIXI.Container;
-  private _placementHelperShadows: PIXI.Graphics[];
-  private _app: PIXI.Application;
-  private _world: PIXI.Container;
+  // FIXME: restructure to not require definite assignment
+  private _grid!: IRenderableGrid;
+  private _placementHelperShadowContainer!: PIXI.Container;
+  private _placementHelperShadows!: PIXI.Graphics[];
+  private _app!: PIXI.Application;
+  private _world!: PIXI.Container;
 
-  private _blocks: { [playerId: number]: IRenderableBlock };
-  private _cells: { [cellId: number]: IRenderableCell };
-  private _playerScores: IPlayerScore[];
+  // FIXME: blocks should have their own ids!
+  private _blocks!: { [playerId: number]: IRenderableBlock };
+  private _cells!: { [cellId: number]: IRenderableCell };
+  private _playerScores!: IPlayerScore[];
 
-  private _simulation: Simulation;
+  private _simulation!: Simulation;
 
-  private _camera: Camera;
-  private _gridWidth: number;
-  private _gridHeight: number;
-  private _cellSize: number;
-  private _scrollY: boolean;
-  private _scrollX: boolean;
-  private _shadowCount: number;
+  private _camera!: Camera;
+  private _gridWidth!: number;
+  private _gridHeight!: number;
+  private _cellSize!: number;
+  private _scrollY!: boolean;
+  private _scrollX!: boolean;
+  private _shadowCount!: number;
 
   constructor() {}
 
@@ -75,10 +78,8 @@ export default class MinimalRenderer
   private _tick = () => {
     Object.values(this._cells).forEach((cell) => {
       if (cell.cell.type === CellType.Laser) {
-        cell.graphics.alpha *= 0.99;
-        if (cell.graphics.alpha < 0.01) {
-          cell.graphics.alpha = 1;
-        }
+        const cellBehaviour = cell.cell.behaviour as LaserBehaviour;
+        cell.graphics.alpha = cellBehaviour.alpha;
       }
     });
 
@@ -210,8 +211,19 @@ export default class MinimalRenderer
   /**
    * @inheritdoc
    */
+  onBlockDied(block: Block) {
+    this._removeBlock(block);
+  }
+
+  /**
+   * @inheritdoc
+   */
   onBlockPlaced(block: Block) {
     this._renderCells(block.cells);
+    this._removeBlock(block);
+  }
+
+  private _removeBlock(block: Block) {
     this._world.removeChild(
       ...this._blocks[block.playerId].cells.map((c) => c.graphics)
     );
@@ -237,13 +249,25 @@ export default class MinimalRenderer
         this._playerScores[i].text.text = '';
       }
     }
+
+    // FIXME: remove. When a block dies, it's gone
+    /*Object.values(this._blocks).forEach((block) => {
+      if (!block.block.isAlive) {
+        block.cells.forEach((cell) => (cell.graphics.alpha *= 0.99));
+        if (this._simulation.isFollowingPlayerId(block.block.playerId)) {
+          this._placementHelperShadows.forEach(
+            (shadow) => (shadow.alpha *= 0.99)
+          );
+        }
+      }
+    });*/
   }
 
   /**
    * @inheritdoc
    */
   onLineCleared(row: number) {
-    this._renderCells([].concat.apply([], this._grid.grid.cells), true);
+    this._renderCells(this._grid.grid.reducedCells, true);
   }
 
   private _getCellSize = () => {
@@ -322,7 +346,7 @@ export default class MinimalRenderer
         }
       }
 
-      this._renderCells([].concat.apply([], this._grid.grid.cells));
+      this._renderCells(this._grid.grid.reducedCells);
 
       for (const block of Object.values(this._blocks)) {
         this._renderBlock(block.block);

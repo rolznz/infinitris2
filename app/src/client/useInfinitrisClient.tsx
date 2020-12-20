@@ -1,10 +1,10 @@
-import { InfinitrisApi } from 'infinitris2-models';
+import { IInfinitrisApi } from 'infinitris2-models';
 import { useEffect } from 'react';
 import useAppStore from '../state/AppStore';
 
 declare global {
   interface Window {
-    infinitris2: InfinitrisApi;
+    infinitris2: IInfinitrisApi;
   }
 }
 

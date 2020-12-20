@@ -1,14 +1,15 @@
 const cameraDrag = 0.25;
 const cameraSpeed = 0.01;
 export default class Camera {
-  x: number;
-  y: number;
-  private _vx: number;
-  private _vy: number;
-  private _dx: number;
-  private _dy: number;
-  private _followingId: number;
-  private _gridWidth: number;
+  // FIXME: restructure to not require definite assignment
+  x!: number;
+  y!: number;
+  private _vx!: number;
+  private _vy!: number;
+  private _dx!: number;
+  private _dy!: number;
+  private _followingId?: number;
+  private _gridWidth!: number;
   constructor() {
     this.reset();
   }
@@ -18,7 +19,7 @@ export default class Camera {
   }
 
   reset() {
-    this._followingId = null;
+    this._followingId = undefined;
     this.x = 0;
     this.y = 0;
     this._vx = 0;

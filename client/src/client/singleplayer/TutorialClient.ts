@@ -6,18 +6,19 @@ import Grid from '@core/grid/Grid';
 import Input from '@src/input/Input';
 import IClient from '../Client';
 import Tutorial from '../../../../models/src/Tutorial';
-import ISimulationEventListener from '@core/ISimulationEventListener';
+import ISimulationEventListener from '@models/ISimulationEventListener';
 import Block from '@core/block/Block';
 import CellType from '@core/grid/cell/CellType';
 
 export default class TutorialClient
   implements IClient, ISimulationEventListener {
-  private _renderer: IRenderer;
-  private _simulation: Simulation;
-  private _tutorial: Tutorial;
-  private _input: Input;
-  constructor(tutorial?: Tutorial) {
-    this._create(tutorial);
+  // FIXME: restructure to not require definite assignment
+  private _renderer!: IRenderer;
+  private _simulation!: Simulation;
+  private _tutorial!: Tutorial;
+  private _input!: Input;
+  constructor(tutorial: Tutorial, listener?: ISimulationEventListener) {
+    this._create(tutorial, listener);
   }
 
   /**
@@ -36,17 +37,13 @@ export default class TutorialClient
   /**
    * @inheritdoc
    */
-  onBlockPlaced(block: Block) {
-    /*if (this._tutorial) {
-      this._simulation.stopInterval();
-      this._input.destroy();
+  onBlockPlaced(block: Block) {}
 
-      // FIXME: on block placed, check if line clear was triggered?
-      // line clear should be delayed, 1 s + colors changing
-      const success = this._simulation.getPlayer(block.playerId).score > 0;
-      //this._listeners.
-    }*/
-  }
+  /**
+   * @inheritdoc
+   */
+  onBlockDied(block: Block) {}
+
   /**
    * @inheritdoc
    */
@@ -65,28 +62,33 @@ export default class TutorialClient
     this._input.destroy();
   }
 
-  private async _create(tutorial: Tutorial) {
+  private async _create(
+    tutorial: Tutorial,
+    listener?: ISimulationEventListener
+  ) {
     this._tutorial = tutorial;
     this._renderer = new MinimalRenderer();
     await this._renderer.create();
 
-    let cellTypes: CellType[][] = null;
+    const cellTypes: CellType[][] = [];
     if (tutorial.grid) {
-      cellTypes = tutorial.grid
-        .split('\n')
-        .map((row) => row.trim())
-        .filter((row) => row && !row.startsWith('//'))
-        .map((row) => row.split('').map((c) => c as CellType));
+      cellTypes.push(
+        ...tutorial.grid
+          .split('\n')
+          .map((row) => row.trim())
+          .filter((row) => row && !row.startsWith('//'))
+          .map((row) => row.split('').map((c) => c as CellType))
+      );
       if (cellTypes.find((r) => r.length !== cellTypes[0].length)) {
         throw new Error('Invalid tutorial grid: ' + tutorial.title);
       }
     }
 
     const grid = new Grid(
-      cellTypes ? cellTypes[0].length : undefined,
-      cellTypes ? cellTypes.length : undefined
+      cellTypes.length ? cellTypes[0].length : undefined,
+      cellTypes.length ? cellTypes.length : undefined
     );
-    if (cellTypes) {
+    if (cellTypes.length) {
       for (let r = 0; r < grid.cells.length; r++) {
         for (let c = 0; c < grid.cells[0].length; c++) {
           const cell = grid.cells[r][c];
@@ -98,6 +100,9 @@ export default class TutorialClient
 
     this._simulation = new Simulation(grid);
     this._simulation.addEventListener(this, this._renderer);
+    if (listener) {
+      this._simulation.addEventListener(listener);
+    }
 
     this._simulation.init();
     const playerId = 0;

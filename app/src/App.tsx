@@ -9,6 +9,12 @@ import useAppStore from './state/AppStore';
 import { Box, ThemeProvider } from '@material-ui/core';
 import LobbyPage from './components/pages/LobbyPage';
 import theme from './theme';
+import WelcomePage from './components/pages/WelcomePage';
+import Routes from './models/Routes';
+import SinglePlayerPage from './components/pages/SinglePlayerPage';
+import TutorialPage from './components/pages/TutorialPage';
+import TutorialRequiredPage from './components/pages/TutorialRequiredPage';
+import AllSetPage from './components/pages/AllSetPage';
 
 function App() {
   useInfinitrisClient();
@@ -16,32 +22,57 @@ function App() {
   if (!appStore.clientApi) {
     return null;
   }
+
+  const outsideGamePaths = ['/', '/lobby'];
+  function OutsideGameElement(props: React.PropsWithChildren<{}>) {
+    return (
+      <Switch>
+        {outsideGamePaths.map((path) => (
+          <Route key={path} exact path={path}>
+            {props.children}
+          </Route>
+        ))}
+      </Switch>
+    );
+  }
+
+  // TODO: move router to new file
   return (
     <ThemeProvider theme={theme}>
       <Box className="App" display="flex" flexDirection="column" height="100%">
         <Router>
-          <Route
-            render={({ location }) =>
-              location.pathname.indexOf('/rooms') === 0 ? null : <Header />
-            }
-          />
+          <OutsideGameElement>
+            <Header />
+          </OutsideGameElement>
           <Switch>
-            <Route exact path="/">
+            <Route exact path={Routes.home}>
               <HomePage />
             </Route>
-            <Route exact path="/lobby">
+            <Route exact path={Routes.welcome}>
+              <WelcomePage />
+            </Route>
+            <Route exact path={Routes.tutorialRequired}>
+              <TutorialRequiredPage />
+            </Route>
+            <Route exact path={Routes.allSet}>
+              <AllSetPage />
+            </Route>
+            <Route exact path={Routes.lobby}>
               <LobbyPage />
             </Route>
-            <Route path="/rooms/:id">
+            <Route exact path={Routes.singlePlayer}>
+              <SinglePlayerPage />
+            </Route>
+            <Route exact path={`${Routes.tutorials}/:id`}>
+              <TutorialPage />
+            </Route>
+            <Route path={`${Routes.rooms}/:id`}>
               <RoomPage />
             </Route>
           </Switch>
-
-          <Route
-            render={({ location }) =>
-              location.pathname.indexOf('/rooms') === 0 ? null : <Footer />
-            }
-          />
+          <OutsideGameElement>
+            <Footer />
+          </OutsideGameElement>
         </Router>
       </Box>
     </ThemeProvider>

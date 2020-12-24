@@ -3,6 +3,7 @@ import tetrominoes from '../Tetrominoes';
 import Tutorial from '../Tutorial';
 
 const wrapTest: Tutorial = {
+  id: 'wrap-test',
   title: 'Wrap Test',
   description: '',
   highlightScore: true,

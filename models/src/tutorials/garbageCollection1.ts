@@ -2,6 +2,7 @@ import tetrominoes from '../Tetrominoes';
 import Tutorial from '../Tutorial';
 
 const garbageCollection1: Tutorial = {
+  id: 'garbage-collection-1',
   title: 'Garbage Collection 1',
   description: '',
   highlightScore: true,

@@ -10,14 +10,9 @@ import Loader from 'react-loader-spinner';
 import SignalCellularConnectedNoInternet0BarIcon from '@material-ui/icons/SignalCellularConnectedNoInternet0Bar';
 import HomeIcon from '@material-ui/icons/Home';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import {
-  IClientSocketEventListener,
-  tutorials,
-  Room,
-  IBlock,
-  ISimulationEventListener,
-  ISimulation,
-} from 'infinitris2-models';
+import { IClientSocketEventListener, Room } from 'infinitris2-models';
+import useWelcomeRedirect from '../hooks/useWelcomeRedirect';
+import useReleaseClient from '../hooks/useReleaseClient';
 
 interface RoomPageRouteParams {
   id: string;
@@ -36,34 +31,9 @@ const socketEventListener: IClientSocketEventListener = {
   onMessage: () => {},
 };
 
-function checkTutorialFinished() {
-  //this._simulation.stopInterval();
-  //this._input.destroy();
-  // FIXME: on block placed, check if line clear was triggered?
-  // line clear should be delayed, 1 s + colors changing
-  //const success = this._simulation.getPlayer(block.playerId).score > 0;
-  //this._listeners.
-  alert('Tutorial finished');
-}
-
-const simulationEventListener: ISimulationEventListener = {
-  onSimulationInit(simulation: ISimulation) {},
-  onSimulationStep(simulation: ISimulation) {},
-
-  onBlockCreated(block: IBlock) {},
-
-  onBlockPlaced(block: IBlock) {
-    checkTutorialFinished();
-  },
-  onBlockDied(block: IBlock) {
-    checkTutorialFinished();
-  },
-  onBlockMoved(block: IBlock) {},
-  onLineCleared(row: number) {},
-};
-
 export default function RoomPage() {
-  const client = useAppStore((store) => store.clientApi);
+  const appStore = useAppStore();
+  const client = appStore.clientApi;
   const [
     connected,
     setConnected,
@@ -76,45 +46,45 @@ export default function RoomPage() {
     store.setDisconnected,
   ]);
   const { id } = useParams<RoomPageRouteParams>();
-  const isTutorial = true; // FIXME: check id starts with tutorial/
-  const isSinglePlayer = id === 'singleplayer' || isTutorial;
+
   const [room, loadingRoom] = useDocumentData<Room>(
-    !isSinglePlayer ? firebase.firestore().doc(`rooms/${id}`) : undefined
+    firebase.firestore().doc(`rooms/${id}`)
   );
   const [retryCount, setRetryCount] = useState(0);
   const roomUrl = room?.url;
+  const requiresRedirect = useWelcomeRedirect();
+  const [hasLaunched, setLaunched] = useState(false);
 
   useEffect(() => {
-    if (disconnected || !client || (!isSinglePlayer && !roomUrl)) {
+    if (
+      requiresRedirect ||
+      disconnected ||
+      !client ||
+      !roomUrl ||
+      hasLaunched
+    ) {
       return;
     }
-    if (isTutorial) {
-      client.launchTutorial(tutorials[0], simulationEventListener);
-    } else if (isSinglePlayer) {
-      client.launchSinglePlayer();
-    } else {
-      client.launchNetworkClient(roomUrl as string, socketEventListener);
-    }
+    setLaunched(true);
+    client.launchNetworkClient(roomUrl as string, socketEventListener);
   }, [
     disconnected,
     retryCount,
     roomUrl,
-    isSinglePlayer,
-    isTutorial,
     client,
     setConnected,
+    requiresRedirect,
+    hasLaunched,
   ]);
 
   useEffect(() => {
     setDisconnected(false);
     setConnected(false);
-    return () => {
-      client?.releaseClient();
-      client?.launchDemo();
-    };
-  }, [client, setConnected, setDisconnected]);
+  }, [setConnected, setDisconnected]);
 
-  if (connected || isSinglePlayer) {
+  useReleaseClient();
+
+  if (connected) {
     return null;
   }
 

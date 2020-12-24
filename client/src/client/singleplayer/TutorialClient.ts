@@ -9,6 +9,7 @@ import Tutorial from '../../../../models/src/Tutorial';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import Block from '@core/block/Block';
 import CellType from '@core/grid/cell/CellType';
+import { InputAction } from 'models';
 
 export default class TutorialClient
   implements IClient, ISimulationEventListener {
@@ -17,6 +18,8 @@ export default class TutorialClient
   private _simulation!: Simulation;
   private _tutorial!: Tutorial;
   private _input!: Input;
+  private _allowedActions?: InputAction[];
+
   constructor(tutorial: Tutorial, listener?: ISimulationEventListener) {
     this._create(tutorial, listener);
   }
@@ -85,8 +88,8 @@ export default class TutorialClient
     }
 
     const grid = new Grid(
-      cellTypes.length ? cellTypes[0].length : undefined,
-      cellTypes.length ? cellTypes.length : undefined
+      cellTypes.length ? cellTypes[0].length : tutorial.gridNumColumns,
+      cellTypes.length ? cellTypes.length : tutorial.gridNumRows
     );
     if (cellTypes.length) {
       for (let r = 0; r < grid.cells.length; r++) {
@@ -98,20 +101,54 @@ export default class TutorialClient
       }
     }
 
-    this._simulation = new Simulation(grid);
+    this._simulation = new Simulation(grid, tutorial.simulationSettings);
     this._simulation.addEventListener(this, this._renderer);
     if (listener) {
       this._simulation.addEventListener(listener);
     }
 
-    this._simulation.init();
     const playerId = 0;
     const player = new ControllablePlayer(playerId, this._simulation);
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);
     player.nextLayout = tutorial.layout;
     player.nextLayoutRotation = tutorial.layoutRotation;
+
+    this._input = new Input(this._simulation, player, undefined);
+    this._renderer.virtualKeyboardControls = this._input.controls;
+    this._updateAllowedActions(tutorial.allowedActions);
+
+    if (tutorial.teachControls) {
+      this._teachNextControl();
+      this._input.addListener(
+        (action) =>
+          (this._allowedActions as InputAction[]).indexOf(action) >= 0 &&
+          this._teachNextControl()
+      );
+    }
+
+    this._simulation.init();
     this._simulation.step();
-    this._input = new Input(this._simulation, player, undefined, tutorial);
+  }
+
+  private _updateAllowedActions(allowedActions?: InputAction[]) {
+    this._allowedActions = allowedActions;
+    this._input.allowedActions = allowedActions;
+    this._renderer.allowedActions = allowedActions;
+  }
+
+  private _teachNextControl() {
+    if (!this._allowedActions) {
+      return;
+    }
+    const nextAction =
+      this._allowedActions.length === 0
+        ? InputAction.MoveLeft
+        : ((this._allowedActions[0] + 1) as InputAction);
+    if (nextAction > InputAction.Drop) {
+      // TODO: finish tutorial
+    } else {
+      this._updateAllowedActions([nextAction]);
+    }
   }
 }

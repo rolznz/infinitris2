@@ -1,8 +1,9 @@
-import ISimulationEventListener from '../../models/src/ISimulationEventListener';
 import Grid from './grid/Grid';
 import Player from './player/Player';
 import Block from './block/Block';
 import ISimulation from '@models/ISimulation';
+import ISimulationEventListener from '@models/ISimulationEventListener';
+import ISimulationSettings from '@models/ISimulationSettings';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -15,12 +16,14 @@ export default class Simulation implements ISimulation {
   private _grid: Grid;
   private _eventListeners: ISimulationEventListener[];
   private _interval?: NodeJS.Timeout;
+  private _settings: ISimulationSettings;
 
-  constructor(grid: Grid) {
+  constructor(grid: Grid, settings: ISimulationSettings = {}) {
     this._eventListeners = [];
     this._players = {};
     this._grid = grid;
     this._grid.addEventListener(this);
+    this._settings = settings;
   }
 
   get grid(): Grid {
@@ -33,6 +36,10 @@ export default class Simulation implements ISimulation {
 
   get players(): Player[] {
     return Object.values(this._players);
+  }
+
+  get settings(): ISimulationSettings {
+    return this._settings;
   }
 
   getPlayer(playerId: number) {
@@ -161,6 +168,6 @@ export default class Simulation implements ISimulation {
   };
 
   private _updatePlayer = (player: Player) => {
-    player.update(this._grid.cells);
+    player.update(this._grid.cells, this._settings);
   };
 }

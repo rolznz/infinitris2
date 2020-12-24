@@ -3,12 +3,15 @@ import tetrominoes from '../Tetrominoes';
 import Tutorial from '../Tutorial';
 
 const basicMovement: Tutorial = {
+  id: 'movement-1',
   title: 'Basic Movement',
   description: '',
   highlightScore: true,
   layout: tetrominoes.L,
   layoutRotation: 1,
   successLinesCleared: [2],
+  mandatory: true,
+  priority: 9000,
   //successActions: [] // TODO: hint when drop is not used
   grid: `
 // first room - move right

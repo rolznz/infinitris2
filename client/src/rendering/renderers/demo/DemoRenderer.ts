@@ -31,6 +31,7 @@ export default class DemoRenderer implements IRenderer {
       resizeTo: window,
       transparent: true,
     });
+    this._app.view.classList.add('demo');
     document.body.appendChild(this._app.view);
 
     this._app.loader.add(`${imagesDirectory}/bg.png`);

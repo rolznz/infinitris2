@@ -1,7 +1,11 @@
+import { InputMethod } from 'infinitris2-models';
+
 const userKey = 'user';
 
 export default interface User {
+  readonly hasSeenWelcome: boolean;
   readonly nickname: string;
+  readonly preferredInputMethod?: InputMethod;
   readonly completedTutorialIds: string[];
 }
 

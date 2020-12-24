@@ -2,6 +2,7 @@ import tetrominoes from '../Tetrominoes';
 import Tutorial from '../Tutorial';
 
 const shadowTest: Tutorial = {
+  id: 'shadow-test',
   title: 'Shadow Test',
   description: '',
   highlightScore: true,

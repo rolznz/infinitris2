@@ -2,7 +2,8 @@ import tetrominoes from '../Tetrominoes';
 import Tutorial from '../Tutorial';
 
 const fireTest: Tutorial = {
-  title: 'Movement 1',
+  id: 'fire-test',
+  title: 'Fire Test',
   description: '',
   highlightScore: true,
   layout: tetrominoes.T,

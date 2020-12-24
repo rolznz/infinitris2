@@ -22,7 +22,7 @@ export default class InfinitrisApi implements IInfinitrisApi {
    *  - single-player=true Launch the game in single player mode
    *  - url=ws%3A%2F%2F127.0.0.1%3A9001 Connect to the websocket server running at this url
    */
-  loadUrl(url: string) {
+  loadUrl = (url: string) => {
     const params = new URLSearchParams(url.substring(url.indexOf('?') + 1));
     if (params.has('single-player')) {
       this.launchSinglePlayer();
@@ -35,57 +35,63 @@ export default class InfinitrisApi implements IInfinitrisApi {
     } else {
       this._invalidUrl(url);
     }
-  }
+  };
 
   /**
    * Runs the game in demo mode.
    */
-  launchDemo() {
+  launchDemo = () => {
     this.releaseClient();
     this._client = new DemoClient();
-  }
+  };
 
   /**
    * Runs the game in single player mode with no connection to a server.
    */
-  launchSinglePlayer() {
+  launchSinglePlayer = () => {
     this.releaseClient();
     this._client = new SinglePlayerClient();
-  }
+  };
 
   /**
-   * Runs the game in single player mode with no connection to a server.
+   * Runs the game in tutorial mode with no connection to a server.
    */
-  launchTutorial(tutorial: Tutorial, listener?: ISimulationEventListener) {
+  launchTutorial = (
+    tutorial: Tutorial,
+    listener?: ISimulationEventListener
+  ) => {
     this.releaseClient();
     this._client = new TutorialClient(tutorial, listener);
-  }
+  };
 
   /**
    * Launches the client in multiplayer mode and connects to a server.
    * @param url the url of the websocket server to connect to.
    */
-  launchNetworkClient(url: string, listener?: IClientSocketEventListener) {
+  launchNetworkClient = (
+    url: string,
+    listener?: IClientSocketEventListener
+  ) => {
     this.releaseClient();
     this._client = new NetworkClient(url, listener);
-  }
+  };
 
   /**
    * Closes any connections and releases any resources used by the client.
    */
-  releaseClient() {
+  releaseClient = () => {
     if (this._client) {
       this._client.destroy();
     }
     this._client = undefined;
-  }
+  };
 
   /**
    * Returns the client app version.
    */
-  getVersion(): string {
+  getVersion = (): string => {
     return __VERSION__;
-  }
+  };
 
   private _invalidUrl(url: string) {
     console.error('Invalid URL: ', url);

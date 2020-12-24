@@ -1,5 +1,6 @@
 import IBlock from '@models/IBlock';
 import IBlockEventListener from '@models/IBlockEventListener';
+import ISimulationSettings from '@models/ISimulationSettings';
 import Layout from '@models/Layout';
 import Cell from '../grid/cell/Cell';
 import CellType from '../grid/cell/CellType';
@@ -209,11 +210,13 @@ export default class Block implements IBlock {
    *
    * Timers will be updated, triggering the block to fall or be placed if possible.
    */
-  update(gridCells: Cell[][]) {
+  update(gridCells: Cell[][], simulationSettings: ISimulationSettings) {
     if (!this._isAlive) {
       return;
     }
-    --this._fallTimer;
+    if (simulationSettings.gravityEnabled) {
+      --this._fallTimer;
+    }
 
     let fell = false;
     if (this.isReadyToFall) {

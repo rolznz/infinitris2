@@ -3,6 +3,7 @@ import Cell from '../grid/cell/Cell';
 import Layout from '@models/Layout';
 import tetrominoes from '@models/Tetrominoes';
 import IBlockEventListener from '@models/IBlockEventListener';
+import ISimulationSettings from '@models/ISimulationSettings';
 
 export default abstract class Player implements IBlockEventListener {
   private _id: number;
@@ -49,7 +50,7 @@ export default abstract class Player implements IBlockEventListener {
    *
    * @param gridCells The cells within the grid.
    */
-  update(gridCells: Cell[][]) {
+  update(gridCells: Cell[][], simulationSettings: ISimulationSettings) {
     if (!this._block) {
       const layout =
         this._nextLayout ||
@@ -64,7 +65,7 @@ export default abstract class Player implements IBlockEventListener {
       this._block = new Block(
         this._id,
         layout,
-        0,
+        simulationSettings.spawnRowOffset || 0,
         column,
         this._nextLayoutRotation || 0,
         gridCells,
@@ -72,7 +73,7 @@ export default abstract class Player implements IBlockEventListener {
       );
       this._nextLayoutRotation = undefined;
     } else {
-      this._block.update(gridCells);
+      this._block.update(gridCells, simulationSettings);
     }
   }
 

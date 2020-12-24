@@ -8,6 +8,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import Room from 'infinitris2-models/src/Room';
 import useHomeStore from '../../state/HomeStore';
 import RoomCard from '../RoomCard';
+import Routes from '../../models/Routes';
 
 export default function LobbyPage() {
   const [rooms, loading] = useCollectionData<Room>(
@@ -34,7 +35,7 @@ export default function LobbyPage() {
                   component={RouterLink}
                   key={room.id}
                   underline="none"
-                  to="/"
+                  to={Routes.home}
                   onClick={() => homeStore.setSelectedRoom(room)}
                   style={{ marginBottom: 2 }}
                 >

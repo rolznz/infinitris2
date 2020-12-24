@@ -9,6 +9,8 @@ import Tutorial from 'models/src/Tutorial';
 import Camera from '@src/rendering/Camera';
 import CellType from '@core/grid/cell/CellType';
 import LaserBehaviour from '@core/grid/cell/behaviours/LaserBehaviour';
+import ControlSettings from '@src/input/ControlSettings';
+import { InputAction } from 'models';
 
 const minCellSize = 32;
 interface IRenderableGrid {
@@ -36,6 +38,8 @@ export default class MinimalRenderer
   private _grid!: IRenderableGrid;
   private _placementHelperShadowContainer!: PIXI.Container;
   private _placementHelperShadows!: PIXI.Graphics[];
+  private _virtualKeyboardGraphics?: PIXI.Graphics;
+  private _virtualKeyboardCharacters!: PIXI.Text[];
   private _app!: PIXI.Application;
   private _world!: PIXI.Container;
 
@@ -53,8 +57,21 @@ export default class MinimalRenderer
   private _scrollY!: boolean;
   private _scrollX!: boolean;
   private _shadowCount!: number;
+  private _virtualKeyboardControls?: ControlSettings;
+  private _allowedActions?: InputAction[];
 
   constructor() {}
+
+  set virtualKeyboardControls(
+    virtualKeyboardControls: ControlSettings | undefined
+  ) {
+    this._virtualKeyboardControls = virtualKeyboardControls;
+  }
+
+  set allowedActions(allowedActions: InputAction[] | undefined) {
+    this._allowedActions = allowedActions;
+    this._renderVirtualKeyboard();
+  }
 
   /**
    * @inheritdoc
@@ -182,6 +199,25 @@ export default class MinimalRenderer
 
     this._app.stage.addChild(...this._playerScores.map((score) => score.text));
 
+    if (this._virtualKeyboardControls) {
+      this._virtualKeyboardGraphics = new PIXI.Graphics();
+      this._app.stage.addChild(this._virtualKeyboardGraphics);
+
+      this._virtualKeyboardCharacters = Array.from(
+        this._virtualKeyboardControls.values()
+      ).map(
+        (_) =>
+          new PIXI.Text('', {
+            font: 'bold italic 60px Arvo',
+            fill: '#444444',
+            align: 'center',
+            stroke: '#000000',
+            strokeThickness: 7,
+          })
+      );
+      this._app.stage.addChild(...this._virtualKeyboardCharacters);
+    }
+
     this._resize();
   }
 
@@ -289,6 +325,8 @@ export default class MinimalRenderer
     const cellSize = this._getClampedCellSize();
     this._cellSize = cellSize;
 
+    this._renderVirtualKeyboard();
+
     if (this._grid) {
       this._grid.graphics.clear();
 
@@ -388,13 +426,12 @@ export default class MinimalRenderer
 
   private _renderBlock(block: Block) {
     const renderableBlock: IRenderableBlock = this._blocks[block.playerId];
+    this._moveBlock(block);
 
     renderableBlock.cells.forEach((cell) => {
       cell.graphics.clear();
       this._renderCellAt(cell.graphics, 0, 0, 1, block.color);
     });
-
-    this._moveBlock(block);
   }
 
   private _moveBlock(block: Block) {
@@ -495,5 +532,74 @@ export default class MinimalRenderer
         this._renderCellAt(shadowGraphics, 0, y * cellSize, 0.33, block.color);
       }
     });
+  }
+
+  private _getKeySymbol(key: string): string {
+    switch (key) {
+      case 'ArrowLeft':
+        return '←';
+      case 'ArrowRight':
+        return '→';
+      case 'ArrowUp':
+        return '↑';
+      case 'ArrowDown':
+        return '↓';
+      default:
+        return key;
+    }
+  }
+
+  private _renderVirtualKeyboardKey(
+    inputAction: InputAction,
+    column: number,
+    row: number,
+    left: boolean = false
+  ) {
+    if (!this._virtualKeyboardControls || !this._virtualKeyboardGraphics) {
+      return;
+    }
+    const key = this._virtualKeyboardControls.get(inputAction);
+    const alpha =
+      !this._allowedActions || this._allowedActions.indexOf(inputAction) >= 0
+        ? 1
+        : 0.5;
+    const keySize = this._app.renderer.width * 0.05;
+    const cols = 3.5;
+    const rows = 2.5;
+    const keyPadding = keySize * 0.1;
+
+    const x =
+      column * keySize + (left ? 0 : this._app.renderer.width - cols * keySize);
+    const y = this._app.renderer.height - (rows - row) * keySize;
+    const character = this._virtualKeyboardCharacters[inputAction];
+    character.text = this._getKeySymbol(key as string);
+    character.x = x + keySize * 0.5;
+    character.y = y + keySize * 0.5;
+    character.anchor.x = 0.5;
+    character.anchor.y = 0.5;
+    character.alpha = alpha;
+
+    this._virtualKeyboardGraphics.beginFill(0xffffff, alpha);
+    this._virtualKeyboardGraphics.drawRect(
+      x + keyPadding,
+      y + keyPadding,
+      keySize - keyPadding * 2,
+      keySize - keyPadding * 2
+    );
+    this._virtualKeyboardGraphics.beginFill(0x000000);
+  }
+
+  private _renderVirtualKeyboard() {
+    if (!this._virtualKeyboardGraphics) {
+      return;
+    }
+    this._virtualKeyboardGraphics.clear();
+
+    this._renderVirtualKeyboardKey(InputAction.RotateAntiClockwise, 1, 0, true);
+    this._renderVirtualKeyboardKey(InputAction.RotateClockwise, 2, 0, true);
+    this._renderVirtualKeyboardKey(InputAction.Drop, 1, 0);
+    this._renderVirtualKeyboardKey(InputAction.MoveDown, 1, 1);
+    this._renderVirtualKeyboardKey(InputAction.MoveLeft, 0, 1);
+    this._renderVirtualKeyboardKey(InputAction.MoveRight, 2, 1);
   }
 }

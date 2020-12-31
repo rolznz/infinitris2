@@ -11,11 +11,10 @@ import ISimulationSettings from './src/ISimulationSettings';
 import Layout from './src/Layout';
 import Room from './src/Room';
 import tetrominoes from './src/Tetrominoes';
-import Tutorial, { coreTutorials, tutorials } from './src/Tutorial';
+import Tutorial, { tutorials } from './src/Tutorial';
 
 export {
   tutorials,
-  coreTutorials,
   Tutorial,
   InputAction,
   Layout,

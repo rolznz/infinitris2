@@ -1,4 +1,3 @@
-import InputAction from '../InputAction';
 import tetrominoes from '../Tetrominoes';
 import Tutorial from '../Tutorial';
 
@@ -6,6 +5,7 @@ const basicMovement: Tutorial = {
   id: 'movement-1',
   title: 'Basic Movement',
   description: '',
+  locale: 'en',
   highlightScore: true,
   layout: tetrominoes.L,
   layoutRotation: 1,
@@ -149,6 +149,11 @@ LLLLLLLLLLLLLLLLLLLLLLLLLLLLL
 XXXXXXXXXXXXX000XXXXXXXXXXXXX
 XXXXXXXXXXXXX0XXXXXXXXXXXXXXX
 `,
+  translations: {
+    th: {
+      title: 'การเคลื่อนไหวขั้นพื้นฐาน',
+    },
+  },
 };
 
 export default basicMovement;

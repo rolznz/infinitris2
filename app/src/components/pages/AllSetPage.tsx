@@ -1,28 +1,26 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 
-import { useKeyPress } from 'react-use';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
-import useTapListener from '../hooks/useTapListener';
 import useAppStore from '../../state/AppStore';
+import useReceivedInput from '../hooks/useReceivedInput';
+import Lottie from 'lottie-react';
+import rocketAnimation from '../lottie/rocket.json';
+import FlexBox from '../layout/FlexBox';
+import ContinueHint from '../ContinueHint';
+import { FormattedMessage } from 'react-intl';
+import useDemo from '../hooks/useDemo';
 
 export default function AllSetPage() {
-  const [hasReceivedInput, setHasReceivedInput] = React.useState(false);
+  useDemo();
+  const [hasReceivedInput] = useReceivedInput();
   const history = useHistory();
-  const [isAnyKeyPressed] = useKeyPress((event) => Boolean(event.key));
-  const [hasTapped, TapListener] = useTapListener();
   const appStore = useAppStore();
   const returnToUrl = appStore.returnToUrl;
   const setReturnToUrl = appStore.setReturnToUrl;
   const [hasRedirected, setHasRedirected] = useState(false);
   const destinationUrl = returnToUrl || Routes.home;
-
-  // TODO: move into useReceivedInput
-  // TODO: also add delay
-  if ((hasTapped || isAnyKeyPressed) && !hasReceivedInput) {
-    setHasReceivedInput(true);
-  }
 
   useEffect(() => {
     if (hasReceivedInput && !hasRedirected) {
@@ -40,21 +38,25 @@ export default function AllSetPage() {
 
   return (
     <>
-      <TapListener />
-      <Box
-        flex={1}
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Typography>
-          Woohoo! All mandatory tutorials have been completed!
+      <FlexBox flex={1}>
+        <Typography align="center">
+          <FormattedMessage
+            defaultMessage="Woohoo! All required tutorials have been completed!"
+            description="All required tutorials have been completed"
+          />
         </Typography>
-        {<Typography>You will now be going to {destinationUrl}</Typography>}
-        {/* TODO: Play more tutorials button */}
-        <Typography>Tap or press any key to continue.</Typography>
-      </Box>
+        {/*TODO: show destination name (need to retrieve room from URL) destinationUrl !== Routes.home && (
+          <Typography>You will now be going to </Typography>
+        )*/}
+
+        <Lottie animationData={rocketAnimation} loop={false} />
+
+        <ContinueHint />
+
+        {/*TODO: <Typography>
+          You can play more tutorials at any time from the main menu.
+        </Typography>*/}
+      </FlexBox>
     </>
   );
 }

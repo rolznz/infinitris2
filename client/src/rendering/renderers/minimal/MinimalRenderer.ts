@@ -5,7 +5,6 @@ import Block from '@core/block/Block';
 import Cell from '@core/grid/cell/Cell';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import Simulation from '@core/Simulation';
-import Tutorial from 'models/src/Tutorial';
 import Camera from '@src/rendering/Camera';
 import CellType from '@core/grid/cell/CellType';
 import LaserBehaviour from '@core/grid/cell/behaviours/LaserBehaviour';
@@ -56,6 +55,7 @@ export default class MinimalRenderer
   private _cellSize!: number;
   private _scrollY!: boolean;
   private _scrollX!: boolean;
+  private _hasShadows!: boolean;
   private _shadowCount!: number;
   private _virtualKeyboardControls?: ControlSettings;
   private _allowedActions?: InputAction[];
@@ -103,7 +103,7 @@ export default class MinimalRenderer
     if (!this._scrollX && !this._scrollY) {
       return;
     }
-    const visibilityX = this._app.renderer.width * 0.5;
+    const visibilityX = this._getVisiblityX();
     const visibilityY = this._app.renderer.height * 0.125;
     this._camera.update();
 
@@ -125,7 +125,9 @@ export default class MinimalRenderer
 
     if (this._scrollX) {
       this._grid.graphics.x = (this._camera.x + visibilityX) % this._cellSize;
-      this._wrapObjects(visibilityX);
+      if (!this._hasShadows) {
+        this._wrapObjects();
+      }
     }
     if (this._scrollY) {
       this._grid.graphics.y =
@@ -133,19 +135,18 @@ export default class MinimalRenderer
     }
   };
 
-  private _wrapObjects(visibilityX: number) {
-    this._placementHelperShadows.forEach((shadow) =>
-      this._wrapObject(shadow, visibilityX)
-    );
+  private _wrapObjects() {
+    this._placementHelperShadows.forEach((shadow) => this._wrapObject(shadow));
     this._world.children.forEach((child) => {
       if (child === this._placementHelperShadowContainer) {
         return;
       }
-      this._wrapObject(child, visibilityX);
+      this._wrapObject(child);
     });
   }
 
-  private _wrapObject(child: PIXI.DisplayObject, visibilityX: number) {
+  private _wrapObject(child: PIXI.DisplayObject) {
+    const visibilityX = this._getVisiblityX();
     if (child.x + this._cellSize < -this._camera.x - visibilityX) {
       child.x += this._gridWidth;
     } else if (
@@ -334,12 +335,13 @@ export default class MinimalRenderer
       this._gridWidth = gridWidth;
       const gridHeight = this._grid.grid.numRows * cellSize;
       this._gridHeight = gridHeight;
-      this._scrollX = gridWidth > appWidth;
+      this._scrollX = true;
+      this._hasShadows = gridWidth < appWidth;
       this._scrollY = gridHeight > appHeight;
 
-      this._shadowCount = this._scrollX
-        ? 0
-        : Math.ceil(Math.floor(appWidth / gridWidth) / 2);
+      this._shadowCount = this._hasShadows
+        ? Math.ceil(Math.floor(appWidth / gridWidth) / 2)
+        : 0;
 
       this._camera.gridWidth = gridWidth;
 
@@ -357,31 +359,15 @@ export default class MinimalRenderer
         ? Math.ceil(appWidth / cellSize)
         : this._grid.grid.numColumns;
 
-      for (
-        let shadowIndex = -this._shadowCount;
-        shadowIndex <= this._shadowCount;
-        shadowIndex++
-      ) {
-        this._grid.graphics.lineStyle(
-          1,
-          0xaaaaaa,
-          0.5 / (Math.abs(shadowIndex) * 0.5 + 1)
-        );
-        for (let r = 0; r < gridRows + 1; r++) {
-          this._grid.graphics.moveTo(shadowIndex * gridWidth, r * cellSize);
-          this._grid.graphics.lineTo(
-            shadowIndex * gridWidth + gridWidth,
-            r * cellSize
-          );
-        }
+      this._grid.graphics.lineStyle(1, 0xaaaaaa, 0.5);
+      for (let r = 0; r < gridRows + 1; r++) {
+        this._grid.graphics.moveTo(0, r * cellSize);
+        this._grid.graphics.lineTo(gridColumns * cellSize, r * cellSize);
+      }
 
-        for (let c = 0; c < gridColumns + 1; c++) {
-          this._grid.graphics.moveTo(shadowIndex * gridWidth + c * cellSize, 0);
-          this._grid.graphics.lineTo(
-            shadowIndex * gridWidth + c * cellSize,
-            gridHeight
-          );
-        }
+      for (let c = 0; c < gridColumns + 1; c++) {
+        this._grid.graphics.moveTo(c * cellSize, 0);
+        this._grid.graphics.lineTo(c * cellSize, gridHeight);
       }
 
       this._renderCells(this._grid.grid.reducedCells);
@@ -434,6 +420,10 @@ export default class MinimalRenderer
     });
   }
 
+  private _getVisiblityX() {
+    return this._app.renderer.width * 0.5;
+  }
+
   private _moveBlock(block: Block) {
     const cellSize = this._getClampedCellSize();
     const renderableBlock: IRenderableBlock = this._blocks[block.playerId];
@@ -466,20 +456,22 @@ export default class MinimalRenderer
     y: number,
     opacity: number,
     color: number,
-    shadowIndex: number = 0
+    shadowIndex: number = 0,
+    shadowDirection: number = 0
   ) {
     const cellSize = this._getClampedCellSize();
     graphics.beginFill(color, Math.min(opacity, 1));
     graphics.drawRect(x, y, cellSize, cellSize);
     if (shadowIndex < this._shadowCount) {
-      [-1, 1].forEach((i) =>
+      (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>
         this._renderCellAt(
           graphics,
           x + this._gridWidth * i,
           y,
           opacity * 0.5,
           color,
-          shadowIndex + 1
+          shadowIndex + 1,
+          i
         )
       );
     }
@@ -560,7 +552,9 @@ export default class MinimalRenderer
     }
     const key = this._virtualKeyboardControls.get(inputAction);
     const alpha =
-      !this._allowedActions || this._allowedActions.indexOf(inputAction) >= 0
+      !this._allowedActions ||
+      (this._allowedActions.length === 1 &&
+        this._allowedActions[0] === inputAction)
         ? 1
         : 0.5;
     const keySize = this._app.renderer.width * 0.05;
@@ -586,7 +580,6 @@ export default class MinimalRenderer
       keySize - keyPadding * 2,
       keySize - keyPadding * 2
     );
-    this._virtualKeyboardGraphics.beginFill(0x000000);
   }
 
   private _renderVirtualKeyboard() {

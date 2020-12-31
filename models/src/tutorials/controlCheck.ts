@@ -4,7 +4,7 @@ import Tutorial from '../Tutorial';
 const controlCheck: Tutorial = {
   id: 'control-check',
   title: 'Control Check',
-  description: "Let's go through the basic controls",
+  locale: 'en',
   highlightScore: true,
   layout: tetrominoes.L,
   gridNumRows: 35,
@@ -17,6 +17,11 @@ const controlCheck: Tutorial = {
   teachControls: true,
   mandatory: true,
   priority: 10000,
+  translations: {
+    th: {
+      title: 'ตรวจสอบการควบคุม',
+    },
+  },
 };
 
 export default controlCheck;

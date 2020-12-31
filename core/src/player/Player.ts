@@ -60,7 +60,7 @@ export default abstract class Player implements IBlockEventListener {
       this._nextLayout = undefined;
       const column =
         this._lastPlacementColumn === undefined
-          ? Math.floor((gridCells[0].length - layout[0].length) / 2) + 1
+          ? Math.floor((gridCells[0].length - layout[0].length) / 2)
           : this._lastPlacementColumn;
       this._block = new Block(
         this._id,

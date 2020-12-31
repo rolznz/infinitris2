@@ -16,8 +16,11 @@ import useAppStore from '../../state/AppStore';
 import useHomeStore from '../../state/HomeStore';
 import RoomCard from '../RoomCard';
 import Routes from '../../models/Routes';
+import { FormattedMessage, useIntl } from 'react-intl';
+import useDemo from '../hooks/useDemo';
 
 export default function HomePage() {
+  useDemo();
   const appStore = useAppStore();
   const homeStore = useHomeStore();
   const [rooms, loadingRooms] = useCollectionData<Room>(
@@ -35,6 +38,7 @@ export default function HomePage() {
   });
 
   const classes = useStyles();
+  const intl = useIntl();
 
   return (
     <>
@@ -43,7 +47,10 @@ export default function HomePage() {
           <Grid item xs={10} md={4} sm={6} style={{ maxWidth: '300px' }}>
             <Box flex={1} display="flex" flexDirection="column">
               <TextField
-                placeholder="Nickname"
+                placeholder={intl.formatMessage({
+                  defaultMessage: 'Nickname',
+                  description: 'Nickname textbox placeholder',
+                })}
                 value={appStore.user.nickname}
                 onChange={(e) => appStore.setNickname(e.target.value)}
               />
@@ -74,7 +81,10 @@ export default function HomePage() {
                       size="large"
                       className={classes.playButton}
                     >
-                      Play
+                      <FormattedMessage
+                        defaultMessage="Play"
+                        description="Play button text"
+                      />
                     </Button>
                   </Link>
                 ) : (

@@ -5,6 +5,7 @@ const garbageCollection1: Tutorial = {
   id: 'garbage-collection-1',
   title: 'Garbage Collection 1',
   description: '',
+  locale: 'en',
   highlightScore: true,
   layout: tetrominoes.T,
   successLinesCleared: [2],

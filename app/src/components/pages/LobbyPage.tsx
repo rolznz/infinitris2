@@ -9,6 +9,7 @@ import Room from 'infinitris2-models/src/Room';
 import useHomeStore from '../../state/HomeStore';
 import RoomCard from '../RoomCard';
 import Routes from '../../models/Routes';
+import { FormattedMessage } from 'react-intl';
 
 export default function LobbyPage() {
   const [rooms, loading] = useCollectionData<Room>(
@@ -26,7 +27,15 @@ export default function LobbyPage() {
               {loading ? (
                 <Skeleton height={28} width={48} />
               ) : (
-                <Typography variant="caption">{rooms?.length} Rooms</Typography>
+                <Typography variant="caption">
+                  <FormattedMessage
+                    defaultMessage="{numRooms} Rooms"
+                    description="Number of rooms"
+                    values={{
+                      numRooms: rooms?.length,
+                    }}
+                  />
+                </Typography>
               )}
             </Box>
             <List>

@@ -4,12 +4,18 @@ import useAppStore from '../../state/AppStore';
 
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
-import { useKeyPress } from 'react-use';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
-import useTapListener from '../hooks/useTapListener';
+import useIncompleteTutorials from '../hooks/useIncompleteTutorials';
+import FlexBox from '../layout/FlexBox';
+import Lottie from 'lottie-react';
+import welcomeAnimation from '../lottie/welcome.json';
+import useReceivedInput from '../hooks/useReceivedInput';
+import { FormattedMessage } from 'react-intl';
+import useDemo from '../hooks/useDemo';
 
 export default function WelcomePage() {
+  useDemo();
   const appStore = useAppStore();
 
   const useStyles = makeStyles({
@@ -19,7 +25,8 @@ export default function WelcomePage() {
       marginBottom: 'min(2vw, 2vh)',
     },
     card: {
-      margin: 'min(5vw, 5vh)',
+      marginLeft: 'min(5vw, 5vh)',
+      marginRight: 'min(5vw, 5vh)',
       padding: 'min(5vw, 5vh)',
     },
   });
@@ -27,57 +34,74 @@ export default function WelcomePage() {
   function ControlOptionCard(props: { option: 'keyboard' | 'touch' }) {
     const classes = useStyles();
     const Icon = props.option === 'keyboard' ? KeyboardIcon : TouchAppIcon;
-    const text = props.option === 'keyboard' ? 'Press Any Key' : 'Tap Anywhere';
+    const text =
+      props.option === 'keyboard' ? (
+        <FormattedMessage
+          defaultMessage="Press Enter"
+          description="Choose keyboard controls"
+        />
+      ) : (
+        <FormattedMessage
+          defaultMessage="Tap Anywhere"
+          description="Choose touch controls"
+        />
+      );
+
     return (
       <Card className={classes.card}>
-        <Icon className={classes.icon} />
-        <Typography align="center">{text}</Typography>
+        <FlexBox>
+          <Icon className={classes.icon} />
+          <Typography align="center">{text}</Typography>
+        </FlexBox>
       </Card>
     );
   }
 
-  const { setPreferredInputMethod, user, markHasSeenWelcome } = appStore;
-  const preferredInputMethod = user.preferredInputMethod;
+  const { setPreferredInputMethod, markHasSeenWelcome } = appStore;
 
   const history = useHistory();
-  const [isAnyKeyPressed] = useKeyPress((event) => Boolean(event.key));
-  const [hasTapped, TapListener] = useTapListener();
+  const [, newPreferredInputMethod] = useReceivedInput();
 
-  if ((hasTapped || isAnyKeyPressed) && !preferredInputMethod) {
-    setPreferredInputMethod(hasTapped ? 'touch' : 'keyboard');
-  }
+  const incompleteTutorials = useIncompleteTutorials();
 
   useEffect(() => {
-    if (preferredInputMethod) {
+    if (newPreferredInputMethod) {
       markHasSeenWelcome();
-      setPreferredInputMethod(preferredInputMethod);
-      history.replace(Routes.tutorialRequired);
+      setPreferredInputMethod(newPreferredInputMethod);
+      history.replace(
+        incompleteTutorials.length ? Routes.tutorialRequired : Routes.home
+      );
     }
   }, [
     setPreferredInputMethod,
     markHasSeenWelcome,
     history,
-    preferredInputMethod,
+    newPreferredInputMethod,
+    incompleteTutorials,
   ]);
 
   return (
     <>
-      <TapListener />
-      <Box
-        flex={1}
-        display="flex"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Typography>Welcome to Infinitris 2!</Typography>
-        <Typography>Please choose your preferred input method.</Typography>
+      <FlexBox flex={1}>
+        <Lottie
+          animationData={welcomeAnimation}
+          loop={true}
+          style={{ maxWidth: 150 }}
+        />
+        <Box marginY={2}>
+          <Typography variant="h6">
+            <FormattedMessage
+              defaultMessage="Control Select"
+              description="Control selection heading"
+            />
+          </Typography>
+        </Box>
 
-        <Box display="flex">
+        <FlexBox flexDirection="row">
           <ControlOptionCard option="touch" />
           <ControlOptionCard option="keyboard" />
-        </Box>
-      </Box>
+        </FlexBox>
+      </FlexBox>
     </>
   );
 }

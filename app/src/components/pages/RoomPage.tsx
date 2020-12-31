@@ -12,7 +12,6 @@ import HomeIcon from '@material-ui/icons/Home';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { IClientSocketEventListener, Room } from 'infinitris2-models';
 import useWelcomeRedirect from '../hooks/useWelcomeRedirect';
-import useReleaseClient from '../hooks/useReleaseClient';
 
 interface RoomPageRouteParams {
   id: string;
@@ -45,6 +44,7 @@ export default function RoomPage() {
     store.disconnected,
     store.setDisconnected,
   ]);
+  const setIsDemo = appStore.setIsDemo;
   const { id } = useParams<RoomPageRouteParams>();
 
   const [room, loadingRoom] = useDocumentData<Room>(
@@ -67,6 +67,7 @@ export default function RoomPage() {
     }
     setLaunched(true);
     client.launchNetworkClient(roomUrl as string, socketEventListener);
+    setIsDemo(false);
   }, [
     disconnected,
     retryCount,
@@ -75,14 +76,13 @@ export default function RoomPage() {
     setConnected,
     requiresRedirect,
     hasLaunched,
+    setIsDemo,
   ]);
 
   useEffect(() => {
     setDisconnected(false);
     setConnected(false);
   }, [setConnected, setDisconnected]);
-
-  useReleaseClient();
 
   if (connected) {
     return null;

@@ -1,22 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useTimeout } from 'react-use';
 
-export default function TapListener(): [boolean, React.FunctionComponent] {
+export default function useTapListener(isReadyTimeout: number = 1000): boolean {
+  const [isReady] = useTimeout(isReadyTimeout);
   const [hasTapped, setHasTapped] = React.useState(false);
-  function TapListener() {
-    return (
-      <div
-        style={{
-          width: '100vw',
-          height: '100vh',
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          zIndex: 99,
-        }}
-        onTouchEnd={() => setHasTapped(true)}
-      />
-    );
-  }
 
-  return [hasTapped, TapListener];
+  useEffect(() => {
+    function touchHandler() {
+      if (isReady()) {
+        setHasTapped(true);
+      }
+    }
+    window.addEventListener('touchend', touchHandler);
+    return () => {
+      window.removeEventListener('touchend', touchHandler);
+    };
+  }, [isReady]);
+
+  return hasTapped;
 }

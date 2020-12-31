@@ -5,25 +5,48 @@ import User, { loadUser, saveUser } from '../models/User';
 type AppStore = {
   readonly user: User;
   readonly returnToUrl?: string;
-  readonly clientApi: IInfinitrisApi | null;
-  setClientApi(clientApi: IInfinitrisApi | null): void;
+  readonly clientApi?: IInfinitrisApi;
+  readonly isDemo: boolean;
+  readonly internationalization: {
+    messages: Record<string, string>;
+  };
+  setIsDemo(isDemo: boolean): void;
+  setClientApi(clientApi: IInfinitrisApi): void;
   setReturnToUrl(returnToUrl?: string): void;
+  setInternationalizationMessages(messages: Record<string, string>): void;
   // TODO: move to UserStore
   setNickname(nickname: string): void;
+  setLanguageCode(languageCode: string): void;
   markHasSeenWelcome(): void;
-  setPreferredInputMethod(preferredInputMethod: InputMethod): void;
+  setPreferredInputMethod(preferredInputMethod: InputMethod | undefined): void;
   completeTutorial(tutorialId: string): void;
 };
 
 const useAppStore = create<AppStore>((set) => ({
   user: loadUser(),
-  clientApi: null,
+  clientApi: undefined,
+  isDemo: false,
   returnToUrl: undefined,
+  internationalization: {
+    messages: {},
+  },
+  setInternationalizationMessages: (messages: Record<string, string>) =>
+    set((state) => ({
+      internationalization: { ...state.internationalization, messages },
+    })),
+  setIsDemo: (isDemo: boolean) => set((_) => ({ isDemo })),
   setClientApi: (client: IInfinitrisApi) => set((_) => ({ clientApi: client })),
   setReturnToUrl: (returnToUrl?: string) => set((_) => ({ returnToUrl })),
   setNickname: (nickname: string) => {
     set((state) => {
       const user: User = { ...state.user, nickname };
+      saveUser(user);
+      return { user };
+    });
+  },
+  setLanguageCode: (languageCode: string) => {
+    set((state) => {
+      const user: User = { ...state.user, locale: languageCode };
       saveUser(user);
       return { user };
     });
@@ -35,7 +58,7 @@ const useAppStore = create<AppStore>((set) => ({
       return { user };
     });
   },
-  setPreferredInputMethod: (preferredInputMethod: InputMethod) => {
+  setPreferredInputMethod: (preferredInputMethod: InputMethod | undefined) => {
     set((state) => {
       const user: User = { ...state.user, preferredInputMethod };
       saveUser(user);

@@ -1,0 +1,110 @@
+{
+  "0IFGxr": [
+    {
+      "type": 0,
+      "value": "Press Enter"
+    }
+  ],
+  "5VgUMU": [
+    {
+      "type": 0,
+      "value": "Control Select"
+    }
+  ],
+  "C1C3gi": [
+    {
+      "type": 0,
+      "value": "Play"
+    }
+  ],
+  "FJsJQx": [
+    {
+      "type": 0,
+      "value": "Single Player"
+    }
+  ],
+  "K3+emg": [
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " incomplete "
+    },
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 0,
+              "value": "tutorial"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "tutorials"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " to be completed"
+    }
+  ],
+  "Mkztkl": [
+    {
+      "type": 0,
+      "value": "Woohoo! All required tutorials have been completed!"
+    }
+  ],
+  "VWWoDA": [
+    {
+      "type": 0,
+      "value": "No description provided"
+    }
+  ],
+  "YxmKee": [
+    {
+      "type": 1,
+      "value": "numRooms"
+    },
+    {
+      "type": 0,
+      "value": " Rooms"
+    }
+  ],
+  "eA1i8I": [
+    {
+      "type": 0,
+      "value": "Press Enter to continue"
+    }
+  ],
+  "eoqvCV": [
+    {
+      "type": 0,
+      "value": "Nickname"
+    }
+  ],
+  "iBEOtA": [
+    {
+      "type": 0,
+      "value": "Tap Anywhere"
+    }
+  ],
+  "oLa/Am": [
+    {
+      "type": 0,
+      "value": "Tap to continue"
+    }
+  ]
+}

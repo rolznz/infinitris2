@@ -5,6 +5,7 @@ import Tutorial from '../Tutorial';
 const wrapTest: Tutorial = {
   id: 'wrap-test',
   title: 'Wrap Test',
+  locale: 'en',
   description: '',
   highlightScore: true,
   layout: tetrominoes.T,

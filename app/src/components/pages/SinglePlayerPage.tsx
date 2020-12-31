@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import useAppStore from '../../state/AppStore';
-import useReleaseClient from '../hooks/useReleaseClient';
 import useWelcomeRedirect from '../hooks/useWelcomeRedirect';
 
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
   const user = appStore.user;
+  const setIsDemo = appStore.setIsDemo;
   const requiresRedirect = useWelcomeRedirect();
   const launchSinglePlayer = client?.launchSinglePlayer;
   const [hasLaunched, setLaunched] = useState(false);
@@ -15,10 +15,15 @@ export default function SinglePlayerPage() {
     if (!requiresRedirect && launchSinglePlayer && !hasLaunched) {
       setLaunched(true);
       launchSinglePlayer();
+      setIsDemo(false);
     }
-  }, [launchSinglePlayer, user.hasSeenWelcome, requiresRedirect, hasLaunched]);
-
-  useReleaseClient();
+  }, [
+    launchSinglePlayer,
+    user.hasSeenWelcome,
+    requiresRedirect,
+    hasLaunched,
+    setIsDemo,
+  ]);
 
   return null;
 }

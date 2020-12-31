@@ -48,7 +48,6 @@ export default class Cell {
     if (this._blocks.find((existingBlock) => existingBlock === block)) {
       throw new Error('Cannot add the same block to a cell');
     }
-    console.log('Block added to ', this._row, this._column);
     this._blocks.push(block);
   }
 

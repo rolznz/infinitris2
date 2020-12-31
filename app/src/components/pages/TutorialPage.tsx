@@ -1,11 +1,19 @@
 import { useEffect, useState } from 'react';
 import useAppStore from '../../state/AppStore';
-import { tutorials, ISimulationEventListener } from 'infinitris2-models';
+import {
+  tutorials,
+  ISimulationEventListener,
+  ISimulation,
+} from 'infinitris2-models';
 import useWelcomeRedirect from '../hooks/useWelcomeRedirect';
 import { useHistory, useParams } from 'react-router-dom';
 import useIncompleteTutorials from '../hooks/useIncompleteTutorials';
 import Routes from '../../models/Routes';
-import useReleaseClient from '../hooks/useReleaseClient';
+import React from 'react';
+import { Box, Typography } from '@material-ui/core';
+import useReceivedInput from '../hooks/useReceivedInput';
+import ContinueHint from '../ContinueHint';
+import { FormattedMessage } from 'react-intl';
 
 interface TutorialPageRouteParams {
   id: string;
@@ -22,9 +30,16 @@ export default function TutorialPage() {
   const tutorial = tutorials.find((t) => t.id === id);
   const requiresRedirect = useWelcomeRedirect(true, tutorial?.priority);
   const incompleteTutorials = useIncompleteTutorials();
+  const setIsDemo = appStore.setIsDemo;
   const completeTutorial = appStore.completeTutorial;
   const launchTutorial = client?.launchTutorial;
   const [hasLaunched, setLaunched] = useState(false);
+  const [showInfo, setShowInfo] = useState(true);
+  const [simulation, setSimulation] = useState<ISimulation | undefined>(
+    undefined
+  );
+  const [hasReceivedInput] = useReceivedInput();
+  const translation = tutorial?.translations?.[user.locale];
   // TODO: useWelcomeRedirect
 
   // TODO: load tutorial from firebase
@@ -32,7 +47,9 @@ export default function TutorialPage() {
   useEffect(() => {
     if (tutorial && !requiresRedirect && launchTutorial && !hasLaunched) {
       setLaunched(true);
-      const checkTutorialFinished = () => {
+      const checkTutorialFinished = async () => {
+        // execute outside of game event loop
+        await new Promise((resolve) => setTimeout(resolve, 1));
         // FIXME: should this be done here?
         //this._simulation.stopInterval();
         //this._input.destroy();
@@ -54,7 +71,9 @@ export default function TutorialPage() {
       };
 
       const simulationEventListener: ISimulationEventListener = {
-        onSimulationInit() {},
+        onSimulationInit(simulation: ISimulation) {
+          setSimulation(simulation);
+        },
         onSimulationStep() {},
 
         onBlockCreated() {},
@@ -69,6 +88,7 @@ export default function TutorialPage() {
         onLineCleared() {},
       };
       launchTutorial(tutorial, simulationEventListener);
+      setIsDemo(false);
     }
   }, [
     launchTutorial,
@@ -79,9 +99,56 @@ export default function TutorialPage() {
     incompleteTutorials,
     history,
     hasLaunched,
+    setIsDemo,
   ]);
 
-  useReleaseClient();
+  if (!hasLaunched) {
+    return null;
+  }
+
+  if (showInfo) {
+    if (hasReceivedInput && simulation) {
+      simulation.startInterval();
+      setShowInfo(false);
+    }
+    return (
+      <Box
+        flex={1}
+        display="flex"
+        flexDirection="column"
+        justifyContent="center"
+        alignItems="center"
+        maxWidth="100%"
+        padding={4}
+      >
+        <Box
+          display="flex"
+          flexDirection="column"
+          justifyContent="center"
+          alignItems="center"
+          color="primary.main"
+          bgcolor="background.paper"
+          padding={4}
+          borderRadius={16}
+        >
+          <Typography variant="h6">
+            {translation?.title || tutorial?.title}
+          </Typography>
+          <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
+            {translation?.description || tutorial?.description || (
+              <FormattedMessage
+                defaultMessage="No description provided"
+                description="No description provided"
+              />
+            )}
+          </Typography>
+          <Box pt={2}>
+            <ContinueHint />
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
 
   return null;
 }

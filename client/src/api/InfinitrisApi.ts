@@ -31,7 +31,17 @@ export default class InfinitrisApi implements IInfinitrisApi {
     } else if (params.has('demo')) {
       this.launchDemo();
     } else if (params.has('tutorial')) {
-      this.launchTutorial(tutorials[0]);
+      this.launchTutorial(tutorials[0], {
+        onSimulationInit: (simulation) => {
+          simulation.startInterval();
+        },
+        onSimulationStep() {},
+        onBlockCreated() {},
+        onBlockMoved() {},
+        onBlockDied() {},
+        onBlockPlaced() {},
+        onLineCleared() {},
+      });
     } else {
       this._invalidUrl(url);
     }

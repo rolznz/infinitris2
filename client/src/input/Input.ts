@@ -65,7 +65,7 @@ export default class Input {
 
   private _onKeyDown = (event: KeyboardEvent) => {
     if (!this._simulation.isRunning) {
-      this._simulation.startInterval();
+      return;
     }
 
     const block: Block | undefined = this._player.block;

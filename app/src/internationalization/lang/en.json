@@ -1,0 +1,50 @@
+{
+  "0IFGxr": {
+    "defaultMessage": "Press Enter",
+    "description": "Choose keyboard controls"
+  },
+  "5VgUMU": {
+    "defaultMessage": "Control Select",
+    "description": "Control selection heading"
+  },
+  "C1C3gi": {
+    "defaultMessage": "Play",
+    "description": "Play button text"
+  },
+  "FJsJQx": {
+    "defaultMessage": "Single Player",
+    "description": "Single player button tooltip"
+  },
+  "K3+emg": {
+    "defaultMessage": "{count} incomplete {count, plural, one {tutorial} other {tutorials}} to be completed",
+    "description": "Incompleted tutorials"
+  },
+  "Mkztkl": {
+    "defaultMessage": "Woohoo! All required tutorials have been completed!",
+    "description": "All required tutorials have been completed"
+  },
+  "VWWoDA": {
+    "defaultMessage": "No description provided",
+    "description": "No description provided"
+  },
+  "YxmKee": {
+    "defaultMessage": "{numRooms} Rooms",
+    "description": "Number of rooms"
+  },
+  "eA1i8I": {
+    "defaultMessage": "Press Enter to continue",
+    "description": "Keyboard continue text"
+  },
+  "eoqvCV": {
+    "defaultMessage": "Nickname",
+    "description": "Nickname textbox placeholder"
+  },
+  "iBEOtA": {
+    "defaultMessage": "Tap Anywhere",
+    "description": "Choose touch controls"
+  },
+  "oLa/Am": {
+    "defaultMessage": "Tap to continue",
+    "description": "Touchscreen continue text"
+  }
+}

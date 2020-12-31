@@ -1,0 +1,50 @@
+{
+  "0IFGxr": {
+    "defaultMessage": "กดปุ่ม Enter",
+    "description": "Choose keyboard controls"
+  },
+  "5VgUMU": {
+    "defaultMessage": "เลือกตัวควบคุม",
+    "description": "Control selection heading"
+  },
+  "C1C3gi": {
+    "defaultMessage": "เล่นเกม",
+    "description": "Play button text"
+  },
+  "FJsJQx": {
+    "defaultMessage": "เล่นคนเดียว",
+    "description": "Single player button tooltip"
+  },
+  "K3+emg": {
+    "defaultMessage": "มีอีก {count} บทช่วยสอน",
+    "description": "Incompleted tutorials"
+  },
+  "Mkztkl": {
+    "defaultMessage": "ไชโย! บทเรียนที่จำเป็นทั้งหมดเสร็จสมบูรณ์แล้ว",
+    "description": "All required tutorials have been completed"
+  },
+  "VWWoDA": {
+    "defaultMessage": "ไม่มีคำอธิบาย",
+    "description": "No description provided"
+  },
+  "YxmKee": {
+    "defaultMessage": "{numRooms} ห้อง",
+    "description": "Number of rooms"
+  },
+  "eA1i8I": {
+    "defaultMessage": "กดปุ่ม Enter เพื่อดำเนินการต่อ",
+    "description": "Keyboard continue text"
+  },
+  "eoqvCV": {
+    "defaultMessage": "ชื่อเล่น",
+    "description": "Nickname textbox placeholder"
+  },
+  "iBEOtA": {
+    "defaultMessage": "แตะที่หน้าจอ",
+    "description": "Choose touch controls"
+  },
+  "oLa/Am": {
+    "defaultMessage": "แตะที่หน้าจอเพื่อดำเนินการต่อ",
+    "description": "Touchscreen continue text"
+  }
+}

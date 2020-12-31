@@ -3,4 +3,7 @@ import IGridEventListener from './IGridEventListener';
 
 export default interface ISimulation
   extends IBlockEventListener,
-    IGridEventListener {}
+    IGridEventListener {
+  startInterval(): void;
+  stopInterval(): void;
+}

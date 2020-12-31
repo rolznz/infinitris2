@@ -23,7 +23,10 @@ export default class Simulation implements ISimulation {
     this._players = {};
     this._grid = grid;
     this._grid.addEventListener(this);
-    this._settings = settings;
+    this._settings = {
+      gravityEnabled: true,
+      ...settings,
+    };
   }
 
   get grid(): Grid {
@@ -71,7 +74,9 @@ export default class Simulation implements ISimulation {
    * @param grid The grid to run the simulation on.
    */
   startInterval() {
-    this._interval = setInterval(this.step, FRAME_LENGTH);
+    if (!this._interval) {
+      this._interval = setInterval(this.step, FRAME_LENGTH);
+    }
   }
 
   /**

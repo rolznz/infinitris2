@@ -1,14 +1,15 @@
-import Block from 'core/src/block/Block';
+import IBlock from '@models/IBlock';
 import createBehaviour from './behaviours/createBehaviour';
-import ICellBehaviour from './behaviours/ICellBehaviour';
-import CellType from './CellType';
+import ICell from '@models/ICell';
+import CellType from '@models/CellType';
+import ICellBehaviour from '@models/ICellBehaviour';
 
-export default class Cell {
+export default class Cell implements ICell {
   private _row: number;
   private _column: number;
   private _type: CellType;
   private _behaviour?: ICellBehaviour;
-  private readonly _blocks: Block[];
+  private readonly _blocks: IBlock[];
   constructor(column: number, row: number) {
     this._row = row;
     this._column = column;
@@ -36,7 +37,7 @@ export default class Cell {
     return this._behaviour;
   }
 
-  get blocks(): ReadonlyArray<Block> {
+  get blocks(): ReadonlyArray<IBlock> {
     return this._blocks;
   }
 
@@ -44,14 +45,14 @@ export default class Cell {
     this._behaviour?.step(this);
   }
 
-  addBlock(block: Block) {
+  addBlock(block: IBlock) {
     if (this._blocks.find((existingBlock) => existingBlock === block)) {
       throw new Error('Cannot add the same block to a cell');
     }
     this._blocks.push(block);
   }
 
-  removeBlock(block: Block) {
+  removeBlock(block: IBlock) {
     const index = this._blocks.indexOf(block);
     if (index < 0) {
       throw new Error('Block does not exist in cell');

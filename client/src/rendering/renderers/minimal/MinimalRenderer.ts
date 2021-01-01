@@ -6,10 +6,12 @@ import Cell from '@core/grid/cell/Cell';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import Simulation from '@core/Simulation';
 import Camera from '@src/rendering/Camera';
-import CellType from '@core/grid/cell/CellType';
+import CellType from '@models/CellType';
 import LaserBehaviour from '@core/grid/cell/behaviours/LaserBehaviour';
 import ControlSettings from '@src/input/ControlSettings';
-import { InputAction } from 'models';
+import InputAction from '@models/InputAction';
+import IBlock from '@models/IBlock';
+import ICell from '@models/ICell';
 
 const minCellSize = 32;
 interface IRenderableGrid {
@@ -17,12 +19,12 @@ interface IRenderableGrid {
   graphics: PIXI.Graphics;
 }
 interface IRenderableBlock {
-  block: Block;
+  block: IBlock;
   cells: IRenderableCell[];
 }
 
 interface IRenderableCell {
-  cell: Cell;
+  cell: ICell;
   graphics: PIXI.Graphics;
 }
 
@@ -116,7 +118,7 @@ export default class MinimalRenderer
       -visibilityY
     );
     if (this._scrollX) {
-      this._world.x = this._camera.x + visibilityX;
+      this._world.x = this._camera.wrappedX + visibilityX;
     }
     if (this._scrollY) {
       this._world.y = cameraY + visibilityY;
@@ -124,7 +126,8 @@ export default class MinimalRenderer
     }
 
     if (this._scrollX) {
-      this._grid.graphics.x = (this._camera.x + visibilityX) % this._cellSize;
+      this._grid.graphics.x =
+        (this._camera.wrappedX + visibilityX) % this._cellSize;
       if (!this._hasShadows) {
         this._wrapObjects();
       }
@@ -147,11 +150,11 @@ export default class MinimalRenderer
 
   private _wrapObject(child: PIXI.DisplayObject) {
     const visibilityX = this._getVisiblityX();
-    if (child.x + this._cellSize < -this._camera.x - visibilityX) {
+    if (child.x + this._cellSize < -this._camera.wrappedX - visibilityX) {
       child.x += this._gridWidth;
     } else if (
       child.x + this._cellSize >=
-      -this._camera.x + this._gridWidth - visibilityX
+      -this._camera.wrappedX + this._gridWidth - visibilityX
     ) {
       child.x -= this._gridWidth;
     }
@@ -225,7 +228,7 @@ export default class MinimalRenderer
   /**
    * @inheritdoc
    */
-  onBlockCreated(block: Block) {
+  onBlockCreated(block: IBlock) {
     const renderableBlock: IRenderableBlock = {
       cells: block.cells.map((cell) => ({
         cell,
@@ -241,26 +244,35 @@ export default class MinimalRenderer
   /**
    * @inheritdoc
    */
-  onBlockMoved(block: Block) {
+  onBlockMoved(block: IBlock) {
     this._moveBlock(block);
   }
 
   /**
    * @inheritdoc
    */
-  onBlockDied(block: Block) {
+  onBlockWrapped(block: IBlock, wrapIndexChange: number) {
+    if (this._simulation.isFollowingPlayerId(block.playerId)) {
+      this._camera.moveWrapIndex(wrapIndexChange);
+    }
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockDied(block: IBlock) {
     this._removeBlock(block);
   }
 
   /**
    * @inheritdoc
    */
-  onBlockPlaced(block: Block) {
+  onBlockPlaced(block: IBlock) {
     this._renderCells(block.cells);
     this._removeBlock(block);
   }
 
-  private _removeBlock(block: Block) {
+  private _removeBlock(block: IBlock) {
     this._world.removeChild(
       ...this._blocks[block.playerId].cells.map((c) => c.graphics)
     );
@@ -378,11 +390,11 @@ export default class MinimalRenderer
     }
   };
 
-  private _renderCells(cells: Cell[], force: boolean = false) {
+  private _renderCells(cells: ICell[], force: boolean = false) {
     cells.forEach((cell) => this._renderCell(cell, force));
   }
 
-  private _renderCell = (cell: Cell, force: boolean = false) => {
+  private _renderCell = (cell: ICell, force: boolean = false) => {
     /*if (cell.isEmpty && !force) {
       return;
     }*/
@@ -410,7 +422,7 @@ export default class MinimalRenderer
     }
   };
 
-  private _renderBlock(block: Block) {
+  private _renderBlock(block: IBlock) {
     const renderableBlock: IRenderableBlock = this._blocks[block.playerId];
     this._moveBlock(block);
 
@@ -424,7 +436,7 @@ export default class MinimalRenderer
     return this._app.renderer.width * 0.5;
   }
 
-  private _moveBlock(block: Block) {
+  private _moveBlock(block: IBlock) {
     const cellSize = this._getClampedCellSize();
     const renderableBlock: IRenderableBlock = this._blocks[block.playerId];
 
@@ -468,7 +480,7 @@ export default class MinimalRenderer
           graphics,
           x + this._gridWidth * i,
           y,
-          opacity * 0.5,
+          opacity, // * 0.5,
           color,
           shadowIndex + 1,
           i
@@ -477,7 +489,7 @@ export default class MinimalRenderer
     }
   }
 
-  private _renderBlockPlacementShadow(block: Block) {
+  private _renderBlockPlacementShadow(block: IBlock) {
     const cellSize = this._getClampedCellSize();
     const lowestCells = block.cells.filter(
       (cell) =>

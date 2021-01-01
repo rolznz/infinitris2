@@ -1,7 +1,7 @@
 import tetrominoes from '../Tetrominoes';
-import Tutorial from '../Tutorial';
+import ITutorial from '../ITutorial';
 
-const shadowTest: Tutorial = {
+const shadowTest: ITutorial = {
   id: 'shadow-test',
   title: 'Shadow Test',
   locale: 'en',

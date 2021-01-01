@@ -1,7 +1,7 @@
 import tetrominoes from '../Tetrominoes';
-import Tutorial from '../Tutorial';
+import ITutorial from '../ITutorial';
 
-const garbageCollection1: Tutorial = {
+const garbageCollection1: ITutorial = {
   id: 'garbage-collection-1',
   title: 'Garbage Collection 1',
   description: '',

@@ -4,6 +4,7 @@ import Block from './block/Block';
 import ISimulation from '@models/ISimulation';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import ISimulationSettings from '@models/ISimulationSettings';
+import IBlock from '@models/IBlock';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -126,28 +127,37 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
-  onBlockCreated(block: Block) {
+  onBlockCreated(block: IBlock) {
     this._eventListeners.forEach((listener) => listener.onBlockCreated(block));
   }
 
   /**
    * @inheritdoc
    */
-  onBlockMoved(block: Block) {
+  onBlockMoved(block: IBlock) {
     this._eventListeners.forEach((listener) => listener.onBlockMoved(block));
   }
 
   /**
    * @inheritdoc
    */
-  onBlockDied(block: Block) {
+  onBlockWrapped(block: IBlock, wrapIndexChange: number) {
+    this._eventListeners.forEach((listener) =>
+      listener.onBlockWrapped(block, wrapIndexChange)
+    );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockDied(block: IBlock) {
     this._eventListeners.forEach((listener) => listener.onBlockDied(block));
   }
 
   /**
    * @inheritdoc
    */
-  onBlockPlaced(block: Block) {
+  onBlockPlaced(block: IBlock) {
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
     this._grid.checkLineClears(
       block.cells

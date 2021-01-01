@@ -1,5 +1,6 @@
 import IBlock from './src/IBlock';
 import IBlockEventListener from './src/IBlockEventListener';
+import ICell from './src/ICell';
 import { IClientSocketEventListener } from './src/IClientSocketEventListener';
 import IGridEventListener from './src/IGridEventListener';
 import IInfinitrisApi from './src/IInfinitrisApi';
@@ -9,19 +10,24 @@ import ISimulation from './src/ISimulation';
 import ISimulationEventListener from './src/ISimulationEventListener';
 import ISimulationSettings from './src/ISimulationSettings';
 import Layout from './src/Layout';
-import Room from './src/Room';
+import IRoom from './src/IRoom';
 import tetrominoes from './src/Tetrominoes';
-import Tutorial, { tutorials } from './src/Tutorial';
+import ITutorial, { tutorials } from './src/ITutorial';
+import CellType from './src/CellType';
+import ICellBehaviour from './src/ICellBehaviour';
 
 export {
   tutorials,
-  Tutorial,
+  ITutorial as Tutorial,
   InputAction,
   Layout,
   tetrominoes,
-  Room,
+  IRoom as Room,
   IInfinitrisApi,
   IClientSocketEventListener,
+  ICell,
+  ICellBehaviour,
+  CellType,
   IBlock,
   IBlockEventListener,
   IGridEventListener,

@@ -1,9 +1,9 @@
 import ControllablePlayer from '../ControllablePlayer';
-import Block from '@core/block/Block';
 import Grid from '@core/grid/Grid';
 import Simulation from '@core/Simulation';
-import { InputAction } from 'models';
 import ControlSettings from './ControlSettings';
+import InputAction from '@models/InputAction';
+import IBlock from '@models/IBlock';
 
 const DEFAULT_CONTROLS: ControlSettings = new Map<InputAction, string>([
   [InputAction.MoveLeft, 'ArrowLeft'],
@@ -68,7 +68,7 @@ export default class Input {
       return;
     }
 
-    const block: Block | undefined = this._player.block;
+    const block: IBlock | undefined = this._player.block;
     if (block) {
       if (
         (this._isActionAllowed(InputAction.MoveLeft) &&

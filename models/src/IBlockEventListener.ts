@@ -28,4 +28,12 @@ export default interface IBlockEventListener {
    * @param block The block that died
    */
   onBlockDied(block: IBlock): void;
+
+  /**
+   * Triggered when a block wraps to the other side of the grid
+   *
+   * @param block The block that moved
+   * @param wrapIndexChange the number of wraps that occurred (most likely -1 or 1)
+   */
+  onBlockWrapped(block: IBlock, wrapIndexChange: number): void;
 }

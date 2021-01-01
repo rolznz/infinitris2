@@ -1,5 +1,5 @@
-import CellType from '../CellType';
-import ICellBehaviour from './ICellBehaviour';
+import CellType from '@models/CellType';
+import ICellBehaviour from '@models/ICellBehaviour';
 import LaserBehaviour from './LaserBehaviour';
 
 export default function createBehaviour(

@@ -1,4 +1,4 @@
-import Tutorial, { tutorials } from '@models/Tutorial';
+import ITutorial, { tutorials } from '@models/ITutorial';
 import IInfinitrisApi from '@models/IInfinitrisApi';
 import IClientSocketEventListener from '@src/networking/IClientSocketEventListener';
 import IClient from '../client/Client';
@@ -6,7 +6,7 @@ import DemoClient from '../client/DemoClient';
 import NetworkClient from '../client/NetworkClient';
 import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
 import TutorialClient from '@src/client/singleplayer/TutorialClient';
-import { ISimulationEventListener } from 'models';
+import ISimulationEventListener from '@models/ISimulationEventListener';
 
 export default class InfinitrisApi implements IInfinitrisApi {
   private _client?: IClient;
@@ -38,6 +38,7 @@ export default class InfinitrisApi implements IInfinitrisApi {
         onSimulationStep() {},
         onBlockCreated() {},
         onBlockMoved() {},
+        onBlockWrapped() {},
         onBlockDied() {},
         onBlockPlaced() {},
         onLineCleared() {},
@@ -67,7 +68,7 @@ export default class InfinitrisApi implements IInfinitrisApi {
    * Runs the game in tutorial mode with no connection to a server.
    */
   launchTutorial = (
-    tutorial: Tutorial,
+    tutorial: ITutorial,
     listener?: ISimulationEventListener
   ) => {
     this.releaseClient();

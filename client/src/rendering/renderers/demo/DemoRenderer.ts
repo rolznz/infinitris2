@@ -5,9 +5,8 @@ import {
   Renderer,
   Sprite,
 } from 'pixi.js-legacy';
-import Block from '@core/block/Block';
-import Grid from '@core/grid/Grid';
 import Simulation from '@core/Simulation';
+import IBlock from '@models/IBlock';
 const imagesDirectory = 'client/images';
 
 type Snowflake = {
@@ -135,28 +134,35 @@ export default class DemoRenderer implements IRenderer {
   /**
    * @inheritdoc
    */
-  onBlockCreated(block: Block) {
+  onBlockCreated(block: IBlock) {
     throw new Error('Method not implemented.');
   }
 
   /**
    * @inheritdoc
    */
-  onBlockPlaced(block: Block) {
+  onBlockPlaced(block: IBlock) {
     throw new Error('Method not implemented.');
   }
 
   /**
    * @inheritdoc
    */
-  onBlockMoved(block: Block) {
+  onBlockMoved(block: IBlock) {
     throw new Error('Method not implemented.');
   }
 
   /**
    * @inheritdoc
    */
-  onBlockDied(block: Block) {
+  onBlockWrapped(block: IBlock, wrapIndexChange: number) {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockDied(block: IBlock) {
     throw new Error('Method not implemented.');
   }
 

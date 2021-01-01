@@ -100,21 +100,21 @@ export default class Room implements ISimulationEventListener {
    * @inheritdoc
    */
   onBlockCreated(
-    block: Block // tslint:disable-next-line: no-empty
+    block: IBlock // tslint:disable-next-line: no-empty
   ) {}
 
   /**
    * @inheritdoc
    */
   onBlockPlaced(
-    block: Block // tslint:disable-next-line: no-empty
+    block: IBlock // tslint:disable-next-line: no-empty
   ) {}
 
   /**
    * @inheritdoc
    */
   onBlockMoved(
-    block: Block // tslint:disable-next-line: no-empty
+    block: IBlock // tslint:disable-next-line: no-empty
   ) {}
 
   /**

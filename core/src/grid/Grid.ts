@@ -1,16 +1,17 @@
 import Cell from './cell/Cell';
-import CellType from './cell/CellType';
+import CellType from '../../../models/src/CellType';
 import IGridEventListener from '../../../models/src/IGridEventListener';
+import ICell from '@models/ICell';
 
 export default class Grid {
-  private _cells: Cell[][];
+  private _cells: ICell[][];
   private _eventListeners: IGridEventListener[];
 
   constructor(numColumns: number = 20, numRows: number = 20) {
     this._cells = [];
     this._eventListeners = [];
     for (let r = 0; r < numRows; r++) {
-      const row: Cell[] = [];
+      const row: ICell[] = [];
       for (let c = 0; c < numColumns; c++) {
         row.push(new Cell(c, r));
       }
@@ -18,11 +19,11 @@ export default class Grid {
     }
   }
 
-  get cells(): Cell[][] {
+  get cells(): ICell[][] {
     return this._cells;
   }
-  get reducedCells(): Cell[] {
-    return ([] as Cell[]).concat(...this._cells);
+  get reducedCells(): ICell[] {
+    return ([] as ICell[]).concat(...this._cells);
   }
   get numColumns(): number {
     return this._cells[0].length;

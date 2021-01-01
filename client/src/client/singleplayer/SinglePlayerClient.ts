@@ -7,6 +7,7 @@ import Input from '@src/input/Input';
 import IClient from '../Client';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import Block from '@core/block/Block';
+import IBlock from '@models/IBlock';
 
 export default class SinglePlayerClient
   implements IClient, ISimulationEventListener {
@@ -30,23 +31,28 @@ export default class SinglePlayerClient
   /**
    * @inheritdoc
    */
-  onBlockCreated(block: Block) {}
+  onBlockCreated(block: IBlock) {}
   /**
    * @inheritdoc
    */
-  onBlockPlaced(block: Block) {}
+  onBlockPlaced(block: IBlock) {}
   /**
    * @inheritdoc
    */
-  onBlockMoved(block: Block) {}
+  onBlockMoved(block: IBlock) {}
   /**
    * @inheritdoc
    */
-  onBlockDied(block: Block) {}
+  onBlockDied(block: IBlock) {}
   /**
    * @inheritdoc
    */
   onLineCleared(row: number) {}
+
+  /**
+   * @inheritdoc
+   */
+  onBlockWrapped(block: IBlock, wrapIndexChange: number) {}
 
   /**
    * @inheritdoc

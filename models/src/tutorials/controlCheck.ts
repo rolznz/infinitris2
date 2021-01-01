@@ -1,7 +1,7 @@
 import tetrominoes from '../Tetrominoes';
-import Tutorial from '../Tutorial';
+import ITutorial from '../ITutorial';
 
-const controlCheck: Tutorial = {
+const controlCheck: ITutorial = {
   id: 'control-check',
   title: 'Control Check',
   locale: 'en',

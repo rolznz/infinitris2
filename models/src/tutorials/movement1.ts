@@ -1,7 +1,7 @@
 import tetrominoes from '../Tetrominoes';
-import Tutorial from '../Tutorial';
+import ITutorial from '../ITutorial';
 
-const basicMovement: Tutorial = {
+const basicMovement: ITutorial = {
   id: 'movement-1',
   title: 'Basic Movement',
   description: '',

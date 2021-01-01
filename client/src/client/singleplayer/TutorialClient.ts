@@ -5,22 +5,22 @@ import ControllablePlayer from '@src/ControllablePlayer';
 import Grid from '@core/grid/Grid';
 import Input from '@src/input/Input';
 import IClient from '../Client';
-import Tutorial from '../../../../models/src/Tutorial';
+import ITutorial from '../../../../models/src/ITutorial';
 import ISimulationEventListener from '@models/ISimulationEventListener';
-import Block from '@core/block/Block';
-import CellType from '@core/grid/cell/CellType';
-import { InputAction } from 'models';
+import CellType from '@models/CellType';
+import InputAction from '@models/InputAction';
+import IBlock from '@models/IBlock';
 
 export default class TutorialClient
   implements IClient, ISimulationEventListener {
   // FIXME: restructure to not require definite assignment
   private _renderer!: IRenderer;
   private _simulation!: Simulation;
-  private _tutorial!: Tutorial;
+  private _tutorial!: ITutorial;
   private _input!: Input;
   private _allowedActions?: InputAction[];
 
-  constructor(tutorial: Tutorial, listener?: ISimulationEventListener) {
+  constructor(tutorial: ITutorial, listener?: ISimulationEventListener) {
     this._create(tutorial, listener);
   }
 
@@ -36,21 +36,26 @@ export default class TutorialClient
   /**
    * @inheritdoc
    */
-  onBlockCreated(block: Block) {}
+  onBlockCreated(block: IBlock) {}
   /**
    * @inheritdoc
    */
-  onBlockPlaced(block: Block) {}
+  onBlockPlaced(block: IBlock) {}
 
   /**
    * @inheritdoc
    */
-  onBlockDied(block: Block) {}
+  onBlockDied(block: IBlock) {}
 
   /**
    * @inheritdoc
    */
-  onBlockMoved(block: Block) {}
+  onBlockMoved(block: IBlock) {}
+
+  /**
+   * @inheritdoc
+   */
+  onBlockWrapped(block: IBlock, wrapIndexChange: number) {}
   /**
    * @inheritdoc
    */
@@ -66,7 +71,7 @@ export default class TutorialClient
   }
 
   private async _create(
-    tutorial: Tutorial,
+    tutorial: ITutorial,
     listener?: ISimulationEventListener
   ) {
     this._tutorial = tutorial;

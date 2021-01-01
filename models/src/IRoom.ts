@@ -1,4 +1,4 @@
-export default interface Room {
+export default interface IRoom {
   id: string;
   name: string;
   mode: string;

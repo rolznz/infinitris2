@@ -1,8 +1,8 @@
 import InputAction from '../InputAction';
 import tetrominoes from '../Tetrominoes';
-import Tutorial from '../Tutorial';
+import ITutorial from '../ITutorial';
 
-const wrapTest: Tutorial = {
+const wrapTest: ITutorial = {
   id: 'wrap-test',
   title: 'Wrap Test',
   locale: 'en',

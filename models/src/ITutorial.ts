@@ -11,7 +11,7 @@ export interface TutorialTranslation {
   title: string;
   description?: string;
 }
-export default interface Tutorial extends TutorialTranslation {
+export default interface ITutorial extends TutorialTranslation {
   readonly id: string;
   readonly priority?: number;
   readonly mandatory?: boolean;
@@ -32,7 +32,7 @@ export default interface Tutorial extends TutorialTranslation {
 }
 
 // TODO: rename to core tutorials (user-submitted ones will be from Firebase)
-export const tutorials: Tutorial[] = [
+export const tutorials: ITutorial[] = [
   garbageCollection1,
   wrapTest,
   shadowTest,

@@ -4,10 +4,12 @@ import Layout from '@models/Layout';
 import tetrominoes from '@models/Tetrominoes';
 import IBlockEventListener from '@models/IBlockEventListener';
 import ISimulationSettings from '@models/ISimulationSettings';
+import IBlock from '@models/IBlock';
+import ICell from '@models/ICell';
 
 export default abstract class Player implements IBlockEventListener {
   private _id: number;
-  private _block?: Block;
+  private _block?: IBlock;
   private _score: number;
   private _lastPlacementColumn: number | undefined;
   private _eventListener: IBlockEventListener;
@@ -24,7 +26,7 @@ export default abstract class Player implements IBlockEventListener {
   get id(): number {
     return this._id;
   }
-  get block(): Block | undefined {
+  get block(): IBlock | undefined {
     return this._block;
   }
 
@@ -50,7 +52,7 @@ export default abstract class Player implements IBlockEventListener {
    *
    * @param gridCells The cells within the grid.
    */
-  update(gridCells: Cell[][], simulationSettings: ISimulationSettings) {
+  update(gridCells: ICell[][], simulationSettings: ISimulationSettings) {
     if (!this._block) {
       const layout =
         this._nextLayout ||
@@ -80,21 +82,28 @@ export default abstract class Player implements IBlockEventListener {
   /**
    * @inheritdoc
    */
-  onBlockCreated(block: Block) {
+  onBlockCreated(block: IBlock) {
     this._eventListener.onBlockCreated(block);
   }
 
   /**
    * @inheritdoc
    */
-  onBlockMoved(block: Block) {
+  onBlockMoved(block: IBlock) {
     this._eventListener.onBlockMoved(block);
   }
 
   /**
    * @inheritdoc
    */
-  onBlockPlaced(block: Block) {
+  onBlockWrapped(block: IBlock, wrapIndexChange: number) {
+    this._eventListener.onBlockWrapped(block, wrapIndexChange);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockPlaced(block: IBlock) {
     if (this._block !== block) {
       throw new Error('Block mismatch');
     }
@@ -109,7 +118,7 @@ export default abstract class Player implements IBlockEventListener {
   /**
    * @inheritdoc
    */
-  onBlockDied(block: Block) {
+  onBlockDied(block: IBlock) {
     this._eventListener.onBlockDied(block);
     this._removeBlock();
   }

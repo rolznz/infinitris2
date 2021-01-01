@@ -1,5 +1,5 @@
 import Cell from '../Cell';
-import ICellBehaviour from './ICellBehaviour';
+import ICellBehaviour from '../../../../../models/src/ICellBehaviour';
 
 const CHARGE_RATE = 0.005;
 const COOLDOWN_RATE = 0.025;

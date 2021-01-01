@@ -3,15 +3,17 @@ import IBlockEventListener from '@models/IBlockEventListener';
 import ISimulationSettings from '@models/ISimulationSettings';
 import Layout from '@models/Layout';
 import Cell from '../grid/cell/Cell';
-import CellType from '../grid/cell/CellType';
+import CellType from '../../../models/src/CellType';
 import LayoutUtils from './layout/LayoutUtils';
+import ICell from '@models/ICell';
 
-type LoopCellEvent = (cell?: Cell) => void;
+type LoopCellEvent = (cell?: ICell) => void;
 
 export default class Block implements IBlock {
   private _playerId: number;
   private _color: number;
-  private readonly _cells: Cell[];
+  private readonly _cells: ICell[];
+  private _wrapIndex: number;
   private _column: number;
   private _row: number;
   private _rotation: number;
@@ -28,11 +30,12 @@ export default class Block implements IBlock {
     row: number,
     column: number,
     rotation: number,
-    gridCells: Cell[][],
+    gridCells: ICell[][],
     eventListener?: IBlockEventListener
   ) {
     this._color = 0x0000ff;
     this._playerId = playerId;
+    this._wrapIndex = 0;
     this._column = column;
     this._row = row;
     this._rotation = rotation;
@@ -60,7 +63,7 @@ export default class Block implements IBlock {
   get color(): number {
     return this._color;
   }
-  get cells(): Cell[] {
+  get cells(): ICell[] {
     return this._cells;
   }
   get isReadyToFall(): boolean {
@@ -72,6 +75,10 @@ export default class Block implements IBlock {
 
   get isAlive(): boolean {
     return this._isAlive;
+  }
+
+  get wrapIndex(): number {
+    return this._wrapIndex;
   }
 
   // TODO: rename numColumns
@@ -159,21 +166,33 @@ export default class Block implements IBlock {
     dx: number,
     dy: number,
     dr: number,
-    force: boolean = false,
-    fireEvent: boolean = true
+    force: boolean = false
   ): boolean {
     const canMove = force || this.canMove(gridCells, dx, dy, dr);
     if (canMove) {
-      const numColumns = gridCells[0].length;
-      this._column =
-        (((this._column + dx) % numColumns) + numColumns) % numColumns;
+      const gridNumColumns = gridCells[0].length;
+      this._column += dx;
+      const oldWrapIndex = this._wrapIndex;
+      while (this._column > gridNumColumns) {
+        this._column -= gridNumColumns;
+        ++this._wrapIndex;
+      }
+      while (this._column < 0) {
+        this._column += gridNumColumns;
+        --this._wrapIndex;
+      }
+      if (oldWrapIndex !== this._wrapIndex) {
+        this._eventListener?.onBlockWrapped(
+          this,
+          this._wrapIndex - oldWrapIndex
+        );
+      }
+
       this._row += dy;
       this._rotation += dr;
       this._updateCells(gridCells);
       this._resetTimers();
-      if (fireEvent) {
-        this._eventListener?.onBlockMoved(this);
-      }
+      this._eventListener?.onBlockMoved(this);
     }
     return canMove;
   }
@@ -234,7 +253,7 @@ export default class Block implements IBlock {
     this._cells.length = 0;
   }
 
-  private _updateCells(gridCells: Cell[][]) {
+  private _updateCells(gridCells: ICell[][]) {
     this._removeCells();
     this._loopCells(
       gridCells,
@@ -250,7 +269,7 @@ export default class Block implements IBlock {
     this._lockTimer = this._isDropping ? 0 : 45;
   }
 
-  private _addCell = (cell?: Cell) => {
+  private _addCell = (cell?: ICell) => {
     if (!cell) {
       throw new Error('Cannot add an empty cell to a block');
     }
@@ -259,7 +278,7 @@ export default class Block implements IBlock {
   };
 
   private _loopCells(
-    gridCells: Cell[][],
+    gridCells: ICell[][],
     column: number,
     row: number,
     rotation: number,

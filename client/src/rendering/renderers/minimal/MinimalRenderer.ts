@@ -1,8 +1,6 @@
 import IRenderer from '../../IRenderer';
 import * as PIXI from 'pixi.js-legacy';
 import Grid from '@core/grid/Grid';
-import Block from '@core/block/Block';
-import Cell from '@core/grid/cell/Cell';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import Simulation from '@core/Simulation';
 import Camera from '@src/rendering/Camera';
@@ -25,7 +23,12 @@ interface IRenderableBlock {
 
 interface IRenderableCell {
   cell: ICell;
-  graphics: PIXI.Graphics;
+  // a cell will be rendered 1 time on wrapped grids, N times for shadow wrapping (grid width < screen width)
+  container: PIXI.Container;
+  children: {
+    shadowIndex: number;
+    graphics: PIXI.Graphics;
+  }[];
 }
 
 interface IPlayerScore {
@@ -37,8 +40,7 @@ export default class MinimalRenderer
   implements IRenderer, ISimulationEventListener {
   // FIXME: restructure to not require definite assignment
   private _grid!: IRenderableGrid;
-  private _placementHelperShadowContainer!: PIXI.Container;
-  private _placementHelperShadows!: PIXI.Graphics[];
+  private _placementHelperShadowCells!: IRenderableCell[];
   private _virtualKeyboardGraphics?: PIXI.Graphics;
   private _virtualKeyboardCharacters!: PIXI.Text[];
   private _app!: PIXI.Application;
@@ -95,18 +97,9 @@ export default class MinimalRenderer
   }
 
   private _tick = () => {
-    Object.values(this._cells).forEach((cell) => {
-      if (cell.cell.type === CellType.Laser) {
-        const cellBehaviour = cell.cell.behaviour as LaserBehaviour;
-        cell.graphics.alpha = cellBehaviour.alpha;
-      }
-    });
-
-    if (!this._scrollX && !this._scrollY) {
-      return;
-    }
     const visibilityX = this._getVisiblityX();
     const visibilityY = this._app.renderer.height * 0.125;
+
     this._camera.update();
 
     // clamp the camera to fit within the grid
@@ -136,14 +129,43 @@ export default class MinimalRenderer
       this._grid.graphics.y =
         ((cameraY + visibilityY) % this._cellSize) - this._cellSize;
     }
+
+    if (this._hasShadows) {
+      Object.values(this._blocks).forEach((block) => {
+        block.cells.forEach((cell) => this._applyShadowAlpha(cell));
+      });
+      this._placementHelperShadowCells.forEach((renderableCell) =>
+        this._applyShadowAlpha(renderableCell)
+      );
+    }
+    Object.values(this._cells).forEach((cell) => {
+      if (this._hasShadows) {
+        this._applyShadowAlpha(cell);
+      }
+
+      if (cell.cell.type === CellType.Laser) {
+        const cellBehaviour = cell.cell.behaviour as LaserBehaviour;
+        cell.container.alpha = cellBehaviour.alpha;
+      }
+    });
   };
 
+  private _applyShadowAlpha(cell: IRenderableCell) {
+    cell.children.forEach((child) => {
+      const distance = Math.min(
+        Math.abs(cell.container.x + child.graphics.x + this._camera.wrappedX),
+        this._app.renderer.width * 0.5
+      );
+
+      child.graphics.alpha =
+        1 -
+        (distance * Math.max(this._shadowCount / 2, 1)) /
+          this._app.renderer.width;
+    });
+  }
+
   private _wrapObjects() {
-    this._placementHelperShadows.forEach((shadow) => this._wrapObject(shadow));
     this._world.children.forEach((child) => {
-      if (child === this._placementHelperShadowContainer) {
-        return;
-      }
       this._wrapObject(child);
     });
   }
@@ -186,9 +208,7 @@ export default class MinimalRenderer
     this._world = new PIXI.Container();
     this._app.stage.addChild(this._world);
 
-    this._placementHelperShadowContainer = new PIXI.Container();
-    this._world.addChild(this._placementHelperShadowContainer);
-    this._placementHelperShadows = [];
+    this._placementHelperShadowCells = [];
 
     this._playerScores = [...Array(10)].map((_, i) => ({
       playerId: -1,
@@ -232,11 +252,14 @@ export default class MinimalRenderer
     const renderableBlock: IRenderableBlock = {
       cells: block.cells.map((cell) => ({
         cell,
-        graphics: new PIXI.Graphics(),
+        container: new PIXI.Container(),
+        children: [],
       })),
       block,
     };
-    this._world.addChild(...renderableBlock.cells.map((cell) => cell.graphics));
+    this._world.addChild(
+      ...renderableBlock.cells.map((cell) => cell.container)
+    );
     this._blocks[block.playerId] = renderableBlock;
     this._renderBlock(block);
   }
@@ -274,7 +297,7 @@ export default class MinimalRenderer
 
   private _removeBlock(block: IBlock) {
     this._world.removeChild(
-      ...this._blocks[block.playerId].cells.map((c) => c.graphics)
+      ...this._blocks[block.playerId].cells.map((cell) => cell.container)
     );
     delete this._blocks[block.playerId];
   }
@@ -299,7 +322,7 @@ export default class MinimalRenderer
       }
     }
 
-    // FIXME: remove. When a block dies, it's gone
+    // TODO: animation for where block died
     /*Object.values(this._blocks).forEach((block) => {
       if (!block.block.isAlive) {
         block.cells.forEach((cell) => (cell.graphics.alpha *= 0.99));
@@ -316,7 +339,7 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   onLineCleared(row: number) {
-    this._renderCells(this._grid.grid.reducedCells, true);
+    this._renderCells(this._grid.grid.reducedCells);
   }
 
   private _getCellSize = () => {
@@ -390,35 +413,32 @@ export default class MinimalRenderer
     }
   };
 
-  private _renderCells(cells: ICell[], force: boolean = false) {
-    cells.forEach((cell) => this._renderCell(cell, force));
+  private _renderCells(cells: ICell[]) {
+    cells.forEach((cell) => this._renderCell(cell));
   }
 
-  private _renderCell = (cell: ICell, force: boolean = false) => {
-    /*if (cell.isEmpty && !force) {
-      return;
-    }*/
+  private _renderCell = (cell: ICell) => {
     const cellIndex = cell.row * this._grid.grid.numColumns + cell.column;
     if (!this._cells[cellIndex]) {
       this._cells[cellIndex] = {
         cell,
-        graphics: this._world.addChild(new PIXI.Graphics()),
+        container: this._world.addChild(new PIXI.Container()),
+        children: [],
       };
     }
     const renderableCell: IRenderableCell = this._cells[cellIndex];
-    const graphics = renderableCell.graphics;
-    graphics.clear();
+
     if (!cell.isEmpty || cell.type === CellType.Laser) {
       const cellSize = this._getClampedCellSize();
-      graphics.x = renderableCell.cell.column * cellSize;
-      graphics.y = renderableCell.cell.row * cellSize;
-      this._renderCellAt(
-        graphics,
-        0,
-        0,
+      renderableCell.container.x = renderableCell.cell.column * cellSize;
+      renderableCell.container.y = renderableCell.cell.row * cellSize;
+      this._renderCellCopies(
+        renderableCell,
         1,
         cell.type === CellType.Laser ? 0xff0000 : 0xaaaaaa
       );
+    } else {
+      renderableCell.children.forEach((child) => child.graphics.clear());
     }
   };
 
@@ -427,8 +447,7 @@ export default class MinimalRenderer
     this._moveBlock(block);
 
     renderableBlock.cells.forEach((cell) => {
-      cell.graphics.clear();
-      this._renderCellAt(cell.graphics, 0, 0, 1, block.color);
+      this._renderCellCopies(cell, 1, block.color);
     });
   }
 
@@ -445,8 +464,8 @@ export default class MinimalRenderer
     }
 
     renderableBlock.cells.forEach((cell) => {
-      cell.graphics.x = cell.cell.column * cellSize;
-      cell.graphics.y = cell.cell.row * cellSize;
+      cell.container.x = cell.cell.column * cellSize;
+      cell.container.y = cell.cell.row * cellSize;
     });
 
     if (this._simulation.isFollowingPlayerId(block.playerId)) {
@@ -462,24 +481,36 @@ export default class MinimalRenderer
     }
   }
 
-  private _renderCellAt(
-    graphics: PIXI.Graphics,
-    x: number,
-    y: number,
+  private _renderCellCopies(
+    cell: IRenderableCell,
     opacity: number,
     color: number,
     shadowIndex: number = 0,
     shadowDirection: number = 0
   ) {
+    const shadowIndexWithDirection = shadowIndex * shadowDirection;
+    let entry = cell.children.find(
+      (child) => child.shadowIndex === shadowIndexWithDirection
+    );
+    if (!entry) {
+      entry = {
+        graphics: new PIXI.Graphics(),
+        shadowIndex: shadowIndexWithDirection,
+      };
+      cell.children.push(entry);
+      cell.container.addChild(entry.graphics);
+    }
+
+    const graphics = entry.graphics;
+    graphics.clear();
     const cellSize = this._getClampedCellSize();
     graphics.beginFill(color, Math.min(opacity, 1));
-    graphics.drawRect(x, y, cellSize, cellSize);
+    graphics.drawRect(0, 0, cellSize, cellSize);
+    graphics.x = shadowIndexWithDirection * this._gridWidth;
     if (shadowIndex < this._shadowCount) {
       (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>
-        this._renderCellAt(
-          graphics,
-          x + this._gridWidth * i,
-          y,
+        this._renderCellCopies(
+          cell,
           opacity, // * 0.5,
           color,
           shadowIndex + 1,
@@ -497,12 +528,10 @@ export default class MinimalRenderer
           (other) => other.column === cell.column && other.row > cell.row
         )
     );
-    this._placementHelperShadows.forEach((shadow) => shadow.clear());
-    while (lowestCells.length > this._placementHelperShadows.length) {
-      const shadowColumn = new PIXI.Graphics();
-      this._placementHelperShadows.push(shadowColumn);
-      this._placementHelperShadowContainer.addChild(shadowColumn);
-    }
+
+    this._placementHelperShadowCells.forEach((shadow) => {
+      shadow.children.forEach((child) => child.graphics.clear());
+    });
 
     const lowestBlockRow = lowestCells
       .map((cell) => cell.row)
@@ -521,19 +550,32 @@ export default class MinimalRenderer
         }
       }
     }
-
-    // render placement helper shadow - NB: this could be done a lot more efficiently by rendering 3 lines,
+    // render placement helper shadow - this could be done a lot more efficiently by rendering one line per column,
     // but for now it's easier to reuse the cell rendering code (for shadows)
+    let cellIndex = 0;
     lowestCells.forEach((cell, index) => {
       const cellDistanceFromLowestRow = lowestBlockRow - cell.row;
-      const shadowGraphics = this._placementHelperShadows[index];
-      shadowGraphics.x = cell.column * cellSize;
       for (
         let y = cell.row + 1;
         y <= highestPlacementRow - cellDistanceFromLowestRow;
         y++
       ) {
-        this._renderCellAt(shadowGraphics, 0, y * cellSize, 0.33, block.color);
+        let renderableCell: IRenderableCell;
+        if (this._placementHelperShadowCells.length > cellIndex) {
+          renderableCell = this._placementHelperShadowCells[cellIndex];
+        } else {
+          renderableCell = {
+            cell,
+            children: [],
+            container: new PIXI.Container(),
+          };
+          this._world.addChild(renderableCell.container);
+          this._placementHelperShadowCells.push(renderableCell);
+        }
+        renderableCell.container.x = cell.column * cellSize;
+        renderableCell.container.y = y * cellSize;
+        this._renderCellCopies(renderableCell, 0.33, block.color);
+        cellIndex++;
       }
     });
   }

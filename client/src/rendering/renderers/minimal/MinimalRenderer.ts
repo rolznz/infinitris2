@@ -157,10 +157,12 @@ export default class MinimalRenderer
         this._app.renderer.width * 0.5
       );
 
-      child.graphics.alpha =
+      const alpha = Math.min(
         1 -
-        (distance * Math.max(this._shadowCount / 2, 1)) /
-          this._app.renderer.width;
+          (distance * Math.max(this._shadowCount / 2, 1)) /
+            this._app.renderer.width
+      );
+      child.graphics.tint = PIXI.utils.rgb2hex([alpha, alpha, alpha]);
     });
   }
 
@@ -206,6 +208,7 @@ export default class MinimalRenderer
     this._app.stage.addChild(this._grid.graphics);
 
     this._world = new PIXI.Container();
+    this._world.sortableChildren = true;
     this._app.stage.addChild(this._world);
 
     this._placementHelperShadowCells = [];
@@ -574,6 +577,7 @@ export default class MinimalRenderer
         }
         renderableCell.container.x = cell.column * cellSize;
         renderableCell.container.y = y * cellSize;
+        renderableCell.container.zIndex = -1000;
         this._renderCellCopies(renderableCell, 0.33, block.color);
         cellIndex++;
       }

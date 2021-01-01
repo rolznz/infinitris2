@@ -11,6 +11,8 @@ export interface TutorialTranslation {
   title: string;
   description?: string;
 }
+
+// TODO: rename to Challenge?
 export default interface ITutorial extends TutorialTranslation {
   readonly id: string;
   readonly priority?: number;
@@ -33,9 +35,9 @@ export default interface ITutorial extends TutorialTranslation {
 
 // TODO: rename to core tutorials (user-submitted ones will be from Firebase)
 export const tutorials: ITutorial[] = [
-  garbageCollection1,
-  wrapTest,
-  shadowTest,
   basicMovement,
+  shadowTest,
+  wrapTest,
+  garbageCollection1,
   controlCheck,
 ];

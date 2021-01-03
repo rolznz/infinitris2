@@ -4,20 +4,10 @@ import Simulation from '@core/Simulation';
 import ControlSettings from './ControlSettings';
 import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
+import KeyboardInput, { DEFAULT_CONTROLS } from './KeyboardInput';
+import TouchInput from './TouchInput';
 
-const DEFAULT_CONTROLS: ControlSettings = new Map<InputAction, string>([
-  [InputAction.MoveLeft, 'ArrowLeft'],
-  [InputAction.MoveRight, 'ArrowRight'],
-  [InputAction.Drop, 'ArrowUp'],
-  [InputAction.MoveDown, 'ArrowDown'],
-  [InputAction.RotateAntiClockwise, 'z'],
-  [InputAction.RotateClockwise, 'x'],
-  [InputAction.MoveLeft, 'ArrowLeft'],
-]);
-/*start: 'Enter',
-  pause: 'p',*/
-
-type ActionListener = (action: InputAction) => void;
+export type ActionListener = (action: InputAction) => void;
 
 export default class Input {
   private _player: ControllablePlayer;
@@ -26,6 +16,8 @@ export default class Input {
   private _controls: ControlSettings;
   private _allowedActions?: InputAction[];
   private _actionListeners: ActionListener[];
+  private _keyboardInput: KeyboardInput;
+  private _touchInput: TouchInput;
 
   constructor(
     simulation: Simulation,
@@ -37,7 +29,9 @@ export default class Input {
     this._player = player;
     this._controls = controls;
     this._actionListeners = [];
-    document.addEventListener('keydown', this._onKeyDown);
+    // TODO: only add listeners for preferred input method?
+    this._keyboardInput = new KeyboardInput(this._fireAction, controls);
+    this._touchInput = new TouchInput(this._fireAction);
   }
 
   set allowedActions(allowedActions: InputAction[] | undefined) {
@@ -56,71 +50,47 @@ export default class Input {
    * Removes all input listeners.
    */
   destroy() {
-    document.removeEventListener('keydown', this._onKeyDown);
+    this._keyboardInput.destroy();
+    this._touchInput.destroy();
   }
 
   private _isActionAllowed(action: InputAction) {
     return !this._allowedActions || this._allowedActions.indexOf(action) >= 0;
   }
 
-  private _onKeyDown = (event: KeyboardEvent) => {
-    if (!this._simulation.isRunning) {
+  private _fireAction = (action: InputAction) => {
+    if (!this._simulation.isRunning || !this._isActionAllowed(action)) {
       return;
     }
-
     const block: IBlock | undefined = this._player.block;
-    if (block) {
-      if (
-        (this._isActionAllowed(InputAction.MoveLeft) &&
-          event.key === this._controls.get(InputAction.MoveLeft)) ||
-        (this._isActionAllowed(InputAction.MoveRight) &&
-          event.key === this._controls.get(InputAction.MoveRight))
-      ) {
-        const action =
-          event.key === this._controls.get(InputAction.MoveLeft)
-            ? InputAction.MoveLeft
-            : InputAction.MoveRight;
-        this._fireAction(action);
-        block.move(
+    switch (action) {
+      case InputAction.MoveLeft:
+      case InputAction.MoveRight:
+      case InputAction.MoveDown:
+        block?.move(
           this._grid.cells,
-          action === InputAction.MoveLeft ? -1 : 1,
-          0,
+          action === InputAction.MoveLeft
+            ? -1
+            : action === InputAction.MoveRight
+            ? 1
+            : 0,
+          action === InputAction.MoveDown ? 1 : 0,
           0
         );
-      } else if (
-        this._isActionAllowed(InputAction.MoveDown) &&
-        event.key === this._controls.get(InputAction.MoveDown)
-      ) {
-        this._fireAction(InputAction.MoveDown);
-        block.move(this._grid.cells, 0, 1, 0);
-      } else if (
-        this._isActionAllowed(InputAction.Drop) &&
-        event.key === this._controls.get(InputAction.Drop)
-      ) {
-        this._fireAction(InputAction.Drop);
-        block.drop();
-      } else if (
-        (this._isActionAllowed(InputAction.RotateAntiClockwise) &&
-          event.key === this._controls.get(InputAction.RotateAntiClockwise)) ||
-        (this._isActionAllowed(InputAction.RotateClockwise) &&
-          event.key === this._controls.get(InputAction.RotateClockwise))
-      ) {
-        const action =
-          event.key === this._controls.get(InputAction.RotateAntiClockwise)
-            ? InputAction.RotateAntiClockwise
-            : InputAction.RotateClockwise;
-        this._fireAction(action);
-        block.move(
+        break;
+      case InputAction.Drop:
+        block?.drop();
+        break;
+      case InputAction.RotateClockwise:
+      case InputAction.RotateAntiClockwise:
+        block?.move(
           this._grid.cells,
           0,
           0,
           action === InputAction.RotateClockwise ? 1 : -1
         );
-      }
     }
-  };
 
-  private _fireAction(action: InputAction) {
     this._actionListeners.forEach((listener) => listener(action));
-  }
+  };
 }

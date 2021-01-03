@@ -4,23 +4,38 @@ import MinimalRenderer from '@src/rendering/renderers/minimal/MinimalRenderer';
 import ControllablePlayer from '@src/ControllablePlayer';
 import Grid from '@core/grid/Grid';
 import Input from '@src/input/Input';
-import IClient from '../Client';
-import ITutorial from '../../../../models/src/ITutorial';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import CellType from '@models/CellType';
 import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
+import ITutorialClient, { TutorialStatus } from '@models/ITutorialClient';
+import InputMethod from '@models/InputMethod';
+import ITutorial from '@models/ITutorial';
 
+// TODO: enable support for multiplayer tutorials (challenges)
+// this client should be replaced with a single player / network client that supports a challenge
 export default class TutorialClient
-  implements IClient, ISimulationEventListener {
+  implements ITutorialClient, ISimulationEventListener {
   // FIXME: restructure to not require definite assignment
   private _renderer!: IRenderer;
   private _simulation!: Simulation;
   private _tutorial!: ITutorial;
   private _input!: Input;
   private _allowedActions?: InputAction[];
+  private _preferredInputMethod: InputMethod;
+  private _simulationEventListener?: ISimulationEventListener;
+  private _numBlocksPlaced: number;
+  private _numLinesCleared: number;
 
-  constructor(tutorial: ITutorial, listener?: ISimulationEventListener) {
+  constructor(
+    tutorial: ITutorial,
+    listener?: ISimulationEventListener,
+    preferredInputMethod: InputMethod = 'keyboard'
+  ) {
+    this._preferredInputMethod = preferredInputMethod;
+    // TODO: store in status object instead
+    this._numBlocksPlaced = 0;
+    this._numLinesCleared = 0;
     this._create(tutorial, listener);
   }
 
@@ -40,7 +55,9 @@ export default class TutorialClient
   /**
    * @inheritdoc
    */
-  onBlockPlaced(block: IBlock) {}
+  onBlockPlaced(block: IBlock) {
+    ++this._numBlocksPlaced;
+  }
 
   /**
    * @inheritdoc
@@ -59,15 +76,47 @@ export default class TutorialClient
   /**
    * @inheritdoc
    */
-  onLineCleared(row: number) {}
+  onLineCleared(row: number) {
+    ++this._numLinesCleared;
+  }
 
   /**
    * @inheritdoc
    */
   destroy() {
-    this._simulation.stopInterval();
     this._renderer.destroy();
+    this._destroyTempObjects();
+  }
+
+  private _destroyTempObjects() {
+    this._simulation.stopInterval();
+    // TODO: shouldn't have to destroy the input each time
     this._input.destroy();
+  }
+
+  /**
+   * @inheritdoc
+   */
+  restart() {
+    this._destroyTempObjects();
+    this._createTempObjects();
+    this._numBlocksPlaced = 0;
+    this._numLinesCleared = 0;
+  }
+
+  getStatus(): TutorialStatus {
+    const finished =
+      this._tutorial.maxBlocks &&
+      this._numBlocksPlaced >= this._tutorial.maxBlocks;
+    const won =
+      this._numLinesCleared >= (this._tutorial.successLinesCleared || 0);
+    const status = finished ? (won ? 'success' : 'failed') : 'pending';
+
+    // TODO:
+    return {
+      status,
+      stars: 0,
+    };
   }
 
   private async _create(
@@ -75,26 +124,31 @@ export default class TutorialClient
     listener?: ISimulationEventListener
   ) {
     this._tutorial = tutorial;
-    this._renderer = new MinimalRenderer();
+    this._renderer = new MinimalRenderer(this._preferredInputMethod);
+    this._simulationEventListener = listener;
     await this._renderer.create();
 
+    this._createTempObjects();
+  }
+
+  private _createTempObjects() {
     const cellTypes: CellType[][] = [];
-    if (tutorial.grid) {
+    if (this._tutorial.grid) {
       cellTypes.push(
-        ...tutorial.grid
+        ...this._tutorial.grid
           .split('\n')
           .map((row) => row.trim())
           .filter((row) => row && !row.startsWith('//'))
           .map((row) => row.split('').map((c) => c as CellType))
       );
       if (cellTypes.find((r) => r.length !== cellTypes[0].length)) {
-        throw new Error('Invalid tutorial grid: ' + tutorial.title);
+        throw new Error('Invalid tutorial grid: ' + this._tutorial.title);
       }
     }
 
     const grid = new Grid(
-      cellTypes.length ? cellTypes[0].length : tutorial.gridNumColumns,
-      cellTypes.length ? cellTypes.length : tutorial.gridNumRows
+      cellTypes.length ? cellTypes[0].length : this._tutorial.gridNumColumns,
+      cellTypes.length ? cellTypes.length : this._tutorial.gridNumRows
     );
     if (cellTypes.length) {
       for (let r = 0; r < grid.cells.length; r++) {
@@ -106,24 +160,24 @@ export default class TutorialClient
       }
     }
 
-    this._simulation = new Simulation(grid, tutorial.simulationSettings);
+    this._simulation = new Simulation(grid, this._tutorial.simulationSettings);
     this._simulation.addEventListener(this, this._renderer);
-    if (listener) {
-      this._simulation.addEventListener(listener);
+    if (this._simulationEventListener) {
+      this._simulation.addEventListener(this._simulationEventListener);
     }
 
     const playerId = 0;
     const player = new ControllablePlayer(playerId, this._simulation);
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);
-    player.nextLayout = tutorial.layout;
-    player.nextLayoutRotation = tutorial.layoutRotation;
+    player.nextLayout = this._tutorial.layout;
+    player.nextLayoutRotation = this._tutorial.layoutRotation;
 
     this._input = new Input(this._simulation, player, undefined);
     this._renderer.virtualKeyboardControls = this._input.controls;
-    this._updateAllowedActions(tutorial.allowedActions);
+    this._updateAllowedActions(this._tutorial.allowedActions);
 
-    if (tutorial.teachControls) {
+    if (this._tutorial.teachControls) {
       this._teachNextControl();
       this._input.addListener(
         (action) =>

@@ -9,6 +9,7 @@ const controlCheck: ITutorial = {
   layout: tetrominoes.L,
   gridNumRows: 35,
   gridNumColumns: 100,
+  maxBlocks: 1,
   simulationSettings: {
     spawnRowOffset: 5,
     gravityEnabled: false,

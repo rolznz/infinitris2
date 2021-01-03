@@ -8,7 +8,8 @@ const garbageCollection1: ITutorial = {
   locale: 'en',
   highlightScore: true,
   layout: tetrominoes.T,
-  successLinesCleared: [2],
+  //successOnEmptyGrid: true
+  //successLinesCleared: 2,
   grid: `
 0000
 0000

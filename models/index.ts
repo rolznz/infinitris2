@@ -15,14 +15,16 @@ import tetrominoes from './src/Tetrominoes';
 import ITutorial, { tutorials } from './src/ITutorial';
 import CellType from './src/CellType';
 import ICellBehaviour from './src/ICellBehaviour';
+import ITutorialClient, { TutorialStatus } from './src/ITutorialClient';
 
 export {
   tutorials,
-  ITutorial as Tutorial,
+  ITutorial,
+  ITutorialClient,
+  TutorialStatus,
   InputAction,
   Layout,
   tetrominoes,
-  IRoom as Room,
   IInfinitrisApi,
   IClientSocketEventListener,
   ICell,
@@ -35,4 +37,5 @@ export {
   ISimulationEventListener,
   ISimulationSettings,
   InputMethod,
+  IRoom,
 };

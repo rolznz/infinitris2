@@ -4,7 +4,7 @@ import MinimalRenderer from '@src/rendering/renderers/minimal/MinimalRenderer';
 import ControllablePlayer from '@src/ControllablePlayer';
 import Grid from '@core/grid/Grid';
 import Input from '@src/input/Input';
-import IClient from '../Client';
+import IClient from '../../../../models/src/IClient';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import Block from '@core/block/Block';
 import IBlock from '@models/IBlock';
@@ -53,6 +53,13 @@ export default class SinglePlayerClient
    * @inheritdoc
    */
   onBlockWrapped(block: IBlock, wrapIndexChange: number) {}
+
+  /**
+   * @inheritdoc
+   */
+  restart(): void {
+    throw new Error('Method not implemented.');
+  }
 
   /**
    * @inheritdoc

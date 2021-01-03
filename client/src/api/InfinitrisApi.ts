@@ -1,12 +1,13 @@
 import ITutorial, { tutorials } from '@models/ITutorial';
 import IInfinitrisApi from '@models/IInfinitrisApi';
 import IClientSocketEventListener from '@src/networking/IClientSocketEventListener';
-import IClient from '../client/Client';
+import IClient from '../../../models/src/IClient';
 import DemoClient from '../client/DemoClient';
 import NetworkClient from '../client/NetworkClient';
 import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
 import TutorialClient from '@src/client/singleplayer/TutorialClient';
 import ISimulationEventListener from '@models/ISimulationEventListener';
+import InputMethod from '@models/InputMethod';
 
 export default class InfinitrisApi implements IInfinitrisApi {
   private _client?: IClient;
@@ -31,18 +32,22 @@ export default class InfinitrisApi implements IInfinitrisApi {
     } else if (params.has('demo')) {
       this.launchDemo();
     } else if (params.has('tutorial')) {
-      this.launchTutorial(tutorials[0], {
-        onSimulationInit: (simulation) => {
-          simulation.startInterval();
+      this.launchTutorial(
+        tutorials[0],
+        {
+          onSimulationInit: (simulation) => {
+            simulation.startInterval();
+          },
+          onSimulationStep() {},
+          onBlockCreated() {},
+          onBlockMoved() {},
+          onBlockWrapped() {},
+          onBlockDied() {},
+          onBlockPlaced() {},
+          onLineCleared() {},
         },
-        onSimulationStep() {},
-        onBlockCreated() {},
-        onBlockMoved() {},
-        onBlockWrapped() {},
-        onBlockDied() {},
-        onBlockPlaced() {},
-        onLineCleared() {},
-      });
+        'touch'
+      );
     } else {
       this._invalidUrl(url);
     }
@@ -69,10 +74,21 @@ export default class InfinitrisApi implements IInfinitrisApi {
    */
   launchTutorial = (
     tutorial: ITutorial,
-    listener?: ISimulationEventListener
+    listener?: ISimulationEventListener,
+    preferredInputMethod?: InputMethod
   ) => {
     this.releaseClient();
-    this._client = new TutorialClient(tutorial, listener);
+    const tutorialClient = new TutorialClient(
+      tutorial,
+      listener,
+      preferredInputMethod
+    );
+    this._client = tutorialClient;
+    return tutorialClient;
+  };
+
+  restartClient = () => {
+    this._client?.restart();
   };
 
   /**

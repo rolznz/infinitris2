@@ -7,7 +7,7 @@ import {
 } from 'pixi.js-legacy';
 import Simulation from '@core/Simulation';
 import IBlock from '@models/IBlock';
-const imagesDirectory = 'client/images';
+import { imagesDirectory } from '..';
 
 type Snowflake = {
   vx: number;

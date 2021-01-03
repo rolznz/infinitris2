@@ -27,7 +27,8 @@ export default interface ITutorial extends TutorialTranslation {
   readonly highlightScore?: boolean;
   readonly layoutRotation?: number;
   readonly allowedActions?: InputAction[];
-  readonly successLinesCleared?: number[];
+  readonly maxBlocks?: number;
+  readonly successLinesCleared?: number;
 
   readonly simulationSettings?: ISimulationSettings;
   readonly teachControls?: boolean;
@@ -35,9 +36,9 @@ export default interface ITutorial extends TutorialTranslation {
 
 // TODO: rename to core tutorials (user-submitted ones will be from Firebase)
 export const tutorials: ITutorial[] = [
+  controlCheck,
+  garbageCollection1,
   basicMovement,
   shadowTest,
   wrapTest,
-  garbageCollection1,
-  controlCheck,
 ];

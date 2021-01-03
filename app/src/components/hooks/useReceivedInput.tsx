@@ -1,20 +1,24 @@
 import { InputMethod } from 'infinitris2-models';
-import React from 'react';
+import { useState } from 'react';
 import { useKeyPress, useTimeout } from 'react-use';
 import useTapListener from './useTapListener';
 
-export default function useReceivedInput(): [boolean, InputMethod | undefined] {
-  const isReadyTimeout = 1000;
+export default function useReceivedInput(
+  retryId: number = 0
+): [boolean, InputMethod | undefined] {
+  const [lastRetryId, setLastRetryId] = useState<number | undefined>(undefined);
+  const isReadyTimeout = 1000 + (retryId % 2); // force timeout to restart on retry change
   const [isReady] = useTimeout(isReadyTimeout);
-  const [isAnyKeyPressed] = useKeyPress((event) =>
-    Boolean(isReady() && event.key === 'Enter')
-  );
-  const hasTapped = useTapListener(isReadyTimeout);
-  const [hasReceivedInput, setHasReceivedInput] = React.useState(false);
 
-  if ((hasTapped || isAnyKeyPressed) && !hasReceivedInput) {
-    setHasReceivedInput(true);
+  const [isAnyKeyPressed] = useKeyPress(
+    (event: KeyboardEvent) => event.key === 'Enter'
+  );
+  const hasTapped = useTapListener(isReadyTimeout, retryId);
+  if ((hasTapped || isAnyKeyPressed) && retryId !== lastRetryId && isReady()) {
+    setLastRetryId(retryId);
   }
+
+  const hasReceivedInput = retryId === lastRetryId;
 
   return [
     hasReceivedInput,

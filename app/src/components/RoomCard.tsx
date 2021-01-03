@@ -2,10 +2,10 @@ import { Box, Typography, Chip } from '@material-ui/core';
 import { Skeleton } from '@material-ui/lab';
 import React from 'react';
 import FaceIcon from '@material-ui/icons/Face';
-import { Room } from 'infinitris2-models';
+import { IRoom } from 'infinitris2-models';
 
 interface RoomCardProps {
-  room?: Room;
+  room?: IRoom;
   loading?: boolean;
 }
 

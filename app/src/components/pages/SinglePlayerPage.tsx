@@ -5,7 +5,6 @@ import useWelcomeRedirect from '../hooks/useWelcomeRedirect';
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
-  const user = appStore.user;
   const setIsDemo = appStore.setIsDemo;
   const requiresRedirect = useWelcomeRedirect();
   const launchSinglePlayer = client?.launchSinglePlayer;
@@ -17,13 +16,7 @@ export default function SinglePlayerPage() {
       launchSinglePlayer();
       setIsDemo(false);
     }
-  }, [
-    launchSinglePlayer,
-    user.hasSeenWelcome,
-    requiresRedirect,
-    hasLaunched,
-    setIsDemo,
-  ]);
+  }, [launchSinglePlayer, requiresRedirect, hasLaunched, setIsDemo]);
 
   return null;
 }

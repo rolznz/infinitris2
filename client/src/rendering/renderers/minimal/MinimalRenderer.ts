@@ -10,6 +10,8 @@ import ControlSettings from '@src/input/ControlSettings';
 import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
+import { InputMethod } from 'models';
+import { imagesDirectory } from '..';
 
 const minCellSize = 32;
 interface IRenderableGrid {
@@ -43,6 +45,7 @@ export default class MinimalRenderer
   private _placementHelperShadowCells!: IRenderableCell[];
   private _virtualKeyboardGraphics?: PIXI.Graphics;
   private _virtualKeyboardCharacters!: PIXI.Text[];
+  private _virtualGestureSprites?: PIXI.Sprite[];
   private _app!: PIXI.Application;
   private _world!: PIXI.Container;
 
@@ -63,8 +66,11 @@ export default class MinimalRenderer
   private _shadowCount!: number;
   private _virtualKeyboardControls?: ControlSettings;
   private _allowedActions?: InputAction[];
+  private _preferredInputMethod: InputMethod;
 
-  constructor() {}
+  constructor(preferredInputMethod: InputMethod = 'keyboard') {
+    this._preferredInputMethod = preferredInputMethod;
+  }
 
   set virtualKeyboardControls(
     virtualKeyboardControls: ControlSettings | undefined
@@ -75,6 +81,7 @@ export default class MinimalRenderer
   set allowedActions(allowedActions: InputAction[] | undefined) {
     this._allowedActions = allowedActions;
     this._renderVirtualKeyboard();
+    this._renderVirtualGestures();
   }
 
   /**
@@ -85,11 +92,39 @@ export default class MinimalRenderer
       resizeTo: window,
       antialias: true,
     });
-    this._camera = new Camera();
-    document.body.appendChild(this._app.view);
 
-    this._blocks = {};
-    this._cells = {};
+    if (this._preferredInputMethod === 'touch') {
+      const gesturesDirectory = `${imagesDirectory}/gestures`;
+      const swipeLeftUrl = `${gesturesDirectory}/swipe-left.png`;
+      const swipeRightUrl = `${gesturesDirectory}/swipe-right.png`;
+      const swipeUpUrl = `${gesturesDirectory}/swipe-up.png`;
+      const swipeDownUrl = `${gesturesDirectory}/swipe-down.png`;
+      const tapUrl = `${gesturesDirectory}/tap.png`;
+      this._app.loader.add(swipeLeftUrl);
+      this._app.loader.add(swipeRightUrl);
+      this._app.loader.add(swipeUpUrl);
+      this._app.loader.add(swipeDownUrl);
+      this._app.loader.add(tapUrl);
+      await new Promise((resolve) => this._app.loader.load(resolve));
+      const createGestureSprite = (url: string) => {
+        const sprite = PIXI.Sprite.from(
+          this._app.loader.resources[url].texture
+        );
+        sprite.anchor.set(0.5);
+        sprite.alpha = 0;
+        return sprite;
+      };
+      // one sprite is added for each input action
+      this._virtualGestureSprites = [];
+      this._virtualGestureSprites.push(createGestureSprite(swipeLeftUrl));
+      this._virtualGestureSprites.push(createGestureSprite(swipeRightUrl));
+      this._virtualGestureSprites.push(createGestureSprite(swipeDownUrl));
+      this._virtualGestureSprites.push(createGestureSprite(tapUrl));
+      this._virtualGestureSprites.push(createGestureSprite(tapUrl));
+      this._virtualGestureSprites.push(createGestureSprite(swipeUpUrl));
+    }
+
+    document.body.appendChild(this._app.view);
 
     window.addEventListener('resize', this._resize);
     this._resize();
@@ -115,7 +150,6 @@ export default class MinimalRenderer
     }
     if (this._scrollY) {
       this._world.y = cameraY + visibilityY;
-      console.log(this._world.y);
     }
 
     if (this._scrollX) {
@@ -159,8 +193,11 @@ export default class MinimalRenderer
 
       const alpha = Math.min(
         1 -
-          (distance * Math.max(this._shadowCount / 2, 1)) /
-            this._app.renderer.width
+          Math.min(
+            (distance * Math.max(this._shadowCount / 2, 1)) /
+              this._app.renderer.width,
+            1
+          )
       );
       child.graphics.tint = PIXI.utils.rgb2hex([alpha, alpha, alpha]);
     });
@@ -226,7 +263,10 @@ export default class MinimalRenderer
 
     this._app.stage.addChild(...this._playerScores.map((score) => score.text));
 
-    if (this._virtualKeyboardControls) {
+    if (
+      this._virtualKeyboardControls &&
+      this._preferredInputMethod === 'keyboard'
+    ) {
       this._virtualKeyboardGraphics = new PIXI.Graphics();
       this._app.stage.addChild(this._virtualKeyboardGraphics);
 
@@ -243,6 +283,10 @@ export default class MinimalRenderer
           })
       );
       this._app.stage.addChild(...this._virtualKeyboardCharacters);
+    }
+
+    if (this._preferredInputMethod === 'touch') {
+      this._app.stage.addChild(...this._virtualGestureSprites);
     }
 
     this._resize();
@@ -356,7 +400,9 @@ export default class MinimalRenderer
   };
 
   private _resize = async () => {
-    await new Promise((resolve) => setTimeout(resolve, 100));
+    this._blocks = {};
+    this._cells = {};
+    this._camera = new Camera();
     this._camera.reset();
 
     const appWidth = this._app.renderer.width;
@@ -365,6 +411,7 @@ export default class MinimalRenderer
     this._cellSize = cellSize;
 
     this._renderVirtualKeyboard();
+    this._renderVirtualGestures();
 
     if (this._grid) {
       this._grid.graphics.clear();
@@ -652,5 +699,25 @@ export default class MinimalRenderer
     this._renderVirtualKeyboardKey(InputAction.MoveDown, 1, 1);
     this._renderVirtualKeyboardKey(InputAction.MoveLeft, 0, 1);
     this._renderVirtualKeyboardKey(InputAction.MoveRight, 2, 1);
+  }
+
+  private _renderVirtualGestures() {
+    if (!this._virtualGestureSprites) {
+      return;
+    }
+    this._virtualGestureSprites.forEach((sprite, i) => {
+      sprite.x =
+        this._app.renderer.width *
+        (i === InputAction.RotateAntiClockwise
+          ? 0.25
+          : i === InputAction.RotateClockwise
+          ? 0.75
+          : 0.5);
+      sprite.y = this._app.renderer.height * 0.75;
+      sprite.alpha =
+        this._allowedActions?.length === 1 && this._allowedActions[0] === i
+          ? 1
+          : 0;
+    });
   }
 }

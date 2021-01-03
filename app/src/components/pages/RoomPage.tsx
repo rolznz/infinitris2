@@ -10,7 +10,7 @@ import Loader from 'react-loader-spinner';
 import SignalCellularConnectedNoInternet0BarIcon from '@material-ui/icons/SignalCellularConnectedNoInternet0Bar';
 import HomeIcon from '@material-ui/icons/Home';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { IClientSocketEventListener, Room } from 'infinitris2-models';
+import { IClientSocketEventListener, IRoom } from 'infinitris2-models';
 import useWelcomeRedirect from '../hooks/useWelcomeRedirect';
 
 interface RoomPageRouteParams {
@@ -47,7 +47,7 @@ export default function RoomPage() {
   const setIsDemo = appStore.setIsDemo;
   const { id } = useParams<RoomPageRouteParams>();
 
-  const [room, loadingRoom] = useDocumentData<Room>(
+  const [room, loadingRoom] = useDocumentData<IRoom>(
     firebase.firestore().doc(`rooms/${id}`)
   );
   const [retryCount, setRetryCount] = useState(0);

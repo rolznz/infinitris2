@@ -1,5 +1,5 @@
 import IRenderer from '@src/rendering/IRenderer';
-import IClient from './Client';
+import IClient from '../../../models/src/IClient';
 import DemoRenderer from '@src/rendering/renderers/demo/DemoRenderer';
 
 export default class DemoClient implements IClient {
@@ -7,6 +7,10 @@ export default class DemoClient implements IClient {
   private _renderer!: IRenderer;
   constructor() {
     this._create();
+  }
+
+  restart(): void {
+    throw new Error('Method not implemented.');
   }
 
   /**

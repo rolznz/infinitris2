@@ -45,7 +45,6 @@ export default class Camera {
   }
 
   follow(x: number, y: number, id: number) {
-    console.log(this._wrapIndex);
     this._dx = -(x + this._wrapIndex * this._gridWidth);
     this._dy = -y;
     if (this._followingId != id) {

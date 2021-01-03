@@ -9,7 +9,7 @@ const wrapTest: ITutorial = {
   description: '',
   highlightScore: true,
   layout: tetrominoes.T,
-  successLinesCleared: [2],
+  successLinesCleared: 2,
   grid: `
 X00000000000000000000000000000000000000000000000X
 0000000000000000000000000000000000000000000000000

@@ -7,7 +7,7 @@ import ClientMessageType from '@core/networking/client/ClientMessageType';
 import ServerMessageType from '@core/networking/server/ServerMessageType';
 import Grid from '@core/grid/Grid';
 import IClientSocket from '../networking/IClientSocket';
-import IClient from './Client';
+import IClient from '../../../models/src/IClient';
 import ClientSocket from '@src/networking/ClientSocket';
 
 export default class NetworkClient
@@ -51,6 +51,13 @@ export default class NetworkClient
       this._simulation.addEventListener(this._renderer);
       this._simulation.init();
     }
+  }
+
+  /**
+   * @inheritdoc
+   */
+  restart(): void {
+    throw new Error('Method not implemented.');
   }
 
   /**

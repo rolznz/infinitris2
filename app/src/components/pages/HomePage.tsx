@@ -11,19 +11,19 @@ import {
   TextField,
 } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
-import Room from 'infinitris2-models/src/Room';
 import useAppStore from '../../state/AppStore';
 import useHomeStore from '../../state/HomeStore';
 import RoomCard from '../RoomCard';
 import Routes from '../../models/Routes';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useDemo from '../hooks/useDemo';
+import { IRoom } from 'infinitris2-models';
 
 export default function HomePage() {
   useDemo();
   const appStore = useAppStore();
   const homeStore = useHomeStore();
-  const [rooms, loadingRooms] = useCollectionData<Room>(
+  const [rooms, loadingRooms] = useCollectionData<IRoom>(
     firebase.firestore().collection('rooms'),
     { idField: 'id' }
   );

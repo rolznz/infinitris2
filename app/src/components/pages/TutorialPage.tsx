@@ -4,6 +4,7 @@ import {
   tutorials,
   ISimulationEventListener,
   ISimulation,
+  ITutorialClient,
 } from 'infinitris2-models';
 import useWelcomeRedirect from '../hooks/useWelcomeRedirect';
 import { useHistory, useParams } from 'react-router-dom';
@@ -33,13 +34,25 @@ export default function TutorialPage() {
   const setIsDemo = appStore.setIsDemo;
   const completeTutorial = appStore.completeTutorial;
   const launchTutorial = client?.launchTutorial;
+  const restartClient = client?.restartClient; // TODO: move to IClient
   const [hasLaunched, setLaunched] = useState(false);
-  const [showInfo, setShowInfo] = useState(true);
+
   const [simulation, setSimulation] = useState<ISimulation | undefined>(
     undefined
   );
-  const [hasReceivedInput] = useReceivedInput();
+  const [tutorialClient, setTutorialClient] = useState<
+    ITutorialClient | undefined
+  >(undefined);
+
+  const [showInfo, setShowInfo] = useState(true);
+  const [checkTutorialStatus, setCheckTutorialStatus] = useState(false);
+
+  const [retryId, setRetryId] = useState(0);
+
+  const [hasReceivedInput] = useReceivedInput(retryId);
+
   const translation = tutorial?.translations?.[user.locale];
+  const preferredInputMethod = user.preferredInputMethod;
   // TODO: useWelcomeRedirect
 
   // TODO: load tutorial from firebase
@@ -47,28 +60,6 @@ export default function TutorialPage() {
   useEffect(() => {
     if (tutorial && !requiresRedirect && launchTutorial && !hasLaunched) {
       setLaunched(true);
-      const checkTutorialFinished = async () => {
-        // execute outside of game event loop
-        await new Promise((resolve) => setTimeout(resolve, 1));
-        // FIXME: should this be done here?
-        //this._simulation.stopInterval();
-        //this._input.destroy();
-        // FIXME: on block placed, check if line clear was triggered?
-        // line clear should be delayed, 1 s + colors changing
-        //const success = this._simulation.getPlayer(block.playerId).score > 0;
-        //this._listeners.
-        //useRoomStore.getState()
-        completeTutorial(tutorial.id);
-        const remainingTutorials = incompleteTutorials.filter(
-          (incompleteTutorial) => incompleteTutorial.id !== tutorial.id
-        );
-        if (remainingTutorials.length) {
-          // TODO: automatically go to next room?
-          history.replace(Routes.tutorialRequired);
-        } else {
-          history.replace(Routes.allSet);
-        }
-      };
 
       const simulationEventListener: ISimulationEventListener = {
         onSimulationInit(simulation: ISimulation) {
@@ -79,27 +70,65 @@ export default function TutorialPage() {
         onBlockCreated() {},
 
         onBlockPlaced() {
-          checkTutorialFinished();
+          setCheckTutorialStatus(true);
         },
         onBlockDied() {
-          checkTutorialFinished();
+          setCheckTutorialStatus(true);
         },
         onBlockMoved() {},
+        onBlockWrapped() {},
         onLineCleared() {},
       };
-      launchTutorial(tutorial, simulationEventListener);
+
+      setTutorialClient(
+        launchTutorial(tutorial, simulationEventListener, preferredInputMethod)
+      );
       setIsDemo(false);
     }
   }, [
     launchTutorial,
-    user.hasSeenWelcome,
     requiresRedirect,
     tutorial,
-    completeTutorial,
     incompleteTutorials,
-    history,
     hasLaunched,
     setIsDemo,
+    preferredInputMethod,
+    setCheckTutorialStatus,
+    setTutorialClient,
+  ]);
+
+  useEffect(() => {
+    if (checkTutorialStatus && tutorial && restartClient) {
+      setCheckTutorialStatus(false);
+      const status = tutorialClient?.getStatus();
+      console.log('Status: ', status);
+      if (status && status.status !== 'pending') {
+        if (status.status === 'success') {
+          completeTutorial(tutorial.id);
+          const remainingTutorials = incompleteTutorials.filter(
+            (incompleteTutorial) => incompleteTutorial.id !== tutorial.id
+          );
+          if (remainingTutorials.length) {
+            // TODO: automatically go to next room?
+            history.replace(Routes.tutorialRequired);
+          } else {
+            history.replace(Routes.allSet);
+          }
+        } else {
+          setRetryId((oldRetryId) => oldRetryId + 1);
+          setShowInfo(true);
+          restartClient();
+        }
+      }
+    }
+  }, [
+    checkTutorialStatus,
+    completeTutorial,
+    history,
+    incompleteTutorials,
+    restartClient,
+    tutorial,
+    tutorialClient,
   ]);
 
   if (!hasLaunched) {

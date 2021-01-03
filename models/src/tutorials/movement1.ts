@@ -9,7 +9,8 @@ const basicMovement: ITutorial = {
   highlightScore: true,
   layout: tetrominoes.L,
   layoutRotation: 1,
-  successLinesCleared: [2],
+  successLinesCleared: 2,
+  maxBlocks: 1,
   mandatory: true,
   priority: 9000,
   //successActions: [] // TODO: hint when drop is not used

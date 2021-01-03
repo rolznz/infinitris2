@@ -5,14 +5,14 @@ import { useCollectionData } from 'react-firebase-hooks/firestore';
 import * as firebase from 'firebase/app';
 import { Box, Grid, Link, Typography } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
-import Room from 'infinitris2-models/src/Room';
+import { IRoom } from 'infinitris2-models';
 import useHomeStore from '../../state/HomeStore';
 import RoomCard from '../RoomCard';
 import Routes from '../../models/Routes';
 import { FormattedMessage } from 'react-intl';
 
 export default function LobbyPage() {
-  const [rooms, loading] = useCollectionData<Room>(
+  const [rooms, loading] = useCollectionData<IRoom>(
     firebase.firestore().collection('rooms'),
     { idField: 'id' }
   );

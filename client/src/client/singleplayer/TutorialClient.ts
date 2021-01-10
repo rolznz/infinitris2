@@ -112,9 +112,6 @@ export default class TutorialClient
   restart() {
     this._destroyTempObjects();
     this._createTempObjects();
-    this._numBlocksPlaced = 0;
-    this._numLinesCleared = 0;
-    this._blockCreateFailed = false;
   }
 
   getStatus(): TutorialStatus {
@@ -238,6 +235,10 @@ export default class TutorialClient
   }
 
   private _createTempObjects() {
+    this._numBlocksPlaced = 0;
+    this._numLinesCleared = 0;
+    this._blockCreateFailed = false;
+
     const cellTypes: CellType[][] = [];
     if (this._tutorial.grid) {
       cellTypes.push(

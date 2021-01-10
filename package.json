@@ -2,7 +2,8 @@
   "private": true,
   "scripts": {
     "prettier:write": "prettier \"**/*.{ts,tsx}\" --write",
-    "prettier:check": "prettier \"**/*.{ts,tsx}\" --check"
+    "prettier:check": "prettier \"**/*.{ts,tsx}\" --check",
+    "firebase:deploy:hosting": "firebase deploy --only hosting"
   },
   "devDependencies": {
     "prettier": "^2.2.1"

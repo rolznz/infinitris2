@@ -1,4 +1,3 @@
-import Simulation from '@core/Simulation';
 import IRenderer from '@src/rendering/IRenderer';
 import MinimalRenderer from '@src/rendering/renderers/minimal/MinimalRenderer';
 import ControllablePlayer from '@src/ControllablePlayer';
@@ -11,6 +10,10 @@ import IBlock from '@models/IBlock';
 import ITutorialClient, { TutorialStatus } from '@models/ITutorialClient';
 import InputMethod from '@models/InputMethod';
 import ITutorial from '@models/ITutorial';
+import TutorialSuccessCriteria from '@models/TutorialSuccessCriteria';
+import ISimulation from '@models/ISimulation';
+import Simulation from '@core/Simulation';
+import TutorialCompletionStats from '@models/TutorialCompletionStats';
 
 // TODO: enable support for multiplayer tutorials (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -18,14 +21,15 @@ export default class TutorialClient
   implements ITutorialClient, ISimulationEventListener {
   // FIXME: restructure to not require definite assignment
   private _renderer!: IRenderer;
-  private _simulation!: Simulation;
+  private _simulation!: ISimulation;
   private _tutorial!: ITutorial;
   private _input!: Input;
   private _allowedActions?: InputAction[];
   private _preferredInputMethod: InputMethod;
   private _simulationEventListener?: ISimulationEventListener;
-  private _numBlocksPlaced: number;
-  private _numLinesCleared: number;
+  private _numBlocksPlaced!: number;
+  private _numLinesCleared!: number;
+  private _blockCreateFailed!: boolean;
 
   constructor(
     tutorial: ITutorial,
@@ -33,20 +37,28 @@ export default class TutorialClient
     preferredInputMethod: InputMethod = 'keyboard'
   ) {
     this._preferredInputMethod = preferredInputMethod;
-    // TODO: store in status object instead
-    this._numBlocksPlaced = 0;
-    this._numLinesCleared = 0;
     this._create(tutorial, listener);
   }
 
   /**
    * @inheritdoc
    */
-  onSimulationInit(simulation: Simulation) {}
+  onSimulationInit(simulation: ISimulation) {}
   /**
    * @inheritdoc
    */
-  onSimulationStep(simulation: Simulation) {}
+  onSimulationStep(simulation: ISimulation) {
+    if (this.getStatus().status !== 'pending') {
+      simulation.stopInterval();
+    }
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockCreateFailed(block: IBlock) {
+    this._blockCreateFailed = true;
+  }
 
   /**
    * @inheritdoc
@@ -102,20 +114,114 @@ export default class TutorialClient
     this._createTempObjects();
     this._numBlocksPlaced = 0;
     this._numLinesCleared = 0;
+    this._blockCreateFailed = false;
   }
 
   getStatus(): TutorialStatus {
-    const finished =
-      this._tutorial.maxBlocks &&
-      this._numBlocksPlaced >= this._tutorial.maxBlocks;
-    const won =
-      this._numLinesCleared >= (this._tutorial.successLinesCleared || 0);
-    const status = finished ? (won ? 'success' : 'failed') : 'pending';
+    const { finishCriteria, successCriteria } = this._tutorial;
+    const matchesFinishCriteria = () => {
+      if (this._blockCreateFailed) {
+        return true;
+      }
+      if (
+        finishCriteria.maxBlocks &&
+        this._numBlocksPlaced < finishCriteria.maxBlocks
+      ) {
+        return false;
+      }
+      if (finishCriteria.emptyGrid && !this._simulation.grid.isEmpty) {
+        return false;
+      }
+      if (
+        finishCriteria.maxLinesCleared &&
+        this._numLinesCleared < finishCriteria.maxLinesCleared
+      ) {
+        return false;
+      }
+      if (
+        finishCriteria.maxTime &&
+        this._simulation.runningTime < finishCriteria.maxTime
+      ) {
+        return false;
+      }
+
+      return true;
+    };
+    const finished = matchesFinishCriteria();
+
+    const getStars = () => {
+      const matchesSuccessCriteria = (
+        criteria: TutorialSuccessCriteria
+      ): boolean => {
+        if (this._blockCreateFailed) {
+          return false;
+        }
+        if (
+          criteria.minBlocksPlaced &&
+          this._numBlocksPlaced < criteria.minBlocksPlaced
+        ) {
+          return false;
+        }
+        if (
+          criteria.maxBlocksPlaced &&
+          this._numBlocksPlaced > criteria.maxBlocksPlaced
+        ) {
+          return false;
+        }
+        if (
+          criteria.minLinesCleared &&
+          this._numLinesCleared < criteria.minLinesCleared
+        ) {
+          return false;
+        }
+        if (
+          criteria.maxLinesCleared &&
+          this._numLinesCleared > criteria.maxLinesCleared
+        ) {
+          return false;
+        }
+        if (
+          criteria.maxTimeTaken &&
+          this._simulation.runningTime > criteria.maxTimeTaken
+        ) {
+          return false;
+        }
+        return true;
+      };
+
+      const mergeCriteria = (criteria?: TutorialSuccessCriteria) => {
+        return {
+          ...successCriteria.all,
+          ...(criteria || {}),
+        };
+      };
+
+      return [
+        successCriteria.gold,
+        successCriteria.silver,
+        successCriteria.bronze,
+      ]
+        .map((criteria) => matchesSuccessCriteria(mergeCriteria(criteria)))
+        .filter((result) => result).length;
+    };
+
+    const stars = finished ? getStars() : 0;
+    //this._numLinesCleared >= (this._tutorial.successLinesCleared || 0);
+    const status = finished ? (stars > 0 ? 'success' : 'failed') : 'pending';
+
+    const stats: TutorialCompletionStats | undefined = finished
+      ? {
+          blocksPlaced: this._numBlocksPlaced,
+          linesCleared: this._numLinesCleared,
+          timeTaken: this._simulation.runningTime,
+        }
+      : undefined;
 
     // TODO:
     return {
       status,
-      stars: 0,
+      stars,
+      stats,
     };
   }
 
@@ -160,20 +266,23 @@ export default class TutorialClient
       }
     }
 
-    this._simulation = new Simulation(grid, this._tutorial.simulationSettings);
-    this._simulation.addEventListener(this, this._renderer);
+    const simulation = (this._simulation = new Simulation(
+      grid,
+      this._tutorial.simulationSettings
+    ));
+    simulation.addEventListener(this, this._renderer);
     if (this._simulationEventListener) {
-      this._simulation.addEventListener(this._simulationEventListener);
+      simulation.addEventListener(this._simulationEventListener);
     }
 
     const playerId = 0;
     const player = new ControllablePlayer(playerId, this._simulation);
-    this._simulation.addPlayer(player);
-    this._simulation.followPlayer(player);
+    simulation.addPlayer(player);
+    simulation.followPlayer(player);
     player.nextLayout = this._tutorial.layout;
     player.nextLayoutRotation = this._tutorial.layoutRotation;
 
-    this._input = new Input(this._simulation, player, undefined);
+    this._input = new Input(simulation, player, undefined);
     this._renderer.virtualKeyboardControls = this._input.controls;
     this._updateAllowedActions(this._tutorial.allowedActions);
 
@@ -186,8 +295,8 @@ export default class TutorialClient
       );
     }
 
-    this._simulation.init();
-    this._simulation.step();
+    simulation.init();
+    simulation.step();
   }
 
   private _updateAllowedActions(allowedActions?: InputAction[]) {

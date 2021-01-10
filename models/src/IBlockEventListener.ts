@@ -9,6 +9,13 @@ export default interface IBlockEventListener {
   onBlockCreated(block: IBlock): void;
 
   /**
+   * Triggered when a block failed to create (due to the grid not being clear)
+   *
+   * @param block the block that was created
+   */
+  onBlockCreateFailed(block: IBlock): void;
+
+  /**
    * Triggered when a block is placed on the grid
    *
    * @param block the block that was placed

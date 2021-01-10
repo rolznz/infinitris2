@@ -141,6 +141,13 @@ export default class DemoRenderer implements IRenderer {
   /**
    * @inheritdoc
    */
+  onBlockCreateFailed(block: IBlock) {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * @inheritdoc
+   */
   onBlockPlaced(block: IBlock) {
     throw new Error('Method not implemented.');
   }

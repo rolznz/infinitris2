@@ -18,10 +18,12 @@ export default class Simulation implements ISimulation {
   private _eventListeners: ISimulationEventListener[];
   private _interval?: NodeJS.Timeout;
   private _settings: ISimulationSettings;
+  private _runningTime: number;
 
   constructor(grid: Grid, settings: ISimulationSettings = {}) {
     this._eventListeners = [];
     this._players = {};
+    this._runningTime = 0;
     this._grid = grid;
     this._grid.addEventListener(this);
     this._settings = {
@@ -77,6 +79,7 @@ export default class Simulation implements ISimulation {
   startInterval() {
     if (!this._interval) {
       this._interval = setInterval(this.step, FRAME_LENGTH);
+      console.log('Simulation started');
     }
   }
 
@@ -87,7 +90,12 @@ export default class Simulation implements ISimulation {
     if (this._interval) {
       clearInterval(this._interval);
       this._interval = undefined;
+      console.log('Simulation stopped');
     }
+  }
+
+  get runningTime(): number {
+    return this._runningTime;
   }
 
   /**
@@ -129,6 +137,15 @@ export default class Simulation implements ISimulation {
    */
   onBlockCreated(block: IBlock) {
     this._eventListeners.forEach((listener) => listener.onBlockCreated(block));
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockCreateFailed(block: IBlock) {
+    this._eventListeners.forEach((listener) =>
+      listener.onBlockCreateFailed(block)
+    );
   }
 
   /**
@@ -178,8 +195,9 @@ export default class Simulation implements ISimulation {
    */
   step = () => {
     Object.values(this._players).forEach(this._updatePlayer);
-    this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
     this._grid.step();
+    this._runningTime += FRAME_LENGTH;
+    this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
   };
 
   private _updatePlayer = (player: Player) => {

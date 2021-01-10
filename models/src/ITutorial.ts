@@ -1,11 +1,12 @@
 import InputAction from './InputAction';
 import Layout from './Layout';
 import garbageCollection1 from './tutorials/garbageCollection1';
-import basicMovement from './tutorials/movement1';
+import basicMovement from './tutorials/basicMovement';
 import shadowTest from './tutorials/shadowTest';
 import wrapTest from './tutorials/wrapTest';
 import controlCheck from './tutorials/controlCheck';
 import ISimulationSettings from './ISimulationSettings';
+import TutorialSuccessCriteria from './TutorialSuccessCriteria';
 
 export interface TutorialTranslation {
   title: string;
@@ -24,20 +25,31 @@ export default interface ITutorial extends TutorialTranslation {
   readonly gridNumRows?: number;
   readonly gridNumColumns?: number;
 
-  readonly highlightScore?: boolean;
   readonly layoutRotation?: number;
   readonly allowedActions?: InputAction[];
-  readonly maxBlocks?: number;
-  readonly successLinesCleared?: number;
+
+  readonly finishCriteria: {
+    readonly maxBlocks?: number;
+    readonly maxLinesCleared?: number;
+    readonly maxTime?: number;
+    readonly emptyGrid?: boolean;
+  };
 
   readonly simulationSettings?: ISimulationSettings;
   readonly teachControls?: boolean;
+
+  readonly successCriteria: {
+    bronze?: TutorialSuccessCriteria;
+    silver?: TutorialSuccessCriteria;
+    gold?: TutorialSuccessCriteria;
+    all?: TutorialSuccessCriteria;
+  };
 }
 
 // TODO: rename to core tutorials (user-submitted ones will be from Firebase)
 export const tutorials: ITutorial[] = [
-  controlCheck,
   garbageCollection1,
+  controlCheck,
   basicMovement,
   shadowTest,
   wrapTest,

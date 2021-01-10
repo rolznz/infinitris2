@@ -1,18 +1,23 @@
-import tetrominoes from '../Tetrominoes';
+import tetrominoes from '../layouts/Tetrominoes';
 import ITutorial from '../ITutorial';
 
 const basicMovement: ITutorial = {
-  id: 'movement-1',
+  id: 'basic-movement',
   title: 'Basic Movement',
   description: '',
   locale: 'en',
-  highlightScore: true,
   layout: tetrominoes.L,
   layoutRotation: 1,
-  successLinesCleared: 2,
-  maxBlocks: 1,
   mandatory: true,
   priority: 9000,
+  finishCriteria: {
+    maxBlocks: 1,
+  },
+  successCriteria: {
+    all: {
+      minLinesCleared: 2,
+    },
+  },
   //successActions: [] // TODO: hint when drop is not used
   grid: `
 // first room - move right

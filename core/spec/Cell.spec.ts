@@ -1,6 +1,6 @@
 require('module-alias/register');
 import 'jasmine';
-import tetrominoes from '@models/Tetrominoes';
+import tetrominoes from '@models/layouts/Tetrominoes';
 import Block from '../src/block/Block';
 import Grid from '@core/grid/Grid';
 describe('Cell', () => {

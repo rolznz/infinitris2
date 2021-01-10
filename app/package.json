@@ -28,6 +28,7 @@
     "react-router-dom": "^5.2.0",
     "react-script-tag": "^1.1.2",
     "react-scripts": "3.4.3",
+    "react-star-rating-component": "^1.4.1",
     "react-use": "^15.3.4",
     "social-logos": "^2.1.2",
     "typescript": "^3.9.5",
@@ -77,6 +78,7 @@
     "@types/react-loader-spinner": "^3.1.2",
     "@types/react-router-dom": "^5.1.6",
     "@types/social-logos": "^2.1.0",
+    "@types/react-star-rating-component": "^1.4.0",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.1.8"
   }

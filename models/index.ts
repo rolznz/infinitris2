@@ -11,11 +11,12 @@ import ISimulationEventListener from './src/ISimulationEventListener';
 import ISimulationSettings from './src/ISimulationSettings';
 import Layout from './src/Layout';
 import IRoom from './src/IRoom';
-import tetrominoes from './src/Tetrominoes';
+import tetrominoes from './src/layouts/Tetrominoes';
 import ITutorial, { tutorials } from './src/ITutorial';
 import CellType from './src/CellType';
 import ICellBehaviour from './src/ICellBehaviour';
 import ITutorialClient, { TutorialStatus } from './src/ITutorialClient';
+import IGrid from './src/IGrid';
 
 export {
   tutorials,
@@ -33,6 +34,7 @@ export {
   IBlock,
   IBlockEventListener,
   IGridEventListener,
+  IGrid,
   ISimulation,
   ISimulationEventListener,
   ISimulationSettings,

@@ -1,4 +1,4 @@
-import tetrominoes from '../Tetrominoes';
+import tetrominoes from '../layouts/Tetrominoes';
 import ITutorial from '../ITutorial';
 
 const shadowTest: ITutorial = {
@@ -6,9 +6,9 @@ const shadowTest: ITutorial = {
   title: 'Shadow Test',
   locale: 'en',
   description: '',
-  highlightScore: true,
   layout: tetrominoes.T,
-  successLinesCleared: 2,
+  finishCriteria: {},
+  successCriteria: {},
   grid: `
 X000000X
 00000000
@@ -19,7 +19,6 @@ X000000X
 00000000
 X000000X
 `,
-  layoutRotation: 2,
 };
 
 export default shadowTest;

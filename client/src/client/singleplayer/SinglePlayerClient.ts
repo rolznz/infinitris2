@@ -32,6 +32,11 @@ export default class SinglePlayerClient
    * @inheritdoc
    */
   onBlockCreated(block: IBlock) {}
+
+  /**
+   * @inheritdoc
+   */
+  onBlockCreateFailed(block: IBlock) {}
   /**
    * @inheritdoc
    */

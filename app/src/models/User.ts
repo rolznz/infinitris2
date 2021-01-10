@@ -1,9 +1,10 @@
-import { InputMethod } from 'infinitris2-models';
+import { InputMethod, TutorialStatus } from 'infinitris2-models';
 import { defaultLocale } from '../internationalization';
 
 const userKey = 'infinitris2-user';
 
 export default interface User {
+  readonly tutorialAttempts: { [tutorialId: string]: TutorialStatus[] };
   readonly hasSeenWelcome: boolean;
   readonly nickname: string;
   readonly locale: string;
@@ -18,6 +19,7 @@ export function loadUser(): User {
   return {
     ...user,
     nickname: user.nickname || '',
+    tutorialAttempts: user.tutorialAttempts || {},
     locale: user.locale || defaultLocale,
     completedTutorialIds: user.completedTutorialIds || [],
   };

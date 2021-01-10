@@ -1,18 +1,31 @@
-import tetrominoes from '../Tetrominoes';
+import tetrominoes from '../layouts/Tetrominoes';
 import ITutorial from '../ITutorial';
 
 const controlCheck: ITutorial = {
   id: 'control-check',
   title: 'Control Check',
   locale: 'en',
-  highlightScore: true,
   layout: tetrominoes.L,
   gridNumRows: 35,
   gridNumColumns: 100,
-  maxBlocks: 1,
   simulationSettings: {
     spawnRowOffset: 5,
     gravityEnabled: false,
+  },
+  finishCriteria: {
+    maxBlocks: 1,
+  },
+  successCriteria: {
+    gold: {
+      maxTimeTaken: 5000,
+    },
+    silver: {
+      maxTimeTaken: 10000,
+    },
+    bronze: {},
+    all: {
+      minBlocksPlaced: 1,
+    },
   },
   allowedActions: [],
   teachControls: true,

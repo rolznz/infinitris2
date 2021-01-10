@@ -1,4 +1,5 @@
 import IBlockEventListener from './IBlockEventListener';
+import IGrid from './IGrid';
 import IGridEventListener from './IGridEventListener';
 
 export default interface ISimulation
@@ -6,4 +7,6 @@ export default interface ISimulation
     IGridEventListener {
   startInterval(): void;
   stopInterval(): void;
+  runningTime: number;
+  grid: IGrid;
 }

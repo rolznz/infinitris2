@@ -40,6 +40,7 @@ export default class InfinitrisApi implements IInfinitrisApi {
           },
           onSimulationStep() {},
           onBlockCreated() {},
+          onBlockCreateFailed() {},
           onBlockMoved() {},
           onBlockWrapped() {},
           onBlockDied() {},

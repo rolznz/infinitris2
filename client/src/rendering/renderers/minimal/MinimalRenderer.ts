@@ -314,6 +314,11 @@ export default class MinimalRenderer
   /**
    * @inheritdoc
    */
+  onBlockCreateFailed(block: IBlock) {}
+
+  /**
+   * @inheritdoc
+   */
   onBlockMoved(block: IBlock) {
     this._moveBlock(block);
   }

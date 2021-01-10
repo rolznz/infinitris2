@@ -7,7 +7,7 @@ import HomePage from './components/pages/HomePage';
 import LobbyPage from './components/pages/LobbyPage';
 import RoomPage from './components/pages/RoomPage';
 import SinglePlayerPage from './components/pages/SinglePlayerPage';
-import TutorialPage from './components/pages/TutorialPage';
+import TutorialPage from './components/pages/TutorialPage/TutorialPage';
 import TutorialRequiredPage from './components/pages/TutorialRequiredPage';
 import WelcomePage from './components/pages/WelcomePage';
 import Routes from './models/Routes';

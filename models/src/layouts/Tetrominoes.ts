@@ -1,4 +1,4 @@
-import Layout from './Layout';
+import Layout from '../Layout';
 
 const I: Layout = [
   [0, 0, 1, 0],

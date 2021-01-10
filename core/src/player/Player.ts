@@ -1,7 +1,7 @@
 import Block from '../block/Block';
 import Cell from '../grid/cell/Cell';
 import Layout from '@models/Layout';
-import tetrominoes from '@models/Tetrominoes';
+import tetrominoes from '@models/layouts/Tetrominoes';
 import IBlockEventListener from '@models/IBlockEventListener';
 import ISimulationSettings from '@models/ISimulationSettings';
 import IBlock from '@models/IBlock';
@@ -64,7 +64,7 @@ export default abstract class Player implements IBlockEventListener {
         this._lastPlacementColumn === undefined
           ? Math.floor((gridCells[0].length - layout[0].length) / 2)
           : this._lastPlacementColumn;
-      this._block = new Block(
+      const newBlock = new Block(
         this._id,
         layout,
         simulationSettings.spawnRowOffset || 0,
@@ -73,6 +73,9 @@ export default abstract class Player implements IBlockEventListener {
         gridCells,
         this
       );
+      if (newBlock.isAlive) {
+        this._block = newBlock;
+      }
       this._nextLayoutRotation = undefined;
     } else {
       this._block.update(gridCells, simulationSettings);
@@ -84,6 +87,13 @@ export default abstract class Player implements IBlockEventListener {
    */
   onBlockCreated(block: IBlock) {
     this._eventListener.onBlockCreated(block);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockCreateFailed(block: IBlock) {
+    this._eventListener.onBlockCreateFailed(block);
   }
 
   /**

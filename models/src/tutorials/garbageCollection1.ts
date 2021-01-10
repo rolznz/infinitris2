@@ -1,4 +1,4 @@
-import tetrominoes from '../Tetrominoes';
+import tetrominoes from '../layouts/Tetrominoes';
 import ITutorial from '../ITutorial';
 
 const garbageCollection1: ITutorial = {
@@ -6,24 +6,38 @@ const garbageCollection1: ITutorial = {
   title: 'Garbage Collection 1',
   description: '',
   locale: 'en',
-  highlightScore: true,
   layout: tetrominoes.T,
-  //successOnEmptyGrid: true
-  //successLinesCleared: 2,
+  mandatory: true,
+  priority: 8000,
+  finishCriteria: {
+    emptyGrid: true,
+  },
+  successCriteria: {
+    gold: {
+      maxBlocksPlaced: 20,
+    },
+    silver: {
+      maxBlocksPlaced: 40,
+    },
+  },
   grid: `
-0000
-0000
-0000
-0000
-0000
-0000
-0XXX
-000X
-0XXX
-XX00
-X0XX
+00000
+00000
+00000
+00000
+00000
+00000
+00000
+00000
+00000
+00000
+00000
+X0XXX
+X000X
+X0XXX
+XXX00
+0X0XX
 `, // TODO: garbageRows=[5,6,7]
-  layoutRotation: 2,
 };
 
 export default garbageCollection1;

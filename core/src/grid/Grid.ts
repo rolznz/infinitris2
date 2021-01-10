@@ -2,8 +2,9 @@ import Cell from './cell/Cell';
 import CellType from '../../../models/src/CellType';
 import IGridEventListener from '../../../models/src/IGridEventListener';
 import ICell from '@models/ICell';
+import IGrid from '@models/IGrid';
 
-export default class Grid {
+export default class Grid implements IGrid {
   private _cells: ICell[][];
   private _eventListeners: IGridEventListener[];
 
@@ -30,6 +31,10 @@ export default class Grid {
   }
   get numRows(): number {
     return this._cells.length;
+  }
+
+  get isEmpty(): boolean {
+    return this.reducedCells.findIndex((cell) => !cell.isEmpty) < 0;
   }
 
   /**

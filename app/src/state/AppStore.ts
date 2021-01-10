@@ -1,4 +1,8 @@
-import { IInfinitrisApi, InputMethod } from 'infinitris2-models';
+import {
+  IInfinitrisApi,
+  InputMethod,
+  TutorialStatus,
+} from 'infinitris2-models';
 import create from 'zustand';
 import User, { loadUser, saveUser } from '../models/User';
 
@@ -15,6 +19,7 @@ type AppStore = {
   setReturnToUrl(returnToUrl?: string): void;
   setInternationalizationMessages(messages: Record<string, string>): void;
   // TODO: move to UserStore
+  addTutorialAttempt(tutorialId: string, attempt: TutorialStatus): void;
   setNickname(nickname: string): void;
   setLanguageCode(languageCode: string): void;
   markHasSeenWelcome(): void;
@@ -65,6 +70,22 @@ const useAppStore = create<AppStore>((set) => ({
       return { user };
     });
   },
+  addTutorialAttempt: (tutorialId: string, attempt: TutorialStatus) => {
+    set((state) => {
+      const attempts = state.user.tutorialAttempts[tutorialId] || [];
+
+      const user: User = {
+        ...state.user,
+        tutorialAttempts: {
+          ...state.user.tutorialAttempts,
+          [tutorialId]: [...attempts, attempt],
+        },
+      };
+      saveUser(user);
+      return { user };
+    });
+  },
+  // TODO: this isn't needed any more - use tutorialAttempts instead?
   completeTutorial: (tutorialId: string) => {
     set((state) => {
       const user: User = {

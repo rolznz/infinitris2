@@ -47,8 +47,15 @@ export default class Block implements IBlock {
     this._lockTimer = 0;
     this._isAlive = true;
     this._resetTimers();
-    this._updateCells(gridCells);
-    this._eventListener?.onBlockCreated(this);
+    if (this.canMove(gridCells, 0, 0, 0)) {
+      this._updateCells(gridCells);
+    } else {
+      this._isAlive = false;
+      this._eventListener?.onBlockCreateFailed(this);
+    }
+    if (this._isAlive) {
+      this._eventListener?.onBlockCreated(this);
+    }
   }
 
   get playerId(): number {
@@ -131,7 +138,7 @@ export default class Block implements IBlock {
    * @param dy the delta of the x position (row).
    * @param dr the delta of the rotation.
    */
-  canMove(gridCells: Cell[][], dx: number, dy: number, dr: number): boolean {
+  canMove(gridCells: ICell[][], dx: number, dy: number, dr: number): boolean {
     if (!this._isAlive) {
       return false;
     }
@@ -289,6 +296,9 @@ export default class Block implements IBlock {
 
     for (let r = 0; r < rotatedLayout.length; r++) {
       for (let c = 0; c < rotatedLayout[0].length; c++) {
+        if (!this._isAlive) {
+          break;
+        }
         if (rotatedLayout[r][c] === 1) {
           const cellRow = row + r;
           const numColumns = gridCells[0].length;

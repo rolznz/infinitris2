@@ -1,5 +1,11 @@
+import CellType from './CellType';
 import ICell from './ICell';
 
 export default interface ICellBehaviour {
-  step(cell: ICell): void;
+  step?(gridCells: ICell[]): void;
+  color?: number;
+  alpha: number;
+  isPassable: boolean;
+  type: CellType;
+  requiresRerender?: boolean;
 }

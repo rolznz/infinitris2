@@ -3,17 +3,19 @@ import createBehaviour from './behaviours/createBehaviour';
 import ICell from '@models/ICell';
 import CellType from '@models/CellType';
 import ICellBehaviour from '@models/ICellBehaviour';
+import NormalCellBehaviour from './behaviours/NormalCellBehaviour';
 
 export default class Cell implements ICell {
   private _row: number;
   private _column: number;
-  private _type: CellType;
-  private _behaviour?: ICellBehaviour;
+  private _behaviour: ICellBehaviour;
+  private _isEmpty: boolean;
   private readonly _blocks: IBlock[];
   constructor(column: number, row: number) {
     this._row = row;
     this._column = column;
-    this._type = CellType.Empty;
+    this._behaviour = new NormalCellBehaviour();
+    this._isEmpty = true;
     this._blocks = [];
   }
   get row(): number {
@@ -23,26 +25,37 @@ export default class Cell implements ICell {
     return this._column;
   }
   get type(): CellType {
-    return this._type;
-  }
-  set type(type: CellType) {
-    this._type = type;
-    this._behaviour = createBehaviour(type);
-  }
-  get isEmpty(): boolean {
-    return this._type !== CellType.Full;
+    return this._behaviour.type;
   }
 
-  get behaviour(): ICellBehaviour | undefined {
+  get color(): number {
+    return this._behaviour?.color || 0xffffff;
+  }
+
+  get isPassable(): boolean {
+    return this._behaviour.isPassable && this._isEmpty;
+  }
+
+  get isEmpty(): boolean {
+    return this._isEmpty;
+  }
+  set isEmpty(isEmpty: boolean) {
+    this._isEmpty = isEmpty;
+  }
+
+  get behaviour(): ICellBehaviour {
     return this._behaviour;
   }
+  set behaviour(behaviour: ICellBehaviour) {
+    this._behaviour = behaviour;
+  }
 
-  get blocks(): ReadonlyArray<IBlock> {
+  get blocks(): IBlock[] {
     return this._blocks;
   }
 
-  step() {
-    this._behaviour?.step(this);
+  step(gridCells: ICell[]) {
+    this._behaviour?.step?.(gridCells);
   }
 
   addBlock(block: IBlock) {

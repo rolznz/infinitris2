@@ -6,6 +6,7 @@ import Cell from '../grid/cell/Cell';
 import CellType from '../../../models/src/CellType';
 import LayoutUtils from './layout/LayoutUtils';
 import ICell from '@models/ICell';
+import FullCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
 
 type LoopCellEvent = (cell?: ICell) => void;
 
@@ -126,7 +127,7 @@ export default class Block implements IBlock {
    *
    * @param gridCells the cells of the grid.
    */
-  canFall(gridCells: Cell[][]) {
+  canFall(gridCells: ICell[][]) {
     return this.canMove(gridCells, 0, 1, 0);
   }
 
@@ -149,7 +150,7 @@ export default class Block implements IBlock {
         this._column + dx,
         this._row + dy,
         this._rotation + dr,
-        (cell) => (canMove = Boolean(canMove && cell && cell.isEmpty))
+        (cell) => (canMove = Boolean(canMove && cell && cell.isPassable))
       );
     } else {
       canMove = false;
@@ -169,7 +170,7 @@ export default class Block implements IBlock {
    * @returns true if the block was moved.
    */
   move(
-    gridCells: Cell[][],
+    gridCells: ICell[][],
     dx: number,
     dy: number,
     dr: number,
@@ -212,7 +213,7 @@ export default class Block implements IBlock {
    *
    * @param gridCells
    */
-  fall(gridCells: Cell[][]): boolean {
+  fall(gridCells: ICell[][]): boolean {
     const fell = this.move(gridCells, 0, 1, 0);
     if (!fell) {
       this._lockTimer--;
@@ -228,7 +229,10 @@ export default class Block implements IBlock {
    * The block's opacity will be transferred into the cells it currently occupies.
    */
   place() {
-    this._cells.forEach((cell) => (cell.type = CellType.Full));
+    this._cells.forEach((cell) => {
+      cell.isEmpty = false;
+      cell.removeBlock(this);
+    });
   }
 
   /**
@@ -236,7 +240,7 @@ export default class Block implements IBlock {
    *
    * Timers will be updated, triggering the block to fall or be placed if possible.
    */
-  update(gridCells: Cell[][], simulationSettings: ISimulationSettings) {
+  update(gridCells: ICell[][], simulationSettings: ISimulationSettings) {
     if (!this._isAlive) {
       return;
     }

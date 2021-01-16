@@ -17,6 +17,7 @@ import CellType from './src/CellType';
 import ICellBehaviour from './src/ICellBehaviour';
 import ITutorialClient, { TutorialStatus } from './src/ITutorialClient';
 import IGrid from './src/IGrid';
+import TutorialCellType from './src/TutorialCellType';
 
 export {
   tutorials,
@@ -39,5 +40,6 @@ export {
   ISimulationEventListener,
   ISimulationSettings,
   InputMethod,
+  TutorialCellType,
   IRoom,
 };

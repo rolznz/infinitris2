@@ -10,7 +10,7 @@ const garbageCollection1: ITutorial = {
   mandatory: true,
   priority: 8000,
   finishCriteria: {
-    emptyGrid: true,
+    finishTutorialCellFilled: true,
   },
   successCriteria: {
     gold: {
@@ -37,6 +37,7 @@ X000X
 X0XXX
 XXX00
 0X0XX
+FFFFF
 `, // TODO: garbageRows=[5,6,7]
 };
 

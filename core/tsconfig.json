@@ -13,6 +13,8 @@
       "@core/*": ["core/src/*"],
       "@models/*": ["models/src/*"]
     },
+    "declaration": true /* Generates corresponding '.d.ts' file. */,
+    "outDir": "./dist",
     "declarationMap": true,
     "types": ["node"],
     "plugins": [
@@ -25,6 +27,6 @@
       }
     ]
   },
-  "exclude": ["node_modules"],
+  "exclude": ["node_modules", "dist"],
   "references": [{ "path": "../models" }]
 }

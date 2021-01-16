@@ -5,9 +5,12 @@ export default interface ICell {
   row: number;
   column: number;
   type: CellType;
+  color: number;
   isEmpty: boolean;
-  behaviour: ICellBehaviour | undefined;
+  isPassable: boolean;
+  behaviour: ICellBehaviour;
+  blocks: IBlock[];
   addBlock(block: IBlock): void;
   removeBlock(block: IBlock): void;
-  step(): void;
+  step(gridCells: ICell[]): void;
 }

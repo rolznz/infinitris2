@@ -12,6 +12,7 @@ import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import { InputMethod } from 'models';
 import { imagesDirectory } from '..';
+import LockBehaviour from '@core/grid/cell/behaviours/LockBehaviour';
 
 const minCellSize = 32;
 interface IRenderableGrid {
@@ -21,6 +22,12 @@ interface IRenderableGrid {
 interface IRenderableBlock {
   block: IBlock;
   cells: IRenderableCell[];
+}
+
+enum RenderCellType {
+  Block,
+  Cell,
+  PlacementHelper,
 }
 
 interface IRenderableCell {
@@ -173,6 +180,10 @@ export default class MinimalRenderer
       );
     }
     Object.values(this._cells).forEach((cell) => {
+      if (cell.cell.behaviour.requiresRerender) {
+        this._renderCell(cell.cell);
+      }
+      cell.container.alpha = cell.cell.behaviour.alpha;
       if (this._hasShadows) {
         this._applyShadowAlpha(cell);
       }
@@ -180,6 +191,10 @@ export default class MinimalRenderer
       if (cell.cell.type === CellType.Laser) {
         const cellBehaviour = cell.cell.behaviour as LaserBehaviour;
         cell.container.alpha = cellBehaviour.alpha;
+      } else if (cell.cell.type === CellType.Lock) {
+        const cellBehaviour = cell.cell.behaviour as LockBehaviour;
+        if (cellBehaviour.isLocked) {
+        }
       }
     });
   };
@@ -483,14 +498,15 @@ export default class MinimalRenderer
     }
     const renderableCell: IRenderableCell = this._cells[cellIndex];
 
-    if (!cell.isEmpty || cell.type === CellType.Laser) {
+    if (!cell.isEmpty || cell.behaviour.type !== CellType.Normal) {
       const cellSize = this._getClampedCellSize();
       renderableCell.container.x = renderableCell.cell.column * cellSize;
       renderableCell.container.y = renderableCell.cell.row * cellSize;
       this._renderCellCopies(
         renderableCell,
+        RenderCellType.Cell,
         1,
-        cell.type === CellType.Laser ? 0xff0000 : 0xaaaaaa
+        cell.color
       );
     } else {
       renderableCell.children.forEach((child) => child.graphics.clear());
@@ -502,7 +518,7 @@ export default class MinimalRenderer
     this._moveBlock(block);
 
     renderableBlock.cells.forEach((cell) => {
-      this._renderCellCopies(cell, 1, block.color);
+      this._renderCellCopies(cell, RenderCellType.Block, 1, block.color);
     });
   }
 
@@ -538,6 +554,7 @@ export default class MinimalRenderer
 
   private _renderCellCopies(
     cell: IRenderableCell,
+    renderCellType: RenderCellType,
     opacity: number,
     color: number,
     shadowIndex: number = 0,
@@ -559,13 +576,59 @@ export default class MinimalRenderer
     const graphics = entry.graphics;
     graphics.clear();
     const cellSize = this._getClampedCellSize();
+
+    /*if (!cell.cell.behaviour.isPassable || cell.cell.blocks.length > 0) {
+      graphics.beginFill(
+        cell.cell.blocks.length > 0 ? color : 0xaaaaaa,
+        Math.min(opacity, 1)
+      );
+      graphics.drawRect(0, 0, cellSize, cellSize);
+    }*/
+
+    // TODO: extract rendering of different behaviours
+    if (
+      renderCellType !== RenderCellType.Cell ||
+      cell.cell.type === CellType.FinishTutorial ||
+      cell.cell.type === CellType.Laser
+    ) {
+      graphics.beginFill(color, Math.min(opacity, 1));
+      graphics.drawRect(0, 0, cellSize, cellSize);
+    } else if (!cell.cell.isEmpty) {
+      // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
+      // e.g. non-empty red key cell
+      graphics.beginFill(0x999999, Math.min(opacity, 1));
+      graphics.drawRect(0, 0, cellSize, cellSize);
+    }
+
     graphics.beginFill(color, Math.min(opacity, 1));
-    graphics.drawRect(0, 0, cellSize, cellSize);
+
+    switch (cell.cell.type) {
+      case CellType.Key:
+        graphics.drawRect(
+          cellSize / 3,
+          cellSize / 3,
+          cellSize / 3,
+          cellSize / 3
+        );
+        break;
+      case CellType.Lock:
+        graphics.drawRect(0, 0, cellSize, cellSize / 3);
+        graphics.drawRect(0, cellSize / 3, cellSize / 3, cellSize / 3);
+        graphics.drawRect(0, cellSize * (2 / 3), cellSize, cellSize / 3);
+        graphics.drawRect(
+          cellSize * (2 / 3),
+          cellSize / 3,
+          cellSize / 3,
+          cellSize / 3
+        );
+        break;
+    }
     graphics.x = shadowIndexWithDirection * this._gridWidth;
     if (shadowIndex < this._shadowCount) {
       (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>
         this._renderCellCopies(
           cell,
+          renderCellType,
           opacity, // * 0.5,
           color,
           shadowIndex + 1,
@@ -596,7 +659,7 @@ export default class MinimalRenderer
 
     for (const cell of lowestCells) {
       for (let y = cell.row; y < highestPlacementRow; y++) {
-        if (!this._grid.grid.cells[y + 1][cell.column].isEmpty) {
+        if (!this._grid.grid.cells[y + 1][cell.column].isPassable) {
           highestPlacementRow = Math.min(
             y + (lowestBlockRow - cell.row),
             highestPlacementRow
@@ -630,7 +693,12 @@ export default class MinimalRenderer
         renderableCell.container.x = cell.column * cellSize;
         renderableCell.container.y = y * cellSize;
         renderableCell.container.zIndex = -1000;
-        this._renderCellCopies(renderableCell, 0.33, block.color);
+        this._renderCellCopies(
+          renderableCell,
+          RenderCellType.PlacementHelper,
+          0.33,
+          block.color
+        );
         cellIndex++;
       }
     });

@@ -1,8 +1,10 @@
 enum CellType {
-  Empty = '0',
-  Full = 'X',
-  Laser = 'L',
-  Deadly = 'D',
+  Normal = 'Normal',
+  Laser = 'Laser',
+  Deadly = 'Deadly',
+  Key = 'Key',
+  Lock = 'Lock',
+  FinishTutorial = 'FinishTutorial',
 }
 
 export default CellType;

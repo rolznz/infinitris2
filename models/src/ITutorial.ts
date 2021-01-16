@@ -7,6 +7,7 @@ import wrapTest from './tutorials/wrapTest';
 import controlCheck from './tutorials/controlCheck';
 import ISimulationSettings from './ISimulationSettings';
 import TutorialSuccessCriteria from './TutorialSuccessCriteria';
+import keysAndLocks1 from './tutorials/keysAndLocks1';
 
 export interface TutorialTranslation {
   title: string;
@@ -33,6 +34,7 @@ export default interface ITutorial extends TutorialTranslation {
     readonly maxLinesCleared?: number;
     readonly maxTime?: number;
     readonly emptyGrid?: boolean;
+    readonly finishTutorialCellFilled?: boolean;
   };
 
   readonly simulationSettings?: ISimulationSettings;
@@ -48,9 +50,10 @@ export default interface ITutorial extends TutorialTranslation {
 
 // TODO: rename to core tutorials (user-submitted ones will be from Firebase)
 export const tutorials: ITutorial[] = [
+  basicMovement,
+  keysAndLocks1,
   garbageCollection1,
   controlCheck,
-  basicMovement,
   shadowTest,
   wrapTest,
 ];

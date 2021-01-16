@@ -1,13 +1,9 @@
 {
-    "files.exclude": {
-        "**/dist": true,
-        "**/node_modules": true,
-        "core/**/*.js": true,
-        "core/**/*.js.map": true,
-        "core/**/*.d.ts.map": true,
-        "core/**/*.d.ts": true,
-        "server/ts-out": true
-    },
-    "editor.formatOnSave": true,
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "files.exclude": {
+    "**/dist": true,
+    "**/node_modules": true,
+    "server/ts-out": true
+  },
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

@@ -12,12 +12,12 @@ export default abstract class Player implements IBlockEventListener {
   private _block?: IBlock;
   private _score: number;
   private _lastPlacementColumn: number | undefined;
-  private _eventListener: IBlockEventListener;
+  private _eventListener?: IBlockEventListener;
   private _nextLayout?: Layout;
   private _nextLayoutRotation?: number;
 
   // TODO: addEventListener to be consistent with other objects
-  constructor(id: number, eventListener: IBlockEventListener) {
+  constructor(id: number, eventListener?: IBlockEventListener) {
     this._id = id;
     this._eventListener = eventListener;
     this._score = 0;
@@ -86,28 +86,28 @@ export default abstract class Player implements IBlockEventListener {
    * @inheritdoc
    */
   onBlockCreated(block: IBlock) {
-    this._eventListener.onBlockCreated(block);
+    this._eventListener?.onBlockCreated(block);
   }
 
   /**
    * @inheritdoc
    */
   onBlockCreateFailed(block: IBlock) {
-    this._eventListener.onBlockCreateFailed(block);
+    this._eventListener?.onBlockCreateFailed(block);
   }
 
   /**
    * @inheritdoc
    */
   onBlockMoved(block: IBlock) {
-    this._eventListener.onBlockMoved(block);
+    this._eventListener?.onBlockMoved(block);
   }
 
   /**
    * @inheritdoc
    */
   onBlockWrapped(block: IBlock, wrapIndexChange: number) {
-    this._eventListener.onBlockWrapped(block, wrapIndexChange);
+    this._eventListener?.onBlockWrapped(block, wrapIndexChange);
   }
 
   /**
@@ -118,7 +118,7 @@ export default abstract class Player implements IBlockEventListener {
       throw new Error('Block mismatch');
     }
     this._lastPlacementColumn = this._block.column;
-    this._eventListener.onBlockPlaced(block);
+    this._eventListener?.onBlockPlaced(block);
     this._removeBlock();
 
     // TODO: improved score calculation
@@ -129,7 +129,7 @@ export default abstract class Player implements IBlockEventListener {
    * @inheritdoc
    */
   onBlockDied(block: IBlock) {
-    this._eventListener.onBlockDied(block);
+    this._eventListener?.onBlockDied(block);
     this._removeBlock();
   }
 

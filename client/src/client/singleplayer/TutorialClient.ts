@@ -14,6 +14,8 @@ import TutorialSuccessCriteria from '@models/TutorialSuccessCriteria';
 import ISimulation from '@models/ISimulation';
 import Simulation from '@core/Simulation';
 import TutorialCompletionStats from '@models/TutorialCompletionStats';
+import TutorialCellType from '@models/TutorialCellType';
+import createBehaviour from '@core/grid/cell/behaviours/createBehaviour';
 
 // TODO: enable support for multiplayer tutorials (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -119,6 +121,14 @@ export default class TutorialClient
     const matchesFinishCriteria = () => {
       if (this._blockCreateFailed) {
         return true;
+      }
+      if (
+        finishCriteria.finishTutorialCellFilled &&
+        !this._simulation.grid.reducedCells.some(
+          (cell) => !cell.isEmpty && cell.type === CellType.FinishTutorial
+        )
+      ) {
+        return false;
       }
       if (
         finishCriteria.maxBlocks &&
@@ -239,14 +249,14 @@ export default class TutorialClient
     this._numLinesCleared = 0;
     this._blockCreateFailed = false;
 
-    const cellTypes: CellType[][] = [];
+    const cellTypes: TutorialCellType[][] = [];
     if (this._tutorial.grid) {
       cellTypes.push(
         ...this._tutorial.grid
           .split('\n')
           .map((row) => row.trim())
           .filter((row) => row && !row.startsWith('//'))
-          .map((row) => row.split('').map((c) => c as CellType))
+          .map((row) => row.split('').map((c) => c as TutorialCellType))
       );
       if (cellTypes.find((r) => r.length !== cellTypes[0].length)) {
         throw new Error('Invalid tutorial grid: ' + this._tutorial.title);
@@ -262,7 +272,11 @@ export default class TutorialClient
         for (let c = 0; c < grid.cells[0].length; c++) {
           const cell = grid.cells[r][c];
           const cellType = cellTypes[r][c];
-          cell.type = cellType;
+          cell.behaviour = createBehaviour(cell, cellType);
+
+          if (cellType === TutorialCellType.Full) {
+            cell.isEmpty = false;
+          }
         }
       }
     }

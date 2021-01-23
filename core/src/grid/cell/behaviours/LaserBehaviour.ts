@@ -3,8 +3,8 @@ import ICellBehaviour from '../../../../../models/src/ICellBehaviour';
 import CellType from '@models/CellType';
 import ICell from '@models/ICell';
 
-const CHARGE_RATE = 0.005;
-const COOLDOWN_RATE = 0.025;
+const CHARGE_RATE = 0.01;
+const COOLDOWN_RATE = 0.05;
 const HOLD_LENGTH = 90;
 
 export default class LaserBehaviour implements ICellBehaviour {
@@ -36,7 +36,7 @@ export default class LaserBehaviour implements ICellBehaviour {
       } else {
         --this._hold;
       }
-      if (this._charge > 0.1) {
+      if (this._isActive) {
         this._cell.blocks.forEach((block) => block.die());
       }
     }

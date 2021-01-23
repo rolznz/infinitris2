@@ -22,7 +22,8 @@ export default class LockBehaviour implements ICellBehaviour {
       (other) =>
         other.type === CellType.Key &&
         (<KeyBehaviour>other.behaviour).color === this._color &&
-        other.isEmpty
+        other.isEmpty &&
+        other.blocks.length === 0
     );
 
     if (!this._cell.isEmpty) {

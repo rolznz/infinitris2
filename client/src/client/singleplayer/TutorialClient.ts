@@ -32,6 +32,7 @@ export default class TutorialClient
   private _numBlocksPlaced!: number;
   private _numLinesCleared!: number;
   private _blockCreateFailed!: boolean;
+  private _blockDied!: boolean;
 
   constructor(
     tutorial: ITutorial,
@@ -76,7 +77,9 @@ export default class TutorialClient
   /**
    * @inheritdoc
    */
-  onBlockDied(block: IBlock) {}
+  onBlockDied(block: IBlock) {
+    this._blockDied = true;
+  }
 
   /**
    * @inheritdoc
@@ -119,7 +122,7 @@ export default class TutorialClient
   getStatus(): TutorialStatus {
     const { finishCriteria, successCriteria } = this._tutorial;
     const matchesFinishCriteria = () => {
-      if (this._blockCreateFailed) {
+      if (this._blockCreateFailed || this._blockDied) {
         return true;
       }
       if (
@@ -160,7 +163,7 @@ export default class TutorialClient
       const matchesSuccessCriteria = (
         criteria: TutorialSuccessCriteria
       ): boolean => {
-        if (this._blockCreateFailed) {
+        if (this._blockCreateFailed || this._blockDied) {
           return false;
         }
         if (
@@ -248,6 +251,7 @@ export default class TutorialClient
     this._numBlocksPlaced = 0;
     this._numLinesCleared = 0;
     this._blockCreateFailed = false;
+    this._blockDied = false;
 
     const cellTypes: TutorialCellType[][] = [];
     if (this._tutorial.grid) {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import * as firebase from 'firebase/app';
@@ -27,6 +27,7 @@ export default function HomePage() {
     firebase.firestore().collection('rooms'),
     { idField: 'id' }
   );
+  const [hasFocusedPlayButton, setHasFocusedPlayButton] = useState(false);
   const selectedRoom = homeStore.selectedRoom || rooms?.[0];
   const loading = loadingRooms && !selectedRoom;
 
@@ -68,9 +69,12 @@ export default function HomePage() {
               <Box mt={2} display="flex" justifyContent="center">
                 {!loading ? (
                   <Link
-                    ref={(element: HTMLSpanElement | null) =>
-                      element && element.focus()
-                    }
+                    ref={(element: HTMLSpanElement | null) => {
+                      if (element && !hasFocusedPlayButton) {
+                        setHasFocusedPlayButton(true);
+                        element.focus();
+                      }
+                    }}
                     component={RouterLink}
                     underline="none"
                     to={`${Routes.rooms}/${selectedRoom?.id}`}

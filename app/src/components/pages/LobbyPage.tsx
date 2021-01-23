@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import List from '@material-ui/core/List';
 import Skeleton from '@material-ui/lab/Skeleton';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
@@ -17,6 +17,7 @@ export default function LobbyPage() {
     { idField: 'id' }
   );
   const homeStore = useHomeStore();
+  const [hasFocusedFirstEntry, setHasFocusedFirstEntry] = useState(false);
 
   return (
     <>
@@ -39,8 +40,18 @@ export default function LobbyPage() {
               )}
             </Box>
             <List>
-              {rooms?.map((room) => (
+              {rooms?.map((room, index) => (
                 <Link
+                  ref={
+                    index === 0
+                      ? (element: HTMLSpanElement | null) => {
+                          if (element && !hasFocusedFirstEntry) {
+                            setHasFocusedFirstEntry(true);
+                            element.focus();
+                          }
+                        }
+                      : null
+                  }
                   component={RouterLink}
                   key={room.id}
                   underline="none"

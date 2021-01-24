@@ -1,3 +1,4 @@
+import ControlSettings from './ControlSettings';
 import { IClientSocketEventListener } from './IClientSocketEventListener';
 import InputMethod from './InputMethod';
 import ISimulationEventListener from './ISimulationEventListener';
@@ -7,13 +8,18 @@ import ITutorialClient from './ITutorialClient';
 export default interface IInfinitrisApi {
   releaseClient(): void;
   getVersion(): string;
-  launchSinglePlayer(): void;
+  launchSinglePlayer(controls?: ControlSettings): void;
   launchTutorial(
     tutorial: ITutorial,
     listener?: ISimulationEventListener,
-    preferredInputMethod?: InputMethod
+    preferredInputMethod?: InputMethod,
+    controls?: ControlSettings
   ): ITutorialClient;
-  restartClient(): void;
+  restartClient(): void; // TODO: remove
   launchDemo(): void;
-  launchNetworkClient(url: string, listener: IClientSocketEventListener): void;
+  launchNetworkClient(
+    url: string,
+    listener: IClientSocketEventListener,
+    controls?: ControlSettings
+  ): void;
 }

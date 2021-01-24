@@ -1,4 +1,3 @@
-import tetrominoes from '../layouts/Tetrominoes';
 import ITutorial from '../ITutorial';
 
 const keysAndLocks1: ITutorial = {
@@ -11,7 +10,14 @@ const keysAndLocks1: ITutorial = {
   finishCriteria: {
     finishTutorialCellFilled: true,
   },
-  successCriteria: {},
+  successCriteria: {
+    gold: {
+      maxBlocksPlaced: 10,
+    },
+    silver: {
+      maxBlocksPlaced: 20,
+    },
+  },
   grid: `
 000000000000000
 000000000000000
@@ -25,12 +31,11 @@ const keysAndLocks1: ITutorial = {
 000000000000000
 000000000000000
 000000000000000
-000000000000000
 00000000000000R
+00000000000000X
 rrrrrrrrrrrrrrr
-0XX00X000XX0XXX
-00X0X00XX0X0X00
-0X00X00XX0X0X0X
+000000000000000
+000000000000000
 000000G00000000
 bbbbbbbbbbbbbbb
 FFFFFFFFFFFFFFF

@@ -6,13 +6,14 @@ import Simulation from '@core/Simulation';
 import Camera from '@src/rendering/Camera';
 import CellType from '@models/CellType';
 import LaserBehaviour from '@core/grid/cell/behaviours/LaserBehaviour';
-import ControlSettings from '@src/input/ControlSettings';
 import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
-import { InputMethod } from 'models';
 import { imagesDirectory } from '..';
 import LockBehaviour from '@core/grid/cell/behaviours/LockBehaviour';
+import ControlSettings from '@models/ControlSettings';
+import getUserFriendlyKeyText from '@models/util/getUserFriendlyKeyText';
+import InputMethod from '@models/InputMethod';
 
 const minCellSize = 32;
 interface IRenderableGrid {
@@ -51,7 +52,7 @@ export default class MinimalRenderer
   private _grid!: IRenderableGrid;
   private _placementHelperShadowCells!: IRenderableCell[];
   private _virtualKeyboardGraphics?: PIXI.Graphics;
-  private _virtualKeyboardCharacters!: PIXI.Text[];
+  private _virtualKeyboardCurrentKeyText!: PIXI.Text;
   private _virtualGestureSprites?: PIXI.Sprite[];
   private _app!: PIXI.Application;
   private _world!: PIXI.Container;
@@ -74,9 +75,14 @@ export default class MinimalRenderer
   private _virtualKeyboardControls?: ControlSettings;
   private _allowedActions?: InputAction[];
   private _preferredInputMethod: InputMethod;
+  private _teachControls: boolean;
 
-  constructor(preferredInputMethod: InputMethod = 'keyboard') {
+  constructor(
+    preferredInputMethod: InputMethod = 'keyboard',
+    teachControls: boolean = false
+  ) {
     this._preferredInputMethod = preferredInputMethod;
+    this._teachControls = teachControls;
   }
 
   set virtualKeyboardControls(
@@ -100,7 +106,7 @@ export default class MinimalRenderer
       antialias: true,
     });
 
-    if (this._preferredInputMethod === 'touch') {
+    if (this._preferredInputMethod === 'touch' && this._teachControls) {
       const gesturesDirectory = `${imagesDirectory}/gestures`;
       const swipeLeftUrl = `${gesturesDirectory}/swipe-left.png`;
       const swipeRightUrl = `${gesturesDirectory}/swipe-right.png`;
@@ -280,27 +286,23 @@ export default class MinimalRenderer
 
     if (
       this._virtualKeyboardControls &&
-      this._preferredInputMethod === 'keyboard'
+      this._preferredInputMethod === 'keyboard' &&
+      this._teachControls
     ) {
       this._virtualKeyboardGraphics = new PIXI.Graphics();
       this._app.stage.addChild(this._virtualKeyboardGraphics);
 
-      this._virtualKeyboardCharacters = Array.from(
-        this._virtualKeyboardControls.values()
-      ).map(
-        (_) =>
-          new PIXI.Text('', {
-            font: 'bold italic 60px Arvo',
-            fill: '#444444',
-            align: 'center',
-            stroke: '#000000',
-            strokeThickness: 7,
-          })
-      );
-      this._app.stage.addChild(...this._virtualKeyboardCharacters);
+      this._virtualKeyboardCurrentKeyText = new PIXI.Text('', {
+        font: 'bold italic 60px Arvo',
+        fill: '#444444',
+        align: 'center',
+        stroke: '#000000',
+        strokeThickness: 7,
+      });
+      this._app.stage.addChild(this._virtualKeyboardCurrentKeyText);
     }
 
-    if (this._preferredInputMethod === 'touch') {
+    if (this._preferredInputMethod === 'touch' && this._teachControls) {
       this._app.stage.addChild(...this._virtualGestureSprites);
     }
 
@@ -600,28 +602,80 @@ export default class MinimalRenderer
       graphics.drawRect(0, 0, cellSize, cellSize);
     }
 
-    graphics.beginFill(color, Math.min(opacity, 1));
+    if (cell.cell.isEmpty) {
+      switch (cell.cell.type) {
+        case CellType.Key:
+          graphics.beginFill(color, Math.min(opacity, 1));
 
-    switch (cell.cell.type) {
-      case CellType.Key:
-        graphics.drawRect(
-          cellSize / 3,
-          cellSize / 3,
-          cellSize / 3,
-          cellSize / 3
-        );
-        break;
-      case CellType.Lock:
-        graphics.drawRect(0, 0, cellSize, cellSize / 3);
-        graphics.drawRect(0, cellSize / 3, cellSize / 3, cellSize / 3);
-        graphics.drawRect(0, cellSize * (2 / 3), cellSize, cellSize / 3);
-        graphics.drawRect(
-          cellSize * (2 / 3),
-          cellSize / 3,
-          cellSize / 3,
-          cellSize / 3
-        );
-        break;
+          // bit
+          graphics.drawRect(
+            (cellSize * 4.5) / 8,
+            (cellSize * 1.5) / 8,
+            (cellSize * 1) / 8,
+            (cellSize * 0.5) / 8
+          );
+
+          graphics.drawRect(
+            (cellSize * 4.5) / 8,
+            (cellSize * 2.5) / 8,
+            (cellSize * 1) / 8,
+            (cellSize * 0.5) / 8
+          );
+
+          // shank
+          graphics.drawRect(
+            (cellSize * 3.5) / 8,
+            (cellSize * 1) / 8,
+            (cellSize * 1) / 8,
+            (cellSize * 4) / 8
+          );
+
+          // bow
+          graphics.drawRect(
+            (cellSize * 2.5) / 8,
+            (cellSize * 5) / 8,
+            (cellSize * 3) / 8,
+            (cellSize * 2) / 8
+          );
+          break;
+        case CellType.Lock:
+          // background
+          graphics.beginFill(color, Math.min(opacity, 0.5));
+          graphics.drawRect(0, 0, cellSize, cellSize);
+
+          graphics.beginFill(color, Math.min(opacity, 1));
+          // shackle - top
+          graphics.drawRect(
+            (cellSize * 2) / 8,
+            cellSize / 8,
+            (cellSize * 4) / 8,
+            cellSize / 8
+          );
+
+          // shackle - sides
+          graphics.drawRect(
+            (cellSize * 2) / 8,
+            cellSize / 8,
+            (cellSize * 1) / 8,
+            (cellSize * 3) / 8
+          );
+
+          graphics.drawRect(
+            (cellSize * 5) / 8,
+            cellSize / 8,
+            (cellSize * 1) / 8,
+            (cellSize * 3) / 8
+          );
+
+          // body
+          graphics.drawRect(
+            (cellSize * 1) / 8,
+            cellSize * (4 / 8),
+            (cellSize * 6) / 8,
+            (cellSize * 3) / 8
+          );
+          break;
+      }
     }
     graphics.x = shadowIndexWithDirection * this._gridWidth;
     if (shadowIndex < this._shadowCount) {
@@ -704,74 +758,38 @@ export default class MinimalRenderer
     });
   }
 
-  private _getKeySymbol(key: string): string {
-    switch (key) {
-      case 'ArrowLeft':
-        return '←';
-      case 'ArrowRight':
-        return '→';
-      case 'ArrowUp':
-        return '↑';
-      case 'ArrowDown':
-        return '↓';
-      default:
-        return key;
-    }
-  }
-
-  private _renderVirtualKeyboardKey(
-    inputAction: InputAction,
-    column: number,
-    row: number,
-    left: boolean = false
-  ) {
-    if (!this._virtualKeyboardControls || !this._virtualKeyboardGraphics) {
-      return;
-    }
-    const key = this._virtualKeyboardControls.get(inputAction);
-    const alpha =
-      !this._allowedActions ||
-      (this._allowedActions.length === 1 &&
-        this._allowedActions[0] === inputAction)
-        ? 1
-        : 0.5;
-    const keySize = this._app.renderer.width * 0.05;
-    const cols = 3.5;
-    const rows = 2.5;
-    const keyPadding = keySize * 0.1;
-
-    const x =
-      column * keySize + (left ? 0 : this._app.renderer.width - cols * keySize);
-    const y = this._app.renderer.height - (rows - row) * keySize;
-    const character = this._virtualKeyboardCharacters[inputAction];
-    character.text = this._getKeySymbol(key as string);
-    character.x = x + keySize * 0.5;
-    character.y = y + keySize * 0.5;
-    character.anchor.x = 0.5;
-    character.anchor.y = 0.5;
-    character.alpha = alpha;
-
-    this._virtualKeyboardGraphics.beginFill(0xffffff, alpha);
-    this._virtualKeyboardGraphics.drawRect(
-      x + keyPadding,
-      y + keyPadding,
-      keySize - keyPadding * 2,
-      keySize - keyPadding * 2
-    );
-  }
-
   private _renderVirtualKeyboard() {
-    if (!this._virtualKeyboardGraphics) {
+    if (!this._virtualKeyboardGraphics || !this._virtualKeyboardControls) {
       return;
     }
     this._virtualKeyboardGraphics.clear();
+    this._virtualKeyboardCurrentKeyText.text = '';
 
-    this._renderVirtualKeyboardKey(InputAction.RotateAntiClockwise, 1, 0, true);
-    this._renderVirtualKeyboardKey(InputAction.RotateClockwise, 2, 0, true);
-    this._renderVirtualKeyboardKey(InputAction.Drop, 1, 0);
-    this._renderVirtualKeyboardKey(InputAction.MoveDown, 1, 1);
-    this._renderVirtualKeyboardKey(InputAction.MoveLeft, 0, 1);
-    this._renderVirtualKeyboardKey(InputAction.MoveRight, 2, 1);
+    if (this._allowedActions?.length !== 1) {
+      return;
+    }
+
+    const key = this._virtualKeyboardControls[this._allowedActions[0]];
+    const keySymbol = getUserFriendlyKeyText(key);
+    const keyHeight = this._app.renderer.width * 0.05;
+    const keyWidth = (1 + (keySymbol.length - 1) * 0.2) * keyHeight;
+    const keyPadding = keyHeight * 0.1;
+
+    const x = this._app.renderer.width * 0.6;
+    const y = this._app.renderer.height * 0.25 - keyHeight * 2;
+    this._virtualKeyboardCurrentKeyText.text = keySymbol;
+    this._virtualKeyboardCurrentKeyText.x = x + keyWidth * 0.5;
+    this._virtualKeyboardCurrentKeyText.y = y + keyHeight * 0.5;
+    this._virtualKeyboardCurrentKeyText.anchor.x = 0.5;
+    this._virtualKeyboardCurrentKeyText.anchor.y = 0.5;
+
+    this._virtualKeyboardGraphics.beginFill(0xffffff);
+    this._virtualKeyboardGraphics.drawRect(
+      x + keyPadding,
+      y + keyPadding,
+      keyWidth - keyPadding * 2,
+      keyHeight - keyPadding * 2
+    );
   }
 
   private _renderVirtualGestures() {
@@ -781,14 +799,17 @@ export default class MinimalRenderer
     this._virtualGestureSprites.forEach((sprite, i) => {
       sprite.x =
         this._app.renderer.width *
-        (i === InputAction.RotateAntiClockwise
+        (i ===
+        Object.values(InputAction).indexOf(InputAction.RotateAnticlockwise)
           ? 0.25
-          : i === InputAction.RotateClockwise
+          : i ===
+            Object.values(InputAction).indexOf(InputAction.RotateClockwise)
           ? 0.75
           : 0.5);
       sprite.y = this._app.renderer.height * 0.75;
       sprite.alpha =
-        this._allowedActions?.length === 1 && this._allowedActions[0] === i
+        this._allowedActions?.length === 1 &&
+        Object.values(InputAction).indexOf(this._allowedActions[0]) === i
           ? 1
           : 0;
     });

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import useAppStore from '../../state/AppStore';
+import useUserStore from '../../state/UserStore';
 import useIncompleteTutorials from './useIncompleteTutorials';
 
 // TODO: rename to useForcedRedirect
@@ -11,7 +12,7 @@ export default function useWelcomeRedirect(
   currentTutorialPriority?: number
 ) {
   const appStore = useAppStore();
-  const user = appStore.user;
+  const user = useUserStore((userStore) => userStore.user);
   const setReturnToUrl = appStore.setReturnToUrl;
   const location = useLocation();
   const history = useHistory();

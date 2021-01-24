@@ -8,6 +8,7 @@ import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
 import TutorialClient from '@src/client/singleplayer/TutorialClient';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import InputMethod from '@models/InputMethod';
+import { ControlSettings } from 'models';
 
 export default class InfinitrisApi implements IInfinitrisApi {
   private _client?: IClient;
@@ -65,9 +66,9 @@ export default class InfinitrisApi implements IInfinitrisApi {
   /**
    * Runs the game in single player mode with no connection to a server.
    */
-  launchSinglePlayer = () => {
+  launchSinglePlayer = (controls?: ControlSettings) => {
     this.releaseClient();
-    this._client = new SinglePlayerClient();
+    this._client = new SinglePlayerClient(controls);
   };
 
   /**
@@ -76,13 +77,15 @@ export default class InfinitrisApi implements IInfinitrisApi {
   launchTutorial = (
     tutorial: ITutorial,
     listener?: ISimulationEventListener,
-    preferredInputMethod?: InputMethod
+    preferredInputMethod?: InputMethod,
+    controls?: ControlSettings
   ) => {
     this.releaseClient();
     const tutorialClient = new TutorialClient(
       tutorial,
       listener,
-      preferredInputMethod
+      preferredInputMethod,
+      controls
     );
     this._client = tutorialClient;
     return tutorialClient;
@@ -98,10 +101,11 @@ export default class InfinitrisApi implements IInfinitrisApi {
    */
   launchNetworkClient = (
     url: string,
-    listener?: IClientSocketEventListener
+    listener?: IClientSocketEventListener,
+    controls?: ControlSettings
   ) => {
     this.releaseClient();
-    this._client = new NetworkClient(url, listener);
+    this._client = new NetworkClient(url, listener, controls);
   };
 
   /**

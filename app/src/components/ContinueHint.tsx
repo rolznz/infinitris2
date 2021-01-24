@@ -1,7 +1,7 @@
 import { Typography } from '@material-ui/core';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import useAppStore from '../state/AppStore';
+import useUserStore from '../state/UserStore';
 
 interface ContinueHintProps {
   showContextMenu?: boolean;
@@ -10,7 +10,7 @@ interface ContinueHintProps {
 export default function ContinueHint({
   showContextMenu = false,
 }: ContinueHintProps) {
-  const user = useAppStore((appStore) => appStore.user);
+  const user = useUserStore((userStore) => userStore.user);
   return (
     <>
       <Typography variant="caption">

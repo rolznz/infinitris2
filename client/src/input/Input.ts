@@ -1,11 +1,13 @@
 import ControllablePlayer from '../ControllablePlayer';
 import Grid from '@core/grid/Grid';
 import Simulation from '@core/Simulation';
-import ControlSettings from './ControlSettings';
 import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
-import KeyboardInput, { DEFAULT_CONTROLS } from './KeyboardInput';
+import KeyboardInput from './KeyboardInput';
 import TouchInput from './TouchInput';
+import ControlSettings, {
+  DEFAULT_KEYBOARD_CONTROLS,
+} from '@models/ControlSettings';
 
 export type ActionListener = (action: InputAction) => void;
 
@@ -22,14 +24,13 @@ export default class Input {
   constructor(
     simulation: Simulation,
     player: ControllablePlayer,
-    controls: ControlSettings = DEFAULT_CONTROLS
+    controls: ControlSettings = DEFAULT_KEYBOARD_CONTROLS
   ) {
     this._simulation = simulation;
     this._grid = simulation.grid;
     this._player = player;
     this._controls = controls;
     this._actionListeners = [];
-    // TODO: only add listeners for preferred input method?
     this._keyboardInput = new KeyboardInput(this._fireAction, controls);
     this._touchInput = new TouchInput(this._fireAction);
   }
@@ -82,7 +83,7 @@ export default class Input {
         block?.drop();
         break;
       case InputAction.RotateClockwise:
-      case InputAction.RotateAntiClockwise:
+      case InputAction.RotateAnticlockwise:
         block?.move(
           this._grid.cells,
           0,

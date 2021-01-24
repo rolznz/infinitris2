@@ -16,6 +16,7 @@ import Simulation from '@core/Simulation';
 import TutorialCompletionStats from '@models/TutorialCompletionStats';
 import TutorialCellType from '@models/TutorialCellType';
 import createBehaviour from '@core/grid/cell/behaviours/createBehaviour';
+import { ControlSettings } from 'models';
 
 // TODO: enable support for multiplayer tutorials (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -33,13 +34,16 @@ export default class TutorialClient
   private _numLinesCleared!: number;
   private _blockCreateFailed!: boolean;
   private _blockDied!: boolean;
+  private _controls?: ControlSettings;
 
   constructor(
     tutorial: ITutorial,
     listener?: ISimulationEventListener,
-    preferredInputMethod: InputMethod = 'keyboard'
+    preferredInputMethod: InputMethod = 'keyboard',
+    controls?: ControlSettings
   ) {
     this._preferredInputMethod = preferredInputMethod;
+    this._controls = controls;
     this._create(tutorial, listener);
   }
 
@@ -240,7 +244,10 @@ export default class TutorialClient
     listener?: ISimulationEventListener
   ) {
     this._tutorial = tutorial;
-    this._renderer = new MinimalRenderer(this._preferredInputMethod);
+    this._renderer = new MinimalRenderer(
+      this._preferredInputMethod,
+      this._tutorial.teachControls
+    );
     this._simulationEventListener = listener;
     await this._renderer.create();
 
@@ -301,7 +308,7 @@ export default class TutorialClient
     player.nextLayout = this._tutorial.layout;
     player.nextLayoutRotation = this._tutorial.layoutRotation;
 
-    this._input = new Input(simulation, player, undefined);
+    this._input = new Input(simulation, player, this._controls);
     this._renderer.virtualKeyboardControls = this._input.controls;
     this._updateAllowedActions(this._tutorial.allowedActions);
 
@@ -328,11 +335,13 @@ export default class TutorialClient
     if (!this._allowedActions) {
       return;
     }
+    const allActions = Object.values(InputAction);
     const nextAction =
       this._allowedActions.length === 0
         ? InputAction.MoveLeft
-        : ((this._allowedActions[0] + 1) as InputAction);
-    if (nextAction > InputAction.Drop) {
+        : allActions[allActions.indexOf(this._allowedActions[0]) + 1];
+    if (!nextAction) {
+      this._updateAllowedActions([]);
       // TODO: finish tutorial
     } else {
       this._updateAllowedActions([nextAction]);

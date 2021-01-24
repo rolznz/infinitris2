@@ -9,6 +9,7 @@ import Grid from '@core/grid/Grid';
 import IClientSocket from '../networking/IClientSocket';
 import IClient from '../../../models/src/IClient';
 import ClientSocket from '@src/networking/ClientSocket';
+import ControlSettings from '@models/ControlSettings';
 
 export default class NetworkClient
   implements IClient, IClientSocketEventListener {
@@ -16,7 +17,13 @@ export default class NetworkClient
   // FIXME: restructure to not require definite assignment
   private _renderer!: IRenderer;
   private _simulation!: Simulation;
-  constructor(url: string, listener?: IClientSocketEventListener) {
+  private _controls?: ControlSettings;
+  constructor(
+    url: string,
+    listener?: IClientSocketEventListener,
+    controls?: ControlSettings
+  ) {
+    this._controls = controls;
     const eventListeners: IClientSocketEventListener[] = [this];
     if (listener) {
       eventListeners.push(listener);

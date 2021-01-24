@@ -1,18 +1,6 @@
+import ControlSettings from '@models/ControlSettings';
 import InputAction from '@models/InputAction';
-import ControlSettings from './ControlSettings';
 import { ActionListener } from './Input';
-
-export const DEFAULT_CONTROLS: ControlSettings = new Map<InputAction, string>([
-  [InputAction.MoveLeft, 'ArrowLeft'],
-  [InputAction.MoveRight, 'ArrowRight'],
-  [InputAction.Drop, 'ArrowUp'],
-  [InputAction.MoveDown, 'ArrowDown'],
-  [InputAction.RotateAntiClockwise, 'z'],
-  [InputAction.RotateClockwise, 'x'],
-  [InputAction.MoveLeft, 'ArrowLeft'],
-]);
-/*start: 'Enter',
-  pause: 'p',*/
 
 export default class KeyboardInput {
   private _controls: ControlSettings;
@@ -29,25 +17,25 @@ export default class KeyboardInput {
 
   private _onKeyDown = (event: KeyboardEvent) => {
     if (
-      event.key === this._controls.get(InputAction.MoveLeft) ||
-      event.key === this._controls.get(InputAction.MoveRight)
+      event.key === this._controls[InputAction.MoveLeft] ||
+      event.key === this._controls[InputAction.MoveRight]
     ) {
       const action =
-        event.key === this._controls.get(InputAction.MoveLeft)
+        event.key === this._controls[InputAction.MoveLeft]
           ? InputAction.MoveLeft
           : InputAction.MoveRight;
       this._fireAction(action);
-    } else if (event.key === this._controls.get(InputAction.MoveDown)) {
+    } else if (event.key === this._controls[InputAction.MoveDown]) {
       this._fireAction(InputAction.MoveDown);
-    } else if (event.key === this._controls.get(InputAction.Drop)) {
+    } else if (event.key === this._controls[InputAction.Drop]) {
       this._fireAction(InputAction.Drop);
     } else if (
-      event.key === this._controls.get(InputAction.RotateAntiClockwise) ||
-      event.key === this._controls.get(InputAction.RotateClockwise)
+      event.key === this._controls[InputAction.RotateAnticlockwise] ||
+      event.key === this._controls[InputAction.RotateClockwise]
     ) {
       const action =
-        event.key === this._controls.get(InputAction.RotateAntiClockwise)
-          ? InputAction.RotateAntiClockwise
+        event.key === this._controls[InputAction.RotateAnticlockwise]
+          ? InputAction.RotateAnticlockwise
           : InputAction.RotateClockwise;
       this._fireAction(action);
     }

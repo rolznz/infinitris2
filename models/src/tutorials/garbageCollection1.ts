@@ -14,10 +14,10 @@ const garbageCollection1: ITutorial = {
   },
   successCriteria: {
     gold: {
-      maxBlocksPlaced: 20,
+      maxBlocksPlaced: 10,
     },
     silver: {
-      maxBlocksPlaced: 40,
+      maxBlocksPlaced: 20,
     },
   },
   grid: `

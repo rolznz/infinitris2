@@ -26,7 +26,7 @@ export default function AllSetPage() {
     if (hasReceivedInput && !hasRedirected) {
       setHasRedirected(true);
       setReturnToUrl(undefined);
-      history.replace(destinationUrl);
+      history.push(destinationUrl);
     }
   }, [
     hasReceivedInput,

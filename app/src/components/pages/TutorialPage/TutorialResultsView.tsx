@@ -4,7 +4,7 @@ import TutorialCompletionStats from 'infinitris2-models/dist/src/TutorialComplet
 import React, { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import StarRatingComponent from 'react-star-rating-component';
-import useAppStore from '../../../state/AppStore';
+import useUserStore from '../../../state/UserStore';
 import ContinueHint from '../../ContinueHint';
 import { Gesture } from '../../hooks/useGestureListener';
 import useReceivedInput from '../../hooks/useReceivedInput';
@@ -24,7 +24,7 @@ export default function TutorialResultsView({
   onContinue,
   onRetry,
 }: TutorialResultsViewProps) {
-  const user = useAppStore((appStore) => appStore.user);
+  const user = useUserStore((userStore) => userStore.user);
   const [starAnimation, setStarAnimation] = useState(0);
   useEffect(() => {
     if (starAnimation < status.stars) {

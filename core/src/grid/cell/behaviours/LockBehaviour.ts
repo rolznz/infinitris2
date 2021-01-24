@@ -31,7 +31,7 @@ export default class LockBehaviour implements ICellBehaviour {
     } else if (this._isLocked) {
       this._alpha = Math.min(this._alpha + 0.05, 1);
     } else {
-      this._alpha = Math.max(this._alpha - 0.05, 0.25);
+      this._alpha = Math.max(this._alpha - 0.05, 0.2);
     }
     // TODO: is there a better way to do this?
     // cells are only currently rendered (full re-render) initially and on block placement and line clear.

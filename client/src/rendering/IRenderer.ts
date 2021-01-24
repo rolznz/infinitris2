@@ -1,5 +1,5 @@
 import ISimulationEventListener from '@models/ISimulationEventListener';
-import ControlSettings from '@src/input/ControlSettings';
+import ControlSettings from '@models/ControlSettings';
 import { InputAction } from 'models';
 
 export default interface IRenderer extends ISimulationEventListener {

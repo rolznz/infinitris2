@@ -1,7 +1,5 @@
-import React, { useEffect } from 'react';
-import { Box, Card, makeStyles, Typography } from '@material-ui/core';
-import useAppStore from '../../state/AppStore';
-
+import React, { useEffect, useState } from 'react';
+import { Box, Button, Card, makeStyles, Typography } from '@material-ui/core';
 import TouchAppIcon from '@material-ui/icons/TouchApp';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
 import { useHistory } from 'react-router-dom';
@@ -10,57 +8,64 @@ import useIncompleteTutorials from '../hooks/useIncompleteTutorials';
 import FlexBox from '../layout/FlexBox';
 import Lottie from 'lottie-react';
 import welcomeAnimation from '../lottie/welcome.json';
-import useReceivedInput from '../hooks/useReceivedInput';
 import { FormattedMessage } from 'react-intl';
 import useDemo from '../hooks/useDemo';
+import useUserStore from '../../state/UserStore';
+import { InputMethod } from 'infinitris2-models';
 
 export default function WelcomePage() {
   useDemo();
-  const appStore = useAppStore();
+  const userStore = useUserStore();
+  const [newPreferredInputMethod, setNewPreferredInputMethod] = useState<
+    InputMethod | undefined
+  >(undefined);
 
   const useStyles = makeStyles({
     icon: {
       width: 'min(20vw, 20vh)',
       height: 'min(20vw, 20vh)',
-      marginBottom: 'min(2vw, 2vh)',
+      marginBottom: 'min(4vw, 4vh)',
     },
     card: {
       marginLeft: 'min(5vw, 5vh)',
       marginRight: 'min(5vw, 5vh)',
       padding: 'min(5vw, 5vh)',
+      cursor: 'pointer',
     },
   });
 
-  function ControlOptionCard(props: { option: 'keyboard' | 'touch' }) {
+  function ControlOptionCard(props: { option: InputMethod }) {
     const classes = useStyles();
     const Icon = props.option === 'keyboard' ? KeyboardIcon : TouchAppIcon;
     const text =
       props.option === 'keyboard' ? (
         <FormattedMessage
-          defaultMessage="Press Enter"
+          defaultMessage="Keyboard"
           description="Choose keyboard controls"
         />
       ) : (
         <FormattedMessage
-          defaultMessage="Tap Anywhere"
+          defaultMessage="Touchscreen"
           description="Choose touch controls"
         />
       );
 
     return (
-      <Card className={classes.card}>
+      <Card
+        className={classes.card}
+        onClick={() => setNewPreferredInputMethod(props.option)}
+      >
         <FlexBox>
           <Icon className={classes.icon} />
-          <Typography align="center">{text}</Typography>
+          <Button variant="contained">{text}</Button>
         </FlexBox>
       </Card>
     );
   }
 
-  const { setPreferredInputMethod, markHasSeenWelcome } = appStore;
+  const { setPreferredInputMethod, markHasSeenWelcome } = userStore;
 
   const history = useHistory();
-  const [, newPreferredInputMethod] = useReceivedInput();
 
   const incompleteTutorials = useIncompleteTutorials();
 
@@ -68,7 +73,7 @@ export default function WelcomePage() {
     if (newPreferredInputMethod) {
       markHasSeenWelcome();
       setPreferredInputMethod(newPreferredInputMethod);
-      history.replace(
+      history.push(
         incompleteTutorials.length ? Routes.tutorialRequired : Routes.home
       );
     }

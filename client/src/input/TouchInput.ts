@@ -46,7 +46,7 @@ export default class TouchInput {
 
     if (pointerChangeDistance < MOVEMENT_THRESHOLD) {
       if (this._pointerX < document.body.clientWidth * 0.5) {
-        this._fireAction(InputAction.RotateAntiClockwise);
+        this._fireAction(InputAction.RotateAnticlockwise);
       } else {
         this._fireAction(InputAction.RotateClockwise);
       }

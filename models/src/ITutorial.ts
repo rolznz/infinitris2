@@ -50,10 +50,10 @@ export default interface ITutorial extends TutorialTranslation {
 
 // TODO: rename to core tutorials (user-submitted ones will be from Firebase)
 export const tutorials: ITutorial[] = [
-  basicMovement,
   keysAndLocks1,
-  garbageCollection1,
   controlCheck,
+  basicMovement,
+  garbageCollection1,
   shadowTest,
   wrapTest,
 ];

@@ -1,7 +1,12 @@
-import { InputMethod, TutorialStatus } from 'infinitris2-models';
+import {
+  ControlSettings,
+  DEFAULT_KEYBOARD_CONTROLS,
+  InputMethod,
+  TutorialStatus,
+} from 'infinitris2-models';
 import { defaultLocale } from '../internationalization';
 
-const userKey = 'infinitris2-user';
+const userKey = 'infinitris2-user-v3';
 
 export default interface User {
   readonly tutorialAttempts: { [tutorialId: string]: TutorialStatus[] };
@@ -10,6 +15,7 @@ export default interface User {
   readonly locale: string;
   readonly preferredInputMethod?: InputMethod;
   readonly completedTutorialIds: string[];
+  readonly controls: ControlSettings;
 }
 
 export function loadUser(): User {
@@ -22,6 +28,7 @@ export function loadUser(): User {
     tutorialAttempts: user.tutorialAttempts || {},
     locale: user.locale || defaultLocale,
     completedTutorialIds: user.completedTutorialIds || [],
+    controls: user.controls || DEFAULT_KEYBOARD_CONTROLS,
   };
 }
 

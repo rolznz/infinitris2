@@ -2,7 +2,7 @@ import { Box, Typography } from '@material-ui/core';
 import { ITutorial } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import useAppStore from '../../../state/AppStore';
+import useUserStore from '../../../state/UserStore';
 import ContinueHint from '../../ContinueHint';
 import useReceivedInput from '../../hooks/useReceivedInput';
 import useTrue from '../../hooks/useTrue';
@@ -17,7 +17,7 @@ export default function TutorialInfoView({
   onReceivedInput,
   tutorial,
 }: TutorialInfoViewProps) {
-  const user = useAppStore((appStore) => appStore.user);
+  const user = useUserStore((userStore) => userStore.user);
   const [hasReceivedInput] = useReceivedInput();
   useTrue(hasReceivedInput, onReceivedInput);
   const translation = tutorial?.translations?.[user.locale];

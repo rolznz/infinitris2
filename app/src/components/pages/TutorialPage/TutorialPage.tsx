@@ -14,6 +14,7 @@ import React from 'react';
 import TutorialInfoView from './TutorialInfoView';
 import TutorialResultsView from './TutorialResultsView';
 import TutorialFailedView from './TutorialFailedView';
+import useUserStore from '../../../state/UserStore';
 
 interface TutorialPageRouteParams {
   id: string;
@@ -22,7 +23,7 @@ interface TutorialPageRouteParams {
 export default function TutorialPage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
-  const user = appStore.user;
+  const userStore = useUserStore();
   const history = useHistory();
 
   const { id } = useParams<TutorialPageRouteParams>();
@@ -30,9 +31,9 @@ export default function TutorialPage() {
   const tutorial = tutorials.find((t) => t.id === id);
   const requiresRedirect = useWelcomeRedirect(true, tutorial?.priority);
   const incompleteTutorials = useIncompleteTutorials();
-  const addTutorialAttempt = appStore.addTutorialAttempt;
+  const addTutorialAttempt = userStore.addTutorialAttempt;
   const setIsDemo = appStore.setIsDemo;
-  const completeTutorial = appStore.completeTutorial;
+  const completeTutorial = userStore.completeTutorial;
   const launchTutorial = client?.launchTutorial;
   const restartClient = client?.restartClient; // TODO: move to IClient
   const [hasLaunched, setLaunched] = useState(false);
@@ -50,7 +51,7 @@ export default function TutorialPage() {
 
   const [checkTutorialStatus, setCheckTutorialStatus] = useState(false);
 
-  const preferredInputMethod = user.preferredInputMethod;
+  const { preferredInputMethod, controls } = userStore.user;
 
   // TODO: load tutorial from firebase
 
@@ -81,7 +82,12 @@ export default function TutorialPage() {
       };
 
       setTutorialClient(
-        launchTutorial(tutorial, simulationEventListener, preferredInputMethod)
+        launchTutorial(
+          tutorial,
+          simulationEventListener,
+          preferredInputMethod,
+          controls
+        )
       );
       setIsDemo(false);
     }
@@ -94,13 +100,13 @@ export default function TutorialPage() {
     setIsDemo,
     setCheckTutorialStatus,
     setTutorialClient,
+    controls,
   ]);
 
   useEffect(() => {
     if (tutorial && checkTutorialStatus && tutorialClient) {
       setCheckTutorialStatus(false);
       const status = tutorialClient.getStatus();
-      console.log('Status: ', status);
       if (status && status.status !== 'pending') {
         addTutorialAttempt(tutorial.id, status);
         if (status.status === 'success') {
@@ -143,9 +149,9 @@ export default function TutorialPage() {
             (incompleteTutorial) => incompleteTutorial.id !== tutorial.id
           );
           if (remainingTutorials.length) {
-            history.replace(Routes.tutorialRequired);
+            history.push(Routes.tutorialRequired);
           } else {
-            history.replace(Routes.allSet);
+            history.push(Routes.allSet);
           }
         }}
         onRetry={() => {

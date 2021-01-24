@@ -6,6 +6,8 @@ import AllSetPage from './components/pages/AllSetPage';
 import HomePage from './components/pages/HomePage';
 import LobbyPage from './components/pages/LobbyPage';
 import RoomPage from './components/pages/RoomPage';
+import ControlSettingsPage from './components/pages/SettingsPage/ControlSettingsPage';
+import SettingsPage from './components/pages/SettingsPage/SettingsPage';
 import SinglePlayerPage from './components/pages/SinglePlayerPage';
 import TutorialPage from './components/pages/TutorialPage/TutorialPage';
 import TutorialRequiredPage from './components/pages/TutorialRequiredPage';
@@ -13,7 +15,12 @@ import WelcomePage from './components/pages/WelcomePage';
 import Routes from './models/Routes';
 
 export default function Router() {
-  const outsideGamePaths = ['/', '/lobby'];
+  const outsideGamePaths = [
+    Routes.home,
+    Routes.lobby,
+    Routes.settings,
+    Routes.controlSettings,
+  ];
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
     return (
       <Switch>
@@ -34,6 +41,12 @@ export default function Router() {
       <Switch>
         <Route exact path={Routes.home}>
           <HomePage />
+        </Route>
+        <Route exact path={Routes.settings}>
+          <SettingsPage />
+        </Route>
+        <Route exact path={Routes.controlSettings}>
+          <ControlSettingsPage />
         </Route>
         <Route exact path={Routes.welcome}>
           <WelcomePage />

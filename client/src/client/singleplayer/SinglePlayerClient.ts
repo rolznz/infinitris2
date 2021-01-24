@@ -6,8 +6,8 @@ import Grid from '@core/grid/Grid';
 import Input from '@src/input/Input';
 import IClient from '../../../../models/src/IClient';
 import ISimulationEventListener from '@models/ISimulationEventListener';
-import Block from '@core/block/Block';
 import IBlock from '@models/IBlock';
+import ControlSettings from '@models/ControlSettings';
 
 export default class SinglePlayerClient
   implements IClient, ISimulationEventListener {
@@ -15,7 +15,9 @@ export default class SinglePlayerClient
   private _renderer!: IRenderer;
   private _simulation!: Simulation;
   private _input!: Input;
-  constructor() {
+  private _controls?: ControlSettings;
+  constructor(controls?: ControlSettings) {
+    this._controls = controls;
     this._create();
   }
 
@@ -88,6 +90,6 @@ export default class SinglePlayerClient
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);
     this._simulation.startInterval();
-    this._input = new Input(this._simulation, player, undefined);
+    this._input = new Input(this._simulation, player, this._controls);
   }
 }

@@ -18,6 +18,10 @@ import ICellBehaviour from './src/ICellBehaviour';
 import ITutorialClient, { TutorialStatus } from './src/ITutorialClient';
 import IGrid from './src/IGrid';
 import TutorialCellType from './src/TutorialCellType';
+import ControlSettings, {
+  DEFAULT_KEYBOARD_CONTROLS,
+} from './src/ControlSettings';
+import getUserFriendlyKeyText from './src/util/getUserFriendlyKeyText';
 
 export {
   tutorials,
@@ -42,4 +46,7 @@ export {
   InputMethod,
   TutorialCellType,
   IRoom,
+  ControlSettings,
+  DEFAULT_KEYBOARD_CONTROLS,
+  getUserFriendlyKeyText,
 };

@@ -11,17 +11,17 @@ import {
   TextField,
 } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
-import useAppStore from '../../state/AppStore';
 import useHomeStore from '../../state/HomeStore';
 import RoomCard from '../RoomCard';
 import Routes from '../../models/Routes';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useDemo from '../hooks/useDemo';
 import { IRoom } from 'infinitris2-models';
+import useUserStore from '../../state/UserStore';
 
 export default function HomePage() {
   useDemo();
-  const appStore = useAppStore();
+  const userStore = useUserStore();
   const homeStore = useHomeStore();
   const [rooms, loadingRooms] = useCollectionData<IRoom>(
     firebase.firestore().collection('rooms'),
@@ -52,8 +52,8 @@ export default function HomePage() {
                   defaultMessage: 'Nickname',
                   description: 'Nickname textbox placeholder',
                 })}
-                value={appStore.user.nickname}
-                onChange={(e) => appStore.setNickname(e.target.value)}
+                value={userStore.user.nickname}
+                onChange={(e) => userStore.setNickname(e.target.value)}
               />
               <Box mt={2} px={1} style={{ opacity: 0.5 }}>
                 <Link

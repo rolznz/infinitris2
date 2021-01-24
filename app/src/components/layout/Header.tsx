@@ -1,38 +1,14 @@
-import {
-  Box,
-  IconButton,
-  Link,
-  makeStyles,
-  MenuItem,
-  Select,
-  Tooltip,
-} from '@material-ui/core';
+import { Box, IconButton, Link, Tooltip } from '@material-ui/core';
 import React from 'react';
 import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
+import SettingsIcon from '@material-ui/icons/Settings';
+import HomeIcon from '@material-ui/icons/Home';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../models/Routes';
-import { supportedLocales } from '../../internationalization';
-import useAppStore from '../../state/AppStore';
+
 import { useIntl } from 'react-intl';
 
 export default function Header() {
-  const useStyles = makeStyles({
-    languageSelect: {
-      marginLeft: 8,
-      marginRight: 8,
-      '& div': {
-        padding: '0 !important',
-        width: '48px',
-        height: '48px',
-        borderRadius: '24px !important',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-      },
-    },
-  });
-  const classes = useStyles();
-  const appStore = useAppStore();
   const intl = useIntl();
 
   return (
@@ -55,21 +31,18 @@ export default function Header() {
           </IconButton>
         </Link>
       </Tooltip>
-      <Select
-        className={classes.languageSelect}
-        disableUnderline
-        IconComponent={() => <></>}
-        value={appStore.user.locale}
-        onChange={(event) =>
-          appStore.setLanguageCode(event.target.value as string)
-        }
-      >
-        {supportedLocales.map((language) => (
-          <MenuItem key={language} value={language}>
-            {language.toUpperCase()}
-          </MenuItem>
-        ))}
-      </Select>
+      <Link component={RouterLink} underline="none" to={Routes.settings}>
+        <IconButton>
+          <SettingsIcon />
+        </IconButton>
+      </Link>
+      {window.location.pathname.length > 1 && (
+        <Link component={RouterLink} underline="none" to={Routes.home}>
+          <IconButton>
+            <HomeIcon />
+          </IconButton>
+        </Link>
+      )}
     </Box>
   );
 }

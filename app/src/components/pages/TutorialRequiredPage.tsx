@@ -20,14 +20,14 @@ export default function TutorialRequiredPage() {
 
   useEffect(() => {
     if (!incompleteTutorials.length) {
-      history.replace(Routes.home);
+      history.push(Routes.home);
     }
 
     if (hasReceivedInput) {
       const highestPriorityTutorial = incompleteTutorials.sort(
         (a, b) => (b.priority || 0) - (a.priority || 0)
       )[0];
-      history.replace(`${Routes.tutorials}/${highestPriorityTutorial.id}`);
+      history.push(`${Routes.tutorials}/${highestPriorityTutorial.id}`);
     }
   }, [hasReceivedInput, history, incompleteTutorials]);
 

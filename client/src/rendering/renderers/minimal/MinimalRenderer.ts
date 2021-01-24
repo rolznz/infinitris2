@@ -447,7 +447,7 @@ export default class MinimalRenderer
       this._scrollY = gridHeight > appHeight;
 
       this._shadowCount = this._hasShadows
-        ? Math.ceil(Math.floor(appWidth / gridWidth) / 2)
+        ? Math.ceil(Math.ceil(appWidth / gridWidth) / 2)
         : 0;
 
       this._camera.gridWidth = gridWidth;

@@ -28,6 +28,8 @@ export default class InfinitrisApi implements IInfinitrisApi {
     const params = new URLSearchParams(url.substring(url.indexOf('?') + 1));
     const controlsString = params.get('controls') as string;
     const controls = controlsString ? JSON.parse(controlsString) : undefined;
+    const inputMethod: InputMethod =
+      (params.get('input') as InputMethod) || 'keyboard';
 
     if (params.has('single-player')) {
       this.launchSinglePlayer(controls);
@@ -57,7 +59,7 @@ export default class InfinitrisApi implements IInfinitrisApi {
           onBlockPlaced() {},
           onLineCleared() {},
         },
-        'touch',
+        inputMethod,
         controls
       );
     } else {

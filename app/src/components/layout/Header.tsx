@@ -31,12 +31,14 @@ export default function Header() {
           </IconButton>
         </Link>
       </Tooltip>
-      <Link component={RouterLink} underline="none" to={Routes.settings}>
-        <IconButton>
-          <SettingsIcon />
-        </IconButton>
-      </Link>
-      {window.location.pathname.length > 1 && (
+      {window.location.pathname !== Routes.settings && (
+        <Link component={RouterLink} underline="none" to={Routes.settings}>
+          <IconButton>
+            <SettingsIcon />
+          </IconButton>
+        </Link>
+      )}
+      {window.location.pathname !== Routes.home && (
         <Link component={RouterLink} underline="none" to={Routes.home}>
           <IconButton>
             <HomeIcon />

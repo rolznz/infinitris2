@@ -17,6 +17,7 @@ import useUserStore from '../../../state/UserStore';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import SettingsRow from './SettingsRow';
+import { InputMethod } from 'infinitris2-models';
 
 export default function SettingsPage() {
   useDemo();
@@ -59,6 +60,30 @@ export default function SettingsPage() {
             <SettingsRow
               left={
                 <FormattedMessage
+                  defaultMessage="Preferred Input Method"
+                  description="Preferred Input Method left column"
+                />
+              }
+              right={
+                <Select
+                  value={userStore.user.preferredInputMethod}
+                  onChange={(event) =>
+                    userStore.setPreferredInputMethod(
+                      event.target.value as InputMethod
+                    )
+                  }
+                >
+                  {['keyboard', 'touch'].map((inputMethod) => (
+                    <MenuItem key={inputMethod} value={inputMethod}>
+                      {inputMethod.toUpperCase()}
+                    </MenuItem>
+                  ))}
+                </Select>
+              }
+            />
+            <SettingsRow
+              left={
+                <FormattedMessage
                   defaultMessage="Controls"
                   description="Controls left column"
                 />
@@ -72,10 +97,34 @@ export default function SettingsPage() {
                   <Button variant="contained" color="primary">
                     <FormattedMessage
                       defaultMessage="Change"
-                      description="Change controls text"
+                      description="Change controls button text"
                     />
                   </Button>
                 </Link>
+              }
+            />
+            <SettingsRow
+              left={
+                <FormattedMessage
+                  defaultMessage="Clear Progress"
+                  description="Clear Progress left column"
+                />
+              }
+              right={
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() =>
+                    window.confirm(
+                      'Are you sure you wish to clear your progress?'
+                    ) && userStore.clearProgress()
+                  }
+                >
+                  <FormattedMessage
+                    defaultMessage="Clear"
+                    description="Clear progress button text"
+                  />
+                </Button>
               }
             />
           </Grid>

@@ -20,6 +20,9 @@ export default function Router() {
     Routes.lobby,
     Routes.settings,
     Routes.controlSettings,
+    Routes.welcome,
+    Routes.tutorialRequired,
+    Routes.allSet,
   ];
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
     return (

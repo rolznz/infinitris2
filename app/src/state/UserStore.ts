@@ -17,6 +17,7 @@ type UserStore = {
   completeTutorial(tutorialId: string): void;
   updateControl(inputAction: InputAction, control: string): void;
   resetControls(): void;
+  clearProgress(): void;
 };
 
 const useUserStore = create<UserStore>((set) => ({
@@ -90,6 +91,17 @@ const useUserStore = create<UserStore>((set) => ({
       const user: User = {
         ...state.user,
         controls: DEFAULT_KEYBOARD_CONTROLS,
+      };
+      saveUser(user);
+      return { user };
+    });
+  },
+  clearProgress: () => {
+    set((state) => {
+      const user: User = {
+        ...state.user,
+        completedTutorialIds: [],
+        tutorialAttempts: {},
       };
       saveUser(user);
       return { user };

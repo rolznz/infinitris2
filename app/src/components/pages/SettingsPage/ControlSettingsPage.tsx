@@ -96,7 +96,7 @@ export default function ControlSettingsPage() {
             values={{ inputAction: editingInputAction }}
           />
         ) : (
-          <FlexBox width={300}>
+          <FlexBox width={300} height="100%">
             <Grid container spacing={2} alignItems="center" justify="center">
               {(Object.values(InputAction) as InputAction[]).map(
                 (inputAction) => {
@@ -121,16 +121,22 @@ export default function ControlSettingsPage() {
               )}
             </Grid>
             <Box mb={4} />
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => resetControls()}
-            >
-              <FormattedMessage
-                defaultMessage="Reset Controls"
-                description="Reset Controls button text"
-              />
-            </Button>
+            <FlexBox flex={1} justifyContent="flex-end" mb={4}>
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() =>
+                  window.confirm(
+                    'Are you sure you wish to reset your controls?'
+                  ) && resetControls()
+                }
+              >
+                <FormattedMessage
+                  defaultMessage="Reset Controls"
+                  description="Reset Controls button text"
+                />
+              </Button>
+            </FlexBox>
           </FlexBox>
         )}
       </FlexBox>

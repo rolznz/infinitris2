@@ -26,15 +26,24 @@ export default class InfinitrisApi implements IInfinitrisApi {
    */
   loadUrl = (url: string) => {
     const params = new URLSearchParams(url.substring(url.indexOf('?') + 1));
+    const controlsString = params.get('controls') as string;
+    const controls = controlsString ? JSON.parse(controlsString) : undefined;
+
     if (params.has('single-player')) {
-      this.launchSinglePlayer();
+      this.launchSinglePlayer(controls);
     } else if (params.has('url')) {
-      this.launchNetworkClient(params.get('url') as string);
+      this.launchNetworkClient(
+        params.get('url') as string,
+        undefined,
+        controls
+      );
     } else if (params.has('demo')) {
       this.launchDemo();
     } else if (params.has('tutorial')) {
       this.launchTutorial(
-        tutorials[0],
+        tutorials.find(
+          (tutorial) => tutorial.id === params.get('tutorialId')
+        ) || tutorials[0],
         {
           onSimulationInit: (simulation) => {
             simulation.startInterval();
@@ -48,11 +57,14 @@ export default class InfinitrisApi implements IInfinitrisApi {
           onBlockPlaced() {},
           onLineCleared() {},
         },
-        'touch'
+        'touch',
+        controls
       );
     } else {
-      this._invalidUrl(url);
+      return false;
     }
+
+    return true;
   };
 
   /**

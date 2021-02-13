@@ -46,7 +46,7 @@ export default function SettingsPage() {
                 <Select
                   value={userStore.user.locale}
                   onChange={(event) =>
-                    userStore.setLanguageCode(event.target.value as string)
+                    userStore.setLocale(event.target.value as string)
                   }
                 >
                   {supportedLocales.map((language) => (

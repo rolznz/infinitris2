@@ -2,6 +2,7 @@ import { Box, IconButton, Link, Tooltip } from '@material-ui/core';
 import React from 'react';
 import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
 import SettingsIcon from '@material-ui/icons/Settings';
+import FaceIcon from '@material-ui/icons/Face';
 import HomeIcon from '@material-ui/icons/Home';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../models/Routes';
@@ -31,6 +32,14 @@ export default function Header() {
           </IconButton>
         </Link>
       </Tooltip>
+      {window.location.pathname !== Routes.profile &&
+        window.location.pathname !== Routes.login && (
+          <Link component={RouterLink} underline="none" to={Routes.profile}>
+            <IconButton>
+              <FaceIcon />
+            </IconButton>
+          </Link>
+        )}
       {window.location.pathname !== Routes.settings && (
         <Link component={RouterLink} underline="none" to={Routes.settings}>
           <IconButton>

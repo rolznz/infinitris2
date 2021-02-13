@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
 import * as firebase from 'firebase/app';
 import {
   Box,
@@ -18,18 +17,18 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import useDemo from '../hooks/useDemo';
 import { IRoom } from 'infinitris2-models';
 import useUserStore from '../../state/UserStore';
+import { useCollection } from '@nandorojo/swr-firestore';
 
 export default function HomePage() {
   useDemo();
   const userStore = useUserStore();
   const homeStore = useHomeStore();
-  const [rooms, loadingRooms] = useCollectionData<IRoom>(
-    firebase.firestore().collection('rooms'),
-    { idField: 'id' }
+  const { data: rooms } = useCollection<IRoom>(
+    firebase.firestore().collection('rooms').path
   );
   const [hasFocusedPlayButton, setHasFocusedPlayButton] = useState(false);
   const selectedRoom = homeStore.selectedRoom || rooms?.[0];
-  const loading = loadingRooms && !selectedRoom;
+  const isLoading = !selectedRoom;
 
   const useStyles = makeStyles({
     playButton: {
@@ -62,12 +61,12 @@ export default function HomePage() {
                   to={Routes.lobby}
                   style={{ opacity: 0.5 }}
                 >
-                  <RoomCard loading={loading} room={selectedRoom} />
+                  <RoomCard loading={isLoading} room={selectedRoom} />
                 </Link>
               </Box>
 
               <Box mt={2} display="flex" justifyContent="center">
-                {!loading ? (
+                {!isLoading ? (
                   <Link
                     ref={(element: HTMLSpanElement | null) => {
                       if (element && !hasFocusedPlayButton) {

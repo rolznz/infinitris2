@@ -100,8 +100,6 @@ export default function ControlSettingsPage() {
             <Grid container spacing={2} alignItems="center" justify="center">
               {(Object.values(InputAction) as InputAction[]).map(
                 (inputAction) => {
-                  console.log(user.controls);
-                  console.log(user.controls[inputAction]);
                   return (
                     <SettingsRow
                       key={inputAction}

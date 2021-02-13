@@ -7,6 +7,9 @@ import theme from './theme';
 import Router from './Router';
 import Internationalization from './internationalization/Internationalization';
 
+import { FuegoProvider } from '@nandorojo/swr-firestore';
+import { fuego } from './firebase';
+
 function App() {
   useInfinitrisClient();
   const appStore = useAppStore();
@@ -15,18 +18,20 @@ function App() {
   }
 
   return (
-    <Internationalization>
-      <ThemeProvider theme={theme}>
-        <Box
-          className="App"
-          display="flex"
-          flexDirection="column"
-          height="100%"
-        >
-          <Router />
-        </Box>
-      </ThemeProvider>
-    </Internationalization>
+    <FuegoProvider fuego={fuego}>
+      <Internationalization>
+        <ThemeProvider theme={theme}>
+          <Box
+            className="App"
+            display="flex"
+            flexDirection="column"
+            height="100%"
+          >
+            <Router />
+          </Box>
+        </ThemeProvider>
+      </Internationalization>
+    </FuegoProvider>
   );
 }
 

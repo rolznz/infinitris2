@@ -1,8 +1,8 @@
 import { tutorials } from 'infinitris2-models';
-import useUserStore from '../../state/UserStore';
+import { useUser } from '../../state/UserStore';
 
 export default function useIncompleteTutorials() {
-  const user = useUserStore((userStore) => userStore.user);
+  const user = useUser();
   const incompleteTutorials = tutorials.filter(
     (tutorial) =>
       tutorial.mandatory && user.completedTutorialIds.indexOf(tutorial.id) < 0

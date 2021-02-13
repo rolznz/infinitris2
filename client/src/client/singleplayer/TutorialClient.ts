@@ -7,7 +7,7 @@ import ISimulationEventListener from '@models/ISimulationEventListener';
 import CellType from '@models/CellType';
 import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
-import ITutorialClient, { TutorialStatus } from '@models/ITutorialClient';
+import ITutorialClient from '@models/ITutorialClient';
 import InputMethod from '@models/InputMethod';
 import ITutorial from '@models/ITutorial';
 import TutorialSuccessCriteria from '@models/TutorialSuccessCriteria';
@@ -16,7 +16,7 @@ import Simulation from '@core/Simulation';
 import TutorialCompletionStats from '@models/TutorialCompletionStats';
 import TutorialCellType from '@models/TutorialCellType';
 import createBehaviour from '@core/grid/cell/behaviours/createBehaviour';
-import { ControlSettings } from 'models';
+import { ControlSettings, TutorialStatus } from 'models';
 
 // TODO: enable support for multiplayer tutorials (challenges)
 // this client should be replaced with a single player / network client that supports a challenge

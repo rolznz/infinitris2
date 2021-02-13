@@ -1,18 +1,18 @@
-import firebase from 'firebase';
 import React, { useEffect, useState } from 'react';
-import { useDocumentData } from 'react-firebase-hooks/firestore';
 import { useParams } from 'react-router-dom';
 import useAppStore from '../../state/AppStore';
 import { Link as RouterLink } from 'react-router-dom';
 import { Box, IconButton, Link, Typography } from '@material-ui/core';
 import useRoomStore from '../../state/RoomStore';
-import Loader from 'react-loader-spinner';
 import SignalCellularConnectedNoInternet0BarIcon from '@material-ui/icons/SignalCellularConnectedNoInternet0Bar';
 import HomeIcon from '@material-ui/icons/Home';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { IClientSocketEventListener, IRoom } from 'infinitris2-models';
 import useWelcomeRedirect from '../hooks/useWelcomeRedirect';
-import useUserStore from '../../state/UserStore';
+import { useUser } from '../../state/UserStore';
+import LoadingSpinner from '../LoadingSpinner';
+import { useDocument } from '@nandorojo/swr-firestore';
+import { getRoomPath } from '../../firebase';
 
 interface RoomPageRouteParams {
   id: string;
@@ -48,14 +48,12 @@ export default function RoomPage() {
   const setIsDemo = appStore.setIsDemo;
   const { id } = useParams<RoomPageRouteParams>();
 
-  const [room, loadingRoom] = useDocumentData<IRoom>(
-    firebase.firestore().doc(`rooms/${id}`)
-  );
+  const { data: room } = useDocument<IRoom>(id ? getRoomPath(id) : null);
   const [retryCount, setRetryCount] = useState(0);
   const roomUrl = room?.url;
   const requiresRedirect = useWelcomeRedirect();
   const [hasLaunched, setLaunched] = useState(false);
-  const controls = useUserStore((userStore) => userStore.user.controls);
+  const controls = useUser().controls;
 
   useEffect(() => {
     if (
@@ -97,7 +95,7 @@ export default function RoomPage() {
 
   const status = disconnected
     ? 'Disconnected'
-    : loadingRoom
+    : !room
     ? 'Loading Room'
     : 'Connecting';
 
@@ -119,7 +117,7 @@ export default function RoomPage() {
         {disconnected ? (
           <SignalCellularConnectedNoInternet0BarIcon style={{ fontSize: 50 }} />
         ) : (
-          <Loader type="Rings" color="#00BFFF33" height={100} width={100} />
+          <LoadingSpinner />
         )}
       </Box>
 

@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import useAppStore from '../../state/AppStore';
-import useUserStore from '../../state/UserStore';
+import { useUser } from '../../state/UserStore';
 import useWelcomeRedirect from '../hooks/useWelcomeRedirect';
 
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
-  const controls = useUserStore((userStore) => userStore.user.controls);
+  const controls = useUser().controls;
   const setIsDemo = appStore.setIsDemo;
   const requiresRedirect = useWelcomeRedirect();
   const launchSinglePlayer = client?.launchSinglePlayer;

@@ -15,13 +15,15 @@ import tetrominoes from './src/layouts/Tetrominoes';
 import ITutorial, { tutorials } from './src/ITutorial';
 import CellType from './src/CellType';
 import ICellBehaviour from './src/ICellBehaviour';
-import ITutorialClient, { TutorialStatus } from './src/ITutorialClient';
+import ITutorialClient from './src/ITutorialClient';
 import IGrid from './src/IGrid';
 import TutorialCellType from './src/TutorialCellType';
 import ControlSettings, {
   DEFAULT_KEYBOARD_CONTROLS,
 } from './src/ControlSettings';
 import getUserFriendlyKeyText from './src/util/getUserFriendlyKeyText';
+import { TutorialStatus } from './src/TutorialStatus';
+import IUser from './src/IUser';
 
 export {
   tutorials,
@@ -46,6 +48,7 @@ export {
   InputMethod,
   TutorialCellType,
   IRoom,
+  IUser,
   ControlSettings,
   DEFAULT_KEYBOARD_CONTROLS,
   getUserFriendlyKeyText,

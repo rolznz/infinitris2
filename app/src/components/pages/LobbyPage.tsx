@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import List from '@material-ui/core/List';
 import Skeleton from '@material-ui/lab/Skeleton';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
 import * as firebase from 'firebase/app';
 import { Box, Grid, Link, Typography } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
@@ -10,11 +9,11 @@ import useHomeStore from '../../state/HomeStore';
 import RoomCard from '../RoomCard';
 import Routes from '../../models/Routes';
 import { FormattedMessage } from 'react-intl';
+import { useCollection } from '@nandorojo/swr-firestore';
 
 export default function LobbyPage() {
-  const [rooms, loading] = useCollectionData<IRoom>(
-    firebase.firestore().collection('rooms'),
-    { idField: 'id' }
+  const { data: rooms } = useCollection<IRoom>(
+    firebase.firestore().collection('rooms').path
   );
   const homeStore = useHomeStore();
   const [hasFocusedFirstEntry, setHasFocusedFirstEntry] = useState(false);
@@ -25,7 +24,7 @@ export default function LobbyPage() {
         <Grid container justify="center">
           <Grid item xs={12} md={4}>
             <Box height={20} px={2} display="flex" justifyContent="flex-end">
-              {loading ? (
+              {!rooms ? (
                 <Skeleton height={28} width={48} />
               ) : (
                 <Typography variant="caption">

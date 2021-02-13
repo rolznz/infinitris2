@@ -7,5 +7,8 @@ service cloud.firestore {
     match /rooms/{document=**} {
       allow read: if true;
     }
+    match /users/{userId} {
+      allow create, read, update, delete: if request.auth != null && request.auth.uid == userId;
+    }
   }
 }

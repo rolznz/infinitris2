@@ -3,6 +3,8 @@ enum Routes {
   rooms = '/rooms',
   lobby = '/lobby',
   home = '/',
+  profile = '/profile',
+  login = '/login',
   singlePlayer = '/single-player',
   settings = '/settings',
   controlSettings = '/settings/controls',

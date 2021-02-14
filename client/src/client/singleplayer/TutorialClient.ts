@@ -283,7 +283,7 @@ export default class TutorialClient
         for (let c = 0; c < grid.cells[0].length; c++) {
           const cell = grid.cells[r][c];
           const cellType = cellTypes[r][c];
-          cell.behaviour = createBehaviour(cell, cellType);
+          cell.behaviour = createBehaviour(cell, grid, cellType);
 
           if (cellType === TutorialCellType.Full) {
             cell.isEmpty = false;

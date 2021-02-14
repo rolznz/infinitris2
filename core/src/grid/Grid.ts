@@ -14,7 +14,7 @@ export default class Grid implements IGrid {
     for (let r = 0; r < numRows; r++) {
       const row: ICell[] = [];
       for (let c = 0; c < numColumns; c++) {
-        row.push(new Cell(c, r));
+        row.push(new Cell(this, c, r));
       }
       this._cells.push(row);
     }
@@ -46,9 +46,7 @@ export default class Grid implements IGrid {
   }
 
   step() {
-    this._cells.forEach((row) =>
-      row.forEach((cell) => cell.step(this.reducedCells))
-    );
+    this._cells.forEach((row) => row.forEach((cell) => cell.step()));
   }
 
   /**

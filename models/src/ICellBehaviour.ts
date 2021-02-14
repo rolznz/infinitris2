@@ -1,8 +1,10 @@
+import { IBlock } from '../index';
 import CellType from './CellType';
-import ICell from './ICell';
 
 export default interface ICellBehaviour {
-  step?(gridCells: ICell[]): void;
+  step?(): void;
+  onAddBlock?(block: IBlock): void;
+  onRemoveBlock?(block: IBlock): void;
   color?: number;
   alpha: number;
   isPassable: boolean;

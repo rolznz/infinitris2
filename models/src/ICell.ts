@@ -12,5 +12,5 @@ export default interface ICell {
   blocks: IBlock[];
   addBlock(block: IBlock): void;
   removeBlock(block: IBlock): void;
-  step(gridCells: ICell[]): void;
+  step(): void;
 }

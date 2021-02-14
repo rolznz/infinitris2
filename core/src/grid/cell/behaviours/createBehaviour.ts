@@ -6,6 +6,7 @@ import LockBehaviour from './LockBehaviour';
 import ICell from '@models/ICell';
 import NormalCellBehaviour from './NormalCellBehaviour';
 import TutorialFinishBehaviour from './TutorialFinishBehaviour';
+import { IGrid } from 'models';
 
 const redColor = 0xff0000;
 const blueColor = 0x0000ff;
@@ -15,6 +16,7 @@ const yellowColor = 0xffff00;
 // TODO: move this to tutorial
 export default function createBehaviour(
   cell: ICell,
+  grid: IGrid,
   tutorialCellType: TutorialCellType
 ): ICellBehaviour {
   switch (tutorialCellType) {
@@ -27,19 +29,19 @@ export default function createBehaviour(
     case TutorialCellType.RedKey:
       return new KeyBehaviour(redColor);
     case TutorialCellType.RedLock:
-      return new LockBehaviour(cell, redColor);
+      return new LockBehaviour(cell, grid, redColor);
     case TutorialCellType.GreenKey:
       return new KeyBehaviour(greenColor);
     case TutorialCellType.GreenLock:
-      return new LockBehaviour(cell, greenColor);
+      return new LockBehaviour(cell, grid, greenColor);
     case TutorialCellType.BlueKey:
       return new KeyBehaviour(blueColor);
     case TutorialCellType.BlueLock:
-      return new LockBehaviour(cell, blueColor);
+      return new LockBehaviour(cell, grid, blueColor);
     case TutorialCellType.YellowKey:
       return new KeyBehaviour(yellowColor);
     case TutorialCellType.YellowLock:
-      return new LockBehaviour(cell, yellowColor);
+      return new LockBehaviour(cell, grid, yellowColor);
     case TutorialCellType.Finish:
       return new TutorialFinishBehaviour();
     default:

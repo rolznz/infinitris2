@@ -550,7 +550,14 @@ export default class MinimalRenderer
         block.playerId
       );
 
-      this._renderBlockPlacementShadow(block);
+      // timeout required in order to render shadow after locks process.
+      // step 1 and 2 happen in the same simulation step.
+      // - step 1. block moves and captures key (callback fires, this render occurs)
+      // - step 2. all cells in grid process (cells unlocked)
+      // - step 3. render block placement shadow (forced delay, otherwise would happen in step 1)
+      setTimeout(() => {
+        this._renderBlockPlacementShadow(block);
+      }, 1);
     }
   }
 
@@ -578,14 +585,6 @@ export default class MinimalRenderer
     const graphics = entry.graphics;
     graphics.clear();
     const cellSize = this._getClampedCellSize();
-
-    /*if (!cell.cell.behaviour.isPassable || cell.cell.blocks.length > 0) {
-      graphics.beginFill(
-        cell.cell.blocks.length > 0 ? color : 0xaaaaaa,
-        Math.min(opacity, 1)
-      );
-      graphics.drawRect(0, 0, cellSize, cellSize);
-    }*/
 
     // TODO: extract rendering of different behaviours
     if (

@@ -4,14 +4,17 @@ import ICell from '@models/ICell';
 import CellType from '@models/CellType';
 import ICellBehaviour from '@models/ICellBehaviour';
 import NormalCellBehaviour from './behaviours/NormalCellBehaviour';
+import IGrid from '@models/IGrid';
 
 export default class Cell implements ICell {
+  private _grid: IGrid;
   private _row: number;
   private _column: number;
   private _behaviour: ICellBehaviour;
   private _isEmpty: boolean;
   private readonly _blocks: IBlock[];
-  constructor(column: number, row: number) {
+  constructor(grid: IGrid, column: number, row: number) {
+    this._grid = grid;
     this._row = row;
     this._column = column;
     this._behaviour = new NormalCellBehaviour();
@@ -54,8 +57,8 @@ export default class Cell implements ICell {
     return this._blocks;
   }
 
-  step(gridCells: ICell[]) {
-    this._behaviour?.step?.(gridCells);
+  step() {
+    this._behaviour?.step?.();
   }
 
   addBlock(block: IBlock) {
@@ -63,6 +66,7 @@ export default class Cell implements ICell {
       throw new Error('Cannot add the same block to a cell');
     }
     this._blocks.push(block);
+    this._behaviour?.onAddBlock?.(block);
   }
 
   removeBlock(block: IBlock) {
@@ -71,5 +75,6 @@ export default class Cell implements ICell {
       throw new Error('Block does not exist in cell');
     }
     this._blocks.splice(index, 1);
+    this._behaviour?.onRemoveBlock?.(block);
   }
 }

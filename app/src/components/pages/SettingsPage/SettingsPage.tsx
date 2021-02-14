@@ -13,7 +13,7 @@ import FlexBox from '../../layout/FlexBox';
 import useDemo from '../../hooks/useDemo';
 import { FormattedMessage } from 'react-intl';
 import { supportedLocales } from '../../../internationalization';
-import useUserStore from '../../../state/UserStore';
+import { useUserStore } from '../../../state/UserStore';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import SettingsRow from './SettingsRow';

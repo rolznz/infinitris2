@@ -10,7 +10,7 @@ import Lottie from 'lottie-react';
 import welcomeAnimation from '../lottie/welcome.json';
 import { FormattedMessage } from 'react-intl';
 import useDemo from '../hooks/useDemo';
-import useUserStore from '../../state/UserStore';
+import { useUserStore } from '../../state/UserStore';
 import { InputMethod } from 'infinitris2-models';
 
 export default function WelcomePage() {

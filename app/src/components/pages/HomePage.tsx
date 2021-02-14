@@ -16,8 +16,8 @@ import Routes from '../../models/Routes';
 import { FormattedMessage, useIntl } from 'react-intl';
 import useDemo from '../hooks/useDemo';
 import { IRoom } from 'infinitris2-models';
-import useUserStore from '../../state/UserStore';
 import { useCollection } from '@nandorojo/swr-firestore';
+import { useUserStore } from '../../state/UserStore';
 
 export default function HomePage() {
   useDemo();

@@ -5,13 +5,12 @@ import FlexBox from '../layout/FlexBox';
 import { FormattedMessage } from 'react-intl';
 import useDemo from '../hooks/useDemo';
 import useLoginRedirect from '../hooks/useLoginRedirect';
-import useUserStore from '../../state/UserStore';
+import { useUserStore } from '../../state/UserStore';
 
 export default function ProfilePage() {
   useLoginRedirect();
   useDemo();
-  const userStore = useUserStore();
-  const user = userStore.user;
+  const [userStore, user] = useUserStore((store) => [store, store.user]);
 
   function signOut() {
     userStore.signOut();

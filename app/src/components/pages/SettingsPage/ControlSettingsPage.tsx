@@ -4,7 +4,7 @@ import { Typography, Grid, Box, Button } from '@material-ui/core';
 import FlexBox from '../../layout/FlexBox';
 import useDemo from '../../hooks/useDemo';
 import { FormattedMessage } from 'react-intl';
-import useUserStore from '../../../state/UserStore';
+import { useUserStore } from '../../../state/UserStore';
 import SettingsRow from './SettingsRow';
 import { getUserFriendlyKeyText, InputAction } from 'infinitris2-models';
 import { useState } from 'react';

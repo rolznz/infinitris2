@@ -14,7 +14,7 @@ import React from 'react';
 import TutorialInfoView from './TutorialInfoView';
 import TutorialResultsView from './TutorialResultsView';
 import TutorialFailedView from './TutorialFailedView';
-import useUserStore from '../../../state/UserStore';
+import { useUserStore } from '../../../state/UserStore';
 
 interface TutorialPageRouteParams {
   id: string;

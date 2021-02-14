@@ -6,6 +6,7 @@ import {
   IUser,
   TutorialStatus,
 } from 'infinitris2-models';
+import { StateSelector } from 'zustand';
 import { fuego, getUserPath } from '../firebase';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
@@ -23,7 +24,27 @@ export function useUser(): IUser {
   };
 }
 
-export default function useUserStore() {
+type IUserStore = {
+  user: IUser;
+  setNickname(nickname: string): void;
+  setLocale(locale: string): void;
+  markHasSeenWelcome(): void;
+  setPreferredInputMethod(preferredInputMethod: InputMethod | undefined): void;
+  addTutorialAttempt(tutorialId: string, attempt: TutorialStatus): void;
+  completeTutorial(tutorialId: string): void;
+  updateControl(inputAction: InputAction, control: string): void;
+  resetControls(): void;
+  clearProgress(): void;
+  signOut(): void;
+};
+
+export function useUserStore(): IUserStore;
+export function useUserStore<StateSlice>(
+  selector: StateSelector<IUserStore, StateSlice>
+): StateSlice;
+export function useUserStore<StateSlice>(
+  selector?: StateSelector<IUserStore, StateSlice>
+): StateSlice {
   const user = useUser();
   const [updateLocalUser, signoutLocalUser] = useLocalUserStore((store) => [
     store.updateUser,
@@ -43,7 +64,7 @@ export default function useUserStore() {
     updateLocalUser(cleanedChanges);
   };
 
-  return {
+  const state: IUserStore = {
     user,
     setNickname: (nickname: string) => {
       updateUser({
@@ -89,4 +110,6 @@ export default function useUserStore() {
       fuego.auth().signOut();
     },
   };
+
+  return selector ? selector(state) : (state as any);
 }

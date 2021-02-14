@@ -375,6 +375,22 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   onSimulationStep() {
+    const followingPlayer = this._simulation.players.find((player) =>
+      this._simulation.isFollowingPlayerId(player.id)
+    );
+    if (followingPlayer && followingPlayer.block) {
+      // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
+      const cellSize = this._getClampedCellSize();
+      const block = followingPlayer.block;
+      const blockX = block.column * cellSize;
+      const y = block.row * cellSize;
+      this._camera.follow(
+        blockX + block.width * cellSize * 0.5,
+        y,
+        block.playerId
+      );
+      this._renderBlockPlacementShadow(block);
+    }
     // TODO: only run this once per second
     const scores = this._simulation.players.map((p) => ({
       id: p.id,
@@ -549,15 +565,6 @@ export default class MinimalRenderer
         y,
         block.playerId
       );
-
-      // timeout required in order to render shadow after locks process.
-      // step 1 and 2 happen in the same simulation step.
-      // - step 1. block moves and captures key (callback fires, this render occurs)
-      // - step 2. all cells in grid process (cells unlocked)
-      // - step 3. render block placement shadow (forced delay, otherwise would happen in step 1)
-      setTimeout(() => {
-        this._renderBlockPlacementShadow(block);
-      }, 1);
     }
   }
 

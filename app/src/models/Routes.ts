@@ -9,6 +9,7 @@ enum Routes {
   settings = '/settings',
   controlSettings = '/settings/controls',
   tutorials = '/tutorials',
+  createChallenge = '/create/challenge',
   tutorialRequired = '/tutorial-required', // TODO: should be a level map?
   allSet = '/all-set', // TODO: rename to "ready to play"
 }

@@ -9,7 +9,8 @@ import useIncompleteTutorials from './useIncompleteTutorials';
 // TODO: rename to useForcedRedirect
 export default function useWelcomeRedirect(
   onTutorialPage: boolean = false,
-  currentTutorialPriority?: number
+  currentTutorialPriority?: number,
+  enabled: boolean = true
 ) {
   const appStore = useAppStore();
   const user = useUser();
@@ -19,9 +20,12 @@ export default function useWelcomeRedirect(
   const incompleteTutorials = useIncompleteTutorials();
   const { pathname } = location;
 
-  let [requiresRedirect, setRequiresRedirect] = React.useState(true);
+  let [requiresRedirect, setRequiresRedirect] = React.useState(enabled);
 
   useEffect(() => {
+    if (!enabled) {
+      return;
+    }
     function replaceHistory(url: string) {
       //TODO: store intended url to return to
       setReturnToUrl(pathname);
@@ -54,6 +58,7 @@ export default function useWelcomeRedirect(
     currentTutorialPriority,
     pathname,
     setReturnToUrl,
+    enabled,
   ]);
   return requiresRedirect;
 }

@@ -15,6 +15,7 @@ import TutorialInfoView from './TutorialInfoView';
 import TutorialResultsView from './TutorialResultsView';
 import TutorialFailedView from './TutorialFailedView';
 import { useUserStore } from '../../../state/UserStore';
+import { useSearchParam } from 'react-use';
 
 interface TutorialPageRouteParams {
   id: string;
@@ -25,11 +26,19 @@ export default function TutorialPage() {
   const client = appStore.clientApi;
   const userStore = useUserStore();
   const history = useHistory();
+  const json = useSearchParam('json');
 
   const { id } = useParams<TutorialPageRouteParams>();
+  const isTest = id === 'test';
 
-  const tutorial = tutorials.find((t) => t.id === id);
-  const requiresRedirect = useWelcomeRedirect(true, tutorial?.priority);
+  const tutorial = isTest
+    ? JSON.parse(json as string)
+    : tutorials.find((t) => t.id === id);
+  const requiresRedirect = useWelcomeRedirect(
+    true,
+    tutorial?.priority,
+    !isTest
+  );
   const incompleteTutorials = useIncompleteTutorials();
   const addTutorialAttempt = userStore.addTutorialAttempt;
   const setIsDemo = appStore.setIsDemo;
@@ -108,7 +117,9 @@ export default function TutorialPage() {
       setCheckTutorialStatus(false);
       const status = tutorialClient.getStatus();
       if (status && status.status !== 'pending') {
-        addTutorialAttempt(tutorial.id, status);
+        if (!isTest) {
+          addTutorialAttempt(tutorial.id, status);
+        }
         if (status.status === 'success') {
           setTutorialCompleted(true);
         } else {
@@ -122,6 +133,7 @@ export default function TutorialPage() {
     tutorialClient,
     setTutorialFailed,
     addTutorialAttempt,
+    isTest,
   ]);
 
   if (!hasLaunched || !tutorial) {

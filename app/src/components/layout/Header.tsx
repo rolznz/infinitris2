@@ -4,6 +4,8 @@ import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
 import SettingsIcon from '@material-ui/icons/Settings';
 import FaceIcon from '@material-ui/icons/Face';
 import HomeIcon from '@material-ui/icons/Home';
+import AddIcon from '@material-ui/icons/Add';
+import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../models/Routes';
 
@@ -20,27 +22,64 @@ export default function Header() {
       display="flex"
       alignItems="center"
     >
-      <Tooltip
-        title={intl.formatMessage({
-          defaultMessage: 'Single Player',
-          description: 'Single player button tooltip',
-        })}
-      >
-        <Link component={RouterLink} underline="none" to={Routes.singlePlayer}>
-          <IconButton>
-            <SportsEsportsIcon />
-          </IconButton>
-        </Link>
-      </Tooltip>
-      {window.location.pathname !== Routes.profile &&
-        window.location.pathname !== Routes.login && (
-          <Link component={RouterLink} underline="none" to={Routes.profile}>
+      {window.location.pathname === Routes.home && (
+        <Tooltip
+          title={intl.formatMessage({
+            defaultMessage: 'Challenges',
+            description: 'Challenges button tooltip',
+          })}
+        >
+          <Link component={RouterLink} underline="none" to={Routes.tutorials}>
             <IconButton>
-              <FaceIcon />
+              <LocalLibraryIcon />
             </IconButton>
           </Link>
-        )}
-      {window.location.pathname !== Routes.settings && (
+        </Tooltip>
+      )}
+      {window.location.pathname === Routes.tutorials && (
+        <Tooltip
+          title={intl.formatMessage({
+            defaultMessage: 'Create Challenge',
+            description: 'Create Challenge button tooltip',
+          })}
+        >
+          <Link
+            component={RouterLink}
+            underline="none"
+            to={Routes.createChallenge}
+          >
+            <IconButton>
+              <AddIcon />
+            </IconButton>
+          </Link>
+        </Tooltip>
+      )}
+      {window.location.pathname === Routes.home && (
+        <Tooltip
+          title={intl.formatMessage({
+            defaultMessage: 'Single Player',
+            description: 'Single player button tooltip',
+          })}
+        >
+          <Link
+            component={RouterLink}
+            underline="none"
+            to={Routes.singlePlayer}
+          >
+            <IconButton>
+              <SportsEsportsIcon />
+            </IconButton>
+          </Link>
+        </Tooltip>
+      )}
+      {window.location.pathname === Routes.home && (
+        <Link component={RouterLink} underline="none" to={Routes.profile}>
+          <IconButton>
+            <FaceIcon />
+          </IconButton>
+        </Link>
+      )}
+      {window.location.pathname === Routes.home && (
         <Link component={RouterLink} underline="none" to={Routes.settings}>
           <IconButton>
             <SettingsIcon />

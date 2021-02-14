@@ -5,7 +5,7 @@ export default function useIncompleteTutorials() {
   const user = useUser();
   const incompleteTutorials = tutorials.filter(
     (tutorial) =>
-      tutorial.mandatory && user.completedTutorialIds.indexOf(tutorial.id) < 0
+      tutorial.isMandatory && user.completedTutorialIds.indexOf(tutorial.id) < 0
   );
   return incompleteTutorials;
 }

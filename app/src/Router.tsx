@@ -3,6 +3,7 @@ import { Route, Switch, BrowserRouter } from 'react-router-dom';
 import Footer from './components/layout/Footer';
 import Header from './components/layout/Header';
 import AllSetPage from './components/pages/AllSetPage';
+import { CreateChallengePage } from './components/pages/CreateChallengePage/CreateChallengePage';
 import HomePage from './components/pages/HomePage';
 import LobbyPage from './components/pages/LobbyPage';
 import LoginPage from './components/pages/LoginPage';
@@ -14,13 +15,13 @@ import SettingsPage from './components/pages/SettingsPage/SettingsPage';
 import SinglePlayerPage from './components/pages/SinglePlayerPage';
 import TutorialPage from './components/pages/TutorialPage/TutorialPage';
 import TutorialRequiredPage from './components/pages/TutorialRequiredPage';
+import { TutorialsPage } from './components/pages/TutorialsPage/TutorialsPage';
 import WelcomePage from './components/pages/WelcomePage';
 import Routes from './models/Routes';
 
 export default function Router() {
   const outsideGamePaths = Object.values(Routes).filter(
-    (route) =>
-      [Routes.singlePlayer, Routes.rooms, Routes.tutorials].indexOf(route) < 0
+    (route) => [Routes.singlePlayer, Routes.rooms].indexOf(route) < 0
   );
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
     return (
@@ -70,7 +71,13 @@ export default function Router() {
         <Route exact path={Routes.singlePlayer}>
           <SinglePlayerPage />
         </Route>
-        <Route exact path={`${Routes.tutorials}/:id`}>
+        <Route exact path={Routes.tutorials}>
+          <TutorialsPage />
+        </Route>
+        <Route exact path={Routes.createChallenge}>
+          <CreateChallengePage />
+        </Route>
+        <Route path={`${Routes.tutorials}/:id`}>
           <TutorialPage />
         </Route>
         <Route exact path={`${Routes.rooms}/:id`}>

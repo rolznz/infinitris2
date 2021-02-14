@@ -18,7 +18,8 @@ export interface TutorialTranslation {
 export default interface ITutorial extends TutorialTranslation {
   readonly id: string;
   readonly priority?: number;
-  readonly mandatory?: boolean;
+  readonly isMandatory?: boolean;
+  readonly isPublished?: boolean;
   readonly locale: string;
   readonly translations?: { [locale: string]: TutorialTranslation };
   readonly layout?: Layout;

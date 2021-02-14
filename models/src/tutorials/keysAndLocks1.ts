@@ -5,7 +5,8 @@ const keysAndLocks1: ITutorial = {
   title: 'Keys and Locks 1',
   description: '',
   locale: 'en',
-  mandatory: true,
+  isMandatory: true,
+  isPublished: true,
   priority: 7000,
   finishCriteria: {
     finishTutorialCellFilled: true,

@@ -44,7 +44,7 @@ export function useUserStore<StateSlice>(
 ): StateSlice;
 export function useUserStore<StateSlice>(
   selector?: StateSelector<IUserStore, StateSlice>
-): StateSlice {
+): StateSlice | IUserStore {
   const user = useUser();
   const [updateLocalUser, signoutLocalUser] = useLocalUserStore((store) => [
     store.updateUser,
@@ -111,5 +111,5 @@ export function useUserStore<StateSlice>(
     },
   };
 
-  return selector ? selector(state) : (state as any);
+  return selector ? selector(state) : state;
 }

@@ -8,6 +8,7 @@ const wrapTest: ITutorial = {
   locale: 'en',
   description: '',
   layout: tetrominoes.T,
+  isPublished: false,
   finishCriteria: {},
   successCriteria: {},
   grid: `

@@ -24,6 +24,7 @@ import ControlSettings, {
 import getUserFriendlyKeyText from './src/util/getUserFriendlyKeyText';
 import { TutorialStatus } from './src/TutorialStatus';
 import IUser from './src/IUser';
+import parseGrid from './src/util/parseGrid';
 
 export {
   tutorials,
@@ -52,4 +53,5 @@ export {
   ControlSettings,
   DEFAULT_KEYBOARD_CONTROLS,
   getUserFriendlyKeyText,
+  parseGrid,
 };

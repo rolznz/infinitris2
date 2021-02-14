@@ -5,7 +5,7 @@ import FlexBox from '../layout/FlexBox';
 import { FormattedMessage } from 'react-intl';
 import useDemo from '../hooks/useDemo';
 import firebase from 'firebase';
-import useProfileRedirect from '../hooks/useProfileRedirect';
+import useLoggedInRedirect from '../hooks/useLoggedInRedirect';
 import SocialLogo from 'social-logos';
 import LoadingSpinner from '../LoadingSpinner';
 import { useUser } from '../../state/UserStore';
@@ -16,7 +16,7 @@ const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 
 export default function LoginPage() {
-  useProfileRedirect();
+  useLoggedInRedirect();
   useDemo();
   const [isLoading, setIsLoading] = useState(false);
   const user = useUser();

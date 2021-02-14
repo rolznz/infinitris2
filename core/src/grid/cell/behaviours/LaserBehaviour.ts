@@ -51,7 +51,7 @@ export default class LaserBehaviour implements ICellBehaviour {
   }
 
   get isPassable(): boolean {
-    return true;
+    return !this._isActive;
   }
 
   get type(): CellType {

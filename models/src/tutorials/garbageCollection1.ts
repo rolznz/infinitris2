@@ -7,7 +7,8 @@ const garbageCollection1: ITutorial = {
   description: '',
   locale: 'en',
   layout: tetrominoes.T,
-  mandatory: true,
+  isMandatory: true,
+  isPublished: true,
   priority: 8000,
   finishCriteria: {
     finishTutorialCellFilled: true,

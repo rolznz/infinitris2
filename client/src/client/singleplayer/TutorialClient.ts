@@ -16,7 +16,9 @@ import Simulation from '@core/Simulation';
 import TutorialCompletionStats from '@models/TutorialCompletionStats';
 import TutorialCellType from '@models/TutorialCellType';
 import createBehaviour from '@core/grid/cell/behaviours/createBehaviour';
-import { ControlSettings, TutorialStatus } from 'models';
+import ControlSettings from '@models/ControlSettings';
+import { TutorialStatus } from '@models/TutorialStatus';
+import parseGrid from '@models/util/parseGrid';
 
 // TODO: enable support for multiplayer tutorials (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -262,16 +264,7 @@ export default class TutorialClient
 
     const cellTypes: TutorialCellType[][] = [];
     if (this._tutorial.grid) {
-      cellTypes.push(
-        ...this._tutorial.grid
-          .split('\n')
-          .map((row) => row.trim())
-          .filter((row) => row && !row.startsWith('//'))
-          .map((row) => row.split('').map((c) => c as TutorialCellType))
-      );
-      if (cellTypes.find((r) => r.length !== cellTypes[0].length)) {
-        throw new Error('Invalid tutorial grid: ' + this._tutorial.title);
-      }
+      cellTypes.push(...parseGrid(this._tutorial.grid));
     }
 
     const grid = new Grid(

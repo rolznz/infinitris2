@@ -19,7 +19,7 @@ body {
   animation: fadein 5s ease-in forwards;
 }
 
-canvas {
+body > canvas {
   position: absolute;
   z-index: -1;
   top: 0;
@@ -28,7 +28,7 @@ canvas {
   height: 100%;
 }
 
-canvas .demo {
+body > canvas .demo {
   animation: fadein 2s ease-in forwards;
 }
 

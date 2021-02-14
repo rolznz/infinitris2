@@ -29,7 +29,8 @@ const controlCheck: ITutorial = {
   },
   allowedActions: [],
   teachControls: true,
-  mandatory: true,
+  isMandatory: true,
+  isPublished: true,
   priority: 10000,
   translations: {
     th: {

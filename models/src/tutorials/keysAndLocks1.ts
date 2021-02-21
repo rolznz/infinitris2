@@ -2,6 +2,8 @@ import ITutorial from '../ITutorial';
 
 const keysAndLocks1: ITutorial = {
   id: 'keys-and-locks-1',
+  userId: '',
+  isOfficial: true,
   title: 'Keys and Locks 1',
   description: '',
   locale: 'en',

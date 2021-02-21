@@ -3,7 +3,7 @@ import { Box, IconButton, Typography } from '@material-ui/core';
 
 import FlexBox from '../layout/FlexBox';
 import { FormattedMessage } from 'react-intl';
-import useDemo from '../hooks/useDemo';
+
 import firebase from 'firebase';
 import useLoggedInRedirect from '../hooks/useLoggedInRedirect';
 import SocialLogo from 'social-logos';
@@ -17,7 +17,7 @@ const facebookProvider = new firebase.auth.FacebookAuthProvider();
 
 export default function LoginPage() {
   useLoggedInRedirect();
-  useDemo();
+
   const [isLoading, setIsLoading] = useState(false);
   const user = useUser();
 

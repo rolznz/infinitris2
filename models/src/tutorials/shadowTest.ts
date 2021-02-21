@@ -3,6 +3,8 @@ import ITutorial from '../ITutorial';
 
 const shadowTest: ITutorial = {
   id: 'shadow-test',
+  userId: '',
+  isOfficial: true,
   title: 'Shadow Test',
   locale: 'en',
   description: '',

@@ -267,10 +267,7 @@ export default class TutorialClient
       cellTypes.push(...parseGrid(this._tutorial.grid));
     }
 
-    const grid = new Grid(
-      cellTypes.length ? cellTypes[0].length : this._tutorial.gridNumColumns,
-      cellTypes.length ? cellTypes.length : this._tutorial.gridNumRows
-    );
+    const grid = new Grid(cellTypes[0].length, cellTypes.length);
     if (cellTypes.length) {
       for (let r = 0; r < grid.cells.length; r++) {
         for (let c = 0; c < grid.cells[0].length; c++) {

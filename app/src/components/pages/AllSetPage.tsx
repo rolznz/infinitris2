@@ -10,10 +10,8 @@ import rocketAnimation from '../lottie/rocket.json';
 import FlexBox from '../layout/FlexBox';
 import ContinueHint from '../ContinueHint';
 import { FormattedMessage } from 'react-intl';
-import useDemo from '../hooks/useDemo';
 
 export default function AllSetPage() {
-  useDemo();
   const [hasReceivedInput] = useReceivedInput();
   const history = useHistory();
   const appStore = useAppStore();

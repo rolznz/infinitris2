@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import List from '@material-ui/core/List';
 import Skeleton from '@material-ui/lab/Skeleton';
-import * as firebase from 'firebase/app';
 import { Box, Grid, Link, Typography } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
 import { IRoom } from 'infinitris2-models';
@@ -10,11 +9,10 @@ import RoomCard from '../RoomCard';
 import Routes from '../../models/Routes';
 import { FormattedMessage } from 'react-intl';
 import { useCollection } from '@nandorojo/swr-firestore';
+import { roomsPath } from '../../firebase';
 
 export default function LobbyPage() {
-  const { data: rooms } = useCollection<IRoom>(
-    firebase.firestore().collection('rooms').path
-  );
+  const { data: rooms } = useCollection<IRoom>(roomsPath);
   const homeStore = useHomeStore();
   const [hasFocusedFirstEntry, setHasFocusedFirstEntry] = useState(false);
 

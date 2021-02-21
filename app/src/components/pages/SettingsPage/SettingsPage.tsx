@@ -10,7 +10,7 @@ import {
 } from '@material-ui/core';
 
 import FlexBox from '../../layout/FlexBox';
-import useDemo from '../../hooks/useDemo';
+
 import { FormattedMessage } from 'react-intl';
 import { supportedLocales } from '../../../internationalization';
 import { useUserStore } from '../../../state/UserStore';
@@ -20,7 +20,6 @@ import SettingsRow from './SettingsRow';
 import { InputMethod } from 'infinitris2-models';
 
 export default function SettingsPage() {
-  useDemo();
   const userStore = useUserStore();
 
   return (

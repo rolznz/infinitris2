@@ -3,7 +3,7 @@ import { Button, Typography } from '@material-ui/core';
 
 import FlexBox from '../layout/FlexBox';
 import { FormattedMessage } from 'react-intl';
-import useDemo from '../hooks/useDemo';
+
 import useLoginRedirect from '../hooks/useLoginRedirect';
 import { useUserStore } from '../../state/UserStore';
 import { useHistory } from 'react-router-dom';
@@ -11,7 +11,7 @@ import Routes from '../../models/Routes';
 
 export default function ProfilePage() {
   useLoginRedirect();
-  useDemo();
+
   const [userStore, user] = useUserStore((store) => [store, store.user]);
   const history = useHistory();
 

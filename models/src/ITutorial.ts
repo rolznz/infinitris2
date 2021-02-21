@@ -14,18 +14,18 @@ export interface TutorialTranslation {
   description?: string;
 }
 
-// TODO: rename to Challenge?
+// TODO: rename to Challenge
 export default interface ITutorial extends TutorialTranslation {
   readonly id: string;
+  readonly userId: string;
   readonly priority?: number;
+  readonly isOfficial: boolean;
   readonly isMandatory?: boolean;
   readonly isPublished?: boolean;
   readonly locale: string;
   readonly translations?: { [locale: string]: TutorialTranslation };
   readonly layout?: Layout;
-  readonly grid?: string;
-  readonly gridNumRows?: number;
-  readonly gridNumColumns?: number;
+  readonly grid: string;
 
   readonly layoutRotation?: number;
   readonly allowedActions?: InputAction[];

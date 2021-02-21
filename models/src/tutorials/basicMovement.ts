@@ -3,6 +3,8 @@ import ITutorial from '../ITutorial';
 
 const basicMovement: ITutorial = {
   id: 'basic-movement',
+  userId: '',
+  isOfficial: true,
   title: 'Basic Movement',
   description: '',
   locale: 'en',

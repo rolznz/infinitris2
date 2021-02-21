@@ -4,6 +4,8 @@ import ITutorial from '../ITutorial';
 
 const wrapTest: ITutorial = {
   id: 'wrap-test',
+  userId: '',
+  isOfficial: true,
   title: 'Wrap Test',
   locale: 'en',
   description: '',

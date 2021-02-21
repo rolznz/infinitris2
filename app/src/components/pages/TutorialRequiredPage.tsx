@@ -10,10 +10,8 @@ import planeAnimation from '../lottie/plane.json';
 import ContinueHint from '../ContinueHint';
 import FlexBox from '../layout/FlexBox';
 import { FormattedMessage } from 'react-intl';
-import useDemo from '../hooks/useDemo';
 
 export default function TutorialRequiredPage() {
-  useDemo();
   const [hasReceivedInput] = useReceivedInput();
   const history = useHistory();
   const incompleteTutorials = useIncompleteTutorials();

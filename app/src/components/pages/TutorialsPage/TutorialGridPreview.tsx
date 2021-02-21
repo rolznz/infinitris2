@@ -34,6 +34,7 @@ export default function TutorialGridPreview({ grid }: TutorialPreviewProps) {
 
   useEffect(() => {
     const context = canvasRef.current!.getContext('2d')!;
+    context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     let cellTypes: TutorialCellType[][];
     try {
       cellTypes = parseGrid(grid);

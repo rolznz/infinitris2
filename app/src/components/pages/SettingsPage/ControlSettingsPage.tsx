@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Typography, Grid, Box, Button } from '@material-ui/core';
 
 import FlexBox from '../../layout/FlexBox';
-import useDemo from '../../hooks/useDemo';
+
 import { FormattedMessage } from 'react-intl';
 import { useUserStore } from '../../../state/UserStore';
 import SettingsRow from './SettingsRow';
@@ -11,7 +11,6 @@ import { useState } from 'react';
 import { useKeyPress } from 'react-use';
 
 export default function ControlSettingsPage() {
-  useDemo();
   const userStore = useUserStore();
   const { user, resetControls, updateControl } = userStore;
   const [editingInputAction, setEditingInputAction] = useState<

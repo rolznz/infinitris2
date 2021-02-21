@@ -6,13 +6,16 @@ import FaceIcon from '@material-ui/icons/Face';
 import HomeIcon from '@material-ui/icons/Home';
 import AddIcon from '@material-ui/icons/Add';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
+import FolderIcon from '@material-ui/icons/Folder';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../models/Routes';
-
+import { Route } from 'react-router-dom';
+import useDemo from '../hooks/useDemo';
 import { useIntl } from 'react-intl';
 
 export default function Header() {
   const intl = useIntl();
+  useDemo();
 
   return (
     <Box
@@ -22,7 +25,7 @@ export default function Header() {
       display="flex"
       alignItems="center"
     >
-      {window.location.pathname === Routes.home && (
+      <Route exact path={Routes.home}>
         <Tooltip
           title={intl.formatMessage({
             defaultMessage: 'Challenges',
@@ -35,26 +38,6 @@ export default function Header() {
             </IconButton>
           </Link>
         </Tooltip>
-      )}
-      {window.location.pathname === Routes.tutorials && (
-        <Tooltip
-          title={intl.formatMessage({
-            defaultMessage: 'Create Challenge',
-            description: 'Create Challenge button tooltip',
-          })}
-        >
-          <Link
-            component={RouterLink}
-            underline="none"
-            to={Routes.createChallenge}
-          >
-            <IconButton>
-              <AddIcon />
-            </IconButton>
-          </Link>
-        </Tooltip>
-      )}
-      {window.location.pathname === Routes.home && (
         <Tooltip
           title={intl.formatMessage({
             defaultMessage: 'Single Player',
@@ -71,28 +54,64 @@ export default function Header() {
             </IconButton>
           </Link>
         </Tooltip>
-      )}
-      {window.location.pathname === Routes.home && (
         <Link component={RouterLink} underline="none" to={Routes.profile}>
           <IconButton>
             <FaceIcon />
           </IconButton>
         </Link>
-      )}
-      {window.location.pathname === Routes.home && (
         <Link component={RouterLink} underline="none" to={Routes.settings}>
           <IconButton>
             <SettingsIcon />
           </IconButton>
         </Link>
-      )}
-      {window.location.pathname !== Routes.home && (
-        <Link component={RouterLink} underline="none" to={Routes.home}>
-          <IconButton>
-            <HomeIcon />
-          </IconButton>
-        </Link>
-      )}
+      </Route>
+      <Route exact path={Routes.tutorials}>
+        <Tooltip
+          title={intl.formatMessage({
+            defaultMessage: 'Create Challenge',
+            description: 'Create Challenge button tooltip',
+          })}
+        >
+          <Link
+            component={RouterLink}
+            underline="none"
+            to={Routes.createChallenge}
+          >
+            <IconButton>
+              <AddIcon />
+            </IconButton>
+          </Link>
+        </Tooltip>
+      </Route>
+      <Route exact path={Routes.createChallenge}>
+        <Tooltip
+          title={intl.formatMessage({
+            defaultMessage: 'Load Challenge',
+            description: 'Load Challenge button tooltip',
+          })}
+        >
+          <Link
+            component={RouterLink}
+            underline="none"
+            to={Routes.loadChallenge}
+          >
+            <IconButton>
+              <FolderIcon />
+            </IconButton>
+          </Link>
+        </Tooltip>
+      </Route>
+      <Route
+        render={({ location }) =>
+          location.pathname !== Routes.home ? (
+            <Link component={RouterLink} underline="none" to={Routes.home}>
+              <IconButton>
+                <HomeIcon />
+              </IconButton>
+            </Link>
+          ) : null
+        }
+      ></Route>
     </Box>
   );
 }

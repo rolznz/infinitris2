@@ -3,6 +3,8 @@ import ITutorial from '../ITutorial';
 
 const garbageCollection1: ITutorial = {
   id: 'garbage-collection-1',
+  userId: '',
+  isOfficial: true,
   title: 'Garbage Collection 1',
   description: '',
   locale: 'en',

@@ -8,7 +8,11 @@ service cloud.firestore {
       allow read: if true;
     }
     match /users/{userId} {
-      allow create, read, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow create, read, update: if request.auth != null && request.auth.uid == userId;
+    }
+    match /challenges/{challengeId} {
+      allow create, update, delete: if request.auth != null && (resource == null || request.auth.uid == resource.data.userId) && request.resource.data.isOfficial == false && resource.data.isPublished == false && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0;
+      allow read: if true;
     }
   }
 }

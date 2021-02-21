@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import Skeleton from '@material-ui/lab/Skeleton';
-import * as firebase from 'firebase/app';
 import {
   Box,
   Button,
@@ -14,18 +13,16 @@ import useHomeStore from '../../state/HomeStore';
 import RoomCard from '../RoomCard';
 import Routes from '../../models/Routes';
 import { FormattedMessage, useIntl } from 'react-intl';
-import useDemo from '../hooks/useDemo';
+
 import { IRoom } from 'infinitris2-models';
 import { useCollection } from '@nandorojo/swr-firestore';
 import { useUserStore } from '../../state/UserStore';
+import { roomsPath } from '../../firebase';
 
 export default function HomePage() {
-  useDemo();
   const userStore = useUserStore();
   const homeStore = useHomeStore();
-  const { data: rooms } = useCollection<IRoom>(
-    firebase.firestore().collection('rooms').path
-  );
+  const { data: rooms } = useCollection<IRoom>(roomsPath);
   const [hasFocusedPlayButton, setHasFocusedPlayButton] = useState(false);
   const selectedRoom = homeStore.selectedRoom || rooms?.[0];
   const isLoading = !selectedRoom;

@@ -1,9 +1,9 @@
 import { IUser, DEFAULT_KEYBOARD_CONTROLS } from 'infinitris2-models';
 import create from 'zustand';
 import { defaultLocale } from '../internationalization';
+import localStorageKeys from '../utils/localStorageKeys';
 
-const localStorageKey = 'infinitris2-user';
-const localStorageValue = localStorage.getItem(localStorageKey);
+const localStorageValue = localStorage.getItem(localStorageKeys.localUser);
 const localStorageUser = localStorageValue
   ? (JSON.parse(localStorageValue) as IUser)
   : undefined;
@@ -29,12 +29,12 @@ const useLocalUserStore = create<LocalUserStore>((set) => ({
   updateUser: (changes: Partial<IUser>) =>
     set((current) => {
       const user: IUser = { ...current.user, ...changes };
-      localStorage.setItem(localStorageKey, JSON.stringify(user));
+      localStorage.setItem(localStorageKeys.localUser, JSON.stringify(user));
       return { user };
     }),
   signOut: () =>
     set((_) => {
-      localStorage.removeItem(localStorageKey);
+      localStorage.removeItem(localStorageKeys.localUser);
       return { user: initialUser };
     }),
 }));

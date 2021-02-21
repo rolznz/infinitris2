@@ -4,6 +4,7 @@ import Footer from './components/layout/Footer';
 import Header from './components/layout/Header';
 import AllSetPage from './components/pages/AllSetPage';
 import { CreateChallengePage } from './components/pages/CreateChallengePage/CreateChallengePage';
+import { LoadChallengePage } from './components/pages/CreateChallengePage/LoadChallengePage';
 import HomePage from './components/pages/HomePage';
 import LobbyPage from './components/pages/LobbyPage';
 import LoginPage from './components/pages/LoginPage';
@@ -20,18 +21,22 @@ import WelcomePage from './components/pages/WelcomePage';
 import Routes from './models/Routes';
 
 export default function Router() {
-  const outsideGamePaths = Object.values(Routes).filter(
-    (route) => [Routes.singlePlayer, Routes.rooms].indexOf(route) < 0
-  );
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
     return (
-      <Switch>
-        {outsideGamePaths.map((path) => (
-          <Route key={path} exact path={path}>
-            {props.children}
-          </Route>
-        ))}
-      </Switch>
+      <Route
+        render={({ location }) => {
+          return !(
+            (
+              location.pathname.startsWith(Routes.tutorials) &&
+              location.pathname.length > Routes.tutorials.length + 1
+            ) // match /tutorials or /tutorials/ but not /tutorials/<tutorialId>
+          ) &&
+            !location.pathname.startsWith(Routes.singlePlayer) &&
+            !location.pathname.startsWith(Routes.rooms) ? (
+            <>{props.children}</>
+          ) : null;
+        }}
+      />
     );
   }
 
@@ -76,6 +81,9 @@ export default function Router() {
         </Route>
         <Route exact path={Routes.createChallenge}>
           <CreateChallengePage />
+        </Route>
+        <Route exact path={Routes.loadChallenge}>
+          <LoadChallengePage />
         </Route>
         <Route path={`${Routes.tutorials}/:id`}>
           <TutorialPage />

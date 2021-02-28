@@ -1,6 +1,6 @@
-import TutorialCellType from '../TutorialCellType';
+import ChallengeCellType from '../ChallengeCellType';
 
-export default function parseGrid(grid: string): TutorialCellType[][] {
+export default function parseGrid(grid: string): ChallengeCellType[][] {
   const cellTypes = grid
     .split('\n')
     .map((row) => row.trim())
@@ -8,15 +8,15 @@ export default function parseGrid(grid: string): TutorialCellType[][] {
     .map((row) =>
       row.split('').map((c) => {
         if (
-          Object.values(TutorialCellType).indexOf(c as TutorialCellType) < 0
+          Object.values(ChallengeCellType).indexOf(c as ChallengeCellType) < 0
         ) {
-          throw new Error('Invalid tutorial grid');
+          throw new Error('Invalid challenge grid');
         }
-        return c as TutorialCellType;
+        return c as ChallengeCellType;
       })
     );
   if (cellTypes.find((r) => r.length !== cellTypes[0].length)) {
-    throw new Error('Invalid tutorial grid');
+    throw new Error('Invalid challenge grid');
   }
   return cellTypes;
 }

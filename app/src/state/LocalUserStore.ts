@@ -12,9 +12,9 @@ const initialUser: IUser = localStorageUser || {
   preferredInputMethod: undefined,
   hasSeenWelcome: false,
   nickname: '',
-  tutorialAttempts: {},
+  challengeAttempts: {},
   locale: defaultLocale,
-  completedTutorialIds: [],
+  completedChallengeIds: [],
   controls: DEFAULT_KEYBOARD_CONTROLS,
 };
 

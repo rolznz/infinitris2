@@ -4,7 +4,7 @@ import {
   InputAction,
   InputMethod,
   IUser,
-  TutorialStatus,
+  ChallengeStatus,
 } from 'infinitris2-models';
 import { StateSelector } from 'zustand';
 import { fuego, getUserPath } from '../firebase';
@@ -30,8 +30,8 @@ type IUserStore = {
   setLocale(locale: string): void;
   markHasSeenWelcome(): void;
   setPreferredInputMethod(preferredInputMethod: InputMethod | undefined): void;
-  addTutorialAttempt(tutorialId: string, attempt: TutorialStatus): void;
-  completeTutorial(tutorialId: string): void;
+  addChallengeAttempt(challengeId: string, attempt: ChallengeStatus): void;
+  completeChallenge(challengeId: string): void;
   updateControl(inputAction: InputAction, control: string): void;
   resetControls(): void;
   clearProgress(): void;
@@ -82,18 +82,18 @@ export function useUserStore<StateSlice>(
     ) => {
       updateUser({ preferredInputMethod });
     },
-    addTutorialAttempt: (tutorialId: string, attempt: TutorialStatus) => {
-      const attempts = user.tutorialAttempts[tutorialId] || [];
+    addChallengeAttempt: (challengeId: string, attempt: ChallengeStatus) => {
+      const attempts = user.challengeAttempts[challengeId] || [];
       updateUser({
-        tutorialAttempts: {
-          ...user.tutorialAttempts,
-          [tutorialId]: [...attempts, attempt],
+        challengeAttempts: {
+          ...user.challengeAttempts,
+          [challengeId]: [...attempts, attempt],
         },
       });
     },
-    completeTutorial: (tutorialId: string) => {
+    completeChallenge: (challengeId: string) => {
       updateUser({
-        completedTutorialIds: [...user.completedTutorialIds, tutorialId],
+        completedChallengeIds: [...user.completedChallengeIds, challengeId],
       });
     },
     updateControl: (inputAction: InputAction, control: string) => {
@@ -103,7 +103,7 @@ export function useUserStore<StateSlice>(
       updateUser({ controls: DEFAULT_KEYBOARD_CONTROLS });
     },
     clearProgress: () => {
-      updateUser({ completedTutorialIds: [], tutorialAttempts: {} });
+      updateUser({ completedChallengeIds: [], challengeAttempts: {} });
     },
     signOut: () => {
       signoutLocalUser();

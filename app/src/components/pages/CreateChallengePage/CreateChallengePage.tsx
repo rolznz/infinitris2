@@ -1,11 +1,11 @@
 import { Button, Link, TextField, Typography } from '@material-ui/core';
-import { ITutorial, parseGrid } from 'infinitris2-models';
+import { IChallenge, parseGrid } from 'infinitris2-models';
 import React, { useCallback, useEffect, useState } from 'react';
 import { defaultLocale } from '../../../internationalization';
 
 import useLoginRedirect from '../../hooks/useLoginRedirect';
 import FlexBox from '../../layout/FlexBox';
-import TutorialGridPreview from '../TutorialsPage/TutorialGridPreview';
+import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import { FormattedMessage } from 'react-intl';
@@ -18,7 +18,7 @@ import useAuthStore from '../../../state/AuthStore';
 import prettyStringify from '../../../utils/prettyStringify';
 import stableStringify from '../../../utils/stableStringify';
 
-function createNewChallenge(userId: string): ITutorial {
+function createNewChallenge(userId: string): IChallenge {
   return {
     id: uuidv4(),
     locale: defaultLocale,
@@ -48,7 +48,7 @@ X00X00X0X`.trim(),
   };
 }
 
-function getGridError(challenge: ITutorial): string | null {
+function getGridError(challenge: IChallenge): string | null {
   try {
     parseGrid(challenge.grid as string);
     return null;
@@ -62,7 +62,7 @@ export function CreateChallengePage() {
   useLoginRedirect();
 
   const [initialChallenge, setInitialChallenge] = useState<
-    ITutorial | undefined
+    IChallenge | undefined
   >();
   const [isSaving, setIsSaving] = useState(false);
   const userId = useAuthStore().user?.uid;
@@ -84,7 +84,7 @@ export function CreateChallengePage() {
   );
 
   const resetChallenge = useCallback(
-    (initialValue?: ITutorial) => {
+    (initialValue?: IChallenge) => {
       const newInitialChallenge = initialValue || createNewChallenge(userId!);
       setInitialChallenge(newInitialChallenge);
       const { grid, ...challengeWithoutGrid } = newInitialChallenge;
@@ -100,7 +100,7 @@ export function CreateChallengePage() {
     }
   }, [localChallengeInfo, userId, resetChallenge]);
 
-  let challenge: ITutorial | undefined;
+  let challenge: IChallenge | undefined;
   let challengeInfoError: string | undefined;
   try {
     challenge = {
@@ -112,7 +112,7 @@ export function CreateChallengePage() {
     challengeInfoError = e.message;
   }
 
-  const { data: syncedChallenge } = useDocument<ITutorial>(
+  const { data: syncedChallenge } = useDocument<IChallenge>(
     challenge ? getChallengePath(challenge.id) : null
   );
 
@@ -163,7 +163,7 @@ export function CreateChallengePage() {
           onChange={(event) => setLocalChallengeGrid(event.target.value)}
           variant="outlined"
         />
-        {challenge && <TutorialGridPreview grid={challenge.grid as string} />}
+        {challenge && <ChallengeGridPreview grid={challenge.grid as string} />}
         {gridError && (
           <Typography variant="caption" color="secondary">
             {gridError}
@@ -219,7 +219,7 @@ export function CreateChallengePage() {
           <Link
             component={RouterLink}
             underline="none"
-            to={`${Routes.tutorials}/test?json=${encodeURIComponent(
+            to={`${Routes.challenges}/test?json=${encodeURIComponent(
               stableStringify(challenge)
             )}`}
           >

@@ -1,11 +1,11 @@
-import ITutorial, { tutorials } from '@models/ITutorial';
+import IChallenge, { challenges } from '@models/IChallenge';
 import IInfinitrisApi from '@models/IInfinitrisApi';
 import IClientSocketEventListener from '@src/networking/IClientSocketEventListener';
 import IClient from '../../../models/src/IClient';
 import DemoClient from '../client/DemoClient';
 import NetworkClient from '../client/NetworkClient';
 import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
-import TutorialClient from '@src/client/singleplayer/TutorialClient';
+import ChallengeClient from '@src/client/singleplayer/ChallengeClient';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import InputMethod from '@models/InputMethod';
 import { ControlSettings } from 'models';
@@ -41,11 +41,11 @@ export default class InfinitrisApi implements IInfinitrisApi {
       );
     } else if (params.has('demo')) {
       this.launchDemo();
-    } else if (params.has('tutorial')) {
-      this.launchTutorial(
-        tutorials.find(
-          (tutorial) => tutorial.id === params.get('tutorialId')
-        ) || tutorials[0],
+    } else if (params.has('challenge')) {
+      this.launchChallenge(
+        challenges.find(
+          (challenge) => challenge.id === params.get('challengeId')
+        ) || challenges[0],
         {
           onSimulationInit: (simulation) => {
             simulation.startInterval();
@@ -86,23 +86,23 @@ export default class InfinitrisApi implements IInfinitrisApi {
   };
 
   /**
-   * Runs the game in tutorial mode with no connection to a server.
+   * Runs the game in challenge mode with no connection to a server.
    */
-  launchTutorial = (
-    tutorial: ITutorial,
+  launchChallenge = (
+    challenge: IChallenge,
     listener?: ISimulationEventListener,
     preferredInputMethod?: InputMethod,
     controls?: ControlSettings
   ) => {
     this.releaseClient();
-    const tutorialClient = new TutorialClient(
-      tutorial,
+    const challengeClient = new ChallengeClient(
+      challenge,
       listener,
       preferredInputMethod,
       controls
     );
-    this._client = tutorialClient;
-    return tutorialClient;
+    this._client = challengeClient;
+    return challengeClient;
   };
 
   restartClient = () => {

@@ -1,4 +1,4 @@
-enum TutorialCellType {
+enum ChallengeCellType {
   Empty = '0',
   Full = 'X',
   Laser = 'L',
@@ -14,4 +14,4 @@ enum TutorialCellType {
   Finish = 'F',
 }
 
-export default TutorialCellType;
+export default ChallengeCellType;

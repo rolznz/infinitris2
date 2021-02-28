@@ -14,9 +14,9 @@ import RoomPage from './components/pages/RoomPage';
 import ControlSettingsPage from './components/pages/SettingsPage/ControlSettingsPage';
 import SettingsPage from './components/pages/SettingsPage/SettingsPage';
 import SinglePlayerPage from './components/pages/SinglePlayerPage';
-import TutorialPage from './components/pages/TutorialPage/TutorialPage';
-import TutorialRequiredPage from './components/pages/TutorialRequiredPage';
-import { TutorialsPage } from './components/pages/TutorialsPage/TutorialsPage';
+import ChallengePage from './components/pages/ChallengePage/ChallengePage';
+import ChallengeRequiredPage from './components/pages/ChallengeRequiredPage';
+import { ChallengesPage } from './components/pages/ChallengesPage/ChallengesPage';
 import WelcomePage from './components/pages/WelcomePage';
 import Routes from './models/Routes';
 
@@ -27,9 +27,9 @@ export default function Router() {
         render={({ location }) => {
           return !(
             (
-              location.pathname.startsWith(Routes.tutorials) &&
-              location.pathname.length > Routes.tutorials.length + 1
-            ) // match /tutorials or /tutorials/ but not /tutorials/<tutorialId>
+              location.pathname.startsWith(Routes.challenges) &&
+              location.pathname.length > Routes.challenges.length + 1
+            ) // match /challenges or /challenges/ but not /challenges/<challengeId>
           ) &&
             !location.pathname.startsWith(Routes.singlePlayer) &&
             !location.pathname.startsWith(Routes.rooms) ? (
@@ -64,8 +64,8 @@ export default function Router() {
         <Route exact path={Routes.welcome}>
           <WelcomePage />
         </Route>
-        <Route exact path={Routes.tutorialRequired}>
-          <TutorialRequiredPage />
+        <Route exact path={Routes.challengeRequired}>
+          <ChallengeRequiredPage />
         </Route>
         <Route exact path={Routes.allSet}>
           <AllSetPage />
@@ -76,8 +76,8 @@ export default function Router() {
         <Route exact path={Routes.singlePlayer}>
           <SinglePlayerPage />
         </Route>
-        <Route exact path={Routes.tutorials}>
-          <TutorialsPage />
+        <Route exact path={Routes.challenges}>
+          <ChallengesPage />
         </Route>
         <Route exact path={Routes.createChallenge}>
           <CreateChallengePage />
@@ -85,8 +85,8 @@ export default function Router() {
         <Route exact path={Routes.loadChallenge}>
           <LoadChallengePage />
         </Route>
-        <Route path={`${Routes.tutorials}/:id`}>
-          <TutorialPage />
+        <Route path={`${Routes.challenges}/:id`}>
+          <ChallengePage />
         </Route>
         <Route exact path={`${Routes.rooms}/:id`}>
           <RoomPage />

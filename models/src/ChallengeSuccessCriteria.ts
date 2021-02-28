@@ -1,4 +1,4 @@
-type TutorialSuccessCriteria = {
+type ChallengeSuccessCriteria = {
   minLinesCleared?: number;
   maxLinesCleared?: number;
   maxBlocksPlaced?: number;
@@ -6,4 +6,4 @@ type TutorialSuccessCriteria = {
   maxTimeTaken?: number;
 };
 
-export default TutorialSuccessCriteria;
+export default ChallengeSuccessCriteria;

@@ -40,4 +40,4 @@ Frontend for single player and multiplayer games
 
 ## app
 
-Frontend UI for access to the lobby, managing user settings, tutorials etc
+Frontend UI for access to the lobby, managing user settings, challenges etc

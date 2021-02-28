@@ -12,25 +12,25 @@ import ISimulationSettings from './src/ISimulationSettings';
 import Layout from './src/Layout';
 import IRoom from './src/IRoom';
 import tetrominoes from './src/layouts/Tetrominoes';
-import ITutorial, { tutorials } from './src/ITutorial';
+import IChallenge, { challenges } from './src/IChallenge';
 import CellType from './src/CellType';
 import ICellBehaviour from './src/ICellBehaviour';
-import ITutorialClient from './src/ITutorialClient';
+import IChallengeClient from './src/IChallengeClient';
 import IGrid from './src/IGrid';
-import TutorialCellType from './src/TutorialCellType';
+import ChallengeCellType from './src/ChallengeCellType';
 import ControlSettings, {
   DEFAULT_KEYBOARD_CONTROLS,
 } from './src/ControlSettings';
 import getUserFriendlyKeyText from './src/util/getUserFriendlyKeyText';
-import { TutorialStatus } from './src/TutorialStatus';
+import { ChallengeStatus } from './src/ChallengeStatus';
 import IUser from './src/IUser';
 import parseGrid from './src/util/parseGrid';
 
 export {
-  tutorials,
-  ITutorial,
-  ITutorialClient,
-  TutorialStatus,
+  challenges,
+  IChallenge,
+  IChallengeClient,
+  ChallengeStatus,
   InputAction,
   Layout,
   tetrominoes,
@@ -47,7 +47,7 @@ export {
   ISimulationEventListener,
   ISimulationSettings,
   InputMethod,
-  TutorialCellType,
+  ChallengeCellType,
   IRoom,
   IUser,
   ControlSettings,

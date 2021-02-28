@@ -4,7 +4,7 @@ import TouchAppIcon from '@material-ui/icons/TouchApp';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
-import useIncompleteTutorials from '../hooks/useIncompleteTutorials';
+import useIncompleteChallenges from '../hooks/useIncompleteChallenges';
 import FlexBox from '../layout/FlexBox';
 import Lottie from 'lottie-react';
 import welcomeAnimation from '../lottie/welcome.json';
@@ -66,14 +66,14 @@ export default function WelcomePage() {
 
   const history = useHistory();
 
-  const incompleteTutorials = useIncompleteTutorials();
+  const incompleteChallenges = useIncompleteChallenges();
 
   useEffect(() => {
     if (newPreferredInputMethod) {
       markHasSeenWelcome();
       setPreferredInputMethod(newPreferredInputMethod);
       history.push(
-        incompleteTutorials.length ? Routes.tutorialRequired : Routes.home
+        incompleteChallenges.length ? Routes.challengeRequired : Routes.home
       );
     }
   }, [
@@ -81,7 +81,7 @@ export default function WelcomePage() {
     markHasSeenWelcome,
     history,
     newPreferredInputMethod,
-    incompleteTutorials,
+    incompleteChallenges,
   ]);
 
   return (

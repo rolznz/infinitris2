@@ -1,11 +1,11 @@
 import ICellBehaviour from '@models/ICellBehaviour';
-import TutorialCellType from '@models/TutorialCellType';
+import ChallengeCellType from '@models/ChallengeCellType';
 import KeyBehaviour from './KeyBehaviour';
 import LaserBehaviour from './LaserBehaviour';
 import LockBehaviour from './LockBehaviour';
 import ICell from '@models/ICell';
 import NormalCellBehaviour from './NormalCellBehaviour';
-import TutorialFinishBehaviour from './TutorialFinishBehaviour';
+import ChallengeFinishBehaviour from './ChallengeFinishBehaviour';
 import { IGrid } from 'models';
 
 const redColor = 0xff0000;
@@ -13,38 +13,38 @@ const blueColor = 0x0000ff;
 const greenColor = 0x00ff00;
 const yellowColor = 0xffff00;
 
-// TODO: move this to tutorial
+// TODO: move this to challenge
 export default function createBehaviour(
   cell: ICell,
   grid: IGrid,
-  tutorialCellType: TutorialCellType
+  challengeCellType: ChallengeCellType
 ): ICellBehaviour {
-  switch (tutorialCellType) {
-    case TutorialCellType.Empty:
-    case TutorialCellType.Full:
+  switch (challengeCellType) {
+    case ChallengeCellType.Empty:
+    case ChallengeCellType.Full:
       return new NormalCellBehaviour();
-    case TutorialCellType.Laser:
+    case ChallengeCellType.Laser:
       return new LaserBehaviour(cell);
     // TODO: find way to reduce duplication
-    case TutorialCellType.RedKey:
+    case ChallengeCellType.RedKey:
       return new KeyBehaviour(redColor);
-    case TutorialCellType.RedLock:
+    case ChallengeCellType.RedLock:
       return new LockBehaviour(cell, grid, redColor);
-    case TutorialCellType.GreenKey:
+    case ChallengeCellType.GreenKey:
       return new KeyBehaviour(greenColor);
-    case TutorialCellType.GreenLock:
+    case ChallengeCellType.GreenLock:
       return new LockBehaviour(cell, grid, greenColor);
-    case TutorialCellType.BlueKey:
+    case ChallengeCellType.BlueKey:
       return new KeyBehaviour(blueColor);
-    case TutorialCellType.BlueLock:
+    case ChallengeCellType.BlueLock:
       return new LockBehaviour(cell, grid, blueColor);
-    case TutorialCellType.YellowKey:
+    case ChallengeCellType.YellowKey:
       return new KeyBehaviour(yellowColor);
-    case TutorialCellType.YellowLock:
+    case ChallengeCellType.YellowLock:
       return new LockBehaviour(cell, grid, yellowColor);
-    case TutorialCellType.Finish:
-      return new TutorialFinishBehaviour();
+    case ChallengeCellType.Finish:
+      return new ChallengeFinishBehaviour();
     default:
-      throw new Error('Unknown tutorial cell type: ' + tutorialCellType);
+      throw new Error('Unknown challenge cell type: ' + challengeCellType);
   }
 }

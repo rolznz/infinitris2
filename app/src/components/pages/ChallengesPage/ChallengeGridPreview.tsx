@@ -1,41 +1,41 @@
-import { parseGrid, TutorialCellType } from 'infinitris2-models';
+import { parseGrid, ChallengeCellType } from 'infinitris2-models';
 import React, { useEffect, useRef } from 'react';
 
-interface TutorialPreviewProps {
+interface ChallengePreviewProps {
   grid: string;
 }
 
-function getFillStyle(cellType: TutorialCellType): string {
+function getFillStyle(cellType: ChallengeCellType): string {
   switch (cellType) {
-    case TutorialCellType.Laser:
-    case TutorialCellType.Deadly:
+    case ChallengeCellType.Laser:
+    case ChallengeCellType.Deadly:
       return '#c2261f';
-    case TutorialCellType.RedKey:
-    case TutorialCellType.RedLock:
+    case ChallengeCellType.RedKey:
+    case ChallengeCellType.RedLock:
       return '#f00';
-    case TutorialCellType.BlueKey:
-    case TutorialCellType.BlueLock:
+    case ChallengeCellType.BlueKey:
+    case ChallengeCellType.BlueLock:
       return '#00f';
-    case TutorialCellType.GreenKey:
-    case TutorialCellType.GreenLock:
+    case ChallengeCellType.GreenKey:
+    case ChallengeCellType.GreenLock:
       return '#0f0';
-    case TutorialCellType.YellowKey:
-    case TutorialCellType.YellowLock:
+    case ChallengeCellType.YellowKey:
+    case ChallengeCellType.YellowLock:
       return '#ff0';
-    case TutorialCellType.Finish:
+    case ChallengeCellType.Finish:
       return '#aaffaa';
     default:
       return '#aaaaaa';
   }
 }
 
-export default function TutorialGridPreview({ grid }: TutorialPreviewProps) {
+export default function ChallengeGridPreview({ grid }: ChallengePreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const context = canvasRef.current!.getContext('2d')!;
     context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-    let cellTypes: TutorialCellType[][];
+    let cellTypes: ChallengeCellType[][];
     try {
       cellTypes = parseGrid(grid);
     } catch (error) {
@@ -54,7 +54,7 @@ export default function TutorialGridPreview({ grid }: TutorialPreviewProps) {
     for (let r = 0; r < numRows; r++) {
       for (let c = 0; c < numColumns; c++) {
         const cellType = cellTypes[r][c];
-        if (cellType !== TutorialCellType.Empty) {
+        if (cellType !== ChallengeCellType.Empty) {
           context.fillStyle = getFillStyle(cellType);
           context.fillRect(
             sx + c * cellSize,

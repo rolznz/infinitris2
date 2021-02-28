@@ -4,7 +4,7 @@ enum CellType {
   Deadly = 'Deadly',
   Key = 'Key',
   Lock = 'Lock',
-  FinishTutorial = 'FinishTutorial',
+  FinishChallenge = 'FinishChallenge',
 }
 
 export default CellType;

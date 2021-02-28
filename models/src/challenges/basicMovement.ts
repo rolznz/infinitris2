@@ -1,7 +1,7 @@
 import tetrominoes from '../layouts/Tetrominoes';
-import ITutorial from '../ITutorial';
+import IChallenge from '../IChallenge';
 
-const basicMovement: ITutorial = {
+const basicMovement: IChallenge = {
   id: 'basic-movement',
   userId: '',
   isOfficial: true,

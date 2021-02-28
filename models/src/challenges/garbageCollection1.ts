@@ -1,7 +1,7 @@
 import tetrominoes from '../layouts/Tetrominoes';
-import ITutorial from '../ITutorial';
+import IChallenge from '../IChallenge';
 
-const garbageCollection1: ITutorial = {
+const garbageCollection1: IChallenge = {
   id: 'garbage-collection-1',
   userId: '',
   isOfficial: true,
@@ -13,7 +13,7 @@ const garbageCollection1: ITutorial = {
   isPublished: true,
   priority: 8000,
   finishCriteria: {
-    finishTutorialCellFilled: true,
+    finishChallengeCellFilled: true,
   },
   successCriteria: {
     gold: {

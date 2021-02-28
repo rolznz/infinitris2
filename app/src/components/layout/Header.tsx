@@ -32,7 +32,7 @@ export default function Header() {
             description: 'Challenges button tooltip',
           })}
         >
-          <Link component={RouterLink} underline="none" to={Routes.tutorials}>
+          <Link component={RouterLink} underline="none" to={Routes.challenges}>
             <IconButton>
               <LocalLibraryIcon />
             </IconButton>
@@ -65,7 +65,7 @@ export default function Header() {
           </IconButton>
         </Link>
       </Route>
-      <Route exact path={Routes.tutorials}>
+      <Route exact path={Routes.challenges}>
         <Tooltip
           title={intl.formatMessage({
             defaultMessage: 'Create Challenge',

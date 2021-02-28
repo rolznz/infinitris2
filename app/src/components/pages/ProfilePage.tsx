@@ -32,9 +32,9 @@ export default function ProfilePage() {
 
       <Typography align="center">
         <FormattedMessage
-          defaultMessage="{count} completed tutorials"
+          defaultMessage="{count} completed challenges"
           description="Profile"
-          values={{ count: user.completedTutorialIds.length }}
+          values={{ count: user.completedChallengeIds.length }}
         />
       </Typography>
 

@@ -1,7 +1,7 @@
 import tetrominoes from '../layouts/Tetrominoes';
-import ITutorial from '../ITutorial';
+import IChallenge from '../IChallenge';
 
-const shadowTest: ITutorial = {
+const shadowTest: IChallenge = {
   id: 'shadow-test',
   userId: '',
   isOfficial: true,

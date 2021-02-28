@@ -8,10 +8,10 @@ enum Routes {
   singlePlayer = '/single-player',
   settings = '/settings',
   controlSettings = '/settings/controls',
-  tutorials = '/tutorials',
+  challenges = '/challenges',
   createChallenge = '/create/challenge',
   loadChallenge = '/create/challenge/load',
-  tutorialRequired = '/tutorial-required', // TODO: should be a level map?
+  challengeRequired = '/challenge-required', // TODO: should be a level map?
   allSet = '/all-set', // TODO: rename to "ready to play"
 }
 

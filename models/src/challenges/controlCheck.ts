@@ -1,7 +1,7 @@
 import tetrominoes from '../layouts/Tetrominoes';
-import ITutorial from '../ITutorial';
+import IChallenge from '../IChallenge';
 
-const controlCheck: ITutorial = {
+const controlCheck: IChallenge = {
   id: 'control-check',
   userId: '',
   isOfficial: true,

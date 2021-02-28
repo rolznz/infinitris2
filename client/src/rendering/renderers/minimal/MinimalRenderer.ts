@@ -596,7 +596,7 @@ export default class MinimalRenderer
     // TODO: extract rendering of different behaviours
     if (
       renderCellType !== RenderCellType.Cell ||
-      cell.cell.type === CellType.FinishTutorial ||
+      cell.cell.type === CellType.FinishChallenge ||
       cell.cell.type === CellType.Laser
     ) {
       graphics.beginFill(color, Math.min(opacity, 1));

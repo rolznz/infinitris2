@@ -1,13 +1,13 @@
 import ControlSettings from './ControlSettings';
 import InputMethod from './InputMethod';
-import { TutorialStatus } from './TutorialStatus';
+import { ChallengeStatus } from './ChallengeStatus';
 
 export default interface IUser {
-  readonly tutorialAttempts: { [tutorialId: string]: TutorialStatus[] };
+  readonly challengeAttempts: { [challengeId: string]: ChallengeStatus[] };
   readonly hasSeenWelcome: boolean;
   readonly nickname: string;
   readonly locale: string;
   readonly preferredInputMethod?: InputMethod;
-  readonly completedTutorialIds: string[];
+  readonly completedChallengeIds: string[];
   readonly controls: ControlSettings;
 }

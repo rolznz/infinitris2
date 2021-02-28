@@ -39,8 +39,8 @@ export default function AllSetPage() {
       <FlexBox flex={1}>
         <Typography align="center">
           <FormattedMessage
-            defaultMessage="Woohoo! All required tutorials have been completed!"
-            description="All required tutorials have been completed"
+            defaultMessage="Woohoo! All required challenges have been completed!"
+            description="All required challenges have been completed"
           />
         </Typography>
         {/*TODO: show destination name (need to retrieve room from URL) destinationUrl !== Routes.home && (
@@ -52,7 +52,7 @@ export default function AllSetPage() {
         <ContinueHint />
 
         {/*TODO: <Typography>
-          You can play more tutorials at any time from the main menu.
+          You can play more challenges at any time from the main menu.
         </Typography>*/}
       </FlexBox>
     </>

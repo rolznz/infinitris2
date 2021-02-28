@@ -1,21 +1,21 @@
 import InputAction from './InputAction';
 import Layout from './Layout';
-import garbageCollection1 from './tutorials/garbageCollection1';
-import basicMovement from './tutorials/basicMovement';
-import shadowTest from './tutorials/shadowTest';
-import wrapTest from './tutorials/wrapTest';
-import controlCheck from './tutorials/controlCheck';
+import garbageCollection1 from './challenges/garbageCollection1';
+import basicMovement from './challenges/basicMovement';
+import shadowTest from './challenges/shadowTest';
+import wrapTest from './challenges/wrapTest';
+import controlCheck from './challenges/controlCheck';
 import ISimulationSettings from './ISimulationSettings';
-import TutorialSuccessCriteria from './TutorialSuccessCriteria';
-import keysAndLocks1 from './tutorials/keysAndLocks1';
+import ChallengeSuccessCriteria from './ChallengeSuccessCriteria';
+import keysAndLocks1 from './challenges/keysAndLocks1';
 
-export interface TutorialTranslation {
+export interface ChallengeTranslation {
   title: string;
   description?: string;
 }
 
 // TODO: rename to Challenge
-export default interface ITutorial extends TutorialTranslation {
+export default interface IChallenge extends ChallengeTranslation {
   readonly id: string;
   readonly userId: string;
   readonly priority?: number;
@@ -23,7 +23,7 @@ export default interface ITutorial extends TutorialTranslation {
   readonly isMandatory?: boolean;
   readonly isPublished?: boolean;
   readonly locale: string;
-  readonly translations?: { [locale: string]: TutorialTranslation };
+  readonly translations?: { [locale: string]: ChallengeTranslation };
   readonly layout?: Layout;
   readonly grid: string;
 
@@ -35,22 +35,22 @@ export default interface ITutorial extends TutorialTranslation {
     readonly maxLinesCleared?: number;
     readonly maxTime?: number;
     readonly emptyGrid?: boolean;
-    readonly finishTutorialCellFilled?: boolean;
+    readonly finishChallengeCellFilled?: boolean;
   };
 
   readonly simulationSettings?: ISimulationSettings;
   readonly teachControls?: boolean;
 
   readonly successCriteria: {
-    bronze?: TutorialSuccessCriteria;
-    silver?: TutorialSuccessCriteria;
-    gold?: TutorialSuccessCriteria;
-    all?: TutorialSuccessCriteria;
+    bronze?: ChallengeSuccessCriteria;
+    silver?: ChallengeSuccessCriteria;
+    gold?: ChallengeSuccessCriteria;
+    all?: ChallengeSuccessCriteria;
   };
 }
 
-// TODO: rename to core tutorials (user-submitted ones will be from Firebase)
-export const tutorials: ITutorial[] = [
+// TODO: rename to core challenges (user-submitted ones will be from Firebase)
+export const challenges: IChallenge[] = [
   keysAndLocks1,
   controlCheck,
   basicMovement,

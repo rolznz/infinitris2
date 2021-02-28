@@ -1,6 +1,6 @@
-import ITutorial from '../ITutorial';
+import IChallenge from '../IChallenge';
 
-const keysAndLocks1: ITutorial = {
+const keysAndLocks1: IChallenge = {
   id: 'keys-and-locks-1',
   userId: '',
   isOfficial: true,
@@ -11,7 +11,7 @@ const keysAndLocks1: ITutorial = {
   isPublished: true,
   priority: 7000,
   finishCriteria: {
-    finishTutorialCellFilled: true,
+    finishChallengeCellFilled: true,
   },
   successCriteria: {
     gold: {

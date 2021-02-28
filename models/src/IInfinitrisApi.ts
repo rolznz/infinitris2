@@ -2,19 +2,19 @@ import ControlSettings from './ControlSettings';
 import { IClientSocketEventListener } from './IClientSocketEventListener';
 import InputMethod from './InputMethod';
 import ISimulationEventListener from './ISimulationEventListener';
-import ITutorial from './ITutorial';
-import ITutorialClient from './ITutorialClient';
+import IChallenge from './IChallenge';
+import IChallengeClient from './IChallengeClient';
 
 export default interface IInfinitrisApi {
   releaseClient(): void;
   getVersion(): string;
   launchSinglePlayer(controls?: ControlSettings): void;
-  launchTutorial(
-    tutorial: ITutorial,
+  launchChallenge(
+    challenge: IChallenge,
     listener?: ISimulationEventListener,
     preferredInputMethod?: InputMethod,
     controls?: ControlSettings
-  ): ITutorialClient;
+  ): IChallengeClient;
   restartClient(): void; // TODO: remove
   launchDemo(): void;
   launchNetworkClient(

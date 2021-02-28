@@ -1,6 +1,6 @@
 import { Box, Typography } from '@material-ui/core';
-import { ITutorial, TutorialStatus } from 'infinitris2-models';
-import TutorialCompletionStats from 'infinitris2-models/dist/src/TutorialCompletionStats';
+import { IChallenge, ChallengeStatus } from 'infinitris2-models';
+import ChallengeCompletionStats from 'infinitris2-models/dist/src/ChallengeCompletionStats';
 import React, { useEffect, useState } from 'react';
 import { FormattedMessage } from 'react-intl';
 import StarRatingComponent from 'react-star-rating-component';
@@ -11,19 +11,19 @@ import useReceivedInput from '../../hooks/useReceivedInput';
 import useTrue from '../../hooks/useTrue';
 import FlexBox from '../../layout/FlexBox';
 
-interface TutorialResultsViewProps {
-  status: TutorialStatus;
-  tutorial: ITutorial;
+interface ChallengeResultsViewProps {
+  status: ChallengeStatus;
+  challenge: IChallenge;
   onContinue(): void;
   onRetry(): void;
 }
 
-export default function TutorialResultsView({
-  tutorial,
+export default function ChallengeResultsView({
+  challenge,
   status,
   onContinue,
   onRetry,
-}: TutorialResultsViewProps) {
+}: ChallengeResultsViewProps) {
   const user = useUser();
   const [starAnimation, setStarAnimation] = useState(0);
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function TutorialResultsView({
 
   const [hasReceivedContinueInput] = useReceivedInput();
   useTrue(hasReceivedContinueInput, onContinue);
-  const stats = status.stats as TutorialCompletionStats;
+  const stats = status.stats as ChallengeCompletionStats;
 
   return (
     <FlexBox flex={1} maxWidth="100%" padding={4}>
@@ -56,13 +56,13 @@ export default function TutorialResultsView({
       >
         <Typography variant="h6">
           <FormattedMessage
-            defaultMessage="Tutorial Completed"
-            description="Tutorial completed heading"
+            defaultMessage="Challenge Completed"
+            description="Challenge completed heading"
           />
         </Typography>
         <div style={{ fontSize: 96 }}>
           <StarRatingComponent
-            name="tutorial-score"
+            name="challenge-score"
             editing={false}
             starCount={3}
             value={starAnimation}
@@ -72,7 +72,7 @@ export default function TutorialResultsView({
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage="Time taken: {timeTaken} seconds"
-            description="Time taken to complete tutorial"
+            description="Time taken to complete challenge"
             values={{
               timeTaken: (stats.timeTaken / 1000).toFixed(2),
             }}
@@ -81,7 +81,7 @@ export default function TutorialResultsView({
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage="Blocks placed: {blocksPlaced}"
-            description="Number of blocks placed in tutorial"
+            description="Number of blocks placed in challenge"
             values={{
               blocksPlaced: stats.blocksPlaced,
             }}
@@ -90,7 +90,7 @@ export default function TutorialResultsView({
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage="Lines cleared: {linesCleared}"
-            description="Number of lines cleared in tutorial"
+            description="Number of lines cleared in challenge"
             values={{
               linesCleared: stats.linesCleared,
             }}
@@ -99,9 +99,9 @@ export default function TutorialResultsView({
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage="Attempt: #{attemptCount}"
-            description="Number of times the user has attempted this tutorial"
+            description="Number of times the user has attempted this challenge"
             values={{
-              attemptCount: user.tutorialAttempts[tutorial.id]?.length,
+              attemptCount: user.challengeAttempts[challenge.id]?.length,
             }}
           />
         </Typography>

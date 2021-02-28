@@ -7,27 +7,27 @@ import ISimulationEventListener from '@models/ISimulationEventListener';
 import CellType from '@models/CellType';
 import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
-import ITutorialClient from '@models/ITutorialClient';
+import IChallengeClient from '@models/IChallengeClient';
 import InputMethod from '@models/InputMethod';
-import ITutorial from '@models/ITutorial';
-import TutorialSuccessCriteria from '@models/TutorialSuccessCriteria';
+import IChallenge from '@models/IChallenge';
+import ChallengeSuccessCriteria from '@models/ChallengeSuccessCriteria';
 import ISimulation from '@models/ISimulation';
 import Simulation from '@core/Simulation';
-import TutorialCompletionStats from '@models/TutorialCompletionStats';
-import TutorialCellType from '@models/TutorialCellType';
+import ChallengeCompletionStats from '@models/ChallengeCompletionStats';
+import ChallengeCellType from '@models/ChallengeCellType';
 import createBehaviour from '@core/grid/cell/behaviours/createBehaviour';
 import ControlSettings from '@models/ControlSettings';
-import { TutorialStatus } from '@models/TutorialStatus';
+import { ChallengeStatus } from '@models/ChallengeStatus';
 import parseGrid from '@models/util/parseGrid';
 
-// TODO: enable support for multiplayer tutorials (challenges)
+// TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
-export default class TutorialClient
-  implements ITutorialClient, ISimulationEventListener {
+export default class ChallengeClient
+  implements IChallengeClient, ISimulationEventListener {
   // FIXME: restructure to not require definite assignment
   private _renderer!: IRenderer;
   private _simulation!: ISimulation;
-  private _tutorial!: ITutorial;
+  private _challenge!: IChallenge;
   private _input!: Input;
   private _allowedActions?: InputAction[];
   private _preferredInputMethod: InputMethod;
@@ -39,14 +39,14 @@ export default class TutorialClient
   private _controls?: ControlSettings;
 
   constructor(
-    tutorial: ITutorial,
+    challenge: IChallenge,
     listener?: ISimulationEventListener,
     preferredInputMethod: InputMethod = 'keyboard',
     controls?: ControlSettings
   ) {
     this._preferredInputMethod = preferredInputMethod;
     this._controls = controls;
-    this._create(tutorial, listener);
+    this._create(challenge, listener);
   }
 
   /**
@@ -125,16 +125,16 @@ export default class TutorialClient
     this._createTempObjects();
   }
 
-  getStatus(): TutorialStatus {
-    const { finishCriteria, successCriteria } = this._tutorial;
+  getStatus(): ChallengeStatus {
+    const { finishCriteria, successCriteria } = this._challenge;
     const matchesFinishCriteria = () => {
       if (this._blockCreateFailed || this._blockDied) {
         return true;
       }
       if (
-        finishCriteria.finishTutorialCellFilled &&
+        finishCriteria.finishChallengeCellFilled &&
         !this._simulation.grid.reducedCells.some(
-          (cell) => !cell.isEmpty && cell.type === CellType.FinishTutorial
+          (cell) => !cell.isEmpty && cell.type === CellType.FinishChallenge
         )
       ) {
         return false;
@@ -167,7 +167,7 @@ export default class TutorialClient
 
     const getStars = () => {
       const matchesSuccessCriteria = (
-        criteria: TutorialSuccessCriteria
+        criteria: ChallengeSuccessCriteria
       ): boolean => {
         if (this._blockCreateFailed || this._blockDied) {
           return false;
@@ -205,7 +205,7 @@ export default class TutorialClient
         return true;
       };
 
-      const mergeCriteria = (criteria?: TutorialSuccessCriteria) => {
+      const mergeCriteria = (criteria?: ChallengeSuccessCriteria) => {
         return {
           ...successCriteria.all,
           ...(criteria || {}),
@@ -222,10 +222,10 @@ export default class TutorialClient
     };
 
     const stars = finished ? getStars() : 0;
-    //this._numLinesCleared >= (this._tutorial.successLinesCleared || 0);
+    //this._numLinesCleared >= (this._challenge.successLinesCleared || 0);
     const status = finished ? (stars > 0 ? 'success' : 'failed') : 'pending';
 
-    const stats: TutorialCompletionStats | undefined = finished
+    const stats: ChallengeCompletionStats | undefined = finished
       ? {
           blocksPlaced: this._numBlocksPlaced,
           linesCleared: this._numLinesCleared,
@@ -242,13 +242,13 @@ export default class TutorialClient
   }
 
   private async _create(
-    tutorial: ITutorial,
+    challenge: IChallenge,
     listener?: ISimulationEventListener
   ) {
-    this._tutorial = tutorial;
+    this._challenge = challenge;
     this._renderer = new MinimalRenderer(
       this._preferredInputMethod,
-      this._tutorial.teachControls
+      this._challenge.teachControls
     );
     this._simulationEventListener = listener;
     await this._renderer.create();
@@ -262,9 +262,9 @@ export default class TutorialClient
     this._blockCreateFailed = false;
     this._blockDied = false;
 
-    const cellTypes: TutorialCellType[][] = [];
-    if (this._tutorial.grid) {
-      cellTypes.push(...parseGrid(this._tutorial.grid));
+    const cellTypes: ChallengeCellType[][] = [];
+    if (this._challenge.grid) {
+      cellTypes.push(...parseGrid(this._challenge.grid));
     }
 
     const grid = new Grid(cellTypes[0].length, cellTypes.length);
@@ -275,7 +275,7 @@ export default class TutorialClient
           const cellType = cellTypes[r][c];
           cell.behaviour = createBehaviour(cell, grid, cellType);
 
-          if (cellType === TutorialCellType.Full) {
+          if (cellType === ChallengeCellType.Full) {
             cell.isEmpty = false;
           }
         }
@@ -284,7 +284,7 @@ export default class TutorialClient
 
     const simulation = (this._simulation = new Simulation(
       grid,
-      this._tutorial.simulationSettings
+      this._challenge.simulationSettings
     ));
     simulation.addEventListener(this, this._renderer);
     if (this._simulationEventListener) {
@@ -295,14 +295,14 @@ export default class TutorialClient
     const player = new ControllablePlayer(playerId, this._simulation);
     simulation.addPlayer(player);
     simulation.followPlayer(player);
-    player.nextLayout = this._tutorial.layout;
-    player.nextLayoutRotation = this._tutorial.layoutRotation;
+    player.nextLayout = this._challenge.layout;
+    player.nextLayoutRotation = this._challenge.layoutRotation;
 
     this._input = new Input(simulation, player, this._controls);
     this._renderer.virtualKeyboardControls = this._input.controls;
-    this._updateAllowedActions(this._tutorial.allowedActions);
+    this._updateAllowedActions(this._challenge.allowedActions);
 
-    if (this._tutorial.teachControls) {
+    if (this._challenge.teachControls) {
       this._teachNextControl();
       this._input.addListener(
         (action) =>
@@ -332,7 +332,7 @@ export default class TutorialClient
         : allActions[allActions.indexOf(this._allowedActions[0]) + 1];
     if (!nextAction) {
       this._updateAllowedActions([]);
-      // TODO: finish tutorial
+      // TODO: finish challenge
     } else {
       this._updateAllowedActions([nextAction]);
     }

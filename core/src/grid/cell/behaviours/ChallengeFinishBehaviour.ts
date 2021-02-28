@@ -1,7 +1,7 @@
 import CellType from '@models/CellType';
 import ICellBehaviour from '@models/ICellBehaviour';
 
-export default class TutorialFinishBehaviour implements ICellBehaviour {
+export default class ChallengeFinishBehaviour implements ICellBehaviour {
   constructor() {}
   get color(): number {
     return 0x00ff00;
@@ -12,7 +12,7 @@ export default class TutorialFinishBehaviour implements ICellBehaviour {
   }
 
   get type(): CellType {
-    return CellType.FinishTutorial;
+    return CellType.FinishChallenge;
   }
 
   get alpha(): number {

@@ -4,12 +4,12 @@ import { useHistory, useLocation } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import useAppStore from '../../state/AppStore';
 import { useUser } from '../../state/UserStore';
-import useIncompleteTutorials from './useIncompleteTutorials';
+import useIncompleteChallenges from './useIncompleteChallenges';
 
 // TODO: rename to useForcedRedirect
 export default function useWelcomeRedirect(
-  onTutorialPage: boolean = false,
-  currentTutorialPriority?: number,
+  onChallengePage: boolean = false,
+  currentChallengePriority?: number,
   enabled: boolean = true
 ) {
   const appStore = useAppStore();
@@ -17,7 +17,7 @@ export default function useWelcomeRedirect(
   const setReturnToUrl = appStore.setReturnToUrl;
   const location = useLocation();
   const history = useHistory();
-  const incompleteTutorials = useIncompleteTutorials();
+  const incompleteChallenges = useIncompleteChallenges();
   const { pathname } = location;
 
   let [requiresRedirect, setRequiresRedirect] = React.useState(enabled);
@@ -35,27 +35,27 @@ export default function useWelcomeRedirect(
     if (!user.hasSeenWelcome) {
       replaceHistory(Routes.welcome);
     } else if (
-      incompleteTutorials.length > 0 &&
-      (!onTutorialPage ||
-        (currentTutorialPriority !== undefined &&
-          incompleteTutorials.find(
-            (incompleteTutorial) =>
-              incompleteTutorial.priority &&
-              incompleteTutorial.priority > currentTutorialPriority
+      incompleteChallenges.length > 0 &&
+      (!onChallengePage ||
+        (currentChallengePriority !== undefined &&
+          incompleteChallenges.find(
+            (incompleteChallenge) =>
+              incompleteChallenge.priority &&
+              incompleteChallenge.priority > currentChallengePriority
           )))
     ) {
-      replaceHistory(Routes.tutorialRequired);
+      replaceHistory(Routes.challengeRequired);
     } else {
-      if (!onTutorialPage || currentTutorialPriority !== undefined) {
+      if (!onChallengePage || currentChallengePriority !== undefined) {
         setRequiresRedirect(false);
       }
     }
   }, [
     user.hasSeenWelcome,
     history,
-    incompleteTutorials,
-    onTutorialPage,
-    currentTutorialPriority,
+    incompleteChallenges,
+    onChallengePage,
+    currentChallengePriority,
     pathname,
     setReturnToUrl,
     enabled,

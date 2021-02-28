@@ -1,8 +1,8 @@
 import InputAction from '../InputAction';
 import tetrominoes from '../layouts/Tetrominoes';
-import ITutorial from '../ITutorial';
+import IChallenge from '../IChallenge';
 
-const wrapTest: ITutorial = {
+const wrapTest: IChallenge = {
   id: 'wrap-test',
   userId: '',
   isOfficial: true,

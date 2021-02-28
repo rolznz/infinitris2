@@ -70,5 +70,5 @@ export default function ChallengeGridPreview({ grid }: ChallengePreviewProps) {
     context.stroke();
   }, [grid]);
 
-  return <canvas ref={canvasRef} width={100} height={100} />;
+  return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />;
 }

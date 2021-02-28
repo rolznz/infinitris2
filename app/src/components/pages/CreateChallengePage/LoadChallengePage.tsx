@@ -1,10 +1,12 @@
 import { Card, Typography } from '@material-ui/core';
-import { useCollection } from '@nandorojo/swr-firestore';
+import { Document, useCollection } from '@nandorojo/swr-firestore';
 import { IChallenge } from 'infinitris2-models';
 import React from 'react';
+import { FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 import { challengesPath } from '../../../firebase';
 import Routes from '../../../models/Routes';
+import useAuthStore from '../../../state/AuthStore';
 import localStorageKeys from '../../../utils/localStorageKeys';
 import prettyStringify from '../../../utils/prettyStringify';
 
@@ -12,16 +14,18 @@ import FlexBox from '../../layout/FlexBox';
 import LoadingSpinner from '../../LoadingSpinner';
 import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
 
-export function LoadChallengePage() {
-  const { data: challenges } = useCollection<IChallenge>(challengesPath);
-  const history = useHistory();
+interface ChallengesRowProps {
+  challenges: Document<IChallenge>[] | null | undefined;
+}
 
+function ChallengesRow({ challenges }: ChallengesRowProps) {
+  const history = useHistory();
   if (!challenges) {
-    return <LoadingSpinner />;
+    return null;
   }
 
   return (
-    <FlexBox flex={1} padding={10} flexWrap="wrap" flexDirection="row">
+    <FlexBox flex={1} padding={4} flexWrap="wrap" flexDirection="row">
       {challenges.map((challenge) => (
         <FlexBox key={challenge.id} margin={4}>
           <Card
@@ -43,6 +47,44 @@ export function LoadChallengePage() {
           </Card>
         </FlexBox>
       ))}
+    </FlexBox>
+  );
+}
+
+export function LoadChallengePage() {
+  const userId = useAuthStore().user?.uid;
+
+  const { data: userChallenges } = useCollection<IChallenge>(challengesPath, {
+    where: [['userId', '==', userId]],
+  });
+  const { data: challenges } = useCollection<IChallenge>(challengesPath);
+
+  if (!challenges) {
+    return (
+      <FlexBox flex={1}>
+        <LoadingSpinner />
+      </FlexBox>
+    );
+  }
+
+  return (
+    <FlexBox>
+      <Typography align="center">
+        <FormattedMessage
+          defaultMessage="Your Challenges"
+          description="Challenges Page - Your Challenges section title"
+        />
+      </Typography>
+
+      <ChallengesRow challenges={userChallenges} />
+
+      <Typography align="center">
+        <FormattedMessage
+          defaultMessage="All Challenges"
+          description="Challenges Page - All Challenges section title"
+        />
+      </Typography>
+      <ChallengesRow challenges={challenges} />
     </FlexBox>
   );
 }

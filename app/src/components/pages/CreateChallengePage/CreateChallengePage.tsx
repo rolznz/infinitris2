@@ -1,11 +1,10 @@
-import { Button, Link, TextField, Typography } from '@material-ui/core';
+import { Box, Button, Link, TextField, Typography } from '@material-ui/core';
 import { IChallenge, parseGrid } from 'infinitris2-models';
 import React, { useCallback, useEffect, useState } from 'react';
 import { defaultLocale } from '../../../internationalization';
 
 import useLoginRedirect from '../../hooks/useLoginRedirect';
 import FlexBox from '../../layout/FlexBox';
-import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import { FormattedMessage } from 'react-intl';
@@ -17,6 +16,7 @@ import { getChallengePath } from '../../../firebase';
 import useAuthStore from '../../../state/AuthStore';
 import prettyStringify from '../../../utils/prettyStringify';
 import stableStringify from '../../../utils/stableStringify';
+import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
 
 function createNewChallenge(userId: string): IChallenge {
   return {
@@ -118,6 +118,19 @@ export function CreateChallengePage() {
 
   const gridError = challenge ? getGridError(challenge) : undefined;
 
+  function publishChallenge() {
+    if (!challenge) {
+      return;
+    }
+    challenge = {
+      ...challenge,
+      isPublished: true,
+    };
+    const { grid, ...challengeWithoutGrid } = challenge;
+    setLocalChallengeInfo(prettyStringify(challengeWithoutGrid));
+    saveChallenge();
+  }
+
   async function saveChallenge() {
     if (!challenge) {
       console.error('Cannot save invalid challenge');
@@ -135,40 +148,83 @@ export function CreateChallengePage() {
   }
 
   return (
-    <FlexBox flex={1}>
-      <TextField
-        label="Challenge Settings"
-        multiline
-        fullWidth
-        spellCheck={false}
-        value={localChallengeInfo}
-        onChange={(event) => setLocalChallengeInfo(event.target.value)}
-        variant="outlined"
-      />
-      {challengeInfoError && (
-        <Typography variant="caption" color="secondary">
-          {challengeInfoError}
-        </Typography>
+    <FlexBox flex={1} padding={4}>
+      {syncedChallenge?.isPublished && (
+        <FlexBox>
+          <FormattedMessage
+            defaultMessage="This challenge is published and can no longer be edited."
+            description="Challenge published text"
+          />
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              resetChallenge({
+                ...syncedChallenge,
+                isPublished: false,
+                id: uuidv4(),
+              });
+            }}
+          >
+            <FormattedMessage
+              defaultMessage="Clone Challenge"
+              description="Clone challenge button text"
+            />
+          </Button>
+        </FlexBox>
       )}
-      <FlexBox flex={1} width="100%" flexDirection="row">
-        <TextField
-          label="Grid"
-          inputProps={{
-            style: { fontFamily: 'Courier New' },
-          }}
-          multiline
-          fullWidth
-          spellCheck={false}
-          value={localChallengeGrid}
-          onChange={(event) => setLocalChallengeGrid(event.target.value)}
-          variant="outlined"
-        />
-        {challenge && <ChallengeGridPreview grid={challenge.grid as string} />}
-        {gridError && (
-          <Typography variant="caption" color="secondary">
-            {gridError}
-          </Typography>
-        )}
+      <FlexBox flex={1} flexDirection="row" width="100%">
+        <FlexBox flex={1}>
+          <TextField
+            label="Challenge Settings"
+            multiline
+            fullWidth
+            disabled={challenge?.isPublished}
+            spellCheck={false}
+            value={localChallengeInfo}
+            onChange={(event) => setLocalChallengeInfo(event.target.value)}
+            inputProps={{
+              style: {
+                height: '20vh',
+                overflow: 'unset',
+              },
+            }}
+            variant="outlined"
+          />
+          {challengeInfoError && (
+            <Typography variant="caption" color="secondary">
+              {challengeInfoError}
+            </Typography>
+          )}
+          <Box my={1} />
+          <TextField
+            label="Grid"
+            inputProps={{
+              style: {
+                fontFamily: 'Courier New',
+                height: '40vh',
+                overflow: 'unset',
+              },
+            }}
+            multiline
+            fullWidth
+            disabled={challenge?.isPublished}
+            spellCheck={false}
+            value={localChallengeGrid}
+            onChange={(event) => setLocalChallengeGrid(event.target.value)}
+            variant="outlined"
+          />
+          {gridError && (
+            <Typography variant="caption" color="secondary">
+              {gridError}
+            </Typography>
+          )}
+        </FlexBox>
+        <FlexBox flex={1}>
+          {challenge && (
+            <ChallengeGridPreview grid={challenge.grid as string} />
+          )}
+        </FlexBox>
       </FlexBox>
       <FlexBox flexDirection="row">
         <Button
@@ -255,6 +311,22 @@ export function CreateChallengePage() {
             )}
           </Button>
         )}
+        {!gridError &&
+          !challengeInfoError &&
+          syncedChallenge?.exists &&
+          !syncedChallenge.isPublished && (
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={isSaving}
+              onClick={publishChallenge}
+            >
+              <FormattedMessage
+                defaultMessage="Publish"
+                description="Publish button text"
+              />
+            </Button>
+          )}
       </FlexBox>
     </FlexBox>
   );

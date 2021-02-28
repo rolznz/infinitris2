@@ -8,12 +8,20 @@ import useLoginRedirect from '../hooks/useLoginRedirect';
 import { useUserStore } from '../../state/UserStore';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
+import { useCollection } from '@nandorojo/swr-firestore';
+import { IChallenge } from 'infinitris2-models';
+import useAuthStore from '../../state/AuthStore';
+import { challengesPath } from '../../firebase';
 
 export default function ProfilePage() {
   useLoginRedirect();
 
   const [userStore, user] = useUserStore((store) => [store, store.user]);
+  const userId = useAuthStore().user?.uid;
   const history = useHistory();
+  const { data: userChallenges } = useCollection<IChallenge>(challengesPath, {
+    where: [['userId', '==', userId]],
+  });
 
   function signOut() {
     userStore.signOut();
@@ -33,8 +41,16 @@ export default function ProfilePage() {
       <Typography align="center">
         <FormattedMessage
           defaultMessage="{count} completed challenges"
-          description="Profile"
+          description="Completed challenges statistic"
           values={{ count: user.completedChallengeIds.length }}
+        />
+      </Typography>
+
+      <Typography align="center">
+        <FormattedMessage
+          defaultMessage="{count} challenges created"
+          description="Created challenges statistic"
+          values={{ count: userChallenges?.length }}
         />
       </Typography>
 

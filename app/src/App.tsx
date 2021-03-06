@@ -9,6 +9,8 @@ import Internationalization from './internationalization/Internationalization';
 
 import { FuegoProvider } from '@nandorojo/swr-firestore';
 import { fuego } from './firebase';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 
 function App() {
   useInfinitrisClient();
@@ -28,6 +30,7 @@ function App() {
             height="100%"
           >
             <Router />
+            <ToastContainer />
           </Box>
         </ThemeProvider>
       </Internationalization>

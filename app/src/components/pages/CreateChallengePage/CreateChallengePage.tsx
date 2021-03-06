@@ -1,5 +1,5 @@
 import { Box, Button, Link, TextField, Typography } from '@material-ui/core';
-import { IChallenge, parseGrid } from 'infinitris2-models';
+import { ChallengeCellType, IChallenge, parseGrid } from 'infinitris2-models';
 import React, { useCallback, useEffect, useState } from 'react';
 import { defaultLocale } from '../../../internationalization';
 
@@ -7,7 +7,7 @@ import useLoginRedirect from '../../hooks/useLoginRedirect';
 import FlexBox from '../../layout/FlexBox';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useCopyToClipboard, useLocalStorage } from 'react-use';
 import { v4 as uuidv4 } from 'uuid';
 import localStorageKeys from '../../../utils/localStorageKeys';
@@ -17,6 +17,9 @@ import useAuthStore from '../../../state/AuthStore';
 import prettyStringify from '../../../utils/prettyStringify';
 import stableStringify from '../../../utils/stableStringify';
 import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
+import { toast } from 'react-toastify';
+import useWelcomeRedirect from '../../hooks/useWelcomeRedirect';
+import { getCellFillColor } from '../../../utils/getCellFillColor';
 
 function createNewChallenge(userId: string): IChallenge {
   return {
@@ -58,12 +61,11 @@ function getGridError(challenge: IChallenge): string | null {
 }
 
 export function CreateChallengePage() {
+  const intl = useIntl();
   const [, copy] = useCopyToClipboard();
   useLoginRedirect();
+  useWelcomeRedirect();
 
-  const [initialChallenge, setInitialChallenge] = useState<
-    IChallenge | undefined
-  >();
   const [isSaving, setIsSaving] = useState(false);
   const userId = useAuthStore().user?.uid;
 
@@ -83,6 +85,22 @@ export function CreateChallengePage() {
     }
   );
 
+  let challenge: IChallenge | undefined;
+  let challengeInfoError: string | undefined;
+  try {
+    challenge = {
+      ...JSON.parse(localChallengeInfo || ''),
+      grid: localChallengeGrid,
+    };
+  } catch (e) {
+    console.log(localChallengeInfo);
+    challengeInfoError = e.message;
+  }
+
+  const [initialChallenge, setInitialChallenge] = useState<
+    IChallenge | undefined
+  >(challenge);
+
   const resetChallenge = useCallback(
     (initialValue?: IChallenge) => {
       const newInitialChallenge = initialValue || createNewChallenge(userId!);
@@ -95,22 +113,10 @@ export function CreateChallengePage() {
   );
 
   useEffect(() => {
-    if (!localChallengeInfo && userId) {
+    if (!challenge && userId) {
       resetChallenge();
     }
-  }, [localChallengeInfo, userId, resetChallenge]);
-
-  let challenge: IChallenge | undefined;
-  let challengeInfoError: string | undefined;
-  try {
-    challenge = {
-      ...JSON.parse(localChallengeInfo || ''),
-      grid: localChallengeGrid,
-    };
-  } catch (e) {
-    console.log(localChallengeInfo);
-    challengeInfoError = e.message;
-  }
+  }, [challenge, userId, resetChallenge]);
 
   const { data: syncedChallenge } = useDocument<IChallenge>(
     challenge ? getChallengePath(challenge.id) : null
@@ -142,7 +148,7 @@ export function CreateChallengePage() {
       await set(challengePath, challenge);
     } catch (e) {
       console.error(e);
-      alert('Failed to save challenge, please try again.');
+      alert(`Failed to save challenge\n${e.message}`);
     }
     setIsSaving(false);
   }
@@ -155,6 +161,7 @@ export function CreateChallengePage() {
             defaultMessage="This challenge is published and can no longer be edited."
             description="Challenge published text"
           />
+          <Box mb={1} />
           <Button
             variant="contained"
             color="primary"
@@ -171,6 +178,7 @@ export function CreateChallengePage() {
               description="Clone challenge button text"
             />
           </Button>
+          <Box mb={1} />
         </FlexBox>
       )}
       <FlexBox flex={1} flexDirection="row" width="100%">
@@ -202,7 +210,7 @@ export function CreateChallengePage() {
             inputProps={{
               style: {
                 fontFamily: 'Courier New',
-                height: '40vh',
+                height: '30vh',
                 overflow: 'unset',
               },
             }}
@@ -214,19 +222,49 @@ export function CreateChallengePage() {
             onChange={(event) => setLocalChallengeGrid(event.target.value)}
             variant="outlined"
           />
+          <FlexBox
+            flexDirection="row"
+            flexWrap="wrap"
+            my={1}
+            style={{ backgroundColor: '#666' }}
+          >
+            {Object.entries(ChallengeCellType).map((entry) => (
+              <Box mx={1}>
+                <Typography
+                  key={entry[0]}
+                  variant="caption"
+                  style={{ color: getCellFillColor(entry[1]) }}
+                >
+                  {entry[0]}: {entry[1]}
+                </Typography>
+              </Box>
+            ))}
+          </FlexBox>
+        </FlexBox>
+        <FlexBox flex={1}>
+          {challenge && (
+            <ChallengeGridPreview grid={challenge.grid as string} />
+          )}
           {gridError && (
             <Typography variant="caption" color="secondary">
               {gridError}
             </Typography>
           )}
         </FlexBox>
-        <FlexBox flex={1}>
-          {challenge && (
-            <ChallengeGridPreview grid={challenge.grid as string} />
-          )}
-        </FlexBox>
       </FlexBox>
-      <FlexBox flexDirection="row">
+      <FlexBox flexDirection="row" justifyContent="space-between" width="100%">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            alert('Load an existing challenge to see an example.');
+          }}
+        >
+          <FormattedMessage
+            defaultMessage="Help"
+            description="Help button text"
+          />
+        </Button>
         <Button
           variant="contained"
           color="secondary"
@@ -263,12 +301,44 @@ export function CreateChallengePage() {
           variant="contained"
           onClick={() => {
             copy(prettyStringify(challenge));
-            // TODO: react-toastify notification
+            toast(
+              intl.formatMessage({
+                defaultMessage: 'Challenge copied to clipboard',
+                description: 'Challenge copied to clipboard toast message',
+              })
+            );
           }}
         >
           <FormattedMessage
-            defaultMessage="Copy JSON"
-            description="Copy challenge JSON button text"
+            defaultMessage="Export"
+            description="Export JSON button text"
+          />
+        </Button>
+        <Button
+          variant="contained"
+          onClick={() => {
+            const receivedJson = window.prompt(
+              intl.formatMessage({
+                defaultMessage: 'Enter challenge JSON',
+                description: 'Enter challenge JSON dialog message',
+              })
+            );
+            if (receivedJson) {
+              const importedChallenge = JSON.parse(receivedJson);
+              // TODO: validate imported challenge
+              resetChallenge(importedChallenge);
+              toast(
+                intl.formatMessage({
+                  defaultMessage: 'Challenge imported successfully',
+                  description: 'Challenge imported toast message',
+                })
+              );
+            }
+          }}
+        >
+          <FormattedMessage
+            defaultMessage="Import"
+            description="Import JSON button text"
           />
         </Button>
         {!gridError && !challengeInfoError && (
@@ -298,17 +368,10 @@ export function CreateChallengePage() {
             }
             onClick={saveChallenge}
           >
-            {syncedChallenge?.exists ? (
-              <FormattedMessage
-                defaultMessage="Save"
-                description="Save challenge button text"
-              />
-            ) : (
-              <FormattedMessage
-                defaultMessage="Create"
-                description="Create challenge button text"
-              />
-            )}
+            <FormattedMessage
+              defaultMessage="Save"
+              description="Save challenge button text"
+            />
           </Button>
         )}
         {!gridError &&

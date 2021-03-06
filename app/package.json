@@ -30,6 +30,7 @@
     "react-script-tag": "^1.1.2",
     "react-scripts": "3.4.3",
     "react-star-rating-component": "^1.4.1",
+    "react-toastify": "^7.0.3",
     "react-use": "^15.3.4",
     "social-logos": "^2.1.2",
     "typescript": "^3.9.5",

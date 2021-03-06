@@ -11,7 +11,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { useCopyToClipboard, useLocalStorage } from 'react-use';
 import { v4 as uuidv4 } from 'uuid';
 import localStorageKeys from '../../../utils/localStorageKeys';
-import { set, useDocument } from '@nandorojo/swr-firestore';
+import { revalidateDocument, set, useDocument } from '@nandorojo/swr-firestore';
 import { getChallengePath } from '../../../firebase';
 import useAuthStore from '../../../state/AuthStore';
 import prettyStringify from '../../../utils/prettyStringify';
@@ -20,16 +20,28 @@ import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
 import { toast } from 'react-toastify';
 import useWelcomeRedirect from '../../hooks/useWelcomeRedirect';
 import { getCellFillColor } from '../../../utils/getCellFillColor';
+import { detailedDiff } from 'deep-object-diff';
+
+function removeSwrFields(challenge?: IChallenge): IChallenge | undefined {
+  if (!challenge) {
+    return undefined;
+  }
+  const cleaned = { ...challenge } as any;
+  delete cleaned.exists;
+  delete cleaned.hasPendingWrites;
+  return cleaned;
+}
 
 function createNewChallenge(userId: string): IChallenge {
   return {
     id: uuidv4(),
     locale: defaultLocale,
     isOfficial: false,
+    isPublished: false,
     userId,
     successCriteria: {},
     finishCriteria: {
-      emptyGrid: true,
+      finishChallengeCellFilled: true,
     },
     title: '',
     grid: `
@@ -47,7 +59,8 @@ function createNewChallenge(userId: string): IChallenge {
 000000000
 0000X0000
 0X0000X00
-X00X00X0X`.trim(),
+X00X00X0X
+FFFFFFFFF`.trim(),
   };
 }
 
@@ -93,8 +106,9 @@ export function CreateChallengePage() {
       grid: localChallengeGrid,
     };
   } catch (e) {
-    console.log(localChallengeInfo);
+    console.error('Failed to parse challenge', localChallengeInfo);
     challengeInfoError = e.message;
+    challenge = undefined;
   }
 
   const [initialChallenge, setInitialChallenge] = useState<
@@ -113,10 +127,10 @@ export function CreateChallengePage() {
   );
 
   useEffect(() => {
-    if (!challenge && userId) {
+    if (!localChallengeInfo && userId) {
       resetChallenge();
     }
-  }, [challenge, userId, resetChallenge]);
+  }, [localChallengeInfo, userId, resetChallenge]);
 
   const { data: syncedChallenge } = useDocument<IChallenge>(
     challenge ? getChallengePath(challenge.id) : null
@@ -146,6 +160,7 @@ export function CreateChallengePage() {
     setIsSaving(true);
     try {
       await set(challengePath, challenge);
+      await revalidateDocument(challengePath);
     } catch (e) {
       console.error(e);
       alert(`Failed to save challenge\n${e.message}`);
@@ -187,7 +202,7 @@ export function CreateChallengePage() {
             label="Challenge Settings"
             multiline
             fullWidth
-            disabled={challenge?.isPublished}
+            disabled={challenge?.isPublished && syncedChallenge?.isPublished}
             spellCheck={false}
             value={localChallengeInfo}
             onChange={(event) => setLocalChallengeInfo(event.target.value)}
@@ -216,7 +231,7 @@ export function CreateChallengePage() {
             }}
             multiline
             fullWidth
-            disabled={challenge?.isPublished}
+            disabled={challenge?.isPublished && syncedChallenge?.isPublished}
             spellCheck={false}
             value={localChallengeGrid}
             onChange={(event) => setLocalChallengeGrid(event.target.value)}
@@ -229,7 +244,7 @@ export function CreateChallengePage() {
             style={{ backgroundColor: '#666' }}
           >
             {Object.entries(ChallengeCellType).map((entry) => (
-              <Box mx={1}>
+              <Box mx={1} key={entry[0]}>
                 <Typography
                   key={entry[0]}
                   variant="caption"
@@ -281,9 +296,11 @@ export function CreateChallengePage() {
           variant="contained"
           color="secondary"
           disabled={
-            stableStringify(challenge) ===
+            stableStringify(removeSwrFields(challenge)) ===
             stableStringify(
-              syncedChallenge?.exists ? syncedChallenge : initialChallenge
+              removeSwrFields(
+                syncedChallenge?.exists ? syncedChallenge : initialChallenge
+              )
             )
           }
           onClick={() => {
@@ -364,7 +381,8 @@ export function CreateChallengePage() {
             disabled={
               isSaving ||
               (syncedChallenge?.exists &&
-                stableStringify(challenge) === stableStringify(syncedChallenge))
+                stableStringify(removeSwrFields(challenge)) ===
+                  stableStringify(removeSwrFields(syncedChallenge)))
             }
             onClick={saveChallenge}
           >
@@ -376,13 +394,20 @@ export function CreateChallengePage() {
         )}
         {!gridError &&
           !challengeInfoError &&
-          syncedChallenge?.exists &&
-          !syncedChallenge.isPublished && (
+          (!syncedChallenge?.exists || !syncedChallenge.isPublished) && (
             <Button
               variant="contained"
               color="primary"
               disabled={isSaving}
-              onClick={publishChallenge}
+              onClick={() => {
+                window.confirm(
+                  intl.formatMessage({
+                    defaultMessage:
+                      'Are you sure you want to publish? Once published, this challenge will become visible and can no longer be edited.',
+                    description: 'Publish challenge button confirmation',
+                  })
+                ) && publishChallenge();
+              }}
             >
               <FormattedMessage
                 defaultMessage="Publish"
@@ -391,6 +416,20 @@ export function CreateChallengePage() {
             </Button>
           )}
       </FlexBox>
+      {challenge && (
+        <Typography variant="caption" color="secondary">
+          {JSON.stringify(
+            detailedDiff(
+              removeSwrFields(challenge) as IChallenge,
+              removeSwrFields(
+                (syncedChallenge?.exists
+                  ? syncedChallenge
+                  : initialChallenge) || challenge
+              ) as IChallenge
+            )
+          )}
+        </Typography>
+      )}
     </FlexBox>
   );
 }

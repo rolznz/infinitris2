@@ -1,6 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+  	function isAdmin(request) {
+      return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+    function isOwner(request, resource) {    
+    	return request.auth != null && (resource == null || request.auth.uid == resource.data.userId) && request.auth.uid == request.resource.data.userId;
+    }
     match /{document=**} {
       allow read, write: if false;
     }
@@ -11,7 +17,7 @@ service cloud.firestore {
       allow create, read, update: if request.auth != null && request.auth.uid == userId;
     }
     match /challenges/{challengeId} {
-      allow create, update, delete: if request.auth != null && (resource == null || request.auth.uid == resource.data.userId) && request.auth.uid == request.resource.data.userId && request.resource.data.isOfficial == false && resource.data.isPublished == false && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0;
+      allow create, update, delete: if (resource == null || resource.data.isPublished == false) && (request.resource.data.isOfficial == false || isAdmin(request)) && isOwner(request, resource) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0;
       allow read: if true;
     }
   }

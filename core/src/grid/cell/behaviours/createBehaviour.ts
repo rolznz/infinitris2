@@ -7,6 +7,7 @@ import ICell from '@models/ICell';
 import NormalCellBehaviour from './NormalCellBehaviour';
 import ChallengeFinishBehaviour from './ChallengeFinishBehaviour';
 import { IGrid } from 'models';
+import DeadlyBehaviour from './DeadlyBehaviour';
 
 const redColor = 0xff0000;
 const blueColor = 0x0000ff;
@@ -25,6 +26,8 @@ export default function createBehaviour(
       return new NormalCellBehaviour();
     case ChallengeCellType.Laser:
       return new LaserBehaviour(cell);
+    case ChallengeCellType.Deadly:
+      return new DeadlyBehaviour(cell);
     // TODO: find way to reduce duplication
     case ChallengeCellType.RedKey:
       return new KeyBehaviour(redColor);

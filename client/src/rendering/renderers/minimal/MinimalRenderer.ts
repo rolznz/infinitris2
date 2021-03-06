@@ -597,7 +597,8 @@ export default class MinimalRenderer
     if (
       renderCellType !== RenderCellType.Cell ||
       cell.cell.type === CellType.FinishChallenge ||
-      cell.cell.type === CellType.Laser
+      cell.cell.type === CellType.Laser ||
+      cell.cell.type === CellType.Deadly
     ) {
       graphics.beginFill(color, Math.min(opacity, 1));
       graphics.drawRect(0, 0, cellSize, cellSize);

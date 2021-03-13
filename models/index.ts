@@ -11,8 +11,8 @@ import ISimulationEventListener from './src/ISimulationEventListener';
 import ISimulationSettings from './src/ISimulationSettings';
 import Layout from './src/Layout';
 import IRoom from './src/IRoom';
-import tetrominoes from './src/layouts/Tetrominoes';
-import IChallenge, { challenges } from './src/IChallenge';
+import tetrominoes from './src/exampleBlockLayouts/Tetrominoes';
+import IChallenge, { exampleChallenges } from './src/IChallenge';
 import CellType from './src/CellType';
 import ICellBehaviour from './src/ICellBehaviour';
 import IChallengeClient from './src/IChallengeClient';
@@ -27,7 +27,7 @@ import IUser from './src/IUser';
 import parseGrid from './src/util/parseGrid';
 
 export {
-  challenges,
+  exampleChallenges,
   IChallenge,
   IChallengeClient,
   ChallengeStatus,

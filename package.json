@@ -4,7 +4,8 @@
     "prettier:write": "prettier \"**/*.{ts,tsx}\" --write",
     "prettier:check": "prettier \"**/*.{ts,tsx}\" --check",
     "firebase:deploy:hosting": "firebase deploy --only hosting",
-    "firebase:deploy:rules": "firebase deploy --only firestore:rules"
+    "firebase:deploy:rules": "firebase deploy --only firestore:rules",
+    "firebase:deploy:functions": "firebase deploy --only functions"
   },
   "devDependencies": {
     "prettier": "^2.2.1"

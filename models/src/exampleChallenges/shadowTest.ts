@@ -1,4 +1,4 @@
-import tetrominoes from '../layouts/Tetrominoes';
+import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import IChallenge from '../IChallenge';
 
 const shadowTest: IChallenge = {
@@ -8,7 +8,6 @@ const shadowTest: IChallenge = {
   title: 'Shadow Test',
   locale: 'en',
   description: '',
-  layout: tetrominoes.T,
   isPublished: false,
   finishCriteria: {},
   successCriteria: {},

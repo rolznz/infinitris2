@@ -1,4 +1,3 @@
-import tetrominoes from '../layouts/Tetrominoes';
 import IChallenge from '../IChallenge';
 
 const garbageCollection1: IChallenge = {
@@ -8,7 +7,6 @@ const garbageCollection1: IChallenge = {
   title: 'Garbage Collection 1',
   description: '',
   locale: 'en',
-  layout: tetrominoes.T,
   isMandatory: true,
   isPublished: true,
   priority: 8000,

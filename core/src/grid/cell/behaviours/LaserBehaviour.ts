@@ -36,7 +36,7 @@ export default class LaserBehaviour implements ICellBehaviour {
       } else {
         --this._hold;
       }
-      if (this._isActive) {
+      if (this._charge === 1) {
         this._cell.blocks.forEach((block) => block.die());
       }
     }

@@ -21,6 +21,7 @@ import { toast } from 'react-toastify';
 import useWelcomeRedirect from '../../hooks/useWelcomeRedirect';
 import { getCellFillColor } from '../../../utils/getCellFillColor';
 import { detailedDiff } from 'deep-object-diff';
+import { useUser } from '../../../state/UserStore';
 
 function removeSwrFields(challenge?: IChallenge): IChallenge | undefined {
   if (!challenge) {
@@ -81,6 +82,7 @@ export function CreateChallengePage() {
 
   const [isSaving, setIsSaving] = useState(false);
   const userId = useAuthStore().user?.uid;
+  const user = useUser();
 
   const [localChallengeGrid, setLocalChallengeGrid] = useLocalStorage<string>(
     localStorageKeys.createChallengeGrid,
@@ -168,9 +170,11 @@ export function CreateChallengePage() {
     setIsSaving(false);
   }
 
+  const isPublished = syncedChallenge?.exists && syncedChallenge?.isPublished;
+
   return (
     <FlexBox flex={1} padding={4}>
-      {syncedChallenge?.isPublished && (
+      {syncedChallenge && isPublished && (
         <FlexBox>
           <FormattedMessage
             defaultMessage="This challenge is published and can no longer be edited."
@@ -202,7 +206,7 @@ export function CreateChallengePage() {
             label="Challenge Settings"
             multiline
             fullWidth
-            disabled={challenge?.isPublished && syncedChallenge?.isPublished}
+            disabled={isPublished}
             spellCheck={false}
             value={localChallengeInfo}
             onChange={(event) => setLocalChallengeInfo(event.target.value)}
@@ -231,7 +235,7 @@ export function CreateChallengePage() {
             }}
             multiline
             fullWidth
-            disabled={challenge?.isPublished && syncedChallenge?.isPublished}
+            disabled={isPublished}
             spellCheck={false}
             value={localChallengeGrid}
             onChange={(event) => setLocalChallengeGrid(event.target.value)}
@@ -272,7 +276,14 @@ export function CreateChallengePage() {
           variant="contained"
           color="primary"
           onClick={() => {
-            alert('Load an existing challenge to see an example.');
+            alert(`Load existing challenges to see examples.
+- You can edit, save and test a level privately. A level will only be visible to other users once it has been PUBLISHED.
+- For user safety, a challenge can only be published once. Once published, it cannot be edited. Therefore, please TEST that you can actually complete the challenge for all medals, and give your challenge a good name before publishing.
+- Each challenge must have "finishCriteria" (How the level will be ended. This can be a maximum number of blocks placed, lines cleared, touching a "Finish" cell, clearing the entire grid, etc.)
+- Each challenge must have "successCriteria" (Determines if the player wins or loses, and what medal they receive. You can use the "all" field to set standard success conditions, and then modify bronze/silver/gold to override the difficulty for that medal)
+- Each challenge must have a unique ID and must match your user ID in order to be created.
+- More questions? please create an issue on github or send an email to infinitris2@googlegroups.com.
+`);
           }}
         >
           <FormattedMessage
@@ -400,10 +411,21 @@ export function CreateChallengePage() {
               color="primary"
               disabled={isSaving}
               onClick={() => {
+                if (user.credits <= 0) {
+                  alert(
+                    intl.formatMessage({
+                      defaultMessage:
+                        'You do not have enough credits to publish. Try again in 24 hours.',
+                      description:
+                        'Not enough credits to publish alert message',
+                    })
+                  );
+                  return;
+                }
                 window.confirm(
                   intl.formatMessage({
                     defaultMessage:
-                      'Are you sure you want to publish? Once published, this challenge will become visible and can no longer be edited.',
+                      'Are you sure you want to publish? Once published, this challenge will become visible and can no longer be edited. Publishing will cost one credit (renewed daily)',
                     description: 'Publish challenge button confirmation',
                   })
                 ) && publishChallenge();

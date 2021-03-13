@@ -10,4 +10,5 @@ export default interface IUser {
   readonly preferredInputMethod?: InputMethod;
   readonly completedChallengeIds: string[];
   readonly controls: ControlSettings;
+  readonly credits: number;
 }

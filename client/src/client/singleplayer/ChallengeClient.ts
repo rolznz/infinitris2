@@ -19,6 +19,7 @@ import createBehaviour from '@core/grid/cell/behaviours/createBehaviour';
 import ControlSettings from '@models/ControlSettings';
 import { ChallengeStatus } from '@models/ChallengeStatus';
 import parseGrid from '@models/util/parseGrid';
+import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -295,8 +296,11 @@ export default class ChallengeClient
     const player = new ControllablePlayer(playerId, this._simulation);
     simulation.addPlayer(player);
     simulation.followPlayer(player);
-    player.nextLayout = this._challenge.layout;
-    player.nextLayoutRotation = this._challenge.layoutRotation;
+    if (this._challenge.firstBlockLayoutId) {
+      // TODO: remove hard coded tetrominoes to support multiple block sets from Firestore
+      player.nextLayout = tetrominoes[this._challenge.firstBlockLayoutId];
+    }
+    //player.nextLayoutRotation = this._challenge.layoutRotation;
 
     this._input = new Input(simulation, player, this._controls);
     this._renderer.virtualKeyboardControls = this._input.controls;

@@ -1,4 +1,4 @@
-import tetrominoes from '../layouts/Tetrominoes';
+import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import IChallenge from '../IChallenge';
 
 const basicMovement: IChallenge = {
@@ -8,7 +8,7 @@ const basicMovement: IChallenge = {
   title: 'Basic Movement',
   description: '',
   locale: 'en',
-  layout: tetrominoes.L,
+  firstBlockLayoutId: 'L',
   isMandatory: true,
   isPublished: true,
   priority: 9000,

@@ -10,7 +10,7 @@ import SocialLogo from 'social-logos';
 import LoadingSpinner from '../LoadingSpinner';
 import { useUser } from '../../state/UserStore';
 import removeUndefinedValues from '../../utils/removeUndefinedValues';
-import { getDocument, set } from '@nandorojo/swr-firestore';
+import { getDocument, revalidateDocument, set } from '@nandorojo/swr-firestore';
 import { getUserPath } from '../../firebase';
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
@@ -35,6 +35,10 @@ export default function LoginPage() {
             nickname: user.nickname || result.user.displayName,
             email: result.user.email,
           });
+          // wait for the firebase onCreateUser function to run
+          await new Promise((resolve) => setTimeout(resolve, 3000));
+          // re-retrieve the user with updated properties
+          await revalidateDocument(userPath);
         }
       }
     } catch (e) {

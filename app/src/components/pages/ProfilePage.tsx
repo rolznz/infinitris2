@@ -54,6 +54,14 @@ export default function ProfilePage() {
         />
       </Typography>
 
+      <Typography align="center">
+        <FormattedMessage
+          defaultMessage="{count} credits available"
+          description="User credits statistic"
+          values={{ count: user.credits || 0 }}
+        />
+      </Typography>
+
       <FlexBox flex={1} justifyContent="flex-end" mb={4}>
         <Button
           variant="contained"

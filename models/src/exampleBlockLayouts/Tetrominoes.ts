@@ -42,6 +42,6 @@ const Z: Layout = [
   [0, 0, 0],
 ];
 
-const tetrominoes = { I, J, L, O, S, T, Z };
+const tetrominoes: { [key: string]: Layout } = { I, J, L, O, S, T, Z };
 
 export default tetrominoes;

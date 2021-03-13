@@ -1,4 +1,4 @@
-import IChallenge, { challenges } from '@models/IChallenge';
+import IChallenge, { exampleChallenges } from '@models/IChallenge';
 import IInfinitrisApi from '@models/IInfinitrisApi';
 import IClientSocketEventListener from '@src/networking/IClientSocketEventListener';
 import IClient from '../../../models/src/IClient';
@@ -43,9 +43,9 @@ export default class InfinitrisApi implements IInfinitrisApi {
       this.launchDemo();
     } else if (params.has('challenge')) {
       this.launchChallenge(
-        challenges.find(
+        exampleChallenges.find(
           (challenge) => challenge.id === params.get('challengeId')
-        ) || challenges[0],
+        ) || exampleChallenges[0],
         {
           onSimulationInit: (simulation) => {
             simulation.startInterval();

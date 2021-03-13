@@ -1,13 +1,13 @@
 import InputAction from './InputAction';
 import Layout from './Layout';
-import garbageCollection1 from './challenges/garbageCollection1';
-import basicMovement from './challenges/basicMovement';
-import shadowTest from './challenges/shadowTest';
-import wrapTest from './challenges/wrapTest';
-import controlCheck from './challenges/controlCheck';
+import garbageCollection1 from './exampleChallenges/garbageCollection1';
+import basicMovement from './exampleChallenges/basicMovement';
+import shadowTest from './exampleChallenges/shadowTest';
+import wrapTest from './exampleChallenges/wrapTest';
+import controlCheck from './exampleChallenges/controlCheck';
 import ISimulationSettings from './ISimulationSettings';
 import ChallengeSuccessCriteria from './ChallengeSuccessCriteria';
-import keysAndLocks1 from './challenges/keysAndLocks1';
+import keysAndLocks1 from './exampleChallenges/keysAndLocks1';
 
 export interface ChallengeTranslation {
   title: string;
@@ -24,10 +24,10 @@ export default interface IChallenge extends ChallengeTranslation {
   readonly isPublished?: boolean;
   readonly locale: string;
   readonly translations?: { [locale: string]: ChallengeTranslation };
-  readonly layout?: Layout;
+  readonly firstBlockLayoutId?: string;
   readonly grid: string;
 
-  readonly layoutRotation?: number;
+  //readonly layoutRotation?: number;
   readonly allowedActions?: InputAction[];
 
   readonly finishCriteria: {
@@ -49,8 +49,7 @@ export default interface IChallenge extends ChallengeTranslation {
   };
 }
 
-// TODO: rename to core challenges (user-submitted ones will be from Firebase)
-export const challenges: IChallenge[] = [
+export const exampleChallenges: IChallenge[] = [
   keysAndLocks1,
   controlCheck,
   basicMovement,

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import useAppStore from '../../../state/AppStore';
 import {
-  challenges,
   ISimulationEventListener,
   ISimulation,
   IChallengeClient,
+  IChallenge,
 } from 'infinitris2-models';
 import useWelcomeRedirect from '../../hooks/useWelcomeRedirect';
 import { useHistory, useParams } from 'react-router-dom';
@@ -16,6 +16,8 @@ import ChallengeResultsView from './ChallengeResultsView';
 import ChallengeFailedView from './ChallengeFailedView';
 import { useUserStore } from '../../../state/UserStore';
 import { useSearchParam } from 'react-use';
+import { useDocument } from '@nandorojo/swr-firestore';
+import { getChallengePath } from '../../../firebase';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -31,9 +33,11 @@ export default function ChallengePage() {
   const { id } = useParams<ChallengePageRouteParams>();
   const isTest = id === 'test';
 
-  const challenge = isTest
-    ? JSON.parse(json as string)
-    : challenges.find((t) => t.id === id);
+  const { data: syncedChallenge } = useDocument<IChallenge>(
+    !isTest && id ? getChallengePath(id) : null
+  );
+
+  const challenge = isTest ? JSON.parse(json as string) : syncedChallenge;
   const requiresRedirect = useWelcomeRedirect(
     true,
     challenge?.priority,
@@ -160,7 +164,9 @@ export default function ChallengePage() {
           const remainingChallenges = incompleteChallenges.filter(
             (incompleteChallenge) => incompleteChallenge.id !== challenge.id
           );
-          if (remainingChallenges.length) {
+          if (isTest) {
+            history.goBack();
+          } else if (remainingChallenges.length) {
             history.push(Routes.challengeRequired);
           } else {
             history.push(Routes.allSet);

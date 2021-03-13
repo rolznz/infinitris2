@@ -1,5 +1,5 @@
 import InputAction from '../InputAction';
-import tetrominoes from '../layouts/Tetrominoes';
+import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import IChallenge from '../IChallenge';
 
 const wrapTest: IChallenge = {
@@ -9,7 +9,6 @@ const wrapTest: IChallenge = {
   title: 'Wrap Test',
   locale: 'en',
   description: '',
-  layout: tetrominoes.T,
   isPublished: false,
   finishCriteria: {},
   successCriteria: {},

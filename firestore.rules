@@ -4,8 +4,11 @@ service cloud.firestore {
   	function isAdmin(request) {
       return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
+    function matchesUser(request, userId) {    
+    	return request.auth != null && request.auth.uid == userId;
+    }
     function isOwner(request, resource) {    
-    	return request.auth != null && (resource == null || request.auth.uid == resource.data.userId) && request.auth.uid == request.resource.data.userId;
+    	return request.auth != null && (resource == null || request.auth.uid == resource.data.userId)
     }
     match /{document=**} {
       allow read, write: if false;
@@ -14,10 +17,12 @@ service cloud.firestore {
       allow read: if true;
     }
     match /users/{userId} {
-      allow create, read, update: if request.auth != null && request.auth.uid == userId;
+    	allow read: if matchesUser(request, userId);
+      allow create: if matchesUser(request, userId) && request.resource.data.credits == 0;
+      allow update: if matchesUser(request, userId) && !('credits' in request.resource.data);
     }
     match /challenges/{challengeId} {
-      allow create, update, delete: if (resource == null || resource.data.isPublished == false) && (request.resource.data.isOfficial == false || isAdmin(request)) && isOwner(request, resource) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0;
+      allow create, update, delete: if matchesUser(request, request.resource.data.userId) && (resource == null || resource.data.isPublished == false) && (request.resource.data.isOfficial == false || isAdmin(request)) && isOwner(request, resource) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0;
       allow read: if true;
     }
   }

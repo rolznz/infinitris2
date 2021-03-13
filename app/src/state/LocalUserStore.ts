@@ -16,6 +16,7 @@ const initialUser: IUser = localStorageUser || {
   locale: defaultLocale,
   completedChallengeIds: [],
   controls: DEFAULT_KEYBOARD_CONTROLS,
+  credits: 0,
 };
 
 type LocalUserStore = {

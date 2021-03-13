@@ -1,4 +1,4 @@
-import tetrominoes from '../layouts/Tetrominoes';
+import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import IChallenge from '../IChallenge';
 
 const controlCheck: IChallenge = {
@@ -7,7 +7,7 @@ const controlCheck: IChallenge = {
   isOfficial: true,
   title: 'Control Check',
   locale: 'en',
-  layout: tetrominoes.L,
+  firstBlockLayoutId: 'L',
   grid: `
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000

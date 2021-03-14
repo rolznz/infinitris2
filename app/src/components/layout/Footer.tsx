@@ -10,6 +10,8 @@ import React from 'react';
 import SocialLogo, { SocialIcon } from 'social-logos';
 import useAppStore from '../../state/AppStore';
 import { WithStyles } from '@material-ui/core/styles/withStyles';
+import { Link as RouterLink } from 'react-router-dom';
+import Routes from '../../models/Routes';
 
 interface SocialIconLink {
   icon: SocialIcon;
@@ -40,6 +42,7 @@ const styles = (theme: Theme) =>
 
 function Footer(props: WithStyles<typeof styles>) {
   const appStore = useAppStore();
+
   return (
     <Box
       width="100%"
@@ -52,7 +55,7 @@ function Footer(props: WithStyles<typeof styles>) {
       boxShadow={1}
     >
       <Typography variant="caption">
-        INFINITRIS 2{' '}
+        INFINITRIS ONLINE{' '}
         <img
           src="/logo192.png"
           alt=""
@@ -61,6 +64,33 @@ function Footer(props: WithStyles<typeof styles>) {
         />{' '}
         Build {appStore.clientApi?.getVersion()}
       </Typography>
+      <Box ml={0.5} />
+      <Link
+        component={RouterLink}
+        underline="none"
+        to={Routes.credits}
+        style={{ lineHeight: 0 }}
+      >
+        <Typography variant="caption">CREDITS</Typography>
+      </Link>
+      <Box ml={0.5} />
+      <Link
+        component={RouterLink}
+        underline="none"
+        to={Routes.privacyPolicy}
+        style={{ lineHeight: 0 }}
+      >
+        <Typography variant="caption">PRIVACY</Typography>
+      </Link>
+      <Box ml={0.5} />
+      <Link
+        component={RouterLink}
+        underline="none"
+        to={Routes.termsOfService}
+        style={{ lineHeight: 0 }}
+      >
+        <Typography variant="caption">TOS</Typography>
+      </Link>
       {socialIconLinks.map((link) => (
         <Box key={link.icon} ml={0.75} mr={0.25} mt={0.25}>
           <Link href={link.link}>

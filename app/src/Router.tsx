@@ -19,6 +19,9 @@ import ChallengeRequiredPage from './components/pages/ChallengeRequiredPage';
 import { ChallengesPage } from './components/pages/ChallengesPage/ChallengesPage';
 import WelcomePage from './components/pages/WelcomePage';
 import Routes from './models/Routes';
+import { CreditsPage } from './components/pages/CreditsPage';
+import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
+import { TermsOfServicePage } from './components/TermsOfServicePage';
 
 export default function Router() {
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
@@ -48,6 +51,15 @@ export default function Router() {
       <Switch>
         <Route exact path={Routes.home}>
           <HomePage />
+        </Route>
+        <Route exact path={Routes.credits}>
+          <CreditsPage />
+        </Route>
+        <Route exact path={Routes.termsOfService}>
+          <TermsOfServicePage />
+        </Route>
+        <Route exact path={Routes.privacyPolicy}>
+          <PrivacyPolicyPage />
         </Route>
         <Route exact path={Routes.settings}>
           <SettingsPage />

@@ -19,7 +19,8 @@ service cloud.firestore {
     match /users/{userId} {
     	allow read: if matchesUser(request, userId);
       allow create: if matchesUser(request, userId) && request.resource.data.credits == 0;
-      allow update: if matchesUser(request, userId) && !('credits' in request.resource.data);
+      allow update: if matchesUser(request, userId) && !request.resource.data.diff(resource.data).affectedKeys()
+        .hasAny(['credits']);
     }
     match /challenges/{challengeId} {
       allow create, update, delete: if matchesUser(request, request.resource.data.userId) && (resource == null || resource.data.isPublished == false) && (request.resource.data.isOfficial == false || isAdmin(request)) && isOwner(request, resource) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0;

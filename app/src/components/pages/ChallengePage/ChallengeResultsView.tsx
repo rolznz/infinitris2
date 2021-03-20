@@ -1,3 +1,4 @@
+import FlexBox from '@/components/layout/FlexBox';
 import { Box, Typography } from '@material-ui/core';
 import { IChallenge, ChallengeStatus } from 'infinitris2-models';
 import ChallengeCompletionStats from 'infinitris2-models/dist/src/ChallengeCompletionStats';
@@ -9,7 +10,7 @@ import ContinueHint from '../../ContinueHint';
 import { Gesture } from '../../hooks/useGestureListener';
 import useReceivedInput from '../../hooks/useReceivedInput';
 import useTrue from '../../hooks/useTrue';
-import FlexBox from '../../layout/FlexBox';
+import ChallengeMedalDisplay from './ChallengeMedalDisplay';
 
 interface ChallengeResultsViewProps {
   status: ChallengeStatus;
@@ -25,14 +26,6 @@ export default function ChallengeResultsView({
   onRetry,
 }: ChallengeResultsViewProps) {
   const user = useUser();
-  const [starAnimation, setStarAnimation] = useState(0);
-  useEffect(() => {
-    if (starAnimation < status.stars) {
-      setTimeout(() => {
-        setStarAnimation((oldStarAnimation) => oldStarAnimation + 1);
-      }, 500);
-    }
-  }, [starAnimation, status.stars]);
 
   const [hasReceivedRetryInput] = useReceivedInput('r', Gesture.LongPress);
   useTrue(hasReceivedRetryInput, onRetry);
@@ -60,14 +53,15 @@ export default function ChallengeResultsView({
             description="Challenge completed heading"
           />
         </Typography>
-        <div style={{ fontSize: 96 }}>
+        <ChallengeMedalDisplay medalIndex={status.stars} />
+        {/*<div style={{ fontSize: 96 }}>
           <StarRatingComponent
             name="challenge-score"
             editing={false}
             starCount={3}
-            value={starAnimation}
+            value={medalAnimation}
           />
-        </div>
+  </div>*/}
         {/* TODO: extract to a list of statistics, will this work with react-i18n? */}
         <Typography variant="caption">
           <FormattedMessage

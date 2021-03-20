@@ -8,10 +8,11 @@ import useLoginRedirect from '../hooks/useLoginRedirect';
 import { useUserStore } from '../../state/UserStore';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
-import { useCollection } from '@nandorojo/swr-firestore';
-import { IChallenge } from 'infinitris2-models';
+import { useCollection, useDocument } from '@nandorojo/swr-firestore';
+import { IChallenge, IUser } from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
-import { challengesPath } from '../../firebase';
+import { challengesPath, getUserPath } from '../../firebase';
+import LoadingSpinner from '../LoadingSpinner';
 
 export default function ProfilePage() {
   useLoginRedirect();
@@ -23,9 +24,22 @@ export default function ProfilePage() {
     where: [['userId', '==', userId]],
   });
 
+  const { data: fireStoreUserDoc } = useDocument<IUser>(
+    userId ? getUserPath(userId) : null
+  );
+
   function signOut() {
     userStore.signOut();
     history.replace(Routes.home);
+  }
+
+  if (!fireStoreUserDoc?.id || fireStoreUserDoc.id !== userId) {
+    // wait for the user profile to load
+    return (
+      <FlexBox flex={1}>
+        <LoadingSpinner />
+      </FlexBox>
+    );
   }
 
   return (

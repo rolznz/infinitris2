@@ -157,7 +157,7 @@ export default function ChallengePage() {
   } else if (challengeCompleted && challengeClient && restartClient) {
     return (
       <ChallengeResultsView
-        challenge={challenge}
+        challengeId={challenge.id}
         status={challengeClient.getStatus()}
         onContinue={() => {
           completeChallenge(challenge.id);

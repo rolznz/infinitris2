@@ -4,7 +4,6 @@ import useAppStore from './state/AppStore';
 import { Box, ThemeProvider } from '@material-ui/core';
 import theme from './theme';
 
-import Router from './Router';
 import Internationalization from './internationalization/Internationalization';
 
 import { FuegoProvider } from '@nandorojo/swr-firestore';
@@ -12,7 +11,9 @@ import { fuego } from './firebase';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
 
-function App() {
+interface AppProps {}
+
+function App({ children }: React.PropsWithChildren<AppProps>) {
   useInfinitrisClient();
   const appStore = useAppStore();
   if (!appStore.clientApi) {
@@ -29,7 +30,7 @@ function App() {
             flexDirection="column"
             height="100%"
           >
-            <Router />
+            {children}
             <ToastContainer />
           </Box>
         </ThemeProvider>

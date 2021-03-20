@@ -12,7 +12,7 @@ module.exports = override(
   ]),
   addWebpackAlias({
     ['@']: path.resolve(__dirname, 'src'),
-    ['@components']: path.resolve(__dirname, 'src/components'),
-    ['@images']: path.resolve(__dirname, 'src/images'),
+    ['@components']: path.resolve(__dirname, 'src', 'components'),
+    ['@images']: path.resolve(__dirname, 'src', 'images'),
   })
 );

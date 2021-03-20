@@ -38,7 +38,7 @@ export default function SettingsPage() {
               left={
                 <FormattedMessage
                   defaultMessage="Language"
-                  description="Language left column"
+                  description="Settings Page Table - Language left column"
                 />
               }
               right={
@@ -60,7 +60,7 @@ export default function SettingsPage() {
               left={
                 <FormattedMessage
                   defaultMessage="Preferred Input Method"
-                  description="Preferred Input Method left column"
+                  description="Settings Page Table - Preferred Input Method left column"
                 />
               }
               right={
@@ -84,7 +84,7 @@ export default function SettingsPage() {
               left={
                 <FormattedMessage
                   defaultMessage="Controls"
-                  description="Controls left column"
+                  description="Settings Page Table - Controls left column"
                 />
               }
               right={
@@ -96,7 +96,7 @@ export default function SettingsPage() {
                   <Button variant="contained" color="primary">
                     <FormattedMessage
                       defaultMessage="Change"
-                      description="Change controls button text"
+                      description="Settings Page Table - Change controls button text"
                     />
                   </Button>
                 </Link>
@@ -106,7 +106,7 @@ export default function SettingsPage() {
               left={
                 <FormattedMessage
                   defaultMessage="Clear Progress"
-                  description="Clear Progress left column"
+                  description="Settings Page Table - Clear Progress left column"
                 />
               }
               right={
@@ -121,7 +121,7 @@ export default function SettingsPage() {
                 >
                   <FormattedMessage
                     defaultMessage="Clear"
-                    description="Clear progress button text"
+                    description="Settings Page Table - Clear progress button text"
                   />
                 </Button>
               }

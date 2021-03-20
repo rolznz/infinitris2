@@ -1,35 +1,163 @@
 {
-  "0IFGxr": {
-    "defaultMessage": "Press Enter",
-    "description": "Choose keyboard controls"
+  "+HC8BA": {
+    "defaultMessage": "Are you sure you want to publish? Once published, this challenge will become visible and can no longer be edited. Publishing will cost one credit (renewed daily)",
+    "description": "Publish challenge button confirmation"
+  },
+  "+Ya7I/": {
+    "defaultMessage": "Create Challenge",
+    "description": "Create Challenge button tooltip"
+  },
+  "/ALJ+x": {
+    "defaultMessage": "Move Down",
+    "description": "MoveDown action text"
+  },
+  "0/CUau": {
+    "defaultMessage": "This challenge is published and can no longer be edited.",
+    "description": "Challenge published text"
+  },
+  "0cwr0n": {
+    "defaultMessage": "Press a key for {inputAction}",
+    "description": "Press a key for the selected input action"
+  },
+  "0kly0X": {
+    "defaultMessage": "Enter challenge JSON",
+    "description": "Enter challenge JSON dialog message"
+  },
+  "1F9C2n": {
+    "defaultMessage": "{count} challenges created",
+    "description": "Created challenges statistic"
+  },
+  "1XwOWH": {
+    "defaultMessage": "Load Challenge",
+    "description": "Load Challenge button tooltip"
+  },
+  "4q7Kpa": {
+    "defaultMessage": "Sign out",
+    "description": "Sign out button text"
   },
   "5VgUMU": {
     "defaultMessage": "Control Select",
     "description": "Control selection heading"
   },
+  "68Rafq": {
+    "defaultMessage": "Import",
+    "description": "Import JSON button text"
+  },
+  "6V0eSJ": {
+    "defaultMessage": "Challenge Completed",
+    "description": "Challenge completed heading"
+  },
+  "7Jl9/3": {
+    "defaultMessage": "Help",
+    "description": "Help button text"
+  },
+  "8dd5jf": {
+    "defaultMessage": "Touchscreen",
+    "description": "Choose touch controls"
+  },
+  "9RckHD": {
+    "defaultMessage": "Reset",
+    "description": "Reset challenge button text"
+  },
+  "9hmrYe": {
+    "defaultMessage": "Publish",
+    "description": "Publish button text"
+  },
+  "BhPh8A": {
+    "defaultMessage": "{count} incomplete {count, plural, one {challenge} other {challenges}} to be completed",
+    "description": "Incompleted challenges"
+  },
   "C1C3gi": {
     "defaultMessage": "Play",
     "description": "Play button text"
+  },
+  "E0BKYv": {
+    "defaultMessage": "Blocks placed: {blocksPlaced}",
+    "description": "Number of blocks placed in challenge"
   },
   "FJsJQx": {
     "defaultMessage": "Single Player",
     "description": "Single player button tooltip"
   },
-  "K3+emg": {
-    "defaultMessage": "{count} incomplete {count, plural, one {tutorial} other {tutorials}} to be completed",
-    "description": "Incompleted tutorials"
+  "Fm/5WQ": {
+    "defaultMessage": "Export",
+    "description": "Export JSON button text"
   },
-  "Mkztkl": {
-    "defaultMessage": "Woohoo! All required tutorials have been completed!",
-    "description": "All required tutorials have been completed"
+  "G1Ftjd": {
+    "defaultMessage": "Rotate Clockwise",
+    "description": "RotateClockwise action text"
+  },
+  "H4fDqx": {
+    "defaultMessage": "Clear Progress",
+    "description": "Settings Page Table - Clear Progress left column"
+  },
+  "Im4nof": {
+    "defaultMessage": "Language",
+    "description": "Settings Page Table - Language left column"
+  },
+  "MhW9iO": {
+    "defaultMessage": "Change",
+    "description": "Settings Page Table - Change controls button text"
+  },
+  "P5qtEF": {
+    "defaultMessage": "You do not have enough credits to publish. Try again in 24 hours.",
+    "description": "Not enough credits to publish alert message"
+  },
+  "QXpu7n": {
+    "defaultMessage": "All Challenges",
+    "description": "Challenges Page - All Challenges section title"
+  },
+  "QnqQTB": {
+    "defaultMessage": "{nickname}'s Profile",
+    "description": "Profile title"
+  },
+  "REvIMN": {
+    "defaultMessage": "R to retry, F for feedback",
+    "description": "Keyboard context menu text (retry, feedback, etc)"
+  },
+  "SLA8kK": {
+    "defaultMessage": "Settings",
+    "description": "Settings Header"
   },
   "VWWoDA": {
     "defaultMessage": "No description provided",
     "description": "No description provided"
   },
+  "X5AYXU": {
+    "defaultMessage": "New Challenge",
+    "description": "New challenge button text"
+  },
+  "Y2vV+d": {
+    "defaultMessage": "Move Left",
+    "description": "MoveLeft action text"
+  },
   "YxmKee": {
     "defaultMessage": "{numRooms} Rooms",
     "description": "Number of rooms"
+  },
+  "Z27sHP": {
+    "defaultMessage": "{count} completed challenges",
+    "description": "Completed challenges statistic"
+  },
+  "cX/GDI": {
+    "defaultMessage": "Your Challenges",
+    "description": "Challenges Page - Your Challenges section title"
+  },
+  "ck/L5/": {
+    "defaultMessage": "Keyboard",
+    "description": "Choose keyboard controls"
+  },
+  "crhfME": {
+    "defaultMessage": "Challenge copied to clipboard",
+    "description": "Challenge copied to clipboard toast message"
+  },
+  "czkrQM": {
+    "defaultMessage": "Challenges",
+    "description": "Challenges button tooltip"
+  },
+  "e0MIw6": {
+    "defaultMessage": "Login with",
+    "description": "Login page title"
   },
   "eA1i8I": {
     "defaultMessage": "Press Enter to continue",
@@ -39,12 +167,80 @@
     "defaultMessage": "Nickname",
     "description": "Nickname textbox placeholder"
   },
-  "iBEOtA": {
-    "defaultMessage": "Tap Anywhere",
-    "description": "Choose touch controls"
+  "fFqua5": {
+    "defaultMessage": "Lines cleared: {linesCleared}",
+    "description": "Number of lines cleared in challenge"
+  },
+  "g6B6Ge": {
+    "defaultMessage": "Challenge imported successfully",
+    "description": "Challenge imported toast message"
+  },
+  "h0pcQT": {
+    "defaultMessage": "Drop",
+    "description": "Drop action text"
+  },
+  "hK8RKE": {
+    "defaultMessage": "Time taken: {timeTaken} seconds",
+    "description": "Time taken to complete challenge"
+  },
+  "iK6s4W": {
+    "defaultMessage": "Test",
+    "description": "Test challenge button text"
+  },
+  "ilOHgt": {
+    "defaultMessage": "Long press to retry or leave feedback",
+    "description": "Touchscreen context menu text (retry, feedback, etc)"
+  },
+  "juwrlQ": {
+    "defaultMessage": "Reset Controls",
+    "description": "Reset Controls button text"
+  },
+  "jz3Nwb": {
+    "defaultMessage": "{count} credits available",
+    "description": "User credits statistic"
+  },
+  "l0mRWy": {
+    "defaultMessage": "Move Right",
+    "description": "MoveRight action text"
+  },
+  "mL3PCN": {
+    "defaultMessage": "Preferred Input Method",
+    "description": "Settings Page Table - Preferred Input Method left column"
+  },
+  "n9WhjL": {
+    "defaultMessage": "Clear",
+    "description": "Settings Page Table - Clear progress button text"
   },
   "oLa/Am": {
     "defaultMessage": "Tap to continue",
     "description": "Touchscreen continue text"
+  },
+  "p/3SgT": {
+    "defaultMessage": "Controls",
+    "description": "Settings Page Table - Controls left column"
+  },
+  "qXu1tt": {
+    "defaultMessage": "Attempt: #{attemptCount}",
+    "description": "Number of times the user has attempted this challenge"
+  },
+  "tbkOWC": {
+    "defaultMessage": "Rotate Anticlockwise",
+    "description": "RotateAnticlockwise action text"
+  },
+  "vuGMBE": {
+    "defaultMessage": "Control Settings",
+    "description": "Control Settings Header"
+  },
+  "x2eyeu": {
+    "defaultMessage": "Woohoo! All required challenges have been completed!",
+    "description": "All required challenges have been completed"
+  },
+  "yOghGo": {
+    "defaultMessage": "Save",
+    "description": "Save challenge button text"
+  },
+  "zMemJF": {
+    "defaultMessage": "Clone Challenge",
+    "description": "Clone challenge button text"
   }
 }

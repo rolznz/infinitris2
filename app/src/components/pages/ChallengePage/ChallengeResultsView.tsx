@@ -1,10 +1,9 @@
 import FlexBox from '@/components/layout/FlexBox';
 import { Box, Typography } from '@material-ui/core';
-import { IChallenge, ChallengeStatus } from 'infinitris2-models';
+import { ChallengeStatus } from 'infinitris2-models';
 import ChallengeCompletionStats from 'infinitris2-models/dist/src/ChallengeCompletionStats';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import StarRatingComponent from 'react-star-rating-component';
 import { useUser } from '../../../state/UserStore';
 import ContinueHint from '../../ContinueHint';
 import { Gesture } from '../../hooks/useGestureListener';
@@ -12,15 +11,15 @@ import useReceivedInput from '../../hooks/useReceivedInput';
 import useTrue from '../../hooks/useTrue';
 import ChallengeMedalDisplay from './ChallengeMedalDisplay';
 
-interface ChallengeResultsViewProps {
+export interface ChallengeResultsViewProps {
   status: ChallengeStatus;
-  challenge: IChallenge;
+  challengeId: string;
   onContinue(): void;
   onRetry(): void;
 }
 
 export default function ChallengeResultsView({
-  challenge,
+  challengeId,
   status,
   onContinue,
   onRetry,
@@ -54,14 +53,6 @@ export default function ChallengeResultsView({
           />
         </Typography>
         <ChallengeMedalDisplay medalIndex={status.stars} />
-        {/*<div style={{ fontSize: 96 }}>
-          <StarRatingComponent
-            name="challenge-score"
-            editing={false}
-            starCount={3}
-            value={medalAnimation}
-          />
-  </div>*/}
         {/* TODO: extract to a list of statistics, will this work with react-i18n? */}
         <Typography variant="caption">
           <FormattedMessage
@@ -95,13 +86,14 @@ export default function ChallengeResultsView({
             defaultMessage="Attempt: #{attemptCount}"
             description="Number of times the user has attempted this challenge"
             values={{
-              attemptCount: user.challengeAttempts[challenge.id]?.length,
+              attemptCount: user.challengeAttempts[challengeId]?.length || 1,
             }}
           />
         </Typography>
         <Box pt={2}>
           <ContinueHint showContextMenu />
         </Box>
+        <p>TODO: 2 buttons (retry, next)</p>
       </FlexBox>
     </FlexBox>
   );

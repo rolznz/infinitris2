@@ -47,7 +47,9 @@
     "formatjs:compile": "wrap () { yarn formatjs compile src/internationalization/lang/$1.json --ast --out-file src/internationalization/compiled-lang/$1.json | cat; }; wrap",
     "formatjs:compile:en": "yarn formatjs:compile en",
     "formatjs:compile:th": "yarn formatjs:compile th",
-    "formatjs:compile:all": "yarn formatjs:compile:en && yarn formatjs:compile:th"
+    "formatjs:compile:all": "yarn formatjs:compile:en && yarn formatjs:compile:th",
+    "storybook": "start-storybook -p 6006 -s public",
+    "build-storybook": "build-storybook -s public"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -79,11 +81,19 @@
   },
   "devDependencies": {
     "@formatjs/cli": "^2.13.16",
+    "@storybook/addon-actions": "^6.1.21",
+    "@storybook/addon-essentials": "^6.1.21",
+    "@storybook/addon-links": "^6.1.21",
+    "@storybook/node-logger": "^6.1.21",
+    "@storybook/preset-create-react-app": "^3.1.7",
+    "@storybook/react": "^6.1.21",
+    "@storybook/addons": "^6.1.21",
+    "@storybook/theming": "^6.1.21",
     "@types/json-stable-stringify": "^1.0.32",
     "@types/react-loader-spinner": "^3.1.2",
     "@types/react-router-dom": "^5.1.6",
-    "@types/social-logos": "^2.1.0",
     "@types/react-star-rating-component": "^1.4.0",
+    "@types/social-logos": "^2.1.0",
     "@types/uuid": "^8.3.0",
     "customize-cra": "^1.0.0",
     "react-app-rewired": "^2.1.8"

@@ -10,6 +10,7 @@ import { Gesture } from '../../hooks/useGestureListener';
 import useReceivedInput from '../../hooks/useReceivedInput';
 import useTrue from '../../hooks/useTrue';
 import ChallengeMedalDisplay from './ChallengeMedalDisplay';
+import ChallengeRatingDisplay from './ChallengeRatingDisplay';
 
 export interface ChallengeResultsViewProps {
   status: ChallengeStatus;
@@ -52,7 +53,7 @@ export default function ChallengeResultsView({
             description="Challenge completed heading"
           />
         </Typography>
-        <ChallengeMedalDisplay medalIndex={status.stars} />
+        <ChallengeMedalDisplay medalIndex={status.medalIndex} />
         {/* TODO: extract to a list of statistics, will this work with react-i18n? */}
         <Typography variant="caption">
           <FormattedMessage
@@ -90,6 +91,7 @@ export default function ChallengeResultsView({
             }}
           />
         </Typography>
+        <ChallengeRatingDisplay />
         <Box pt={2}>
           <ContinueHint showContextMenu />
         </Box>

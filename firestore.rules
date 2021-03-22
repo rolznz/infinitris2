@@ -23,7 +23,25 @@ service cloud.firestore {
         .hasAny(['credits']);
     }
     match /challenges/{challengeId} {
-      allow create, update, delete: if matchesUser(request, request.resource.data.userId) && (resource == null || resource.data.isPublished == false) && (request.resource.data.isOfficial == false || isAdmin(request)) && isOwner(request, resource) && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0;
+    	function isValidChallenge() {
+      	return matchesUser(request, request.resource.data.userId) && (request.resource.data.isOfficial == false || isAdmin(request)) && isOwner(request, resource);
+      }
+      allow create: if isValidChallenge() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0 && request.resource.data.totalRating == 0;
+      allow update: if isValidChallenge() && resource.data.isPublished == false  && !request.resource.data.diff(resource.data).affectedKeys()
+        .hasAny(['totalRating', 'numRatings']);
+      allow delete: if false;
+      allow read: if true;
+    }
+    match /ratings/{ratingId} {
+    	function calculateRatingId() {
+      	return request.resource.data.entityType + '-' + request.resource.data.entityId + '-' + request.resource.data.userId;
+      }
+    	function isValidRating() {
+      	return ratingId == calculateRatingId() && request.resource.data.value > 0 && request.resource.data.value < 6 && matchesUser(request, request.resource.data.userId) && isOwner(request, resource);
+      }
+      allow create: if isValidRating();
+      allow update: if false;
+      allow delete: if false;
       allow read: if true;
     }
   }

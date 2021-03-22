@@ -40,6 +40,8 @@ function createNewChallenge(userId: string): IChallenge {
     isOfficial: false,
     isPublished: false,
     userId,
+    numRatings: 0,
+    totalRating: 0,
     successCriteria: {},
     finishCriteria: {
       finishChallengeCellFilled: true,

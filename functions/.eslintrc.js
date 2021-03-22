@@ -24,6 +24,8 @@ module.exports = {
     'quotes': ['error', 'single'],
     // prettier-ignore
     'indent': ['error', 2],
+    // prettier-ignore
+    'object-curly-spacing': ['error', 'always'],
     'space-before-function-paren': ['error', 'always'],
   },
 };

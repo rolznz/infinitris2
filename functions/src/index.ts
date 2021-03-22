@@ -15,13 +15,44 @@ exports.onCreateUser = functions.firestore
 exports.onCreateChallenge = functions.firestore
   .document('challenges/{challengeId}')
   .onCreate(async (snapshot, _context) => {
-    const userDoc = db.doc(`users/${snapshot.data().userId}`);
-    const userDocData = await userDoc.get();
     // reduce the number of credits the user has so they
     // cannot create an infinite number of challenges
-    return userDoc.update({
+    const userDoc = db.doc(`users/${snapshot.data().userId}`);
+    const userDocData = await userDoc.get();
+    await userDoc.update({
       credits: userDocData.get('credits') - 1,
     });
+  });
+
+exports.onCreateRating = functions.firestore
+  .document('ratings/{ratingId}')
+  .onCreate(async (snapshot, _context) => {
+    const rating = snapshot.data();
+    if (rating.entityType === 'challenge') {
+      // update the challenge total rating
+      const challengeDocRef = db.doc(`challenges/${snapshot.data().entityId}`);
+      try {
+        await db.runTransaction(async (t) => {
+          const challengeDoc = await t.get(challengeDocRef);
+          const challenge = challengeDoc.data();
+          if (challenge) {
+            const oldNumRatings = challenge.numRatings || 0;
+            const oldTotalRating = challenge.totalRating || 0;
+            const numRatings = oldNumRatings + 1;
+            const totalRating =
+              oldTotalRating * (oldNumRatings / numRatings) +
+              rating.value * (1 / numRatings);
+            t.update(challengeDocRef, { numRatings, totalRating });
+          }
+        });
+
+        console.log('Updated challenge rating: ', rating.entityId);
+      } catch (e) {
+        console.log('Failed to update challenge rating: ', e);
+      }
+    } else {
+      throw new Error('Unsupported entity type: ' + rating.entityType);
+    }
   });
 
 exports.dailyCreditAward = functions.pubsub

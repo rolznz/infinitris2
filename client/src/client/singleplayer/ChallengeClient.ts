@@ -58,7 +58,7 @@ export default class ChallengeClient
    * @inheritdoc
    */
   onSimulationStep(simulation: ISimulation) {
-    if (this.getStatus().status !== 'pending') {
+    if (this.getStatus().code !== 'pending') {
       simulation.stopInterval();
     }
   }
@@ -166,7 +166,7 @@ export default class ChallengeClient
     };
     const finished = matchesFinishCriteria();
 
-    const getStars = () => {
+    const getMedalIndex = () => {
       const matchesSuccessCriteria = (
         criteria: ChallengeSuccessCriteria
       ): boolean => {
@@ -214,17 +214,17 @@ export default class ChallengeClient
       };
 
       return [
-        successCriteria.gold,
-        successCriteria.silver,
         successCriteria.bronze,
+        successCriteria.silver,
+        successCriteria.gold,
       ]
         .map((criteria) => matchesSuccessCriteria(mergeCriteria(criteria)))
         .filter((result) => result).length;
     };
 
-    const stars = finished ? getStars() : 0;
+    const medalIndex = finished ? getMedalIndex() : 0;
     //this._numLinesCleared >= (this._challenge.successLinesCleared || 0);
-    const status = finished ? (stars > 0 ? 'success' : 'failed') : 'pending';
+    const code = finished ? (medalIndex > 0 ? 'success' : 'failed') : 'pending';
 
     const stats: ChallengeCompletionStats | undefined = finished
       ? {
@@ -236,8 +236,8 @@ export default class ChallengeClient
 
     // TODO:
     return {
-      status,
-      stars,
+      code,
+      medalIndex,
       stats,
     };
   }

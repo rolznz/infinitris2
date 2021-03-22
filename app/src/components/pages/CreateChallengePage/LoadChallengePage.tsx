@@ -30,14 +30,23 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
         <FlexBox key={challenge.id} margin={4}>
           <Card
             onClick={() => {
-              const { grid, ...challengeInfo } = challenge;
+              const {
+                grid,
+                totalRating,
+                numRatings,
+                ...challengeInfo
+              } = challenge;
               localStorage.setItem(
                 localStorageKeys.createChallengeGrid,
                 grid as string
               );
               localStorage.setItem(
                 localStorageKeys.createChallengeInfo,
-                prettyStringify(challengeInfo)
+                prettyStringify({
+                  ...challengeInfo,
+                  numRatings: 0,
+                  totalRating: 0,
+                })
               );
               history.push(Routes.createChallenge);
             }}

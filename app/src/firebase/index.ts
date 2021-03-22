@@ -26,3 +26,9 @@ export const getRoomPath = (roomId: string) => `${roomsPath}/${roomId}`;
 export const challengesPath = 'challenges';
 export const getChallengePath = (challengeId: string) =>
   `${challengesPath}/${challengeId}`;
+export const ratingsPath = 'ratings';
+export const getRatingsPath = (
+  entityType: 'challenge',
+  entityId: string,
+  userId: string
+) => `${ratingsPath}/${entityType}-${entityId}-${userId}`;

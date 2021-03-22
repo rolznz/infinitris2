@@ -25,6 +25,7 @@ import getUserFriendlyKeyText from './src/util/getUserFriendlyKeyText';
 import { ChallengeStatus } from './src/ChallengeStatus';
 import IUser from './src/IUser';
 import parseGrid from './src/util/parseGrid';
+import IRating from './src/IRating';
 
 export {
   exampleChallenges,
@@ -50,6 +51,7 @@ export {
   ChallengeCellType,
   IRoom,
   IUser,
+  IRating,
   ControlSettings,
   DEFAULT_KEYBOARD_CONTROLS,
   getUserFriendlyKeyText,

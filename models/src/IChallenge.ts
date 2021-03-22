@@ -26,6 +26,8 @@ export default interface IChallenge extends ChallengeTranslation {
   readonly translations?: { [locale: string]: ChallengeTranslation };
   readonly firstBlockLayoutId?: string;
   readonly grid: string;
+  readonly numRatings?: number;
+  readonly totalRating?: number;
 
   //readonly layoutRotation?: number;
   readonly allowedActions?: InputAction[];

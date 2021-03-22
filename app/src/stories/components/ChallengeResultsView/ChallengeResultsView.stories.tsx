@@ -25,8 +25,8 @@ export default {
 } as Meta;
 
 const status: ChallengeStatus = {
-  stars: 3,
-  status: 'success',
+  medalIndex: 3,
+  code: 'success',
   stats: {
     blocksPlaced: 1,
     linesCleared: 1,

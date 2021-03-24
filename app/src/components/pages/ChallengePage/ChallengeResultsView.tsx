@@ -1,42 +1,36 @@
 import FlexBox from '@/components/layout/FlexBox';
-import { Box, Typography } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
 import { ChallengeStatus } from 'infinitris2-models';
 import ChallengeCompletionStats from 'infinitris2-models/dist/src/ChallengeCompletionStats';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUser } from '../../../state/UserStore';
-import ContinueHint from '../../ContinueHint';
-import { Gesture } from '../../hooks/useGestureListener';
-import useReceivedInput from '../../hooks/useReceivedInput';
-import useTrue from '../../hooks/useTrue';
 import ChallengeMedalDisplay from './ChallengeMedalDisplay';
-import ChallengeRatingDisplay from './ChallengeRatingDisplay';
+import RateChallenge from './RateChallenge';
 
 export interface ChallengeResultsViewProps {
   status: ChallengeStatus;
   challengeId: string;
+  isTest: boolean;
   onContinue(): void;
   onRetry(): void;
 }
 
 export default function ChallengeResultsView({
   challengeId,
+  isTest,
   status,
   onContinue,
   onRetry,
 }: ChallengeResultsViewProps) {
   const user = useUser();
 
-  const [hasReceivedRetryInput] = useReceivedInput('r', Gesture.LongPress);
+  // TODO: add keyboard shortcuts / improve accessibility
+  /*const [hasReceivedRetryInput] = useReceivedInput('r', Gesture.LongPress);
   useTrue(hasReceivedRetryInput, onRetry);
-  // TODO:
-  /*const [hasReceivedFeedbackInput] = useReceivedInput(
-    'F',
-    Gesture.LongPress,
-  );*/
-
   const [hasReceivedContinueInput] = useReceivedInput();
-  useTrue(hasReceivedContinueInput, onContinue);
+  useTrue(hasReceivedContinueInput, onContinue);*/
+
   const stats = status.stats as ChallengeCompletionStats;
 
   return (
@@ -91,11 +85,26 @@ export default function ChallengeResultsView({
             }}
           />
         </Typography>
-        <ChallengeRatingDisplay />
-        <Box pt={2}>
-          <ContinueHint showContextMenu />
-        </Box>
-        <p>TODO: 2 buttons (retry, next)</p>
+        <RateChallenge isTest={isTest} challengeId={challengeId} />
+        <FlexBox
+          pt={2}
+          width="100%"
+          flexDirection="row"
+          justifyContent="space-between"
+        >
+          <Button variant="contained" color="secondary" onClick={onRetry}>
+            <FormattedMessage
+              defaultMessage="Retry"
+              description="Challenge Results View - Retry button text"
+            />
+          </Button>
+          <Button variant="contained" color="primary" onClick={onContinue}>
+            <FormattedMessage
+              defaultMessage="Continue"
+              description="Challenge Results View - Continue button text"
+            />
+          </Button>
+        </FlexBox>
       </FlexBox>
     </FlexBox>
   );

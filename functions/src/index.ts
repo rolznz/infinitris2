@@ -28,7 +28,7 @@ exports.onCreateRating = functions.firestore
   .document('ratings/{ratingId}')
   .onCreate(async (snapshot, _context) => {
     const rating = snapshot.data();
-    if (rating.entityType === 'challenge') {
+    if (rating.entityCollection === 'challenges') {
       // update the challenge total rating
       const challengeDocRef = db.doc(`challenges/${snapshot.data().entityId}`);
       try {
@@ -51,7 +51,9 @@ exports.onCreateRating = functions.firestore
         console.log('Failed to update challenge rating: ', e);
       }
     } else {
-      throw new Error('Unsupported entity type: ' + rating.entityType);
+      throw new Error(
+        'Unsupported entity collection: ' + rating.entityCollection
+      );
     }
   });
 

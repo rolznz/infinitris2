@@ -6,13 +6,15 @@ import useAuthStore from '../../state/AuthStore';
 
 export default function useLoggedInRedirect() {
   const history = useHistory();
-  const user = useAuthStore((authStore) => authStore.user);
+  const authUser = useAuthStore((authStore) => authStore.user);
   const returnUrl = useAppStore((appStore) => appStore.returnToUrl);
 
   useEffect(() => {
-    if (user) {
-      history.replace(returnUrl || Routes.home);
+    if (authUser) {
+      const redirectUrl = returnUrl || Routes.home;
+      console.log('Already logged in, redirecting to', redirectUrl);
+      history.replace(redirectUrl);
     }
-  }, [history, user, returnUrl]);
+  }, [history, authUser, returnUrl]);
   return null;
 }

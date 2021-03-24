@@ -1,6 +1,6 @@
 export default interface IRating {
   value: number;
-  entityType: 'challenge';
+  entityCollection: 'challenges';
   entityId: string;
   userId: string;
 }

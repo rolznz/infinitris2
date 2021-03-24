@@ -120,11 +120,11 @@ export default function ChallengePage() {
     if (challenge && checkChallengeStatus && challengeClient) {
       setCheckChallengeStatus(false);
       const status = challengeClient.getStatus();
-      if (status && status.status !== 'pending') {
+      if (status && status.code !== 'pending') {
         if (!isTest) {
           addChallengeAttempt(challenge.id, status);
         }
-        if (status.status === 'success') {
+        if (status.code === 'success') {
           setChallengeCompleted(true);
         } else {
           setChallengeFailed(true);
@@ -158,6 +158,7 @@ export default function ChallengePage() {
     return (
       <ChallengeResultsView
         challengeId={challenge.id}
+        isTest={isTest}
         status={challengeClient.getStatus()}
         onContinue={() => {
           completeChallenge(challenge.id);

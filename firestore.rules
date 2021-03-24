@@ -8,7 +8,7 @@ service cloud.firestore {
     	return request.auth != null && request.auth.uid == userId;
     }
     function isOwner(request, resource) {    
-    	return request.auth != null && (resource == null || request.auth.uid == resource.data.userId)
+    	return request.auth != null && ((resource == null && request.resource.data.userId == request.auth.uid) || request.auth.uid == resource.data.userId)
     }
     match /{document=**} {
       allow read, write: if false;
@@ -24,7 +24,7 @@ service cloud.firestore {
     }
     match /challenges/{challengeId} {
     	function isValidChallenge() {
-      	return matchesUser(request, request.resource.data.userId) && (request.resource.data.isOfficial == false || isAdmin(request)) && isOwner(request, resource);
+      	return (request.resource.data.isOfficial == false || isAdmin(request)) && isOwner(request, resource);
       }
       allow create: if isValidChallenge() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0 && request.resource.data.totalRating == 0;
       allow update: if isValidChallenge() && resource.data.isPublished == false  && !request.resource.data.diff(resource.data).affectedKeys()
@@ -33,11 +33,14 @@ service cloud.firestore {
       allow read: if true;
     }
     match /ratings/{ratingId} {
+    	function entityExists() {
+      	return exists(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId));
+      }
     	function calculateRatingId() {
-      	return request.resource.data.entityType + '-' + request.resource.data.entityId + '-' + request.resource.data.userId;
+      	return request.resource.data.entityCollection + '-' + request.resource.data.entityId + '-' + request.resource.data.userId;
       }
     	function isValidRating() {
-      	return ratingId == calculateRatingId() && request.resource.data.value > 0 && request.resource.data.value < 6 && matchesUser(request, request.resource.data.userId) && isOwner(request, resource);
+      	return ratingId == calculateRatingId() && entityExists() && request.resource.data.value > 0 && request.resource.data.value < 6 && matchesUser(request, request.resource.data.userId) && isOwner(request, resource);
       }
       allow create: if isValidRating();
       allow update: if false;

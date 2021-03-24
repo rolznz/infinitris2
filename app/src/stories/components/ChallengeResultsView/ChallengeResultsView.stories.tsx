@@ -40,7 +40,7 @@ const Template: Story<ChallengeResultsViewProps> = (args) => (
 
 export const _ChallengeResultsView = Template.bind({});
 _ChallengeResultsView.args = {
-  challengeId: 'test-challenge',
+  challengeId: 'basic-movement',
   onContinue: () => alert('Continue'),
   onRetry: () => alert('Retry'),
   status,

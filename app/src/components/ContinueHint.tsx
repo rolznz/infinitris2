@@ -3,13 +3,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUser } from '../state/UserStore';
 
-interface ContinueHintProps {
-  showContextMenu?: boolean;
-}
-
-export default function ContinueHint({
-  showContextMenu = false,
-}: ContinueHintProps) {
+export default function ContinueHint() {
   const user = useUser();
   return (
     <>
@@ -26,24 +20,6 @@ export default function ContinueHint({
           />
         )}
       </Typography>
-      {showContextMenu /*TODO: move to another component? */ && (
-        <>
-          <br />
-          <Typography variant="caption">
-            {user.preferredInputMethod === 'touch' ? (
-              <FormattedMessage
-                defaultMessage="Long press to retry or leave feedback"
-                description="Touchscreen context menu text (retry, feedback, etc)"
-              />
-            ) : (
-              <FormattedMessage
-                defaultMessage="R to retry, F for feedback"
-                description="Keyboard context menu text (retry, feedback, etc)"
-              />
-            )}
-          </Typography>
-        </>
-      )}
     </>
   );
 }

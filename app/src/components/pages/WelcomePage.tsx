@@ -66,7 +66,7 @@ export default function WelcomePage() {
 
   const history = useHistory();
 
-  const incompleteChallenges = useIncompleteChallenges();
+  const { incompleteChallenges } = useIncompleteChallenges();
 
   useEffect(() => {
     if (newPreferredInputMethod) {

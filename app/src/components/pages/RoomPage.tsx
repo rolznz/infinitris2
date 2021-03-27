@@ -8,7 +8,7 @@ import SignalCellularConnectedNoInternet0BarIcon from '@material-ui/icons/Signal
 import HomeIcon from '@material-ui/icons/Home';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import { IClientSocketEventListener, IRoom } from 'infinitris2-models';
-import useWelcomeRedirect from '../hooks/useWelcomeRedirect';
+import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser } from '../../state/UserStore';
 import LoadingSpinner from '../LoadingSpinner';
 import { useDocument } from '@nandorojo/swr-firestore';
@@ -51,7 +51,7 @@ export default function RoomPage() {
   const { data: room } = useDocument<IRoom>(id ? getRoomPath(id) : null);
   const [retryCount, setRetryCount] = useState(0);
   const roomUrl = room?.url;
-  const requiresRedirect = useWelcomeRedirect();
+  const requiresRedirect = useForcedRedirect();
   const [hasLaunched, setLaunched] = useState(false);
   const controls = useUser().controls;
 

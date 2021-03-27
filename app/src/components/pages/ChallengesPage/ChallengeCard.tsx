@@ -14,7 +14,7 @@ interface ChallengeCardProps {
 export default function ChallengeCard({ challenge }: ChallengeCardProps) {
   const user = useUser();
   const translation = challenge?.translations?.[user.locale];
-  const incompleteChallenges = useIncompleteChallenges();
+  const { incompleteChallenges } = useIncompleteChallenges();
   const isLocked = incompleteChallenges.find(
     (t) => t.isMandatory && (t.priority || 0) > (challenge.priority || 0)
   );

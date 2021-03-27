@@ -11,7 +11,7 @@ export default function useIncompleteChallenges() {
     }
   );
 
-  console.log('official challenges count: ', officialChallenges?.length);
+  const isLoadingOfficialChallenges = !officialChallenges?.length;
 
   const user = useUser();
   const incompleteChallenges =
@@ -20,5 +20,5 @@ export default function useIncompleteChallenges() {
         challenge.isMandatory &&
         user.completedChallengeIds.indexOf(challenge.id) < 0
     ) || [];
-  return incompleteChallenges;
+  return { incompleteChallenges, isLoadingOfficialChallenges };
 }

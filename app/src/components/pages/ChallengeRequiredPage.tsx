@@ -14,7 +14,7 @@ import { FormattedMessage } from 'react-intl';
 export default function ChallengeRequiredPage() {
   const [hasReceivedInput] = useReceivedInput();
   const history = useHistory();
-  const incompleteChallenges = useIncompleteChallenges();
+  const { incompleteChallenges } = useIncompleteChallenges();
 
   useEffect(() => {
     if (!incompleteChallenges.length) {

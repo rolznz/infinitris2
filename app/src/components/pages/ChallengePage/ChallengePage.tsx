@@ -6,7 +6,7 @@ import {
   IChallengeClient,
   IChallenge,
 } from 'infinitris2-models';
-import useWelcomeRedirect from '../../hooks/useWelcomeRedirect';
+import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
 import useIncompleteChallenges from '../../hooks/useIncompleteChallenges';
 import Routes from '../../../models/Routes';
@@ -23,6 +23,8 @@ interface ChallengePageRouteParams {
   id: string;
 }
 
+export const isTestChallenge = (challengeId?: string) => challengeId === 'test';
+
 export default function ChallengePage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
@@ -31,19 +33,17 @@ export default function ChallengePage() {
   const json = useSearchParam('json');
 
   const { id } = useParams<ChallengePageRouteParams>();
-  const isTest = id === 'test';
+  const challengeId = id!; // guaranteed not to be null due to router
+  const isTest = isTestChallenge(challengeId);
+
+  const requiresRedirect = useForcedRedirect(true, challengeId);
+  const { incompleteChallenges } = useIncompleteChallenges();
 
   const { data: syncedChallenge } = useDocument<IChallenge>(
-    !isTest && id ? getChallengePath(id) : null
+    !isTest ? getChallengePath(challengeId) : null
   );
-
   const challenge = isTest ? JSON.parse(json as string) : syncedChallenge;
-  const requiresRedirect = useWelcomeRedirect(
-    true,
-    challenge?.priority,
-    !isTest
-  );
-  const incompleteChallenges = useIncompleteChallenges();
+
   const addChallengeAttempt = userStore.addChallengeAttempt;
   const setIsDemo = appStore.setIsDemo;
   const completeChallenge = userStore.completeChallenge;

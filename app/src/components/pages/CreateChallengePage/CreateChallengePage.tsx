@@ -18,7 +18,7 @@ import prettyStringify from '../../../utils/prettyStringify';
 import stableStringify from '../../../utils/stableStringify';
 import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
 import { toast } from 'react-toastify';
-import useWelcomeRedirect from '../../hooks/useWelcomeRedirect';
+import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { getCellFillColor } from '../../../utils/getCellFillColor';
 import { detailedDiff } from 'deep-object-diff';
 import { useUser } from '../../../state/UserStore';
@@ -80,7 +80,7 @@ export function CreateChallengePage() {
   const intl = useIntl();
   const [, copy] = useCopyToClipboard();
   useLoginRedirect();
-  useWelcomeRedirect();
+  useForcedRedirect();
 
   const [isSaving, setIsSaving] = useState(false);
   const userId = useAuthStore().user?.uid;

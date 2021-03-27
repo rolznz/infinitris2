@@ -407,7 +407,8 @@ export function CreateChallengePage() {
         )}
         {!gridError &&
           !challengeInfoError &&
-          (!syncedChallenge?.exists || !syncedChallenge.isPublished) && (
+          syncedChallenge?.exists &&
+          !syncedChallenge.isPublished && (
             <Button
               variant="contained"
               color="primary"

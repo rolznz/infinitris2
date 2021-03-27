@@ -21,19 +21,19 @@ const initialUser: IUser = localStorageUser || {
 
 type LocalUserStore = {
   user: IUser;
-  updateUser(changes: Partial<IUser>): void;
-  signOut(): void;
+  updateLocalUser(changes: Partial<IUser>): void;
+  signOutLocalUser(): void;
 };
 
 const useLocalUserStore = create<LocalUserStore>((set) => ({
   user: initialUser,
-  updateUser: (changes: Partial<IUser>) =>
+  updateLocalUser: (changes: Partial<IUser>) =>
     set((current) => {
       const user: IUser = { ...current.user, ...changes };
       localStorage.setItem(localStorageKeys.localUser, JSON.stringify(user));
       return { user };
     }),
-  signOut: () =>
+  signOutLocalUser: () =>
     set((_) => {
       localStorage.removeItem(localStorageKeys.localUser);
       return { user: initialUser };

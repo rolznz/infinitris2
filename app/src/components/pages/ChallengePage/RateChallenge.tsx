@@ -48,7 +48,7 @@ async function addRating(
   );
   try {
     await set(ratingPath, newRating);
-    await revalidateDocument(ratingPath); // TODO: why is this needed?
+    await revalidateDocument(ratingPath); // TODO: why is this needed in order for the local cache to be updated?
     // wait for the firebase onCreateRating function to run
     await new Promise((resolve) => setTimeout(resolve, 3000));
     await revalidateDocument(getChallengePath(challengeId));

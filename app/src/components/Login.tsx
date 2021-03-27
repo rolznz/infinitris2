@@ -1,8 +1,13 @@
 import { getUserPath } from '@/firebase';
 import useAuthStore from '@/state/AuthStore';
-import { useUser } from '@/state/UserStore';
+import { useUser, useUserStore } from '@/state/UserStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
-import { getDocument, set, revalidateDocument } from '@nandorojo/swr-firestore';
+import {
+  getDocument,
+  set,
+  revalidateDocument,
+  Document,
+} from '@nandorojo/swr-firestore';
 import firebase from 'firebase';
 import React, { useState } from 'react';
 
@@ -11,6 +16,7 @@ import { FormattedMessage } from 'react-intl';
 import SocialLogo from 'social-logos';
 import FlexBox from './layout/FlexBox';
 import LoadingSpinner from './LoadingSpinner';
+import { IUser } from 'infinitris2-models';
 
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
@@ -24,6 +30,7 @@ interface LoginProps {
 export default function Login({ onLogin }: LoginProps) {
   const [isLoading, setIsLoading] = useState(false);
   const user = useUser();
+  const userStore = useUserStore();
   const authUser = useAuthStore((authStore) => authStore.user);
 
   async function loginWithProvider(provider: firebase.auth.AuthProvider) {
@@ -31,12 +38,10 @@ export default function Login({ onLogin }: LoginProps) {
       setIsLoading(true);
       const result = await firebase.auth().signInWithPopup(provider);
       if (result.user) {
-        console.log('Authenticated with', provider);
         // sync on first load
         const userPath = getUserPath(result.user.uid);
-        const userDoc = await getDocument(userPath);
+        const userDoc = await getDocument<IUser & Document>(userPath);
         if (!userDoc.exists) {
-          console.log('New account');
           await set(userPath, {
             ...removeUndefinedValues(user),
             nickname: user.nickname || result.user.displayName,
@@ -47,7 +52,7 @@ export default function Login({ onLogin }: LoginProps) {
           // re-retrieve the user with updated properties
           await revalidateDocument(userPath);
         } else {
-          console.log('Existing account');
+          userStore.resyncLocalStorage(userDoc);
         }
         onLogin?.(result.user.uid);
       }

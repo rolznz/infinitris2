@@ -6,7 +6,6 @@ import useAppStore from '../../state/AppStore';
 import { useUser } from '../../state/UserStore';
 import useIncompleteChallenges from './useIncompleteChallenges';
 
-// TODO: rename to useForcedRedirect
 export default function useWelcomeRedirect(
   onChallengePage: boolean = false,
   currentChallengePriority?: number,
@@ -14,6 +13,7 @@ export default function useWelcomeRedirect(
 ) {
   const appStore = useAppStore();
   const user = useUser();
+  const userHasSeenWelcome = user?.hasSeenWelcome;
   const setReturnToUrl = appStore.setReturnToUrl;
   const location = useLocation();
   const history = useHistory();
@@ -32,7 +32,7 @@ export default function useWelcomeRedirect(
       history.replace(url);
     }
 
-    if (!user.hasSeenWelcome) {
+    if (!userHasSeenWelcome) {
       replaceHistory(Routes.welcome);
     } else if (
       incompleteChallenges.length > 0 &&
@@ -51,7 +51,7 @@ export default function useWelcomeRedirect(
       }
     }
   }, [
-    user.hasSeenWelcome,
+    userHasSeenWelcome,
     history,
     incompleteChallenges,
     onChallengePage,

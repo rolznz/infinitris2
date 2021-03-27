@@ -36,6 +36,7 @@ type IUserStore = {
   resetControls(): void;
   clearProgress(): void;
   signOut(): void;
+  resyncLocalStorage(userData: IUser): void;
 };
 
 export function useUserStore(): IUserStore;
@@ -47,8 +48,8 @@ export function useUserStore<StateSlice>(
 ): StateSlice | IUserStore {
   const user = useUser();
   const [updateLocalUser, signoutLocalUser] = useLocalUserStore((store) => [
-    store.updateUser,
-    store.signOut,
+    store.updateLocalUser,
+    store.signOutLocalUser,
   ]);
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
   const {
@@ -56,9 +57,12 @@ export function useUserStore<StateSlice>(
     update: updateFirestoreDoc,
   } = useDocument<IUser>(authStoreUserId ? getUserPath(authStoreUserId) : null);
 
-  const updateUser = (changes: Partial<IUser>) => {
+  const updateUser = (
+    changes: Partial<IUser>,
+    updateSyncedUser: boolean = true
+  ) => {
     const cleanedChanges = removeUndefinedValues(changes);
-    if (fireStoreUserDoc) {
+    if (fireStoreUserDoc && updateSyncedUser) {
       updateFirestoreDoc(changes);
     }
     updateLocalUser(cleanedChanges);
@@ -66,6 +70,9 @@ export function useUserStore<StateSlice>(
 
   const state: IUserStore = {
     user,
+    resyncLocalStorage: (userData: IUser) => {
+      updateUser(userData, false);
+    },
     setNickname: (nickname: string) => {
       updateUser({
         nickname,

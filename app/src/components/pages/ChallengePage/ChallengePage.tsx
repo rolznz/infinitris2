@@ -64,7 +64,7 @@ export default function ChallengePage() {
 
   const [checkChallengeStatus, setCheckChallengeStatus] = useState(false);
 
-  const { preferredInputMethod, controls } = userStore.user;
+  const { preferredInputMethod, controls, hasSeenAllSet } = userStore.user;
 
   // TODO: load challenge from firebase
 
@@ -169,8 +169,10 @@ export default function ChallengePage() {
             history.goBack();
           } else if (remainingChallenges.length) {
             history.push(Routes.challengeRequired);
-          } else {
+          } else if (!hasSeenAllSet) {
             history.push(Routes.allSet);
+          } else {
+            history.goBack();
           }
         }}
         onRetry={() => {

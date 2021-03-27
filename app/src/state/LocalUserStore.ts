@@ -11,6 +11,7 @@ const localStorageUser = localStorageValue
 const initialUser: IUser = localStorageUser || {
   preferredInputMethod: undefined,
   hasSeenWelcome: false,
+  hasSeenAllSet: false,
   nickname: '',
   challengeAttempts: {},
   locale: defaultLocale,

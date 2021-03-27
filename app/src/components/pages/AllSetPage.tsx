@@ -10,6 +10,7 @@ import rocketAnimation from '../lottie/rocket.json';
 import FlexBox from '../layout/FlexBox';
 import ContinueHint from '../ContinueHint';
 import { FormattedMessage } from 'react-intl';
+import { useUserStore } from '@/state/UserStore';
 
 export default function AllSetPage() {
   const [hasReceivedInput] = useReceivedInput();
@@ -19,9 +20,11 @@ export default function AllSetPage() {
   const setReturnToUrl = appStore.setReturnToUrl;
   const [hasRedirected, setHasRedirected] = useState(false);
   const destinationUrl = returnToUrl || Routes.home;
+  const markHasSeenAllSet = useUserStore((store) => store.markHasSeenAllSet);
 
   useEffect(() => {
     if (hasReceivedInput && !hasRedirected) {
+      markHasSeenAllSet();
       setHasRedirected(true);
       setReturnToUrl(undefined);
       history.push(destinationUrl);
@@ -32,6 +35,7 @@ export default function AllSetPage() {
     setReturnToUrl,
     hasRedirected,
     destinationUrl,
+    markHasSeenAllSet,
   ]);
 
   return (

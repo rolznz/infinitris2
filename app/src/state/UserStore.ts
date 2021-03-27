@@ -29,6 +29,7 @@ type IUserStore = {
   setNickname(nickname: string): void;
   setLocale(locale: string): void;
   markHasSeenWelcome(): void;
+  markHasSeenAllSet(): void;
   setPreferredInputMethod(preferredInputMethod: InputMethod | undefined): void;
   addChallengeAttempt(challengeId: string, attempt: ChallengeStatus): void;
   completeChallenge(challengeId: string): void;
@@ -83,6 +84,9 @@ export function useUserStore<StateSlice>(
     },
     markHasSeenWelcome: () => {
       updateUser({ hasSeenWelcome: true });
+    },
+    markHasSeenAllSet: () => {
+      updateUser({ hasSeenAllSet: true });
     },
     setPreferredInputMethod: (
       preferredInputMethod: InputMethod | undefined

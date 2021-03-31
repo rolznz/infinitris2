@@ -13,4 +13,6 @@ export default interface ICell {
   addBlock(block: IBlock): void;
   removeBlock(block: IBlock): void;
   step(): void;
+  replaceWith(cell: ICell): void;
+  reset(): void;
 }

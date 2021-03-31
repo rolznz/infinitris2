@@ -1,4 +1,4 @@
-import IChallenge, { exampleChallenges } from '@models/IChallenge';
+import IChallenge from '@models/IChallenge';
 import IInfinitrisApi from '@models/IInfinitrisApi';
 import IClientSocketEventListener from '@src/networking/IClientSocketEventListener';
 import IClient from '../../../models/src/IClient';
@@ -8,7 +8,8 @@ import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
 import ChallengeClient from '@src/client/singleplayer/ChallengeClient';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import InputMethod from '@models/InputMethod';
-import { ControlSettings } from 'models';
+import { exampleChallenges } from '@models/exampleChallenges';
+import ControlSettings from '@models/ControlSettings';
 
 export default class InfinitrisApi implements IInfinitrisApi {
   private _client?: IClient;
@@ -42,10 +43,19 @@ export default class InfinitrisApi implements IInfinitrisApi {
     } else if (params.has('demo')) {
       this.launchDemo();
     } else if (params.has('challenge')) {
+      const challengeId = params.get('challengeId');
+      console.log(
+        exampleChallenges.map((c) => c.id),
+        challengeId
+      );
+      const challenge = exampleChallenges.find(
+        (challenge) => challenge.id === challengeId
+      );
+      if (!challenge) {
+        throw new Error('Could not find challenge matching ID: ' + challengeId);
+      }
       this.launchChallenge(
-        exampleChallenges.find(
-          (challenge) => challenge.id === params.get('challengeId')
-        ) || exampleChallenges[0],
+        challenge,
         {
           onSimulationInit: (simulation) => {
             simulation.startInterval();

@@ -14,7 +14,7 @@ export default class Grid implements IGrid {
     for (let r = 0; r < numRows; r++) {
       const row: ICell[] = [];
       for (let c = 0; c < numColumns; c++) {
-        row.push(new Cell(this, c, r));
+        row.push(new Cell(this, r, c));
       }
       this._cells.push(row);
     }
@@ -60,10 +60,13 @@ export default class Grid implements IGrid {
       .sort((a, b) => b - a); // clear lowest row first
 
     for (let i = 0; i < rowsToClear.length; i++) {
-      for (let j = rowsToClear[i] + i; j >= 0; j--) {
+      for (let r = rowsToClear[i] + i; r >= 0; r--) {
         for (let c = 0; c < this._cells[0].length; c++) {
-          this._cells[j][c].isEmpty =
-            j > 0 ? this._cells[j - 1][c].isEmpty : true;
+          if (r > 0) {
+            this._cells[r][c].replaceWith(this._cells[r - 1][c]);
+          } else {
+            this._cells[r][c].reset();
+          }
         }
       }
       this._eventListeners.forEach((eventListener) =>

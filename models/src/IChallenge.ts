@@ -1,13 +1,6 @@
 import InputAction from './InputAction';
-import Layout from './Layout';
-import garbageCollection1 from './exampleChallenges/garbageCollection1';
-import basicMovement from './exampleChallenges/basicMovement';
-import shadowTest from './exampleChallenges/shadowTest';
-import wrapTest from './exampleChallenges/wrapTest';
-import controlCheck from './exampleChallenges/controlCheck';
 import ISimulationSettings from './ISimulationSettings';
 import ChallengeSuccessCriteria from './ChallengeSuccessCriteria';
-import keysAndLocks1 from './exampleChallenges/keysAndLocks1';
 
 export interface ChallengeTranslation {
   title: string;
@@ -50,12 +43,3 @@ export default interface IChallenge extends ChallengeTranslation {
     all?: ChallengeSuccessCriteria;
   };
 }
-
-export const exampleChallenges: IChallenge[] = [
-  keysAndLocks1,
-  controlCheck,
-  basicMovement,
-  garbageCollection1,
-  shadowTest,
-  wrapTest,
-];

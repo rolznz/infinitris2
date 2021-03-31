@@ -13,7 +13,7 @@ export default class Cell implements ICell {
   private _behaviour: ICellBehaviour;
   private _isEmpty: boolean;
   private readonly _blocks: IBlock[];
-  constructor(grid: IGrid, column: number, row: number) {
+  constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
     this._row = row;
     this._column = column;
@@ -59,6 +59,14 @@ export default class Cell implements ICell {
 
   step() {
     this._behaviour?.step?.();
+  }
+
+  replaceWith(cell: ICell) {
+    this._behaviour = cell.behaviour;
+    this._isEmpty = cell.isEmpty;
+  }
+  reset(): void {
+    this._behaviour = new NormalCellBehaviour();
   }
 
   addBlock(block: IBlock) {

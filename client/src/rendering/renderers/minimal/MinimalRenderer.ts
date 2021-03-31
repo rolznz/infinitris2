@@ -189,7 +189,7 @@ export default class MinimalRenderer
       if (cell.cell.behaviour.requiresRerender) {
         this._renderCell(cell.cell);
       }
-      cell.container.alpha = cell.cell.behaviour.alpha;
+      cell.container.alpha = cell.cell.isEmpty ? cell.cell.behaviour.alpha : 1;
       if (this._hasShadows) {
         this._applyShadowAlpha(cell);
       }
@@ -423,7 +423,7 @@ export default class MinimalRenderer
   /**
    * @inheritdoc
    */
-  onLineCleared(row: number) {
+  onLineCleared(_row: number) {
     this._renderCells(this._grid.grid.reducedCells);
   }
 
@@ -569,7 +569,7 @@ export default class MinimalRenderer
   }
 
   private _renderCellCopies(
-    cell: IRenderableCell,
+    renderableCell: IRenderableCell,
     renderCellType: RenderCellType,
     opacity: number,
     color: number,
@@ -577,7 +577,7 @@ export default class MinimalRenderer
     shadowDirection: number = 0
   ) {
     const shadowIndexWithDirection = shadowIndex * shadowDirection;
-    let entry = cell.children.find(
+    let entry = renderableCell.children.find(
       (child) => child.shadowIndex === shadowIndexWithDirection
     );
     if (!entry) {
@@ -585,8 +585,8 @@ export default class MinimalRenderer
         graphics: new PIXI.Graphics(),
         shadowIndex: shadowIndexWithDirection,
       };
-      cell.children.push(entry);
-      cell.container.addChild(entry.graphics);
+      renderableCell.children.push(entry);
+      renderableCell.container.addChild(entry.graphics);
     }
 
     const graphics = entry.graphics;
@@ -596,21 +596,22 @@ export default class MinimalRenderer
     // TODO: extract rendering of different behaviours
     if (
       renderCellType !== RenderCellType.Cell ||
-      cell.cell.type === CellType.FinishChallenge ||
-      cell.cell.type === CellType.Laser ||
-      cell.cell.type === CellType.Deadly
+      (renderableCell.cell.type === CellType.FinishChallenge &&
+        renderableCell.cell.isEmpty) ||
+      renderableCell.cell.type === CellType.Laser ||
+      renderableCell.cell.type === CellType.Deadly
     ) {
       graphics.beginFill(color, Math.min(opacity, 1));
       graphics.drawRect(0, 0, cellSize, cellSize);
-    } else if (!cell.cell.isEmpty) {
+    } else if (!renderableCell.cell.isEmpty) {
       // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
       // e.g. non-empty red key cell
       graphics.beginFill(0x999999, Math.min(opacity, 1));
       graphics.drawRect(0, 0, cellSize, cellSize);
     }
 
-    if (cell.cell.isEmpty) {
-      switch (cell.cell.type) {
+    if (renderableCell.cell.isEmpty) {
+      switch (renderableCell.cell.type) {
         case CellType.Key:
           graphics.beginFill(color, Math.min(opacity, 1));
 
@@ -688,7 +689,7 @@ export default class MinimalRenderer
     if (shadowIndex < this._shadowCount) {
       (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>
         this._renderCellCopies(
-          cell,
+          renderableCell,
           renderCellType,
           opacity, // * 0.5,
           color,

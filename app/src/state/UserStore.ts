@@ -103,8 +103,9 @@ export function useUserStore<StateSlice>(
       });
     },
     completeChallenge: (challengeId: string) => {
+      const uniqueIds = new Set([...user.completedChallengeIds, challengeId]);
       updateUser({
-        completedChallengeIds: [...user.completedChallengeIds, challengeId],
+        completedChallengeIds: Array.from(uniqueIds),
       });
     },
     updateControl: (inputAction: InputAction, control: string) => {

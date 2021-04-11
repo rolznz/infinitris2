@@ -24,10 +24,11 @@ const facebookProvider = new firebase.auth.FacebookAuthProvider();
 export const loginTitleId = 'login-title';
 
 interface LoginProps {
+  showTitle?: boolean;
   onLogin?(userId: string): void;
 }
 
-export default function Login({ onLogin }: LoginProps) {
+export default function Login({ onLogin, showTitle = true }: LoginProps) {
   const [isLoading, setIsLoading] = useState(false);
   const user = useUser();
   const userStore = useUserStore();
@@ -79,12 +80,14 @@ export default function Login({ onLogin }: LoginProps) {
 
   return (
     <FlexBox flex={1}>
-      <Typography align="center" id={loginTitleId}>
-        <FormattedMessage
-          defaultMessage="Login with"
-          description="Login page title"
-        />
-      </Typography>
+      {showTitle && (
+        <Typography align="center" id={loginTitleId}>
+          <FormattedMessage
+            defaultMessage="Login with"
+            description="Login page title"
+          />
+        </Typography>
+      )}
       <Box mt={2} />
       <FlexBox flexDirection="row">
         <IconButton color="primary" onClick={loginWithGoogle}>

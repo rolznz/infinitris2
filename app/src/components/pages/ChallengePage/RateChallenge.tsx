@@ -1,5 +1,5 @@
 import FlexBox from '@/components/layout/FlexBox';
-import LoginModal from '@/components/modals/LoginModal';
+import LoginDialog from '@/components/modals/LoginDialog';
 import { getChallengePath, getRatingsPath as getRatingPath } from '@/firebase';
 import useAuthStore from '@/state/AuthStore';
 import { Typography } from '@material-ui/core';
@@ -90,7 +90,7 @@ export default function RateChallenge({
 
   return (
     <FlexBox my={2}>
-      <LoginModal
+      <LoginDialog
         isOpen={isLoginModalOpen}
         onLogin={(newUserId) => {
           // rating path and user ID cannot be used because are not set in the current component state (user just logged in)

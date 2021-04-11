@@ -36,11 +36,14 @@ service cloud.firestore {
     	function entityExists() {
       	return exists(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId));
       }
+    	function isOwnerOfEntity() {
+      	return get(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId)).data.userId == request.resource.data.userId;
+      }
     	function calculateRatingId() {
       	return request.resource.data.entityCollection + '-' + request.resource.data.entityId + '-' + request.resource.data.userId;
       }
     	function isValidRating() {
-      	return ratingId == calculateRatingId() && entityExists() && request.resource.data.value > 0 && request.resource.data.value < 6 && matchesUser(request, request.resource.data.userId) && isOwner(request, resource);
+      	return ratingId == calculateRatingId() && entityExists() && !isOwnerOfEntity() && request.resource.data.value > 0 && request.resource.data.value < 6 && matchesUser(request, request.resource.data.userId) && isOwner(request, resource);
       }
       allow create: if isValidRating();
       allow update: if false;

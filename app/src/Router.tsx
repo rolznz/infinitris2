@@ -22,6 +22,8 @@ import Routes from './models/Routes';
 import { CreditsPage } from './components/pages/CreditsPage';
 import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
 import { TermsOfServicePage } from './components/TermsOfServicePage';
+import EarnCreditsPage from './components/pages/EarnCreditsPage';
+import ScoreboardPage from './components/pages/ScoreboardPage';
 
 export default function Router() {
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
@@ -72,6 +74,12 @@ export default function Router() {
         </Route>
         <Route exact path={Routes.profile}>
           <ProfilePage />
+        </Route>
+        <Route exact path={Routes.earnCredits}>
+          <EarnCreditsPage />
+        </Route>
+        <Route exact path={Routes.scoreboard}>
+          <ScoreboardPage />
         </Route>
         <Route exact path={Routes.welcome}>
           <WelcomePage />

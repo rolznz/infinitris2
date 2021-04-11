@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Typography } from '@material-ui/core';
+import { Button, Typography, Link, Box } from '@material-ui/core';
 
 import FlexBox from '../layout/FlexBox';
 import { FormattedMessage } from 'react-intl';
@@ -13,6 +13,7 @@ import { IChallenge, IUser } from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
 import { challengesPath, getUserPath } from '../../firebase';
 import LoadingSpinner from '../LoadingSpinner';
+import { Link as RouterLink } from 'react-router-dom';
 
 export default function ProfilePage() {
   useLoginRedirect();
@@ -68,11 +69,29 @@ export default function ProfilePage() {
         />
       </Typography>
 
+      <FlexBox flexDirection="row">
+        <Typography align="center">
+          <FormattedMessage
+            defaultMessage="{count} credits available"
+            description="User credits statistic"
+            values={{ count: user.credits || 0 }}
+          />
+        </Typography>
+        <Box ml={1} />
+        <Link component={RouterLink} underline="none" to={Routes.earnCredits}>
+          <Typography align="center">
+            <FormattedMessage
+              defaultMessage="Earn credits"
+              description="Earn credits link"
+            />
+          </Typography>
+        </Link>
+      </FlexBox>
       <Typography align="center">
         <FormattedMessage
-          defaultMessage="{count} credits available"
-          description="User credits statistic"
-          values={{ count: user.credits || 0 }}
+          defaultMessage="Network impact: {impact}"
+          description="Network impact statistic"
+          values={{ count: 0 }}
         />
       </Typography>
 

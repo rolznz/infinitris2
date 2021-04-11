@@ -14,8 +14,10 @@ enum Routes {
   challenges = '/challenges',
   createChallenge = '/create/challenge',
   loadChallenge = '/create/challenge/load',
-  challengeRequired = '/challenge-required', // TODO: should be a level map?
-  allSet = '/all-set', // TODO: rename to "ready to play"
+  challengeRequired = '/challenge-required',
+  scoreboard = '/scoreboard',
+  allSet = '/all-set',
+  earnCredits = '/earn-credits',
 }
 
 export default Routes;

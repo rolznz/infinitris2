@@ -7,7 +7,6 @@ export interface ChallengeTranslation {
   description?: string;
 }
 
-// TODO: rename to Challenge
 export default interface IChallenge extends ChallengeTranslation {
   readonly id: string;
   readonly userId: string;
@@ -16,6 +15,7 @@ export default interface IChallenge extends ChallengeTranslation {
   readonly isMandatory?: boolean;
   readonly isPublished?: boolean;
   readonly locale: string;
+  // TODO: move into separate collection so other users can submit translations for challenges, have simpler rules etc.
   readonly translations?: { [locale: string]: ChallengeTranslation };
   readonly firstBlockLayoutId?: string;
   readonly grid: string;
@@ -42,4 +42,7 @@ export default interface IChallenge extends ChallengeTranslation {
     gold?: ChallengeSuccessCriteria;
     all?: ChallengeSuccessCriteria;
   };
+
+  readonly clonedFromChallengeId?: string;
+  readonly clonedFromUserId?: string;
 }

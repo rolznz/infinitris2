@@ -5,7 +5,8 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import FaceIcon from '@material-ui/icons/Face';
 import HomeIcon from '@material-ui/icons/Home';
 import AddIcon from '@material-ui/icons/Add';
-import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
+import ScoreIcon from '@material-ui/icons/Score';
+import ExtensionIcon from '@material-ui/icons/Extension';
 import FolderIcon from '@material-ui/icons/Folder';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../models/Routes';
@@ -13,6 +14,8 @@ import { Route } from 'react-router-dom';
 import useDemo from '../hooks/useDemo';
 import { useIntl } from 'react-intl';
 
+// TODO: use material UI app bar
+// TODO: use material UI drawer component (open from the right), add text next to icons in menu
 export default function Header() {
   const intl = useIntl();
   useDemo();
@@ -28,13 +31,25 @@ export default function Header() {
       <Route exact path={Routes.home}>
         <Tooltip
           title={intl.formatMessage({
+            defaultMessage: 'Scoreboard',
+            description: 'Scoreboard button tooltip',
+          })}
+        >
+          <Link component={RouterLink} underline="none" to={Routes.scoreboard}>
+            <IconButton>
+              <ScoreIcon />
+            </IconButton>
+          </Link>
+        </Tooltip>
+        <Tooltip
+          title={intl.formatMessage({
             defaultMessage: 'Challenges',
             description: 'Challenges button tooltip',
           })}
         >
           <Link component={RouterLink} underline="none" to={Routes.challenges}>
             <IconButton>
-              <LocalLibraryIcon />
+              <ExtensionIcon />
             </IconButton>
           </Link>
         </Tooltip>
@@ -55,9 +70,16 @@ export default function Header() {
           </Link>
         </Tooltip>
         <Link component={RouterLink} underline="none" to={Routes.profile}>
-          <IconButton>
-            <FaceIcon />
-          </IconButton>
+          <Tooltip
+            title={intl.formatMessage({
+              defaultMessage: 'Profile',
+              description: 'Profile button tooltip',
+            })}
+          >
+            <IconButton>
+              <FaceIcon />
+            </IconButton>
+          </Tooltip>
         </Link>
         <Link component={RouterLink} underline="none" to={Routes.settings}>
           <IconButton>

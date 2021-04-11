@@ -36,6 +36,7 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
                 numRatings,
                 ...challengeInfo
               } = challenge;
+              // TODO: re-think local storage for the challenge editor - storing the info and grid separately is not ideal
               localStorage.setItem(
                 localStorageKeys.createChallengeGrid,
                 grid as string
@@ -46,7 +47,9 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
                   ...challengeInfo,
                   numRatings: 0,
                   totalRating: 0,
-                })
+                  clonedFromChallengeId: challengeInfo.id,
+                  clonedFromUserId: challengeInfo.userId,
+                } as Omit<IChallenge, 'grid'>)
               );
               history.push(Routes.createChallenge);
             }}

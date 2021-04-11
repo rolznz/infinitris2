@@ -18,14 +18,21 @@ import { IRoom } from 'infinitris2-models';
 import { useCollection } from '@nandorojo/swr-firestore';
 import { useUserStore } from '../../state/UserStore';
 import { roomsPath } from '../../firebase';
+import useAuthStore from '@/state/AuthStore';
+import useIncompleteChallenges from '../hooks/useIncompleteChallenges';
 
 export default function HomePage() {
   const userStore = useUserStore();
+  const isLoggedIn = useAuthStore((authStore) => !!authStore.user);
   const homeStore = useHomeStore();
   const { data: rooms } = useCollection<IRoom>(roomsPath);
   const [hasFocusedPlayButton, setHasFocusedPlayButton] = useState(false);
   const selectedRoom = homeStore.selectedRoom || rooms?.[0];
   const isLoading = !selectedRoom;
+  const {
+    incompleteChallenges,
+    isLoadingOfficialChallenges,
+  } = useIncompleteChallenges();
 
   const useStyles = makeStyles({
     playButton: {
@@ -51,16 +58,20 @@ export default function HomePage() {
                 value={userStore.user.nickname}
                 onChange={(e) => userStore.setNickname(e.target.value)}
               />
-              <Box mt={2} px={1} style={{ opacity: 0.5 }}>
-                <Link
-                  component={RouterLink}
-                  underline="none"
-                  to={Routes.lobby}
-                  style={{ opacity: 0.5 }}
-                >
-                  <RoomCard loading={isLoading} room={selectedRoom} />
-                </Link>
-              </Box>
+              {(isLoggedIn ||
+                (!isLoadingOfficialChallenges &&
+                  !incompleteChallenges.length)) && (
+                <Box mt={2} px={1} style={{ opacity: 0.5 }}>
+                  <Link
+                    component={RouterLink}
+                    underline="none"
+                    to={Routes.lobby}
+                    style={{ opacity: 0.5 }}
+                  >
+                    <RoomCard loading={isLoading} room={selectedRoom} />
+                  </Link>
+                </Box>
+              )}
 
               <Box mt={2} display="flex" justifyContent="center">
                 {!isLoading ? (

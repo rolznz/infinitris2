@@ -12,6 +12,7 @@ import useAppStore from '../../state/AppStore';
 import { WithStyles } from '@material-ui/core/styles/withStyles';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../models/Routes';
+import { appName } from '@/utils/constants';
 
 interface SocialIconLink {
   icon: SocialIcon;
@@ -55,7 +56,7 @@ function Footer(props: WithStyles<typeof styles>) {
       boxShadow={1}
     >
       <Typography variant="caption">
-        INFINITRIS ONLINE{' '}
+        {appName}{' '}
         <img
           src="/logo192.png"
           alt=""

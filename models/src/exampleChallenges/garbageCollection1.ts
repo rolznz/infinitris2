@@ -40,6 +40,7 @@ XXX00
 0X0XX
 FFFFF
 `, // TODO: garbageRows=[5,6,7]
+  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default garbageCollection1;

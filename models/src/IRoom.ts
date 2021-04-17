@@ -1,4 +1,6 @@
-export default interface IRoom {
+import IEntity from './IEntity';
+
+export default interface IRoom extends IEntity {
   id: string;
   name: string;
   mode: string;

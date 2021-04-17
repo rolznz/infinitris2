@@ -27,6 +27,9 @@ import IUser from './src/IUser';
 import parseGrid from './src/util/parseGrid';
 import IRating from './src/IRating';
 import { exampleChallenges } from './src/exampleChallenges/index';
+import INetworkImpact from './src/INetworkImpact';
+import Timestamp from './src/Timestamp';
+import IScoreboardEntry from './src/IScoreboardEntry';
 
 export {
   exampleChallenges,
@@ -54,6 +57,9 @@ export {
   IUser,
   IRating,
   ControlSettings,
+  INetworkImpact,
+  Timestamp,
+  IScoreboardEntry,
   DEFAULT_KEYBOARD_CONTROLS,
   getUserFriendlyKeyText,
   parseGrid,

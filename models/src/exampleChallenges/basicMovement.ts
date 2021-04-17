@@ -141,6 +141,7 @@ XXXXXXXXXXXXX0XXXXXXXXXXXXXXX
       title: 'การเคลื่อนไหวขั้นพื้นฐาน',
     },
   },
+  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default basicMovement;

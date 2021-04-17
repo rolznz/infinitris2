@@ -18,9 +18,9 @@ service cloud.firestore {
     }
     match /users/{userId} {
     	allow read: if matchesUser(request, userId);
-      allow create: if matchesUser(request, userId) && request.resource.data.credits == 0;
+      allow create: if matchesUser(request, userId) && request.resource.data.credits == 0 && request.resource.data.networkImpact == 0;
       allow update: if matchesUser(request, userId) && !request.resource.data.diff(resource.data).affectedKeys()
-        .hasAny(['credits']);
+        .hasAny(['credits', 'networkImpact']);
     }
     match /challenges/{challengeId} {
     	function isValidChallenge() {
@@ -48,6 +48,9 @@ service cloud.firestore {
       allow create: if isValidRating();
       allow update: if false;
       allow delete: if false;
+      allow read: if true;
+    }
+    match /scoreboardEntries/{document=**} {
       allow read: if true;
     }
   }

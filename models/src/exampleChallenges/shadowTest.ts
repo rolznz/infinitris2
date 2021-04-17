@@ -21,6 +21,7 @@ X000000X
 00000000
 X000000X
 `,
+  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default shadowTest;

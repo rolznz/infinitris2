@@ -69,6 +69,7 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       title: 'ตรวจสอบการควบคุม',
     },
   },
+  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default controlCheck;

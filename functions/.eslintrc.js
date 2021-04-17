@@ -26,7 +26,11 @@ module.exports = {
     'indent': ['error', 2],
     'max-len': ['error', { code: 120 }],
     'object-curly-spacing': ['error', 'always'],
-    'space-before-function-paren': ['error', 'always'],
-    'valid-jsdoc': ['error', { requireParamType: false, requireReturn: false }],
+    'space-before-function-paren': [
+      'error',
+      { anonymous: 'always', named: 'never', asyncArrow: 'always' },
+    ],
+    'valid-jsdoc': ['off'],
+    'require-jsdoc': ['off'],
   },
 };

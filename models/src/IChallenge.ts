@@ -1,13 +1,14 @@
 import InputAction from './InputAction';
 import ISimulationSettings from './ISimulationSettings';
 import ChallengeSuccessCriteria from './ChallengeSuccessCriteria';
+import IEntity from './IEntity';
 
 export interface ChallengeTranslation {
   title: string;
   description?: string;
 }
 
-export default interface IChallenge extends ChallengeTranslation {
+export default interface IChallenge extends ChallengeTranslation, IEntity {
   readonly id: string;
   readonly userId: string;
   readonly priority?: number;

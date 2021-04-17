@@ -43,6 +43,7 @@ rrrrrrrrrrrrrrr
 bbbbbbbbbbbbbbb
 FFFFFFFFFFFFFFF
 `,
+  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default keysAndLocks1;

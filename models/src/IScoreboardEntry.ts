@@ -4,5 +4,6 @@ export default interface IScoreboardEntry {
   numCompletedChallenges: number;
   networkImpact: number;
   numBlocksPlaced: number;
+  // TODO: creator rating
   // TODO: createdTimestamp
 }

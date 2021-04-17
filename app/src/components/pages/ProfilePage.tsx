@@ -89,9 +89,9 @@ export default function ProfilePage() {
       </FlexBox>
       <Typography align="center">
         <FormattedMessage
-          defaultMessage="Network impact: {impact}"
+          defaultMessage="Network impact: {networkImpact}"
           description="Network impact statistic"
-          values={{ count: 0 }}
+          values={{ networkImpact: user.networkImpact }}
         />
       </Typography>
 

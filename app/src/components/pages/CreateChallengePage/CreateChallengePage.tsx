@@ -191,6 +191,8 @@ export function CreateChallengePage() {
                 ...syncedChallenge,
                 isPublished: false,
                 id: uuidv4(),
+                clonedFromChallengeId: syncedChallenge.id,
+                clonedFromUserId: syncedChallenge.userId,
               });
             }}
           >

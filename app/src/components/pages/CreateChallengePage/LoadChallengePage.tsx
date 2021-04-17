@@ -47,8 +47,6 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
                   ...challengeInfo,
                   numRatings: 0,
                   totalRating: 0,
-                  clonedFromChallengeId: challengeInfo.id,
-                  clonedFromUserId: challengeInfo.userId,
                 } as Omit<IChallenge, 'grid'>)
               );
               history.push(Routes.createChallenge);

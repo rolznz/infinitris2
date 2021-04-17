@@ -39,10 +39,12 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
       setIsLoading(true);
       const result = await firebase.auth().signInWithPopup(provider);
       if (result.user) {
+        console.log('Authentication succeeded');
         // sync on first load
         const userPath = getUserPath(result.user.uid);
         const userDoc = await getDocument<IUser & Document>(userPath);
         if (!userDoc.exists) {
+          console.log('User does not exist:', userPath, 'creating...');
           await set(userPath, {
             ...removeUndefinedValues(user),
             nickname: user.nickname || result.user.displayName,
@@ -56,8 +58,11 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
           userStore.resyncLocalStorage(userDoc);
         }
         onLogin?.(result.user.uid);
+      } else {
+        console.log('Signin canceled');
       }
     } catch (e) {
+      console.error(e);
       alert(e.message || 'Unknown error occurred. Please try again.');
       setIsLoading(false);
     }

@@ -29,7 +29,6 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
             display="flex"
             flexDirection="column"
             height="100%"
-            bgcolor="background.paper"
           >
             {children}
             <ToastContainer />

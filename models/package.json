@@ -1,7 +1,7 @@
 {
   "name": "infinitris2-models",
   "private": true,
-  "version": "0.1.81",
+  "version": "0.1.82",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,7 +19,7 @@
     "url": "https://github.com/rolznz/infinitris2/issues"
   },
   "scripts": {
-    "build": "tsc && yarn version --patch"
+    "build": "rm -r dist && tsc && yarn version --patch"
   },
   "dependencies": {},
   "devDependencies": {

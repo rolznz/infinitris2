@@ -12,8 +12,11 @@ export default async function updateNetworkImpact(
   fromUserId: string,
   distance: number = 1
 ) {
+  if (fromUserId === toUserId) {
+    return;
+  }
   console.log(
-    'Update network impact',
+    'Checking network impact',
     'from',
     fromUserId,
     'to',
@@ -21,10 +24,8 @@ export default async function updateNetworkImpact(
     'distance',
     distance
   );
-  if (
-    distance > 3 /* max recursions, TODO: review */ ||
-    fromUserId === toUserId
-  ) {
+  if (distance > 5 /* max recursions, TODO: review */) {
+    console.log('Hit max network impact recursions', distance);
     return;
   }
 
@@ -47,7 +48,9 @@ export default async function updateNetworkImpact(
       } as Pick<IUser, 'credits' | 'networkImpact'>);
     }
 
-    impactRef.set({
+    await impactRef.set({
+      toUserId, // part of the URL, but store for convenience, see https://stackoverflow.com/a/58491352/4562693
+      fromUserId, // part of the URL, but store for convenience, see https://stackoverflow.com/a/58491352/4562693
       distance,
       createdTimestamp: admin.firestore.Timestamp.now(),
     });
@@ -63,11 +66,28 @@ export default async function updateNetworkImpact(
 
     const parentImpacts = await db
       .collectionGroup('networkImpacts')
-      .where('id', '==', toUserId)
+      .where('fromUserId', '==', toUserId)
       .get();
 
+    console.log('Found parent impacts:', parentImpacts.docs.length);
+
     for (const parentImpactDoc of parentImpacts.docs) {
-      await updateNetworkImpact(parentImpactDoc.id, fromUserId, distance + 1);
+      const parentImpact = parentImpactDoc.data() as INetworkImpact;
+      await updateNetworkImpact(
+        parentImpact.toUserId,
+        fromUserId,
+        distance + 1
+      );
     }
+  } else {
+    console.log(
+      'Network impact up to date:',
+      'from',
+      fromUserId,
+      'to',
+      toUserId,
+      'distance',
+      distance
+    );
   }
 }

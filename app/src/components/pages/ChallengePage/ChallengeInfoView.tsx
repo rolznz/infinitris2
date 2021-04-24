@@ -1,10 +1,9 @@
+import useContinueButton from '@/components/hooks/useContinueButton';
 import { Box, Typography } from '@material-ui/core';
 import { IChallenge } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUser } from '../../../state/UserStore';
-import ContinueHint from '../../ContinueHint';
-import useReceivedInput from '../../hooks/useReceivedInput';
 import useTrue from '../../hooks/useTrue';
 import FlexBox from '../../layout/FlexBox';
 
@@ -18,7 +17,8 @@ export default function ChallengeInfoView({
   challenge,
 }: ChallengeInfoViewProps) {
   const user = useUser();
-  const [hasReceivedInput] = useReceivedInput();
+  const [hasReceivedInput, continueButton] = useContinueButton();
+
   useTrue(hasReceivedInput, onReceivedInput);
   const translation = challenge?.translations?.[user.locale];
 
@@ -41,9 +41,7 @@ export default function ChallengeInfoView({
             />
           )}
         </Typography>
-        <Box pt={2}>
-          <ContinueHint />
-        </Box>
+        <Box pt={2}>{continueButton}</Box>
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage="Attempt: #{attemptCount}"

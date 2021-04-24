@@ -4,15 +4,14 @@ import { Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import useIncompleteChallenges from '../hooks/useIncompleteChallenges';
-import useReceivedInput from '../hooks/useReceivedInput';
 import Lottie from 'lottie-react';
 import planeAnimation from '../lottie/plane.json';
-import ContinueHint from '../ContinueHint';
 import FlexBox from '../layout/FlexBox';
 import { FormattedMessage } from 'react-intl';
+import useContinueButton from '../hooks/useContinueButton';
 
 export default function ChallengeRequiredPage() {
-  const [hasReceivedInput] = useReceivedInput();
+  const [hasReceivedInput, continueButton] = useContinueButton();
   const history = useHistory();
   const { incompleteChallenges } = useIncompleteChallenges();
 
@@ -46,7 +45,7 @@ export default function ChallengeRequiredPage() {
           />
         </Typography>
         <Lottie animationData={planeAnimation} />
-        <ContinueHint />
+        {continueButton}
       </FlexBox>
     </>
   );

@@ -1,7 +1,6 @@
+import useContinueButton from '@/components/hooks/useContinueButton';
 import { Box, Typography } from '@material-ui/core';
 import React from 'react';
-import ContinueHint from '../../ContinueHint';
-import useReceivedInput from '../../hooks/useReceivedInput';
 import useTrue from '../../hooks/useTrue';
 import FlexBox from '../../layout/FlexBox';
 
@@ -12,7 +11,7 @@ export interface ChallengeFailedViewProps {
 export default function ChallengeFailedView({
   onReceivedInput,
 }: ChallengeFailedViewProps) {
-  const [hasReceivedInput] = useReceivedInput();
+  const [hasReceivedInput, continueButton] = useContinueButton(true);
   useTrue(hasReceivedInput, onReceivedInput);
 
   return (
@@ -24,9 +23,7 @@ export default function ChallengeFailedView({
         borderRadius={16}
       >
         <Typography variant="h6">Challenge Failed</Typography>
-        <Box pt={2}>
-          <ContinueHint />
-        </Box>
+        <Box pt={2}>{continueButton}</Box>
       </FlexBox>
     </FlexBox>
   );

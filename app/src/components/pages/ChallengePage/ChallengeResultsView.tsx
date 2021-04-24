@@ -26,9 +26,9 @@ export default function ChallengeResultsView({
   const user = useUser();
 
   // TODO: add keyboard shortcuts / improve accessibility
-  /*const [hasReceivedRetryInput] = useReceivedInput('r', Gesture.LongPress);
+  /*const [hasReceivedRetryInput] = useReceivedInput('r', true);
   useTrue(hasReceivedRetryInput, onRetry);
-  const [hasReceivedContinueInput] = useReceivedInput();
+  const [hasReceivedContinueInput] = useReceivedInput(undefined, true);
   useTrue(hasReceivedContinueInput, onContinue);*/
 
   const stats = status.stats as ChallengeCompletionStats;

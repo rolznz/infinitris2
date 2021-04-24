@@ -4,16 +4,15 @@ import { Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import useAppStore from '../../state/AppStore';
-import useReceivedInput from '../hooks/useReceivedInput';
 import Lottie from 'lottie-react';
 import rocketAnimation from '../lottie/rocket.json';
 import FlexBox from '../layout/FlexBox';
-import ContinueHint from '../ContinueHint';
 import { FormattedMessage } from 'react-intl';
 import { useUserStore } from '@/state/UserStore';
+import useContinueButton from '../hooks/useContinueButton';
 
 export default function AllSetPage() {
-  const [hasReceivedInput] = useReceivedInput();
+  const [hasReceivedInput, continueButton] = useContinueButton();
   const history = useHistory();
   const appStore = useAppStore();
   const returnToUrl = appStore.returnToUrl;
@@ -53,7 +52,7 @@ export default function AllSetPage() {
 
         <Lottie animationData={rocketAnimation} loop={false} />
 
-        <ContinueHint />
+        {continueButton}
 
         {/*TODO: <Typography>
           You can play more challenges at any time from the main menu.

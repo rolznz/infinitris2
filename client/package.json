@@ -11,7 +11,8 @@
     "build": "yarn clean && webpack && yarn copy-infinitris-client",
     "start": "webpack-dev-server --content-base=dist --inline --watch --hot",
     "docs": "typedoc --out docs --readme README.md src",
-    "tslint": "tslint --project ./tsconfig.json"
+    "tslint": "tslint --project ./tsconfig.json",
+    "lt": "lt --port 8080 --subdomain infinitris --local-host localhost"
   },
   "repository": {
     "type": "git",

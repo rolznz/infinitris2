@@ -56,6 +56,10 @@ export default class Input {
   }
 
   private _isActionAllowed(action: InputAction) {
+    const block: IBlock | undefined = this._player.block;
+    if (block && block.isDropping) {
+      return false;
+    }
     return !this._allowedActions || this._allowedActions.indexOf(action) >= 0;
   }
 

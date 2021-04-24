@@ -20,6 +20,8 @@ import ControlSettings from '@models/ControlSettings';
 import { ChallengeStatus } from '@models/ChallengeStatus';
 import parseGrid from '@models/util/parseGrid';
 import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
+import ICell from '@models/ICell';
+import ICellBehaviour from '@models/ICellBehaviour';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -103,6 +105,11 @@ export default class ChallengeClient
   onLineCleared(row: number) {
     ++this._numLinesCleared;
   }
+
+  /**
+   * @inheritdoc
+   */
+  onCellBehaviourChanged(_cell: ICell, _previousBehaviour: ICellBehaviour) {}
 
   /**
    * @inheritdoc

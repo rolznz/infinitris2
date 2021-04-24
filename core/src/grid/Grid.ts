@@ -2,6 +2,9 @@ import Cell from './cell/Cell';
 import IGridEventListener from '../../../models/src/IGridEventListener';
 import ICell from '@models/ICell';
 import IGrid from '@models/IGrid';
+import ICellBehaviour from '@models/ICellBehaviour';
+import { CellType } from 'models';
+import NormalCellBehaviour from './cell/behaviours/NormalCellBehaviour';
 
 export default class Grid implements IGrid {
   private _cells: ICell[][];
@@ -59,13 +62,26 @@ export default class Grid implements IGrid {
       .filter((row) => this._cells[row].findIndex((cell) => cell.isEmpty) < 0)
       .sort((a, b) => b - a); // clear lowest row first
 
+    if (!rowsToClear.length) {
+      return;
+    }
+
+    console.log('Clearing rows: ', rowsToClear);
     for (let i = 0; i < rowsToClear.length; i++) {
       for (let r = rowsToClear[i] + i; r >= 0; r--) {
         for (let c = 0; c < this._cells[0].length; c++) {
           if (r > 0) {
-            this._cells[r][c].replaceWith(this._cells[r - 1][c]);
+            if (this._cells[r][c].behaviour.isReplaceable) {
+              if (this._cells[r - 1][c].behaviour.isReplaceable) {
+                this._cells[r][c].replaceWith(this._cells[r - 1][c]);
+              } else {
+                this._cells[r][c].reset();
+              }
+            }
           } else {
-            this._cells[r][c].reset();
+            if (this._cells[r][c].behaviour.isReplaceable) {
+              this._cells[r][c].reset();
+            }
           }
         }
       }
@@ -73,5 +89,14 @@ export default class Grid implements IGrid {
         eventListener.onLineCleared(rowsToClear[i] + i)
       );
     }
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onCellBehaviourChanged(cell: ICell, previousBehaviour: ICellBehaviour) {
+    this._eventListeners.forEach((listener) =>
+      listener.onCellBehaviourChanged(cell, previousBehaviour)
+    );
   }
 }

@@ -5,6 +5,7 @@ import CellType from '@models/CellType';
 import ICellBehaviour from '@models/ICellBehaviour';
 import NormalCellBehaviour from './behaviours/NormalCellBehaviour';
 import IGrid from '@models/IGrid';
+import ICellEventListener from '@models/ICellEventListener';
 
 export default class Cell implements ICell {
   private _grid: IGrid;
@@ -13,6 +14,7 @@ export default class Cell implements ICell {
   private _behaviour: ICellBehaviour;
   private _isEmpty: boolean;
   private readonly _blocks: IBlock[];
+  private readonly _eventListener?: ICellEventListener;
   constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
     this._row = row;
@@ -20,6 +22,7 @@ export default class Cell implements ICell {
     this._behaviour = new NormalCellBehaviour();
     this._isEmpty = true;
     this._blocks = [];
+    this._eventListener = grid;
   }
   get row(): number {
     return this._row;
@@ -50,7 +53,9 @@ export default class Cell implements ICell {
     return this._behaviour;
   }
   set behaviour(behaviour: ICellBehaviour) {
+    const previousBehaviour = this._behaviour;
     this._behaviour = behaviour;
+    this._eventListener?.onCellBehaviourChanged(this, previousBehaviour);
   }
 
   get blocks(): IBlock[] {
@@ -62,11 +67,12 @@ export default class Cell implements ICell {
   }
 
   replaceWith(cell: ICell) {
-    this._behaviour = cell.behaviour;
+    this._behaviour = cell.behaviour.clone(this);
     this._isEmpty = cell.isEmpty;
   }
   reset(): void {
     this._behaviour = new NormalCellBehaviour();
+    this._isEmpty = true;
   }
 
   addBlock(block: IBlock) {

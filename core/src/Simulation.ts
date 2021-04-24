@@ -5,6 +5,8 @@ import ISimulation from '@models/ISimulation';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import ISimulationSettings from '@models/ISimulationSettings';
 import IBlock from '@models/IBlock';
+import ICellBehaviour from '@models/ICellBehaviour';
+import ICell from '@models/ICell';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -188,6 +190,15 @@ export default class Simulation implements ISimulation {
    */
   onLineCleared(row: number) {
     this._eventListeners.forEach((listener) => listener.onLineCleared(row));
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onCellBehaviourChanged(cell: ICell, previousBehaviour: ICellBehaviour) {
+    this._eventListeners.forEach((listener) =>
+      listener.onCellBehaviourChanged(cell, previousBehaviour)
+    );
   }
 
   /**

@@ -14,8 +14,10 @@ import LockBehaviour from '@core/grid/cell/behaviours/LockBehaviour';
 import ControlSettings from '@models/ControlSettings';
 import getUserFriendlyKeyText from '@models/util/getUserFriendlyKeyText';
 import InputMethod from '@models/InputMethod';
+import ICellBehaviour from '@models/ICellBehaviour';
 
 const minCellSize = 32;
+const particleDivisions = 4;
 interface IRenderableGrid {
   grid: Grid;
   graphics: PIXI.Graphics;
@@ -31,9 +33,8 @@ enum RenderCellType {
   PlacementHelper,
 }
 
-interface IRenderableCell {
-  cell: ICell;
-  // a cell will be rendered 1 time on wrapped grids, N times for shadow wrapping (grid width < screen width)
+interface IRenderableEntity {
+  // stores all the graphics objects - main render + all shadows
   container: PIXI.Container;
   children: {
     shadowIndex: number;
@@ -41,9 +42,23 @@ interface IRenderableCell {
   }[];
 }
 
+interface IRenderableCell extends IRenderableEntity {
+  cell: ICell;
+  // a cell will be rendered 1 time on wrapped grids, N times for shadow wrapping (grid width < screen width)
+}
+
 interface IPlayerScore {
   playerId: number;
   text: PIXI.Text;
+}
+
+interface IParticle extends IRenderableEntity {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  life: number;
+  maxLife: number;
 }
 
 export default class MinimalRenderer
@@ -60,6 +75,7 @@ export default class MinimalRenderer
   // FIXME: blocks should have their own ids!
   private _blocks!: { [playerId: number]: IRenderableBlock };
   private _cells!: { [cellId: number]: IRenderableCell };
+  private _particles!: IParticle[];
   private _playerScores!: IPlayerScore[];
 
   private _simulation!: Simulation;
@@ -364,6 +380,36 @@ export default class MinimalRenderer
     this._removeBlock(block);
   }
 
+  /**
+   * @inheritdoc
+   */
+  onCellBehaviourChanged(cell: ICell, previousBehaviour: ICellBehaviour) {
+    if (previousBehaviour.type == CellType.Wafer) {
+      this._explodeCell(cell, previousBehaviour.color);
+    }
+    this._renderCell(cell);
+  }
+
+  private _explodeCell(cell: ICell, color?: number) {
+    for (let x = 0; x < particleDivisions; x++) {
+      for (let y = 0; y < particleDivisions; y++) {
+        const particle: IParticle = {
+          x: cell.column + x / particleDivisions,
+          y: cell.row + y / particleDivisions,
+          vx: (Math.random() - 0.5) * 0.1,
+          vy: -(Math.random() + 0.5) * 0.2,
+          container: new PIXI.Container(),
+          children: [],
+          maxLife: 100,
+          life: 100,
+        };
+        this._world.addChild(particle.container);
+        this._particles.push(particle);
+        this._renderParticle(particle, color || cell.color);
+      }
+    }
+  }
+
   private _removeBlock(block: IBlock) {
     this._world.removeChild(
       ...this._blocks[block.playerId].cells.map((cell) => cell.container)
@@ -407,6 +453,20 @@ export default class MinimalRenderer
       }
     }
 
+    for (const particle of this._particles) {
+      particle.x += particle.vx;
+      particle.y += particle.vy;
+      particle.vx *= 0.99;
+      particle.vy += 0.01;
+      particle.container.x = particle.x * this._cellSize;
+      particle.container.y = particle.y * this._cellSize;
+      particle.container.alpha = particle.life / particle.maxLife;
+      if (--particle.life <= 0) {
+        this._world.removeChild(particle.container);
+      }
+    }
+    this._particles = this._particles.filter((particle) => particle.life > 0);
+
     // TODO: animation for where block died
     /*Object.values(this._blocks).forEach((block) => {
       if (!block.block.isAlive) {
@@ -424,6 +484,7 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   onLineCleared(_row: number) {
+    // TODO: remove, should only render individual cells on cell state change
     this._renderCells(this._grid.grid.reducedCells);
   }
 
@@ -442,6 +503,8 @@ export default class MinimalRenderer
     this._cells = {};
     this._camera = new Camera();
     this._camera.reset();
+
+    this._particles = [];
 
     const appWidth = this._app.renderer.width;
     const appHeight = this._app.renderer.height;
@@ -568,16 +631,158 @@ export default class MinimalRenderer
     }
   }
 
+  private _renderParticle(particle: IParticle, color: number) {
+    const particleSize = this._getCellSize() / particleDivisions;
+    this._renderCopies(particle, 1, color, (graphics) => {
+      graphics.beginFill(color);
+      graphics.drawRect(0, 0, particleSize, particleSize);
+    });
+  }
+
   private _renderCellCopies(
     renderableCell: IRenderableCell,
     renderCellType: RenderCellType,
     opacity: number,
+    color: number
+  ) {
+    this._renderCopies(
+      renderableCell,
+      opacity,
+      color,
+      (graphics: PIXI.Graphics) => {
+        const cellSize = this._getClampedCellSize();
+        // TODO: extract rendering of different behaviours
+        if (
+          renderCellType !== RenderCellType.Cell ||
+          (renderableCell.cell.type === CellType.FinishChallenge &&
+            renderableCell.cell.isEmpty) ||
+          renderableCell.cell.type === CellType.Laser ||
+          renderableCell.cell.type === CellType.Infection ||
+          renderableCell.cell.type === CellType.Deadly
+        ) {
+          graphics.beginFill(color, Math.min(opacity, 1));
+          graphics.drawRect(0, 0, cellSize, cellSize);
+        } else if (!renderableCell.cell.isEmpty) {
+          // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
+          // e.g. non-empty red key cell
+          graphics.beginFill(renderableCell.cell.color, Math.min(opacity, 1));
+          graphics.drawRect(0, 0, cellSize, cellSize);
+        }
+
+        if (renderableCell.cell.isEmpty) {
+          switch (renderableCell.cell.type) {
+            case CellType.Wafer:
+              graphics.beginFill(color, Math.min(opacity, 1));
+
+              graphics.drawRect(
+                0,
+                (cellSize * 1.5) / 8,
+                cellSize,
+                (cellSize * 0.5) / 8
+              );
+
+              graphics.drawRect(
+                0,
+                (cellSize * 4) / 8,
+                cellSize,
+                (cellSize * 0.5) / 8
+              );
+
+              graphics.drawRect(
+                0,
+                (cellSize * 6) / 8,
+                cellSize,
+                (cellSize * 0.5) / 8
+              );
+
+              break;
+            case CellType.Key:
+              graphics.beginFill(color, Math.min(opacity, 1));
+
+              // bit
+              graphics.drawRect(
+                (cellSize * 4.5) / 8,
+                (cellSize * 1.5) / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 0.5) / 8
+              );
+
+              graphics.drawRect(
+                (cellSize * 4.5) / 8,
+                (cellSize * 2.5) / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 0.5) / 8
+              );
+
+              // shank
+              graphics.drawRect(
+                (cellSize * 3.5) / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 4) / 8
+              );
+
+              // bow
+              graphics.drawRect(
+                (cellSize * 2.5) / 8,
+                (cellSize * 5) / 8,
+                (cellSize * 3) / 8,
+                (cellSize * 2) / 8
+              );
+              break;
+            case CellType.Lock:
+              // background
+              graphics.beginFill(color, Math.min(opacity, 0.5));
+              graphics.drawRect(0, 0, cellSize, cellSize);
+
+              graphics.beginFill(color, Math.min(opacity, 1));
+              // shackle - top
+              graphics.drawRect(
+                (cellSize * 2) / 8,
+                cellSize / 8,
+                (cellSize * 4) / 8,
+                cellSize / 8
+              );
+
+              // shackle - sides
+              graphics.drawRect(
+                (cellSize * 2) / 8,
+                cellSize / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 3) / 8
+              );
+
+              graphics.drawRect(
+                (cellSize * 5) / 8,
+                cellSize / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 3) / 8
+              );
+
+              // body
+              graphics.drawRect(
+                (cellSize * 1) / 8,
+                cellSize * (4 / 8),
+                (cellSize * 6) / 8,
+                (cellSize * 3) / 8
+              );
+              break;
+          }
+        }
+      }
+    );
+  }
+
+  private _renderCopies(
+    renderableEntity: IRenderableEntity,
+    opacity: number,
     color: number,
+    renderFunction: (graphics: PIXI.Graphics) => void,
     shadowIndex: number = 0,
     shadowDirection: number = 0
   ) {
     const shadowIndexWithDirection = shadowIndex * shadowDirection;
-    let entry = renderableCell.children.find(
+    let entry = renderableEntity.children.find(
       (child) => child.shadowIndex === shadowIndexWithDirection
     );
     if (!entry) {
@@ -585,114 +790,23 @@ export default class MinimalRenderer
         graphics: new PIXI.Graphics(),
         shadowIndex: shadowIndexWithDirection,
       };
-      renderableCell.children.push(entry);
-      renderableCell.container.addChild(entry.graphics);
+      renderableEntity.children.push(entry);
+      renderableEntity.container.addChild(entry.graphics);
     }
 
     const graphics = entry.graphics;
     graphics.clear();
-    const cellSize = this._getClampedCellSize();
 
-    // TODO: extract rendering of different behaviours
-    if (
-      renderCellType !== RenderCellType.Cell ||
-      (renderableCell.cell.type === CellType.FinishChallenge &&
-        renderableCell.cell.isEmpty) ||
-      renderableCell.cell.type === CellType.Laser ||
-      renderableCell.cell.type === CellType.Deadly
-    ) {
-      graphics.beginFill(color, Math.min(opacity, 1));
-      graphics.drawRect(0, 0, cellSize, cellSize);
-    } else if (!renderableCell.cell.isEmpty) {
-      // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
-      // e.g. non-empty red key cell
-      graphics.beginFill(0x999999, Math.min(opacity, 1));
-      graphics.drawRect(0, 0, cellSize, cellSize);
-    }
+    renderFunction(graphics);
 
-    if (renderableCell.cell.isEmpty) {
-      switch (renderableCell.cell.type) {
-        case CellType.Key:
-          graphics.beginFill(color, Math.min(opacity, 1));
-
-          // bit
-          graphics.drawRect(
-            (cellSize * 4.5) / 8,
-            (cellSize * 1.5) / 8,
-            (cellSize * 1) / 8,
-            (cellSize * 0.5) / 8
-          );
-
-          graphics.drawRect(
-            (cellSize * 4.5) / 8,
-            (cellSize * 2.5) / 8,
-            (cellSize * 1) / 8,
-            (cellSize * 0.5) / 8
-          );
-
-          // shank
-          graphics.drawRect(
-            (cellSize * 3.5) / 8,
-            (cellSize * 1) / 8,
-            (cellSize * 1) / 8,
-            (cellSize * 4) / 8
-          );
-
-          // bow
-          graphics.drawRect(
-            (cellSize * 2.5) / 8,
-            (cellSize * 5) / 8,
-            (cellSize * 3) / 8,
-            (cellSize * 2) / 8
-          );
-          break;
-        case CellType.Lock:
-          // background
-          graphics.beginFill(color, Math.min(opacity, 0.5));
-          graphics.drawRect(0, 0, cellSize, cellSize);
-
-          graphics.beginFill(color, Math.min(opacity, 1));
-          // shackle - top
-          graphics.drawRect(
-            (cellSize * 2) / 8,
-            cellSize / 8,
-            (cellSize * 4) / 8,
-            cellSize / 8
-          );
-
-          // shackle - sides
-          graphics.drawRect(
-            (cellSize * 2) / 8,
-            cellSize / 8,
-            (cellSize * 1) / 8,
-            (cellSize * 3) / 8
-          );
-
-          graphics.drawRect(
-            (cellSize * 5) / 8,
-            cellSize / 8,
-            (cellSize * 1) / 8,
-            (cellSize * 3) / 8
-          );
-
-          // body
-          graphics.drawRect(
-            (cellSize * 1) / 8,
-            cellSize * (4 / 8),
-            (cellSize * 6) / 8,
-            (cellSize * 3) / 8
-          );
-          break;
-      }
-    }
     graphics.x = shadowIndexWithDirection * this._gridWidth;
     if (shadowIndex < this._shadowCount) {
       (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>
-        this._renderCellCopies(
-          renderableCell,
-          renderCellType,
+        this._renderCopies(
+          renderableEntity,
           opacity, // * 0.5,
           color,
+          renderFunction,
           shadowIndex + 1,
           i
         )

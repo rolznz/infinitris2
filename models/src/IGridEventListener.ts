@@ -1,4 +1,6 @@
-export default interface IGridEventListener {
+import { ICellEventListener } from '../index';
+
+export default interface IGridEventListener extends ICellEventListener {
   /**
    * Triggered when a filled line on the grid is cleared
    *

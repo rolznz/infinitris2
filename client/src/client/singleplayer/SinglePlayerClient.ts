@@ -8,6 +8,8 @@ import IClient from '../../../../models/src/IClient';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import IBlock from '@models/IBlock';
 import ControlSettings from '@models/ControlSettings';
+import ICell from '@models/ICell';
+import ICellBehaviour from '@models/ICellBehaviour';
 
 export default class SinglePlayerClient
   implements IClient, ISimulationEventListener {
@@ -60,6 +62,11 @@ export default class SinglePlayerClient
    * @inheritdoc
    */
   onBlockWrapped(block: IBlock, wrapIndexChange: number) {}
+
+  /**
+   * @inheritdoc
+   */
+  onCellBehaviourChanged(_cell: ICell, _previousBehaviour: ICellBehaviour) {}
 
   /**
    * @inheritdoc

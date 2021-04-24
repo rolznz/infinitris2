@@ -76,6 +76,7 @@ export default function ChallengeResultsView({
             }}
           />
         </Typography>
+        {/* TODO: efficiency rating e.g. not leaving gaps */}
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage="Attempt: #{attemptCount}"

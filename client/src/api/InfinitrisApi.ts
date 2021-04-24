@@ -68,6 +68,7 @@ export default class InfinitrisApi implements IInfinitrisApi {
           onBlockDied() {},
           onBlockPlaced() {},
           onLineCleared() {},
+          onCellBehaviourChanged() {},
         },
         inputMethod,
         controls

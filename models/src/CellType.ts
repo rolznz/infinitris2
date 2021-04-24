@@ -5,6 +5,9 @@ enum CellType {
   Key = 'Key',
   Lock = 'Lock',
   FinishChallenge = 'FinishChallenge',
+  Wafer = 'Wafer', // dropping causes wafer to explode, standard placement does not explode
+  Infection = 'Infection', // each block placement causes the infection to grow
+  // TODO: cells that can hold a certain amount of weight
 }
 
 export default CellType;

@@ -2,7 +2,7 @@ import ICellBehaviour from '../../../../../models/src/ICellBehaviour';
 import ICell from '@models/ICell';
 import CellType from '@models/CellType';
 import KeyBehaviour from './KeyBehaviour';
-import { IGrid } from 'models';
+import IGrid from '@models/IGrid';
 
 export default class LockBehaviour implements ICellBehaviour {
   private _cell: ICell;
@@ -50,6 +50,14 @@ export default class LockBehaviour implements ICellBehaviour {
 
   get color(): number {
     return this._color;
+  }
+
+  get isReplaceable(): boolean {
+    return false;
+  }
+
+  clone(_forCell: ICell): ICellBehaviour {
+    throw new Error('clone unsupported');
   }
 
   get alpha(): number {

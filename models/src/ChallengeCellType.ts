@@ -12,6 +12,8 @@ enum ChallengeCellType {
   YellowKey = 'Y',
   YellowLock = 'y',
   Finish = 'F',
+  Wafer = 'W',
+  Infection = 'I',
 }
 
 export default ChallengeCellType;

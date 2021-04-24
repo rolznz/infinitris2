@@ -1,5 +1,6 @@
 import ICellBehaviour from '../../../../../models/src/ICellBehaviour';
 import CellType from '@models/CellType';
+import ICell from '@models/ICell';
 
 export default class KeyBehaviour implements ICellBehaviour {
   private _color: number;
@@ -12,6 +13,14 @@ export default class KeyBehaviour implements ICellBehaviour {
 
   get isPassable(): boolean {
     return true;
+  }
+
+  get isReplaceable(): boolean {
+    return false;
+  }
+
+  clone(_forCell: ICell): ICellBehaviour {
+    throw new Error('clone unsupported');
   }
 
   get type(): CellType {

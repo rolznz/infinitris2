@@ -8,6 +8,8 @@ import {
 import Simulation from '@core/Simulation';
 import IBlock from '@models/IBlock';
 import { imagesDirectory } from '..';
+import ICell from '@models/ICell';
+import ICellBehaviour from '@models/ICellBehaviour';
 
 type Snowflake = {
   vx: number;
@@ -177,6 +179,13 @@ export default class DemoRenderer implements IRenderer {
    * @inheritdoc
    */
   onLineCleared(row: number) {
+    throw new Error('Method not implemented.');
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onCellBehaviourChanged(cell: ICell, previousBehaviour: ICellBehaviour) {
     throw new Error('Method not implemented.');
   }
 }

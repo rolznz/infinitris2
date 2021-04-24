@@ -30,6 +30,7 @@ import { exampleChallenges } from './src/exampleChallenges/index';
 import INetworkImpact from './src/INetworkImpact';
 import Timestamp from './src/Timestamp';
 import IScoreboardEntry from './src/IScoreboardEntry';
+import ICellEventListener from './src/ICellEventListener';
 
 export {
   exampleChallenges,
@@ -43,6 +44,7 @@ export {
   IClientSocketEventListener,
   ICell,
   ICellBehaviour,
+  ICellEventListener,
   CellType,
   IBlock,
   IBlockEventListener,

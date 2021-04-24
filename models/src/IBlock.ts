@@ -9,6 +9,7 @@ export default interface IBlock {
   height: number;
   row: number;
   column: number;
+  isDropping: boolean;
   update(gridCells: ICell[][], simulationSettings: ISimulationSettings): void;
   move(
     gridCells: ICell[][],
@@ -18,5 +19,7 @@ export default interface IBlock {
     force?: boolean
   ): boolean;
   drop(): void;
+  cancelDrop(): void;
+  slowDown(row: number): void;
   die(): void;
 }

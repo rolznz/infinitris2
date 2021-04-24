@@ -2,11 +2,8 @@ import IBlock from '@models/IBlock';
 import IBlockEventListener from '@models/IBlockEventListener';
 import ISimulationSettings from '@models/ISimulationSettings';
 import Layout from '@models/Layout';
-import Cell from '../grid/cell/Cell';
-import CellType from '../../../models/src/CellType';
 import LayoutUtils from './layout/LayoutUtils';
 import ICell from '@models/ICell';
-import FullCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
 
 type LoopCellEvent = (cell?: ICell) => void;
 
@@ -24,6 +21,8 @@ export default class Block implements IBlock {
   private _lockTimer: number;
   private _eventListener?: IBlockEventListener;
   private _isAlive: boolean;
+  private _cancelDrop: boolean;
+  private _slowdownRows: number[];
 
   constructor(
     playerId: number,
@@ -42,10 +41,12 @@ export default class Block implements IBlock {
     this._rotation = rotation;
     this._layout = layout;
     this._isDropping = false;
+    this._cancelDrop = false;
     this._eventListener = eventListener;
     this._cells = [];
     this._fallTimer = 0;
     this._lockTimer = 0;
+    this._slowdownRows = [];
     this._isAlive = true;
     this._resetTimers();
     if (this.canMove(gridCells, 0, 0, 0)) {
@@ -79,6 +80,10 @@ export default class Block implements IBlock {
   }
   get isReadyToLock(): boolean {
     return this._lockTimer <= 0;
+  }
+
+  get isDropping(): boolean {
+    return this._isDropping;
   }
 
   get isAlive(): boolean {
@@ -120,6 +125,16 @@ export default class Block implements IBlock {
     this._isDropping = true;
     this._lockTimer = 0;
     this._fallTimer = 0;
+  }
+
+  slowDown(row: number) {
+    if (this._slowdownRows.indexOf(row) < 0) {
+      this._slowdownRows.push(row);
+    }
+  }
+
+  cancelDrop() {
+    this._cancelDrop = true;
   }
 
   /**
@@ -233,6 +248,7 @@ export default class Block implements IBlock {
       cell.isEmpty = false;
       cell.removeBlock(this);
     });
+    this._eventListener?.onBlockPlaced(this);
   }
 
   /**
@@ -244,6 +260,12 @@ export default class Block implements IBlock {
     if (!this._isAlive) {
       return;
     }
+    if (this._cancelDrop) {
+      this._cancelDrop = false;
+      this._isDropping = false;
+      this._resetTimers();
+    }
+
     if (simulationSettings.gravityEnabled) {
       --this._fallTimer;
     }
@@ -255,7 +277,6 @@ export default class Block implements IBlock {
 
     if (!fell && this.isReadyToLock) {
       this.place();
-      this._eventListener?.onBlockPlaced(this);
     }
   }
 
@@ -276,8 +297,8 @@ export default class Block implements IBlock {
   }
 
   private _resetTimers() {
-    this._fallTimer = this._isDropping ? 0 : 90;
-    this._lockTimer = this._isDropping ? 0 : 45;
+    this._fallTimer = this._isDropping ? this._slowdownRows.length * 3 : 90;
+    this._lockTimer = this._isDropping ? this._slowdownRows.length * 3 : 45;
   }
 
   private _addCell = (cell?: ICell) => {

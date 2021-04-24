@@ -42,6 +42,14 @@ export default class LaserBehaviour implements ICellBehaviour {
     }
   }
 
+  get isReplaceable(): boolean {
+    return false;
+  }
+
+  clone(_forCell: ICell): ICellBehaviour {
+    throw new Error('clone unsupported');
+  }
+
   get alpha(): number {
     return this._isActive ? this._charge : 0;
   }

@@ -6,8 +6,10 @@ import LockBehaviour from './LockBehaviour';
 import ICell from '@models/ICell';
 import NormalCellBehaviour from './NormalCellBehaviour';
 import ChallengeFinishBehaviour from './ChallengeFinishBehaviour';
-import { IGrid } from 'models';
 import DeadlyBehaviour from './DeadlyBehaviour';
+import WaferBehaviour from './WaferBehaviour';
+import IGrid from '@models/IGrid';
+import InfectionBehaviour from './InfectionBehaviour';
 
 const redColor = 0xff0000;
 const blueColor = 0x0000ff;
@@ -47,6 +49,10 @@ export default function createBehaviour(
       return new LockBehaviour(cell, grid, yellowColor);
     case ChallengeCellType.Finish:
       return new ChallengeFinishBehaviour();
+    case ChallengeCellType.Wafer:
+      return new WaferBehaviour(cell, grid);
+    case ChallengeCellType.Infection:
+      return new InfectionBehaviour(cell, grid);
     default:
       throw new Error('Unknown challenge cell type: ' + challengeCellType);
   }

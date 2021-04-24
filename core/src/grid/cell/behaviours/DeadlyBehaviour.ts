@@ -23,6 +23,14 @@ export default class DeadlyBehaviour implements ICellBehaviour {
     return true;
   }
 
+  get isReplaceable(): boolean {
+    return false;
+  }
+
+  clone(_forCell: ICell): ICellBehaviour {
+    throw new Error('clone unsupported');
+  }
+
   get type(): CellType {
     return CellType.Deadly;
   }

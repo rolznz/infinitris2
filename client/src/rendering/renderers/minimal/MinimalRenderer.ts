@@ -183,7 +183,8 @@ export default class MinimalRenderer
 
     if (this._scrollX) {
       this._grid.graphics.x =
-        (this._camera.wrappedX + visibilityX) % this._cellSize;
+        ((this._camera.wrappedX + visibilityX) % this._cellSize) -
+        this._cellSize;
       if (!this._hasShadows) {
         this._wrapObjects();
       }
@@ -489,9 +490,8 @@ export default class MinimalRenderer
   }
 
   private _getCellSize = () => {
-    const width = this._app.renderer.width;
     const height = this._app.renderer.height;
-    return Math.floor((minCellSize * Math.min(width, height)) / 768 - 3);
+    return Math.ceil((minCellSize * height) / 768);
   };
 
   private _getClampedCellSize = () => {
@@ -542,7 +542,7 @@ export default class MinimalRenderer
         ? Math.ceil(appHeight / cellSize) + 2
         : this._grid.grid.numRows;
       const gridColumns = this._scrollX
-        ? Math.ceil(appWidth / cellSize)
+        ? Math.ceil(appWidth / cellSize) + 1
         : this._grid.grid.numColumns;
 
       this._grid.graphics.lineStyle(1, 0xaaaaaa, 0.5);

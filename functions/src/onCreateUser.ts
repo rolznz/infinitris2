@@ -7,6 +7,7 @@ import updateNetworkImpact from './utils/updateNetworkImpact';
 export const onCreateUser = functions.firestore
   .document('users/{userId}')
   .onCreate(async (snapshot, _context) => {
+    let credits = 3;
     // give the user 3 credits
     // TODO: affiliate system reward
     const user = snapshot.data() as IUser;
@@ -17,6 +18,7 @@ export const onCreateUser = functions.firestore
       const affiliateDoc = await affiliateDocRef.get();
       if (affiliateDoc.exists) {
         const affiliate = affiliateDoc.data() as IAffiliate;
+        credits += (affiliate.referralCount || 0) + 3;
         await updateNetworkImpact(affiliate.userId, snapshot.id);
         const conversionRef = db.doc(
           `affiliates/${user.referredByAffiliateId}/conversions/${snapshot.id}`
@@ -34,7 +36,7 @@ export const onCreateUser = functions.firestore
     }
 
     return snapshot.ref.update({
-      credits: 3,
+      credits,
       createdTimestamp: admin.firestore.Timestamp.now(),
     } as Pick<IUser, 'credits' | 'createdTimestamp'>);
   });

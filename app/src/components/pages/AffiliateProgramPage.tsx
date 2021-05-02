@@ -65,6 +65,17 @@ export default function AffiliateProgramPage() {
           description="Affiliate Program page title - invite your friends description"
         />
       </Typography>
+      {affiliateDoc && (
+        <Typography align="center" variant="caption">
+          <FormattedMessage
+            defaultMessage="Your next friend will receive a bonus of {signupRewardCredits} credits"
+            description="Affiliate Program Page - affiliate count statistic"
+            values={{
+              signupRewardCredits: (affiliateDoc.referralCount || 0) + 3,
+            }}
+          />
+        </Typography>
+      )}
       <Box mt={4} />
       {isCreatingAffiliate || !fireStoreUserDoc ? (
         <FlexBox>

@@ -1,12 +1,38 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { IUser } from 'infinitris2-models';
+import { db } from './utils/constants';
+import { IAffiliate, IUser } from 'infinitris2-models';
+import updateNetworkImpact from './utils/updateNetworkImpact';
 
 export const onCreateUser = functions.firestore
   .document('users/{userId}')
-  .onCreate((snapshot, _context) => {
+  .onCreate(async (snapshot, _context) => {
     // give the user 3 credits
     // TODO: affiliate system reward
+    const user = snapshot.data() as IUser;
+    if (user.referredByAffiliateId) {
+      const affiliateDocRef = db.doc(
+        `affiliates/${user.referredByAffiliateId}`
+      );
+      const affiliateDoc = await affiliateDocRef.get();
+      if (affiliateDoc.exists) {
+        const affiliate = affiliateDoc.data() as IAffiliate;
+        await updateNetworkImpact(affiliate.userId, snapshot.id);
+        const conversionRef = db.doc(
+          `affiliates/${user.referredByAffiliateId}/conversions/${snapshot.id}`
+        );
+        await conversionRef.set({
+          createdTimestamp: admin.firestore.Timestamp.now(),
+        });
+
+        await affiliateDocRef.update({
+          referralCount: (admin.firestore.FieldValue.increment(
+            1
+          ) as any) as number,
+        } as Pick<IAffiliate, 'referralCount'>);
+      }
+    }
+
     return snapshot.ref.update({
       credits: 3,
       createdTimestamp: admin.firestore.Timestamp.now(),

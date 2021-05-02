@@ -15,4 +15,5 @@ export default interface IUser extends IEntity {
   readonly credits: number;
   readonly networkImpact: number;
   readonly affiliateId?: string;
+  readonly referredByAffiliateId?: string;
 }

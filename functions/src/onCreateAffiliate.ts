@@ -14,7 +14,7 @@ export const onCreateAffiliate = functions.firestore
     } as Pick<IUser, 'credits' | 'affiliateId'>);
 
     return snapshot.ref.update({
-      referrals: 0,
+      referralCount: 0,
       createdTimestamp: admin.firestore.Timestamp.now(),
-    } as Pick<IAffiliate, 'createdTimestamp'>);
+    } as Pick<IAffiliate, 'createdTimestamp' | 'referralCount'>);
   });

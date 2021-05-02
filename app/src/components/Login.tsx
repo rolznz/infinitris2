@@ -17,6 +17,8 @@ import SocialLogo from 'social-logos';
 import FlexBox from './layout/FlexBox';
 import LoadingSpinner from './LoadingSpinner';
 import { IUser } from 'infinitris2-models';
+import localStorageKeys from '@/utils/localStorageKeys';
+import { useLocalStorage } from 'react-use';
 
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
@@ -33,6 +35,13 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
   const user = useUser();
   const userStore = useUserStore();
   const authUser = useAuthStore((authStore) => authStore.user);
+  const [referredByAffiliateId] = useLocalStorage<string>(
+    localStorageKeys.referredByAffiliateId,
+    undefined,
+    {
+      raw: true,
+    }
+  );
 
   async function loginWithProvider(provider: firebase.auth.AuthProvider) {
     try {
@@ -49,6 +58,7 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
             ...removeUndefinedValues(user),
             nickname: user.nickname || result.user.displayName,
             email: result.user.email,
+            ...(referredByAffiliateId ? { referredByAffiliateId } : {}),
           });
           // wait for the firebase onCreateUser function to run
           await new Promise((resolve) => setTimeout(resolve, 3000));

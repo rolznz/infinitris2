@@ -12,7 +12,7 @@ import {
 } from '@nandorojo/swr-firestore';
 import { IAffiliate, IUser } from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
-import { affiliatesPath, getUserPath } from '../../firebase';
+import { affiliatesPath, getAffiliatePath, getUserPath } from '../../firebase';
 import LoadingSpinner from '../LoadingSpinner';
 import { useCopyToClipboard } from 'react-use';
 import { toast } from 'react-toastify';
@@ -35,15 +35,11 @@ export default function AffiliateProgramPage() {
 
   const affiliateId = fireStoreUserDoc?.affiliateId;
 
-  /*const { data: affiliateDoc } = useDocument<IAffiliate>(
+  const { data: affiliateDoc } = useDocument<IAffiliate>(
     affiliateId ? getAffiliatePath(affiliateId) : null
-  );*/
+  );
 
   const affiliateLink = `${process.env.REACT_APP_URL}?ref=${affiliateId}`;
-
-  /*useEffect(() => {
-
-  }, [])*/
 
   if (!fireStoreUserDoc?.id || fireStoreUserDoc.id !== userId) {
     // wait for the user profile to load
@@ -114,15 +110,18 @@ export default function AffiliateProgramPage() {
               );
             }}
           >
-            {affiliateLink}
+            {affiliateLink.substring(affiliateLink.indexOf('://') + 3)}
           </Button>
+          <Box mt={4} />
+          <Typography align="center" variant="caption">
+            <FormattedMessage
+              defaultMessage="So far {affiliateCount} friends have signed up"
+              description="Affiliate Program Page - affiliate count statistic"
+              values={{ affiliateCount: affiliateDoc?.referralCount || 0 }}
+            />
+          </Typography>
 
-          {/* TODO: your link is: <copy> <share on> Facebook, Twitter */}
           {/* TODO: OG images for sharing */}
-          {/* TODO: show number of conversions */}
-          {/* TODO: show number of credits received */}
-          {/* TODO: show next conversion will give you X credits */}
-          {/* TODO: show next conversion will receive X credits */}
         </>
       )}
     </FlexBox>

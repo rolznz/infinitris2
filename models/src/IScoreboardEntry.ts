@@ -6,4 +6,5 @@ export default interface IScoreboardEntry {
   numBlocksPlaced: number;
   // TODO: creator rating
   // TODO: createdTimestamp
+  // TODO: number of conversions (affiliate program)
 }

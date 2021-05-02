@@ -1,10 +1,13 @@
 import React from 'react';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography, Link } from '@material-ui/core';
 
 import FlexBox from '../layout/FlexBox';
 import { FormattedMessage } from 'react-intl';
 
 import useLoginRedirect from '../hooks/useLoginRedirect';
+
+import Routes from '../../models/Routes';
+import { Link as RouterLink } from 'react-router-dom';
 
 export default function EarnCreditsPage() {
   useLoginRedirect();
@@ -36,41 +39,75 @@ export default function EarnCreditsPage() {
         <li>
           <Typography>
             <FormattedMessage
-              defaultMessage="Receive positive (4 or 5 star) ratings for created challenges - 1 credit per rating*"
-              description="Earn credits information - receive positive challenge rating"
+              defaultMessage="Increase your network impact - 1 credit per new impact"
+              description="Earn credits information - increase network impact"
             />
           </Typography>
-        </li>
-        <li>
-          <Typography>
-            <FormattedMessage
-              defaultMessage="Rate other users' challenges - 1 credit per rating"
-              description="Earn credits information - give rating"
-            />
-          </Typography>
-        </li>
-        <li>
-          <Typography>
-            <FormattedMessage
-              defaultMessage={`Affiliate program - coming soon`}
-              description="Earn credits information - affiliate program"
-            />
-          </Typography>
+          <ul>
+            <li>
+              <Typography>
+                <FormattedMessage
+                  defaultMessage="Create a challenge¹"
+                  description="Earn credits information - receive positive challenge rating"
+                />
+              </Typography>
+            </li>
+            <li>
+              <Box display="flex">
+                <Link
+                  component={RouterLink}
+                  underline="none"
+                  to={Routes.affiliateProgram}
+                  style={{ flexShrink: 0 }}
+                >
+                  <Typography>
+                    <FormattedMessage
+                      defaultMessage={`Invite your friends²`}
+                      description="Earn credits information - invite your friends (affiliate program) link"
+                    />
+                  </Typography>
+                </Link>
+              </Box>
+            </li>
+            <li>
+              <Typography>
+                <FormattedMessage
+                  defaultMessage="Mutual network impacts³"
+                  description="Earn credits information - mutual network impacts"
+                />
+              </Typography>
+            </li>
+          </ul>
         </li>
       </ul>
       <Box mt={10} />
-      <Typography variant="caption">
-        <FormattedMessage
-          defaultMessage={`*Saving a new challenge will cost 1 credit. This is to reduce spam.`}
-          description="Earn credits information - fine print"
-        />
-      </Typography>
-      <Typography variant="caption">
-        <FormattedMessage
-          defaultMessage={`Credit rewards may change over time.`}
-          description="Earn credits information - credit rewards may change"
-        />
-      </Typography>
+      <FlexBox alignItems="flex-start">
+        <Typography variant="caption">
+          <FormattedMessage
+            defaultMessage={`¹Saving a new challenge will cost 1 credit. This is to reduce spam. A new network impact will be created for each unique user that rates your challenge.`}
+            description="Earn credits information - challenges fine print"
+          />
+        </Typography>
+        <Typography variant="caption">
+          <FormattedMessage
+            defaultMessage={`²A new network impact will be created for each new user that creates an account by using your referral link.`}
+            description="Earn credits information - affiliate program fine print"
+          />
+        </Typography>
+        <Typography variant="caption">
+          <FormattedMessage
+            defaultMessage={`³If a player (B) who was impacted by you (A) goes on to impact another player (C), an impact from A -> C will be created. Up to 5 levels of recursion.`}
+            description="Earn credits information - mutual network impacts fine print"
+          />
+        </Typography>
+        <Box mt={1} />
+        <Typography variant="caption">
+          <FormattedMessage
+            defaultMessage={`This credit system is designed to reward players who positively contribute to the game. Credit rewards may change over time.`}
+            description="Earn credits information - credit rewards may change"
+          />
+        </Typography>
+      </FlexBox>
     </FlexBox>
   );
 }

@@ -22,6 +22,9 @@ firebase.auth().onAuthStateChanged((user) => {
 
 export const usersPath = 'users';
 export const getUserPath = (userId: string) => `${usersPath}/${userId}`;
+export const affiliatesPath = 'affiliates';
+export const getAffiliatePath = (affiliateId: string) =>
+  `${affiliatesPath}/${affiliateId}`;
 export const scoreboardEntriesPath = 'scoreboardEntries';
 export const roomsPath = 'rooms';
 export const getRoomPath = (roomId: string) => `${roomsPath}/${roomId}`;

@@ -31,6 +31,7 @@ import INetworkImpact from './src/INetworkImpact';
 import Timestamp from './src/Timestamp';
 import IScoreboardEntry from './src/IScoreboardEntry';
 import ICellEventListener from './src/ICellEventListener';
+import IAffiliate from './src/IAffiliate';
 
 export {
   exampleChallenges,
@@ -57,6 +58,7 @@ export {
   ChallengeCellType,
   IRoom,
   IUser,
+  IAffiliate,
   IRating,
   ControlSettings,
   INetworkImpact,

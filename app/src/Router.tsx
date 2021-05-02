@@ -24,6 +24,7 @@ import { PrivacyPolicyPage } from './components/PrivacyPolicyPage';
 import { TermsOfServicePage } from './components/TermsOfServicePage';
 import EarnCreditsPage from './components/pages/EarnCreditsPage';
 import ScoreboardPage from './components/pages/ScoreboardPage';
+import AffiliateProgramPage from './components/pages/AffiliateProgramPage';
 
 export default function Router() {
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
@@ -77,6 +78,9 @@ export default function Router() {
         </Route>
         <Route exact path={Routes.earnCredits}>
           <EarnCreditsPage />
+        </Route>
+        <Route exact path={Routes.affiliateProgram}>
+          <AffiliateProgramPage />
         </Route>
         <Route exact path={Routes.scoreboard}>
           <ScoreboardPage />

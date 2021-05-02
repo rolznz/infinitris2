@@ -53,5 +53,16 @@ service cloud.firestore {
     match /scoreboardEntries/{document=**} {
       allow read: if true;
     }
+    match /affiliates/{affiliateId} {
+      function canCreateAffiliate() {
+      	return exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+        	!('affiliateId' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data) &&
+          request.resource.data.keys().hasOnly(['userId']);
+      }
+      allow create: if isOwner(request, resource) && canCreateAffiliate();
+      allow read: if isOwner(request, resource);
+      allow update: if false;
+      allow delete: if false;
+    }
   }
 }

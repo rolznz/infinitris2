@@ -18,6 +18,7 @@ enum Routes {
   scoreboard = '/scoreboard',
   allSet = '/all-set',
   earnCredits = '/earn-credits',
+  affiliateProgram = '/affiliate-program',
 }
 
 export default Routes;

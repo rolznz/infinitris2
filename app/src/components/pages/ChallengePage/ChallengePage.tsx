@@ -92,6 +92,7 @@ export default function ChallengePage() {
         onBlockMoved() {},
         onBlockWrapped() {},
         onLineCleared() {},
+        onCellBehaviourChanged() {},
       };
 
       setChallengeClient(

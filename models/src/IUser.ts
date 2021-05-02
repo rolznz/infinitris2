@@ -14,4 +14,5 @@ export default interface IUser extends IEntity {
   readonly controls: ControlSettings;
   readonly credits: number;
   readonly networkImpact: number;
+  readonly affiliateId?: string;
 }

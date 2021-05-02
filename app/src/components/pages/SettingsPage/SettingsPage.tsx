@@ -80,28 +80,30 @@ export default function SettingsPage() {
                 </Select>
               }
             />
-            <SettingsRow
-              left={
-                <FormattedMessage
-                  defaultMessage="Controls"
-                  description="Settings Page Table - Controls left column"
-                />
-              }
-              right={
-                <Link
-                  component={RouterLink}
-                  underline="none"
-                  to={`${Routes.controlSettings}`}
-                >
-                  <Button variant="contained" color="primary">
-                    <FormattedMessage
-                      defaultMessage="Change"
-                      description="Settings Page Table - Change controls button text"
-                    />
-                  </Button>
-                </Link>
-              }
-            />
+            {userStore.user.preferredInputMethod === 'keyboard' && (
+              <SettingsRow
+                left={
+                  <FormattedMessage
+                    defaultMessage="Controls"
+                    description="Settings Page Table - Controls left column"
+                  />
+                }
+                right={
+                  <Link
+                    component={RouterLink}
+                    underline="none"
+                    to={`${Routes.controlSettings}`}
+                  >
+                    <Button variant="contained" color="primary">
+                      <FormattedMessage
+                        defaultMessage="Change"
+                        description="Settings Page Table - Change controls button text"
+                      />
+                    </Button>
+                  </Link>
+                }
+              />
+            )}
             <SettingsRow
               left={
                 <FormattedMessage

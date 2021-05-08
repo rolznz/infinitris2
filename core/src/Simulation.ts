@@ -50,7 +50,7 @@ export default class Simulation implements ISimulation {
     return this._settings;
   }
 
-  getPlayer(playerId: number) {
+  getPlayer(playerId: number): Player {
     return this._players[playerId];
   }
 
@@ -110,6 +110,7 @@ export default class Simulation implements ISimulation {
    */
   addPlayer(player: Player) {
     this._players[player.id] = player;
+    player.addEventListener(this);
   }
 
   // TODO: move to renderer

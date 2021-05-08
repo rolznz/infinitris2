@@ -93,7 +93,7 @@ export default class SinglePlayerClient
 
     this._simulation.init();
     const playerId = 0;
-    const player = new ControllablePlayer(playerId, this._simulation);
+    const player = new ControllablePlayer(playerId);
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);
     this._simulation.startInterval();

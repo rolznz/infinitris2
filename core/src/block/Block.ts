@@ -4,12 +4,12 @@ import ISimulationSettings from '@models/ISimulationSettings';
 import Layout from '@models/Layout';
 import LayoutUtils from './layout/LayoutUtils';
 import ICell from '@models/ICell';
+import IPlayer from '@models/IPlayer';
 
 type LoopCellEvent = (cell?: ICell) => void;
 
 export default class Block implements IBlock {
-  private _playerId: number;
-  private _color: number;
+  private _player: IPlayer;
   private readonly _cells: ICell[];
   private _wrapIndex: number;
   private _column: number;
@@ -23,9 +23,10 @@ export default class Block implements IBlock {
   private _isAlive: boolean;
   private _cancelDrop: boolean;
   private _slowdownRows: number[];
+  private _gridCells: ICell[][];
 
   constructor(
-    playerId: number,
+    player: IPlayer,
     layout: Layout,
     row: number,
     column: number,
@@ -33,8 +34,7 @@ export default class Block implements IBlock {
     gridCells: ICell[][],
     eventListener?: IBlockEventListener
   ) {
-    this._color = 0x0000ff;
-    this._playerId = playerId;
+    this._player = player;
     this._wrapIndex = 0;
     this._column = column;
     this._row = row;
@@ -48,6 +48,7 @@ export default class Block implements IBlock {
     this._lockTimer = 0;
     this._slowdownRows = [];
     this._isAlive = true;
+    this._gridCells = gridCells;
     this._resetTimers();
     if (this.canMove(gridCells, 0, 0, 0)) {
       this._updateCells(gridCells);
@@ -60,8 +61,8 @@ export default class Block implements IBlock {
     }
   }
 
-  get playerId(): number {
-    return this._playerId;
+  get player(): IPlayer {
+    return this._player;
   }
   get row(): number {
     return this._row;
@@ -69,8 +70,25 @@ export default class Block implements IBlock {
   get column(): number {
     return this._column;
   }
-  get color(): number {
-    return this._color;
+  get centreX(): number {
+    // TODO: optimize
+    const rotatedLayout = LayoutUtils.rotate(this._layout, this._rotation);
+    let firstFilledColumn = rotatedLayout[0].length;
+    let lastFilledColumn = 0;
+    for (let row = 0; row < rotatedLayout.length; row++) {
+      for (let column = 0; column < rotatedLayout[0].length; column++) {
+        if (rotatedLayout[row][column] === 1) {
+          firstFilledColumn = Math.min(firstFilledColumn, column);
+          lastFilledColumn = Math.max(lastFilledColumn, column);
+        }
+      }
+    }
+    return (
+      this._column +
+      firstFilledColumn +
+      (lastFilledColumn + 1 - firstFilledColumn) * 0.5 -
+      Math.floor(rotatedLayout[0].length / 2) // all block cells are centered horizontally - see _loopCells
+    );
   }
   get cells(): ICell[] {
     return this._cells;
@@ -263,7 +281,6 @@ export default class Block implements IBlock {
         continue;
       }
       canMove = force || this.canMove(gridCells, dx, dy, drClamped);
-      console.log('Canmove: ', i, canMove, drClamped, dx, dy);
       if (canMove) {
         const gridNumColumns = gridCells[0].length;
         this._column += dx;

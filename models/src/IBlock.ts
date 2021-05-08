@@ -1,14 +1,15 @@
 import ICell from './ICell';
+import IPlayer from './IPlayer';
 import ISimulationSettings from './ISimulationSettings';
 
 export default interface IBlock {
-  playerId: number;
+  player: IPlayer;
   cells: ICell[];
-  color: number;
   width: number;
   height: number;
   row: number;
   column: number;
+  centreX: number;
   isDropping: boolean;
   update(gridCells: ICell[][], simulationSettings: ISimulationSettings): void;
   move(

@@ -25,6 +25,7 @@ interface IRenderableGrid {
 interface IRenderableBlock {
   block: IBlock;
   cells: IRenderableCell[];
+  playerNameText: PIXI.Text;
 }
 
 enum RenderCellType {
@@ -47,10 +48,10 @@ interface IRenderableCell extends IRenderableEntity {
   // a cell will be rendered 1 time on wrapped grids, N times for shadow wrapping (grid width < screen width)
 }
 
-interface IPlayerScore {
+/*interface IPlayerScore {
   playerId: number;
   text: PIXI.Text;
-}
+}*/
 
 interface IParticle extends IRenderableEntity {
   x: number;
@@ -76,7 +77,7 @@ export default class MinimalRenderer
   private _blocks!: { [playerId: number]: IRenderableBlock };
   private _cells!: { [cellId: number]: IRenderableCell };
   private _particles!: IParticle[];
-  private _playerScores!: IPlayerScore[];
+  //private _playerScores!: IPlayerScore[];
 
   private _simulation!: Simulation;
 
@@ -288,7 +289,7 @@ export default class MinimalRenderer
 
     this._placementHelperShadowCells = [];
 
-    this._playerScores = [...Array(10)].map((_, i) => ({
+    /*this._playerScores = [...Array(10)].map((_, i) => ({
       playerId: -1,
       text: new PIXI.Text('', {
         font: 'bold italic 60px Arvo',
@@ -297,9 +298,9 @@ export default class MinimalRenderer
         stroke: '#a4410e',
         strokeThickness: 7,
       }),
-    }));
+    }));*/
 
-    this._app.stage.addChild(...this._playerScores.map((score) => score.text));
+    //this._app.stage.addChild(...this._playerScores.map((score) => score.text));
 
     if (
       this._virtualKeyboardControls &&
@@ -337,11 +338,21 @@ export default class MinimalRenderer
         children: [],
       })),
       block,
+      playerNameText: new PIXI.Text(block.player.nickname, {
+        font: 'bold italic 60px Arvo',
+        fill: PIXI.utils.hex2string(block.player.color),
+        align: 'center',
+        stroke: '#000000',
+        strokeThickness: 7,
+      }),
     };
+    this._world.addChild(renderableBlock.playerNameText);
+    renderableBlock.playerNameText.anchor.set(0.5, 0);
+
     this._world.addChild(
       ...renderableBlock.cells.map((cell) => cell.container)
     );
-    this._blocks[block.playerId] = renderableBlock;
+    this._blocks[block.player.id] = renderableBlock;
     this._renderBlock(block);
   }
 
@@ -361,7 +372,7 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   onBlockWrapped(block: IBlock, wrapIndexChange: number) {
-    if (this._simulation.isFollowingPlayerId(block.playerId)) {
+    if (this._simulation.isFollowingPlayerId(block.player.id)) {
       this._camera.moveWrapIndex(wrapIndexChange);
     }
   }
@@ -412,10 +423,12 @@ export default class MinimalRenderer
   }
 
   private _removeBlock(block: IBlock) {
+    var renderableBlock = this._blocks[block.player.id];
     this._world.removeChild(
-      ...this._blocks[block.playerId].cells.map((cell) => cell.container)
+      ...renderableBlock.cells.map((cell) => cell.container)
     );
-    delete this._blocks[block.playerId];
+    this._world.removeChild(renderableBlock.playerNameText);
+    delete this._blocks[block.player.id];
   }
 
   /**
@@ -434,12 +447,12 @@ export default class MinimalRenderer
       this._camera.follow(
         blockX + block.width * cellSize * 0.5,
         y,
-        block.playerId
+        block.player.id
       );
       this._renderBlockPlacementShadow(block);
     }
     // TODO: only run this once per second
-    const scores = this._simulation.players.map((p) => ({
+    /*const scores = this._simulation.players.map((p) => ({
       id: p.id,
       name: 'New player',
       score: p.score,
@@ -452,7 +465,7 @@ export default class MinimalRenderer
       } else {
         this._playerScores[i].text.text = '';
       }
-    }
+    }*/
 
     for (const particle of this._particles) {
       particle.x += particle.vx;
@@ -595,11 +608,11 @@ export default class MinimalRenderer
   };
 
   private _renderBlock(block: IBlock) {
-    const renderableBlock: IRenderableBlock = this._blocks[block.playerId];
+    const renderableBlock: IRenderableBlock = this._blocks[block.player.id];
     this._moveBlock(block);
 
     renderableBlock.cells.forEach((cell) => {
-      this._renderCellCopies(cell, RenderCellType.Block, 1, block.color);
+      this._renderCellCopies(cell, RenderCellType.Block, 1, block.player.color);
     });
   }
 
@@ -609,7 +622,7 @@ export default class MinimalRenderer
 
   private _moveBlock(block: IBlock) {
     const cellSize = this._getClampedCellSize();
-    const renderableBlock: IRenderableBlock = this._blocks[block.playerId];
+    const renderableBlock: IRenderableBlock = this._blocks[block.player.id];
 
     for (let i = 0; i < block.cells.length; i++) {
       renderableBlock.cells[i].cell = block.cells[i];
@@ -620,15 +633,11 @@ export default class MinimalRenderer
       cell.container.y = cell.cell.row * cellSize;
     });
 
-    if (this._simulation.isFollowingPlayerId(block.playerId)) {
-      const blockX = block.column * cellSize;
-      const y = block.row * cellSize;
-      this._camera.follow(
-        blockX + block.width * cellSize * 0.5,
-        y,
-        block.playerId
-      );
-    }
+    const textCentreX = block.centreX * cellSize;
+    const textY =
+      block.row * cellSize - renderableBlock.playerNameText.height * 1.2;
+    renderableBlock.playerNameText.x = textCentreX;
+    renderableBlock.playerNameText.y = textY;
   }
 
   private _renderParticle(particle: IParticle, color: number) {
@@ -866,7 +875,7 @@ export default class MinimalRenderer
           renderableCell,
           RenderCellType.PlacementHelper,
           0.33,
-          block.color
+          block.player.color
         );
         cellIndex++;
       }

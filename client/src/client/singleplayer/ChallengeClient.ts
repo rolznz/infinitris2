@@ -300,7 +300,7 @@ export default class ChallengeClient
     }
 
     const playerId = 0;
-    const player = new ControllablePlayer(playerId, this._simulation);
+    const player = new ControllablePlayer(playerId);
     simulation.addPlayer(player);
     simulation.followPlayer(player);
     if (this._challenge.firstBlockLayoutId) {

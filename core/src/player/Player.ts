@@ -6,21 +6,25 @@ import IBlockEventListener from '@models/IBlockEventListener';
 import ISimulationSettings from '@models/ISimulationSettings';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
+import IPlayer from '@models/IPlayer';
 
-export default abstract class Player implements IBlockEventListener {
+export default abstract class Player implements IPlayer, IBlockEventListener {
   private _id: number;
   private _block?: IBlock;
   private _score: number;
   private _lastPlacementColumn: number | undefined;
-  private _eventListener?: IBlockEventListener;
+  private _eventListeners: IBlockEventListener[]; // TODO: add IPlayerEventListener
   private _nextLayout?: Layout;
   private _nextLayoutRotation?: number;
+  private _nickname: string;
+  private _color: number;
 
-  // TODO: addEventListener to be consistent with other objects
-  constructor(id: number, eventListener?: IBlockEventListener) {
+  constructor(id: number, nickname: string = 'Guest') {
     this._id = id;
-    this._eventListener = eventListener;
+    this._eventListeners = [];
     this._score = 0;
+    this._nickname = nickname;
+    this._color = 0x666666;
   }
 
   get id(): number {
@@ -34,12 +38,27 @@ export default abstract class Player implements IBlockEventListener {
     return this._score;
   }
 
+  get nickname(): string {
+    return this._nickname;
+  }
+
+  get color(): number {
+    return this._color;
+  }
+
   set nextLayout(nextLayout: Layout | undefined) {
     this._nextLayout = nextLayout;
   }
 
   set nextLayoutRotation(nextLayoutRotation: number | undefined) {
     this._nextLayoutRotation = nextLayoutRotation;
+  }
+
+  /**
+   * Add one or more listeners to listen to events broadcasted by this player.
+   */
+  addEventListener(...eventListeners: IBlockEventListener[]) {
+    this._eventListeners.push(...eventListeners);
   }
 
   /**
@@ -70,7 +89,7 @@ export default abstract class Player implements IBlockEventListener {
           ? Math.floor((gridCells[0].length - layout[0].length) / 2)
           : this._lastPlacementColumn;
       const newBlock = new Block(
-        this._id,
+        this,
         layout,
         simulationSettings.spawnRowOffset || 0,
         column,
@@ -91,28 +110,32 @@ export default abstract class Player implements IBlockEventListener {
    * @inheritdoc
    */
   onBlockCreated(block: IBlock) {
-    this._eventListener?.onBlockCreated(block);
+    this._eventListeners.forEach((listener) => listener.onBlockCreated(block));
   }
 
   /**
    * @inheritdoc
    */
   onBlockCreateFailed(block: IBlock) {
-    this._eventListener?.onBlockCreateFailed(block);
+    this._eventListeners.forEach((listener) =>
+      listener.onBlockCreateFailed(block)
+    );
   }
 
   /**
    * @inheritdoc
    */
   onBlockMoved(block: IBlock) {
-    this._eventListener?.onBlockMoved(block);
+    this._eventListeners.forEach((listener) => listener.onBlockMoved(block));
   }
 
   /**
    * @inheritdoc
    */
   onBlockWrapped(block: IBlock, wrapIndexChange: number) {
-    this._eventListener?.onBlockWrapped(block, wrapIndexChange);
+    this._eventListeners.forEach((listener) =>
+      listener.onBlockWrapped(block, wrapIndexChange)
+    );
   }
 
   /**
@@ -123,7 +146,7 @@ export default abstract class Player implements IBlockEventListener {
       throw new Error('Block mismatch');
     }
     this._lastPlacementColumn = this._block.column;
-    this._eventListener?.onBlockPlaced(block);
+    this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
     this._removeBlock();
 
     // TODO: improved score calculation
@@ -134,7 +157,7 @@ export default abstract class Player implements IBlockEventListener {
    * @inheritdoc
    */
   onBlockDied(block: IBlock) {
-    this._eventListener?.onBlockDied(block);
+    this._eventListeners.forEach((listener) => listener.onBlockDied(block));
     this._removeBlock();
   }
 

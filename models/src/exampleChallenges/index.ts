@@ -7,6 +7,7 @@ import infectionTest2 from './infectionTest2';
 import keysAndLocks1 from './keysAndLocks1';
 import outsideTheBox from './outsideTheBox';
 import shadowTest from './shadowTest';
+import tSpins1 from './tSpins';
 import waferTest from './waferTest';
 import wrapTest from './wrapTest';
 
@@ -21,4 +22,5 @@ export const exampleChallenges: IChallenge[] = [
   waferTest,
   infectionTest,
   infectionTest2,
+  tSpins1,
 ];

@@ -160,13 +160,42 @@ export default class Block implements IBlock {
     }
     let canMove: boolean = true;
     if (!this._isDropping || (dx === 0 && dr === 0)) {
+      const newCells: ICell[] = [];
       this._loopCells(
         gridCells,
         this._column + dx,
         this._row + dy,
         this._rotation + dr,
-        (cell) => (canMove = Boolean(canMove && cell && cell.isPassable))
+        (cell) => {
+          if (cell) {
+            newCells.push(cell);
+          }
+          canMove = Boolean(canMove && cell && cell.isPassable);
+        }
       );
+
+      // if attempting to rotate but the result is a non-rotation movement in any direction, return false
+      if (dr !== 0) {
+        const gridNumColumns = gridCells[0].length;
+        for (let x = -1; x <= 1; x++) {
+          for (let y = -1; y <= 1; y++) {
+            if (
+              newCells.findIndex(
+                (newCell) =>
+                  this._cells.findIndex(
+                    (currentCell) =>
+                      (((currentCell.column + x) % gridNumColumns) +
+                        gridNumColumns) %
+                        gridNumColumns ===
+                        newCell.column && currentCell.row + y === newCell.row
+                  ) < 0
+              ) < 0
+            ) {
+              canMove = false;
+            }
+          }
+        }
+      }
     } else {
       canMove = false;
     }
@@ -191,31 +220,76 @@ export default class Block implements IBlock {
     dr: number,
     force: boolean = false
   ): boolean {
-    const canMove = force || this.canMove(gridCells, dx, dy, dr);
-    if (canMove) {
-      const gridNumColumns = gridCells[0].length;
-      this._column += dx;
-      const oldWrapIndex = this._wrapIndex;
-      while (this._column > gridNumColumns) {
-        this._column -= gridNumColumns;
-        ++this._wrapIndex;
-      }
-      while (this._column < 0) {
-        this._column += gridNumColumns;
-        --this._wrapIndex;
-      }
-      if (oldWrapIndex !== this._wrapIndex) {
-        this._eventListener?.onBlockWrapped(
-          this,
-          this._wrapIndex - oldWrapIndex
-        );
-      }
+    const maxAttempts = dr !== 0 ? 44 : 1;
+    let canMove = false;
+    for (let i = 0; i < maxAttempts; i++) {
+      let drClamped = dr !== 0 ? (((dr + i * dr) % 4) + 4) % 4 : 0;
+      if (dr !== 0) {
+        // order to prioritize downward rotation:
+        // cycle 0 iteration 0-3: dx=0, dy=0
+        // cycle 1 iteration 4-7: dx=dr, dy=0
+        // cycle 2 iteration 8-11: dx=-dr, dy=0
+        // cycle 3 iteration 12-15: dx=0, dy=1
+        // cycle 4 iteration 16-19: dy=dr, dy=1
+        // cycle 5 iteration 20-23: dy=-dr, dy=1
+        // cycle 6 iteration 24-27: dx=0, dy=2
+        // cycle 7 iteration 28-31: dy=dr, dy=2
+        // cycle 8 iteration 32-35: dy=-dr, dy=2
+        // cycle 9 iteration 36-39: dy=0, dy=-1 - special case, allow Z/T blocks to rotate on a flat surface
+        // cycle 10 iteration 40-43: dy=0, dy=-2 - special case, allow I blocks to rotate on a flat surface
 
-      this._row += dy;
-      this._rotation += dr;
-      this._updateCells(gridCells);
-      this._resetTimers();
-      this._eventListener?.onBlockMoved(this);
+        const attemptCycles = Math.floor(i / 4);
+        dx =
+          attemptCycles === 1 || attemptCycles === 4 || attemptCycles === 7
+            ? dr
+            : attemptCycles === 2 || attemptCycles === 5 || attemptCycles === 8
+            ? -dr
+            : 0;
+        dy =
+          attemptCycles === 10
+            ? -2
+            : attemptCycles === 9
+            ? -1
+            : attemptCycles > 5
+            ? 2
+            : attemptCycles > 2
+            ? 1
+            : 0;
+      }
+      // don't allow movement without rotation and 180 degree rotations
+      // Note: has additional check in canMove to ensure rotation does not result in a simple movement
+      // (e.g. for 180 degree rotation with up/down movement on an I block)
+      if ((drClamped === 0 || (drClamped === 2 && dy === 0)) && dr !== 0) {
+        continue;
+      }
+      canMove = force || this.canMove(gridCells, dx, dy, drClamped);
+      console.log('Canmove: ', i, canMove, drClamped, dx, dy);
+      if (canMove) {
+        const gridNumColumns = gridCells[0].length;
+        this._column += dx;
+        const oldWrapIndex = this._wrapIndex;
+        while (this._column > gridNumColumns) {
+          this._column -= gridNumColumns;
+          ++this._wrapIndex;
+        }
+        while (this._column < 0) {
+          this._column += gridNumColumns;
+          --this._wrapIndex;
+        }
+        if (oldWrapIndex !== this._wrapIndex) {
+          this._eventListener?.onBlockWrapped(
+            this,
+            this._wrapIndex - oldWrapIndex
+          );
+        }
+
+        this._row += dy;
+        this._rotation += drClamped;
+        this._updateCells(gridCells);
+        this._resetTimers();
+        this._eventListener?.onBlockMoved(this);
+        break;
+      }
     }
     return canMove;
   }

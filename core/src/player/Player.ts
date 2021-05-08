@@ -54,11 +54,16 @@ export default abstract class Player implements IBlockEventListener {
    */
   update(gridCells: ICell[][], simulationSettings: ISimulationSettings) {
     if (!this._block) {
+      const layouts = Object.entries(tetrominoes)
+        .filter(
+          (entry) =>
+            !simulationSettings.allowedBlockLayoutIds ||
+            simulationSettings.allowedBlockLayoutIds.indexOf(entry[0]) >= 0
+        )
+        .map((entry) => entry[1]);
+
       const layout =
-        this._nextLayout ||
-        Object.values(tetrominoes)[
-          Math.floor(Math.random() * Object.values(tetrominoes).length)
-        ];
+        this._nextLayout || layouts[Math.floor(Math.random() * layouts.length)];
       this._nextLayout = undefined;
       const column =
         this._lastPlacementColumn === undefined

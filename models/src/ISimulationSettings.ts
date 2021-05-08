@@ -1,4 +1,5 @@
 export default interface ISimulationSettings {
-  gravityEnabled?: boolean;
-  spawnRowOffset?: number;
+  readonly gravityEnabled?: boolean;
+  readonly spawnRowOffset?: number;
+  readonly allowedBlockLayoutIds?: string[];
 }

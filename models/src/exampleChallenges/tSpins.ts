@@ -1,0 +1,47 @@
+import IChallenge from '../IChallenge';
+
+const tSpins1: IChallenge = {
+  id: 't-spins-1',
+  userId: '',
+  isOfficial: true,
+  title: 'T Spins 1',
+  description: '',
+  locale: 'en',
+  isMandatory: true,
+  isPublished: true,
+  priority: 8000,
+  simulationSettings: {
+    allowedBlockLayoutIds: ['T'],
+  },
+  finishCriteria: {
+    finishChallengeCellFilled: true,
+  },
+  successCriteria: {
+    gold: {
+      maxBlocksPlaced: 10,
+    },
+    silver: {
+      maxBlocksPlaced: 20,
+    },
+  },
+  grid: `
+0000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000
+0000000000000XX0000XX0000000000000000000000000
+0000000000000X0000XX00000000000000000000000000
+000000XX0X00XX0XXXX00XXXX000000000000000000000
+XXXX00RXXX0rGXg0XXXX00XXXXXXXXXXXXXXXXXXXXXXXX
+XXXXX0XXXXX0XXBXXXX00XXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXX0XXXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXX000XXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXX000XXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXX00bXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXFXXXXXXXXXXXXXXXXXXXXXXX
+
+`, // TODO: garbageRows=[5,6,7]
+  createdTimestamp: { toDate: () => new Date() },
+  //firstBlockLayoutId: 'T',
+};
+
+export default tSpins1;

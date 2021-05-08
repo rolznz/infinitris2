@@ -13,6 +13,7 @@ import { useUser } from '../../state/UserStore';
 import LoadingSpinner from '../LoadingSpinner';
 import { useDocument } from '@nandorojo/swr-firestore';
 import { getRoomPath } from '../../firebase';
+import useComingSoonRedirect from '../hooks/useComingSoonRedirect';
 
 interface RoomPageRouteParams {
   id: string;
@@ -32,6 +33,7 @@ const socketEventListener: IClientSocketEventListener = {
 };
 
 export default function RoomPage() {
+  useComingSoonRedirect();
   const appStore = useAppStore();
   const client = appStore.clientApi;
   const [

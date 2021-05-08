@@ -25,6 +25,7 @@ import { TermsOfServicePage } from './components/TermsOfServicePage';
 import EarnCreditsPage from './components/pages/EarnCreditsPage';
 import ScoreboardPage from './components/pages/ScoreboardPage';
 import AffiliateProgramPage from './components/pages/AffiliateProgramPage';
+import { ComingSoonPage } from './components/pages/ComingSoonPage';
 
 export default function Router() {
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
@@ -72,6 +73,9 @@ export default function Router() {
         </Route>
         <Route exact path={Routes.login}>
           <LoginPage />
+        </Route>
+        <Route exact path={Routes.comingSoon}>
+          <ComingSoonPage />
         </Route>
         <Route exact path={Routes.profile}>
           <ProfilePage />

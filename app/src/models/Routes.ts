@@ -8,6 +8,7 @@ enum Routes {
   privacyPolicy = '/privacy',
   profile = '/profile',
   login = '/login',
+  comingSoon = '/coming-soon',
   singlePlayer = '/single-player',
   settings = '/settings',
   controlSettings = '/settings/controls',

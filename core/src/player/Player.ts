@@ -24,7 +24,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._eventListeners = [];
     this._score = 0;
     this._nickname = nickname;
-    this._color = 0x666666;
+    this._color = 0xffff00;
   }
 
   get id(): number {

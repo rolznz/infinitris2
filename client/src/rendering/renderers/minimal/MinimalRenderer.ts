@@ -25,7 +25,7 @@ interface IRenderableGrid {
 interface IRenderableBlock {
   block: IBlock;
   cells: IRenderableCell[];
-  playerNameText: PIXI.Text;
+  playerNameText: IRenderableEntity<PIXI.Text>;
 }
 
 enum RenderCellType {
@@ -34,16 +34,16 @@ enum RenderCellType {
   PlacementHelper,
 }
 
-interface IRenderableEntity {
+interface IRenderableEntity<T extends PIXI.DisplayObject> {
   // stores all the graphics objects - main render + all shadows
   container: PIXI.Container;
   children: {
     shadowIndex: number;
-    graphics: PIXI.Graphics;
+    pixiObject: T;
   }[];
 }
 
-interface IRenderableCell extends IRenderableEntity {
+interface IRenderableCell extends IRenderableEntity<PIXI.Graphics> {
   cell: ICell;
   // a cell will be rendered 1 time on wrapped grids, N times for shadow wrapping (grid width < screen width)
 }
@@ -53,7 +53,7 @@ interface IRenderableCell extends IRenderableEntity {
   text: PIXI.Text;
 }*/
 
-interface IParticle extends IRenderableEntity {
+interface IParticle extends IRenderableEntity<PIXI.Graphics> {
   x: number;
   y: number;
   vx: number;
@@ -72,6 +72,8 @@ export default class MinimalRenderer
   private _virtualGestureSprites?: PIXI.Sprite[];
   private _app!: PIXI.Application;
   private _world!: PIXI.Container;
+
+  private _shadowGradientGraphics?: PIXI.Graphics;
 
   // FIXME: blocks should have their own ids!
   private _blocks!: { [playerId: number]: IRenderableBlock };
@@ -195,52 +197,13 @@ export default class MinimalRenderer
         ((cameraY + visibilityY) % this._cellSize) - this._cellSize;
     }
 
-    if (this._hasShadows) {
-      Object.values(this._blocks).forEach((block) => {
-        block.cells.forEach((cell) => this._applyShadowAlpha(cell));
-      });
-      this._placementHelperShadowCells.forEach((renderableCell) =>
-        this._applyShadowAlpha(renderableCell)
-      );
-    }
     Object.values(this._cells).forEach((cell) => {
       if (cell.cell.behaviour.requiresRerender) {
         this._renderCell(cell.cell);
       }
       cell.container.alpha = cell.cell.isEmpty ? cell.cell.behaviour.alpha : 1;
-      if (this._hasShadows) {
-        this._applyShadowAlpha(cell);
-      }
-
-      if (cell.cell.type === CellType.Laser) {
-        const cellBehaviour = cell.cell.behaviour as LaserBehaviour;
-        cell.container.alpha = cellBehaviour.alpha;
-      } else if (cell.cell.type === CellType.Lock) {
-        const cellBehaviour = cell.cell.behaviour as LockBehaviour;
-        if (cellBehaviour.isLocked) {
-        }
-      }
     });
   };
-
-  private _applyShadowAlpha(cell: IRenderableCell) {
-    cell.children.forEach((child) => {
-      const distance = Math.min(
-        Math.abs(cell.container.x + child.graphics.x + this._camera.wrappedX),
-        this._app.renderer.width * 0.5
-      );
-
-      const alpha = Math.min(
-        1 -
-          Math.min(
-            (distance * Math.max(this._shadowCount / 2, 1)) /
-              this._app.renderer.width,
-            1
-          )
-      );
-      child.graphics.tint = PIXI.utils.rgb2hex([alpha, alpha, alpha]);
-    });
-  }
 
   private _wrapObjects() {
     this._world.children.forEach((child) => {
@@ -283,9 +246,12 @@ export default class MinimalRenderer
     };
     this._app.stage.addChild(this._grid.graphics);
 
+    this._shadowGradientGraphics = new PIXI.Graphics();
+
     this._world = new PIXI.Container();
     this._world.sortableChildren = true;
     this._app.stage.addChild(this._world);
+    this._app.stage.addChild(this._shadowGradientGraphics);
 
     this._placementHelperShadowCells = [];
 
@@ -338,17 +304,12 @@ export default class MinimalRenderer
         children: [],
       })),
       block,
-      playerNameText: new PIXI.Text(block.player.nickname, {
-        font: 'bold italic 60px Arvo',
-        fill: PIXI.utils.hex2string(block.player.color),
-        align: 'center',
-        stroke: '#000000',
-        strokeThickness: 7,
-      }),
+      playerNameText: {
+        container: new PIXI.Container(),
+        children: [],
+      },
     };
-    this._world.addChild(renderableBlock.playerNameText);
-    renderableBlock.playerNameText.anchor.set(0.5, 0);
-
+    this._world.addChild(renderableBlock.playerNameText.container);
     this._world.addChild(
       ...renderableBlock.cells.map((cell) => cell.container)
     );
@@ -427,7 +388,7 @@ export default class MinimalRenderer
     this._world.removeChild(
       ...renderableBlock.cells.map((cell) => cell.container)
     );
-    this._world.removeChild(renderableBlock.playerNameText);
+    this._world.removeChild(renderableBlock.playerNameText.container);
     delete this._blocks[block.player.id];
   }
 
@@ -574,6 +535,22 @@ export default class MinimalRenderer
       for (const block of Object.values(this._blocks)) {
         this._renderBlock(block.block);
       }
+
+      this._shadowGradientGraphics?.clear();
+      if (this._shadowGradientGraphics && this._hasShadows) {
+        // thanks to https://gist.github.com/gre/1650294
+        const easeInOutQuad = (t: number) =>
+          t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+        for (let x = 0; x < appWidth; x++) {
+          this._shadowGradientGraphics.lineStyle(
+            1,
+            0x00000,
+            easeInOutQuad(Math.abs(appWidth * 0.5 - x) / (appWidth * 0.5))
+          );
+          this._shadowGradientGraphics.moveTo(x, 0);
+          this._shadowGradientGraphics.lineTo(x, appHeight);
+        }
+      }
     }
   };
 
@@ -603,7 +580,7 @@ export default class MinimalRenderer
         cell.color
       );
     } else {
-      renderableCell.children.forEach((child) => child.graphics.clear());
+      renderableCell.children.forEach((child) => child.pixiObject.clear());
     }
   };
 
@@ -614,6 +591,23 @@ export default class MinimalRenderer
     renderableBlock.cells.forEach((cell) => {
       this._renderCellCopies(cell, RenderCellType.Block, 1, block.player.color);
     });
+
+    this._renderCopies(
+      renderableBlock.playerNameText,
+      1,
+      () => {},
+      () => {
+        const text = new PIXI.Text(block.player.nickname, {
+          font: 'bold italic 60px Arvo',
+          fill: PIXI.utils.hex2string(block.player.color),
+          align: 'center',
+          stroke: '#000000',
+          strokeThickness: 7,
+        });
+        text.anchor.set(0.5, 0);
+        return text;
+      }
+    );
   }
 
   private _getVisiblityX() {
@@ -634,18 +628,23 @@ export default class MinimalRenderer
     });
 
     const textCentreX = block.centreX * cellSize;
-    const textY =
-      block.row * cellSize - renderableBlock.playerNameText.height * 1.2;
-    renderableBlock.playerNameText.x = textCentreX;
-    renderableBlock.playerNameText.y = textY;
+    const textY = block.row * cellSize - cellSize * 1.2;
+    renderableBlock.playerNameText.container.x = textCentreX;
+    renderableBlock.playerNameText.container.y = textY;
   }
 
   private _renderParticle(particle: IParticle, color: number) {
     const particleSize = this._getCellSize() / particleDivisions;
-    this._renderCopies(particle, 1, (graphics) => {
-      graphics.beginFill(color);
-      graphics.drawRect(0, 0, particleSize, particleSize);
-    });
+    this._renderCopies(
+      particle,
+      1,
+      (graphics) => {
+        graphics.clear();
+        graphics.beginFill(color);
+        graphics.drawRect(0, 0, particleSize, particleSize);
+      },
+      () => new PIXI.Graphics()
+    );
   }
 
   private _renderCellCopies(
@@ -654,133 +653,140 @@ export default class MinimalRenderer
     opacity: number,
     color: number
   ) {
-    this._renderCopies(renderableCell, opacity, (graphics: PIXI.Graphics) => {
-      const cellSize = this._getClampedCellSize();
-      // TODO: extract rendering of different behaviours
-      if (
-        renderCellType !== RenderCellType.Cell ||
-        (renderableCell.cell.type === CellType.FinishChallenge &&
-          renderableCell.cell.isEmpty) ||
-        renderableCell.cell.type === CellType.Laser ||
-        renderableCell.cell.type === CellType.Infection ||
-        renderableCell.cell.type === CellType.Deadly
-      ) {
-        graphics.beginFill(color, Math.min(opacity, 1));
-        graphics.drawRect(0, 0, cellSize, cellSize);
-      } else if (!renderableCell.cell.isEmpty) {
-        // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
-        // e.g. non-empty red key cell
-        graphics.beginFill(renderableCell.cell.color, Math.min(opacity, 1));
-        graphics.drawRect(0, 0, cellSize, cellSize);
-      }
-
-      if (renderableCell.cell.isEmpty) {
-        switch (renderableCell.cell.type) {
-          case CellType.Wafer:
-            graphics.beginFill(color, Math.min(opacity, 1));
-
-            graphics.drawRect(
-              0,
-              (cellSize * 1.5) / 8,
-              cellSize,
-              (cellSize * 0.5) / 8
-            );
-
-            graphics.drawRect(
-              0,
-              (cellSize * 4) / 8,
-              cellSize,
-              (cellSize * 0.5) / 8
-            );
-
-            graphics.drawRect(
-              0,
-              (cellSize * 6) / 8,
-              cellSize,
-              (cellSize * 0.5) / 8
-            );
-
-            break;
-          case CellType.Key:
-            graphics.beginFill(color, Math.min(opacity, 1));
-
-            // bit
-            graphics.drawRect(
-              (cellSize * 4.5) / 8,
-              (cellSize * 1.5) / 8,
-              (cellSize * 1) / 8,
-              (cellSize * 0.5) / 8
-            );
-
-            graphics.drawRect(
-              (cellSize * 4.5) / 8,
-              (cellSize * 2.5) / 8,
-              (cellSize * 1) / 8,
-              (cellSize * 0.5) / 8
-            );
-
-            // shank
-            graphics.drawRect(
-              (cellSize * 3.5) / 8,
-              (cellSize * 1) / 8,
-              (cellSize * 1) / 8,
-              (cellSize * 4) / 8
-            );
-
-            // bow
-            graphics.drawRect(
-              (cellSize * 2.5) / 8,
-              (cellSize * 5) / 8,
-              (cellSize * 3) / 8,
-              (cellSize * 2) / 8
-            );
-            break;
-          case CellType.Lock:
-            // background
-            graphics.beginFill(color, Math.min(opacity, 0.5));
-            graphics.drawRect(0, 0, cellSize, cellSize);
-
-            graphics.beginFill(color, Math.min(opacity, 1));
-            // shackle - top
-            graphics.drawRect(
-              (cellSize * 2) / 8,
-              cellSize / 8,
-              (cellSize * 4) / 8,
-              cellSize / 8
-            );
-
-            // shackle - sides
-            graphics.drawRect(
-              (cellSize * 2) / 8,
-              cellSize / 8,
-              (cellSize * 1) / 8,
-              (cellSize * 3) / 8
-            );
-
-            graphics.drawRect(
-              (cellSize * 5) / 8,
-              cellSize / 8,
-              (cellSize * 1) / 8,
-              (cellSize * 3) / 8
-            );
-
-            // body
-            graphics.drawRect(
-              (cellSize * 1) / 8,
-              cellSize * (4 / 8),
-              (cellSize * 6) / 8,
-              (cellSize * 3) / 8
-            );
-            break;
+    this._renderCopies(
+      renderableCell,
+      opacity,
+      (graphics: PIXI.Graphics) => {
+        graphics.clear();
+        const cellSize = this._getClampedCellSize();
+        // TODO: extract rendering of different behaviours
+        if (
+          renderCellType !== RenderCellType.Cell ||
+          (renderableCell.cell.type === CellType.FinishChallenge &&
+            renderableCell.cell.isEmpty) ||
+          renderableCell.cell.type === CellType.Laser ||
+          renderableCell.cell.type === CellType.Infection ||
+          renderableCell.cell.type === CellType.Deadly
+        ) {
+          graphics.beginFill(color, Math.min(opacity, 1));
+          graphics.drawRect(0, 0, cellSize, cellSize);
+        } else if (!renderableCell.cell.isEmpty) {
+          // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
+          // e.g. non-empty red key cell
+          graphics.beginFill(renderableCell.cell.color, Math.min(opacity, 1));
+          graphics.drawRect(0, 0, cellSize, cellSize);
         }
-      }
-    });
+
+        if (renderableCell.cell.isEmpty) {
+          switch (renderableCell.cell.type) {
+            case CellType.Wafer:
+              graphics.beginFill(color, Math.min(opacity, 1));
+
+              graphics.drawRect(
+                0,
+                (cellSize * 1.5) / 8,
+                cellSize,
+                (cellSize * 0.5) / 8
+              );
+
+              graphics.drawRect(
+                0,
+                (cellSize * 4) / 8,
+                cellSize,
+                (cellSize * 0.5) / 8
+              );
+
+              graphics.drawRect(
+                0,
+                (cellSize * 6) / 8,
+                cellSize,
+                (cellSize * 0.5) / 8
+              );
+
+              break;
+            case CellType.Key:
+              graphics.beginFill(color, Math.min(opacity, 1));
+
+              // bit
+              graphics.drawRect(
+                (cellSize * 4.5) / 8,
+                (cellSize * 1.5) / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 0.5) / 8
+              );
+
+              graphics.drawRect(
+                (cellSize * 4.5) / 8,
+                (cellSize * 2.5) / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 0.5) / 8
+              );
+
+              // shank
+              graphics.drawRect(
+                (cellSize * 3.5) / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 4) / 8
+              );
+
+              // bow
+              graphics.drawRect(
+                (cellSize * 2.5) / 8,
+                (cellSize * 5) / 8,
+                (cellSize * 3) / 8,
+                (cellSize * 2) / 8
+              );
+              break;
+            case CellType.Lock:
+              // background
+              graphics.beginFill(color, Math.min(opacity, 0.5));
+              graphics.drawRect(0, 0, cellSize, cellSize);
+
+              graphics.beginFill(color, Math.min(opacity, 1));
+              // shackle - top
+              graphics.drawRect(
+                (cellSize * 2) / 8,
+                cellSize / 8,
+                (cellSize * 4) / 8,
+                cellSize / 8
+              );
+
+              // shackle - sides
+              graphics.drawRect(
+                (cellSize * 2) / 8,
+                cellSize / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 3) / 8
+              );
+
+              graphics.drawRect(
+                (cellSize * 5) / 8,
+                cellSize / 8,
+                (cellSize * 1) / 8,
+                (cellSize * 3) / 8
+              );
+
+              // body
+              graphics.drawRect(
+                (cellSize * 1) / 8,
+                cellSize * (4 / 8),
+                (cellSize * 6) / 8,
+                (cellSize * 3) / 8
+              );
+              break;
+          }
+        }
+      },
+      () => new PIXI.Graphics()
+    );
   }
 
-  private _renderCopies(
-    renderableEntity: IRenderableEntity,
+  private _renderCopies<T extends PIXI.DisplayObject>(
+    renderableEntity: IRenderableEntity<T>,
     opacity: number,
-    renderFunction: (graphics: PIXI.Graphics) => void,
+    renderFunction: (pixiObject: T) => void,
+    createPixiObject: () => T,
     shadowIndex: number = 0,
     shadowDirection: number = 0
   ) {
@@ -790,25 +796,25 @@ export default class MinimalRenderer
     );
     if (!entry) {
       entry = {
-        graphics: new PIXI.Graphics(),
+        pixiObject: createPixiObject(),
         shadowIndex: shadowIndexWithDirection,
       };
       renderableEntity.children.push(entry);
-      renderableEntity.container.addChild(entry.graphics);
+      renderableEntity.container.addChild(entry.pixiObject);
     }
 
-    const graphics = entry.graphics;
-    graphics.clear();
+    const pixiObject = entry.pixiObject;
 
-    renderFunction(graphics);
+    renderFunction(pixiObject);
 
-    graphics.x = shadowIndexWithDirection * this._gridWidth;
+    pixiObject.x = shadowIndexWithDirection * this._gridWidth;
     if (shadowIndex < this._shadowCount) {
       (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>
         this._renderCopies(
           renderableEntity,
           opacity, // * 0.5,
           renderFunction,
+          createPixiObject,
           shadowIndex + 1,
           i
         )
@@ -826,7 +832,7 @@ export default class MinimalRenderer
     );
 
     this._placementHelperShadowCells.forEach((shadow) => {
-      shadow.children.forEach((child) => child.graphics.clear());
+      shadow.children.forEach((child) => child.pixiObject.clear());
     });
 
     const lowestBlockRow = lowestCells

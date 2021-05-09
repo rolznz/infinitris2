@@ -5,6 +5,7 @@ import Layout from '@models/Layout';
 import LayoutUtils from './layout/LayoutUtils';
 import ICell from '@models/ICell';
 import IPlayer from '@models/IPlayer';
+import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
 
 type LoopCellEvent = (cell?: ICell) => void;
 
@@ -192,11 +193,11 @@ export default class Block implements IBlock {
         }
       );
 
-      // if attempting to rotate but the result is a non-rotation movement in any direction, return false
+      // if attempting to rotate but the result is a non-rotation movement in any direction (up to 2 cells), return false
       if (dr !== 0) {
         const gridNumColumns = gridCells[0].length;
-        for (let x = -1; x <= 1; x++) {
-          for (let y = -1; y <= 1; y++) {
+        for (let x = -2; x <= 2; x++) {
+          for (let y = -2; y <= 2; y++) {
             if (
               newCells.findIndex(
                 (newCell) =>
@@ -338,6 +339,7 @@ export default class Block implements IBlock {
     this._cells.forEach((cell) => {
       cell.isEmpty = false;
       cell.removeBlock(this);
+      cell.behaviour = new NormalCellBehaviour(this._player.color);
     });
     this._eventListener?.onBlockPlaced(this);
   }

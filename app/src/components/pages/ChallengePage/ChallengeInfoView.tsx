@@ -5,7 +5,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUser } from '../../../state/UserStore';
 import useTrue from '../../hooks/useTrue';
-import FlexBox from '../../layout/FlexBox';
+import FlexBox from '../../ui/FlexBox';
 
 export interface ChallengeInfoViewProps {
   onReceivedInput(): void;

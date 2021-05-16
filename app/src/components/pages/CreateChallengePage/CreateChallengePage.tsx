@@ -4,7 +4,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { defaultLocale } from '../../../internationalization';
 
 import useLoginRedirect from '../../hooks/useLoginRedirect';
-import FlexBox from '../../layout/FlexBox';
+import FlexBox from '../../ui/FlexBox';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -22,6 +22,7 @@ import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { getCellFillColor } from '../../../utils/getCellFillColor';
 import { detailedDiff } from 'deep-object-diff';
 import { useUser } from '../../../state/UserStore';
+import removeUndefinedValues from '@/utils/removeUndefinedValues';
 
 function removeSwrFields(challenge?: IChallenge): IChallenge | undefined {
   if (!challenge) {
@@ -163,7 +164,26 @@ export function CreateChallengePage() {
     const challengePath = getChallengePath(challenge.id);
     setIsSaving(true);
     try {
-      await set(challengePath, challenge);
+      // NB: when updating this list, also update firestore rules
+      const challengeToSave: Partial<IChallenge> = {
+        allowedActions: challenge.allowedActions,
+        description: challenge.description,
+        finishCriteria: challenge.finishCriteria,
+        firstBlockLayoutId: challenge.firstBlockLayoutId,
+        grid: challenge.grid,
+        isMandatory: challenge.isMandatory,
+        isOfficial: challenge.isOfficial,
+        isPublished: challenge.isPublished,
+        locale: challenge.locale,
+        priority: challenge.priority,
+        simulationSettings: challenge.simulationSettings,
+        successCriteria: challenge.successCriteria,
+        title: challenge.title,
+      };
+
+      await set(challengePath, removeUndefinedValues(challengeToSave), {
+        merge: true,
+      });
       await revalidateDocument(challengePath);
     } catch (e) {
       console.error(e);

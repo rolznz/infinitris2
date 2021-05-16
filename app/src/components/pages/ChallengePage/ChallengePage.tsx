@@ -18,6 +18,7 @@ import { useUserStore } from '../../../state/UserStore';
 import { useSearchParam } from 'react-use';
 import { useDocument } from '@nandorojo/swr-firestore';
 import { getChallengePath } from '../../../firebase';
+import IPlayer from 'infinitris2-models/dist/src/IPlayer';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -64,7 +65,17 @@ export default function ChallengePage() {
 
   const [checkChallengeStatus, setCheckChallengeStatus] = useState(false);
 
-  const { preferredInputMethod, controls, hasSeenAllSet } = userStore.user;
+  const {
+    preferredInputMethod,
+    controls,
+    hasSeenAllSet,
+    nickname,
+  } = userStore.user;
+  const playerInfo: IPlayer = {
+    color: 0xff0000,
+    nickname,
+    id: -1,
+  };
 
   // TODO: load challenge from firebase
 
@@ -100,7 +111,8 @@ export default function ChallengePage() {
           challenge,
           simulationEventListener,
           preferredInputMethod,
-          controls
+          controls,
+          playerInfo
         )
       );
       setIsDemo(false);
@@ -115,6 +127,7 @@ export default function ChallengePage() {
     setCheckChallengeStatus,
     setChallengeClient,
     controls,
+    playerInfo,
   ]);
 
   useEffect(() => {

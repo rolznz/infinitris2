@@ -6,7 +6,11 @@ import updateNetworkImpact from './utils/updateNetworkImpact';
 
 export const onCreateRating = functions.firestore
   .document('ratings/{ratingId}')
-  .onCreate(async (snapshot, _context) => {
+  .onCreate(async (snapshot, context) => {
+    const userId = context.auth?.uid;
+    if (!userId) {
+      throw new Error('User not logged in');
+    }
     const rating = snapshot.data() as IRating;
     if (rating.entityCollection === 'challenges') {
       const challengeDocRef = db.doc(`challenges/${snapshot.data().entityId}`);
@@ -33,7 +37,7 @@ export const onCreateRating = functions.firestore
           const challengeDoc = await challengeDocRef.get();
           const challenge = challengeDoc.data() as IChallenge;
           if (challenge) {
-            await updateNetworkImpact(challenge.userId, rating.userId);
+            await updateNetworkImpact(challenge.userId, userId);
           }
         })();
       } catch (e) {
@@ -46,5 +50,6 @@ export const onCreateRating = functions.firestore
     }
     return snapshot.ref.update({
       createdTimestamp: admin.firestore.Timestamp.now(),
-    } as Pick<IRating, 'createdTimestamp'>);
+      userId,
+    } as Pick<IRating, 'createdTimestamp' | 'userId'>);
   });

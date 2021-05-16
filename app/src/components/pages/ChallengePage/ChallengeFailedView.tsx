@@ -2,7 +2,7 @@ import useContinueButton from '@/components/hooks/useContinueButton';
 import { Box, Typography } from '@material-ui/core';
 import React from 'react';
 import useTrue from '../../hooks/useTrue';
-import FlexBox from '../../layout/FlexBox';
+import FlexBox from '../../ui/FlexBox';
 
 export interface ChallengeFailedViewProps {
   onReceivedInput(): void;

@@ -1,5 +1,5 @@
 import React from 'react';
-import FlexBox from '../layout/FlexBox';
+import FlexBox from '../ui/FlexBox';
 
 export function CreditsPage() {
   return (

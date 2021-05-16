@@ -13,9 +13,9 @@ const basicMovement: IChallenge = {
   isPublished: true,
   priority: 9000,
   finishCriteria: {
-    maxBlocks: 1,
+    maxBlocksPlaced: 1,
   },
-  successCriteria: {
+  rewardCriteria: {
     all: {
       minLinesCleared: 2,
     },

@@ -6,7 +6,7 @@ import Routes from '../../models/Routes';
 import useIncompleteChallenges from '../hooks/useIncompleteChallenges';
 import Lottie from 'lottie-react';
 import planeAnimation from '../lottie/plane.json';
-import FlexBox from '../layout/FlexBox';
+import FlexBox from '../ui/FlexBox';
 import { FormattedMessage } from 'react-intl';
 import useContinueButton from '../hooks/useContinueButton';
 

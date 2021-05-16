@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Box, Button, Typography } from '@material-ui/core';
 
-import FlexBox from '../layout/FlexBox';
+import FlexBox from '../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import useLoginRedirect from '../hooks/useLoginRedirect';
@@ -88,9 +88,7 @@ export default function AffiliateProgramPage() {
             color="primary"
             onClick={async () => {
               setIsCreatingAffiliate(true);
-              await addAffiliate({
-                userId,
-              });
+              await addAffiliate({});
               // wait for the firebase onCreateAffiliate function to run
               await new Promise((resolve) => setTimeout(resolve, 3000));
               // re-retrieve the user with updated affiliate ID

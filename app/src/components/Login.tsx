@@ -1,6 +1,10 @@
 import { getUserPath } from '@/firebase';
 import useAuthStore from '@/state/AuthStore';
-import { useUser, useUserStore } from '@/state/UserStore';
+import {
+  getUpdatableUserProperties,
+  useUser,
+  useUserStore,
+} from '@/state/UserStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
 import {
   getDocument,
@@ -14,7 +18,7 @@ import React, { useState } from 'react';
 import { Box, IconButton, Typography } from '@material-ui/core';
 import { FormattedMessage } from 'react-intl';
 import SocialLogo from 'social-logos';
-import FlexBox from './layout/FlexBox';
+import FlexBox from './ui/FlexBox';
 import LoadingSpinner from './LoadingSpinner';
 import { IUser } from 'infinitris2-models';
 import localStorageKeys from '@/utils/localStorageKeys';
@@ -54,12 +58,19 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
         const userDoc = await getDocument<IUser & Document>(userPath);
         if (!userDoc.exists) {
           console.log('User does not exist:', userPath, 'creating...');
-          await set(userPath, {
-            ...removeUndefinedValues(user),
-            nickname: user.nickname || result.user.displayName,
+
+          if (!result.user.email) {
+            throw new Error('No email address');
+          }
+
+          // NB: when updating this list, also update firestore rules
+          const userToCreate: Partial<IUser> = {
             email: result.user.email,
-            ...(referredByAffiliateId ? { referredByAffiliateId } : {}),
-          });
+            referredByAffiliateId,
+            ...getUpdatableUserProperties(user),
+          };
+
+          await set(userPath, removeUndefinedValues(userToCreate));
           // wait for the firebase onCreateUser function to run
           await new Promise((resolve) => setTimeout(resolve, 3000));
           // re-retrieve the user with updated properties

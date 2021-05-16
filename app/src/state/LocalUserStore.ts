@@ -3,12 +3,14 @@ import create from 'zustand';
 import { defaultLocale } from '../internationalization';
 import localStorageKeys from '../utils/localStorageKeys';
 
+const defaultColor = 0x666666;
+
 const localStorageValue = localStorage.getItem(localStorageKeys.localUser);
 const localStorageUser = localStorageValue
   ? (JSON.parse(localStorageValue) as IUser)
   : undefined;
 
-const initialUser: IUser = localStorageUser || {
+const defaultUser = {
   preferredInputMethod: undefined,
   hasSeenWelcome: false,
   hasSeenAllSet: false,
@@ -19,7 +21,11 @@ const initialUser: IUser = localStorageUser || {
   controls: DEFAULT_KEYBOARD_CONTROLS,
   credits: 0,
   networkImpact: 0,
+  color: defaultColor,
 };
+const initialUser: IUser = localStorageUser
+  ? { ...defaultUser, ...localStorageUser }
+  : defaultUser;
 
 type LocalUserStore = {
   user: IUser;

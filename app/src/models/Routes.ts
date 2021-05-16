@@ -7,6 +7,7 @@ enum Routes {
   termsOfService = '/tos',
   privacyPolicy = '/privacy',
   profile = '/profile',
+  customizeProfile = '/profile/customize',
   login = '/login',
   comingSoon = '/coming-soon',
   singlePlayer = '/single-player',

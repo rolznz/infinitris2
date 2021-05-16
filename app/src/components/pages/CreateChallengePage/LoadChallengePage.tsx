@@ -10,7 +10,7 @@ import useAuthStore from '../../../state/AuthStore';
 import localStorageKeys from '../../../utils/localStorageKeys';
 import prettyStringify from '../../../utils/prettyStringify';
 
-import FlexBox from '../../layout/FlexBox';
+import FlexBox from '../../ui/FlexBox';
 import LoadingSpinner from '../../LoadingSpinner';
 import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
 
@@ -43,11 +43,7 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
               );
               localStorage.setItem(
                 localStorageKeys.createChallengeInfo,
-                prettyStringify({
-                  ...challengeInfo,
-                  numRatings: 0,
-                  totalRating: 0,
-                } as Omit<IChallenge, 'grid'>)
+                prettyStringify(challengeInfo as Omit<IChallenge, 'grid'>)
               );
               history.push(Routes.createChallenge);
             }}

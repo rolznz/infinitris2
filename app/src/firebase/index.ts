@@ -20,6 +20,8 @@ firebase.auth().onAuthStateChanged((user) => {
   useAuthStore.getState().setUser(user);
 });
 
+export const colorsPath = 'colors';
+export const getColorPath = (colorId: string) => `${colorsPath}/${colorId}`;
 export const usersPath = 'users';
 export const getUserPath = (userId: string) => `${usersPath}/${userId}`;
 export const affiliatesPath = 'affiliates';

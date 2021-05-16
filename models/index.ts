@@ -32,6 +32,8 @@ import Timestamp from './src/Timestamp';
 import IScoreboardEntry from './src/IScoreboardEntry';
 import ICellEventListener from './src/ICellEventListener';
 import IAffiliate from './src/IAffiliate';
+import IColor from './src/IColor';
+import IProduct from './src/IProduct';
 
 export {
   exampleChallenges,
@@ -58,6 +60,8 @@ export {
   ChallengeCellType,
   IRoom,
   IUser,
+  IColor,
+  IProduct,
   IAffiliate,
   IRating,
   ControlSettings,

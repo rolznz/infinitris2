@@ -3,7 +3,7 @@ import React from 'react';
 import { ReactComponent as GoldMedal } from '@images/medals/gold.svg';
 import { ReactComponent as SilverMedal } from '@images/medals/silver.svg';
 import { ReactComponent as BronzeMedal } from '@images/medals/bronze.svg';
-import FlexBox from '@/components/layout/FlexBox';
+import FlexBox from '@/components/ui/FlexBox';
 
 const medals = [BronzeMedal, SilverMedal, GoldMedal];
 

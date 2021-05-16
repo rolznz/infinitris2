@@ -10,6 +10,7 @@ import IClientSocket from '../networking/IClientSocket';
 import IClient from '../../../models/src/IClient';
 import ClientSocket from '@src/networking/ClientSocket';
 import ControlSettings from '@models/ControlSettings';
+import IPlayer from '@models/IPlayer';
 
 export default class NetworkClient
   implements IClient, IClientSocketEventListener {
@@ -18,12 +19,15 @@ export default class NetworkClient
   private _renderer!: IRenderer;
   private _simulation!: Simulation;
   private _controls?: ControlSettings;
+  private _playerInfo?: IPlayer;
   constructor(
     url: string,
     listener?: IClientSocketEventListener,
-    controls?: ControlSettings
+    controls?: ControlSettings,
+    playerInfo?: IPlayer
   ) {
     this._controls = controls;
+    this._playerInfo = playerInfo;
     const eventListeners: IClientSocketEventListener[] = [this];
     if (listener) {
       eventListeners.push(listener);

@@ -11,7 +11,7 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import FlexBox from './FlexBox';
+import FlexBox from '../FlexBox';
 
 const styles = (theme: Theme) =>
   createStyles({

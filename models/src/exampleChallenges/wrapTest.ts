@@ -11,7 +11,7 @@ const wrapTest: IChallenge = {
   description: '',
   isPublished: false,
   finishCriteria: {},
-  successCriteria: {},
+  rewardCriteria: {},
   grid: `
 X00000000000000000000000000000000000000000000000X
 0000000000000000000000000000000000000000000000000

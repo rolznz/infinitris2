@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
-import Footer from './components/layout/Footer';
-import Header from './components/layout/Header';
+import Footer from './components/ui/Footer';
+import Header from './components/ui/Header';
 import AllSetPage from './components/pages/AllSetPage';
 import { CreateChallengePage } from './components/pages/CreateChallengePage/CreateChallengePage';
 import { LoadChallengePage } from './components/pages/CreateChallengePage/LoadChallengePage';
@@ -26,6 +26,7 @@ import EarnCreditsPage from './components/pages/EarnCreditsPage';
 import ScoreboardPage from './components/pages/ScoreboardPage';
 import AffiliateProgramPage from './components/pages/AffiliateProgramPage';
 import { ComingSoonPage } from './components/pages/ComingSoonPage';
+import CustomizeProfilePage from './components/pages/CustomizeProfilePage';
 
 export default function Router() {
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
@@ -79,6 +80,9 @@ export default function Router() {
         </Route>
         <Route exact path={Routes.profile}>
           <ProfilePage />
+        </Route>
+        <Route exact path={Routes.customizeProfile}>
+          <CustomizeProfilePage />
         </Route>
         <Route exact path={Routes.earnCredits}>
           <EarnCreditsPage />

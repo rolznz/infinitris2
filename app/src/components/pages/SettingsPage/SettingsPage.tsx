@@ -9,7 +9,7 @@ import {
   Button,
 } from '@material-ui/core';
 
-import FlexBox from '../../layout/FlexBox';
+import FlexBox from '../../ui/FlexBox';
 
 import { FormattedMessage } from 'react-intl';
 import { supportedLocales } from '../../../internationalization';

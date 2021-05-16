@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Typography, Link, Box } from '@material-ui/core';
 
-import FlexBox from '../layout/FlexBox';
+import FlexBox from '../ui/FlexBox';
 import { FormattedMessage } from 'react-intl';
 
 import useLoginRedirect from '../hooks/useLoginRedirect';
@@ -14,6 +14,7 @@ import useAuthStore from '../../state/AuthStore';
 import { challengesPath, getUserPath } from '../../firebase';
 import LoadingSpinner from '../LoadingSpinner';
 import { Link as RouterLink } from 'react-router-dom';
+import { YourBlockPreview } from '../ui/BlockPreview';
 
 export default function ProfilePage() {
   useLoginRedirect();
@@ -94,6 +95,22 @@ export default function ProfilePage() {
           values={{ networkImpact: user.networkImpact }}
         />
       </Typography>
+      <FlexBox flexDirection="row">
+        <YourBlockPreview user={user} />
+        <Box ml={1} />
+        <Link
+          component={RouterLink}
+          underline="none"
+          to={Routes.customizeProfile}
+        >
+          <Typography align="center">
+            <FormattedMessage
+              defaultMessage="Customize"
+              description="Customize block link"
+            />
+          </Typography>
+        </Link>
+      </FlexBox>
 
       <FlexBox flex={1} justifyContent="flex-end" mb={4}>
         <Button

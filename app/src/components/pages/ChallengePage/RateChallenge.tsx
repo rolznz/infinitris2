@@ -1,5 +1,5 @@
-import FlexBox from '@/components/layout/FlexBox';
-import LoginDialog from '@/components/modals/LoginDialog';
+import FlexBox from '@/components/ui/FlexBox';
+import LoginDialog from '@/components/ui/modals/LoginDialog';
 import { getChallengePath, getRatingsPath as getRatingPath } from '@/firebase';
 import useAuthStore from '@/state/AuthStore';
 import { Typography } from '@material-ui/core';
@@ -29,15 +29,14 @@ async function addRating(
   userRating: Document<IRating> | null | undefined
 ) {
   if (userRating?.exists) {
-    // TODO: allow rating updates
     alert('You have already voted');
     return;
   }
-  const newRating: IRating = {
+  // NB: when updating this list, also update firestore rules
+  const newRating: Omit<IRating, 'userId'> = {
     value: nextValue,
     entityCollection: 'challenges',
     entityId: challengeId,
-    userId,
   };
   console.log('Adding rating', ratingPath, newRating);
   toast(

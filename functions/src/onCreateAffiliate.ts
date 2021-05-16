@@ -5,10 +5,14 @@ import { IAffiliate, IUser } from 'infinitris2-models';
 
 export const onCreateAffiliate = functions.firestore
   .document('affiliates/{affiliateId}')
-  .onCreate(async (snapshot, _context) => {
-    const affiliate = snapshot.data() as IAffiliate;
+  .onCreate(async (snapshot, context) => {
+    const userId = context.auth?.uid;
+    if (!userId) {
+      throw new Error('User not logged in');
+    }
+    //const affiliate = snapshot.data() as IAffiliate;
 
-    const userDocRef = db.doc(`users/${affiliate.userId}`);
+    const userDocRef = db.doc(`users/${userId}`);
     await userDocRef.update({
       affiliateId: snapshot.id,
     } as Pick<IUser, 'credits' | 'affiliateId'>);
@@ -16,5 +20,6 @@ export const onCreateAffiliate = functions.firestore
     return snapshot.ref.update({
       referralCount: 0,
       createdTimestamp: admin.firestore.Timestamp.now(),
+      userId,
     } as Pick<IAffiliate, 'createdTimestamp' | 'referralCount'>);
   });

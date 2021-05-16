@@ -10,6 +10,7 @@ import ISimulationEventListener from '@models/ISimulationEventListener';
 import InputMethod from '@models/InputMethod';
 import { exampleChallenges } from '@models/exampleChallenges';
 import ControlSettings from '@models/ControlSettings';
+import IPlayer from '@models/IPlayer';
 
 export default class InfinitrisApi implements IInfinitrisApi {
   private _client?: IClient;
@@ -91,9 +92,9 @@ export default class InfinitrisApi implements IInfinitrisApi {
   /**
    * Runs the game in single player mode with no connection to a server.
    */
-  launchSinglePlayer = (controls?: ControlSettings) => {
+  launchSinglePlayer = (controls?: ControlSettings, playerInfo?: IPlayer) => {
     this.releaseClient();
-    this._client = new SinglePlayerClient(controls);
+    this._client = new SinglePlayerClient(controls, playerInfo);
   };
 
   /**
@@ -103,14 +104,16 @@ export default class InfinitrisApi implements IInfinitrisApi {
     challenge: IChallenge,
     listener?: ISimulationEventListener,
     preferredInputMethod?: InputMethod,
-    controls?: ControlSettings
+    controls?: ControlSettings,
+    playerInfo?: IPlayer
   ) => {
     this.releaseClient();
     const challengeClient = new ChallengeClient(
       challenge,
       listener,
       preferredInputMethod,
-      controls
+      controls,
+      playerInfo
     );
     this._client = challengeClient;
     return challengeClient;
@@ -127,10 +130,11 @@ export default class InfinitrisApi implements IInfinitrisApi {
   launchNetworkClient = (
     url: string,
     listener?: IClientSocketEventListener,
-    controls?: ControlSettings
+    controls?: ControlSettings,
+    playerInfo?: IPlayer
   ) => {
     this.releaseClient();
-    this._client = new NetworkClient(url, listener, controls);
+    this._client = new NetworkClient(url, listener, controls, playerInfo);
   };
 
   /**

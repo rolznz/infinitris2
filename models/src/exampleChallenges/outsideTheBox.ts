@@ -13,7 +13,7 @@ const outsideTheBox: IChallenge = {
   finishCriteria: {
     finishChallengeCellFilled: true,
   },
-  successCriteria: {
+  rewardCriteria: {
     gold: {
       maxBlocksPlaced: 10,
     },

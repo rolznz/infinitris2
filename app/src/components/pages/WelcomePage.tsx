@@ -5,7 +5,7 @@ import KeyboardIcon from '@material-ui/icons/Keyboard';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import useIncompleteChallenges from '../hooks/useIncompleteChallenges';
-import FlexBox from '../layout/FlexBox';
+import FlexBox from '../ui/FlexBox';
 import Lottie from 'lottie-react';
 import welcomeAnimation from '../lottie/welcome.json';
 import { FormattedMessage } from 'react-intl';

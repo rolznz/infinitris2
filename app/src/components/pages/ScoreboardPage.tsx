@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@material-ui/core';
 
-import FlexBox from '../layout/FlexBox';
+import FlexBox from '../ui/FlexBox';
 import { FormattedMessage } from 'react-intl';
 import { IScoreboardEntry } from 'infinitris2-models';
 import { useCollection } from '@nandorojo/swr-firestore';

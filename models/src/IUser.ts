@@ -8,6 +8,7 @@ export default interface IUser extends IEntity {
   readonly hasSeenWelcome: boolean;
   readonly hasSeenAllSet: boolean;
   readonly nickname: string;
+  readonly email: string;
   readonly locale: string;
   readonly preferredInputMethod?: InputMethod;
   readonly completedChallengeIds: string[];
@@ -16,4 +17,5 @@ export default interface IUser extends IEntity {
   readonly networkImpact: number;
   readonly affiliateId?: string;
   readonly referredByAffiliateId?: string;
+  readonly colorId: string;
 }

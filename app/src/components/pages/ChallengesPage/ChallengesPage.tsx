@@ -3,7 +3,7 @@ import { IChallenge } from 'infinitris2-models';
 import React from 'react';
 import { challengesPath } from '../../../firebase';
 
-import FlexBox from '../../layout/FlexBox';
+import FlexBox from '../../ui/FlexBox';
 import ChallengeCard from './ChallengeCard';
 
 export function ChallengesPage() {

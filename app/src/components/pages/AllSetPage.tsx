@@ -6,7 +6,7 @@ import Routes from '../../models/Routes';
 import useAppStore from '../../state/AppStore';
 import Lottie from 'lottie-react';
 import rocketAnimation from '../lottie/rocket.json';
-import FlexBox from '../layout/FlexBox';
+import FlexBox from '../ui/FlexBox';
 import { FormattedMessage } from 'react-intl';
 import { useUserStore } from '@/state/UserStore';
 import useContinueButton from '../hooks/useContinueButton';

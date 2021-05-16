@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Link } from '@material-ui/core';
 
-import FlexBox from '../layout/FlexBox';
+import FlexBox from '../ui/FlexBox';
 import { FormattedMessage } from 'react-intl';
 
 import useLoginRedirect from '../hooks/useLoginRedirect';

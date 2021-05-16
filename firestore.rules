@@ -4,11 +4,8 @@ service cloud.firestore {
   	function isAdmin(request) {
       return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
-    function matchesUser(request, userId) {    
-    	return request.auth != null && request.auth.uid == userId;
-    }
-    function isOwner(request, resource) {    
-    	return request.auth != null && ((resource == null && request.resource.data.userId == request.auth.uid) || request.auth.uid == resource.data.userId)
+    function isOwner(request, resource) {
+    	return request.auth != null && request.auth.uid == resource.data.userId;
     }
     match /{document=**} {
       allow read, write: if false;
@@ -17,33 +14,68 @@ service cloud.firestore {
       allow read: if true;
     }
     match /users/{userId} {
+      function matchesUser(request, userId) {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      function isValidUser(request) {
+        return request.resource.data.keys().hasOnly(['nickname', 'email', 'referredByAffiliateId', 'challengeAttempts', 'completedChallengeIds', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']);
+      }
     	allow read: if matchesUser(request, userId);
-      allow create: if matchesUser(request, userId) && request.resource.data.credits == 0 && request.resource.data.networkImpact == 0;
-      allow update: if matchesUser(request, userId) && !request.resource.data.diff(resource.data).affectedKeys()
-        .hasAny(['credits', 'networkImpact']);
+      allow create: if matchesUser(request, userId) && isValidUser();
+      allow update: if matchesUser(request, userId) && isValidUser();
     }
     match /challenges/{challengeId} {
     	function isValidChallenge() {
-      	return (request.resource.data.isOfficial == false || isAdmin(request)) && isOwner(request, resource);
+      	return
+          (!request.resource.data.get('isOfficial', false) || isAdmin(request)) &&
+          request.resource.data.keys().hasOnly(['allowedActions', 'description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']);
       }
-      allow create: if isValidChallenge() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0 && request.resource.data.totalRating == 0;
-      allow update: if isValidChallenge() && resource.data.isPublished == false  && !request.resource.data.diff(resource.data).affectedKeys()
-        .hasAny(['totalRating', 'numRatings']);
+      allow create: if isValidChallenge() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0;
+      allow update: if isValidChallenge() && (isAdmin(request) || isOwner(request, resource)) && (!resource.data.isPublished || isAdmin(request));
       allow delete: if false;
       allow read: if true;
+      match /simulationSettings {
+        allow read: if true;
+        allow delete: if true;
+        allow create, update: if request.resource.data.keys().hasOnly(['gravityEnabled', 'allowedBlockLayoutIds']);
+      }
+      match /finishCriteria {
+        allow read: if true;
+        allow delete: if false;
+        allow create, update: if request.resource.data.keys().hasOnly(['maxBlocks', 'maxLines', 'maxTime', 'emptyGrid', 'finishChallengeCellFilled']);
+      }
+      match /rewardCriteria {
+        allow read: if true;
+        allow delete: if false;
+        allow create, update: if request.resource.data.keys().hasOnly(['bronze', 'silver', 'gold', 'all']);
+      }
+      match /rewardCriteria/(bronze|silver|gold|all) {
+        allow read: if true;
+        allow delete: if false;
+        allow create, update: if request.resource.data.keys().hasOnly(['minLinesCleared', 'maxLinesCleared', 'maxBlocksPlaced', 'minBlocksPlaced', 'maxTimeTaken']);
+      }
     }
     match /ratings/{ratingId} {
+      function isValidCollection() {
+        return entityCollection == 'challenges';
+      }
     	function entityExists() {
       	return exists(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId));
       }
     	function isOwnerOfEntity() {
-      	return get(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId)).data.userId == request.resource.data.userId;
+      	return get(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId)).data.userId == request.auth.uid;
       }
     	function calculateRatingId() {
-      	return request.resource.data.entityCollection + '-' + request.resource.data.entityId + '-' + request.resource.data.userId;
+      	return request.resource.data.entityCollection + '-' + request.resource.data.entityId + '-' + request.auth.uid;
       }
     	function isValidRating() {
-      	return ratingId == calculateRatingId() && entityExists() && !isOwnerOfEntity() && request.resource.data.value > 0 && request.resource.data.value < 6 && matchesUser(request, request.resource.data.userId) && isOwner(request, resource);
+      	return
+          ratingId == calculateRatingId() &&
+          isValidCollection() &&
+          entityExists() &&
+          !isOwnerOfEntity() &&
+          request.resource.data.value >= 1 && request.resource.data.value <= 5 &&
+          request.resource.data.keys().hasOnly(['value', 'entityCollection', 'entityId']);
       }
       allow create: if isValidRating();
       allow update: if false;
@@ -55,14 +87,18 @@ service cloud.firestore {
     }
     match /affiliates/{affiliateId} {
       function canCreateAffiliate() {
-      	return exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+      	return
+          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
         	!('affiliateId' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data) &&
-          request.resource.data.keys().hasOnly(['userId']);
+          request.resource.data.size() == 0;
       }
-      allow create: if isOwner(request, resource) && canCreateAffiliate();
+      allow create: if canCreateAffiliate();
       allow read: if isOwner(request, resource);
       allow update: if false;
       allow delete: if false;
+    }
+    match /colors/{document=**} {
+      allow read: if true;
     }
   }
 }

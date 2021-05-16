@@ -1,4 +1,4 @@
-import FlexBox from '@/components/layout/FlexBox';
+import FlexBox from '@/components/ui/FlexBox';
 import { Button, Typography } from '@material-ui/core';
 import { ChallengeStatus } from 'infinitris2-models';
 import ChallengeCompletionStats from 'infinitris2-models/dist/src/ChallengeCompletionStats';

@@ -1,6 +1,6 @@
 import InputAction from './InputAction';
 import ISimulationSettings from './ISimulationSettings';
-import ChallengeSuccessCriteria from './ChallengeSuccessCriteria';
+import ChallengeRewardCriteria from './ChallengeSuccessCriteria';
 import IEntity from './IEntity';
 
 export interface ChallengeTranslation {
@@ -27,7 +27,7 @@ export default interface IChallenge extends ChallengeTranslation, IEntity {
   readonly allowedActions?: InputAction[];
 
   readonly finishCriteria: {
-    readonly maxBlocks?: number;
+    readonly maxBlocksPlaced?: number;
     readonly maxLinesCleared?: number;
     readonly maxTime?: number;
     readonly emptyGrid?: boolean;
@@ -37,11 +37,11 @@ export default interface IChallenge extends ChallengeTranslation, IEntity {
   readonly simulationSettings?: ISimulationSettings;
   readonly teachControls?: boolean;
 
-  readonly successCriteria: {
-    bronze?: ChallengeSuccessCriteria;
-    silver?: ChallengeSuccessCriteria;
-    gold?: ChallengeSuccessCriteria;
-    all?: ChallengeSuccessCriteria;
+  readonly rewardCriteria: {
+    bronze?: ChallengeRewardCriteria;
+    silver?: ChallengeRewardCriteria;
+    gold?: ChallengeRewardCriteria;
+    all?: ChallengeRewardCriteria;
   };
 
   readonly clonedFromChallengeId?: string;

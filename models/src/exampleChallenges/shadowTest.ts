@@ -10,7 +10,7 @@ const shadowTest: IChallenge = {
   description: '',
   isPublished: false,
   finishCriteria: {},
-  successCriteria: {},
+  rewardCriteria: {},
   grid: `
 X000000X
 00000000

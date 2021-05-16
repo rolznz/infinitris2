@@ -40,6 +40,21 @@ type IUserStore = {
   resyncLocalStorage(userData: IUser): void;
 };
 
+export function getUpdatableUserProperties(
+  user: Partial<IUser>
+): Partial<IUser> {
+  return {
+    nickname: user.nickname,
+    challengeAttempts: user.challengeAttempts,
+    completedChallengeIds: user.completedChallengeIds,
+    controls: user.controls,
+    hasSeenAllSet: user.hasSeenAllSet,
+    hasSeenWelcome: user.hasSeenWelcome,
+    preferredInputMethod: user.preferredInputMethod,
+    locale: user.locale,
+  };
+}
+
 export function useUserStore(): IUserStore;
 export function useUserStore<StateSlice>(
   selector: StateSelector<IUserStore, StateSlice>
@@ -62,11 +77,12 @@ export function useUserStore<StateSlice>(
     changes: Partial<IUser>,
     updateSyncedUser: boolean = true
   ) => {
-    const cleanedChanges = removeUndefinedValues(changes);
     if (fireStoreUserDoc && updateSyncedUser) {
-      updateFirestoreDoc(changes);
+      // NB: when updating this list, also update firestore rules
+
+      updateFirestoreDoc(getUpdatableUserProperties(changes));
     }
-    updateLocalUser(cleanedChanges);
+    updateLocalUser(removeUndefinedValues(changes));
   };
 
   const state: IUserStore = {

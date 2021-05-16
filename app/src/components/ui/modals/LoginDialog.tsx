@@ -1,7 +1,7 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import CustomDialog from '../layout/CustomDialog';
-import Login, { loginTitleId } from '../Login';
+import CustomDialog from './CustomDialog';
+import Login, { loginTitleId } from '../../Login';
 
 interface LoginModalProps {
   isOpen: boolean;

@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@material-ui/core';
 import React from 'react';
-import FlexBox from '../../layout/FlexBox';
+import FlexBox from '../../ui/FlexBox';
 
 interface SettingsRowProps {
   left: React.ReactNode;

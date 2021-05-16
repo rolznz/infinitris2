@@ -1,6 +1,6 @@
 import { appName } from '@/utils/constants';
 import React from 'react';
-import FlexBox from './layout/FlexBox';
+import FlexBox from './ui/FlexBox';
 
 export function PrivacyPolicyPage() {
   return (
@@ -14,12 +14,10 @@ export function PrivacyPolicyPage() {
 
       <p>
         You may also login to {appName} through a social media integration such
-        as Facebook or Google. We will store your display name and email address
-        under your user account and may use this information to send you emails
-        related to {appName}. You can update your nickname on the home page at
-        any time, which will be saved in place of your Facebook/Google display
-        name. Any emails sent may contain a tracking beacon to determine whether
-        or not the email has been opened.
+        as Facebook or Google. We will store your email address under your user
+        account and may use this information to send you emails related to{' '}
+        {appName}. Any emails sent may contain a tracking beacon to determine
+        whether or not the email has been opened.
       </p>
       <p>
         Your {appName} user profile (nickname and any other information you

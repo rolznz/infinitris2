@@ -10,6 +10,7 @@ import IBlock from '@models/IBlock';
 import ControlSettings from '@models/ControlSettings';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
+import IPlayer from '@models/IPlayer';
 
 export default class SinglePlayerClient
   implements IClient, ISimulationEventListener {
@@ -18,9 +19,9 @@ export default class SinglePlayerClient
   private _simulation!: Simulation;
   private _input!: Input;
   private _controls?: ControlSettings;
-  constructor(controls?: ControlSettings) {
+  constructor(controls?: ControlSettings, playerInfo?: IPlayer) {
     this._controls = controls;
-    this._create();
+    this._create(playerInfo);
   }
 
   /**
@@ -84,7 +85,7 @@ export default class SinglePlayerClient
     this._input.destroy();
   }
 
-  private async _create() {
+  private async _create(playerInfo?: IPlayer) {
     this._renderer = new MinimalRenderer();
     await this._renderer.create();
 
@@ -93,7 +94,11 @@ export default class SinglePlayerClient
 
     this._simulation.init();
     const playerId = 0;
-    const player = new ControllablePlayer(playerId);
+    const player = new ControllablePlayer(
+      playerId,
+      playerInfo?.nickname,
+      playerInfo?.color
+    );
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);
     this._simulation.startInterval();

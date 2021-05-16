@@ -22,6 +22,7 @@ import parseGrid from '@models/util/parseGrid';
 import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
+import IPlayer from '@models/IPlayer';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -40,15 +41,18 @@ export default class ChallengeClient
   private _blockCreateFailed!: boolean;
   private _blockDied!: boolean;
   private _controls?: ControlSettings;
+  private _playerInfo?: IPlayer;
 
   constructor(
     challenge: IChallenge,
     listener?: ISimulationEventListener,
     preferredInputMethod: InputMethod = 'keyboard',
-    controls?: ControlSettings
+    controls?: ControlSettings,
+    playerInfo?: IPlayer
   ) {
     this._preferredInputMethod = preferredInputMethod;
     this._controls = controls;
+    this._playerInfo = playerInfo;
     this._create(challenge, listener);
   }
 
@@ -300,7 +304,11 @@ export default class ChallengeClient
     }
 
     const playerId = 0;
-    const player = new ControllablePlayer(playerId);
+    const player = new ControllablePlayer(
+      playerId,
+      this._playerInfo?.nickname,
+      this._playerInfo?.color
+    );
     simulation.addPlayer(player);
     simulation.followPlayer(player);
     if (this._challenge.firstBlockLayoutId) {

@@ -45,9 +45,9 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
     gravityEnabled: false,
   },
   finishCriteria: {
-    maxBlocks: 1,
+    maxBlocksPlaced: 1,
   },
-  successCriteria: {
+  rewardCriteria: {
     gold: {
       maxTimeTaken: 5000,
     },

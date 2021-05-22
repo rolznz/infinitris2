@@ -3,10 +3,13 @@
   "scripts": {
     "lint": "eslint --ext .js,.ts .",
     "build": "tsc",
-    "serve": "npm run build && firebase emulators:start --only functions",
-    "shell": "npm run build && firebase functions:shell",
-    "start": "npm run shell",
+    "serve": "yarn build && firebase emulators:start --only functions",
+    "shell": "yarn build && firebase functions:shell",
+    "start": "yarn shell",
     "deploy": "firebase deploy --only functions",
+    "test:emulator:setup": "firebase setup:emulators:firestore",
+    "test:emulator:start": "firebase emulators:start --only firestore",
+    "test": "jest --detectOpenHandles",
     "logs": "firebase functions:log"
   },
   "engines": {
@@ -21,11 +24,18 @@
     "firebase-functions": "^3.13.2"
   },
   "devDependencies": {
+    "@firebase/testing": "^0.20.11",
+    "jest": "^26.6.3",
+    "ts-jest": "^26.5.6",
+    "babel-jest": "^26.6.3",
+    "@babel/preset-env": "^7.14.2",
+    "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.6.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^24.3.6",
     "firebase-functions-test": "^0.2.0",
     "typescript": "^3.8.0"
   },

@@ -17,7 +17,7 @@ service cloud.firestore {
       function matchesUser(request, userId) {
         return request.auth != null && request.auth.uid == userId;
       }
-      function isValidUser(request) {
+      function isValidUser() {
         return request.resource.data.keys().hasOnly(['nickname', 'email', 'referredByAffiliateId', 'challengeAttempts', 'completedChallengeIds', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']);
       }
     	allow read: if matchesUser(request, userId);
@@ -49,15 +49,15 @@ service cloud.firestore {
         allow delete: if false;
         allow create, update: if request.resource.data.keys().hasOnly(['bronze', 'silver', 'gold', 'all']);
       }
-      match /rewardCriteria/(bronze|silver|gold|all) {
+      match /rewardCriteria/{medal} {
         allow read: if true;
         allow delete: if false;
-        allow create, update: if request.resource.data.keys().hasOnly(['minLinesCleared', 'maxLinesCleared', 'maxBlocksPlaced', 'minBlocksPlaced', 'maxTimeTaken']);
+        allow create, update: if medal in ['bronze','silver','gold', 'all'] && request.resource.data.keys().hasOnly(['minLinesCleared', 'maxLinesCleared', 'maxBlocksPlaced', 'minBlocksPlaced', 'maxTimeTaken']);
       }
     }
     match /ratings/{ratingId} {
       function isValidCollection() {
-        return entityCollection == 'challenges';
+        return request.resource.data.entityCollection == 'challenges';
       }
     	function entityExists() {
       	return exists(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId));

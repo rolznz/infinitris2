@@ -35,6 +35,8 @@ import IAffiliate from './src/IAffiliate';
 import IColor from './src/IColor';
 import IProduct from './src/IProduct';
 
+export * from './src/util/fireStorePaths';
+
 export {
   exampleChallenges,
   IChallenge,

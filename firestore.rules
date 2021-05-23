@@ -7,6 +7,11 @@ service cloud.firestore {
     function isOwner(request, resource) {
     	return request.auth != null && request.auth.uid == resource.data.userId;
     }
+    function getProperty(name, fallback) {
+      // request.resource contains the future state of the document
+      return request.resource.data.get(name, fallback);
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
@@ -18,11 +23,27 @@ service cloud.firestore {
         return request.auth != null && request.auth.uid == userId;
       }
       function isValidUser() {
-        return request.resource.data.keys().hasOnly(['nickname', 'email', 'referredByAffiliateId', 'challengeAttempts', 'completedChallengeIds', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']);
+        let nickname = getProperty('nickname', '');
+        let email = getProperty('email', '');
+        let controls = getProperty('controls', []);
+        return request.resource.data.keys().hasOnly(['nickname', 'email', 'referredByAffiliateId', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
+          debug(nickname) is string && nickname.size() > 1 && nickname.size() < 16 && nickname.matches('[a-zA-Z0-9]+') &&
+          email is string && email.size() > 1 && email.size() < 360 && email.matches('.+@.+') &&
+          getProperty('referredByAffiliateId', '') is string &&
+          getProperty('hasSeenAllSet', false) is bool &&
+          getProperty('hasSeenWelcome', false) is bool &&
+          getProperty('preferredInputMethod', '') in ['', 'keyboard', 'touch'] &&
+          getProperty('locale', '') is string && getProperty('locale', '').size() < 3 &&
+          controls is map && controls.keys().hasOnly(['MoveLeft', 'MoveRight', 'MoveDown', 'RotateClockwise', 'RotateAnticlockwise', 'Drop']) &&
+          controls.get('MoveLeft', '') is string &&
+          controls.get('MoveRight', '') is string &&
+          controls.get('MoveDown', '') is string &&
+          controls.get('RotateClockwise', '') is string &&
+          controls.get('RotateAnticlockwise', '') is string &&
+          controls.get('Drop', '') is string;
       }
     	allow read: if matchesUser(request, userId);
-      allow create: if matchesUser(request, userId) && isValidUser();
-      allow update: if matchesUser(request, userId) && isValidUser();
+      allow create, update: if matchesUser(request, userId) && isValidUser();
     }
     match /challenges/{challengeId} {
     	function isValidChallenge() {
@@ -54,6 +75,13 @@ service cloud.firestore {
         allow delete: if false;
         allow create, update: if medal in ['bronze','silver','gold', 'all'] && request.resource.data.keys().hasOnly(['minLinesCleared', 'maxLinesCleared', 'maxBlocksPlaced', 'minBlocksPlaced', 'maxTimeTaken']);
       }
+    }
+    match /challengeAttempts/{challengeAttemptId} {
+      allow read, write: if false;
+      allow read: if isOwner(request, resource);
+      allow delete: if false;
+      allow create: if request.resource.data.keys().hasOnly(['code', 'medalIndex', 'stats']);
+      allow update: if false;
     }
     match /ratings/{ratingId} {
       function isValidCollection() {

@@ -1,11 +1,17 @@
 import * as firebase from '@firebase/testing';
 import * as fs from 'fs';
+import { Timestamp } from 'infinitris2-models';
 
 interface TestAuth {
   uid: string;
 }
 
 type TestData = { [path: string]: firebase.firestore.DocumentData };
+
+export const createdTimestamp: Timestamp = {
+  seconds: 1622246405,
+  nanoseconds: 0,
+};
 
 export async function setup(auth?: TestAuth, data?: TestData) {
   // Create a unique projectId for every firebase simulated app

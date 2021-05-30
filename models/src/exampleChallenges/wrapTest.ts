@@ -3,8 +3,6 @@ import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import IChallenge from '../IChallenge';
 
 const wrapTest: IChallenge = {
-  id: 'wrap-test',
-  userId: '',
   isOfficial: true,
   title: 'Wrap Test',
   locale: 'en',
@@ -35,7 +33,6 @@ X00000000000000000000000000000000000000000000000X
 0000000000000000000000000000000000000000000000000
 X00000000000000000000000000000000000000000000000X
 `,
-  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default wrapTest;

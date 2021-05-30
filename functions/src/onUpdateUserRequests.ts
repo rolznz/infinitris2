@@ -1,17 +1,17 @@
-import * as functions from 'firebase-functions';
+/*import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { db } from './utils/constants';
 import { IAffiliate, IUser } from 'infinitris2-models';
-import updateNetworkImpact from './utils/updateNetworkImpact';
+import updateNetworkImpact from './utils/updateNetworkImpact';*/
 
-export const onCreateUser = functions.firestore
-  .document('users/{userId}')
-  .onCreate(async (snapshot, _context) => {
-    let credits = 3;
-    // give the user 3 credits
-    // TODO: affiliate system reward
-    const user = snapshot.data() as IUser;
-    if (user.referredByAffiliateId) {
+// TODO: handle each field separately (nickname, color etc.)
+/*export const onUpdateUserReferredByAffiliateIdRequest = functions.firestore
+  .document('users/{userId}/requests/referredByAffiliateId')
+  .onUpdate(async (snapshot, _context) => {
+
+
+    // TODO: handle only if user.readOnly.referredByAffiliateId is unset and user created within the last hour
+    if (request.referredByAffiliateId) {
       const affiliateDocRef = db.doc(
         `affiliates/${user.referredByAffiliateId}`
       );
@@ -35,8 +35,4 @@ export const onCreateUser = functions.firestore
       }
     }
 
-    return snapshot.ref.update({
-      credits,
-      createdTimestamp: admin.firestore.Timestamp.now(),
-    } as Pick<IUser, 'credits' | 'createdTimestamp'>);
-  });
+  });*/

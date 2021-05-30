@@ -1,15 +1,21 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-  	function isAdmin(request) {
+  	function isAdmin() {
       return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
-    function isOwner(request, resource) {
-    	return request.auth != null && request.auth.uid == resource.data.userId;
+    function isOwner() {
+    	return request.auth != null && request.auth.uid == resource.data.readOnly.userId;
     }
     function getProperty(name, fallback) {
       // request.resource contains the future state of the document
       return request.resource.data.get(name, fallback);
+    }
+    function readOnlyFieldsUntouched() {
+      let oldState = debug(resource.data.get('readOnly', {}));
+      let newState = debug(request.resource.data.get('readOnly', {}));
+
+      return oldState.diff(newState).affectedKeys().size() == 0
     }
 
     match /{document=**} {
@@ -26,10 +32,8 @@ service cloud.firestore {
         let nickname = getProperty('nickname', '');
         let email = getProperty('email', '');
         let controls = getProperty('controls', []);
-        return request.resource.data.keys().hasOnly(['nickname', 'email', 'referredByAffiliateId', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
-          debug(nickname) is string && nickname.size() > 1 && nickname.size() < 16 && nickname.matches('[a-zA-Z0-9]+') &&
-          email is string && email.size() > 1 && email.size() < 360 && email.matches('.+@.+') &&
-          getProperty('referredByAffiliateId', '') is string &&
+        return request.resource.data.keys().hasOnly(['readOnly', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
+          readOnlyFieldsUntouched() &&
           getProperty('hasSeenAllSet', false) is bool &&
           getProperty('hasSeenWelcome', false) is bool &&
           getProperty('preferredInputMethod', '') in ['', 'keyboard', 'touch'] &&
@@ -43,45 +47,35 @@ service cloud.firestore {
           controls.get('Drop', '') is string;
       }
     	allow read: if matchesUser(request, userId);
-      allow create, update: if matchesUser(request, userId) && isValidUser();
+      allow create, delete: if false;
+      allow update: if matchesUser(request, userId) && isValidUser();
     }
+    /*match /users/{userId}/requests/nickname
+    nickname is string && nickname.size() > 1 && nickname.size() < 16 && nickname.matches('[a-zA-Z0-9]+')
+    */
     match /challenges/{challengeId} {
     	function isValidChallenge() {
       	return
-          (!request.resource.data.get('isOfficial', false) || isAdmin(request)) &&
-          request.resource.data.keys().hasOnly(['allowedActions', 'description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']);
+          (!request.resource.data.get('isOfficial', false) || isAdmin()) &&
+          request.resource.data.keys().hasOnly(['readOnly', 'allowedActions', 'description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
+          readOnlyFieldsUntouched();
       }
       allow create: if isValidChallenge() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0;
-      allow update: if isValidChallenge() && (isAdmin(request) || isOwner(request, resource)) && (!resource.data.isPublished || isAdmin(request));
+      allow update: if isValidChallenge() && (isAdmin() || isOwner()) && (!resource.data.get('isPublished', false) || isAdmin());
       allow delete: if false;
       allow read: if true;
-      match /simulationSettings {
-        allow read: if true;
-        allow delete: if true;
-        allow create, update: if request.resource.data.keys().hasOnly(['gravityEnabled', 'allowedBlockLayoutIds']);
-      }
-      match /finishCriteria {
-        allow read: if true;
-        allow delete: if false;
-        allow create, update: if request.resource.data.keys().hasOnly(['maxBlocks', 'maxLines', 'maxTime', 'emptyGrid', 'finishChallengeCellFilled']);
-      }
-      match /rewardCriteria {
-        allow read: if true;
-        allow delete: if false;
-        allow create, update: if request.resource.data.keys().hasOnly(['bronze', 'silver', 'gold', 'all']);
-      }
-      match /rewardCriteria/{medal} {
-        allow read: if true;
-        allow delete: if false;
-        allow create, update: if medal in ['bronze','silver','gold', 'all'] && request.resource.data.keys().hasOnly(['minLinesCleared', 'maxLinesCleared', 'maxBlocksPlaced', 'minBlocksPlaced', 'maxTimeTaken']);
-      }
+      
     }
     match /challengeAttempts/{challengeAttemptId} {
       allow read, write: if false;
-      allow read: if isOwner(request, resource);
+      // TODO: before implementing this, add rate limiting
+      /*allow read: if isOwner();
       allow delete: if false;
       allow create: if request.resource.data.keys().hasOnly(['code', 'medalIndex', 'stats']);
-      allow update: if false;
+      allow update: if false;*/
+    }
+    match /challengeTranslations/{challengeTranslationId} {
+      allow read, write: if false;
     }
     match /ratings/{ratingId} {
       function isValidCollection() {
@@ -121,7 +115,7 @@ service cloud.firestore {
           request.resource.data.size() == 0;
       }
       allow create: if canCreateAffiliate();
-      allow read: if isOwner(request, resource);
+      allow read: if isOwner();
       allow update: if false;
       allow delete: if false;
     }

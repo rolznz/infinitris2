@@ -1,30 +1,28 @@
 import InputAction from './InputAction';
 import ISimulationSettings from './ISimulationSettings';
 import ChallengeRewardCriteria from './ChallengeSuccessCriteria';
-import IEntity from './IEntity';
+import IEntity, { IEntityReadOnlyProperties } from './IEntity';
 
-export interface ChallengeTranslation {
-  title: string;
-  description?: string;
+export interface IChallengeReadOnlyProperties
+  extends IEntityReadOnlyProperties {
+  readonly userId?: string;
 }
 
-export default interface IChallenge extends ChallengeTranslation, IEntity {
-  readonly id: string;
-  readonly userId: string;
+export default interface IChallenge extends IEntity {
+  readonly readOnly?: IChallengeReadOnlyProperties;
+  readonly title: string;
+  readonly description?: string;
+
   readonly priority?: number;
-  readonly isOfficial: boolean;
+  readonly isOfficial?: boolean;
   readonly isMandatory?: boolean;
   readonly isPublished?: boolean;
-  readonly locale: string;
-  // TODO: move into separate collection so other users can submit translations for challenges, have simpler rules etc.
-  readonly translations?: { [locale: string]: ChallengeTranslation };
+  readonly locale?: string;
   readonly firstBlockLayoutId?: string;
+  readonly firstBlockColumnOffset?: number;
   readonly grid: string;
   readonly numRatings?: number;
   readonly totalRating?: number;
-
-  //readonly layoutRotation?: number;
-  readonly allowedActions?: InputAction[];
 
   readonly finishCriteria: {
     readonly maxBlocksPlaced?: number;
@@ -35,7 +33,6 @@ export default interface IChallenge extends ChallengeTranslation, IEntity {
   };
 
   readonly simulationSettings?: ISimulationSettings;
-  readonly teachControls?: boolean;
 
   readonly rewardCriteria: {
     bronze?: ChallengeRewardCriteria;
@@ -43,7 +40,4 @@ export default interface IChallenge extends ChallengeTranslation, IEntity {
     gold?: ChallengeRewardCriteria;
     all?: ChallengeRewardCriteria;
   };
-
-  readonly clonedFromChallengeId?: string;
-  readonly clonedFromUserId?: string;
 }

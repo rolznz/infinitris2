@@ -12,7 +12,7 @@ import ISimulationSettings from './src/ISimulationSettings';
 import Layout from './src/Layout';
 import IRoom from './src/IRoom';
 import tetrominoes from './src/exampleBlockLayouts/Tetrominoes';
-import IChallenge from './src/IChallenge';
+import IChallenge, { IChallengeReadOnlyProperties } from './src/IChallenge';
 import CellType from './src/CellType';
 import ICellBehaviour from './src/ICellBehaviour';
 import IChallengeClient from './src/IChallengeClient';
@@ -23,7 +23,7 @@ import ControlSettings, {
 } from './src/ControlSettings';
 import getUserFriendlyKeyText from './src/util/getUserFriendlyKeyText';
 import { ChallengeStatus } from './src/ChallengeStatus';
-import IUser from './src/IUser';
+import IUser, { IUserReadOnlyProperties, IUserRequests } from './src/IUser';
 import parseGrid from './src/util/parseGrid';
 import IRating from './src/IRating';
 import { exampleChallenges } from './src/exampleChallenges/index';
@@ -40,6 +40,7 @@ export * from './src/util/fireStorePaths';
 export {
   exampleChallenges,
   IChallenge,
+  IChallengeReadOnlyProperties,
   IChallengeClient,
   ChallengeStatus,
   InputAction,
@@ -62,6 +63,7 @@ export {
   ChallengeCellType,
   IRoom,
   IUser,
+  IUserReadOnlyProperties,
   IColor,
   IProduct,
   IAffiliate,

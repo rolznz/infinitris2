@@ -6,7 +6,8 @@ import { IAffiliate, IUser } from 'infinitris2-models';
 export const onCreateAffiliate = functions.firestore
   .document('affiliates/{affiliateId}')
   .onCreate(async (snapshot, context) => {
-    const userId = context.auth?.uid;
+    // FIXME: update to match new schema
+    /*const userId = context.auth?.uid;
     if (!userId) {
       throw new Error('User not logged in');
     }
@@ -21,5 +22,5 @@ export const onCreateAffiliate = functions.firestore
       referralCount: 0,
       createdTimestamp: admin.firestore.Timestamp.now(),
       userId,
-    } as Pick<IAffiliate, 'createdTimestamp' | 'referralCount'>);
+    } as Pick<IAffiliate, 'createdTimestamp' | 'referralCount'>);*/
   });

@@ -1,8 +1,6 @@
 import IChallenge from '../IChallenge';
 
 const waferTest: IChallenge = {
-  id: 'wafer-1',
-  userId: '',
   isOfficial: true,
   title: 'Wafers 1',
   description: '',
@@ -45,7 +43,6 @@ WWWWWWWWWWWWWWW
 rrrrrrrrrrrrrrr
 FFFFFFFFFFFFFFF
 `,
-  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default waferTest;

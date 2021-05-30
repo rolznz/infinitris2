@@ -1,5 +1,9 @@
 import Timestamp from './Timestamp';
 
-export default interface IEntity {
+export interface IEntityReadOnlyProperties {
   readonly createdTimestamp?: Timestamp;
+}
+
+export default interface IEntity {
+  readonly readOnly?: IEntityReadOnlyProperties;
 }

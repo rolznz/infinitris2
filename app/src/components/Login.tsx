@@ -53,8 +53,9 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
       const result = await firebase.auth().signInWithPopup(provider);
       if (result.user) {
         console.log('Authentication succeeded');
+        throw new Error('TODO user document should be created by backend');
         // sync on first load
-        const userPath = getUserPath(result.user.uid);
+        /*const userPath = getUserPath(result.user.uid);
         const userDoc = await getDocument<IUser & Document>(userPath);
         if (!userDoc.exists) {
           console.log('User does not exist:', userPath, 'creating...');
@@ -65,7 +66,7 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
 
           // NB: when updating this list, also update firestore rules
           const userToCreate: Partial<IUser> = {
-            email: result.user.email,
+            //email: result.user.email,
             referredByAffiliateId,
             ...getUpdatableUserProperties(user),
           };
@@ -77,7 +78,7 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
           await revalidateDocument(userPath);
         } else {
           userStore.resyncLocalStorage(userDoc);
-        }
+        }*/
         onLogin?.(result.user.uid);
       } else {
         console.log('Signin canceled');

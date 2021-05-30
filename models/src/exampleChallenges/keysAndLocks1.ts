@@ -1,8 +1,6 @@
 import IChallenge from '../IChallenge';
 
 const keysAndLocks1: IChallenge = {
-  id: 'keys-and-locks-1',
-  userId: '',
   isOfficial: true,
   title: 'Keys and Locks 1',
   description: '',
@@ -43,7 +41,6 @@ rrrrrrrrrrrrrrr
 bbbbbbbbbbbbbbb
 FFFFFFFFFFFFFFF
 `,
-  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default keysAndLocks1;

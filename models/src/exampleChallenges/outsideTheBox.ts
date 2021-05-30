@@ -1,8 +1,6 @@
 import IChallenge from '../IChallenge';
 
 const outsideTheBox: IChallenge = {
-  id: 'think',
-  userId: '',
   isOfficial: true,
   title: 'Outside The Box',
   description: '',
@@ -44,7 +42,6 @@ const outsideTheBox: IChallenge = {
 XXX0XXXXXXXXXXX
 R0000000X00X00X
 `,
-  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default outsideTheBox;

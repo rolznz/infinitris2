@@ -2,8 +2,6 @@ import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import IChallenge from '../IChallenge';
 
 const controlCheck: IChallenge = {
-  id: 'control-check',
-  userId: '',
   isOfficial: true,
   title: 'Control Check',
   locale: 'en',
@@ -59,17 +57,9 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       minBlocksPlaced: 1,
     },
   },
-  allowedActions: [],
-  teachControls: true,
   isMandatory: true,
   isPublished: true,
   priority: 10000,
-  translations: {
-    th: {
-      title: 'ตรวจสอบการควบคุม',
-    },
-  },
-  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default controlCheck;

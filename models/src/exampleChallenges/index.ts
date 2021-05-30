@@ -11,16 +11,16 @@ import tSpins1 from './tSpins';
 import waferTest from './waferTest';
 import wrapTest from './wrapTest';
 
-export const exampleChallenges: IChallenge[] = [
-  keysAndLocks1,
-  outsideTheBox,
+export const exampleChallenges: { [key: string]: IChallenge } = {
+  'keys-and-locks-1': keysAndLocks1,
+  think: outsideTheBox,
   controlCheck,
-  basicMovement,
-  garbageCollection1,
-  shadowTest,
-  wrapTest,
-  waferTest,
-  infectionTest,
-  infectionTest2,
-  tSpins1,
-];
+  'basic-movement': basicMovement,
+  'garbage-collection-1': garbageCollection1,
+  'shadow-test': shadowTest,
+  'wrap-test': wrapTest,
+  'wafer-1': waferTest,
+  'infection-1': infectionTest,
+  'infection-2': infectionTest2,
+  't-spins-1': tSpins1,
+};

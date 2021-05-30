@@ -1,8 +1,6 @@
 import IChallenge from '../IChallenge';
 
 const infectionTest: IChallenge = {
-  id: 'infection-1',
-  userId: '',
   isOfficial: true,
   title: 'Infection 1',
   description: '',
@@ -43,7 +41,6 @@ const infectionTest: IChallenge = {
 rrrrrrrrrrrrrrr
 FFFFFFFFFFFFFFF
 `,
-  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default infectionTest;

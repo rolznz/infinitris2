@@ -1,8 +1,6 @@
 import IChallenge from '../IChallenge';
 
 const tSpins1: IChallenge = {
-  id: 't-spins-1',
-  userId: '',
   isOfficial: true,
   title: 'T Spins 1',
   description: '',
@@ -42,9 +40,7 @@ XXXXXXXXXXXXXXXXXXXX000XXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXX00bXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXFXXXXXXXXXXXXXXXXXXXXXXX
 
-`, // TODO: garbageRows=[5,6,7]
-  createdTimestamp: { toDate: () => new Date() },
-  //firstBlockLayoutId: 'T',
+`,
 };
 
 export default tSpins1;

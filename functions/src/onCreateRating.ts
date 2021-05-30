@@ -11,7 +11,8 @@ export const onCreateRating = functions.firestore
     if (!userId) {
       throw new Error('User not logged in');
     }
-    const rating = snapshot.data() as IRating;
+    // FIXME: Update to match new schema
+    /*const rating = snapshot.data() as IRating;
     if (rating.entityCollection === 'challenges') {
       const challengeDocRef = db.doc(`challenges/${snapshot.data().entityId}`);
       try {
@@ -51,5 +52,5 @@ export const onCreateRating = functions.firestore
     return snapshot.ref.update({
       createdTimestamp: admin.firestore.Timestamp.now(),
       userId,
-    } as Pick<IRating, 'createdTimestamp' | 'userId'>);
+    } as Pick<IRating, 'createdTimestamp' | 'userId'>);*/
   });

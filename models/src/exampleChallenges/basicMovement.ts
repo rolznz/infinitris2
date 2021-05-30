@@ -2,8 +2,6 @@ import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import IChallenge from '../IChallenge';
 
 const basicMovement: IChallenge = {
-  id: 'basic-movement',
-  userId: '',
   isOfficial: true,
   title: 'Basic Movement',
   description: '',
@@ -136,12 +134,6 @@ LLLLLLLLLLLLLLLLLLLLLLLLLLLLL
 XXXXXXXXXXXXX000XXXXXXXXXXXXX
 XXXXXXXXXXXXX0XXXXXXXXXXXXXXX
 `,
-  translations: {
-    th: {
-      title: 'การเคลื่อนไหวขั้นพื้นฐาน',
-    },
-  },
-  createdTimestamp: { toDate: () => new Date() },
 };
 
 export default basicMovement;

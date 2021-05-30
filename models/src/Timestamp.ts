@@ -1,3 +1,4 @@
 export default interface Timestamp {
-  toDate(): Date;
+  nanoseconds: number;
+  seconds: number;
 }

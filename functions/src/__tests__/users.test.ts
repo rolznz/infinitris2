@@ -2,23 +2,33 @@ import {
   DEFAULT_KEYBOARD_CONTROLS,
   getUserPath,
   IUser,
+  IUserReadOnlyProperties,
   usersPath,
 } from 'infinitris2-models';
-import { setup, teardown } from './helpers/setup';
+import { setup, teardown, createdTimestamp } from './helpers/setup';
 import './helpers/extensions';
 
-const userId1 = 'userId1';
-const userId2 = 'userId2';
+export const userId1 = 'userId1';
+export const userId2 = 'userId2';
+export const userId1Path = getUserPath(userId1);
 
-const validUserObject: Partial<IUser> = {
-  nickname: 'Bob',
-  email: 'bob@gmail.com',
-  referredByAffiliateId: '1234',
+export const validUserRequest: Omit<IUser, 'readOnly'> = {
   controls: DEFAULT_KEYBOARD_CONTROLS,
   hasSeenAllSet: false,
   hasSeenWelcome: true,
   preferredInputMethod: 'keyboard',
   locale: 'EN',
+};
+
+export const existingUser: IUser = {
+  ...validUserRequest,
+  readOnly: {
+    createdTimestamp,
+    nickname: 'Bob',
+    networkImpact: 0,
+    credits: 3,
+    email: 'bob@gmail.com',
+  },
 };
 
 describe('Users Rules', () => {
@@ -33,152 +43,117 @@ describe('Users Rules', () => {
   });
 
   test('should deny reading a user when logged out', async () => {
-    const thisUserPath = getUserPath(userId1);
     const db = await setup(undefined, {
-      [thisUserPath]: validUserObject,
+      [userId1Path]: existingUser,
     });
 
-    await expect(db.doc(thisUserPath).get()).toDeny();
+    await expect(db.doc(userId1Path).get()).toDeny();
   });
 
   test('should deny reading a user with a different ID', async () => {
-    const thisUserPath = getUserPath(userId1);
     const db = await setup(
       { uid: userId2 },
       {
-        [thisUserPath]: validUserObject,
+        [userId1Path]: existingUser,
       }
     );
 
-    await expect(db.doc(thisUserPath).get()).toDeny();
+    await expect(db.doc(userId1Path).get()).toDeny();
   });
 
-  test('should deny creating a user when logged out', async () => {
-    const db = await setup();
-
-    const otherUserPath = getUserPath(userId1);
-    await expect(db.doc(otherUserPath).set(validUserObject)).toDeny();
-  });
-
-  test('should deny creating a user when logged in with a different id', async () => {
-    const db = await setup({ uid: userId2 });
-
-    const otherUserPath = getUserPath(userId1);
-    await expect(db.doc(otherUserPath).set(validUserObject)).toDeny();
-  });
-
-  test('should allow creating a user when logged in with the matching id', async () => {
+  test('should deny creating a user', async () => {
     const db = await setup({ uid: userId1 });
 
-    const thisUserPath = getUserPath(userId1);
-    await expect(db.doc(thisUserPath).set(validUserObject)).toAllow();
+    const otherUserPath = getUserPath(userId1);
+    await expect(db.doc(otherUserPath).set(existingUser)).toDeny();
   });
 
   test('should allow updating a user when logged in with the matching id', async () => {
-    const thisUserPath = getUserPath(userId1);
     const db = await setup(
       { uid: userId1 },
       {
-        [thisUserPath]: validUserObject,
+        [userId1Path]: existingUser,
       }
     );
 
-    await expect(db.doc(thisUserPath).set(validUserObject)).toAllow();
+    await expect(
+      db.doc(userId1Path).set(validUserRequest, { merge: true })
+    ).toAllow();
   });
 
   test('should not allow setting properties outside allow list', async () => {
-    const thisUserPath = getUserPath(userId1);
     const db = await setup(
       { uid: userId1 },
       {
-        [thisUserPath]: validUserObject,
+        [userId1Path]: existingUser,
       }
     );
 
-    // ensure can set a valid property to validate below tests are working as expected
-    await expect(
-      db.doc(thisUserPath).set(
-        {
-          email: 'valid@email.com',
-        },
-        { merge: true }
-      )
-    ).toAllow();
-
     // invalid property
     await expect(
-      db.doc(thisUserPath).set({
+      db.doc(userId1Path).set({
         credits: 5,
       })
     ).toDeny();
   });
 
   test('should not allow setting properties of incorrect type', async () => {
-    const thisUserPath = getUserPath(userId1);
     const db = await setup(
       { uid: userId1 },
       {
-        [thisUserPath]: validUserObject,
+        [userId1Path]: existingUser,
       }
     );
 
-    // ensure can set a valid property to validate below tests are working as expected
-    await expect(
-      db.doc(thisUserPath).set(
-        {
-          email: 'valid@email.com',
-        },
-        { merge: true }
-      )
-    ).toAllow();
-
     // invalid property types
     await expect(
-      db.doc(thisUserPath).set({
+      db.doc(userId1Path).set({
         nickname: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(thisUserPath).set({
+      db.doc(userId1Path).set({
         referredByAffiliateId: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(thisUserPath).set({
+      db.doc(userId1Path).set({
         controls: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(thisUserPath).set({
+      db.doc(userId1Path).set({
         hasSeenAllSet: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(thisUserPath).set({
+      db.doc(userId1Path).set({
         hasSeenWelcome: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(thisUserPath).set({
+      db.doc(userId1Path).set({
         preferredInputMethod: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(thisUserPath).set({
+      db.doc(userId1Path).set({
         locale: 5,
       })
     ).toDeny();
 
     // controls: unsupported control
     await expect(
-      db.doc(thisUserPath).set({
+      db.doc(userId1Path).set({
         controls: {
           nonExistentControl: '1',
         },
       })
     ).toDeny();
+
+    // controls: unsupported input method
     await expect(
-      db.doc(thisUserPath).set({
+      db.doc(userId1Path).set({
         controls: {
           preferredInputMethod: 'nonexistent',
         },
@@ -187,67 +162,31 @@ describe('Users Rules', () => {
   });
 
   test('should not be able to delete user', async () => {
-    const thisUserPath = getUserPath(userId1);
     const db = await setup(
       { uid: userId1 },
       {
-        [thisUserPath]: validUserObject,
+        [userId1Path]: existingUser,
       }
     );
-    await expect(db.doc(thisUserPath).delete()).toDeny();
+    await expect(db.doc(userId1Path).delete()).toDeny();
   });
 
-  test('should not be able to remove required properties', async () => {
-    const thisUserPath = getUserPath(userId1);
+  test('should not be able to write readonly properties', async () => {
     const db = await setup(
       { uid: userId1 },
       {
-        [thisUserPath]: validUserObject,
+        [userId1Path]: existingUser,
       }
     );
-    await expect(db.doc(thisUserPath).set({})).toDeny();
     await expect(
-      db.doc(thisUserPath).set(
+      db.doc(userId1Path).set(
         {
-          email: '',
+          readOnly: {
+            credits: 9999999,
+          } as IUserReadOnlyProperties,
         },
         { merge: true }
       )
-    ).toDeny();
-    await expect(
-      db.doc(thisUserPath).set(
-        {
-          nickname: '',
-        },
-        { merge: true }
-      )
-    ).toDeny();
-
-    await expect(db.doc(thisUserPath).set({}, { merge: true })).toAllow();
-  });
-
-  test('properties should meet requirements', async () => {
-    const thisUserPath = getUserPath(userId1);
-    const db = await setup(
-      { uid: userId1 },
-      {
-        [thisUserPath]: validUserObject,
-      }
-    );
-    await expect(
-      db.doc(thisUserPath).set({ email: 'a'.repeat(361) }, { merge: true })
-    ).toDeny();
-    await expect(
-      db.doc(thisUserPath).set({ email: 'aa' }, { merge: true })
-    ).toDeny(); // invalid email format
-    await expect(
-      db.doc(thisUserPath).set({ nickname: 'a' }, { merge: true })
-    ).toDeny(); // must be at least 2 chars
-    await expect(
-      db.doc(thisUserPath).set({ nickname: '**' }, { merge: true })
-    ).toDeny(); // invalid chars not allowed
-    await expect(
-      db.doc(thisUserPath).set({ nickname: 'a'.repeat(16) }, { merge: true })
     ).toDeny();
   });
 });

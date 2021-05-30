@@ -9,7 +9,9 @@
     "deploy": "firebase deploy --only functions",
     "test:emulator:setup": "firebase setup:emulators:firestore",
     "test:emulator:start": "firebase emulators:start --only firestore",
-    "test": "jest --detectOpenHandles",
+    "test": "jest --detectOpenHandles --all",
+    "test:files:users": "jest --detectOpenHandles -f \"src/__tests__/users.test.ts\"",
+    "test:files:challenges": "jest --detectOpenHandles -f \"src/__tests__/challenges.test.ts\"",
     "logs": "firebase functions:log"
   },
   "engines": {

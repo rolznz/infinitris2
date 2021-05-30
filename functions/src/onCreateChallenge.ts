@@ -12,6 +12,8 @@ export const onCreateChallenge = functions.firestore
       throw new Error('User not logged in');
     }
 
+    // FIXME: update to match new schema
+    /*
     //const challenge = snapshot.data() as IChallenge;
     // reduce the number of credits the user has so they
     // cannot create an infinite number of challenges
@@ -20,13 +22,9 @@ export const onCreateChallenge = functions.firestore
       credits: (admin.firestore.FieldValue.increment(-1) as any) as number,
     } as Pick<IUser, 'credits'>);
 
-    // TODO: review, it would be better to block any new challenges that are too "similar" to existing ones
-    /* if (challenge.clonedFromUserId) {
-      await updateNetworkImpact(challenge.clonedFromUserId, userId);
-    }*/
 
     return snapshot.ref.update({
       createdTimestamp: admin.firestore.Timestamp.now(),
       userId,
-    } as Pick<IChallenge, 'createdTimestamp' | 'userId'>);
+    } as Pick<IChallenge, 'createdTimestamp' | 'userId'>);*/
   });

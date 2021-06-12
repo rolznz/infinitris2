@@ -10,14 +10,14 @@ import IBlock from '@models/IBlock';
 import IChallengeClient from '@models/IChallengeClient';
 import InputMethod from '@models/InputMethod';
 import IChallenge from '@models/IChallenge';
-import ChallengeSuccessCriteria from '@models/ChallengeSuccessCriteria';
+import ChallengeRewardCriteria from '@models/ChallengerewardCriteria';
 import ISimulation from '@models/ISimulation';
 import Simulation from '@core/Simulation';
 import ChallengeCompletionStats from '@models/ChallengeCompletionStats';
 import ChallengeCellType from '@models/ChallengeCellType';
 import createBehaviour from '@core/grid/cell/behaviours/createBehaviour';
 import ControlSettings from '@models/ControlSettings';
-import { ChallengeStatus } from '@models/ChallengeStatus';
+import { ChallengeStatus, ChallengeStatusCode } from '@models/ChallengeStatus';
 import parseGrid from '@models/util/parseGrid';
 import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
 import ICell from '@models/ICell';
@@ -33,7 +33,6 @@ export default class ChallengeClient
   private _simulation!: ISimulation;
   private _challenge!: IChallenge;
   private _input!: Input;
-  private _allowedActions?: InputAction[];
   private _preferredInputMethod: InputMethod;
   private _simulationEventListener?: ISimulationEventListener;
   private _numBlocksPlaced!: number;
@@ -138,13 +137,12 @@ export default class ChallengeClient
   }
 
   getStatus(): ChallengeStatus {
-    const { finishCriteria, successCriteria } = this._challenge;
+    const { finishCriteria, rewardCriteria } = this._challenge;
     const matchesFinishCriteria = () => {
       if (this._blockCreateFailed || this._blockDied) {
         return true;
       }
       if (
-        finishCriteria.finishChallengeCellFilled &&
         !this._simulation.grid.reducedCells.some(
           (cell) => !cell.isEmpty && cell.type === CellType.FinishChallenge
         )
@@ -152,12 +150,12 @@ export default class ChallengeClient
         return false;
       }
       if (
-        finishCriteria.maxBlocks &&
-        this._numBlocksPlaced < finishCriteria.maxBlocks
+        finishCriteria.maxBlocksPlaced &&
+        this._numBlocksPlaced < finishCriteria.maxBlocksPlaced
       ) {
         return false;
       }
-      if (finishCriteria.emptyGrid && !this._simulation.grid.isEmpty) {
+      if (finishCriteria.gridEmpty && !this._simulation.grid.isEmpty) {
         return false;
       }
       if (
@@ -167,8 +165,8 @@ export default class ChallengeClient
         return false;
       }
       if (
-        finishCriteria.maxTime &&
-        this._simulation.runningTime < finishCriteria.maxTime
+        finishCriteria.maxTimeTaken &&
+        this._simulation.runningTime < finishCriteria.maxTimeTaken
       ) {
         return false;
       }
@@ -178,8 +176,8 @@ export default class ChallengeClient
     const finished = matchesFinishCriteria();
 
     const getMedalIndex = () => {
-      const matchesSuccessCriteria = (
-        criteria: ChallengeSuccessCriteria
+      const matchesRewardCriteria = (
+        criteria: ChallengeRewardCriteria
       ): boolean => {
         if (this._blockCreateFailed || this._blockDied) {
           return false;
@@ -217,25 +215,25 @@ export default class ChallengeClient
         return true;
       };
 
-      const mergeCriteria = (criteria?: ChallengeSuccessCriteria) => {
+      const mergeRewardCriteria = (criteria?: ChallengeRewardCriteria) => {
         return {
-          ...successCriteria.all,
+          ...rewardCriteria.all,
           ...(criteria || {}),
         };
       };
 
-      return [
-        successCriteria.bronze,
-        successCriteria.silver,
-        successCriteria.gold,
-      ]
-        .map((criteria) => matchesSuccessCriteria(mergeCriteria(criteria)))
+      return [rewardCriteria.bronze, rewardCriteria.silver, rewardCriteria.gold]
+        .map((criteria) => matchesRewardCriteria(mergeRewardCriteria(criteria)))
         .filter((result) => result).length;
     };
 
     const medalIndex = finished ? getMedalIndex() : 0;
     //this._numLinesCleared >= (this._challenge.successLinesCleared || 0);
-    const code = finished ? (medalIndex > 0 ? 'success' : 'failed') : 'pending';
+    const code: ChallengeStatusCode = finished
+      ? medalIndex > 0
+        ? 'success'
+        : 'failed'
+      : 'pending';
 
     const stats: ChallengeCompletionStats | undefined = finished
       ? {
@@ -260,7 +258,7 @@ export default class ChallengeClient
     this._challenge = challenge;
     this._renderer = new MinimalRenderer(
       this._preferredInputMethod,
-      this._challenge.teachControls
+      true // TODO: check if there is 1+ key instruction cell
     );
     this._simulationEventListener = listener;
     await this._renderer.create();
@@ -335,8 +333,6 @@ export default class ChallengeClient
   }
 
   private _updateAllowedActions(allowedActions?: InputAction[]) {
-    this._allowedActions = allowedActions;
-    this._input.allowedActions = allowedActions;
     this._renderer.allowedActions = allowedActions;
   }
 

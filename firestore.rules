@@ -12,8 +12,8 @@ service cloud.firestore {
       return request.resource.data.get(name, fallback);
     }
     function readOnlyFieldsUntouched() {
-      let oldState = debug(resource.data.get('readOnly', {}));
-      let newState = debug(request.resource.data.get('readOnly', {}));
+      let oldState = debug(resource) != null ? resource.data.get('readOnly', {}) : {};
+      let newState = debug(request.resource) != null ? request.resource.data.get('readOnly', {}) : {};
 
       return oldState.diff(newState).affectedKeys().size() == 0
     }
@@ -29,9 +29,7 @@ service cloud.firestore {
         return request.auth != null && request.auth.uid == userId;
       }
       function isValidUser() {
-        let nickname = getProperty('nickname', '');
-        let email = getProperty('email', '');
-        let controls = getProperty('controls', []);
+        let controls = getProperty('controls', {});
         return request.resource.data.keys().hasOnly(['readOnly', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
           readOnlyFieldsUntouched() &&
           getProperty('hasSeenAllSet', false) is bool &&
@@ -54,14 +52,61 @@ service cloud.firestore {
     nickname is string && nickname.size() > 1 && nickname.size() < 16 && nickname.matches('[a-zA-Z0-9]+')
     */
     match /challenges/{challengeId} {
+      function isValidRewardCriteria(rewardCriteria) {
+        return
+          rewardCriteria.keys().hasOnly(['minLinesCleared', 'maxLinesCleared', 'minBlocksPlaced', 'maxBlocksPlaced', 'maxTimeTaken']) &&
+          rewardCriteria.get('minLinesCleared', 0) is number && 
+          rewardCriteria.get('maxLinesCleared', 0) is number && 
+          rewardCriteria.get('minBlocksPlaced', 0) is number && 
+          rewardCriteria.get('maxBlocksPlaced', 0) is number && 
+          rewardCriteria.get('maxTimeTaken', 0) is number;
+      }
     	function isValidChallenge() {
+        let finishCriteria = getProperty('finishCriteria', {});
+        let simulationSettings = getProperty('simulationSettings', {});
+        let rewardCriteria = getProperty('rewardCriteria', {});
+        let title = getProperty('title', '');
+        let description = getProperty('description', '');
+        let grid = getProperty('grid', '');
+        let allowedBlockLayoutIds = simulationSettings.get('allowedBlockLayoutIds', []);
+
       	return
           (!request.resource.data.get('isOfficial', false) || isAdmin()) &&
-          request.resource.data.keys().hasOnly(['readOnly', 'allowedActions', 'description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
-          readOnlyFieldsUntouched();
+          readOnlyFieldsUntouched() &&
+          request.resource.data.keys().hasOnly(['readOnly', 'description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
+          title is string &&
+          (title.size() == 0 || (title.size() < 21 && title.matches('[a-zA-Z0-9 ]+'))) &&
+          description is string && description.size() < 280 &&
+          getProperty('firstBlockLayoutId', '') is string &&
+          grid is string && grid.size() > 0 &&
+          getProperty('isOfficial', false) is bool &&
+          getProperty('isMandatory', false) is bool &&
+          getProperty('isPublished', false) is bool &&
+          getProperty('locale', '') is string &&
+          getProperty('priority', 0) is number &&
+          simulationSettings is map &&
+          simulationSettings.keys().hasOnly(['gravityEnabled', 'allowedBlockLayoutIds']) &&
+          simulationSettings.get('gravityEnabled', false) is bool && 
+          allowedBlockLayoutIds is list &&
+          allowedBlockLayoutIds.size() < 4 &&
+          (allowedBlockLayoutIds.size() < 1 || allowedBlockLayoutIds[0] is string) &&
+          (allowedBlockLayoutIds.size() < 2 || allowedBlockLayoutIds[1] is string) &&
+          (allowedBlockLayoutIds.size() < 3 || allowedBlockLayoutIds[2] is string) &&
+          finishCriteria is map &&
+          finishCriteria.keys().hasOnly(['maxBlocksPlaced', 'maxLinesCleared', 'maxTimeTaken', 'gridEmpty']) &&
+          finishCriteria.get('maxBlocksPlaced', 0) is number && 
+          finishCriteria.get('maxLinesCleared', 0) is number && 
+          finishCriteria.get('maxTimeTaken', 0) is number && 
+          finishCriteria.get('gridEmpty', false) is bool && 
+          rewardCriteria is map &&
+          rewardCriteria.keys().hasOnly(['all', 'bronze', 'silver', 'gold']) &&
+          isValidRewardCriteria(rewardCriteria.get('all', {})) &&
+          isValidRewardCriteria(rewardCriteria.get('bronze', {})) &&
+          isValidRewardCriteria(rewardCriteria.get('silver', {})) &&
+          isValidRewardCriteria(rewardCriteria.get('gold', {}));
       }
-      allow create: if isValidChallenge() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.credits > 0;
-      allow update: if isValidChallenge() && (isAdmin() || isOwner()) && (!resource.data.get('isPublished', false) || isAdmin());
+      allow create: if isValidChallenge() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.readOnly.credits > 0;
+      allow update: if isValidChallenge() && isOwner() && (!resource.data.get('isPublished', false) || isAdmin());
       allow delete: if false;
       allow read: if true;
       
@@ -73,9 +118,6 @@ service cloud.firestore {
       allow delete: if false;
       allow create: if request.resource.data.keys().hasOnly(['code', 'medalIndex', 'stats']);
       allow update: if false;*/
-    }
-    match /challengeTranslations/{challengeTranslationId} {
-      allow read, write: if false;
     }
     match /ratings/{ratingId} {
       function isValidCollection() {
@@ -104,9 +146,6 @@ service cloud.firestore {
       allow delete: if false;
       allow read: if true;
     }
-    match /scoreboardEntries/{document=**} {
-      allow read: if true;
-    }
     match /affiliates/{affiliateId} {
       function canCreateAffiliate() {
       	return
@@ -120,6 +159,9 @@ service cloud.firestore {
       allow delete: if false;
     }
     match /colors/{document=**} {
+      allow read: if true;
+    }
+    match /scoreboardEntries/{document=**} {
       allow read: if true;
     }
   }

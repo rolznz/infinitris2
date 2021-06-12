@@ -19,7 +19,7 @@ export default interface IChallenge extends IEntity {
   readonly isPublished?: boolean;
   readonly locale?: string;
   readonly firstBlockLayoutId?: string;
-  readonly firstBlockColumnOffset?: number;
+  //readonly firstBlockColumn?: number;
   readonly grid: string;
   readonly numRatings?: number;
   readonly totalRating?: number;
@@ -27,9 +27,8 @@ export default interface IChallenge extends IEntity {
   readonly finishCriteria: {
     readonly maxBlocksPlaced?: number;
     readonly maxLinesCleared?: number;
-    readonly maxTime?: number;
-    readonly emptyGrid?: boolean;
-    readonly finishChallengeCellFilled?: boolean;
+    readonly maxTimeTaken?: number;
+    readonly gridEmpty?: boolean;
   };
 
   readonly simulationSettings?: ISimulationSettings;

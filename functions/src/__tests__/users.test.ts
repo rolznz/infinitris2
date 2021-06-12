@@ -171,7 +171,7 @@ describe('Users Rules', () => {
     await expect(db.doc(userId1Path).delete()).toDeny();
   });
 
-  test('should not be able to write readonly properties', async () => {
+  test('should not be able to update user with readonly properties', async () => {
     const db = await setup(
       { uid: userId1 },
       {

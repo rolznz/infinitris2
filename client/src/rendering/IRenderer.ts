@@ -17,9 +17,4 @@ export default interface IRenderer extends ISimulationEventListener {
    * Helper controls to render on the screen
    */
   virtualKeyboardControls?: ControlSettings;
-
-  /**
-   * Used to render which actions are currently allowed on the virtual keyboard
-   */
-  allowedActions?: InputAction[];
 }

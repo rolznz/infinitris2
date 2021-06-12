@@ -22,7 +22,6 @@ import ControlSettings, {
   DEFAULT_KEYBOARD_CONTROLS,
 } from './src/ControlSettings';
 import getUserFriendlyKeyText from './src/util/getUserFriendlyKeyText';
-import { ChallengeStatus } from './src/ChallengeStatus';
 import IUser, { IUserReadOnlyProperties, IUserRequests } from './src/IUser';
 import parseGrid from './src/util/parseGrid';
 import IRating from './src/IRating';
@@ -36,13 +35,13 @@ import IColor from './src/IColor';
 import IProduct from './src/IProduct';
 
 export * from './src/util/fireStorePaths';
+export * from './src/ChallengeStatus';
 
 export {
   exampleChallenges,
   IChallenge,
   IChallengeReadOnlyProperties,
   IChallengeClient,
-  ChallengeStatus,
   InputAction,
   Layout,
   tetrominoes,

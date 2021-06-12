@@ -8,9 +8,7 @@ const garbageCollection1: IChallenge = {
   isMandatory: true,
   isPublished: true,
   priority: 8000,
-  finishCriteria: {
-    finishChallengeCellFilled: true,
-  },
+  finishCriteria: {},
   rewardCriteria: {
     gold: {
       maxBlocksPlaced: 10,

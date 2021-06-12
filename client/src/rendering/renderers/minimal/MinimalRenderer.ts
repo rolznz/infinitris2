@@ -92,7 +92,6 @@ export default class MinimalRenderer
   private _hasShadows!: boolean;
   private _shadowCount!: number;
   private _virtualKeyboardControls?: ControlSettings;
-  private _allowedActions?: InputAction[];
   private _preferredInputMethod: InputMethod;
   private _teachControls: boolean;
 
@@ -111,7 +110,6 @@ export default class MinimalRenderer
   }
 
   set allowedActions(allowedActions: InputAction[] | undefined) {
-    this._allowedActions = allowedActions;
     this._renderVirtualKeyboard();
     this._renderVirtualGestures();
   }
@@ -895,11 +893,12 @@ export default class MinimalRenderer
     this._virtualKeyboardGraphics.clear();
     this._virtualKeyboardCurrentKeyText.text = '';
 
-    if (this._allowedActions?.length !== 1) {
+    if (!this._teachControls) {
       return;
     }
 
-    const key = this._virtualKeyboardControls[this._allowedActions[0]];
+    // TODO: store last landed on action
+    /*const key = this._virtualKeyboardControls[this._allowedActions[0]];
     const keySymbol = getUserFriendlyKeyText(key);
     const keyHeight = this._app.renderer.width * 0.05;
     const keyWidth = (1 + (keySymbol.length - 1) * 0.2) * keyHeight;
@@ -919,14 +918,15 @@ export default class MinimalRenderer
       y + keyPadding,
       keyWidth - keyPadding * 2,
       keyHeight - keyPadding * 2
-    );
+    );*/
   }
 
   private _renderVirtualGestures() {
     if (!this._virtualGestureSprites) {
       return;
     }
-    this._virtualGestureSprites.forEach((sprite, i) => {
+    // TODO: store last landed on action
+    /*this._virtualGestureSprites.forEach((sprite, i) => {
       sprite.x =
         this._app.renderer.width *
         (i ===
@@ -942,6 +942,6 @@ export default class MinimalRenderer
         Object.values(InputAction).indexOf(this._allowedActions[0]) === i
           ? 1
           : 0;
-    });
+    });*/
   }
 }

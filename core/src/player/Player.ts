@@ -95,7 +95,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       const newBlock = new Block(
         this,
         layout,
-        simulationSettings.spawnRowOffset || 0,
+        0,
         column,
         this._nextLayoutRotation || 0,
         gridCells,

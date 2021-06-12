@@ -1,4 +1,4 @@
-import { teardown, createdTimestamp } from './helpers/setup';
+import { teardown } from './helpers/setup';
 import './helpers/extensions';
 
 describe('Users Requests Rules', () => {

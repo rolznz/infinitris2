@@ -11,9 +11,7 @@ const tSpins1: IChallenge = {
   simulationSettings: {
     allowedBlockLayoutIds: ['T'],
   },
-  finishCriteria: {
-    finishChallengeCellFilled: true,
-  },
+  finishCriteria: {},
   rewardCriteria: {
     gold: {
       maxBlocksPlaced: 10,

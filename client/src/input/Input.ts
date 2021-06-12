@@ -16,7 +16,6 @@ export default class Input {
   private _simulation: Simulation;
   private _grid: Grid;
   private _controls: ControlSettings;
-  private _allowedActions?: InputAction[];
   private _actionListeners: ActionListener[];
   private _keyboardInput: KeyboardInput;
   private _touchInput: TouchInput;
@@ -33,10 +32,6 @@ export default class Input {
     this._actionListeners = [];
     this._keyboardInput = new KeyboardInput(this._fireAction, controls);
     this._touchInput = new TouchInput(this._fireAction);
-  }
-
-  set allowedActions(allowedActions: InputAction[] | undefined) {
-    this._allowedActions = allowedActions;
   }
 
   get controls(): ControlSettings {
@@ -60,7 +55,7 @@ export default class Input {
     if (block && block.isDropping) {
       return false;
     }
-    return !this._allowedActions || this._allowedActions.indexOf(action) >= 0;
+    return true;
   }
 
   private _fireAction = (action: InputAction) => {

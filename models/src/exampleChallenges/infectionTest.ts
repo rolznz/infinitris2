@@ -8,9 +8,7 @@ const infectionTest: IChallenge = {
   isMandatory: true,
   isPublished: true,
   priority: 7000,
-  finishCriteria: {
-    finishChallengeCellFilled: true,
-  },
+  finishCriteria: {},
   rewardCriteria: {
     gold: {
       maxBlocksPlaced: 10,

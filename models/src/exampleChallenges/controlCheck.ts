@@ -1,6 +1,7 @@
 import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import IChallenge from '../IChallenge';
 
+// TODO: delete
 const controlCheck: IChallenge = {
   isOfficial: true,
   title: 'Control Check',
@@ -39,7 +40,6 @@ const controlCheck: IChallenge = {
 FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
 `,
   simulationSettings: {
-    spawnRowOffset: 5,
     gravityEnabled: false,
   },
   finishCriteria: {

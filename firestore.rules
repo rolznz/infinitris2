@@ -151,7 +151,7 @@ service cloud.firestore {
       function canCreateAffiliate() {
       	return
           exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        	!('affiliateId' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data) &&
+        	!('affiliateId' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.readOnly) &&
           request.resource.data.size() == 0;
       }
       allow create: if canCreateAffiliate();

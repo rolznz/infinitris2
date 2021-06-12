@@ -14,6 +14,7 @@
     "test:files:users": "jest -f \"src/__tests__/users.test.ts\"",
     "test:files:challenges": "jest -f \"src/__tests__/challenges.test.ts\"",
     "test:files:ratings": "jest -f \"src/__tests__/ratings.test.ts\"",
+    "test:files:affiliates": "jest -f \"src/__tests__/affiliates.test.ts\"",
     "logs": "firebase functions:log"
   },
   "engines": {

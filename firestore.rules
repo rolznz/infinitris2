@@ -21,9 +21,6 @@ service cloud.firestore {
     match /{document=**} {
       allow read, write: if false;
     }
-    match /rooms/{document=**} {
-      allow read: if true;
-    }
     match /users/{userId} {
       function matchesUser(request, userId) {
         return request.auth != null && request.auth.uid == userId;
@@ -126,8 +123,11 @@ service cloud.firestore {
     	function entityExists() {
       	return exists(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId));
       }
+      function entityIsPublished() {
+      	return get(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId)).data.isPublished == true;
+      }
     	function isOwnerOfEntity() {
-      	return get(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId)).data.userId == request.auth.uid;
+      	return get(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId)).data.readOnly.userId == request.auth.uid;
       }
     	function calculateRatingId() {
       	return request.resource.data.entityCollection + '-' + request.resource.data.entityId + '-' + request.auth.uid;
@@ -137,8 +137,9 @@ service cloud.firestore {
           ratingId == calculateRatingId() &&
           isValidCollection() &&
           entityExists() &&
+          entityIsPublished() &&
           !isOwnerOfEntity() &&
-          request.resource.data.value >= 1 && request.resource.data.value <= 5 &&
+          request.resource.data.value is number && request.resource.data.value >= 1 && request.resource.data.value <= 5 &&
           request.resource.data.keys().hasOnly(['value', 'entityCollection', 'entityId']);
       }
       allow create: if isValidRating();
@@ -162,6 +163,9 @@ service cloud.firestore {
       allow read: if true;
     }
     match /scoreboardEntries/{document=**} {
+      allow read: if true;
+    }
+    match /rooms/{document=**} {
       allow read: if true;
     }
   }

@@ -13,6 +13,7 @@
     "test:memory": "jest --detectOpenHandles --all",
     "test:files:users": "jest -f \"src/__tests__/users.test.ts\"",
     "test:files:challenges": "jest -f \"src/__tests__/challenges.test.ts\"",
+    "test:files:ratings": "jest -f \"src/__tests__/ratings.test.ts\"",
     "logs": "firebase functions:log"
   },
   "engines": {

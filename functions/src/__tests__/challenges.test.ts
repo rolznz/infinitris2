@@ -9,8 +9,8 @@ import { setup, teardown, createdTimestamp } from './helpers/setup';
 import './helpers/extensions';
 import { userId1, userId1Path, existingUser, userId2 } from './users.test';
 
-const challengeId1 = 'challengeId1';
-const challengeId1Path = getChallengePath(challengeId1);
+export const challengeId1 = 'challengeId1';
+export const challengeId1Path = getChallengePath(challengeId1);
 const userIdAdminPath = getAdminPath(userId1);
 
 const validChallenge: Omit<IChallenge, 'readOnly'> = {
@@ -40,7 +40,7 @@ XXX0
 000X`,
 };
 
-const existingUnpublishedChallenge: IChallenge = {
+export const existingUnpublishedChallenge: IChallenge = {
   ...validChallenge,
   readOnly: {
     createdTimestamp,
@@ -48,7 +48,7 @@ const existingUnpublishedChallenge: IChallenge = {
   },
 };
 
-const existingPublishedChallenge: IChallenge = {
+export const existingPublishedChallenge: IChallenge = {
   ...existingUnpublishedChallenge,
   isPublished: true,
 };

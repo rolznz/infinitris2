@@ -15,7 +15,7 @@ export const challengesPath = 'challenges';
 export const getChallengePath = (challengeId: string) =>
   `${challengesPath}/${challengeId}`;
 export const ratingsPath = 'ratings';
-export const getRatingsPath = (
+export const getRatingPath = (
   entityCollection: 'challenges',
   entityId: string,
   userId: string

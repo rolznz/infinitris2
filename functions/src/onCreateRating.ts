@@ -3,7 +3,6 @@ import { IChallenge, IRating } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
 import firebase from 'firebase';
 import IUpdateEntityRating from './models/IUpdateEntityRating';
-//import { getDb } from './utils/firebase';
 import * as admin from 'firebase-admin';
 
 export const onCreateRating = functions.firestore
@@ -33,13 +32,10 @@ export const onCreateRating = functions.firestore
 
     challengeDocRef.update(updatedChallenge);
 
-    return snapshot.ref.set(
-      {
-        readOnly: {
-          createdTimestamp: admin.firestore.Timestamp.now(),
-          userId,
-        },
-      } as Pick<IRating, 'readOnly'>,
-      { merge: true }
-    );
+    return snapshot.ref.update({
+      readOnly: {
+        createdTimestamp: admin.firestore.Timestamp.now(),
+        userId,
+      },
+    } as Pick<IRating, 'readOnly'>);
   });

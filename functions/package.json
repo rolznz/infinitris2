@@ -15,6 +15,7 @@
     "test:files:authUserHooks": "jest -- \"__tests__/authUserHooks.test.ts\"",
     "test:files:roomRules": "jest -- \"__tests__/roomRules.test.ts\"",
     "test:files:challengeRules": "jest -- \"__tests__/challengeRules.test.ts\"",
+    "test:files:challengeHooks": "jest -- \"__tests__/challengeHooks.test.ts\"",
     "test:files:ratingRules": "jest -- \"__tests__/ratingRules.test.ts\"",
     "test:files:ratingHooks": "jest -- \"__tests__/ratingHooks.test.ts\"",
     "test:files:affiliateRules": "jest -- \"__tests__/affiliateRules.test.ts\"",

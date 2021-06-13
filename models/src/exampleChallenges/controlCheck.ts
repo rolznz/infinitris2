@@ -1,5 +1,5 @@
 import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
-import IChallenge from '../IChallenge';
+import { IChallenge } from '../IChallenge';
 
 // TODO: delete
 const controlCheck: IChallenge = {
@@ -60,6 +60,11 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
   isMandatory: true,
   isPublished: true,
   priority: 10000,
+  readOnly: {
+    numRatings: 0,
+    rating: 0,
+    summedRating: 0,
+  },
 };
 
 export default controlCheck;

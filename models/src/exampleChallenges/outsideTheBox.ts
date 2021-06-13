@@ -1,4 +1,4 @@
-import IChallenge from '../IChallenge';
+import { IChallenge } from '../IChallenge';
 
 const outsideTheBox: IChallenge = {
   isOfficial: true,
@@ -40,6 +40,11 @@ const outsideTheBox: IChallenge = {
 XXX0XXXXXXXXXXX
 R0000000X00X00X
 `,
+  readOnly: {
+    numRatings: 0,
+    rating: 0,
+    summedRating: 0,
+  },
 };
 
 export default outsideTheBox;

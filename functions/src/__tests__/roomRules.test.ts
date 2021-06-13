@@ -14,19 +14,19 @@ describe('Rooms Rules', () => {
   });
 
   test('should allow reading the rooms collection', async () => {
-    const db = await setup();
+    const { db } = await setup();
 
     await expect(db.collection(roomsPath).get()).toAllow();
   });
 
   test('should allow reading a room ', async () => {
-    const db = await setup();
+    const { db } = await setup();
 
     await expect(db.doc(getRoomPath(roomId1)).get()).toAllow();
   });
 
   test('should deny creating a room', async () => {
-    const db = await setup();
+    const { db } = await setup();
 
     await expect(db.doc(getRoomPath(roomId1)).set(validRoom)).toDeny();
   });

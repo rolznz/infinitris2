@@ -1,5 +1,4 @@
-import { db } from './constants';
-import * as admin from 'firebase-admin';
+import { db } from './firebase';
 import { IUser } from 'infinitris2-models';
 
 /**

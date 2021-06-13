@@ -12,7 +12,6 @@ import ISimulationSettings from './src/ISimulationSettings';
 import Layout from './src/Layout';
 import IRoom from './src/IRoom';
 import tetrominoes from './src/exampleBlockLayouts/Tetrominoes';
-import IChallenge, { IChallengeReadOnlyProperties } from './src/IChallenge';
 import CellType from './src/CellType';
 import ICellBehaviour from './src/ICellBehaviour';
 import IChallengeClient from './src/IChallengeClient';
@@ -36,11 +35,10 @@ import IProduct from './src/IProduct';
 
 export * from './src/util/fireStorePaths';
 export * from './src/ChallengeStatus';
+export * from './src/IChallenge';
 
 export {
   exampleChallenges,
-  IChallenge,
-  IChallengeReadOnlyProperties,
   IChallengeClient,
   InputAction,
   Layout,

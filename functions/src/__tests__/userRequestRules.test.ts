@@ -12,7 +12,7 @@ describe('Users Requests Rules', () => {
 });
 
 /*test('nickname should meet requirements', async () => {
-    const db = await setup(
+    const {db} = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,

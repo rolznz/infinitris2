@@ -1,15 +1,23 @@
 import InputAction from './InputAction';
 import ISimulationSettings from './ISimulationSettings';
-import ChallengeRewardCriteria from './ChallengeSuccessCriteria';
+import ChallengeRewardCriteria from './ChallengeRewardCriteria';
 import IEntity, { IEntityReadOnlyProperties } from './IEntity';
 
+export interface IRateable {
+  readonly numRatings: number;
+  readonly summedRating: number;
+  readonly rating: number;
+}
 export interface IChallengeReadOnlyProperties
-  extends IEntityReadOnlyProperties {
+  extends IEntityReadOnlyProperties,
+    IRateable {
   readonly userId?: string;
 }
 
-export default interface IChallenge extends IEntity {
-  readonly readOnly?: IChallengeReadOnlyProperties;
+export type CreateChallengeRequest = Omit<IChallenge, 'readOnly'>;
+
+export interface IChallenge extends IEntity {
+  readonly readOnly: IChallengeReadOnlyProperties;
   readonly title: string;
   readonly description?: string;
 
@@ -21,8 +29,6 @@ export default interface IChallenge extends IEntity {
   readonly firstBlockLayoutId?: string;
   //readonly firstBlockColumn?: number;
   readonly grid: string;
-  readonly numRatings?: number;
-  readonly totalRating?: number;
 
   readonly finishCriteria: {
     readonly maxBlocksPlaced?: number;

@@ -1,5 +1,5 @@
 import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
-import IChallenge from '../IChallenge';
+import { IChallenge } from '../IChallenge';
 
 const basicMovement: IChallenge = {
   isOfficial: true,
@@ -134,6 +134,11 @@ LLLLLLLLLLLLLLLLLLLLLLLLLLLLL
 XXXXXXXXXXXXX000XXXXXXXXXXXXX
 XXXXXXXXXXXXX0XXXXXXXXXXXXXXX
 `,
+  readOnly: {
+    numRatings: 0,
+    rating: 0,
+    summedRating: 0,
+  },
 };
 
 export default basicMovement;

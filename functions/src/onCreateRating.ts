@@ -1,8 +1,10 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
-import { db } from './utils/constants';
 import { IChallenge, IRating } from 'infinitris2-models';
-import updateNetworkImpact from './utils/updateNetworkImpact';
+import { getDb } from './utils/firebase';
+import firebase from 'firebase';
+import IUpdateEntityRating from './models/IUpdateEntityRating';
+//import { getDb } from './utils/firebase';
+import * as admin from 'firebase-admin';
 
 export const onCreateRating = functions.firestore
   .document('ratings/{ratingId}')
@@ -12,45 +14,32 @@ export const onCreateRating = functions.firestore
       throw new Error('User not logged in');
     }
     // FIXME: Update to match new schema
-    /*const rating = snapshot.data() as IRating;
-    if (rating.entityCollection === 'challenges') {
-      const challengeDocRef = db.doc(`challenges/${snapshot.data().entityId}`);
-      try {
-        // update the challenge total rating
-        // TODO: maybe could use increment on the two values rather than requiring a transaction
-        await db.runTransaction(async (t) => {
-          const challengeDoc = await t.get(challengeDocRef);
-          const challenge = challengeDoc.data() as IChallenge;
-          if (challenge) {
-            const oldNumRatings = challenge.numRatings || 0;
-            const oldTotalRating = challenge.totalRating || 0;
-            const numRatings = oldNumRatings + 1;
-            const totalRating =
-              oldTotalRating * (oldNumRatings / numRatings) +
-              rating.value * (1 / numRatings);
-            t.update(challengeDocRef, { numRatings, totalRating });
-          }
-        });
+    const rating = snapshot.data() as IRating;
+    const challengeDocRef = getDb().doc(`challenges/${rating.entityId}`);
+    const challenge = (await challengeDocRef.get()).data() as IChallenge;
 
-        console.log('Updated challenge rating: ', rating.entityId);
+    // race condition accounted for as numRatings and summedRating are atomic
+    const expectedNewRatingValue =
+      (challenge.readOnly.summedRating + rating.value) /
+      (challenge.readOnly.numRatings + 1);
 
-        await (async () => {
-          const challengeDoc = await challengeDocRef.get();
-          const challenge = challengeDoc.data() as IChallenge;
-          if (challenge) {
-            await updateNetworkImpact(challenge.userId, userId);
-          }
-        })();
-      } catch (e) {
-        console.log('Failed to update challenge rating: ', e);
-      }
-    } else {
-      throw new Error(
-        'Unsupported entity collection: ' + rating.entityCollection
-      );
-    }
-    return snapshot.ref.update({
-      createdTimestamp: admin.firestore.Timestamp.now(),
-      userId,
-    } as Pick<IRating, 'createdTimestamp' | 'userId'>);*/
+    const updatedChallenge: IUpdateEntityRating = {
+      'readOnly.numRatings': firebase.firestore.FieldValue.increment(1),
+      'readOnly.summedRating': firebase.firestore.FieldValue.increment(
+        rating.value
+      ),
+      'readOnly.rating': expectedNewRatingValue,
+    };
+
+    challengeDocRef.update(updatedChallenge);
+
+    return snapshot.ref.set(
+      {
+        readOnly: {
+          createdTimestamp: admin.firestore.Timestamp.now(),
+          userId,
+        },
+      } as Pick<IRating, 'readOnly'>,
+      { merge: true }
+    );
   });

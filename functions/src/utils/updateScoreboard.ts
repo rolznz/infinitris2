@@ -1,5 +1,5 @@
 import { IScoreboardEntry, IUser } from 'infinitris2-models';
-import { db } from './constants';
+import { db } from './firebase';
 
 /**
  * Updates the public scoreboard

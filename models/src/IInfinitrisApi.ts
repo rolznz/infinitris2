@@ -2,7 +2,7 @@ import ControlSettings from './ControlSettings';
 import { IClientSocketEventListener } from './IClientSocketEventListener';
 import InputMethod from './InputMethod';
 import ISimulationEventListener from './ISimulationEventListener';
-import IChallenge from './IChallenge';
+import { IChallenge } from './IChallenge';
 import IChallengeClient from './IChallengeClient';
 import IPlayer from './IPlayer';
 

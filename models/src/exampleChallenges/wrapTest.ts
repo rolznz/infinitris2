@@ -1,6 +1,6 @@
 import InputAction from '../InputAction';
 import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
-import IChallenge from '../IChallenge';
+import { IChallenge } from '../IChallenge';
 
 const wrapTest: IChallenge = {
   isOfficial: true,
@@ -33,6 +33,11 @@ X00000000000000000000000000000000000000000000000X
 0000000000000000000000000000000000000000000000000
 X00000000000000000000000000000000000000000000000X
 `,
+  readOnly: {
+    numRatings: 0,
+    rating: 0,
+    summedRating: 0,
+  },
 };
 
 export default wrapTest;

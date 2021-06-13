@@ -1,6 +1,30 @@
-import * as firebase from '@firebase/testing';
+// stop firebase-functions error message when we are using the emulator
+// "Warning, FIREBASE_CONFIG and GCLOUD_PROJECT environment variables are missing. Initializing firebase-admin will fail"
+process.env.FIREBASE_CONFIG = 'FAKE';
+process.env.GCLOUD_PROJECT = 'FAKE';
+process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
+
+import {
+  initializeTestApp,
+  loadFirestoreRules,
+  apps,
+} from '@firebase/rules-unit-testing';
 import * as fs from 'fs';
+import * as admin from 'firebase-admin';
 import { Timestamp } from 'infinitris2-models';
+import firebase from 'firebase';
+import * as fft from 'firebase-functions-test';
+
+import * as firebaseUtils from '../../utils/firebase';
+import { FeaturesList } from 'firebase-functions-test/lib/features';
+jest.mock('../../utils/firebase');
+
+const mockedApp = firebaseUtils.getApp as jest.MockedFunction<
+  typeof firebaseUtils.getApp
+>;
+const mockedDb = firebaseUtils.getDb as jest.MockedFunction<
+  typeof firebaseUtils.getDb
+>;
 
 interface TestAuth {
   uid: string;
@@ -13,21 +37,34 @@ export const createdTimestamp: Timestamp = {
   nanoseconds: 0,
 };
 
-export async function setup(auth?: TestAuth, data?: TestData) {
+export async function setup(
+  auth?: TestAuth,
+  data?: TestData,
+  applySecurityRules = true
+): Promise<{ db: firebase.firestore.Firestore; test: FeaturesList }> {
   // Create a unique projectId for every firebase simulated app
   const projectId = `rules-spec-${Date.now()}`;
 
+  const test = fft({
+    projectId,
+  });
+
   // Create the test app using the unique ID and the given user auth object
-  const app = await firebase.initializeTestApp({
+  const app = await initializeTestApp({
     projectId,
     auth,
   });
 
-  // Get the db linked to the new firebase app that we creted
+  // Get the db linked to the new firebase app that we created
   const db = app.firestore();
 
+  // FIXME: Google typings are incompatible (firebase.app.App vs admin.app.App)
+  mockedApp.mockReturnValue((app as any) as admin.app.App);
+  // FIXME: Google typings are incompatible (@firebase/rules-unit-testing.firestore.Firestore vs FirebaseFirestore.Firestore)
+  mockedDb.mockReturnValue((db as any) as FirebaseFirestore.Firestore);
+
   // Apply the test rules so we can write documents
-  await firebase.loadFirestoreRules({
+  await loadFirestoreRules({
     projectId,
     rules: fs.readFileSync('./src/__tests__/firestore-test.rules', 'utf8'),
   });
@@ -40,17 +77,19 @@ export async function setup(auth?: TestAuth, data?: TestData) {
     }
   }
 
-  // Apply the rules that we have locally in the project file
-  await firebase.loadFirestoreRules({
-    projectId,
-    rules: fs.readFileSync('../firestore.rules', 'utf8'),
-  });
+  if (applySecurityRules) {
+    // Apply the rules that we have locally in the project file
+    await loadFirestoreRules({
+      projectId,
+      rules: fs.readFileSync('../firestore.rules', 'utf8'),
+    });
+  }
 
   // return the initialised DB for testing
-  return db;
+  return { db, test };
 }
 
 export function teardown() {
   // Delete all apps currently running in the firebase simulated environment
-  return firebase.apps().map((app) => app.delete());
+  return apps().map((app) => app.delete());
 }

@@ -1,19 +1,20 @@
 import {
   challengesPath,
+  CreateChallengeRequest,
   getAdminPath,
   getChallengePath,
-  IChallenge,
   IUser,
+  IChallenge,
 } from 'infinitris2-models';
 import { setup, teardown, createdTimestamp } from './helpers/setup';
 import './helpers/extensions';
-import { userId1, userId1Path, existingUser, userId2 } from './users.test';
+import { userId1, userId1Path, existingUser, userId2 } from './userRules.test';
 
 export const challengeId1 = 'challengeId1';
-export const challengeId1Path = getChallengePath(challengeId1);
+export const challenge1Path = getChallengePath(challengeId1);
 const userIdAdminPath = getAdminPath(userId1);
 
-const validChallenge: Omit<IChallenge, 'readOnly'> = {
+const validChallengeRequest: CreateChallengeRequest = {
   title: 'New challenge',
   simulationSettings: {
     allowedBlockLayoutIds: ['1', '2'],
@@ -41,10 +42,13 @@ XXX0
 };
 
 export const existingUnpublishedChallenge: IChallenge = {
-  ...validChallenge,
+  ...validChallengeRequest,
   readOnly: {
     createdTimestamp,
     userId: userId1,
+    numRatings: 0,
+    rating: 0,
+    summedRating: 0,
   },
 };
 
@@ -59,32 +63,32 @@ describe('Challenges Rules', () => {
   });
 
   test('should allow reading the challenges collection', async () => {
-    const db = await setup();
+    const { db } = await setup();
 
     await expect(db.collection(challengesPath).get()).toAllow();
   });
 
   test('should allow reading a challenge', async () => {
-    const db = await setup();
+    const { db } = await setup();
 
     await expect(db.doc(getChallengePath(challengeId1)).get()).toAllow();
   });
 
   test('should deny creating a challenge when logged out', async () => {
-    const db = await setup();
+    const { db } = await setup();
 
-    await expect(db.doc(challengeId1Path).set(validChallenge)).toDeny();
+    await expect(db.doc(challenge1Path).set(validChallengeRequest)).toDeny();
   });
 
   test('should allow creating a challenge when logged in and has enough credits', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
       }
     );
 
-    await expect(db.doc(challengeId1Path).set(validChallenge)).toAllow();
+    await expect(db.doc(challenge1Path).set(validChallengeRequest)).toAllow();
   });
 
   test('should not allow creating a challenge when not having enough credits', async () => {
@@ -96,34 +100,34 @@ describe('Challenges Rules', () => {
       },
     };
 
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: userWithNoCredits,
       }
     );
 
-    await expect(db.doc(challengeId1Path).set(validChallenge)).toDeny();
+    await expect(db.doc(challenge1Path).set(validChallengeRequest)).toDeny();
   });
 
   test('should deny creating a challenge with isOfficial property when not admin', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
       }
     );
 
-    const officialChallenge: IChallenge = {
-      ...validChallenge,
+    const officialChallenge: CreateChallengeRequest = {
+      ...validChallengeRequest,
       isOfficial: true,
     };
 
-    await expect(db.doc(challengeId1Path).set(officialChallenge)).toDeny();
+    await expect(db.doc(challenge1Path).set(officialChallenge)).toDeny();
   });
 
   test('should allow creating a challenge with isOfficial property when admin', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
@@ -131,20 +135,20 @@ describe('Challenges Rules', () => {
       }
     );
 
-    const officialChallenge: IChallenge = {
-      ...validChallenge,
+    const officialChallenge: CreateChallengeRequest = {
+      ...validChallengeRequest,
       isOfficial: true,
     };
 
-    await expect(db.doc(challengeId1Path).set(officialChallenge)).toAllow();
+    await expect(db.doc(challenge1Path).set(officialChallenge)).toAllow();
   });
 
   test('should allow updating an unpublished challenge', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
-        [challengeId1Path]: existingUnpublishedChallenge,
+        [challenge1Path]: existingUnpublishedChallenge,
       }
     );
 
@@ -152,16 +156,16 @@ describe('Challenges Rules', () => {
       title: existingUnpublishedChallenge.title + '2',
     };
     await expect(
-      db.doc(challengeId1Path).set(challengeToUpdate, { merge: true })
+      db.doc(challenge1Path).set(challengeToUpdate, { merge: true })
     ).toAllow();
   });
 
   test('should deny updating a published challenge', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
-        [challengeId1Path]: existingPublishedChallenge,
+        [challenge1Path]: existingPublishedChallenge,
       }
     );
 
@@ -170,17 +174,17 @@ describe('Challenges Rules', () => {
     };
 
     await expect(
-      db.doc(challengeId1Path).set(challengeToUpdate, { merge: true })
+      db.doc(challenge1Path).set(challengeToUpdate, { merge: true })
     ).toDeny();
   });
 
   test('should allow admin updating a published challenge', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
         [userIdAdminPath]: {},
-        [challengeId1Path]: existingPublishedChallenge,
+        [challenge1Path]: existingPublishedChallenge,
       }
     );
 
@@ -189,16 +193,16 @@ describe('Challenges Rules', () => {
     };
 
     await expect(
-      db.doc(challengeId1Path).set(challengeToUpdate, { merge: true })
+      db.doc(challenge1Path).set(challengeToUpdate, { merge: true })
     ).toAllow();
   });
 
   test("should not allow updating someone else's unpublished challenge", async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId2 },
       {
         [userId1Path]: existingUser,
-        [challengeId1Path]: existingUnpublishedChallenge,
+        [challenge1Path]: existingUnpublishedChallenge,
       }
     );
 
@@ -207,12 +211,12 @@ describe('Challenges Rules', () => {
     };
 
     await expect(
-      db.doc(challengeId1Path).set(challengeToUpdate, { merge: true })
+      db.doc(challenge1Path).set(challengeToUpdate, { merge: true })
     ).toDeny();
   });
 
   test('should not be create challenge with readonly properties', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
@@ -220,9 +224,12 @@ describe('Challenges Rules', () => {
     );
 
     const challengeToCreate: IChallenge = {
-      ...validChallenge,
+      ...validChallengeRequest,
       readOnly: {
         userId: 'test',
+        numRatings: 5,
+        rating: 5,
+        summedRating: 25,
       },
     };
 
@@ -230,27 +237,28 @@ describe('Challenges Rules', () => {
   });
 
   test('should not be update challenge with readonly properties', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
-        [challengeId1Path]: existingUnpublishedChallenge,
+        [challenge1Path]: existingUnpublishedChallenge,
       }
     );
 
     const challengeToUpdate: Pick<IChallenge, 'readOnly'> = {
       readOnly: {
         userId: 'test',
+        numRatings: 5,
+        rating: 5,
+        summedRating: 25,
       },
     };
 
-    await expect(
-      db.doc(userId1Path).set(challengeToUpdate, { merge: true })
-    ).toDeny();
+    await expect(db.doc(userId1Path).update(challengeToUpdate)).toDeny();
   });
 
   test('should deny creating a challenge with non-allowed property', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
@@ -259,22 +267,22 @@ describe('Challenges Rules', () => {
 
     await expect(
       db
-        .doc(challengeId1Path)
-        .set({ ...validChallenge, someNonExistentProperty: 'a' })
+        .doc(challenge1Path)
+        .set({ ...validChallengeRequest, someNonExistentProperty: 'a' })
     ).toDeny();
   });
 
   test('should not allow setting incorrect property types on challenge', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
-        [challengeId1Path]: existingUnpublishedChallenge,
+        [challenge1Path]: existingUnpublishedChallenge,
       }
     );
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           title: 1,
         },
@@ -283,7 +291,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           description: 1,
         },
@@ -292,7 +300,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           finishCriteria: 1,
         },
@@ -301,7 +309,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           firstBlockLayoutId: 1,
         },
@@ -310,7 +318,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           grid: 1,
         },
@@ -319,7 +327,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           isMandatory: 1,
         },
@@ -328,7 +336,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           isOfficial: 1,
         },
@@ -337,7 +345,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           isPublished: 1,
         },
@@ -346,7 +354,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           locale: 1,
         },
@@ -355,7 +363,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           priority: 'invalid-value',
         },
@@ -364,7 +372,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           simulationSettings: 1,
         },
@@ -373,7 +381,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           simulationSettings: {
             gravityEnabled: 1,
@@ -384,7 +392,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           simulationSettings: {
             allowedBlockLayoutIds: 1,
@@ -395,7 +403,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           simulationSettings: {
             allowedBlockLayoutIds: [1],
@@ -406,7 +414,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
 
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           rewardCriteria: 1,
         },
@@ -416,7 +424,7 @@ describe('Challenges Rules', () => {
 
     // simulation settings: unsupported value
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           simulationSettings: {
             nonExistentSetting: false,
@@ -428,7 +436,7 @@ describe('Challenges Rules', () => {
 
     // reward criteria: unsupported medal
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           rewardCriteria: {
             nonExistentSetting: false,
@@ -441,7 +449,7 @@ describe('Challenges Rules', () => {
     for (const medal of ['bronze', 'silver', 'gold', 'all']) {
       // reward criteria medal: unsupported value
       await expect(
-        db.doc(challengeId1Path).set(
+        db.doc(challenge1Path).set(
           {
             rewardCriteria: {
               [medal]: {
@@ -455,7 +463,7 @@ describe('Challenges Rules', () => {
 
       // reward criteria medal: incorrect property type
       await expect(
-        db.doc(challengeId1Path).set(
+        db.doc(challenge1Path).set(
           {
             rewardCriteria: {
               [medal]: {
@@ -468,7 +476,7 @@ describe('Challenges Rules', () => {
       ).toDeny();
 
       await expect(
-        db.doc(challengeId1Path).set(
+        db.doc(challenge1Path).set(
           {
             rewardCriteria: {
               [medal]: {
@@ -481,7 +489,7 @@ describe('Challenges Rules', () => {
       ).toDeny();
 
       await expect(
-        db.doc(challengeId1Path).set(
+        db.doc(challenge1Path).set(
           {
             rewardCriteria: {
               [medal]: {
@@ -494,7 +502,7 @@ describe('Challenges Rules', () => {
       ).toDeny();
 
       await expect(
-        db.doc(challengeId1Path).set(
+        db.doc(challenge1Path).set(
           {
             rewardCriteria: {
               [medal]: {
@@ -507,7 +515,7 @@ describe('Challenges Rules', () => {
       ).toDeny();
 
       await expect(
-        db.doc(challengeId1Path).set(
+        db.doc(challenge1Path).set(
           {
             rewardCriteria: {
               [medal]: {
@@ -522,7 +530,7 @@ describe('Challenges Rules', () => {
 
     // finish criteria: unsupported value
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           finishCriteria: {
             nonExistentSetting: false,
@@ -534,7 +542,7 @@ describe('Challenges Rules', () => {
 
     // finish criteria invalid property types
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           finishCriteria: {
             maxBlocksPlaced: 'test',
@@ -544,7 +552,7 @@ describe('Challenges Rules', () => {
       )
     ).toDeny();
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           finishCriteria: {
             maxLinesCleared: 'test',
@@ -554,7 +562,7 @@ describe('Challenges Rules', () => {
       )
     ).toDeny();
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           finishCriteria: {
             maxTimeTaken: 'test',
@@ -564,7 +572,7 @@ describe('Challenges Rules', () => {
       )
     ).toDeny();
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           finishCriteria: {
             gridEmpty: 'test',
@@ -576,16 +584,16 @@ describe('Challenges Rules', () => {
   });
 
   test('challenge property values must fit criteria', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
-        [challengeId1Path]: existingUnpublishedChallenge,
+        [challenge1Path]: existingUnpublishedChallenge,
       }
     );
     // challenge title too long
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           title: 'a'.repeat(21),
         },
@@ -595,7 +603,7 @@ describe('Challenges Rules', () => {
 
     // challenge title invalid character
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           title: '#',
         },
@@ -605,7 +613,7 @@ describe('Challenges Rules', () => {
 
     // description too long
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           description: 'a'.repeat(281),
         },
@@ -615,7 +623,7 @@ describe('Challenges Rules', () => {
 
     // grid must not be empty
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           grid: '',
         },
@@ -625,7 +633,7 @@ describe('Challenges Rules', () => {
 
     // allowed layout IDs length must be less than 3 if included
     await expect(
-      db.doc(challengeId1Path).set(
+      db.doc(challenge1Path).set(
         {
           simulationSettings: {
             allowedBlockLayoutIds: ['1', '2', '3', '4'],

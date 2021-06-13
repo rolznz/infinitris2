@@ -1,4 +1,4 @@
-import IChallenge from '../IChallenge';
+import { IChallenge } from '../IChallenge';
 import basicMovement from './basicMovement';
 import controlCheck from './controlCheck';
 import garbageCollection1 from './garbageCollection1';

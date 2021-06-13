@@ -1,4 +1,4 @@
-import IChallenge from '../IChallenge';
+import { IChallenge } from '../IChallenge';
 
 const waferTest: IChallenge = {
   isOfficial: true,
@@ -41,6 +41,11 @@ WWWWWWWWWWWWWWW
 rrrrrrrrrrrrrrr
 FFFFFFFFFFFFFFF
 `,
+  readOnly: {
+    numRatings: 0,
+    rating: 0,
+    summedRating: 0,
+  },
 };
 
 export default waferTest;

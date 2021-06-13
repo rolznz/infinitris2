@@ -1,4 +1,4 @@
-import IChallenge from '../IChallenge';
+import { IChallenge } from '../IChallenge';
 
 const garbageCollection1: IChallenge = {
   isOfficial: true,
@@ -36,6 +36,12 @@ XXX00
 0X0XX
 FFFFF
 `, // TODO: garbageRows=[5,6,7]
+
+  readOnly: {
+    numRatings: 0,
+    rating: 0,
+    summedRating: 0,
+  },
 };
 
 export default garbageCollection1;

@@ -1,4 +1,4 @@
-import IChallenge from '../IChallenge';
+import { IChallenge } from '../IChallenge';
 
 const infectionTest2: IChallenge = {
   isOfficial: true,
@@ -41,6 +41,11 @@ rrrr00000000rrrrrrrrr000rrrrr
 00000000000XXX000XX0XXXXX0XXX
 00000000000XRX000XXIXXXXXIXXX
 `,
+  readOnly: {
+    numRatings: 0,
+    rating: 0,
+    summedRating: 0,
+  },
 };
 
 export default infectionTest2;

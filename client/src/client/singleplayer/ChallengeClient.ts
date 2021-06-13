@@ -9,8 +9,7 @@ import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
 import IChallengeClient from '@models/IChallengeClient';
 import InputMethod from '@models/InputMethod';
-import IChallenge from '@models/IChallenge';
-import ChallengeRewardCriteria from '@models/ChallengerewardCriteria';
+import { IChallenge } from '@models/IChallenge';
 import ISimulation from '@models/ISimulation';
 import Simulation from '@core/Simulation';
 import ChallengeCompletionStats from '@models/ChallengeCompletionStats';
@@ -317,39 +316,8 @@ export default class ChallengeClient
 
     this._input = new Input(simulation, player, this._controls);
     this._renderer.virtualKeyboardControls = this._input.controls;
-    this._updateAllowedActions(this._challenge.allowedActions);
-
-    if (this._challenge.teachControls) {
-      this._teachNextControl();
-      this._input.addListener(
-        (action) =>
-          (this._allowedActions as InputAction[]).indexOf(action) >= 0 &&
-          this._teachNextControl()
-      );
-    }
 
     simulation.init();
     simulation.step();
-  }
-
-  private _updateAllowedActions(allowedActions?: InputAction[]) {
-    this._renderer.allowedActions = allowedActions;
-  }
-
-  private _teachNextControl() {
-    if (!this._allowedActions) {
-      return;
-    }
-    const allActions = Object.values(InputAction);
-    const nextAction =
-      this._allowedActions.length === 0
-        ? InputAction.MoveLeft
-        : allActions[allActions.indexOf(this._allowedActions[0]) + 1];
-    if (!nextAction) {
-      this._updateAllowedActions([]);
-      // TODO: finish challenge
-    } else {
-      this._updateAllowedActions([nextAction]);
-    }
   }
 }

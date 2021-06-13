@@ -1,5 +1,4 @@
 /*import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
 import { db } from './utils/constants';
 import { IAffiliate, IUser } from 'infinitris2-models';
 import updateNetworkImpact from './utils/updateNetworkImpact';*/

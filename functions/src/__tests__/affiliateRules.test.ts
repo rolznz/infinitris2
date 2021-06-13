@@ -6,7 +6,7 @@ import {
 } from 'infinitris2-models';
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
-import { existingUser, userId1, userId1Path, userId2 } from './users.test';
+import { existingUser, userId1, userId1Path, userId2 } from './userRules.test';
 
 const affiliateId1 = 'affiliateId1';
 const affiliateId2 = 'affiliateId2';
@@ -25,19 +25,19 @@ describe('Affiliates Rules', () => {
   });
 
   test('should not allow reading the affiliates collection', async () => {
-    const db = await setup();
+    const { db } = await setup();
 
     await expect(db.collection(affiliatesPath).get()).toDeny();
   });
 
   test('should allow reading an affiliate when logged out', async () => {
-    const db = await setup();
+    const { db } = await setup();
 
     await expect(db.doc(affiliate1Path).get()).toDeny();
   });
 
   test('should allow reading own affiliate', async () => {
-    const db = await setup(
+    const { db } = await setup(
       {
         uid: userId1,
       },
@@ -50,7 +50,7 @@ describe('Affiliates Rules', () => {
   });
 
   test('should not allow reading other affiliate', async () => {
-    const db = await setup(
+    const { db } = await setup(
       {
         uid: userId2,
       },
@@ -63,7 +63,7 @@ describe('Affiliates Rules', () => {
   });
 
   test('should not allow updating affiliate', async () => {
-    const db = await setup(
+    const { db } = await setup(
       {
         uid: userId1,
       },
@@ -85,7 +85,7 @@ describe('Affiliates Rules', () => {
   });
 
   test('should allow creating an affiliate when none exists', async () => {
-    const db = await setup(
+    const { db } = await setup(
       {
         uid: userId1,
       },
@@ -105,7 +105,7 @@ describe('Affiliates Rules', () => {
         affiliateId: affiliateId1,
       },
     };
-    const db = await setup(
+    const { db } = await setup(
       {
         uid: userId1,
       },

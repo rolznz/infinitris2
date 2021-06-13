@@ -1,8 +1,6 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
 
 import { IChallenge, IUser } from 'infinitris2-models';
-import { db } from './utils/constants';
 
 export const onCreateChallenge = functions.firestore
   .document('challenges/{challengeId}')
@@ -13,6 +11,7 @@ export const onCreateChallenge = functions.firestore
     }
 
     // FIXME: update to match new schema
+    // FIXME: set readonly fields
     /*
     //const challenge = snapshot.data() as IChallenge;
     // reduce the number of credits the user has so they

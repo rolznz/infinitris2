@@ -1,4 +1,4 @@
-import IChallenge from '../IChallenge';
+import { IChallenge } from '../IChallenge';
 
 const tSpins1: IChallenge = {
   isOfficial: true,
@@ -39,6 +39,11 @@ XXXXXXXXXXXXXXXXXXXX00bXXXXXXXXXXXXXXXXXXXXXXX
 XXXXXXXXXXXXXXXXXXXXXXFXXXXXXXXXXXXXXXXXXXXXXX
 
 `,
+  readOnly: {
+    numRatings: 0,
+    rating: 0,
+    summedRating: 0,
+  },
 };
 
 export default tSpins1;

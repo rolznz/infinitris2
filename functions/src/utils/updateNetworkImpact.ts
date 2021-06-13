@@ -1,6 +1,4 @@
 import { INetworkImpact, IUser } from 'infinitris2-models';
-import * as admin from 'firebase-admin';
-import { db } from './constants';
 /**
  * Updates the network impact
  * @param toUserId id of user who received the impact

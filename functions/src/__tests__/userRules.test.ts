@@ -37,13 +37,13 @@ describe('Users Rules', () => {
   });
 
   test('should deny reading the users collection', async () => {
-    const db = await setup();
+    const { db } = await setup();
 
     await expect(db.collection(usersPath).get()).toDeny();
   });
 
   test('should deny reading a user when logged out', async () => {
-    const db = await setup(undefined, {
+    const { db } = await setup(undefined, {
       [userId1Path]: existingUser,
     });
 
@@ -51,7 +51,7 @@ describe('Users Rules', () => {
   });
 
   test('should deny reading a user with a different ID', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId2 },
       {
         [userId1Path]: existingUser,
@@ -62,27 +62,25 @@ describe('Users Rules', () => {
   });
 
   test('should deny creating a user', async () => {
-    const db = await setup({ uid: userId1 });
+    const { db } = await setup({ uid: userId1 });
 
     const otherUserPath = getUserPath(userId1);
     await expect(db.doc(otherUserPath).set(existingUser)).toDeny();
   });
 
   test('should allow updating a user when logged in with the matching id', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
       }
     );
 
-    await expect(
-      db.doc(userId1Path).set(validUserRequest, { merge: true })
-    ).toAllow();
+    await expect(db.doc(userId1Path).update(validUserRequest)).toAllow();
   });
 
   test('should not allow setting properties outside allow list', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
@@ -91,14 +89,14 @@ describe('Users Rules', () => {
 
     // invalid property
     await expect(
-      db.doc(userId1Path).set({
+      db.doc(userId1Path).update({
         credits: 5,
       })
     ).toDeny();
   });
 
   test('should not allow setting properties of incorrect type', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
@@ -107,44 +105,44 @@ describe('Users Rules', () => {
 
     // invalid property types
     await expect(
-      db.doc(userId1Path).set({
+      db.doc(userId1Path).update({
         nickname: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).set({
+      db.doc(userId1Path).update({
         referredByAffiliateId: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).set({
+      db.doc(userId1Path).update({
         controls: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).set({
+      db.doc(userId1Path).update({
         hasSeenAllSet: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).set({
+      db.doc(userId1Path).update({
         hasSeenWelcome: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).set({
+      db.doc(userId1Path).update({
         preferredInputMethod: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).set({
+      db.doc(userId1Path).update({
         locale: 5,
       })
     ).toDeny();
 
     // controls: unsupported control
     await expect(
-      db.doc(userId1Path).set({
+      db.doc(userId1Path).update({
         controls: {
           nonExistentControl: '1',
         },
@@ -153,7 +151,7 @@ describe('Users Rules', () => {
 
     // controls: unsupported input method
     await expect(
-      db.doc(userId1Path).set({
+      db.doc(userId1Path).update({
         controls: {
           preferredInputMethod: 'nonexistent',
         },
@@ -162,7 +160,7 @@ describe('Users Rules', () => {
   });
 
   test('should not be able to delete user', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
@@ -172,21 +170,18 @@ describe('Users Rules', () => {
   });
 
   test('should not be able to update user with readonly properties', async () => {
-    const db = await setup(
+    const { db } = await setup(
       { uid: userId1 },
       {
         [userId1Path]: existingUser,
       }
     );
     await expect(
-      db.doc(userId1Path).set(
-        {
-          readOnly: {
-            credits: 9999999,
-          } as IUserReadOnlyProperties,
-        },
-        { merge: true }
-      )
+      db.doc(userId1Path).update({
+        readOnly: {
+          credits: 9999999,
+        } as IUserReadOnlyProperties,
+      })
     ).toDeny();
   });
 });

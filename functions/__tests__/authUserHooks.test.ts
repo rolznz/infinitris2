@@ -1,6 +1,6 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
-import { onCreateAuthUser } from '../onCreateAuthUser';
+import { onCreateAuthUser } from '../src/onCreateAuthUser';
 import { getUserPath, IUser } from 'infinitris2-models';
 import firebase from 'firebase';
 

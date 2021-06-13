@@ -15,9 +15,9 @@ import { Timestamp } from 'infinitris2-models';
 import firebase from 'firebase';
 import * as fft from 'firebase-functions-test';
 
-import * as firebaseUtils from '../../utils/firebase';
+import * as firebaseUtils from '../../src/utils/firebase';
 import { FeaturesList } from 'firebase-functions-test/lib/features';
-jest.mock('../../utils/firebase');
+jest.mock('../../src/utils/firebase');
 
 const mockedApp = firebaseUtils.getApp as jest.MockedFunction<
   typeof firebaseUtils.getApp
@@ -66,7 +66,7 @@ export async function setup(
   // Apply the test rules so we can write documents
   await loadFirestoreRules({
     projectId,
-    rules: fs.readFileSync('./src/__tests__/firestore-test.rules', 'utf8'),
+    rules: fs.readFileSync('./__tests__/firestore-test.rules', 'utf8'),
   });
 
   // Write mock documents with test rules

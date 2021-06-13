@@ -7,7 +7,7 @@ import {
   existingPublishedChallenge,
 } from './challengeRules.test';
 import { ratingId1Path, validRatingRequest } from './ratingRules.test';
-import { onCreateRating } from '../onCreateRating';
+import { onCreateRating } from '../src/onCreateRating';
 import { userId1 } from './userRules.test';
 
 describe('Rating Hooks', () => {

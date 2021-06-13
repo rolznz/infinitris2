@@ -14,7 +14,7 @@ export const challengeId1 = 'challengeId1';
 export const challenge1Path = getChallengePath(challengeId1);
 const userIdAdminPath = getAdminPath(userId1);
 
-const validChallengeRequest: CreateChallengeRequest = {
+export const validChallengeRequest: CreateChallengeRequest = {
   title: 'New challenge',
   simulationSettings: {
     allowedBlockLayoutIds: ['1', '2'],

@@ -2,32 +2,31 @@ import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import { IChallenge, IRating } from 'infinitris2-models';
 import firebase from 'firebase';
-import { challenge1Path, validChallengeRequest } from './challengeRules.test';
-import { ratingId1Path, validRatingRequest } from './ratingRules.test';
 import {
-  existingUser,
-  userId1,
-  userId1Path as user1Path,
-} from './userRules.test';
+  challenge1Path,
+  existingPublishedChallenge,
+} from './challengeRules.test';
+import { ratingId1Path, validRatingRequest } from './ratingRules.test';
+import { onCreateRating } from '../onCreateRating';
+import { userId1 } from './userRules.test';
 
-describe('Challenge Hooks', () => {
+describe('Rating Hooks', () => {
   afterEach(async () => {
     await teardown();
   });
 
-  test('create challenge', async () => {
+  test('create rating', async () => {
     const { db, test } = await setup(
       undefined,
       {
-        [user1Path]: existingUser,
-        [challenge1Path]: validChallengeRequest,
+        [challenge1Path]: existingPublishedChallenge,
       },
       false
     );
 
     await db.doc(ratingId1Path).set(validRatingRequest);
 
-    await test.wrap(onCreateChallenge)(
+    await test.wrap(onCreateRating)(
       test.firestore.makeDocumentSnapshot(validRatingRequest, ratingId1Path),
       {
         auth: test.auth.makeUserRecord({ uid: userId1 }),
@@ -47,6 +46,3 @@ describe('Challenge Hooks', () => {
     expect(challenge.readOnly.rating).toBe(rating.value);
   });
 });
-function onCreateChallenge(onCreateChallenge: any) {
-  throw new Error('Function not implemented.');
-}

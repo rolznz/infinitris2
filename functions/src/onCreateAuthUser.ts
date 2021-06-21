@@ -1,5 +1,4 @@
 import * as functions from 'firebase-functions';
-//import * as admin from 'firebase-admin';
 import { getUserPath, IUser } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
 import firebase from 'firebase';

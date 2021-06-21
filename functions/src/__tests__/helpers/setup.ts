@@ -1,5 +1,5 @@
 // stop firebase-functions error message when we are using the emulator
-// "Warning, FIREBASE_CONFIG and GCLOUD_PROJECT environment variables are missing. Initializing firebase-admin will fail"
+// Warning, FIREBASE_CONFIG and GCLOUD_PROJECT environment variables are missing. Initializing firebase-admin will fail
 process.env.FIREBASE_CONFIG = 'FAKE';
 process.env.GCLOUD_PROJECT = 'FAKE';
 process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
@@ -11,12 +11,12 @@ import {
 } from '@firebase/rules-unit-testing';
 import * as fs from 'fs';
 import * as admin from 'firebase-admin';
-import { Timestamp } from 'infinitris2-models';
 import firebase from 'firebase';
 import * as fft from 'firebase-functions-test';
 
 import * as firebaseUtils from '../../utils/firebase';
 import { FeaturesList } from 'firebase-functions-test/lib/features';
+import { firestore } from 'firebase-admin';
 jest.mock('../../utils/firebase');
 
 const mockedApp = firebaseUtils.getApp as jest.MockedFunction<
@@ -31,11 +31,6 @@ interface TestAuth {
 }
 
 type TestData = { [path: string]: firebase.firestore.DocumentData };
-
-export const createdTimestamp: Timestamp = {
-  seconds: 1622246405,
-  nanoseconds: 0,
-};
 
 export async function setup(
   auth?: TestAuth,
@@ -60,8 +55,9 @@ export async function setup(
 
   // FIXME: Google typings are incompatible (firebase.app.App vs admin.app.App)
   mockedApp.mockReturnValue((app as any) as admin.app.App);
-  // FIXME: Google typings are incompatible (@firebase/rules-unit-testing.firestore.Firestore vs FirebaseFirestore.Firestore)
-  mockedDb.mockReturnValue((db as any) as FirebaseFirestore.Firestore);
+  // FIXME: Google typings are incompatible
+  // (@firebase/rules-unit-testing.firestore.Firestore vs firebase-admin/firestore.Firestore)
+  mockedDb.mockReturnValue((db as any) as firestore.Firestore);
 
   // Apply the test rules so we can write documents
   await loadFirestoreRules({
@@ -71,7 +67,7 @@ export async function setup(
 
   // Write mock documents with test rules
   if (data) {
-    for (const key in data) {
+    for (const key of Object.keys(data)) {
       const ref = db.doc(key);
       await ref.set(data[key]);
     }

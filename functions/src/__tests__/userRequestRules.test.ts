@@ -11,7 +11,7 @@ describe('Users Requests Rules', () => {
   });
 });
 
-/*test('nickname should meet requirements', async () => {
+/* ('nickname should meet requirements', async () => {
     const {db} = await setup(
       { uid: userId1 },
       {

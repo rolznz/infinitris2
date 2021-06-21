@@ -1,7 +1,7 @@
 module.exports = {
   env: {
-    es6: true,
-    node: true,
+    'es6': true,
+    'node': true,
     'jest/globals': true,
   },
   extends: [
@@ -10,6 +10,7 @@ module.exports = {
     'plugin:import/warnings',
     'plugin:import/typescript',
     'google',
+    'plugin:jest/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -18,12 +19,11 @@ module.exports = {
   },
   ignorePatterns: [
     '/lib/**/*', // Ignore built files.
+    '/node_modules/**/*', // Ignore built files.
   ],
   plugins: ['@typescript-eslint', 'import'],
   rules: {
-    // prettier-ignore
-    'quotes': ['error', 'single'],
-    // prettier-ignore
+    'quotes': ['error', 'single', 'avoid-escape'],
     'indent': ['error', 2],
     'max-len': ['error', { code: 120 }],
     'object-curly-spacing': ['error', 'always'],
@@ -33,5 +33,7 @@ module.exports = {
     ],
     'valid-jsdoc': ['off'],
     'require-jsdoc': ['off'],
+    'semi': 'off',
+    '@typescript-eslint/semi': ['error'],
   },
 };

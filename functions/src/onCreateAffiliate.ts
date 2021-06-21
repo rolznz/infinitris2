@@ -2,9 +2,9 @@ import * as functions from 'firebase-functions';
 
 export const onCreateAffiliate = functions.firestore
   .document('affiliates/{affiliateId}')
-  .onCreate(async (snapshot, context) => {
+  .onCreate(async (/* snapshot, context */) => {
     // FIXME: update to match new schema
-    /*const userId = context.auth?.uid;
+    /* const userId = context.auth?.uid;
     if (!userId) {
       throw new Error('User not logged in');
     }

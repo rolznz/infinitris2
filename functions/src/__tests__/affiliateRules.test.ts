@@ -6,7 +6,7 @@ import {
 } from 'infinitris2-models';
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
-import { existingUser, userId1, userId1Path, userId2 } from './userRules.test';
+import dummyData from './helpers/dummyData';
 
 const affiliateId1 = 'affiliateId1';
 const affiliateId2 = 'affiliateId2';
@@ -14,7 +14,7 @@ const affiliate1Path = getAffiliatePath(affiliateId1);
 const affiliate2Path = getAffiliatePath(affiliateId2);
 const existingAffiliate: IAffiliate = {
   readOnly: {
-    userId: userId1,
+    userId: dummyData.userId1,
     referralCount: 0,
   },
 };
@@ -39,7 +39,7 @@ describe('Affiliates Rules', () => {
   test('should allow reading own affiliate', async () => {
     const { db } = await setup(
       {
-        uid: userId1,
+        uid: dummyData.userId1,
       },
       {
         [affiliate1Path]: existingAffiliate,
@@ -52,7 +52,7 @@ describe('Affiliates Rules', () => {
   test('should not allow reading other affiliate', async () => {
     const { db } = await setup(
       {
-        uid: userId2,
+        uid: dummyData.userId2,
       },
       {
         [affiliate1Path]: existingAffiliate,
@@ -65,7 +65,7 @@ describe('Affiliates Rules', () => {
   test('should not allow updating affiliate', async () => {
     const { db } = await setup(
       {
-        uid: userId1,
+        uid: dummyData.userId1,
       },
       {
         [affiliate1Path]: existingAffiliate,
@@ -75,7 +75,7 @@ describe('Affiliates Rules', () => {
     const affiliate: IAffiliate = {
       readOnly: {
         referralCount: 9999,
-        userId: userId1,
+        userId: dummyData.userId1,
       },
     };
 
@@ -87,10 +87,10 @@ describe('Affiliates Rules', () => {
   test('should allow creating an affiliate when none exists', async () => {
     const { db } = await setup(
       {
-        uid: userId1,
+        uid: dummyData.userId1,
       },
       {
-        [userId1Path]: existingUser,
+        [dummyData.user1Path]: dummyData.existingUser,
       }
     );
 
@@ -99,19 +99,19 @@ describe('Affiliates Rules', () => {
 
   test('should not allow creating a second affiliate', async () => {
     const userWithAffiliate: IUser = {
-      ...existingUser,
+      ...dummyData.existingUser,
       readOnly: {
-        ...existingUser.readOnly,
+        ...dummyData.existingUser.readOnly,
         affiliateId: affiliateId1,
       },
     };
     const { db } = await setup(
       {
-        uid: userId1,
+        uid: dummyData.userId1,
       },
       {
         [affiliate1Path]: existingAffiliate,
-        [userId1Path]: userWithAffiliate,
+        [dummyData.user1Path]: userWithAffiliate,
       }
     );
 

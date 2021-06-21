@@ -1,18 +1,20 @@
-import { db } from './firebase';
-import { IUser } from 'infinitris2-models';
+import { getDb } from './firebase';
+import * as admin from 'firebase-admin';
+import IUpdateUserReadOnly from '../models/IUpdateUserReadOnly';
 
 /**
  * Gives all users one credit
  */
 export default function scheduledCreditReward() {
-  return db
+  return getDb()
     .collection('users')
     .get()
     .then(function (querySnapshot) {
       querySnapshot.forEach(function (doc) {
-        doc.ref.update({
-          credits: (admin.firestore.FieldValue.increment(1) as any) as number,
-        } as Pick<IUser, 'credits'>);
+        const updateUserRequest: IUpdateUserReadOnly = {
+          'readOnly.credits': admin.firestore.FieldValue.increment(1),
+        };
+        doc.ref.update(updateUserRequest);
       });
     });
 }

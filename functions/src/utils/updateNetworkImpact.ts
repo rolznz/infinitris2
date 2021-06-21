@@ -1,4 +1,9 @@
-import { INetworkImpact, IUser } from 'infinitris2-models';
+import firebase from 'firebase';
+import { INetworkImpact } from 'infinitris2-models';
+import { getDb } from './firebase';
+import * as admin from 'firebase-admin';
+import IUpdateUserReadOnly from '../models/IUpdateUserReadOnly';
+
 /**
  * Updates the network impact
  * @param toUserId id of user who received the impact
@@ -27,7 +32,7 @@ export default async function updateNetworkImpact(
     return;
   }
 
-  const impactRef = db.doc(
+  const impactRef = getDb().doc(
     `impactedUsers/${toUserId}/networkImpacts/${fromUserId}`
   );
   const impactDoc = await impactRef.get();
@@ -37,13 +42,12 @@ export default async function updateNetworkImpact(
   ) {
     if (!impactDoc.exists) {
       // award user 1 credit, update realized network impact
-      const userDocRef = db.doc(`users/${toUserId}`);
-      await userDocRef.update({
-        credits: (admin.firestore.FieldValue.increment(1) as any) as number,
-        networkImpact: (admin.firestore.FieldValue.increment(
-          1
-        ) as any) as number,
-      } as Pick<IUser, 'credits' | 'networkImpact'>);
+      const updateUserRequest: IUpdateUserReadOnly = {
+        'readOnly.credits': firebase.firestore.FieldValue.increment(1),
+        'readOnly.networkImpact': firebase.firestore.FieldValue.increment(1),
+      };
+      const userDocRef = getDb().doc(`users/${toUserId}`);
+      await userDocRef.update(updateUserRequest);
     }
 
     await impactRef.set({
@@ -62,7 +66,7 @@ export default async function updateNetworkImpact(
     // to = B, from = C (distance = 1)
     // to = A, from = C (distance = 2)
 
-    const parentImpacts = await db
+    const parentImpacts = await getDb()
       .collectionGroup('networkImpacts')
       .where('fromUserId', '==', toUserId)
       .get();

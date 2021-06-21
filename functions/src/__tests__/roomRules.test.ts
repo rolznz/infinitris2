@@ -19,7 +19,7 @@ describe('Rooms Rules', () => {
     await expect(db.collection(roomsPath).get()).toAllow();
   });
 
-  test('should allow reading a room ', async () => {
+  test('should allow reading a room', async () => {
     const { db } = await setup();
 
     await expect(db.doc(getRoomPath(roomId1)).get()).toAllow();

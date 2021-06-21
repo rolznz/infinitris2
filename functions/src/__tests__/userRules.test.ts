@@ -1,35 +1,11 @@
 import {
-  DEFAULT_KEYBOARD_CONTROLS,
   getUserPath,
-  IUser,
   IUserReadOnlyProperties,
   usersPath,
 } from 'infinitris2-models';
-import { setup, teardown, createdTimestamp } from './helpers/setup';
+import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
-
-export const userId1 = 'userId1';
-export const userId2 = 'userId2';
-export const userId1Path = getUserPath(userId1);
-
-export const validUserRequest: Omit<IUser, 'readOnly'> = {
-  controls: DEFAULT_KEYBOARD_CONTROLS,
-  hasSeenAllSet: false,
-  hasSeenWelcome: true,
-  preferredInputMethod: 'keyboard',
-  locale: 'EN',
-};
-
-export const existingUser: IUser = {
-  ...validUserRequest,
-  readOnly: {
-    createdTimestamp,
-    nickname: 'Bob',
-    networkImpact: 0,
-    credits: 3,
-    email: 'bob@gmail.com',
-  },
-};
+import dummyData from './helpers/dummyData';
 
 describe('Users Rules', () => {
   afterEach(async () => {
@@ -44,52 +20,54 @@ describe('Users Rules', () => {
 
   test('should deny reading a user when logged out', async () => {
     const { db } = await setup(undefined, {
-      [userId1Path]: existingUser,
+      [dummyData.user1Path]: dummyData.existingUser,
     });
 
-    await expect(db.doc(userId1Path).get()).toDeny();
+    await expect(db.doc(dummyData.user1Path).get()).toDeny();
   });
 
   test('should deny reading a user with a different ID', async () => {
     const { db } = await setup(
-      { uid: userId2 },
+      { uid: dummyData.userId2 },
       {
-        [userId1Path]: existingUser,
+        [dummyData.user1Path]: dummyData.existingUser,
       }
     );
 
-    await expect(db.doc(userId1Path).get()).toDeny();
+    await expect(db.doc(dummyData.user1Path).get()).toDeny();
   });
 
   test('should deny creating a user', async () => {
-    const { db } = await setup({ uid: userId1 });
+    const { db } = await setup({ uid: dummyData.userId1 });
 
-    const otherUserPath = getUserPath(userId1);
-    await expect(db.doc(otherUserPath).set(existingUser)).toDeny();
+    const otherUserPath = getUserPath(dummyData.userId1);
+    await expect(db.doc(otherUserPath).set(dummyData.existingUser)).toDeny();
   });
 
   test('should allow updating a user when logged in with the matching id', async () => {
     const { db } = await setup(
-      { uid: userId1 },
+      { uid: dummyData.userId1 },
       {
-        [userId1Path]: existingUser,
+        [dummyData.user1Path]: dummyData.existingUser,
       }
     );
 
-    await expect(db.doc(userId1Path).update(validUserRequest)).toAllow();
+    await expect(
+      db.doc(dummyData.user1Path).update(dummyData.validUserRequest)
+    ).toAllow();
   });
 
   test('should not allow setting properties outside allow list', async () => {
     const { db } = await setup(
-      { uid: userId1 },
+      { uid: dummyData.userId1 },
       {
-        [userId1Path]: existingUser,
+        [dummyData.user1Path]: dummyData.existingUser,
       }
     );
 
     // invalid property
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         credits: 5,
       })
     ).toDeny();
@@ -97,52 +75,52 @@ describe('Users Rules', () => {
 
   test('should not allow setting properties of incorrect type', async () => {
     const { db } = await setup(
-      { uid: userId1 },
+      { uid: dummyData.userId1 },
       {
-        [userId1Path]: existingUser,
+        [dummyData.user1Path]: dummyData.existingUser,
       }
     );
 
     // invalid property types
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         nickname: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         referredByAffiliateId: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         controls: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         hasSeenAllSet: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         hasSeenWelcome: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         preferredInputMethod: 5,
       })
     ).toDeny();
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         locale: 5,
       })
     ).toDeny();
 
     // controls: unsupported control
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         controls: {
           nonExistentControl: '1',
         },
@@ -151,7 +129,7 @@ describe('Users Rules', () => {
 
     // controls: unsupported input method
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         controls: {
           preferredInputMethod: 'nonexistent',
         },
@@ -161,23 +139,23 @@ describe('Users Rules', () => {
 
   test('should not be able to delete user', async () => {
     const { db } = await setup(
-      { uid: userId1 },
+      { uid: dummyData.userId1 },
       {
-        [userId1Path]: existingUser,
+        [dummyData.user1Path]: dummyData.existingUser,
       }
     );
-    await expect(db.doc(userId1Path).delete()).toDeny();
+    await expect(db.doc(dummyData.user1Path).delete()).toDeny();
   });
 
   test('should not be able to update user with readonly properties', async () => {
     const { db } = await setup(
-      { uid: userId1 },
+      { uid: dummyData.userId1 },
       {
-        [userId1Path]: existingUser,
+        [dummyData.user1Path]: dummyData.existingUser,
       }
     );
     await expect(
-      db.doc(userId1Path).update({
+      db.doc(dummyData.user1Path).update({
         readOnly: {
           credits: 9999999,
         } as IUserReadOnlyProperties,

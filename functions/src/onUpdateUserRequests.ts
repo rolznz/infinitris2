@@ -1,10 +1,10 @@
-/*import * as functions from 'firebase-functions';
+/* import * as functions from 'firebase-functions';
 import { db } from './utils/constants';
 import { IAffiliate, IUser } from 'infinitris2-models';
 import updateNetworkImpact from './utils/updateNetworkImpact';*/
 
 // TODO: handle each field separately (nickname, color etc.)
-/*export const onUpdateUserReferredByAffiliateIdRequest = functions.firestore
+/* export const onUpdateUserReferredByAffiliateIdRequest = functions.firestore
   .document('users/{userId}/requests/referredByAffiliateId')
   .onUpdate(async (snapshot, _context) => {
 

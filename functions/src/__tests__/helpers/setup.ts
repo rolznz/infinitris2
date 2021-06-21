@@ -7,7 +7,6 @@ process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
 import {
   initializeTestApp,
   loadFirestoreRules,
-  apps,
 } from '@firebase/rules-unit-testing';
 import * as fs from 'fs';
 import * as admin from 'firebase-admin';
@@ -32,6 +31,9 @@ interface TestAuth {
 
 type TestData = { [path: string]: firebase.firestore.DocumentData };
 
+let app: firebase.app.App;
+let test: FeaturesList;
+
 export async function setup(
   auth?: TestAuth,
   data?: TestData,
@@ -40,12 +42,12 @@ export async function setup(
   // Create a unique projectId for every firebase simulated app
   const projectId = `rules-spec-${Date.now()}`;
 
-  const test = fft({
+  test = fft({
     projectId,
   });
 
   // Create the test app using the unique ID and the given user auth object
-  const app = await initializeTestApp({
+  app = await initializeTestApp({
     projectId,
     auth,
   });
@@ -85,7 +87,6 @@ export async function setup(
   return { db, test };
 }
 
-export function teardown() {
-  // Delete all apps currently running in the firebase simulated environment
-  return apps().map((app) => app.delete());
+export async function teardown() {
+  await Promise.all([app.delete(), test.cleanup()]);
 }

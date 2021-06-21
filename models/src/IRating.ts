@@ -10,3 +10,5 @@ export default interface IRating extends IEntity {
   readonly entityCollection: 'challenges';
   readonly entityId: string;
 }
+
+export type CreateRatingRequest = Omit<IRating, 'readOnly'>;

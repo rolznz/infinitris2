@@ -4,6 +4,7 @@ import { getDb } from './utils/firebase';
 import firebase from 'firebase';
 import IUpdateEntityRating from './models/IUpdateEntityRating';
 import * as admin from 'firebase-admin';
+import updateNetworkImpact from './utils/updateNetworkImpact';
 
 export const onCreateRating = functions.firestore
   .document('ratings/{ratingId}')
@@ -31,6 +32,11 @@ export const onCreateRating = functions.firestore
     };
 
     challengeDocRef.update(updatedChallenge);
+
+    if (rating.value > 2) {
+      // only reward positive ratings
+      updateNetworkImpact(challenge.readOnly.userId!, userId);
+    }
 
     return snapshot.ref.update({
       readOnly: {

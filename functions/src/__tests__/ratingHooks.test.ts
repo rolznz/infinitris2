@@ -1,6 +1,11 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
-import { IChallenge, IRating } from 'infinitris2-models';
+import {
+  CreateRatingRequest,
+  IChallenge,
+  IRating,
+  IUser,
+} from 'infinitris2-models';
 import firebase from 'firebase';
 import { onCreateRating } from '../onCreateRating';
 import dummyData from './helpers/dummyData';
@@ -10,16 +15,16 @@ describe('Rating Hooks', () => {
     await teardown();
   });
 
-  test('create rating', async () => {
+  test('can create rating for a challenge created by someone else', async () => {
     const { db, test } = await setup(
       undefined,
       {
         [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.rating1Path]: dummyData.validRatingRequest,
       },
       false
     );
-
-    await db.doc(dummyData.rating1Path).set(dummyData.validRatingRequest);
 
     await test.wrap(onCreateRating)(
       test.firestore.makeDocumentSnapshot(
@@ -27,7 +32,7 @@ describe('Rating Hooks', () => {
         dummyData.rating1Path
       ),
       {
-        auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }),
+        auth: test.auth.makeUserRecord({ uid: dummyData.userId2 }), // user 2 is rating user 1's challenge
       }
     );
 
@@ -35,7 +40,7 @@ describe('Rating Hooks', () => {
       await db.doc(dummyData.rating1Path).get()
     ).data() as IRating;
 
-    expect(rating.readOnly.userId).toBe(dummyData.userId1);
+    expect(rating.readOnly.userId).toBe(dummyData.userId2);
     expect(rating.readOnly.createdTimestamp?.seconds).toBeGreaterThan(
       firebase.firestore.Timestamp.now().seconds - 5
     );
@@ -46,5 +51,37 @@ describe('Rating Hooks', () => {
     expect(challenge.readOnly.numRatings).toBe(1);
     expect(challenge.readOnly.summedRating).toBe(rating.value);
     expect(challenge.readOnly.rating).toBe(rating.value);
+
+    const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
+
+    // network impact user 2 => user 1
+    expect(user.readOnly.networkImpact).toEqual(1);
+  });
+
+  test('rating < 3 will not create network impact', async () => {
+    const ratingRequest: CreateRatingRequest = {
+      ...dummyData.validRatingRequest,
+      value: 2,
+    };
+
+    const { db, test } = await setup(
+      undefined,
+      {
+        [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.rating1Path]: ratingRequest,
+      },
+      false
+    );
+
+    await test.wrap(onCreateRating)(
+      test.firestore.makeDocumentSnapshot(ratingRequest, dummyData.rating1Path),
+      {
+        auth: test.auth.makeUserRecord({ uid: dummyData.userId2 }), // user 2 is rating user 1's challenge
+      }
+    );
+
+    const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
+    expect(user.readOnly.networkImpact).toEqual(0);
   });
 });

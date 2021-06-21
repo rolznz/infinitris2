@@ -8,10 +8,6 @@ import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
 
-const affiliateId1 = 'affiliateId1';
-const affiliateId2 = 'affiliateId2';
-const affiliate1Path = getAffiliatePath(affiliateId1);
-const affiliate2Path = getAffiliatePath(affiliateId2);
 const existingAffiliate: IAffiliate = {
   readOnly: {
     userId: dummyData.userId1,
@@ -19,7 +15,7 @@ const existingAffiliate: IAffiliate = {
   },
 };
 
-describe('Affiliates Rules', () => {
+describe('Affiliate Rules', () => {
   afterEach(async () => {
     await teardown();
   });
@@ -33,7 +29,7 @@ describe('Affiliates Rules', () => {
   test('should allow reading an affiliate when logged out', async () => {
     const { db } = await setup();
 
-    await expect(db.doc(affiliate1Path).get()).toDeny();
+    await expect(db.doc(dummyData.affiliate1Path).get()).toDeny();
   });
 
   test('should allow reading own affiliate', async () => {
@@ -42,11 +38,11 @@ describe('Affiliates Rules', () => {
         uid: dummyData.userId1,
       },
       {
-        [affiliate1Path]: existingAffiliate,
+        [dummyData.affiliate1Path]: existingAffiliate,
       }
     );
 
-    await expect(db.doc(affiliate1Path).get()).toAllow();
+    await expect(db.doc(dummyData.affiliate1Path).get()).toAllow();
   });
 
   test('should not allow reading other affiliate', async () => {
@@ -55,11 +51,11 @@ describe('Affiliates Rules', () => {
         uid: dummyData.userId2,
       },
       {
-        [affiliate1Path]: existingAffiliate,
+        [dummyData.affiliate1Path]: existingAffiliate,
       }
     );
 
-    await expect(db.doc(affiliate1Path).get()).toDeny();
+    await expect(db.doc(dummyData.affiliate1Path).get()).toDeny();
   });
 
   test('should not allow updating affiliate', async () => {
@@ -68,7 +64,7 @@ describe('Affiliates Rules', () => {
         uid: dummyData.userId1,
       },
       {
-        [affiliate1Path]: existingAffiliate,
+        [dummyData.affiliate1Path]: existingAffiliate,
       }
     );
 
@@ -80,7 +76,7 @@ describe('Affiliates Rules', () => {
     };
 
     await expect(
-      db.doc(affiliate1Path).set(affiliate, { merge: true })
+      db.doc(dummyData.affiliate1Path).set(affiliate, { merge: true })
     ).toDeny();
   });
 
@@ -94,7 +90,7 @@ describe('Affiliates Rules', () => {
       }
     );
 
-    await expect(db.doc(affiliate1Path).set({})).toAllow();
+    await expect(db.doc(dummyData.affiliate1Path).set({})).toAllow();
   });
 
   test('should not allow creating a second affiliate', async () => {
@@ -102,7 +98,7 @@ describe('Affiliates Rules', () => {
       ...dummyData.existingUser,
       readOnly: {
         ...dummyData.existingUser.readOnly,
-        affiliateId: affiliateId1,
+        affiliateId: dummyData.affiliateId1,
       },
     };
     const { db } = await setup(
@@ -110,10 +106,13 @@ describe('Affiliates Rules', () => {
         uid: dummyData.userId1,
       },
       {
-        [affiliate1Path]: existingAffiliate,
+        [dummyData.affiliate1Path]: existingAffiliate,
         [dummyData.user1Path]: userWithAffiliate,
       }
     );
+
+    const affiliateId2 = 'affiliateId2';
+    const affiliate2Path = getAffiliatePath(affiliateId2);
 
     await expect(db.doc(affiliate2Path).set({})).toDeny();
   });

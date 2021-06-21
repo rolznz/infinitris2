@@ -1,4 +1,4 @@
-import { teardown } from './helpers/setup';
+import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 
 describe('Users Requests Rules', () => {
@@ -6,7 +6,8 @@ describe('Users Requests Rules', () => {
     await teardown();
   });
 
-  test('placeholder', () => {
+  test('placeholder', async () => {
+    await setup();
     expect(0).toEqual(0);
   });
 });

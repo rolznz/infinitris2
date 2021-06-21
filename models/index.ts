@@ -23,7 +23,7 @@ import ControlSettings, {
 import getUserFriendlyKeyText from './src/util/getUserFriendlyKeyText';
 import IUser, { IUserReadOnlyProperties, IUserRequests } from './src/IUser';
 import parseGrid from './src/util/parseGrid';
-import IRating from './src/IRating';
+import IRating, { CreateRatingRequest } from './src/IRating';
 import { exampleChallenges } from './src/exampleChallenges/index';
 import INetworkImpact from './src/INetworkImpact';
 import Timestamp from './src/Timestamp';
@@ -65,6 +65,7 @@ export {
   IProduct,
   IAffiliate,
   IRating,
+  CreateRatingRequest,
   ControlSettings,
   INetworkImpact,
   Timestamp,

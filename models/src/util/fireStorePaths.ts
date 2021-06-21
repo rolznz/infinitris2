@@ -22,3 +22,10 @@ export const getRatingPath = (
 ) => `${ratingsPath}/${entityCollection}-${entityId}-${userId}`;
 export const adminsPath = 'admins';
 export const getAdminPath = (adminId: string) => `${adminsPath}/${adminId}`;
+
+export const impactedUsersPath = 'impactedUsers';
+export const networkImpactsPath = 'networkImpacts';
+export const getImpactedUserNetworkImpactsPath = (userId: string) =>
+  `${impactedUsersPath}/${userId}/${networkImpactsPath}`;
+export const getNetworkImpactPath = (toUserId: string, fromUserId: string) =>
+  `${impactedUsersPath}/${toUserId}/${networkImpactsPath}/${fromUserId}`;

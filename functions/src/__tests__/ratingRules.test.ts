@@ -8,7 +8,7 @@ import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
 
-describe('Ratings Rules', () => {
+describe('Rating Rules', () => {
   afterEach(async () => {
     await teardown();
   });

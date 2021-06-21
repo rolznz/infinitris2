@@ -7,8 +7,9 @@ import {
   IChallenge,
   DEFAULT_KEYBOARD_CONTROLS,
   Timestamp,
-  IRating,
   getRatingPath,
+  CreateRatingRequest,
+  getAffiliatePath,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -18,7 +19,9 @@ const createdTimestamp: Timestamp = {
 
 const userId1 = 'userId1';
 const userId2 = 'userId2';
+const userId3 = 'userId3';
 const user1Path = getUserPath(userId1);
+const user2Path = getUserPath(userId2);
 
 const validUserRequest: Omit<IUser, 'readOnly'> = {
   controls: DEFAULT_KEYBOARD_CONTROLS,
@@ -86,10 +89,7 @@ const existingPublishedChallenge: IChallenge = {
   isPublished: true,
 };
 
-const validRatingRequest: Pick<
-  IRating,
-  'entityCollection' | 'entityId' | 'value'
-> = {
+const validRatingRequest: CreateRatingRequest = {
   entityCollection: 'challenges',
   entityId: challengeId1,
   value: 3,
@@ -101,11 +101,16 @@ const rating1Path = getRatingPath(
   userId2
 );
 
+const affiliateId1 = 'affiliateId1';
+const affiliate1Path = getAffiliatePath(affiliateId1);
+
 const dummyData = {
   userId1,
   userId2,
+  userId3,
   user1AdminPath,
   user1Path,
+  user2Path,
   existingUser,
   validUserRequest,
   challengeId1,
@@ -115,6 +120,8 @@ const dummyData = {
   validChallengeRequest,
   rating1Path,
   validRatingRequest,
+  affiliateId1,
+  affiliate1Path,
 };
 
 export default dummyData;

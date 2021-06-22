@@ -18,7 +18,6 @@
     "test:files:ratingRules": "jest -- \"src/__tests__/ratingRules.test.ts\"",
     "test:files:ratingHooks": "jest -- \"src/__tests__/ratingHooks.test.ts\"",
     "test:files:affiliateRules": "jest -- \"src/__tests__/affiliateRules.test.ts\"",
-    "test:files:affiliateHooks": "jest -- \"src/__tests__/affiliateHooks.test.ts\"",
     "test:files:scheduledCreditReward": "jest -- \"src/__tests__/scheduledCreditReward.test.ts\"",
     "test:files:updateNetworkImpact": "jest -- \"src/__tests__/updateNetworkImpact.test.ts\"",
     "logs": "firebase functions:log"

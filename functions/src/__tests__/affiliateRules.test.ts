@@ -1,9 +1,4 @@
-import {
-  affiliatesPath,
-  getAffiliatePath,
-  IAffiliate,
-  IUser,
-} from 'infinitris2-models';
+import { affiliatesPath, IAffiliate } from 'infinitris2-models';
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
@@ -58,6 +53,21 @@ describe('Affiliate Rules', () => {
     await expect(db.doc(dummyData.affiliate1Path).get()).toDeny();
   });
 
+  test('should not allow creating an affiliate', async () => {
+    const { db } = await setup({
+      uid: dummyData.userId1,
+    });
+
+    const affiliate: IAffiliate = {
+      readOnly: {
+        referralCount: 9999,
+        userId: dummyData.userId1,
+      },
+    };
+
+    await expect(db.doc(dummyData.affiliate1Path).set(affiliate)).toDeny();
+  });
+
   test('should not allow updating affiliate', async () => {
     const { db } = await setup(
       {
@@ -75,45 +85,19 @@ describe('Affiliate Rules', () => {
       },
     };
 
-    await expect(
-      db.doc(dummyData.affiliate1Path).set(affiliate, { merge: true })
-    ).toDeny();
+    await expect(db.doc(dummyData.affiliate1Path).update(affiliate)).toDeny();
   });
 
-  test('should allow creating an affiliate when none exists', async () => {
-    const { db } = await setup(
-      {
-        uid: dummyData.userId1,
-      },
-      {
-        [dummyData.user1Path]: dummyData.existingUser,
-      }
-    );
-
-    await expect(db.doc(dummyData.affiliate1Path).set({})).toAllow();
-  });
-
-  test('should not allow creating a second affiliate', async () => {
-    const userWithAffiliate: IUser = {
-      ...dummyData.existingUser,
-      readOnly: {
-        ...dummyData.existingUser.readOnly,
-        affiliateId: dummyData.affiliateId1,
-      },
-    };
+  test('should not allow deleting an affiliate', async () => {
     const { db } = await setup(
       {
         uid: dummyData.userId1,
       },
       {
         [dummyData.affiliate1Path]: existingAffiliate,
-        [dummyData.user1Path]: userWithAffiliate,
       }
     );
 
-    const affiliateId2 = 'affiliateId2';
-    const affiliate2Path = getAffiliatePath(affiliateId2);
-
-    await expect(db.doc(affiliate2Path).set({})).toDeny();
+    await expect(db.doc(dummyData.affiliate1Path).delete()).toDeny();
   });
 });

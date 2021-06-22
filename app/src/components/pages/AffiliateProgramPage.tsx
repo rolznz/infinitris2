@@ -22,7 +22,6 @@ export default function AffiliateProgramPage() {
   useLoginRedirect();
   const intl = useIntl();
   const [, copy] = useCopyToClipboard();
-  const [isCreatingAffiliate, setIsCreatingAffiliate] = useState(false);
 
   //const [userStore, user] = useUserStore((store) => [store, store.user]);
   const userId = useAuthStore().user?.uid;
@@ -33,7 +32,7 @@ export default function AffiliateProgramPage() {
 
   var { add: addAffiliate } = useCollection<IAffiliate>(affiliatesPath);
 
-  const affiliateId = fireStoreUserDoc?.affiliateId;
+  const affiliateId = fireStoreUserDoc?.readOnly.affiliateId;
 
   const { data: affiliateDoc } = useDocument<IAffiliate>(
     affiliateId ? getAffiliatePath(affiliateId) : null
@@ -71,37 +70,17 @@ export default function AffiliateProgramPage() {
             defaultMessage="Your next friend will receive a bonus of {signupRewardCredits} credits"
             description="Affiliate Program Page - affiliate count statistic"
             values={{
-              signupRewardCredits: (affiliateDoc.referralCount || 0) + 3,
+              signupRewardCredits:
+                (affiliateDoc.readOnly?.referralCount || 0) + 3,
             }}
           />
         </Typography>
       )}
       <Box mt={4} />
-      {isCreatingAffiliate || !fireStoreUserDoc ? (
+      {!fireStoreUserDoc || !affiliateDoc ? (
         <FlexBox>
           <LoadingSpinner />
         </FlexBox>
-      ) : fireStoreUserDoc && !affiliateId ? (
-        <>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={async () => {
-              setIsCreatingAffiliate(true);
-              await addAffiliate({});
-              // wait for the firebase onCreateAffiliate function to run
-              await new Promise((resolve) => setTimeout(resolve, 3000));
-              // re-retrieve the user with updated affiliate ID
-              await revalidateDocument(getUserPath(userId));
-              setIsCreatingAffiliate(false);
-            }}
-          >
-            <FormattedMessage
-              defaultMessage="Generate Unique Link"
-              description="Affiliate Program Page - Generate Unique Link"
-            />
-          </Button>
-        </>
       ) : (
         <>
           <Button
@@ -126,7 +105,9 @@ export default function AffiliateProgramPage() {
             <FormattedMessage
               defaultMessage="So far {affiliateCount} friends have signed up"
               description="Affiliate Program Page - affiliate count statistic"
-              values={{ affiliateCount: affiliateDoc?.referralCount || 0 }}
+              values={{
+                affiliateCount: affiliateDoc.readOnly?.referralCount || 0,
+              }}
             />
           </Typography>
 

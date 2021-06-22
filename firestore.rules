@@ -148,16 +148,8 @@ service cloud.firestore {
       allow read: if true;
     }
     match /affiliates/{affiliateId} {
-      function canCreateAffiliate() {
-      	return
-          exists(/databases/$(database)/documents/users/$(request.auth.uid)) &&
-        	!('affiliateId' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data.readOnly) &&
-          request.resource.data.size() == 0;
-      }
-      allow create: if canCreateAffiliate();
+      allow write: if false;
       allow read: if isOwner();
-      allow update: if false;
-      allow delete: if false;
     }
     match /colors/{document=**} {
       allow read: if true;

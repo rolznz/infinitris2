@@ -10,6 +10,9 @@ import {
   getRatingPath,
   CreateRatingRequest,
   getAffiliatePath,
+  getUserRequestPath,
+  IReferredByAffiliateRequest,
+  IAffiliate,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -103,6 +106,20 @@ const rating1Path = getRatingPath(
 
 const affiliateId1 = 'affiliateId1';
 const affiliate1Path = getAffiliatePath(affiliateId1);
+const affiliate1: IAffiliate = {
+  readOnly: {
+    numConversions: 0,
+    userId: userId2,
+  },
+};
+
+const referredByAffiliateRequestPath = getUserRequestPath(
+  userId1,
+  'referredByAffiliate'
+);
+const referredByAffiliateRequest: IReferredByAffiliateRequest = {
+  referredByAffiliateId: affiliateId1,
+};
 
 const dummyData = {
   userId1,
@@ -122,6 +139,9 @@ const dummyData = {
   validRatingRequest,
   affiliateId1,
   affiliate1Path,
+  affiliate1,
+  referredByAffiliateRequestPath,
+  referredByAffiliateRequest,
 };
 
 export default dummyData;

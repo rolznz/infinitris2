@@ -71,7 +71,7 @@ export default function AffiliateProgramPage() {
             description="Affiliate Program Page - affiliate count statistic"
             values={{
               signupRewardCredits:
-                (affiliateDoc.readOnly?.referralCount || 0) + 3,
+                (affiliateDoc.readOnly?.numConversions || 0) + 3,
             }}
           />
         </Typography>
@@ -106,7 +106,7 @@ export default function AffiliateProgramPage() {
               defaultMessage="So far {affiliateCount} friends have signed up"
               description="Affiliate Program Page - affiliate count statistic"
               values={{
-                affiliateCount: affiliateDoc.readOnly?.referralCount || 0,
+                affiliateCount: affiliateDoc.readOnly?.numConversions || 0,
               }}
             />
           </Typography>

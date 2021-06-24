@@ -39,7 +39,7 @@ describe('Auth User Hooks', () => {
     ).data() as IAffiliate;
 
     expect(affiliate.readOnly?.userId).toBe(uid);
-    expect(affiliate.readOnly?.referralCount).toBe(0);
+    expect(affiliate.readOnly?.numConversions).toBe(0);
     expect(affiliate.readOnly?.createdTimestamp?.seconds).toBeGreaterThan(
       firebase.firestore.Timestamp.now().seconds - 5
     );

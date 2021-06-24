@@ -32,10 +32,13 @@ import ICellEventListener from './src/ICellEventListener';
 import IAffiliate from './src/IAffiliate';
 import IColor from './src/IColor';
 import IProduct from './src/IProduct';
+import IPlayer from './src/IPlayer';
 
 export * from './src/util/fireStorePaths';
 export * from './src/ChallengeStatus';
 export * from './src/IChallenge';
+export * from './src/UserRequests';
+export * from './src/IConversion';
 
 export {
   exampleChallenges,
@@ -70,6 +73,7 @@ export {
   INetworkImpact,
   Timestamp,
   IScoreboardEntry,
+  IPlayer,
   DEFAULT_KEYBOARD_CONTROLS,
   getUserFriendlyKeyText,
   parseGrid,

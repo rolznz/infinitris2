@@ -22,7 +22,7 @@ service cloud.firestore {
       allow read, write: if false;
     }
     match /users/{userId} {
-      function matchesUser(request, userId) {
+      function matchesUser() {
         return request.auth != null && request.auth.uid == userId;
       }
       function isValidUser() {
@@ -41,13 +41,22 @@ service cloud.firestore {
           controls.get('RotateAnticlockwise', '') is string &&
           controls.get('Drop', '') is string;
       }
-    	allow read: if matchesUser(request, userId);
+    	allow read: if matchesUser();
       allow create, delete: if false;
-      allow update: if matchesUser(request, userId) && isValidUser();
+      allow update: if matchesUser() && isValidUser();
     }
-    /*match /users/{userId}/requests/nickname
-    nickname is string && nickname.size() > 1 && nickname.size() < 16 && nickname.matches('[a-zA-Z0-9]+')
-    */
+    match /users/{userId}/requests/{requestId} {
+      function matchesUser() {
+        return request.auth != null && request.auth.uid == userId;
+      }
+      function isValidUserRequest() {
+        return requestId == 'referredByAffiliate' && request.resource.data.keys().hasOnly(['referredByAffiliateId']) && 
+          getProperty('referredByAffiliateId', '') is string && getProperty('referredByAffiliateId', '').size() > 0;
+      }
+      allow create: if matchesUser() && isValidUserRequest();
+      allow read, update, delete: if false;
+    }
+
     match /challenges/{challengeId} {
       function isValidRewardCriteria(rewardCriteria) {
         return

@@ -19,7 +19,7 @@ export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
     const affiliateRef = getDb().collection(affiliatesPath).doc();
     const affiliateRequest: IAffiliate = {
       readOnly: {
-        referralCount: 0,
+        numConversions: 0,
         createdTimestamp: firebase.firestore.Timestamp.now(),
         userId: user.uid,
       },

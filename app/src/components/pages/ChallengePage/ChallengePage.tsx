@@ -5,6 +5,7 @@ import {
   ISimulation,
   IChallengeClient,
   IChallenge,
+  getChallengePath,
 } from 'infinitris2-models';
 import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
@@ -17,8 +18,7 @@ import ChallengeFailedView from './ChallengeFailedView';
 import { useUserStore } from '../../../state/UserStore';
 import { useSearchParam } from 'react-use';
 import { useDocument } from '@nandorojo/swr-firestore';
-import { getChallengePath } from '../../../firebase';
-import IPlayer from 'infinitris2-models/dist/src/IPlayer';
+import { IPlayer } from 'infinitris2-models';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -69,11 +69,11 @@ export default function ChallengePage() {
     preferredInputMethod,
     controls,
     hasSeenAllSet,
-    nickname,
+    readOnly,
   } = userStore.user;
   const playerInfo: IPlayer = {
-    color: 0xff0000,
-    nickname,
+    color: 0xff0000, // FIXME: use player's color
+    nickname: readOnly.nickname || 'New Player',
     id: -1,
   };
 

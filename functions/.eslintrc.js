@@ -24,7 +24,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'import'],
   rules: {
     'quotes': ['error', 'single', 'avoid-escape'],
-    'indent': ['error', 2],
+    'indent': ['error', 2, { 'SwitchCase': 1 }],
     'max-len': ['error', { code: 120 }],
     'object-curly-spacing': ['error', 'always'],
     'space-before-function-paren': [

@@ -1,10 +1,16 @@
+export type UserRequestKey =
+  | 'referredByAffiliate'
+  | 'nickname'
+  | 'color'
+  | 'pattern';
+
 export const colorsPath = 'colors';
 export const getColorPath = (colorId: string) => `${colorsPath}/${colorId}`;
 export const usersPath = 'users';
 export const getUserPath = (userId: string) => `${usersPath}/${userId}`;
 const userRequestsPath = 'requests';
-export const getUserRequestsPath = (userId: string, request: string) =>
-  `${getUserPath(userId)}/{userRequestsPath}/{request}`;
+export const getUserRequestPath = (userId: string, request: UserRequestKey) =>
+  `${getUserPath(userId)}/${userRequestsPath}/${request}`;
 export const affiliatesPath = 'affiliates';
 export const getAffiliatePath = (affiliateId: string) =>
   `${affiliatesPath}/${affiliateId}`;
@@ -29,3 +35,8 @@ export const getImpactedUserNetworkImpactsPath = (userId: string) =>
   `${impactedUsersPath}/${userId}/${networkImpactsPath}`;
 export const getNetworkImpactPath = (toUserId: string, fromUserId: string) =>
   `${impactedUsersPath}/${toUserId}/${networkImpactsPath}/${fromUserId}`;
+
+export const getConversionPath = (
+  affiliateId: string,
+  convertedUserId: string
+) => `${getAffiliatePath(affiliateId)}/conversions/${convertedUserId}`;

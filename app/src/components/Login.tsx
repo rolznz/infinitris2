@@ -1,4 +1,3 @@
-import { getUserPath } from '@/firebase';
 import useAuthStore from '@/state/AuthStore';
 import {
   getUpdatableUserProperties,
@@ -20,7 +19,12 @@ import { FormattedMessage } from 'react-intl';
 import SocialLogo from 'social-logos';
 import FlexBox from './ui/FlexBox';
 import LoadingSpinner from './LoadingSpinner';
-import { IUser } from 'infinitris2-models';
+import {
+  getUserRequestPath,
+  IReferredByAffiliateRequest,
+  IUser,
+  getUserPath,
+} from 'infinitris2-models';
 import localStorageKeys from '@/utils/localStorageKeys';
 import { useLocalStorage } from 'react-use';
 
@@ -39,7 +43,11 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
   const user = useUser();
   const userStore = useUserStore();
   const authUser = useAuthStore((authStore) => authStore.user);
-  const [referredByAffiliateId] = useLocalStorage<string>(
+  const [
+    referredByAffiliateId,
+    ,
+    deleteReferredByAffiliateId,
+  ] = useLocalStorage<string>(
     localStorageKeys.referredByAffiliateId,
     undefined,
     {
@@ -53,32 +61,23 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
       const result = await firebase.auth().signInWithPopup(provider);
       if (result.user) {
         console.log('Authentication succeeded');
-        throw new Error('TODO user document should be created by backend');
-        // sync on first load
-        /*const userPath = getUserPath(result.user.uid);
-        const userDoc = await getDocument<IUser & Document>(userPath);
-        if (!userDoc.exists) {
-          console.log('User does not exist:', userPath, 'creating...');
-
-          if (!result.user.email) {
-            throw new Error('No email address');
-          }
-
-          // NB: when updating this list, also update firestore rules
-          const userToCreate: Partial<IUser> = {
-            //email: result.user.email,
-            referredByAffiliateId,
-            ...getUpdatableUserProperties(user),
-          };
-
-          await set(userPath, removeUndefinedValues(userToCreate));
-          // wait for the firebase onCreateUser function to run
+        const userPath = getUserPath(result.user.uid);
+        if (referredByAffiliateId) {
+          deleteReferredByAffiliateId();
+          await set(
+            getUserRequestPath(result.user.uid, 'referredByAffiliate'),
+            {
+              referredByAffiliateId,
+            } as IReferredByAffiliateRequest
+          );
+        }
+        /*
+        // wait for the firebase onCreateUser function to run
           await new Promise((resolve) => setTimeout(resolve, 3000));
           // re-retrieve the user with updated properties
           await revalidateDocument(userPath);
-        } else {
           userStore.resyncLocalStorage(userDoc);
-        }*/
+        */
         onLogin?.(result.user.uid);
       } else {
         console.log('Signin canceled');

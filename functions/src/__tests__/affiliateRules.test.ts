@@ -6,7 +6,7 @@ import dummyData from './helpers/dummyData';
 const existingAffiliate: IAffiliate = {
   readOnly: {
     userId: dummyData.userId1,
-    referralCount: 0,
+    numConversions: 0,
   },
 };
 
@@ -60,7 +60,7 @@ describe('Affiliate Rules', () => {
 
     const affiliate: IAffiliate = {
       readOnly: {
-        referralCount: 9999,
+        numConversions: 9999,
         userId: dummyData.userId1,
       },
     };
@@ -80,7 +80,7 @@ describe('Affiliate Rules', () => {
 
     const affiliate: IAffiliate = {
       readOnly: {
-        referralCount: 9999,
+        numConversions: 9999,
         userId: dummyData.userId1,
       },
     };

@@ -14,7 +14,7 @@ export default function updateScoreboard() {
         const scoreboardEntryRef = db.doc(`scoreboardEntries/${userDoc.id}`);
         const entry: IScoreboardEntry = {
           nickname: user.nickname,
-          credits: user.credits,
+          coins: user.coins,
           numCompletedChallenges: user.completedChallengeIds.length,
           networkImpact: user.networkImpact,
           numBlocksPlaced: 0, // TODO: number of blocks placed

@@ -13,11 +13,11 @@ export const onCreateChallenge = functions.firestore
       throw new Error('User not logged in');
     }
 
-    // reduce the number of credits the user has so they
+    // reduce the number of coins the user has so they
     // cannot create an infinite number of challenges
     const userDocRef = getDb().doc(`users/${userId}`);
     const updateUserCreditsRequest: IUpdateUserReadOnly = {
-      'readOnly.credits': firebase.firestore.FieldValue.increment(-1),
+      'readOnly.coins': firebase.firestore.FieldValue.increment(-1),
     };
     await userDocRef.update(updateUserCreditsRequest);
 

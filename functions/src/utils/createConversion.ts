@@ -32,10 +32,10 @@ export default async function createConversion(
   if (affiliateDoc.exists) {
     const affiliate = affiliateDoc.data() as IAffiliate;
 
-    // mark the user as having been converted, plus reward them with 3 credits
+    // mark the user as having been converted, plus reward them with 3 coins
     const updateUserRequest: IUpdateUserReadOnly = {
       'readOnly.referredByAffiliateId': request.referredByAffiliateId,
-      'readOnly.credits': firebase.firestore.FieldValue.increment(3),
+      'readOnly.coins': firebase.firestore.FieldValue.increment(3),
     };
     await convertedUserRef.update(updateUserRequest);
 
@@ -53,12 +53,12 @@ export default async function createConversion(
     // create network impact (+1 credit rewarded to affiliate user and anyone who impacted the affiliate user)
     await updateNetworkImpact(affiliate.readOnly.userId, convertedUserId);
 
-    // give the affiliate user additional credits based on number of conversions
+    // give the affiliate user additional coins based on number of conversions
     const affiliateUserRef = getDb().doc(
       getUserPath(affiliate.readOnly.userId)
     );
     const updateAffiliateUserRequest: IUpdateUserReadOnly = {
-      'readOnly.credits': firebase.firestore.FieldValue.increment(
+      'readOnly.coins': firebase.firestore.FieldValue.increment(
         affiliate.readOnly.numConversions + 2
       ),
     };

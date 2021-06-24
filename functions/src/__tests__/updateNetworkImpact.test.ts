@@ -61,7 +61,7 @@ describe('Update Network Impact', () => {
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
     await expect(user.readOnly.networkImpact).toEqual(1);
-    await expect(user.readOnly.credits).toEqual(4);
+    await expect(user.readOnly.coins).toEqual(4);
   });
 
   test('Repeated network impact makes no changes', async () => {
@@ -77,7 +77,7 @@ describe('Update Network Impact', () => {
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
     await expect(user.readOnly.networkImpact).toEqual(1);
-    await expect(user.readOnly.credits).toEqual(4);
+    await expect(user.readOnly.coins).toEqual(4);
   });
 
   test('Recursive network impact', async () => {
@@ -104,10 +104,10 @@ describe('Update Network Impact', () => {
 
     const user1 = (await db.doc(dummyData.user1Path).get()).data() as IUser;
     await expect(user1.readOnly.networkImpact).toEqual(2);
-    await expect(user1.readOnly.credits).toEqual(5);
+    await expect(user1.readOnly.coins).toEqual(5);
 
     const user2 = (await db.doc(dummyData.user2Path).get()).data() as IUser;
     await expect(user2.readOnly.networkImpact).toEqual(1);
-    await expect(user2.readOnly.credits).toEqual(4);
+    await expect(user2.readOnly.coins).toEqual(4);
   });
 });

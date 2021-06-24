@@ -17,12 +17,12 @@ describe('Scheduled Credit Reward', () => {
       },
       false
     );
-    const credits = dummyData.existingUser.readOnly.credits;
+    const coins = dummyData.existingUser.readOnly.coins;
 
     await scheduledCreditReward();
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
 
-    expect(user.readOnly.credits).toEqual(credits + 1);
+    expect(user.readOnly.coins).toEqual(coins + 1);
   });
 });

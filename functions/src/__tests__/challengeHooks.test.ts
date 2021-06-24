@@ -42,6 +42,6 @@ describe('Challenge Hooks', () => {
     expect(challenge.readOnly.rating).toBe(0);
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
-    expect(user.readOnly.credits).toEqual(2);
+    expect(user.readOnly.coins).toEqual(2);
   });
 });

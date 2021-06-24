@@ -69,7 +69,7 @@ function Footer(props: WithStyles<typeof styles>) {
       <Link
         component={RouterLink}
         underline="none"
-        to={Routes.credits}
+        to={Routes.coins}
         style={{ lineHeight: 0 }}
       >
         <Typography variant="caption">CREDITS</Typography>

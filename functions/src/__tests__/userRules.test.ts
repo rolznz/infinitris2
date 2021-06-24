@@ -68,7 +68,7 @@ describe('Users Rules', () => {
     // invalid property
     await expect(
       db.doc(dummyData.user1Path).update({
-        credits: 5,
+        coins: 5,
       })
     ).toDeny();
   });
@@ -157,7 +157,7 @@ describe('Users Rules', () => {
     await expect(
       db.doc(dummyData.user1Path).update({
         readOnly: {
-          credits: 9999999,
+          coins: 9999999,
         } as IUserReadOnlyProperties,
       })
     ).toDeny();

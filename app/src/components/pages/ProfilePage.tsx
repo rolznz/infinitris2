@@ -73,17 +73,17 @@ export default function ProfilePage() {
       <FlexBox flexDirection="row">
         <Typography align="center">
           <FormattedMessage
-            defaultMessage="{count} credits available"
-            description="User credits statistic"
-            values={{ count: user.credits || 0 }}
+            defaultMessage="{count} coins available"
+            description="User coins statistic"
+            values={{ count: user.coins || 0 }}
           />
         </Typography>
         <Box ml={1} />
-        <Link component={RouterLink} underline="none" to={Routes.earnCredits}>
+        <Link component={RouterLink} underline="none" to={Routes.earnCoins}>
           <Typography align="center">
             <FormattedMessage
-              defaultMessage="Earn credits"
-              description="Earn credits link"
+              defaultMessage="Earn coins"
+              description="Earn coins link"
             />
           </Typography>
         </Link>

@@ -1,6 +1,6 @@
 export default interface IScoreboardEntry {
   nickname: string;
-  credits: number;
+  coins: number;
   numCompletedChallenges: number;
   networkImpact: number;
   numBlocksPlaced: number;

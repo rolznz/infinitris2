@@ -19,7 +19,7 @@ const defaultUser = {
   locale: defaultLocale,
   completedChallengeIds: [],
   controls: DEFAULT_KEYBOARD_CONTROLS,
-  credits: 0,
+  coins: 0,
   networkImpact: 0,
   color: defaultColor,
 };

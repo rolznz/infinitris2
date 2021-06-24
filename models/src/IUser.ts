@@ -3,7 +3,7 @@ import InputMethod from './InputMethod';
 import IEntity, { IEntityReadOnlyProperties } from './IEntity';
 
 export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
-  readonly credits: number;
+  readonly coins: number;
   readonly networkImpact: number;
   readonly nickname?: string;
   readonly colorId?: string;

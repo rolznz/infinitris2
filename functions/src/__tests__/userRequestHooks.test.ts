@@ -57,15 +57,15 @@ describe('User Request Hooks', () => {
     ).data() as IUser;
     // network impact user 1 => user 2 after conversion
     expect(affiliateUser.readOnly.networkImpact).toEqual(1);
-    // 3 initial credits + 1 network impact, + 2 bonus conversion credits
-    expect(affiliateUser.readOnly.credits).toEqual(6);
+    // 3 initial coins + 1 network impact, + 2 bonus conversion coins
+    expect(affiliateUser.readOnly.coins).toEqual(6);
 
     const convertedUser = (
       await db.doc(dummyData.user1Path).get()
     ).data() as IUser;
     expect(convertedUser.readOnly.networkImpact).toEqual(0);
-    // +3 bonus credits for using affiliate link
-    expect(convertedUser.readOnly.credits).toEqual(6);
+    // +3 bonus coins for using affiliate link
+    expect(convertedUser.readOnly.coins).toEqual(6);
 
     const conversion = (
       await db
@@ -134,8 +134,8 @@ describe('User Request Hooks', () => {
     ).data() as IUser;
     // network impact user 1 => user 2 after conversion
     expect(affiliateUser.readOnly.networkImpact).toEqual(1);
-    // 3 initial credits + 1 network impact, + (2 + numConversions) bonus conversion credits
-    expect(affiliateUser.readOnly.credits).toEqual(3 + 1 + 2 + numConversions);
+    // 3 initial coins + 1 network impact, + (2 + numConversions) bonus conversion coins
+    expect(affiliateUser.readOnly.coins).toEqual(3 + 1 + 2 + numConversions);
   });
 
   test('cannot convert same user twice', async () => {

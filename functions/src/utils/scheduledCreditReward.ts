@@ -13,7 +13,7 @@ export default async function scheduledCreditReward(): Promise<void> {
   await Promise.all(
     querySnapshot.docs.map((doc) => {
       const updateUserRequest: IUpdateUserReadOnly = {
-        'readOnly.credits': firebase.firestore.FieldValue.increment(1),
+        'readOnly.coins': firebase.firestore.FieldValue.increment(1),
       };
       return doc.ref.update(updateUserRequest);
     })

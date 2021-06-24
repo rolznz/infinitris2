@@ -40,7 +40,7 @@ const existingUser: IUser = {
     createdTimestamp,
     nickname: 'Bob',
     networkImpact: 0,
-    credits: 3,
+    coins: 3,
     email: 'bob@gmail.com',
   },
 };

@@ -15,7 +15,7 @@ export default function ScoreboardPage() {
 
   const columns: GridColDef[] = [
     { field: 'nickname', headerName: 'Player', width: 150, sortable: false },
-    { field: 'credits', headerName: 'Credits', width: 130 },
+    { field: 'coins', headerName: 'Coins', width: 130 },
     { field: 'networkImpact', headerName: 'Network Impact', width: 170 },
     { field: 'numBlocksPlaced', headerName: 'Blocks Placed', width: 160 },
     {
@@ -51,7 +51,7 @@ export default function ScoreboardPage() {
             sortingOrder={['desc', 'asc']}
             sortModel={[
               {
-                field: 'credits',
+                field: 'coins',
                 sort: 'desc',
               },
             ]}

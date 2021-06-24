@@ -16,15 +16,15 @@ export default function EarnCreditsPage() {
     <FlexBox flex={1} justifyContent="flex-start" maxWidth={500} marginX="auto">
       <Typography variant="h1" align="center">
         <FormattedMessage
-          defaultMessage="Earn Credits"
-          description="Earn Credits page title"
+          defaultMessage="Earn Coins"
+          description="Earn Coins page title"
         />
       </Typography>
 
       <Typography align="center">
         <FormattedMessage
-          defaultMessage="Credits can be used to purchase ingame items and create challenges, and holding credits will place you higher on the scoreboard. You can earn credits in a variety of ways."
-          description="Earn credits information"
+          defaultMessage="Coins can be used to purchase ingame items and create challenges, and holding coins will place you higher on the scoreboard. You can earn coins in a variety of ways."
+          description="Earn coins information"
         />
       </Typography>
       <ul>
@@ -32,7 +32,7 @@ export default function EarnCreditsPage() {
           <Typography>
             <FormattedMessage
               defaultMessage="Passive daily reward - 1 credit"
-              description="Earn credits information - passive reward"
+              description="Earn coins information - passive reward"
             />
           </Typography>
         </li>
@@ -40,7 +40,7 @@ export default function EarnCreditsPage() {
           <Typography>
             <FormattedMessage
               defaultMessage="Increase your network impact - 1 credit per new impact"
-              description="Earn credits information - increase network impact"
+              description="Earn coins information - increase network impact"
             />
           </Typography>
           <ul>
@@ -48,7 +48,7 @@ export default function EarnCreditsPage() {
               <Typography>
                 <FormattedMessage
                   defaultMessage="Create a challenge¹"
-                  description="Earn credits information - receive positive challenge rating"
+                  description="Earn coins information - receive positive challenge rating"
                 />
               </Typography>
             </li>
@@ -63,7 +63,7 @@ export default function EarnCreditsPage() {
                   <Typography>
                     <FormattedMessage
                       defaultMessage={`Invite your friends²`}
-                      description="Earn credits information - invite your friends (affiliate program) link"
+                      description="Earn coins information - invite your friends (affiliate program) link"
                     />
                   </Typography>
                 </Link>
@@ -73,7 +73,7 @@ export default function EarnCreditsPage() {
               <Typography>
                 <FormattedMessage
                   defaultMessage="Mutual network impacts³"
-                  description="Earn credits information - mutual network impacts"
+                  description="Earn coins information - mutual network impacts"
                 />
               </Typography>
             </li>
@@ -85,26 +85,26 @@ export default function EarnCreditsPage() {
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage={`¹Saving a new challenge will cost 1 credit. This is to reduce spam. A new network impact will be created for each unique user that rates your challenge.`}
-            description="Earn credits information - challenges fine print"
+            description="Earn coins information - challenges fine print"
           />
         </Typography>
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage={`²A new network impact will be created for each new user that creates an account by using your referral link.`}
-            description="Earn credits information - affiliate program fine print"
+            description="Earn coins information - affiliate program fine print"
           />
         </Typography>
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage={`³If a player (B) who was impacted by you (A) goes on to impact another player (C), an impact from A -> C will be created. Up to 5 levels of recursion.`}
-            description="Earn credits information - mutual network impacts fine print"
+            description="Earn coins information - mutual network impacts fine print"
           />
         </Typography>
         <Box mt={1} />
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage={`This credit system is designed to reward players who positively contribute to the game. Credit rewards may change over time.`}
-            description="Earn credits information - credit rewards may change"
+            description="Earn coins information - credit rewards may change"
           />
         </Typography>
       </FlexBox>

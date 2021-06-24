@@ -100,8 +100,8 @@
     "description": "Settings Page Table - Change controls button text"
   },
   "P5qtEF": {
-    "defaultMessage": "You do not have enough credits to publish. Try again in 24 hours.",
-    "description": "Not enough credits to publish alert message"
+    "defaultMessage": "You do not have enough coins to publish. Try again in 24 hours.",
+    "description": "Not enough coins to publish alert message"
   },
   "QXpu7n": {
     "defaultMessage": "All Challenges",
@@ -196,8 +196,8 @@
     "description": "Reset Controls button text"
   },
   "jz3Nwb": {
-    "defaultMessage": "{count} credits available",
-    "description": "User credits statistic"
+    "defaultMessage": "{count} coins available",
+    "description": "User coins statistic"
   },
   "l0mRWy": {
     "defaultMessage": "Move Right",

@@ -436,13 +436,12 @@ export function CreateChallengePage() {
               color="primary"
               disabled={isSaving}
               onClick={() => {
-                if (user.credits <= 0) {
+                if (user.coins <= 0) {
                   alert(
                     intl.formatMessage({
                       defaultMessage:
-                        'You do not have enough credits to publish. Try again in 24 hours.',
-                      description:
-                        'Not enough credits to publish alert message',
+                        'You do not have enough coins to publish. Try again in 24 hours.',
+                      description: 'Not enough coins to publish alert message',
                     })
                   );
                   return;

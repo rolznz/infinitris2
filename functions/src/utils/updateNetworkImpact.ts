@@ -48,7 +48,7 @@ export default async function updateNetworkImpact(
     if (!impactDoc.exists) {
       // award user 1 credit, update realized network impact
       const updateUserRequest: IUpdateUserReadOnly = {
-        'readOnly.credits': firebase.firestore.FieldValue.increment(1),
+        'readOnly.coins': firebase.firestore.FieldValue.increment(1),
         'readOnly.networkImpact': firebase.firestore.FieldValue.increment(1),
       };
       const userDocRef = getDb().doc(getUserPath(toUserId));

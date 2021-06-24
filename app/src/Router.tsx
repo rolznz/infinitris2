@@ -84,7 +84,7 @@ export default function Router() {
         <Route exact path={Routes.customizeProfile}>
           <CustomizeProfilePage />
         </Route>
-        <Route exact path={Routes.earnCredits}>
+        <Route exact path={Routes.earnCoins}>
           <EarnCreditsPage />
         </Route>
         <Route exact path={Routes.affiliateProgram}>

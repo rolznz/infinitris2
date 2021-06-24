@@ -60,14 +60,14 @@ export default function AffiliateProgramPage() {
       <Box mt={4} />
       <Typography align="center">
         <FormattedMessage
-          defaultMessage="Share the below link with your friends and you will both earn bonus credits when your friends sign up."
+          defaultMessage="Share the below link with your friends and you will both earn bonus coins when your friends sign up."
           description="Affiliate Program page title - invite your friends description"
         />
       </Typography>
       {affiliateDoc && (
         <Typography align="center" variant="caption">
           <FormattedMessage
-            defaultMessage="Your next friend will receive a bonus of {signupRewardCredits} credits"
+            defaultMessage="Your next friend will receive a bonus of {signupRewardCredits} coins"
             description="Affiliate Program Page - affiliate count statistic"
             values={{
               signupRewardCredits:

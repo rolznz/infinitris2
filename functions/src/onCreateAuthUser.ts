@@ -30,7 +30,7 @@ export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
     const newUser: IUser = {
       readOnly: {
         email: user.email!,
-        credits: 3,
+        coins: 3,
         networkImpact: 0,
         createdTimestamp: firebase.firestore.Timestamp.now(),
         affiliateId: affiliateRef.id,

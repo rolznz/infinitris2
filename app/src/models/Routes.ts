@@ -19,7 +19,7 @@ enum Routes {
   challengeRequired = '/challenge-required',
   scoreboard = '/scoreboard',
   allSet = '/all-set',
-  earnCredits = '/earn-credits',
+  earnCoins = '/earn-coins',
   affiliateProgram = '/affiliate-program',
 }
 

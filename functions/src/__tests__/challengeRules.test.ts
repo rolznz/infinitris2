@@ -36,7 +36,7 @@ describe('Challenges Rules', () => {
     ).toDeny();
   });
 
-  test('should allow creating a challenge when logged in and has enough credits', async () => {
+  test('should allow creating a challenge when logged in and has enough coins', async () => {
     const { db } = await setup(
       { uid: dummyData.userId1 },
       {
@@ -49,12 +49,12 @@ describe('Challenges Rules', () => {
     ).toAllow();
   });
 
-  test('should not allow creating a challenge when not having enough credits', async () => {
+  test('should not allow creating a challenge when not having enough coins', async () => {
     const userWithNoCredits: IUser = {
       ...dummyData.existingUser,
       readOnly: {
         ...dummyData.existingUser.readOnly,
-        credits: 0,
+        coins: 0,
       },
     };
 

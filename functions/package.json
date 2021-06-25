@@ -6,7 +6,6 @@
     "serve": "yarn build && firebase emulators:start --only functions",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
-    "deploy": "firebase deploy --only functions",
     "test:emulator:setup": "firebase init emulators",
     "test:emulator:start": "firebase emulators:start --only firestore,functions,auth",
     "test": "jest",

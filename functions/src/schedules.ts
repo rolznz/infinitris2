@@ -5,7 +5,11 @@ import updateScoreboard from './utils/updateScoreboard';
 export const onDailyCreditAwardSchedule = functions.pubsub
   .schedule('every 24 hours')
   .onRun(async (_context) => {
-    await scheduledCreditReward();
+    try {
+      await scheduledCreditReward();
+    } catch (error) {
+      console.error(error);
+    }
 
     return null;
   });
@@ -13,7 +17,10 @@ export const onDailyCreditAwardSchedule = functions.pubsub
 export const onUpdateScoreboardSchedule = functions.pubsub
   .schedule('every 24 hours')
   .onRun(async (_context) => {
-    await updateScoreboard();
-
+    try {
+      await updateScoreboard();
+    } catch (error) {
+      console.error(error);
+    }
     return null;
   });

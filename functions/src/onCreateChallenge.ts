@@ -22,7 +22,7 @@ export const onCreateChallenge = functions.firestore
       };
       await userDocRef.update(updateUserCreditsRequest);
 
-      return snapshot.ref.update({
+      await snapshot.ref.update({
         readOnly: {
           createdTimestamp: admin.firestore.Timestamp.now(),
           userId,

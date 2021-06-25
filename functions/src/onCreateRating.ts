@@ -39,7 +39,7 @@ export const onCreateRating = functions.firestore
         updateNetworkImpact(challenge.readOnly.userId!, userId);
       }
 
-      return snapshot.ref.update({
+      await snapshot.ref.update({
         readOnly: {
           createdTimestamp: admin.firestore.Timestamp.now(),
           userId,

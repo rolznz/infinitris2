@@ -49,6 +49,22 @@ describe('Challenges Rules', () => {
     ).toAllow();
   });
 
+  test('should deny creating a challenge with created property set to true', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.challenge1Path).set({
+        ...dummyData.creatableChallenge,
+        created: true,
+      } as IChallenge)
+    ).toDeny();
+  });
+
   test('should not allow creating a challenge when not having enough coins', async () => {
     const userWithNoCredits: IUser = {
       ...dummyData.existingUser,
@@ -137,6 +153,23 @@ describe('Challenges Rules', () => {
       title: dummyData.existingUnpublishedChallenge.title + '2',
     };
 
+    await expect(
+      db.doc(dummyData.challenge1Path).set(challengeToUpdate, { merge: true })
+    ).toDeny();
+  });
+
+  test('should deny updating created property', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.challenge1Path]: dummyData.existingUnpublishedChallenge,
+      }
+    );
+
+    const challengeToUpdate: Pick<IChallenge, 'created'> = {
+      created: false,
+    };
     await expect(
       db.doc(dummyData.challenge1Path).set(challengeToUpdate, { merge: true })
     ).toDeny();

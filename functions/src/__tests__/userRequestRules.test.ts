@@ -1,6 +1,7 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
+import { IUserRequest } from '../../../models/dist';
 
 describe('User Requests Rules', () => {
   afterEach(async () => {
@@ -48,6 +49,23 @@ describe('User Requests Rules', () => {
         .doc(dummyData.userRequest1Path)
         .set(dummyData.referredByAffiliateRequest)
     ).toAllow();
+  });
+
+  test('should not allow creating a user request with created property set to true', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.affiliate1Path]: dummyData.affiliate1,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.userRequest1Path).set({
+        ...dummyData.referredByAffiliateRequest,
+        created: true,
+      } as IUserRequest)
+    ).toDeny();
   });
 
   test('should deny updating a user request', async () => {

@@ -69,6 +69,22 @@ describe('Rating Rules', () => {
     ).toAllow();
   });
 
+  test('should not allow creating a rating with created property set to true', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId2 },
+      {
+        [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.rating1Path).set({
+        ...dummyData.creatableRating,
+        created: true,
+      } as IRating)
+    ).toDeny();
+  });
+
   test('should not allow creating a rating for a non-existent entity', async () => {
     const { db } = await setup({ uid: dummyData.userId2 });
 

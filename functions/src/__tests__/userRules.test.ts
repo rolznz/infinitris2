@@ -1,5 +1,6 @@
 import {
   getUserPath,
+  IEntity,
   IUserReadOnlyProperties,
   usersPath,
 } from 'infinitris2-models';
@@ -55,6 +56,21 @@ describe('Users Rules', () => {
     await expect(
       db.doc(dummyData.user1Path).update(dummyData.updatableUser)
     ).toAllow();
+  });
+
+  test('should deny updating created property', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.user1Path).update({
+        created: false,
+      } as IEntity)
+    ).toDeny();
   });
 
   test('should not allow setting properties outside allow list', async () => {

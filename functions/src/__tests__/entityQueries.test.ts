@@ -3,7 +3,7 @@ import './helpers/extensions';
 import { challengesPath } from 'infinitris2-models';
 import dummyData from './helpers/dummyData';
 
-describe('Challenge Queries', () => {
+describe('Entity Queries', () => {
   afterEach(async () => {
     await teardown();
   });

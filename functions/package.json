@@ -17,7 +17,7 @@
     "test:files:roomRules": "jest -- \"src/__tests__/roomRules.test.ts\"",
     "test:files:challengeRules": "jest -- \"src/__tests__/challengeRules.test.ts\"",
     "test:files:challengeHooks": "jest -- \"src/__tests__/challengeHooks.test.ts\"",
-    "test:files:challengeQueries": "jest -- \"src/__tests__/challengeQueries.test.ts\"",
+    "test:files:entityQueries": "jest -- \"src/__tests__/entityQueries.test.ts\"",
     "test:files:ratingRules": "jest -- \"src/__tests__/ratingRules.test.ts\"",
     "test:files:ratingHooks": "jest -- \"src/__tests__/ratingHooks.test.ts\"",
     "test:files:affiliateRules": "jest -- \"src/__tests__/affiliateRules.test.ts\"",

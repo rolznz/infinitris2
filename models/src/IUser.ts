@@ -22,11 +22,3 @@ export default interface IUser extends IEntity {
   readonly preferredInputMethod?: InputMethod;
   readonly controls?: ControlSettings;
 }
-
-// FIXME: this should be individual
-export interface IUserRequests {
-  // readonly referredByAffiliateId?: string;
-  // readonly nickname (Linked with nicknames collection)
-  // readonly colorId (Linked with purchases collection)
-  // readonly patternId (Linked with purchases collection)
-}

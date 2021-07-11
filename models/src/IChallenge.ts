@@ -1,7 +1,11 @@
 import InputAction from './InputAction';
 import ISimulationSettings from './ISimulationSettings';
 import ChallengeRewardCriteria from './ChallengeRewardCriteria';
-import IEntity, { IEntityReadOnlyProperties } from './IEntity';
+import IEntity, {
+  Creatable,
+  IEntityReadOnlyProperties,
+  Updatable,
+} from './IEntity';
 
 export interface IRateable {
   readonly numRatings: number;
@@ -14,7 +18,8 @@ export interface IChallengeReadOnlyProperties
   readonly userId?: string;
 }
 
-export type CreateChallengeRequest = Omit<IChallenge, 'readOnly'>;
+export type CreatableChallenge = Creatable<IChallenge>;
+export type UpdatableChallenge = Updatable<IChallenge>;
 
 export interface IChallenge extends IEntity {
   readonly readOnly: IChallengeReadOnlyProperties;

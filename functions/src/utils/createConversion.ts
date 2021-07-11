@@ -45,8 +45,12 @@ export default async function createConversion(
     );
     const conversion: IConversion = {
       readOnly: {
+        // TODO: extract created/modified etc to utility function
         createdTimestamp: firebase.firestore.Timestamp.now(),
+        lastModifiedTimestamp: firebase.firestore.Timestamp.now(),
+        numTimesModified: 0,
       },
+      created: false,
     };
     await conversionRef.set(conversion);
 

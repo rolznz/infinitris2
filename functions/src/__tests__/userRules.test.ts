@@ -53,7 +53,7 @@ describe('Users Rules', () => {
     );
 
     await expect(
-      db.doc(dummyData.user1Path).update(dummyData.validUserRequest)
+      db.doc(dummyData.user1Path).update(dummyData.updatableUser)
     ).toAllow();
   });
 

@@ -1,16 +1,10 @@
-export type UserRequestKey =
-  | 'referredByAffiliate'
-  | 'nickname'
-  | 'color'
-  | 'pattern';
-
 export const colorsPath = 'colors';
 export const getColorPath = (colorId: string) => `${colorsPath}/${colorId}`;
 export const usersPath = 'users';
 export const getUserPath = (userId: string) => `${usersPath}/${userId}`;
-const userRequestsPath = 'requests';
-export const getUserRequestPath = (userId: string, request: UserRequestKey) =>
-  `${getUserPath(userId)}/${userRequestsPath}/${request}`;
+const userRequestsPath = 'userRequests';
+export const getUserRequestPath = (userRequestId: string) =>
+  `${userRequestsPath}/${userRequestId}`;
 export const affiliatesPath = 'affiliates';
 export const getAffiliatePath = (affiliateId: string) =>
   `${affiliatesPath}/${affiliateId}`;

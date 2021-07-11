@@ -7,7 +7,11 @@ const existingAffiliate: IAffiliate = {
   readOnly: {
     userId: dummyData.userId1,
     numConversions: 0,
+    createdTimestamp: dummyData.createdTimestamp,
+    lastModifiedTimestamp: dummyData.lastModifiedTimestamp,
+    numTimesModified: 0,
   },
+  created: true,
 };
 
 describe('Affiliate Rules', () => {
@@ -62,7 +66,11 @@ describe('Affiliate Rules', () => {
       readOnly: {
         numConversions: 9999,
         userId: dummyData.userId1,
+        createdTimestamp: dummyData.createdTimestamp,
+        lastModifiedTimestamp: dummyData.lastModifiedTimestamp,
+        numTimesModified: 0,
       },
+      created: true,
     };
 
     await expect(db.doc(dummyData.affiliate1Path).set(affiliate)).toDeny();
@@ -82,7 +90,11 @@ describe('Affiliate Rules', () => {
       readOnly: {
         numConversions: 9999,
         userId: dummyData.userId1,
+        createdTimestamp: dummyData.createdTimestamp,
+        lastModifiedTimestamp: dummyData.lastModifiedTimestamp,
+        numTimesModified: 0,
       },
+      created: true,
     };
 
     await expect(db.doc(dummyData.affiliate1Path).update(affiliate)).toDeny();

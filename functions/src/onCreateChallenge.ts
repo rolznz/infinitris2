@@ -17,20 +17,23 @@ export const onCreateChallenge = functions.firestore
       // reduce the number of coins the user has so they
       // cannot create an infinite number of challenges
       const userDocRef = getDb().doc(`users/${userId}`);
-      const updateUserCreditsRequest: IUpdateUserReadOnly = {
+      const updateUserCoins: IUpdateUserReadOnly = {
         'readOnly.coins': firebase.firestore.FieldValue.increment(-1),
       };
-      await userDocRef.update(updateUserCreditsRequest);
+      await userDocRef.update(updateUserCoins);
 
       await snapshot.ref.update({
         readOnly: {
           createdTimestamp: admin.firestore.Timestamp.now(),
+          lastModifiedTimestamp: admin.firestore.Timestamp.now(),
+          numTimesModified: 0,
           userId,
           numRatings: 0,
           rating: 0,
           summedRating: 0,
         },
-      } as Pick<IChallenge, 'readOnly'>);
+        created: true,
+      } as Pick<IChallenge, 'readOnly' | 'created'>);
     } catch (error) {
       console.error(error);
     }

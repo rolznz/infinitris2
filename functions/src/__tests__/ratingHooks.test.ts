@@ -1,7 +1,7 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import {
-  CreateRatingRequest,
+  CreatableRating,
   IChallenge,
   IRating,
   IUser,
@@ -21,14 +21,14 @@ describe('Rating Hooks', () => {
       {
         [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.rating1Path]: dummyData.validRatingRequest,
+        [dummyData.rating1Path]: dummyData.creatableRating,
       },
       false
     );
 
     await test.wrap(onCreateRating)(
       test.firestore.makeDocumentSnapshot(
-        dummyData.validRatingRequest,
+        dummyData.creatableRating,
         dummyData.rating1Path
       ),
       {
@@ -41,6 +41,7 @@ describe('Rating Hooks', () => {
     ).data() as IRating;
 
     expect(rating.readOnly.userId).toBe(dummyData.userId2);
+    expect(rating.created).toBe(true);
     expect(rating.readOnly.createdTimestamp?.seconds).toBeGreaterThan(
       firebase.firestore.Timestamp.now().seconds - 5
     );
@@ -59,8 +60,8 @@ describe('Rating Hooks', () => {
   });
 
   test('rating < 3 will not create network impact', async () => {
-    const ratingRequest: CreateRatingRequest = {
-      ...dummyData.validRatingRequest,
+    const ratingRequest: CreatableRating = {
+      ...dummyData.creatableRating,
       value: 2,
     };
 

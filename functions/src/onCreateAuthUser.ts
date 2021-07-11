@@ -18,24 +18,30 @@ export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
     const userDoc = await userRef.get();
     if (!userDoc.exists) {
       const affiliateRef = getDb().collection(affiliatesPath).doc();
-      const affiliateRequest: IAffiliate = {
+      const affiliateToCreate: IAffiliate = {
         readOnly: {
           numConversions: 0,
           createdTimestamp: firebase.firestore.Timestamp.now(),
+          lastModifiedTimestamp: firebase.firestore.Timestamp.now(),
+          numTimesModified: 0,
           userId: user.uid,
         },
+        created: true,
       };
 
-      await affiliateRef.set(affiliateRequest);
+      await affiliateRef.set(affiliateToCreate);
 
       const newUser: IUser = {
         readOnly: {
+          createdTimestamp: firebase.firestore.Timestamp.now(),
+          lastModifiedTimestamp: firebase.firestore.Timestamp.now(),
+          numTimesModified: 0,
           email: user.email!,
           coins: 3,
           networkImpact: 0,
-          createdTimestamp: firebase.firestore.Timestamp.now(),
           affiliateId: affiliateRef.id,
         },
+        created: true,
       };
       await userRef.set(newUser);
     } else {

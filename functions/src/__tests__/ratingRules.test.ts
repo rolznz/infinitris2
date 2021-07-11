@@ -31,7 +31,7 @@ describe('Rating Rules', () => {
     });
 
     await expect(
-      db.doc(dummyData.rating1Path).set(dummyData.validRatingRequest)
+      db.doc(dummyData.rating1Path).set(dummyData.creatableRating)
     ).toDeny();
   });
 
@@ -52,7 +52,7 @@ describe('Rating Rules', () => {
     );
 
     await expect(
-      db.doc(dummyData.rating1Path).set(dummyData.validRatingRequest)
+      db.doc(dummyData.rating1Path).set(dummyData.creatableRating)
     ).toDeny();
   });
 
@@ -65,7 +65,7 @@ describe('Rating Rules', () => {
     );
 
     await expect(
-      db.doc(dummyData.rating1Path).set(dummyData.validRatingRequest)
+      db.doc(dummyData.rating1Path).set(dummyData.creatableRating)
     ).toAllow();
   });
 
@@ -73,7 +73,7 @@ describe('Rating Rules', () => {
     const { db } = await setup({ uid: dummyData.userId2 });
 
     await expect(
-      db.doc(dummyData.rating1Path).set(dummyData.validRatingRequest)
+      db.doc(dummyData.rating1Path).set(dummyData.creatableRating)
     ).toDeny();
   });
 
@@ -116,7 +116,7 @@ describe('Rating Rules', () => {
     );
 
     await expect(
-      db.doc(dummyData.rating1Path).set(dummyData.validRatingRequest)
+      db.doc(dummyData.rating1Path).set(dummyData.creatableRating)
     ).toDeny();
   });
 
@@ -130,14 +130,14 @@ describe('Rating Rules', () => {
 
     await expect(
       db.doc(dummyData.rating1Path).set({
-        ...dummyData.validRatingRequest,
+        ...dummyData.creatableRating,
         value: 0,
       })
     ).toDeny();
 
     await expect(
       db.doc(dummyData.rating1Path).set({
-        ...dummyData.validRatingRequest,
+        ...dummyData.creatableRating,
         value: 6,
       })
     ).toDeny();
@@ -153,7 +153,7 @@ describe('Rating Rules', () => {
 
     await expect(
       db.doc(dummyData.rating1Path).set({
-        ...dummyData.validRatingRequest,
+        ...dummyData.creatableRating,
         nonExistentValue: 0,
       })
     ).toDeny();

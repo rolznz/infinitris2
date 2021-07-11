@@ -1,6 +1,9 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isLoggedIn() {
+      return request.auth != null;
+    }
   	function isAdmin() {
       return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
@@ -11,11 +14,17 @@ service cloud.firestore {
       // request.resource contains the future state of the document
       return request.resource.data.get(name, fallback);
     }
+    function createdFieldValid() {
+      return (resource == null && request.resource.data.created == false) || (resource != null && request.resource.data.created == resource.data.created);
+    }
     function readOnlyFieldsUntouched() {
-      let oldState = debug(resource) != null ? resource.data.get('readOnly', {}) : {};
-      let newState = debug(request.resource) != null ? request.resource.data.get('readOnly', {}) : {};
+      let oldState = resource != null ? resource.data.get('readOnly', {}) : {};
+      let newState = request.resource != null ? request.resource.data.get('readOnly', {}) : {};
 
       return oldState.diff(newState).affectedKeys().size() == 0
+    }
+    function entityValid() {
+      return createdFieldValid() && readOnlyFieldsUntouched();
     }
 
     match /{document=**} {
@@ -27,8 +36,8 @@ service cloud.firestore {
       }
       function isValidUser() {
         let controls = getProperty('controls', {});
-        return request.resource.data.keys().hasOnly(['readOnly', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
-          readOnlyFieldsUntouched() &&
+        return request.resource.data.keys().hasOnly(['created', 'readOnly', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
+          entityValid() &&
           getProperty('hasSeenAllSet', false) is bool &&
           getProperty('hasSeenWelcome', false) is bool &&
           getProperty('preferredInputMethod', '') in ['', 'keyboard', 'touch'] &&
@@ -45,15 +54,15 @@ service cloud.firestore {
       allow create, delete: if false;
       allow update: if matchesUser() && isValidUser();
     }
-    match /users/{userId}/requests/{requestId} {
-      function matchesUser() {
-        return request.auth != null && request.auth.uid == userId;
-      }
+    match /userRequests/{requestId} {
       function isValidUserRequest() {
-        return requestId == 'referredByAffiliate' && request.resource.data.keys().hasOnly(['referredByAffiliateId']) && 
-          getProperty('referredByAffiliateId', '') is string && getProperty('referredByAffiliateId', '').size() > 0;
+        return entityValid() &&
+          request.resource.data.requestType == 'referredByAffiliate' &&
+          request.resource.data.keys().hasOnly(['created', 'requestType', 'referredByAffiliateId']) &&
+          request.resource.data.referredByAffiliateId is string &&
+          exists(/databases/$(database)/documents/affiliates/$(request.resource.data.referredByAffiliateId));
       }
-      allow create: if matchesUser() && isValidUserRequest();
+      allow create: if isLoggedIn() && isValidUserRequest();
       allow read, update, delete: if false;
     }
 
@@ -78,8 +87,8 @@ service cloud.firestore {
 
       	return
           (!request.resource.data.get('isOfficial', false) || isAdmin()) &&
-          readOnlyFieldsUntouched() &&
-          request.resource.data.keys().hasOnly(['readOnly', 'description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
+          entityValid() &&
+          request.resource.data.keys().hasOnly(['created', 'readOnly', 'description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
           title is string &&
           (title.size() == 0 || (title.size() < 21 && title.matches('[a-zA-Z0-9 ]+'))) &&
           description is string && description.size() < 280 &&
@@ -143,13 +152,14 @@ service cloud.firestore {
       }
     	function isValidRating() {
       	return
+          entityValid() &&
           ratingId == calculateRatingId() &&
           isValidCollection() &&
           entityExists() &&
           entityIsPublished() &&
           !isOwnerOfEntity() &&
           request.resource.data.value is number && request.resource.data.value >= 1 && request.resource.data.value <= 5 &&
-          request.resource.data.keys().hasOnly(['value', 'entityCollection', 'entityId']);
+          request.resource.data.keys().hasOnly(['created', 'readOnly', 'value', 'entityCollection', 'entityId']);
       }
       allow create: if isValidRating();
       allow update: if false;

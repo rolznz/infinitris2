@@ -1,9 +1,9 @@
 import {
   challengesPath,
-  CreateChallengeRequest,
   getChallengePath,
   IUser,
   IChallenge,
+  CreatableChallenge,
 } from 'infinitris2-models';
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
@@ -32,7 +32,7 @@ describe('Challenges Rules', () => {
     const { db } = await setup();
 
     await expect(
-      db.doc(dummyData.challenge1Path).set(dummyData.validChallengeRequest)
+      db.doc(dummyData.challenge1Path).set(dummyData.updatableChallenge)
     ).toDeny();
   });
 
@@ -45,7 +45,7 @@ describe('Challenges Rules', () => {
     );
 
     await expect(
-      db.doc(dummyData.challenge1Path).set(dummyData.validChallengeRequest)
+      db.doc(dummyData.challenge1Path).set(dummyData.creatableChallenge)
     ).toAllow();
   });
 
@@ -66,7 +66,7 @@ describe('Challenges Rules', () => {
     );
 
     await expect(
-      db.doc(dummyData.challenge1Path).set(dummyData.validChallengeRequest)
+      db.doc(dummyData.challenge1Path).set(dummyData.creatableChallenge)
     ).toDeny();
   });
 
@@ -78,8 +78,8 @@ describe('Challenges Rules', () => {
       }
     );
 
-    const officialChallenge: CreateChallengeRequest = {
-      ...dummyData.validChallengeRequest,
+    const officialChallenge: CreatableChallenge = {
+      ...dummyData.creatableChallenge,
       isOfficial: true,
     };
 
@@ -97,8 +97,8 @@ describe('Challenges Rules', () => {
       }
     );
 
-    const officialChallenge: CreateChallengeRequest = {
-      ...dummyData.validChallengeRequest,
+    const officialChallenge: CreatableChallenge = {
+      ...dummyData.creatableChallenge,
       isOfficial: true,
     };
 
@@ -188,8 +188,12 @@ describe('Challenges Rules', () => {
     );
 
     const challengeToCreate: IChallenge = {
-      ...dummyData.validChallengeRequest,
+      ...dummyData.updatableChallenge,
+      created: false,
       readOnly: {
+        createdTimestamp: dummyData.createdTimestamp,
+        lastModifiedTimestamp: dummyData.lastModifiedTimestamp,
+        numTimesModified: 0,
         userId: 'test',
         numRatings: 5,
         rating: 5,
@@ -211,6 +215,9 @@ describe('Challenges Rules', () => {
 
     const challengeToUpdate: Pick<IChallenge, 'readOnly'> = {
       readOnly: {
+        createdTimestamp: dummyData.createdTimestamp,
+        lastModifiedTimestamp: dummyData.lastModifiedTimestamp,
+        numTimesModified: 0,
         userId: 'test',
         numRatings: 5,
         rating: 5,
@@ -233,7 +240,7 @@ describe('Challenges Rules', () => {
 
     await expect(
       db.doc(dummyData.challenge1Path).set({
-        ...dummyData.validChallengeRequest,
+        ...dummyData.updatableChallenge,
         someNonExistentProperty: 'a',
       })
     ).toDeny();

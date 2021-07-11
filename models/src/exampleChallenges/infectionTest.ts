@@ -43,7 +43,11 @@ FFFFFFFFFFFFFFF
     numRatings: 0,
     rating: 0,
     summedRating: 0,
+    createdTimestamp: { seconds: 0, nanoseconds: 0 },
+    lastModifiedTimestamp: { seconds: 0, nanoseconds: 0 },
+    numTimesModified: 0,
   },
+  created: true,
 };
 
 export default infectionTest;

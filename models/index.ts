@@ -21,9 +21,9 @@ import ControlSettings, {
   DEFAULT_KEYBOARD_CONTROLS,
 } from './src/ControlSettings';
 import getUserFriendlyKeyText from './src/util/getUserFriendlyKeyText';
-import IUser, { IUserReadOnlyProperties, IUserRequests } from './src/IUser';
+import IUser, { IUserReadOnlyProperties } from './src/IUser';
 import parseGrid from './src/util/parseGrid';
-import IRating, { CreateRatingRequest } from './src/IRating';
+import IRating, { CreatableRating } from './src/IRating';
 import { exampleChallenges } from './src/exampleChallenges/index';
 import INetworkImpact from './src/INetworkImpact';
 import Timestamp from './src/Timestamp';
@@ -33,15 +33,19 @@ import IAffiliate from './src/IAffiliate';
 import IColor from './src/IColor';
 import IProduct from './src/IProduct';
 import IPlayer from './src/IPlayer';
+import IEntity, { IEntityReadOnlyProperties } from './src/IEntity';
 
 export * from './src/util/fireStorePaths';
 export * from './src/ChallengeStatus';
 export * from './src/IChallenge';
-export * from './src/UserRequests';
+export * from './src/IUserRequest';
 export * from './src/IConversion';
+export * from './src/IEntity';
 
 export {
   exampleChallenges,
+  IEntity,
+  IEntityReadOnlyProperties,
   IChallengeClient,
   InputAction,
   Layout,
@@ -68,7 +72,7 @@ export {
   IProduct,
   IAffiliate,
   IRating,
-  CreateRatingRequest,
+  CreatableRating,
   ControlSettings,
   INetworkImpact,
   Timestamp,

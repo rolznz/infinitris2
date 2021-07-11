@@ -1,7 +1,6 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
-import { getUserRequestPath } from 'infinitris2-models';
 
 describe('User Requests Rules', () => {
   afterEach(async () => {
@@ -15,7 +14,7 @@ describe('User Requests Rules', () => {
 
     await expect(
       db
-        .doc(dummyData.referredByAffiliateRequestPath)
+        .doc(dummyData.userRequest1Path)
         .set(dummyData.referredByAffiliateRequest)
     ).toDeny();
   });
@@ -30,7 +29,7 @@ describe('User Requests Rules', () => {
 
     await expect(
       db
-        .doc(dummyData.referredByAffiliateRequestPath)
+        .doc(dummyData.userRequest1Path)
         .set(dummyData.referredByAffiliateRequest)
     ).toDeny();
   });
@@ -40,29 +39,30 @@ describe('User Requests Rules', () => {
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.affiliate1Path]: dummyData.affiliate1,
       }
     );
 
     await expect(
       db
-        .doc(dummyData.referredByAffiliateRequestPath)
+        .doc(dummyData.userRequest1Path)
         .set(dummyData.referredByAffiliateRequest)
     ).toAllow();
   });
 
-  test('should deny overwriting a user request for self', async () => {
+  test('should deny updating a user request', async () => {
     const { db } = await setup(
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.referredByAffiliateRequestPath]:
-          dummyData.referredByAffiliateRequest,
+        [dummyData.affiliate1Path]: dummyData.affiliate1,
+        [dummyData.userRequest1Path]: dummyData.referredByAffiliateRequest,
       }
     );
 
     await expect(
       db
-        .doc(dummyData.referredByAffiliateRequestPath)
+        .doc(dummyData.userRequest1Path)
         .set(dummyData.referredByAffiliateRequest)
     ).toDeny();
   });
@@ -76,20 +76,20 @@ describe('User Requests Rules', () => {
     );
 
     await expect(
-      db.doc(dummyData.referredByAffiliateRequestPath).set({
+      db.doc(dummyData.userRequest1Path).set({
         ...dummyData.referredByAffiliateRequest,
         nonExistentProperty: '5',
       })
     ).toDeny();
 
     await expect(
-      db.doc(dummyData.referredByAffiliateRequestPath).set({
+      db.doc(dummyData.userRequest1Path).set({
         ...dummyData.referredByAffiliateRequest,
         referredByAffiliateId: 123,
       })
     ).toDeny();
     await expect(
-      db.doc(dummyData.referredByAffiliateRequestPath).set({
+      db.doc(dummyData.userRequest1Path).set({
         ...dummyData.referredByAffiliateRequest,
         referredByAffiliateId: '',
       })
@@ -101,15 +101,15 @@ describe('User Requests Rules', () => {
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.affiliate1Path]: dummyData.affiliate1,
       }
     );
 
     await expect(
-      db
-        .doc(
-          getUserRequestPath(dummyData.userId1, 'referredByAffiliate2' as any)
-        )
-        .set(dummyData.referredByAffiliateRequest)
+      db.doc(dummyData.userRequest1Path).set({
+        ...dummyData.referredByAffiliateRequest,
+        requestType: 'unknownRequestType',
+      })
     ).toDeny();
   });
 });

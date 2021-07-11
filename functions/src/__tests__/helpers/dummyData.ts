@@ -1,5 +1,4 @@
 import {
-  CreateChallengeRequest,
   getAdminPath,
   getChallengePath,
   getUserPath,
@@ -8,11 +7,13 @@ import {
   DEFAULT_KEYBOARD_CONTROLS,
   Timestamp,
   getRatingPath,
-  CreateRatingRequest,
   getAffiliatePath,
   getUserRequestPath,
   IReferredByAffiliateRequest,
   IAffiliate,
+  CreatableChallenge,
+  UpdatableChallenge,
+  CreatableRating,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -20,13 +21,15 @@ const createdTimestamp: Timestamp = {
   nanoseconds: 0,
 };
 
+const lastModifiedTimestamp = createdTimestamp;
+
 const userId1 = 'userId1';
 const userId2 = 'userId2';
 const userId3 = 'userId3';
 const user1Path = getUserPath(userId1);
 const user2Path = getUserPath(userId2);
 
-const validUserRequest: Omit<IUser, 'readOnly'> = {
+const updatableUser: Omit<IUser, 'readOnly' | 'created'> = {
   controls: DEFAULT_KEYBOARD_CONTROLS,
   hasSeenAllSet: false,
   hasSeenWelcome: true,
@@ -35,21 +38,26 @@ const validUserRequest: Omit<IUser, 'readOnly'> = {
 };
 
 const existingUser: IUser = {
-  ...validUserRequest,
+  ...updatableUser,
   readOnly: {
     createdTimestamp,
+    lastModifiedTimestamp,
+    numTimesModified: 0,
     nickname: 'Bob',
     networkImpact: 0,
     coins: 3,
     email: 'bob@gmail.com',
   },
+  created: true,
 };
 
 const challengeId1 = 'challengeId1';
+const challengeId2 = 'challengeId2';
 const challenge1Path = getChallengePath(challengeId1);
+const challenge2Path = getChallengePath(challengeId2);
 const user1AdminPath = getAdminPath(userId1);
 
-const validChallengeRequest: CreateChallengeRequest = {
+const updatableChallenge: UpdatableChallenge = {
   title: 'New challenge',
   simulationSettings: {
     allowedBlockLayoutIds: ['1', '2'],
@@ -76,15 +84,24 @@ const validChallengeRequest: CreateChallengeRequest = {
   000X`,
 };
 
+const creatableChallenge: CreatableChallenge = {
+  ...updatableChallenge,
+  created: false,
+};
+
 const existingUnpublishedChallenge: IChallenge = {
-  ...validChallengeRequest,
+  ...updatableChallenge,
   readOnly: {
     createdTimestamp,
+    lastModifiedTimestamp,
+    numTimesModified: 0,
+
     userId: userId1,
     numRatings: 0,
     rating: 0,
     summedRating: 0,
   },
+  created: true,
 };
 
 const existingPublishedChallenge: IChallenge = {
@@ -92,15 +109,16 @@ const existingPublishedChallenge: IChallenge = {
   isPublished: true,
 };
 
-const validRatingRequest: CreateRatingRequest = {
+const creatableRating: CreatableRating = {
   entityCollection: 'challenges',
   entityId: challengeId1,
   value: 3,
+  created: false,
 };
 
 const rating1Path = getRatingPath(
-  validRatingRequest.entityCollection,
-  validRatingRequest.entityId,
+  creatableRating.entityCollection,
+  creatableRating.entityId,
   userId2
 );
 
@@ -110,15 +128,20 @@ const affiliate1: IAffiliate = {
   readOnly: {
     numConversions: 0,
     userId: userId2,
+    createdTimestamp,
+    lastModifiedTimestamp,
+    numTimesModified: 0,
   },
+  created: true,
 };
 
-const referredByAffiliateRequestPath = getUserRequestPath(
-  userId1,
-  'referredByAffiliate'
-);
+const userRequestId1 = 'userRequestId1';
+
+const userRequest1Path = getUserRequestPath(userRequestId1);
 const referredByAffiliateRequest: IReferredByAffiliateRequest = {
   referredByAffiliateId: affiliateId1,
+  requestType: 'referredByAffiliate',
+  created: false,
 };
 
 const dummyData = {
@@ -129,19 +152,23 @@ const dummyData = {
   user1Path,
   user2Path,
   existingUser,
-  validUserRequest,
+  updatableUser,
   challengeId1,
   challenge1Path,
+  challenge2Path,
   existingPublishedChallenge,
   existingUnpublishedChallenge,
-  validChallengeRequest,
+  creatableChallenge,
+  updatableChallenge,
   rating1Path,
-  validRatingRequest,
+  creatableRating,
   affiliateId1,
   affiliate1Path,
   affiliate1,
-  referredByAffiliateRequestPath,
+  userRequest1Path,
   referredByAffiliateRequest,
+  createdTimestamp,
+  lastModifiedTimestamp,
 };
 
 export default dummyData;

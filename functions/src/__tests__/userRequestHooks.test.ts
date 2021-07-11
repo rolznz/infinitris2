@@ -5,6 +5,7 @@ import {
   IAffiliate,
   IConversion,
   IUser,
+  IUserRequest,
 } from 'infinitris2-models';
 import { onCreateUserRequest } from '../onCreateUserRequest';
 import dummyData from './helpers/dummyData';
@@ -30,8 +31,7 @@ describe('User Request Hooks', () => {
         [dummyData.user1Path]: dummyData.existingUser,
         [dummyData.user2Path]: existingAffiliateUser,
         [dummyData.affiliate1Path]: dummyData.affiliate1,
-        [dummyData.referredByAffiliateRequestPath]:
-          dummyData.referredByAffiliateRequest,
+        [dummyData.userRequest1Path]: dummyData.referredByAffiliateRequest,
       },
       false
     );
@@ -39,7 +39,7 @@ describe('User Request Hooks', () => {
     await test.wrap(onCreateUserRequest)(
       test.firestore.makeDocumentSnapshot(
         dummyData.referredByAffiliateRequest,
-        dummyData.referredByAffiliateRequestPath
+        dummyData.userRequest1Path
       ),
       {
         auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }), // user 1 was referred by user 2
@@ -76,10 +76,11 @@ describe('User Request Hooks', () => {
       firebase.firestore.Timestamp.now().seconds - 5
     );
 
-    // request should be deleted afterward
+    // request should be created afterward
     expect(
-      (await db.doc(dummyData.referredByAffiliateRequestPath).get()).exists
-    ).toBe(false);
+      ((await db.doc(dummyData.userRequest1Path).get()).data() as IUserRequest)
+        .created
+    ).toBe(true);
   });
 
   test('conversions provide increasing revenue', async () => {
@@ -107,8 +108,7 @@ describe('User Request Hooks', () => {
         [dummyData.user1Path]: dummyData.existingUser,
         [dummyData.user2Path]: existingAffiliateUser,
         [dummyData.affiliate1Path]: existingAffiliate,
-        [dummyData.referredByAffiliateRequestPath]:
-          dummyData.referredByAffiliateRequest,
+        [dummyData.userRequest1Path]: dummyData.referredByAffiliateRequest,
       },
       false
     );
@@ -116,7 +116,7 @@ describe('User Request Hooks', () => {
     await test.wrap(onCreateUserRequest)(
       test.firestore.makeDocumentSnapshot(
         dummyData.referredByAffiliateRequest,
-        dummyData.referredByAffiliateRequestPath
+        dummyData.userRequest1Path
       ),
       {
         auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }), // user 1 was referred by user 2
@@ -161,8 +161,7 @@ describe('User Request Hooks', () => {
         [dummyData.user1Path]: existingConvertedUser,
         [dummyData.user2Path]: existingAffiliateUser,
         [dummyData.affiliate1Path]: dummyData.affiliate1,
-        [dummyData.referredByAffiliateRequestPath]:
-          dummyData.referredByAffiliateRequest,
+        [dummyData.userRequest1Path]: dummyData.referredByAffiliateRequest,
       },
       false
     );
@@ -171,7 +170,7 @@ describe('User Request Hooks', () => {
       test.wrap(onCreateUserRequest)(
         test.firestore.makeDocumentSnapshot(
           dummyData.referredByAffiliateRequest,
-          dummyData.referredByAffiliateRequestPath
+          dummyData.userRequest1Path
         ),
         {
           auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }), // user 1 was referred by user 2

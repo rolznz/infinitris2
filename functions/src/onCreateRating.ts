@@ -42,9 +42,12 @@ export const onCreateRating = functions.firestore
       await snapshot.ref.update({
         readOnly: {
           createdTimestamp: admin.firestore.Timestamp.now(),
+          lastModifiedTimestamp: admin.firestore.Timestamp.now(),
+          numTimesModified: 0,
           userId,
         },
-      } as Pick<IRating, 'readOnly'>);
+        created: true,
+      } as Pick<IRating, 'readOnly' | 'created'>);
     } catch (error) {
       console.error(error);
     }

@@ -1,5 +1,8 @@
+export * from './onCreateAuthUser';
 export * from './onCreateChallenge';
 export * from './onCreateRating';
-export * from './onCreateAuthUser';
-export * from './schedules';
 export * from './onCreateUserRequest';
+
+export * from './onUpdateEntity';
+
+export * from './schedules';

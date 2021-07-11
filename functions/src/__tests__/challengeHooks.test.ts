@@ -15,14 +15,14 @@ describe('Challenge Hooks', () => {
       undefined,
       {
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.challenge1Path]: dummyData.validChallengeRequest,
+        [dummyData.challenge1Path]: dummyData.updatableChallenge,
       },
       false
     );
 
     await test.wrap(onCreateChallenge)(
       test.firestore.makeDocumentSnapshot(
-        dummyData.validChallengeRequest,
+        dummyData.updatableChallenge,
         dummyData.challenge1Path
       ),
       {
@@ -33,6 +33,7 @@ describe('Challenge Hooks', () => {
     const challenge = (
       await db.doc(dummyData.challenge1Path).get()
     ).data() as IChallenge;
+    expect(challenge.created).toBe(true);
     expect(challenge.readOnly.userId).toBe(dummyData.userId1);
     expect(challenge.readOnly.createdTimestamp?.seconds).toBeGreaterThan(
       firebase.firestore.Timestamp.now().seconds - 5

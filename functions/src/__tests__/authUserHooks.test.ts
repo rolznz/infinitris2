@@ -27,6 +27,7 @@ describe('Auth User Hooks', () => {
     await test.wrap(onCreateAuthUser)(authUser);
 
     const user = (await db.doc(getUserPath(uid)).get()).data() as IUser;
+    expect(user.created).toBe(true);
     expect(user.readOnly.coins).toBe(3);
     expect(user.readOnly.email).toBe(email);
     expect(user.readOnly.networkImpact).toBe(0);

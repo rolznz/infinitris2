@@ -10,6 +10,7 @@ import {
   getAffiliatePath,
   getUserRequestPath,
   IReferredByAffiliateRequest,
+  INicknameRequest,
   IAffiliate,
   CreatableChallenge,
   UpdatableChallenge,
@@ -144,6 +145,12 @@ const referredByAffiliateRequest: IReferredByAffiliateRequest = {
   created: false,
 };
 
+const nicknameRequest: INicknameRequest = {
+  nickname: 'asdf1',
+  requestType: 'nickname',
+  created: false,
+};
+
 const dummyData = {
   userId1,
   userId2,
@@ -167,6 +174,7 @@ const dummyData = {
   affiliate1,
   userRequest1Path,
   referredByAffiliateRequest,
+  nicknameRequest,
   createdTimestamp,
   lastModifiedTimestamp,
 };

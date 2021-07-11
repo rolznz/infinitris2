@@ -11,7 +11,7 @@ import { onCreateUserRequest } from '../onCreateUserRequest';
 import dummyData from './helpers/dummyData';
 import firebase from 'firebase';
 
-describe('User Request Hooks', () => {
+describe('Referred By Affiliate Request Hooks', () => {
   afterEach(async () => {
     await teardown();
   });

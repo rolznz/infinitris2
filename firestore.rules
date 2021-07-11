@@ -57,10 +57,12 @@ service cloud.firestore {
     match /userRequests/{requestId} {
       function isValidUserRequest() {
         return entityValid() &&
-          request.resource.data.requestType == 'referredByAffiliate' &&
-          request.resource.data.keys().hasOnly(['created', 'requestType', 'referredByAffiliateId']) &&
+          request.resource.data.requestType in ['referredByAffiliate', 'nickname'] &&
+          request.resource.data.keys().hasOnly(['created', 'requestType', 'referredByAffiliateId', 'nickname']) &&
+          ((request.resource.data.requestType == 'referredByAffiliate' &&
           request.resource.data.referredByAffiliateId is string &&
-          exists(/databases/$(database)/documents/affiliates/$(request.resource.data.referredByAffiliateId));
+          exists(/databases/$(database)/documents/affiliates/$(request.resource.data.referredByAffiliateId))) ||
+          (request.resource.data.requestType == 'nickname' && request.resource.data.nickname is string));
       }
       allow create: if isLoggedIn() && isValidUserRequest();
       allow read, update, delete: if false;

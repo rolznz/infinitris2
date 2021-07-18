@@ -1,8 +1,9 @@
 {
   "name": "infinitris2-models",
   "private": true,
-  "version": "0.1.160",
+  "version": "0.1.161",
   "description": "",
+  "type": "module",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "repository": {
@@ -19,10 +20,14 @@
     "url": "https://github.com/rolznz/infinitris2/issues"
   },
   "scripts": {
-    "build": "rm -r dist && tsc && yarn version --patch"
+    "build": "rm -r dist && tsc && yarn version --patch",
+    "test": "ts-node node_modules/jasmine/bin/jasmine --config=spec/support/jasmine.json"
   },
   "dependencies": {},
   "devDependencies": {
+    "@types/jasmine": "^3.4.0",
+    "jasmine": "^3.5.0",
+    "ts-node": "^8.4.1",
     "typescript": "~3.7.2"
   }
 }

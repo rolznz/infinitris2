@@ -1,21 +1,24 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function isLoggedIn() {
+    /*function isLoggedIn() {
       return request.auth != null;
-    }
+    }*/
   	function isAdmin() {
       return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
     function isOwner() {
     	return request.auth != null && request.auth.uid == resource.data.readOnly.userId;
     }
+    function authMatchesUser(userId) {
+      return request.auth != null && request.auth.uid == userId;
+    }
     function getProperty(name, fallback) {
       // request.resource contains the future state of the document
       return request.resource.data.get(name, fallback);
     }
     function createdFieldValid() {
-      return (resource == null && request.resource.data.created == false) || (resource != null && request.resource.data.created == resource.data.created);
+      return (resource == null && request.resource.data.created == false) || (resource != null && request.resource.data.created == resource.data.created && resource.data.created == true);
     }
     function readOnlyFieldsUntouched() {
       let oldState = resource != null ? resource.data.get('readOnly', {}) : {};
@@ -31,9 +34,6 @@ service cloud.firestore {
       allow read, write: if false;
     }
     match /users/{userId} {
-      function matchesUser() {
-        return request.auth != null && request.auth.uid == userId;
-      }
       function isValidUser() {
         let controls = getProperty('controls', {});
         return request.resource.data.keys().hasOnly(['created', 'readOnly', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
@@ -50,24 +50,10 @@ service cloud.firestore {
           controls.get('RotateAnticlockwise', '') is string &&
           controls.get('Drop', '') is string;
       }
-    	allow read: if matchesUser();
+    	allow read: if authMatchesUser(userId);
       allow create, delete: if false;
-      allow update: if matchesUser() && isValidUser();
+      allow update: if authMatchesUser(userId) && isValidUser();
     }
-    match /userRequests/{requestId} {
-      function isValidUserRequest() {
-        return entityValid() &&
-          request.resource.data.requestType in ['referredByAffiliate', 'nickname'] &&
-          request.resource.data.keys().hasOnly(['created', 'requestType', 'referredByAffiliateId', 'nickname']) &&
-          ((request.resource.data.requestType == 'referredByAffiliate' &&
-          request.resource.data.referredByAffiliateId is string &&
-          exists(/databases/$(database)/documents/affiliates/$(request.resource.data.referredByAffiliateId))) ||
-          (request.resource.data.requestType == 'nickname' && request.resource.data.nickname is string));
-      }
-      allow create: if isLoggedIn() && isValidUserRequest();
-      allow read, update, delete: if false;
-    }
-
     match /challenges/{challengeId} {
       function isValidRewardCriteria(rewardCriteria) {
         return
@@ -171,6 +157,19 @@ service cloud.firestore {
     match /affiliates/{affiliateId} {
       allow write: if false;
       allow read: if isOwner();
+    }
+    match /affiliates/{affiliateId}/conversions/{userId} {
+      function conversionIsValid() {
+        let affiliate = get(/databases/$(database)/documents/affiliates/$(affiliateId));
+        let user = get(/databases/$(database)/documents/users/$(userId));
+        return authMatchesUser(userId) &&
+        entityValid() &&
+        request.resource.data.keys().hasOnly(['created']) &&
+        affiliate.data.readOnly.userId != userId &&
+        !('referredByAffiliateId' in user.data.readOnly);
+      }
+      allow create: if conversionIsValid();
+      allow read, update, delete: if false;
     }
     match /colors/{document=**} {
       allow read: if true;

@@ -41,8 +41,8 @@ export * from './src/IChallenge';
 export * from './src/INickname';
 export * from './src/IConversion';
 export * from './src/IEntity';
-export * from './src/util/recursiveKeyOf';
-export * from './src/util/recursivePartial';
+export * from './src/util/RecursiveKeyOf';
+export * from './src/util/RecursivePartial';
 export * from './src/util/objectToDotNotation';
 
 export {

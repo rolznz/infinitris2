@@ -1,5 +1,5 @@
-import { RecursiveKeyOf } from './recursiveKeyOf';
-import { RecursivePartial } from './recursivePartial';
+import { RecursiveKeyOf } from './RecursiveKeyOf';
+import { RecursivePartial } from './RecursivePartial';
 
 // TODO: improve typing to force obj to match allowedKeys rather than having to check at runtime
 export function objectToDotNotation<T extends Object>(

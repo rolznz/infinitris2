@@ -1,7 +1,7 @@
 {
   "name": "infinitris2-models",
   "private": true,
-  "version": "0.1.164",
+  "version": "0.1.165",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,17 +20,18 @@
   },
   "scripts": {
     "build": "rm -r dist && tsc && yarn version --patch",
+    "lint": "eslint --ext .js,.ts .",
     "test": "jest"
   },
   "dependencies": {},
   "devDependencies": {
     "@babel/preset-env": "^7.14.2",
     "@types/jest": "^26.0.23",
-    "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",
+    "@typescript-eslint/eslint-plugin": "^4.28.3",
+    "@typescript-eslint/parser": "^4.28.3",
     "babel-jest": "^26.6.3",
-    "eslint": "^7.6.0",
-    "eslint-plugin-import": "^2.22.0",
+    "eslint": "^7.31.0",
+    "eslint-plugin-import": "^2.23.4",
     "eslint-plugin-jest": "^24.3.6",
     "jest": "^26.6.3",
     "ts-jest": "^26.5.6",

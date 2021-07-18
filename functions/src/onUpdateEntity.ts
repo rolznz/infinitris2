@@ -1,7 +1,7 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 import { IEntity } from 'infinitris2-models';
-import IUpdateEntityReadOnly from './models/IUpdateEntityReadOnly';
+import { objectToDotNotation } from './onCreateConversion';
 
 export const onUpdateEntity = functions.firestore
   .document('{collectionId}/{entityId}')
@@ -16,10 +16,18 @@ export const onUpdateEntity = functions.firestore
         data.readOnly?.lastModifiedTimestamp?.nanoseconds ===
           previousData.readOnly?.lastModifiedTimestamp?.nanoseconds
       ) {
-        const updateReadOnly: IUpdateEntityReadOnly = {
-          'readOnly.lastModifiedTimestamp': admin.firestore.Timestamp.now(),
-          'readOnly.numTimesModified': admin.firestore.FieldValue.increment(1),
-        };
+        const updateReadOnly = objectToDotNotation<IEntity>(
+          {
+            readOnly: {
+              lastModifiedTimestamp: admin.firestore.Timestamp.now(),
+              numTimesModified: (admin.firestore.FieldValue.increment(
+                1
+              ) as any) as number,
+            },
+          },
+          ['readOnly.lastModifiedTimestamp', 'readOnly.numTimesModified']
+        );
+
         await change.after.ref.update(updateReadOnly);
       }
     } catch (error) {

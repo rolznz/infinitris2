@@ -8,13 +8,14 @@ import {
   Timestamp,
   getRatingPath,
   getAffiliatePath,
-  getUserRequestPath,
-  IReferredByAffiliateRequest,
-  INicknameRequest,
   IAffiliate,
   CreatableChallenge,
   UpdatableChallenge,
   CreatableRating,
+  getConversionPath,
+  IConversion,
+  INickname,
+  getNicknamePath,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -136,18 +137,13 @@ const affiliate1: IAffiliate = {
   created: true,
 };
 
-const userRequestId1 = 'userRequestId1';
-
-const userRequest1Path = getUserRequestPath(userRequestId1);
-const referredByAffiliateRequest: IReferredByAffiliateRequest = {
-  referredByAffiliateId: affiliateId1,
-  requestType: 'referredByAffiliate',
+const conversion1Path = getConversionPath(affiliateId1, userId1);
+const conversion1: IConversion = {
   created: false,
 };
 
-const nicknameRequest: INicknameRequest = {
-  nickname: 'asdf1',
-  requestType: 'nickname',
+const nickname1Path = getNicknamePath('Bob');
+const nickname1: INickname = {
   created: false,
 };
 
@@ -172,9 +168,10 @@ const dummyData = {
   affiliateId1,
   affiliate1Path,
   affiliate1,
-  userRequest1Path,
-  referredByAffiliateRequest,
-  nicknameRequest,
+  nickname1Path,
+  nickname1,
+  conversion1,
+  conversion1Path,
   createdTimestamp,
   lastModifiedTimestamp,
 };

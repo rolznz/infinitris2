@@ -13,10 +13,10 @@
     "test:files:authUserHooks": "jest -- \"src/__tests__/authUserHooks.test.ts\"",
     "test:files:userRules": "jest -- \"src/__tests__/userRules.test.ts\"",
     "test:files:userRequestRules": "jest -- \"src/__tests__/userRequestRules.test.ts\"",
-    "test:files:referredByAffiliateRequestRules": "jest -- \"src/__tests__/referredByAffiliateRequestRules.test.ts\"",
-    "test:files:referredByAffiliateRequestHooks": "jest -- \"src/__tests__/referredByAffiliateRequestHooks.test.ts\"",
-    "test:files:nicknameRequestHooks": "jest -- \"src/__tests__/nicknameRequestHooks.test.ts\"",
-    "test:files:nicknameRequestRules": "jest -- \"src/__tests__/nicknameRequestRules.test.ts\"",
+    "test:files:conversionRules": "jest -- \"src/__tests__/conversionRules.test.ts\"",
+    "test:files:conversionHooks": "jest -- \"src/__tests__/conversionHooks.test.ts\"",
+    "test:files:nicknameHooks": "jest -- \"src/__tests__/nicknameHooks.test.ts\"",
+    "test:files:nicknameRules": "jest -- \"src/__tests__/nicknameRules.test.ts\"",
     "test:files:roomRules": "jest -- \"src/__tests__/roomRules.test.ts\"",
     "test:files:challengeRules": "jest -- \"src/__tests__/challengeRules.test.ts\"",
     "test:files:challengeHooks": "jest -- \"src/__tests__/challengeHooks.test.ts\"",
@@ -54,7 +54,7 @@
     "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-jest": "^24.3.6",
     "firebase-functions-test": "^0.3.0",
-    "typescript": "^3.8.0"
+    "typescript": "^4.3.5"
   },
   "private": true
 }

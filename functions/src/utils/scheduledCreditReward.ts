@@ -1,7 +1,7 @@
 import { getDb } from './firebase';
 import firebase from 'firebase';
-import IUpdateUserReadOnly from '../models/IUpdateUserReadOnly';
-import { usersPath } from 'infinitris2-models';
+import { IUser, usersPath } from 'infinitris2-models';
+import { objectToDotNotation } from '../onCreateConversion';
 
 /**
  * Gives all users one credit
@@ -10,12 +10,18 @@ import { usersPath } from 'infinitris2-models';
 export default async function scheduledCreditReward(): Promise<void> {
   const querySnapshot = await getDb().collection(usersPath).get();
 
+  const updateUser = objectToDotNotation<IUser>(
+    {
+      readOnly: {
+        coins: (firebase.firestore.FieldValue.increment(1) as any) as number,
+      },
+    },
+    ['readOnly.coins']
+  );
+
   await Promise.all(
     querySnapshot.docs.map((doc) => {
-      const updateUserRequest: IUpdateUserReadOnly = {
-        'readOnly.coins': firebase.firestore.FieldValue.increment(1),
-      };
-      return doc.ref.update(updateUserRequest);
+      return doc.ref.update(updateUser);
     })
   );
 }

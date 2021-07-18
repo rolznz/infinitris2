@@ -1,7 +1,7 @@
 export * from './onCreateAuthUser';
 export * from './onCreateChallenge';
 export * from './onCreateRating';
-export * from './onCreateUserRequest';
+export * from './onCreateConversion';
 
 export * from './onUpdateEntity';
 

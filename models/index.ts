@@ -38,7 +38,7 @@ import IEntity, { IEntityReadOnlyProperties } from './src/IEntity';
 export * from './src/util/fireStorePaths';
 export * from './src/ChallengeStatus';
 export * from './src/IChallenge';
-export * from './src/IUserRequest';
+export * from './src/INickname';
 export * from './src/IConversion';
 export * from './src/IEntity';
 

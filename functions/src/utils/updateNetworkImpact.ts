@@ -3,10 +3,11 @@ import {
   getNetworkImpactPath,
   getUserPath,
   INetworkImpact,
+  IUser,
   networkImpactsPath,
 } from 'infinitris2-models';
+import { objectToDotNotation } from '../onCreateConversion';
 import { getDb } from './firebase';
-import IUpdateUserReadOnly from '../models/IUpdateUserReadOnly';
 
 /**
  * Updates the network impact
@@ -47,12 +48,23 @@ export default async function updateNetworkImpact(
   ) {
     if (!impactDoc.exists) {
       // award user 1 credit, update realized network impact
-      const updateUserRequest: IUpdateUserReadOnly = {
-        'readOnly.coins': firebase.firestore.FieldValue.increment(1),
-        'readOnly.networkImpact': firebase.firestore.FieldValue.increment(1),
-      };
+
+      const updateUser = objectToDotNotation<IUser>(
+        {
+          readOnly: {
+            coins: (firebase.firestore.FieldValue.increment(
+              1
+            ) as any) as number,
+            networkImpact: (firebase.firestore.FieldValue.increment(
+              1
+            ) as any) as number,
+          },
+        },
+        ['readOnly.coins', 'readOnly.networkImpact']
+      );
+
       const userDocRef = getDb().doc(getUserPath(toUserId));
-      await userDocRef.update(updateUserRequest);
+      await userDocRef.update(updateUser);
     }
 
     const networkImpact: INetworkImpact = {
@@ -61,7 +73,10 @@ export default async function updateNetworkImpact(
       distance,
       readOnly: {
         createdTimestamp: firebase.firestore.Timestamp.now(),
+        lastModifiedTimestamp: firebase.firestore.Timestamp.now(),
+        numTimesModified: 0,
       },
+      created: true,
     };
 
     await impactRef.set(networkImpact);

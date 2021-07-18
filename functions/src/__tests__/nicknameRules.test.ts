@@ -1,4 +1,4 @@
-import { setup, teardown } from './helpers/setup';
+/*import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
 
@@ -16,7 +16,7 @@ describe('Nickname Requests Rules', () => {
     );
 
     await expect(
-      db.doc(dummyData.userRequest1Path).set(dummyData.nicknameRequest)
+      db.doc(dummyData.conversion1Path).set(dummyData.nicknameRequest)
     ).toAllow();
   });
 
@@ -29,10 +29,10 @@ describe('Nickname Requests Rules', () => {
     );
 
     await expect(
-      db.doc(dummyData.userRequest1Path).set(dummyData.nicknameRequest)
+      db.doc(dummyData.conversion1Path).set(dummyData.nicknameRequest)
     ).toAllow();
   });
-});
+});*/
 
 /*
 

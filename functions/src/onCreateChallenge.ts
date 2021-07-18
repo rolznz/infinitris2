@@ -1,9 +1,9 @@
 import * as functions from 'firebase-functions';
-import { IChallenge } from 'infinitris2-models';
+import { IChallenge, IUser } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
 import * as admin from 'firebase-admin';
 import firebase from 'firebase';
-import IUpdateUserReadOnly from './models/IUpdateUserReadOnly';
+import { objectToDotNotation } from './onCreateConversion';
 
 export const onCreateChallenge = functions.firestore
   .document('challenges/{challengeId}')
@@ -17,10 +17,19 @@ export const onCreateChallenge = functions.firestore
       // reduce the number of coins the user has so they
       // cannot create an infinite number of challenges
       const userDocRef = getDb().doc(`users/${userId}`);
-      const updateUserCoins: IUpdateUserReadOnly = {
-        'readOnly.coins': firebase.firestore.FieldValue.increment(-1),
-      };
-      await userDocRef.update(updateUserCoins);
+
+      const updateUser = objectToDotNotation<IUser>(
+        {
+          readOnly: {
+            coins: (firebase.firestore.FieldValue.increment(
+              -1
+            ) as any) as number,
+          },
+        },
+        ['readOnly.coins']
+      );
+
+      await userDocRef.update(updateUser);
 
       await snapshot.ref.update({
         readOnly: {

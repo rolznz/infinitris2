@@ -19,12 +19,7 @@ import { FormattedMessage } from 'react-intl';
 import SocialLogo from 'social-logos';
 import FlexBox from './ui/FlexBox';
 import LoadingSpinner from './LoadingSpinner';
-import {
-  getUserRequestPath,
-  IReferredByAffiliateRequest,
-  IUser,
-  getUserPath,
-} from 'infinitris2-models';
+import { getUserRequestPath, IUser, getUserPath } from 'infinitris2-models';
 import localStorageKeys from '@/utils/localStorageKeys';
 import { useLocalStorage } from 'react-use';
 
@@ -64,12 +59,13 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
         const userPath = getUserPath(result.user.uid);
         if (referredByAffiliateId) {
           deleteReferredByAffiliateId();
-          await set(
+          // FIXME: create conversion
+          /*await set(
             getUserRequestPath(result.user.uid, 'referredByAffiliate'),
             {
               referredByAffiliateId,
-            } as IReferredByAffiliateRequest
-          );
+            } as 
+          );*/
         }
         /*
         // wait for the firebase onCreateUser function to run

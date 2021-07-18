@@ -1,9 +1,8 @@
 import * as functions from 'firebase-functions';
-import { IChallenge, IUser } from 'infinitris2-models';
+import { IChallenge, IUser, objectToDotNotation } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
 import * as admin from 'firebase-admin';
 import firebase from 'firebase';
-import { objectToDotNotation } from './onCreateConversion';
 
 export const onCreateChallenge = functions.firestore
   .document('challenges/{challengeId}')

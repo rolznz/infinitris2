@@ -1,7 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-import { IEntity } from 'infinitris2-models';
-import { objectToDotNotation } from './onCreateConversion';
+import { IEntity, objectToDotNotation } from 'infinitris2-models';
 
 export const onUpdateEntity = functions.firestore
   .document('{collectionId}/{entityId}')

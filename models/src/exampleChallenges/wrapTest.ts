@@ -1,5 +1,3 @@
-import InputAction from '../InputAction';
-import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import { IChallenge } from '../IChallenge';
 
 const wrapTest: IChallenge = {

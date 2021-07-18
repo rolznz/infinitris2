@@ -1,10 +1,9 @@
 import * as functions from 'firebase-functions';
-import { IChallenge, IRating } from 'infinitris2-models';
+import { IChallenge, IRating, objectToDotNotation } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
 import firebase from 'firebase';
 import * as admin from 'firebase-admin';
 import updateNetworkImpact from './utils/updateNetworkImpact';
-import { objectToDotNotation } from './onCreateConversion';
 
 export const onCreateRating = functions.firestore
   .document('ratings/{ratingId}')

@@ -1,4 +1,3 @@
-import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import { IChallenge } from '../IChallenge';
 
 const basicMovement: IChallenge = {

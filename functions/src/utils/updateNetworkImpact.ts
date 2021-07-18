@@ -5,8 +5,8 @@ import {
   INetworkImpact,
   IUser,
   networkImpactsPath,
+  objectToDotNotation,
 } from 'infinitris2-models';
-import { objectToDotNotation } from '../onCreateConversion';
 import { getDb } from './firebase';
 
 /**

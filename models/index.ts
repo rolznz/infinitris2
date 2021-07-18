@@ -33,7 +33,7 @@ import IAffiliate from './src/IAffiliate';
 import IColor from './src/IColor';
 import IProduct from './src/IProduct';
 import IPlayer from './src/IPlayer';
-import IEntity, { IEntityReadOnlyProperties } from './src/IEntity';
+import IEntity from './src/IEntity';
 
 export * from './src/util/fireStorePaths';
 export * from './src/ChallengeStatus';
@@ -41,11 +41,13 @@ export * from './src/IChallenge';
 export * from './src/INickname';
 export * from './src/IConversion';
 export * from './src/IEntity';
+export * from './src/util/recursiveKeyOf';
+export * from './src/util/recursivePartial';
+export * from './src/util/objectToDotNotation';
 
 export {
   exampleChallenges,
   IEntity,
-  IEntityReadOnlyProperties,
   IChallengeClient,
   InputAction,
   Layout,

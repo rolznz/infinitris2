@@ -1,7 +1,6 @@
 import { getDb } from './firebase';
 import firebase from 'firebase';
-import { IUser, usersPath } from 'infinitris2-models';
-import { objectToDotNotation } from '../onCreateConversion';
+import { IUser, objectToDotNotation, usersPath } from 'infinitris2-models';
 
 /**
  * Gives all users one credit

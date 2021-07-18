@@ -7,68 +7,10 @@ import {
   IUser,
   IAffiliate,
   IConversion,
+  objectToDotNotation,
 } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
 import updateNetworkImpact from './utils/updateNetworkImpact';
-
-// TODO: move to models project
-// from https://stackoverflow.com/a/51365037/4562693
-type RecursivePartial<T> = {
-  [P in keyof T]?: T[P] extends (infer U)[]
-    ? RecursivePartial<U>[]
-    : T[P] extends object
-    ? RecursivePartial<T[P]>
-    : T[P];
-};
-
-// https://stackoverflow.com/a/65333050/4562693
-export type RecursiveKeyOf<TObj extends object> = {
-  [TKey in keyof TObj & (string | number)]: TObj[TKey] extends object
-    ? `${TKey}` | `${TKey}.${RecursiveKeyOf<TObj[TKey]>}`
-    : `${TKey}`;
-}[keyof TObj & (string | number)];
-
-// TODO: improve typing to force obj to match allowedKeys rather than having to check at runtime
-export function objectToDotNotation<T extends Object>(
-  obj: RecursivePartial<Required<T>>,
-  allowedKeys: RecursiveKeyOf<Required<T>>[]
-) {
-  const result = objectToDotNotationInternal(obj, allowedKeys);
-  const resultKeys = Object.keys(result);
-  if (resultKeys.sort().join(',') !== allowedKeys.sort().join(',')) {
-    throw new Error(
-      `Unexpected result: ${JSON.stringify(resultKeys)} != ${JSON.stringify(
-        allowedKeys
-      )}`
-    );
-  }
-
-  return result;
-}
-
-// inspired by https://stackoverflow.com/a/54907553/4562693
-function objectToDotNotationInternal<T extends Object>(
-  obj: any,
-  allowedKeys: RecursiveKeyOf<T>[],
-  parent: string[] = [],
-  keyValue: { [key: string]: T[Extract<keyof T, string>] } = {}
-): { [key: string]: Object } {
-  // eslint-disable-next-line guard-for-in
-  for (const key in obj) {
-    const pathParts = [...parent, key];
-    const fullPath = pathParts.join('.');
-    if (allowedKeys.indexOf(fullPath as RecursiveKeyOf<T>) >= 0) {
-      keyValue[fullPath] = obj[key];
-      continue;
-    } else if (obj[key] !== null && typeof obj[key] === 'object') {
-      Object.assign(
-        keyValue,
-        objectToDotNotationInternal(obj[key], allowedKeys, pathParts, keyValue)
-      );
-    }
-  }
-  return keyValue;
-}
 
 export const onCreateConversion = functions.firestore
   .document('affiliates/{affiliateId}/conversions/{convertedUserId}')

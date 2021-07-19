@@ -1,7 +1,7 @@
 {
   "name": "infinitris2-models",
   "private": true,
-  "version": "0.1.183",
+  "version": "0.1.184",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -26,7 +26,6 @@
   "dependencies": {},
   "devDependencies": {
     "@types/jest": "^26.0.23",
-    "@types/node": "^16.3.3",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.6.0",

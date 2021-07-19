@@ -11,6 +11,7 @@ import {
 } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
 import updateNetworkImpact from './utils/updateNetworkImpact';
+import * as admin from 'firebase-admin';
 
 export const onCreateConversion = functions.firestore
   .document('affiliates/{affiliateId}/conversions/{convertedUserId}')
@@ -25,7 +26,9 @@ export const onCreateConversion = functions.firestore
         throw new Error('User not logged in');
       }
       if (userId !== convertedUserId) {
-        throw new Error('User ID does not match converted user ID');
+        throw new Error(
+          `User ID ${userId} does not match converted user ID ${convertedUserId}`
+        );
       }
 
       const affiliateDocRef = getDb().doc(getAffiliatePath(affiliateId));
@@ -56,7 +59,6 @@ export const onCreateConversion = functions.firestore
         },
         ['readOnly.referredByAffiliateId', 'readOnly.coins']
       );
-      console.log('updateUserReadOnly', updateConvertedUserReadOnly);
 
       await convertedUserRef.update(updateConvertedUserReadOnly);
 
@@ -75,7 +77,7 @@ export const onCreateConversion = functions.firestore
             ) as any) as number,
           },
         },
-        ['readOnly.referredByAffiliateId', 'readOnly.coins']
+        ['readOnly.coins']
       );
 
       await affiliateUserRef.update(updateAffiliateUser);
@@ -96,8 +98,8 @@ export const onCreateConversion = functions.firestore
       const updateConversion = {
         readOnly: {
           // TODO: extract created/modified etc to utility function
-          createdTimestamp: firebase.firestore.Timestamp.now(),
-          lastModifiedTimestamp: firebase.firestore.Timestamp.now(),
+          createdTimestamp: admin.firestore.Timestamp.now(),
+          lastModifiedTimestamp: admin.firestore.Timestamp.now(),
           numTimesModified: 0,
         },
         created: true,

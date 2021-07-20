@@ -1,45 +1,46 @@
 import * as functions from 'firebase-functions';
-import { IChallenge, IUser, objectToDotNotation } from 'infinitris2-models';
+import {
+  getUserPath,
+  INickname,
+  IUser,
+  objectToDotNotation,
+} from 'infinitris2-models';
 import { getDb } from './utils/firebase';
-import firebase from 'firebase';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
 
-export const onCreateChallenge = functions.firestore
-  .document('challenges/{challengeId}')
+export const onCreateNickname = functions.firestore
+  .document('nicknames/{nicknameId}')
   .onCreate(async (snapshot, context) => {
     try {
+      const nicknameId = context.params.nicknameId;
       const userId = context.auth?.uid;
       if (!userId) {
         throw new Error('User not logged in');
       }
 
-      // reduce the number of coins the user has so they
-      // cannot create an infinite number of challenges
-      const userDocRef = getDb().doc(`users/${userId}`);
+      // const nickname = snapshot.data() as INickname;
+      const userDocRef = getDb().doc(getUserPath(userId));
+      // const user = (await userDocRef.get()).data() as IUser;
 
+      // assign the nickname to the user
       const updateUser = objectToDotNotation<IUser>(
         {
           readOnly: {
-            coins: (firebase.firestore.FieldValue.increment(
-              -1
-            ) as any) as number,
+            nickname: nicknameId,
           },
         },
-        ['readOnly.coins']
+        ['readOnly.nickname']
       );
-
       await userDocRef.update(updateUser);
 
+      // assign the user's id to the nickname
       await snapshot.ref.update({
         readOnly: {
           ...getDefaultEntityReadOnlyProperties(),
           userId,
-          numRatings: 0,
-          rating: 0,
-          summedRating: 0,
         },
         created: true,
-      } as Pick<IChallenge, 'readOnly' | 'created'>);
+      } as Pick<INickname, 'readOnly' | 'created'>);
     } catch (error) {
       console.error(error);
     }

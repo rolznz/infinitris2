@@ -7,6 +7,7 @@ import {
 } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
 import firebase from 'firebase';
+import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
 
 export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
   try {
@@ -20,10 +21,10 @@ export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
       const affiliateRef = getDb().collection(affiliatesPath).doc();
       const affiliateToCreate: IAffiliate = {
         readOnly: {
+          ...getDefaultEntityReadOnlyProperties(
+            firebase.firestore.Timestamp.now()
+          ),
           numConversions: 0,
-          createdTimestamp: firebase.firestore.Timestamp.now(),
-          lastModifiedTimestamp: firebase.firestore.Timestamp.now(),
-          numTimesModified: 0,
           userId: user.uid,
         },
         created: true,
@@ -33,9 +34,9 @@ export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
 
       const newUser: IUser = {
         readOnly: {
-          createdTimestamp: firebase.firestore.Timestamp.now(),
-          lastModifiedTimestamp: firebase.firestore.Timestamp.now(),
-          numTimesModified: 0,
+          ...getDefaultEntityReadOnlyProperties(
+            firebase.firestore.Timestamp.now()
+          ),
           email: user.email!,
           coins: 3,
           networkImpact: 0,

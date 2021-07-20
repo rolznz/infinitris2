@@ -142,7 +142,8 @@ const conversion1: IConversion = {
   created: false,
 };
 
-const nickname1Path = getNicknamePath('Bob');
+const nicknameId1 = 'Bob';
+const nickname1Path = getNicknamePath(nicknameId1);
 const nickname1: INickname = {
   created: false,
 };
@@ -168,6 +169,7 @@ const dummyData = {
   affiliateId1,
   affiliate1Path,
   affiliate1,
+  nicknameId1,
   nickname1Path,
   nickname1,
   conversion1,

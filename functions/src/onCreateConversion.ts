@@ -11,7 +11,7 @@ import {
 } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
 import updateNetworkImpact from './utils/updateNetworkImpact';
-import * as admin from 'firebase-admin';
+import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
 
 export const onCreateConversion = functions.firestore
   .document('affiliates/{affiliateId}/conversions/{convertedUserId}')
@@ -48,7 +48,7 @@ export const onCreateConversion = functions.firestore
       const affiliate = affiliateDoc.data() as IAffiliate;
 
       // mark the referred user as having been converted, plus reward them with 3 coins
-      const updateConvertedUserReadOnly = objectToDotNotation<IUser>(
+      const updateConvertedUser = objectToDotNotation<IUser>(
         {
           readOnly: {
             referredByAffiliateId: affiliateId,
@@ -60,7 +60,7 @@ export const onCreateConversion = functions.firestore
         ['readOnly.referredByAffiliateId', 'readOnly.coins']
       );
 
-      await convertedUserRef.update(updateConvertedUserReadOnly);
+      await convertedUserRef.update(updateConvertedUser);
 
       // create network impact (+1 credit rewarded to affiliate user and anyone who impacted the affiliate user)
       await updateNetworkImpact(affiliate.readOnly.userId, convertedUserId);
@@ -97,10 +97,7 @@ export const onCreateConversion = functions.firestore
 
       const updateConversion = {
         readOnly: {
-          // TODO: extract created/modified etc to utility function
-          createdTimestamp: admin.firestore.Timestamp.now(),
-          lastModifiedTimestamp: admin.firestore.Timestamp.now(),
-          numTimesModified: 0,
+          ...getDefaultEntityReadOnlyProperties(),
         },
         created: true,
       } as Pick<IConversion, 'readOnly' | 'created'>;

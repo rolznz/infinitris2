@@ -1,9 +1,14 @@
 import * as functions from 'firebase-functions';
-import { IChallenge, IRating, objectToDotNotation } from 'infinitris2-models';
+import {
+  getChallengePath,
+  IChallenge,
+  IRating,
+  objectToDotNotation,
+} from 'infinitris2-models';
 import { getDb } from './utils/firebase';
 import firebase from 'firebase';
-import * as admin from 'firebase-admin';
 import updateNetworkImpact from './utils/updateNetworkImpact';
+import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
 
 export const onCreateRating = functions.firestore
   .document('ratings/{ratingId}')
@@ -13,9 +18,8 @@ export const onCreateRating = functions.firestore
       if (!userId) {
         throw new Error('User not logged in');
       }
-      // FIXME: Update to match new schema
       const rating = snapshot.data() as IRating;
-      const challengeDocRef = getDb().doc(`challenges/${rating.entityId}`);
+      const challengeDocRef = getDb().doc(getChallengePath(rating.entityId));
       const challenge = (await challengeDocRef.get()).data() as IChallenge;
 
       // race condition in rating property accounted for as numRatings and summedRating are atomic
@@ -47,9 +51,7 @@ export const onCreateRating = functions.firestore
 
       await snapshot.ref.update({
         readOnly: {
-          createdTimestamp: admin.firestore.Timestamp.now(),
-          lastModifiedTimestamp: admin.firestore.Timestamp.now(),
-          numTimesModified: 0,
+          ...getDefaultEntityReadOnlyProperties(),
           userId,
         },
         created: true,

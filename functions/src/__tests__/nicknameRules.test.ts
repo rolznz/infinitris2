@@ -1,13 +1,14 @@
-/*import { setup, teardown } from './helpers/setup';
+import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
+import { getNicknamePath } from '../../../models/dist';
 
-describe('Nickname Requests Rules', () => {
+describe('Nickname Rules', () => {
   afterEach(async () => {
     await teardown();
   });
 
-  test('should allow creating a nickname request for self', async () => {
+  test('should allow creating a nickname', async () => {
     const { db } = await setup(
       { uid: dummyData.userId1 },
       {
@@ -15,9 +16,37 @@ describe('Nickname Requests Rules', () => {
       }
     );
 
+    const validNicknames = ['Big Ben 123', 'AL', 'a'.repeat(15)];
+
+    for (const nicknameId of validNicknames) {
+      await expect(
+        db.doc(getNicknamePath(nicknameId)).set(dummyData.nickname1)
+      ).toAllow();
+    }
+  });
+
+  test('should deny creating a nickname when logged out', async () => {
+    const { db } = await setup(undefined, {
+      [dummyData.user1Path]: dummyData.existingUser,
+    });
+
     await expect(
-      db.doc(dummyData.conversion1Path).set(dummyData.nicknameRequest)
-    ).toAllow();
+      db.doc(dummyData.nickname1Path).set(dummyData.nickname1)
+    ).toDeny();
+  });
+
+  test('should deny updating an existing nickname object', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.nickname1Path]: dummyData.nickname1,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.nickname1Path).set(dummyData.nickname1)
+    ).toDeny();
   });
 
   test('should deny creating a nickname request with invalid nickname', async () => {
@@ -28,31 +57,15 @@ describe('Nickname Requests Rules', () => {
       }
     );
 
-    await expect(
-      db.doc(dummyData.conversion1Path).set(dummyData.nicknameRequest)
-    ).toAllow();
+    const invalidNicknames = [
+      '######', // invalid character
+      'a', // must be at least 2 chars
+      'a'.repeat(16), // must be less than 16 chars
+    ];
+    for (const nicknameId of invalidNicknames) {
+      await expect(
+        db.doc(getNicknamePath(nicknameId)).set(dummyData.nickname1)
+      ).toDeny();
+    }
   });
-});*/
-
-/*
-
- ('should deny creating a nickname request with invalid parameters', async () => {
-    expect(true).toBe(false);
-  });
-('nickname should meet requirements', async () => {
-    const {db} = await setup(
-      { uid: userId1 },
-      {
-        [userId1Path]: existingUser,
-      }
-    );
-      db.doc(userId1Path).set({ nickname: 'a' }, { merge: true })
-    ).toDeny(); // must be at least 2 chars
-    await expect(
-      db.doc(userId1Path).set({ nickname: '**' }, { merge: true })
-    ).toDeny(); // invalid chars not allowed
-    await expect(
-      db.doc(userId1Path).set({ nickname: 'a'.repeat(16) }, { merge: true })
-    ).toDeny();
-  });
-*/
+});

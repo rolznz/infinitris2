@@ -3,6 +3,7 @@ import {
   getUserPath,
   INickname,
   IUser,
+  nicknamesPath,
   objectToDotNotation,
 } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
@@ -16,6 +17,16 @@ export const onCreateNickname = functions.firestore
       const userId = context.auth?.uid;
       if (!userId) {
         throw new Error('User not logged in');
+      }
+
+      // delete any old nicknames attached to the user
+      const userOldNicknames = await getDb()
+        .collection(nicknamesPath)
+        .where('readOnly.userId', '==', userId)
+        .where('created', '==', true)
+        .get();
+      for (const oldUserNickname of userOldNicknames.docs) {
+        await oldUserNickname.ref.delete();
       }
 
       // const nickname = snapshot.data() as INickname;

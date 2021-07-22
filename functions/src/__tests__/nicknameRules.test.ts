@@ -20,7 +20,7 @@ describe('Nickname Rules', () => {
 
     for (const nicknameId of validNicknames) {
       await expect(
-        db.doc(getNicknamePath(nicknameId)).set(dummyData.nickname1)
+        db.doc(getNicknamePath(nicknameId)).set(dummyData.creatableNickname)
       ).toAllow();
     }
   });
@@ -31,7 +31,7 @@ describe('Nickname Rules', () => {
     });
 
     await expect(
-      db.doc(dummyData.nickname1Path).set(dummyData.nickname1)
+      db.doc(dummyData.nickname1Path).set(dummyData.creatableNickname)
     ).toDeny();
   });
 
@@ -40,12 +40,12 @@ describe('Nickname Rules', () => {
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.nickname1Path]: dummyData.nickname1,
+        [dummyData.nickname1Path]: dummyData.creatableNickname,
       }
     );
 
     await expect(
-      db.doc(dummyData.nickname1Path).set(dummyData.nickname1)
+      db.doc(dummyData.nickname1Path).set(dummyData.creatableNickname)
     ).toDeny();
   });
 
@@ -64,7 +64,7 @@ describe('Nickname Rules', () => {
     ];
     for (const nicknameId of invalidNicknames) {
       await expect(
-        db.doc(getNicknamePath(nicknameId)).set(dummyData.nickname1)
+        db.doc(getNicknamePath(nicknameId)).set(dummyData.creatableNickname)
       ).toDeny();
     }
   });

@@ -1,6 +1,6 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
-import { INickname, IUser } from 'infinitris2-models';
+import { INickname, IUser, nicknamesPath } from 'infinitris2-models';
 import firebase from 'firebase';
 import dummyData from './helpers/dummyData';
 import { onCreateNickname } from '../onCreateNickname';
@@ -11,19 +11,28 @@ describe('Nickname Hooks', () => {
   });
 
   test('new nickname will be assigned to user', async () => {
+    // assume the user already has a nickname
+    const existingUser: IUser = {
+      ...dummyData.existingUser,
+      readOnly: {
+        ...dummyData.existingUser.readOnly,
+        nickname: dummyData.nicknameId2,
+      },
+    };
+
     const { db, test } = await setup(
       undefined,
       {
-        [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
-        [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.nickname1Path]: dummyData.nickname1,
+        [dummyData.user1Path]: existingUser,
+        [dummyData.nickname1Path]: dummyData.creatableNickname,
+        [dummyData.nickname2Path]: dummyData.existingNickname,
       },
       false
     );
 
     await test.wrap(onCreateNickname)(
       test.firestore.makeDocumentSnapshot(
-        dummyData.nickname1,
+        dummyData.creatableNickname,
         dummyData.nickname1Path
       ),
       {
@@ -46,7 +55,10 @@ describe('Nickname Hooks', () => {
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
     expect(user.readOnly.nickname).toEqual(dummyData.nicknameId1);
-  });
 
-  // TODO: user can only hold one nickname
+    // expect the user's old nickname to be freed
+    const nicknames = await db.collection(nicknamesPath).get();
+    expect(nicknames.docs.length).toBe(1);
+    expect(nicknames.docs[0].id).toBe(dummyData.nicknameId1);
+  });
 });

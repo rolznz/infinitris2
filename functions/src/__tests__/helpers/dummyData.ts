@@ -143,8 +143,21 @@ const conversion1: IConversion = {
 };
 
 const nicknameId1 = 'Bob';
+const nicknameId2 = 'Alice';
+
 const nickname1Path = getNicknamePath(nicknameId1);
-const nickname1: INickname = {
+const nickname2Path = getNicknamePath(nicknameId2);
+
+const existingNickname: INickname = {
+  readOnly: {
+    createdTimestamp: createdTimestamp,
+    lastModifiedTimestamp: createdTimestamp,
+    numTimesModified: 0,
+    userId: userId1,
+  },
+  created: true,
+};
+const creatableNickname: INickname = {
   created: false,
 };
 
@@ -170,8 +183,11 @@ const dummyData = {
   affiliate1Path,
   affiliate1,
   nicknameId1,
+  nicknameId2,
   nickname1Path,
-  nickname1,
+  nickname2Path,
+  creatableNickname,
+  existingNickname,
   conversion1,
   conversion1Path,
   createdTimestamp,

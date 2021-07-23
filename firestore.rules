@@ -26,7 +26,7 @@ service cloud.firestore {
 
       return oldState.diff(newState).affectedKeys().size() == 0
     }
-    function entityValid() {
+    function baseRequestValid() {
       return createdFieldValid() && readOnlyFieldsUntouched();
     }
 
@@ -37,7 +37,7 @@ service cloud.firestore {
       function isValidUser() {
         let controls = getProperty('controls', {});
         return request.resource.data.keys().hasOnly(['created', 'readOnly', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
-          entityValid() &&
+          baseRequestValid() &&
           getProperty('hasSeenAllSet', false) is bool &&
           getProperty('hasSeenWelcome', false) is bool &&
           getProperty('preferredInputMethod', '') in ['', 'keyboard', 'touch'] &&
@@ -75,7 +75,7 @@ service cloud.firestore {
 
       	return
           (!request.resource.data.get('isOfficial', false) || isAdmin()) &&
-          entityValid() &&
+          baseRequestValid() &&
           request.resource.data.keys().hasOnly(['created', 'readOnly', 'description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
           title is string &&
           (title.size() == 0 || (title.size() < 21 && title.matches('[a-zA-Z0-9 ]+'))) &&
@@ -140,16 +140,39 @@ service cloud.firestore {
       }
     	function isValidRating() {
       	return
-          entityValid() &&
+          baseRequestValid() &&
           ratingId == calculateRatingId() &&
           isValidCollection() &&
           entityExists() &&
           entityIsPublished() &&
           !isOwnerOfEntity() &&
           request.resource.data.value is number && request.resource.data.value >= 1 && request.resource.data.value <= 5 &&
-          request.resource.data.keys().hasOnly(['created', 'readOnly', 'value', 'entityCollection', 'entityId']);
+          request.resource.data.keys().hasOnly(['created', 'value', 'entityCollection', 'entityId']);
       }
       allow create: if isValidRating();
+      allow update: if false;
+      allow delete: if false;
+      allow read: if true;
+    }
+    match /purchases/{purchaseId} {
+      function isValidCollection() {
+        return request.resource.data.entityCollection == 'colors';
+      }
+    	function entityExists() {
+      	return exists(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId));
+      }
+    	function calculatePurchaseId() {
+      	return request.resource.data.entityCollection + '-' + request.resource.data.entityId + '-' + request.auth.uid;
+      }
+    	function isValidPurchase() {
+      	return
+          baseRequestValid() &&
+          purchaseId == calculatePurchaseId() &&
+          isValidCollection() &&
+          entityExists() &&
+          request.resource.data.keys().hasOnly(['created', 'entityCollection', 'entityId']);
+      }
+      allow create: if isValidPurchase();
       allow update: if false;
       allow delete: if false;
       allow read: if true;
@@ -163,7 +186,7 @@ service cloud.firestore {
         let affiliate = get(/databases/$(database)/documents/affiliates/$(affiliateId));
         let user = get(/databases/$(database)/documents/users/$(userId));
         return authMatchesUser(userId) &&
-        entityValid() &&
+        baseRequestValid() &&
         request.resource.data.keys().hasOnly(['created']) &&
         affiliate.data.readOnly.userId != userId &&
         !('referredByAffiliateId' in user.data.readOnly);
@@ -178,7 +201,7 @@ service cloud.firestore {
         nicknameId.size() > 1 &&
         nicknameId.size() < 16 &&
         nicknameId.matches('[a-zA-Z0-9 ]+') &&
-        entityValid() &&
+        baseRequestValid() &&
         request.resource.data.keys().hasOnly(['created']);
       allow update, delete: if false;
     }

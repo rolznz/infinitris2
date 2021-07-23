@@ -44,6 +44,7 @@ export * from './src/IEntity';
 export * from './src/util/RecursiveKeyOf';
 export * from './src/util/RecursivePartial';
 export * from './src/util/objectToDotNotation';
+export * from './src/IPurchase';
 
 export {
   exampleChallenges,

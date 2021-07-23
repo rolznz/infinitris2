@@ -34,3 +34,10 @@ export const getConversionPath = (
   affiliateId: string,
   convertedUserId: string
 ) => `${getAffiliatePath(affiliateId)}/conversions/${convertedUserId}`;
+
+export const purchasesPath = 'purchases';
+export const getPurchasePath = (
+  entityCollection: 'colors',
+  entityId: string,
+  userId: string
+) => `${purchasesPath}/${entityCollection}-${entityId}-${userId}`;

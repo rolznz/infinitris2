@@ -16,6 +16,10 @@ import {
   IConversion,
   INickname,
   getNicknamePath,
+  getColorPath,
+  IColor,
+  getPurchasePath,
+  IPurchase,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -161,6 +165,22 @@ const creatableNickname: INickname = {
   created: false,
 };
 
+const colorId1 = 'red';
+const color1Path = getColorPath(colorId1);
+const color1: IColor = {
+  price: 3,
+  value: 0xff0000,
+  created: true,
+};
+
+const purchase1Path = getPurchasePath('colors', colorId1, userId1);
+const purchase1: IPurchase = {
+  entityCollection: 'colors',
+  entityId: colorId1,
+  created: false,
+};
+
+// TODO: rename userId1 to user1Id etc
 const dummyData = {
   userId1,
   userId2,
@@ -192,6 +212,11 @@ const dummyData = {
   conversion1Path,
   createdTimestamp,
   lastModifiedTimestamp,
+  colorId1,
+  color1Path,
+  color1,
+  purchase1Path,
+  purchase1,
 };
 
 export default dummyData;

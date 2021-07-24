@@ -1,15 +1,12 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
-//import { getPurchasePath } from 'infinitris2-models';
+import { IColor, IPurchase } from 'infinitris2-models';
 
 describe('Purchase Rules', () => {
   afterEach(async () => {
     await teardown();
   });
-
-  // TODO: fix this test with valid purchase, color must be less than 3 credits
-  // Firestore rules
 
   test('should allow creating a purchase when logged in with sufficient coins', async () => {
     const { db } = await setup(
@@ -25,51 +22,92 @@ describe('Purchase Rules', () => {
     ).toAllow();
   });
 
-  // TODO: test cannot purchase greater than entity price
-  // TODO: test cannot purchase non-existent entity
-  // TODO: test cannot update purchase
+  test('should deny creating a purchase with insufficient coins', async () => {
+    const color: IColor = {
+      ...dummyData.color1,
+      price: dummyData.existingUser.readOnly.coins + 1,
+    };
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.color1Path]: color,
+      }
+    );
 
-  /*test('should deny creating a purchase when logged out', async () => {
+    await expect(
+      db.doc(dummyData.purchase1Path).set(dummyData.purchase1)
+    ).toDeny();
+  });
+
+  test('should allow creating a purchase when logged out', async () => {
     const { db } = await setup(undefined, {
       [dummyData.user1Path]: dummyData.existingUser,
+      [dummyData.color1Path]: dummyData.color1,
     });
 
     await expect(
-      db.doc(dummyData.purchase1Path).set(dummyData.creatablePurchase)
+      db.doc(dummyData.purchase1Path).set(dummyData.purchase1)
     ).toDeny();
   });
 
-  test('should deny updating an existing purchase object', async () => {
+  test('should deny creating a purchase for non-existent entity', async () => {
     const { db } = await setup(
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.purchase1Path]: dummyData.creatablePurchase,
       }
     );
 
     await expect(
-      db.doc(dummyData.purchase1Path).set(dummyData.creatablePurchase)
+      db.doc(dummyData.purchase1Path).set(dummyData.purchase1)
     ).toDeny();
   });
 
-  test('should deny creating a purchase request with invalid purchase', async () => {
+  test('should deny updating a purchase', async () => {
     const { db } = await setup(
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.color1Path]: dummyData.color1,
+        [dummyData.purchase1Path]: dummyData.purchase1,
       }
     );
 
-    const invalidPurchases = [
-      '######', // invalid character
-      'a', // must be at least 2 chars
-      'a'.repeat(16), // must be less than 16 chars
-    ];
-    for (const purchaseId of invalidPurchases) {
-      await expect(
-        db.doc(getPurchasePath(purchaseId)).set(dummyData.creatablePurchase)
-      ).toDeny();
-    }
-  });*/
+    await expect(db.doc(dummyData.purchase1Path).set({})).toDeny();
+  });
+
+  test('should deny creating a purchase with created property set to true', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.color1Path]: dummyData.color1,
+      }
+    );
+
+    const purchase: IPurchase = {
+      ...dummyData.purchase1,
+      created: true,
+    };
+
+    await expect(db.doc(dummyData.purchase1Path).set(purchase)).toDeny();
+  });
+
+  test('should deny creating a purchase with invalid property', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.color1Path]: dummyData.color1,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.purchase1Path).set({
+        ...dummyData.purchase1,
+        nonExistentProperty: 1,
+      })
+    ).toDeny();
+  });
 });

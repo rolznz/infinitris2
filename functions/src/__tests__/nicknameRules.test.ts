@@ -68,4 +68,20 @@ describe('Nickname Rules', () => {
       ).toDeny();
     }
   });
+
+  test('should deny creating a nickname with invalid property', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.nickname1Path).set({
+        ...dummyData.creatableNickname,
+        nonExistentProperty: 5,
+      })
+    ).toDeny();
+  });
 });

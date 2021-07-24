@@ -158,18 +158,19 @@ service cloud.firestore {
       function isValidCollection() {
         return request.resource.data.entityCollection == 'colors';
       }
-    	function entityExists() {
-      	return exists(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId));
-      }
     	function calculatePurchaseId() {
       	return request.resource.data.entityCollection + '-' + request.resource.data.entityId + '-' + request.auth.uid;
       }
     	function isValidPurchase() {
+        let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
+        let entity = get(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId));
       	return
           baseRequestValid() &&
           purchaseId == calculatePurchaseId() &&
           isValidCollection() &&
-          entityExists() &&
+          entity != null &&
+          user != null &&
+          user.data.readOnly.coins >= entity.data.price &&
           request.resource.data.keys().hasOnly(['created', 'entityCollection', 'entityId']);
       }
       allow create: if isValidPurchase();

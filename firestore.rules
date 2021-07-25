@@ -30,6 +30,14 @@ service cloud.firestore {
       return createdFieldValid() && readOnlyFieldsUntouched();
     }
 
+    function getEntityFromCollection() {
+      return get(/databases/$(database)/documents/$(request.resource.data.entityCollectionPath)/$(request.resource.data.entityId));
+    }
+
+    function getUniqueUserEntityId() {
+      return request.resource.data.entityCollectionPath + '-' + request.resource.data.entityId + '-' + request.auth.uid;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
@@ -124,30 +132,19 @@ service cloud.firestore {
     }
     match /ratings/{ratingId} {
       function isValidCollection() {
-        return request.resource.data.entityCollection == 'challenges';
-      }
-    	function entityExists() {
-      	return exists(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId));
-      }
-      function entityIsPublished() {
-      	return get(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId)).data.isPublished == true;
-      }
-    	function isOwnerOfEntity() {
-      	return get(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId)).data.readOnly.userId == request.auth.uid;
-      }
-    	function calculateRatingId() {
-      	return request.resource.data.entityCollection + '-' + request.resource.data.entityId + '-' + request.auth.uid;
+        return request.resource.data.entityCollectionPath == 'challenges';
       }
     	function isValidRating() {
+        let entity = getEntityFromCollection();
       	return
           baseRequestValid() &&
-          ratingId == calculateRatingId() &&
+          ratingId == getUniqueUserEntityId() &&
           isValidCollection() &&
-          entityExists() &&
-          entityIsPublished() &&
-          !isOwnerOfEntity() &&
+          entity != null &&
+          entity.data.isPublished &&
+          entity.data.readOnly.userId != request.auth.uid &&
           request.resource.data.value is number && request.resource.data.value >= 1 && request.resource.data.value <= 5 &&
-          request.resource.data.keys().hasOnly(['created', 'value', 'entityCollection', 'entityId']);
+          request.resource.data.keys().hasOnly(['created', 'value', 'entityCollectionPath', 'entityId']);
       }
       allow create: if isValidRating();
       allow update: if false;
@@ -156,22 +153,19 @@ service cloud.firestore {
     }
     match /purchases/{purchaseId} {
       function isValidCollection() {
-        return request.resource.data.entityCollection == 'colors';
-      }
-    	function calculatePurchaseId() {
-      	return request.resource.data.entityCollection + '-' + request.resource.data.entityId + '-' + request.auth.uid;
+        return request.resource.data.entityCollectionPath == 'colors';
       }
     	function isValidPurchase() {
         let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
-        let entity = get(/databases/$(database)/documents/$(request.resource.data.entityCollection)/$(request.resource.data.entityId));
+        let entity = getEntityFromCollection();
       	return
           baseRequestValid() &&
-          purchaseId == calculatePurchaseId() &&
+          purchaseId == getUniqueUserEntityId() &&
           isValidCollection() &&
           entity != null &&
           user != null &&
           user.data.readOnly.coins >= entity.data.price &&
-          request.resource.data.keys().hasOnly(['created', 'entityCollection', 'entityId']);
+          request.resource.data.keys().hasOnly(['created', 'entityCollectionPath', 'entityId']);
       }
       allow create: if isValidPurchase();
       allow update: if false;

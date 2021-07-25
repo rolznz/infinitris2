@@ -1,28 +1,37 @@
 export const nicknamesPath = 'nicknames';
 export const getNicknamePath = (nicknameId: string) =>
-  `${nicknamesPath}/${nicknameId}`;
+  getEntityPath(nicknamesPath, nicknameId);
 export const colorsPath = 'colors';
-export const getColorPath = (colorId: string) => `${colorsPath}/${colorId}`;
+export const getColorPath = (colorId: string) =>
+  getEntityPath(colorsPath, colorId);
 export const usersPath = 'users';
-export const getUserPath = (userId: string) => `${usersPath}/${userId}`;
+export const getUserPath = (userId: string) => getEntityPath(usersPath, userId);
 export const affiliatesPath = 'affiliates';
 export const getAffiliatePath = (affiliateId: string) =>
-  `${affiliatesPath}/${affiliateId}`;
+  getEntityPath(affiliatesPath, affiliateId);
 export const scoreboardEntriesPath = 'scoreboardEntries';
 export const roomsPath = 'rooms';
-export const getRoomPath = (roomId: string) => `${roomsPath}/${roomId}`;
+export const getRoomPath = (roomId: string) => getEntityPath(roomsPath, roomId);
 export const challengesPath = 'challenges';
 export const getChallengePath = (challengeId: string) =>
-  `${challengesPath}/${challengeId}`;
+  getEntityPath(challengesPath, challengeId);
 export const ratingsPath = 'ratings';
 export const getRatingPath = (
-  entityCollection: 'challenges',
+  entityCollectionPath: typeof challengesPath,
   entityId: string,
   userId: string
-) => `${ratingsPath}/${entityCollection}-${entityId}-${userId}`;
-export const adminsPath = 'admins';
-export const getAdminPath = (adminId: string) => `${adminsPath}/${adminId}`;
+) =>
+  getEntityPath(
+    ratingsPath,
+    getUniqueUserEntityId(entityCollectionPath, entityId, userId)
+  );
 
+export const adminsPath = 'admins';
+export const getAdminPath = (adminId: string) =>
+  getEntityPath(adminsPath, adminId);
+
+// requires subcollection to easily iterate through network impacts
+// in order to create recursive network impacts
 export const impactedUsersPath = 'impactedUsers';
 export const networkImpactsPath = 'networkImpacts';
 export const getImpactedUserNetworkImpactsPath = (userId: string) =>
@@ -37,7 +46,39 @@ export const getConversionPath = (
 
 export const purchasesPath = 'purchases';
 export const getPurchasePath = (
-  entityCollection: 'colors',
+  entityCollectionPath: typeof colorsPath,
   entityId: string,
   userId: string
-) => `${purchasesPath}/${entityCollection}-${entityId}-${userId}`;
+) =>
+  getEntityPath(
+    purchasesPath,
+    getUniqueUserEntityId(entityCollectionPath, entityId, userId)
+  );
+
+export type EntityCollectionPath =
+  | typeof colorsPath
+  | typeof usersPath
+  | typeof challengesPath
+  | typeof ratingsPath
+  | typeof affiliatesPath
+  | typeof roomsPath
+  | typeof nicknamesPath
+  | typeof adminsPath
+  | typeof purchasesPath;
+
+export function getEntityPath(
+  entityCollectionPath: EntityCollectionPath,
+  entityId: string
+) {
+  return `${entityCollectionPath}/${entityId}`;
+}
+
+// ratings and purchases have IDs based on the user who created them
+// and the entity they are for to be easily retrievable
+export function getUniqueUserEntityId(
+  entityCollectionPath: EntityCollectionPath,
+  entityId: string,
+  userId: string
+) {
+  return `${entityCollectionPath}-${entityId}-${userId}`;
+}

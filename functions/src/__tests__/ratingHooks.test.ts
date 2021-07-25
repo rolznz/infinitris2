@@ -40,9 +40,9 @@ describe('Rating Hooks', () => {
       await db.doc(dummyData.rating1Path).get()
     ).data() as IRating;
 
-    expect(rating.readOnly.userId).toBe(dummyData.userId2);
+    expect(rating.readOnly!.userId).toBe(dummyData.userId2);
     expect(rating.created).toBe(true);
-    expect(rating.readOnly.createdTimestamp?.seconds).toBeGreaterThan(
+    expect(rating.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
       firebase.firestore.Timestamp.now().seconds - 5
     );
 

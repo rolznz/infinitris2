@@ -1,5 +1,10 @@
-import IEntity from './IEntity';
+import IEntity, { IEntityReadOnlyProperties } from './IEntity';
 
-export default interface IProduct extends IEntity {
-  price: number;
+export interface IProductReadOnlyProperties extends IEntityReadOnlyProperties {
+  readonly numPurchases: number;
+}
+
+export interface IProduct extends IEntity {
+  readonly readOnly?: IProductReadOnlyProperties;
+  readonly price: number;
 }

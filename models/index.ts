@@ -31,7 +31,6 @@ import IScoreboardEntry from './src/IScoreboardEntry';
 import ICellEventListener from './src/ICellEventListener';
 import IAffiliate from './src/IAffiliate';
 import IColor from './src/IColor';
-import IProduct from './src/IProduct';
 import IPlayer from './src/IPlayer';
 import IEntity from './src/IEntity';
 
@@ -45,6 +44,7 @@ export * from './src/util/RecursiveKeyOf';
 export * from './src/util/RecursivePartial';
 export * from './src/util/objectToDotNotation';
 export * from './src/IPurchase';
+export * from './src/IProduct';
 
 export {
   exampleChallenges,
@@ -72,7 +72,6 @@ export {
   IUser,
   IUserReadOnlyProperties,
   IColor,
-  IProduct,
   IAffiliate,
   IRating,
   CreatableRating,

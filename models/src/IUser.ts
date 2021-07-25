@@ -12,6 +12,8 @@ export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly affiliateId?: string;
   readonly referredByAffiliateId?: string;
   // readonly patternId?: string;
+  // readonly
+  readonly purchasedEntityIds: string[];
 }
 
 export default interface IUser extends IEntity {

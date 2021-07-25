@@ -5,9 +5,9 @@ export interface IRatingReadOnlyProperties extends IEntityReadOnlyProperties {
 }
 
 export default interface IRating extends IEntity {
-  readonly readOnly: IRatingReadOnlyProperties;
+  readonly readOnly?: IRatingReadOnlyProperties;
   readonly value: number;
-  readonly entityCollection: 'challenges';
+  readonly entityCollectionPath: 'challenges';
   readonly entityId: string;
 }
 

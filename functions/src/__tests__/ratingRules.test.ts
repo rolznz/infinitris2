@@ -103,9 +103,9 @@ describe('Rating Rules', () => {
 
     const ratingRequest: Pick<
       IRating,
-      'entityCollection' | 'entityId' | 'value'
+      'entityCollectionPath' | 'entityId' | 'value'
     > = {
-      entityCollection: 'users' as any,
+      entityCollectionPath: 'users' as any,
       entityId: dummyData.userId1,
       value: 3,
     };
@@ -114,7 +114,7 @@ describe('Rating Rules', () => {
       db
         .doc(
           getRatingPath(
-            ratingRequest.entityCollection,
+            ratingRequest.entityCollectionPath,
             ratingRequest.entityId,
             dummyData.userId2
           )

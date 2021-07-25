@@ -23,6 +23,7 @@
     "test:files:ratingRules": "jest -- \"src/__tests__/ratingRules.test.ts\"",
     "test:files:ratingHooks": "jest -- \"src/__tests__/ratingHooks.test.ts\"",
     "test:files:purchaseRules": "jest -- \"src/__tests__/purchaseRules.test.ts\"",
+    "test:files:purchaseHooks": "jest -- \"src/__tests__/purchaseHooks.test.ts\"",
     "test:files:affiliateRules": "jest -- \"src/__tests__/affiliateRules.test.ts\"",
     "test:files:scheduledCreditReward": "jest -- \"src/__tests__/scheduledCreditReward.test.ts\"",
     "test:files:updateNetworkImpact": "jest -- \"src/__tests__/updateNetworkImpact.test.ts\"",

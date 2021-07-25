@@ -6,7 +6,7 @@ export interface IPurchaseReadOnlyProperties extends IEntityReadOnlyProperties {
 
 export interface IPurchase extends IEntity {
   readonly readOnly?: IPurchaseReadOnlyProperties;
-  readonly entityCollection: 'colors';
+  readonly entityCollectionPath: 'colors';
   readonly entityId: string;
 }
 

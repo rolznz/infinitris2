@@ -53,6 +53,7 @@ const existingUser: IUser = {
     networkImpact: 0,
     coins: 3,
     email: 'bob@gmail.com',
+    purchasedEntityIds: [],
   },
   created: true,
 };
@@ -116,14 +117,14 @@ const existingPublishedChallenge: IChallenge = {
 };
 
 const creatableRating: CreatableRating = {
-  entityCollection: 'challenges',
+  entityCollectionPath: 'challenges',
   entityId: challengeId1,
   value: 3,
   created: false,
 };
 
 const rating1Path = getRatingPath(
-  creatableRating.entityCollection,
+  creatableRating.entityCollectionPath,
   creatableRating.entityId,
   userId2
 );
@@ -166,8 +167,15 @@ const creatableNickname: INickname = {
 };
 
 const colorId1 = 'red';
+const colorId2 = 'blue';
 const color1Path = getColorPath(colorId1);
 const color1: IColor = {
+  readOnly: {
+    createdTimestamp: createdTimestamp,
+    lastModifiedTimestamp: createdTimestamp,
+    numPurchases: 0,
+    numTimesModified: 0,
+  },
   price: 3,
   value: 0xff0000,
   created: true,
@@ -175,7 +183,7 @@ const color1: IColor = {
 
 const purchase1Path = getPurchasePath('colors', colorId1, userId1);
 const purchase1: IPurchase = {
-  entityCollection: 'colors',
+  entityCollectionPath: 'colors',
   entityId: colorId1,
   created: false,
 };
@@ -213,6 +221,7 @@ const dummyData = {
   createdTimestamp,
   lastModifiedTimestamp,
   colorId1,
+  colorId2,
   color1Path,
   color1,
   purchase1Path,

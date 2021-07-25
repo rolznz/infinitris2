@@ -35,7 +35,7 @@ async function addRating(
   // NB: when updating this list, also update firestore rules
   const newRating: Omit<IRating, 'userId'> = {
     value: nextValue,
-    entityCollection: 'challenges',
+    entityCollectionPath: 'challenges',
     entityId: challengeId,
   };
   console.log('Adding rating', ratingPath, newRating);

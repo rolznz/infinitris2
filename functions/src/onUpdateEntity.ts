@@ -1,10 +1,14 @@
 import * as functions from 'firebase-functions';
-import * as admin from 'firebase-admin';
 import { IEntity, objectToDotNotation } from 'infinitris2-models';
+import { updateUserRateLimit } from './utils/updateUserRateLimit';
+import firebase from 'firebase';
+import { getCurrentTimestamp, getDb } from './utils/firebase';
 
+// This trigger only fires for top level collections.
+// subcollections must have their own rules to avoid spam as user rate limits are not updated.
 export const onUpdateEntity = functions.firestore
   .document('{collectionId}/{entityId}')
-  .onUpdate(async (change) => {
+  .onUpdate(async (change, context: functions.EventContext) => {
     try {
       const data = change.after.data() as IEntity;
       const previousData = change.before.data() as IEntity;
@@ -15,11 +19,14 @@ export const onUpdateEntity = functions.firestore
         data.readOnly?.lastModifiedTimestamp?.nanoseconds ===
           previousData.readOnly?.lastModifiedTimestamp?.nanoseconds
       ) {
+        const currentTime = getCurrentTimestamp();
+        await updateUserRateLimit(context.auth?.uid, currentTime);
+
         const updateReadOnly = objectToDotNotation<IEntity>(
           {
             readOnly: {
-              lastModifiedTimestamp: admin.firestore.Timestamp.now(),
-              numTimesModified: (admin.firestore.FieldValue.increment(
+              lastModifiedTimestamp: currentTime,
+              numTimesModified: (firebase.firestore.FieldValue.increment(
                 1
               ) as any) as number,
             },
@@ -27,7 +34,8 @@ export const onUpdateEntity = functions.firestore
           ['readOnly.lastModifiedTimestamp', 'readOnly.numTimesModified']
         );
 
-        await change.after.ref.update(updateReadOnly);
+        // apply update using current database instance
+        await getDb().doc(change.after.ref.path).update(updateReadOnly);
       }
     } catch (error) {
       console.error(error);

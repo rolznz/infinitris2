@@ -18,3 +18,7 @@ export function getDb(): firestore.Firestore {
   }
   return _db;
 }
+
+export function getCurrentTimestamp(): admin.firestore.Timestamp {
+  return admin.firestore.Timestamp.now();
+}

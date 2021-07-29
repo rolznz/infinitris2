@@ -28,6 +28,7 @@ describe('Rating Rules', () => {
   test('should deny creating a rating when logged out', async () => {
     const { db } = await setup(undefined, {
       [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+      [dummyData.user2Path]: dummyData.existingUser,
     });
 
     await expect(
@@ -48,6 +49,7 @@ describe('Rating Rules', () => {
       { uid: dummyData.userId2 },
       {
         [dummyData.challenge1Path]: ownChallenge,
+        [dummyData.user2Path]: dummyData.existingUser,
       }
     );
 
@@ -61,6 +63,7 @@ describe('Rating Rules', () => {
       { uid: dummyData.userId2 },
       {
         [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+        [dummyData.user2Path]: dummyData.existingUser,
       }
     );
 
@@ -74,6 +77,7 @@ describe('Rating Rules', () => {
       { uid: dummyData.userId2 },
       {
         [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+        [dummyData.user2Path]: dummyData.existingUser,
       }
     );
 
@@ -86,7 +90,10 @@ describe('Rating Rules', () => {
   });
 
   test('should not allow creating a rating for a non-existent entity', async () => {
-    const { db } = await setup({ uid: dummyData.userId2 });
+    const { db } = await setup(
+      { uid: dummyData.userId2 },
+      { [dummyData.user2Path]: dummyData.existingUser }
+    );
 
     await expect(
       db.doc(dummyData.rating1Path).set(dummyData.creatableRating)
@@ -98,6 +105,7 @@ describe('Rating Rules', () => {
       { uid: dummyData.userId2 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.user2Path]: dummyData.existingUser,
       }
     );
 
@@ -128,6 +136,7 @@ describe('Rating Rules', () => {
       { uid: dummyData.userId2 },
       {
         [dummyData.challenge1Path]: dummyData.existingUnpublishedChallenge,
+        [dummyData.user2Path]: dummyData.existingUser,
       }
     );
 
@@ -141,6 +150,7 @@ describe('Rating Rules', () => {
       { uid: dummyData.userId2 },
       {
         [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+        [dummyData.user2Path]: dummyData.existingUser,
       }
     );
 
@@ -164,6 +174,7 @@ describe('Rating Rules', () => {
       { uid: dummyData.userId2 },
       {
         [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+        [dummyData.user2Path]: dummyData.existingUser,
       }
     );
 

@@ -26,8 +26,13 @@ service cloud.firestore {
 
       return oldState.diff(newState).affectedKeys().size() == 0
     }
+    function rateLimitHit() {
+      let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
+      return user.data.readOnly.writeRate > 1 && debug(request.time.seconds() - user.data.readOnly.lastWriteTimestamp.seconds()) <= debug(user.data.readOnly.writeRate * 5);
+    }
+
     function baseRequestValid() {
-      return createdFieldValid() && readOnlyFieldsUntouched();
+      return createdFieldValid() && readOnlyFieldsUntouched() && !rateLimitHit();
     }
 
     function getEntityFromCollection() {
@@ -44,8 +49,9 @@ service cloud.firestore {
     match /users/{userId} {
       function isValidUser() {
         let controls = getProperty('controls', {});
-        return request.resource.data.keys().hasOnly(['created', 'readOnly', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
+        return
           baseRequestValid() &&
+          request.resource.data.keys().hasOnly(['created', 'readOnly', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
           getProperty('hasSeenAllSet', false) is bool &&
           getProperty('hasSeenWelcome', false) is bool &&
           getProperty('preferredInputMethod', '') in ['', 'keyboard', 'touch'] &&
@@ -82,8 +88,8 @@ service cloud.firestore {
         let allowedBlockLayoutIds = simulationSettings.get('allowedBlockLayoutIds', []);
 
       	return
-          (!request.resource.data.get('isOfficial', false) || isAdmin()) &&
           baseRequestValid() &&
+          (!request.resource.data.get('isOfficial', false) || isAdmin()) &&
           request.resource.data.keys().hasOnly(['created', 'readOnly', 'description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
           title is string &&
           (title.size() == 0 || (title.size() < 21 && title.matches('[a-zA-Z0-9 ]+'))) &&
@@ -180,11 +186,12 @@ service cloud.firestore {
       function conversionIsValid() {
         let affiliate = get(/databases/$(database)/documents/affiliates/$(affiliateId));
         let user = get(/databases/$(database)/documents/users/$(userId));
-        return authMatchesUser(userId) &&
-        baseRequestValid() &&
-        request.resource.data.keys().hasOnly(['created']) &&
-        affiliate.data.readOnly.userId != userId &&
-        !('referredByAffiliateId' in user.data.readOnly);
+        return
+          baseRequestValid() &&
+          authMatchesUser(userId) &&
+          request.resource.data.keys().hasOnly(['created']) &&
+          affiliate.data.readOnly.userId != userId &&
+          !('referredByAffiliateId' in user.data.readOnly);
       }
       allow create: if conversionIsValid();
       allow read, update, delete: if false;
@@ -192,11 +199,11 @@ service cloud.firestore {
     match /nicknames/{nicknameId} {
       allow read: if true;
       allow create: if
+        baseRequestValid() &&
         isLoggedIn() &&
         nicknameId.size() > 1 &&
         nicknameId.size() < 16 &&
         nicknameId.matches('[a-zA-Z0-9 ]+') &&
-        baseRequestValid() &&
         request.resource.data.keys().hasOnly(['created']);
       allow update, delete: if false;
     }

@@ -1,10 +1,11 @@
-import * as admin from 'firebase-admin';
-import { IEntityReadOnlyProperties, Timestamp } from 'infinitris2-models';
+import { IEntityReadOnlyProperties } from 'infinitris2-models';
+import { getCurrentTimestamp } from './firebase';
 
-export function getDefaultEntityReadOnlyProperties(timestamp?: Timestamp) {
+export function getDefaultEntityReadOnlyProperties() {
+  const timestamp = getCurrentTimestamp();
   const properties: IEntityReadOnlyProperties = {
-    createdTimestamp: timestamp || admin.firestore.Timestamp.now(),
-    lastModifiedTimestamp: timestamp || admin.firestore.Timestamp.now(),
+    createdTimestamp: timestamp,
+    lastModifiedTimestamp: timestamp,
     numTimesModified: 0,
   };
   return properties;

@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import {
   getEntityPath,
+  getUserPath,
   IProduct,
   IPurchase,
   IUser,
@@ -39,7 +40,7 @@ export const onCreatePurchase = functions.firestore
 
       productDocRef.update(updateProduct);
 
-      const userDocRef = getDb().doc(`users/${userId}`);
+      const userDocRef = getDb().doc(getUserPath(userId));
       const user = (await userDocRef.get()).data() as IUser;
       const updateUser = objectToDotNotation<IUser>(
         {
@@ -58,13 +59,16 @@ export const onCreatePurchase = functions.firestore
 
       await userDocRef.update(updateUser);
 
-      await snapshot.ref.update({
-        readOnly: {
-          ...getDefaultEntityReadOnlyProperties(),
-          userId,
-        },
-        created: true,
-      } as Pick<IPurchase, 'readOnly' | 'created'>);
+      // apply update using current database instance
+      await getDb()
+        .doc(snapshot.ref.path)
+        .update({
+          readOnly: {
+            ...getDefaultEntityReadOnlyProperties(),
+            userId,
+          },
+          created: true,
+        } as Pick<IPurchase, 'readOnly' | 'created'>);
     } catch (error) {
       console.error(error);
     }

@@ -49,13 +49,16 @@ export const onCreateRating = functions.firestore
         updateNetworkImpact(challenge.readOnly.userId!, userId);
       }
 
-      await snapshot.ref.update({
-        readOnly: {
-          ...getDefaultEntityReadOnlyProperties(),
-          userId,
-        },
-        created: true,
-      } as Pick<IRating, 'readOnly' | 'created'>);
+      // apply update using current database instance
+      await getDb()
+        .doc(snapshot.ref.path)
+        .update({
+          readOnly: {
+            ...getDefaultEntityReadOnlyProperties(),
+            userId,
+          },
+          created: true,
+        } as Pick<IRating, 'readOnly' | 'created'>);
     } catch (error) {
       console.error(error);
     }

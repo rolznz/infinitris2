@@ -1,12 +1,14 @@
 import {
   getUserPath,
   IEntity,
+  IUser,
   IUserReadOnlyProperties,
   usersPath,
 } from 'infinitris2-models';
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
+import firebase from 'firebase';
 
 describe('Users Rules', () => {
   afterEach(async () => {
@@ -176,6 +178,75 @@ describe('Users Rules', () => {
           coins: 9999999,
         } as IUserReadOnlyProperties,
       })
+    ).toDeny();
+  });
+
+  test('should allow updating an entity when rate limit has not been hit', async () => {
+    const existingUser: IUser = {
+      ...dummyData.existingUser,
+      readOnly: {
+        ...dummyData.existingUser.readOnly,
+        writeRate: 0.9999,
+        lastWriteTimestamp: firebase.firestore.Timestamp.now(),
+      },
+    };
+
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: existingUser,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.user1Path).update(dummyData.updatableUser)
+    ).toAllow();
+  });
+
+  test('should allow updating an entity when write rate has been hit but last write was old enough', async () => {
+    const existingUser: IUser = {
+      ...dummyData.existingUser,
+      readOnly: {
+        ...dummyData.existingUser.readOnly,
+        // user should not be able to write until more than 1.2 * 5 seconds has passed since the last write
+        writeRate: 1.2,
+        lastWriteTimestamp: firebase.firestore.Timestamp.fromMillis(
+          firebase.firestore.Timestamp.now().toMillis() - 1.5 * 5000
+        ),
+      },
+    };
+
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: existingUser,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.user1Path).update(dummyData.updatableUser)
+    ).toAllow();
+  });
+
+  test('should not allow updating an entity when rate limit has been hit', async () => {
+    const existingUser: IUser = {
+      ...dummyData.existingUser,
+      readOnly: {
+        ...dummyData.existingUser.readOnly,
+        writeRate: 1.2,
+        lastWriteTimestamp: firebase.firestore.Timestamp.now(),
+      },
+    };
+
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: existingUser,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.user1Path).update(dummyData.updatableUser)
     ).toDeny();
   });
 });

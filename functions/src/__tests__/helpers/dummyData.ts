@@ -54,6 +54,9 @@ const existingUser: IUser = {
     coins: 3,
     email: 'bob@gmail.com',
     purchasedEntityIds: [],
+    lastWriteTimestamp: createdTimestamp,
+    numWrites: 0,
+    writeRate: 0,
   },
   created: true,
 };

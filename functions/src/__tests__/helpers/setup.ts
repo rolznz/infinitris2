@@ -18,11 +18,15 @@ import { FeaturesList } from 'firebase-functions-test/lib/features';
 import { firestore } from 'firebase-admin';
 jest.mock('../../utils/firebase');
 
-const mockedApp = firebaseUtils.getApp as jest.MockedFunction<
+const getAppMock = firebaseUtils.getApp as jest.MockedFunction<
   typeof firebaseUtils.getApp
 >;
-const mockedDb = firebaseUtils.getDb as jest.MockedFunction<
+const getDbMock = firebaseUtils.getDb as jest.MockedFunction<
   typeof firebaseUtils.getDb
+>;
+
+const getCurrentTimestampMock = firebaseUtils.getCurrentTimestamp as jest.MockedFunction<
+  typeof firebaseUtils.getCurrentTimestamp
 >;
 
 interface TestAuth {
@@ -56,10 +60,14 @@ export async function setup(
   const db = app.firestore();
 
   // FIXME: Google typings are incompatible (firebase.app.App vs admin.app.App)
-  mockedApp.mockReturnValue((app as any) as admin.app.App);
+  getAppMock.mockReturnValue((app as any) as admin.app.App);
   // FIXME: Google typings are incompatible
   // (@firebase/rules-unit-testing.firestore.Firestore vs firebase-admin/firestore.Firestore)
-  mockedDb.mockReturnValue((db as any) as firestore.Firestore);
+  getDbMock.mockReturnValue((db as any) as firestore.Firestore);
+  // don't use admin timestamp in tests, since admin is not connected to the test app :/
+  getCurrentTimestampMock.mockImplementation(() =>
+    firebase.firestore.Timestamp.now()
+  );
 
   // Apply the test rules so we can write documents
   await loadFirestoreRules({

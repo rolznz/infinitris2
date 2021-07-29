@@ -45,13 +45,16 @@ export const onCreateNickname = functions.firestore
       await userDocRef.update(updateUser);
 
       // assign the user's id to the nickname
-      await snapshot.ref.update({
-        readOnly: {
-          ...getDefaultEntityReadOnlyProperties(),
-          userId,
-        },
-        created: true,
-      } as Pick<INickname, 'readOnly' | 'created'>);
+      // apply update using current database instance
+      await getDb()
+        .doc(snapshot.ref.path)
+        .update({
+          readOnly: {
+            ...getDefaultEntityReadOnlyProperties(),
+            userId,
+          },
+          created: true,
+        } as Pick<INickname, 'readOnly' | 'created'>);
     } catch (error) {
       console.error(error);
     }

@@ -102,7 +102,8 @@ export const onCreateConversion = functions.firestore
         created: true,
       } as Pick<IConversion, 'readOnly' | 'created'>;
 
-      await snapshot.ref.update(updateConversion);
+      // apply update using current database instance
+      await getDb().doc(snapshot.ref.path).update(updateConversion);
     } catch (error) {
       console.error(error);
       throw error;

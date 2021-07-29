@@ -1,6 +1,7 @@
 import ControlSettings from './ControlSettings';
 import InputMethod from './InputMethod';
 import IEntity, { IEntityReadOnlyProperties } from './IEntity';
+import Timestamp from './Timestamp';
 
 export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly coins: number;
@@ -14,6 +15,9 @@ export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   // readonly patternId?: string;
   // readonly
   readonly purchasedEntityIds: string[];
+  readonly lastWriteTimestamp: Timestamp;
+  readonly numWrites: number;
+  readonly writeRate: number;
 }
 
 export default interface IUser extends IEntity {

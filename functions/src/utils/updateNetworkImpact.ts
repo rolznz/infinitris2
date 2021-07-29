@@ -8,6 +8,7 @@ import {
   objectToDotNotation,
 } from 'infinitris2-models';
 import { getDb } from './firebase';
+import { getDefaultEntityReadOnlyProperties } from './getDefaultEntityReadOnlyProperties';
 
 /**
  * Updates the network impact
@@ -72,9 +73,7 @@ export default async function updateNetworkImpact(
       fromUserId, // part of the URL, but store for convenience, see https://stackoverflow.com/a/58491352/4562693
       distance,
       readOnly: {
-        createdTimestamp: firebase.firestore.Timestamp.now(),
-        lastModifiedTimestamp: firebase.firestore.Timestamp.now(),
-        numTimesModified: 0,
+        ...getDefaultEntityReadOnlyProperties(),
       },
       created: true,
     };

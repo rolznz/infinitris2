@@ -15,14 +15,14 @@ describe('Challenge Hooks', () => {
       undefined,
       {
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.challenge1Path]: dummyData.updatableChallenge,
+        [dummyData.challenge1Path]: dummyData.creatableChallenge,
       },
       false
     );
 
     await test.wrap(onCreateChallenge)(
       test.firestore.makeDocumentSnapshot(
-        dummyData.updatableChallenge,
+        dummyData.creatableChallenge,
         dummyData.challenge1Path
       ),
       {

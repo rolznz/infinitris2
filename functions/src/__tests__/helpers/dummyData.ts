@@ -20,6 +20,7 @@ import {
   IColor,
   getPurchasePath,
   IPurchase,
+  Creatable,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -183,6 +184,11 @@ const color1: IColor = {
   value: 0xff0000,
   created: true,
 };
+const creatableColor: Creatable<IColor> = {
+  value: 0xff0000,
+  price: 3,
+  created: false,
+};
 
 const purchase1Path = getPurchasePath('colors', colorId1, userId1);
 const purchase1: IPurchase = {
@@ -227,6 +233,7 @@ const dummyData = {
   colorId2,
   color1Path,
   color1,
+  creatableColor,
   purchase1Path,
   purchase1,
 };

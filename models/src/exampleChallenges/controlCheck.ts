@@ -47,10 +47,10 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
   },
   rewardCriteria: {
     gold: {
-      maxTimeTaken: 5000,
+      maxTimeTakenMs: 5000,
     },
     silver: {
-      maxTimeTaken: 10000,
+      maxTimeTakenMs: 10000,
     },
     bronze: {},
     all: {
@@ -60,14 +60,6 @@ FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
   isMandatory: true,
   isPublished: true,
   priority: 10000,
-  readOnly: {
-    numRatings: 0,
-    rating: 0,
-    summedRating: 0,
-    createdTimestamp: { seconds: 0, nanoseconds: 0 },
-    lastModifiedTimestamp: { seconds: 0, nanoseconds: 0 },
-    numTimesModified: 0,
-  },
   created: true,
 };
 

@@ -231,6 +231,7 @@ describe('Challenges Rules', () => {
         numRatings: 5,
         rating: 5,
         summedRating: 25,
+        numAttempts: 999,
       },
     };
 
@@ -255,6 +256,7 @@ describe('Challenges Rules', () => {
         numRatings: 5,
         rating: 5,
         summedRating: 25,
+        numAttempts: 999,
       },
     };
 
@@ -526,7 +528,7 @@ describe('Challenges Rules', () => {
           {
             rewardCriteria: {
               [medal]: {
-                maxTimeTaken: false,
+                maxTimeTakenMs: false,
               },
             },
           },
@@ -572,7 +574,7 @@ describe('Challenges Rules', () => {
       db.doc(dummyData.challenge1Path).set(
         {
           finishCriteria: {
-            maxTimeTaken: 'test',
+            maxTimeTakenMs: 'test',
           },
         },
         { merge: true }

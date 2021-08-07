@@ -40,7 +40,7 @@ describe('Rating Rules', () => {
     const ownChallenge: IChallenge = {
       ...dummyData.existingPublishedChallenge,
       readOnly: {
-        ...dummyData.existingPublishedChallenge.readOnly,
+        ...dummyData.existingPublishedChallenge.readOnly!,
         userId: dummyData.userId2,
       },
     };

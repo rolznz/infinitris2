@@ -164,8 +164,8 @@ export default class ChallengeClient
         return false;
       }
       if (
-        finishCriteria.maxTimeTaken &&
-        this._simulation.runningTime < finishCriteria.maxTimeTaken
+        finishCriteria.maxTimeTakenMs &&
+        this._simulation.runningTime < finishCriteria.maxTimeTakenMs
       ) {
         return false;
       }
@@ -206,8 +206,8 @@ export default class ChallengeClient
           return false;
         }
         if (
-          criteria.maxTimeTaken &&
-          this._simulation.runningTime > criteria.maxTimeTaken
+          criteria.maxTimeTakenMs &&
+          this._simulation.runningTime > criteria.maxTimeTakenMs
         ) {
           return false;
         }
@@ -238,7 +238,7 @@ export default class ChallengeClient
       ? {
           blocksPlaced: this._numBlocksPlaced,
           linesCleared: this._numLinesCleared,
-          timeTaken: this._simulation.runningTime,
+          timeTakenMs: this._simulation.runningTime,
         }
       : undefined;
 

@@ -21,6 +21,8 @@ import {
   getPurchasePath,
   IPurchase,
   Creatable,
+  IChallengeAttempt,
+  getChallengeAttemptPath,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -76,7 +78,7 @@ const updatableChallenge: UpdatableChallenge = {
   finishCriteria: {},
   rewardCriteria: {
     all: {
-      maxTimeTaken: 60000,
+      maxTimeTakenMs: 60000,
     },
     bronze: {
       maxBlocksPlaced: 30,
@@ -111,6 +113,7 @@ const existingUnpublishedChallenge: IChallenge = {
     numRatings: 0,
     rating: 0,
     summedRating: 0,
+    numAttempts: 0,
   },
   created: true,
 };
@@ -197,6 +200,21 @@ const purchase1: IPurchase = {
   created: false,
 };
 
+const challengeAttemptId1 = 'challenge-attempt-1';
+const challengeAttempt1Path = getChallengeAttemptPath(challengeAttemptId1);
+
+const creatableChallengeAttempt: Creatable<IChallengeAttempt> = {
+  challengeId: challengeId1,
+  medalIndex: 1,
+  status: 'success',
+  stats: {
+    blocksPlaced: 1,
+    linesCleared: 1,
+    timeTakenMs: 3500,
+  },
+  created: false,
+};
+
 // TODO: rename userId1 to user1Id etc
 const dummyData = {
   userId1,
@@ -236,6 +254,9 @@ const dummyData = {
   creatableColor,
   purchase1Path,
   purchase1,
+  creatableChallengeAttempt,
+  challengeAttemptId1,
+  challengeAttempt1Path,
 };
 
 export default dummyData;

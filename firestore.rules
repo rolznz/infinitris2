@@ -28,7 +28,7 @@ service cloud.firestore {
     }
     function rateLimitHit() {
       let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
-      return user.data.readOnly.writeRate > 1 && debug(request.time.seconds() - user.data.readOnly.lastWriteTimestamp.seconds()) <= debug(user.data.readOnly.writeRate * 5);
+      return user.data.readOnly.writeRate > 1 && request.time.seconds() - user.data.readOnly.lastWriteTimestamp.seconds() <= user.data.readOnly.writeRate * 5;
     }
 
     function baseRequestValid() {
@@ -71,12 +71,12 @@ service cloud.firestore {
     match /challenges/{challengeId} {
       function isValidRewardCriteria(rewardCriteria) {
         return
-          rewardCriteria.keys().hasOnly(['minLinesCleared', 'maxLinesCleared', 'minBlocksPlaced', 'maxBlocksPlaced', 'maxTimeTaken']) &&
+          rewardCriteria.keys().hasOnly(['minLinesCleared', 'maxLinesCleared', 'minBlocksPlaced', 'maxBlocksPlaced', 'maxTimeTakenMs']) &&
           rewardCriteria.get('minLinesCleared', 0) is number && 
           rewardCriteria.get('maxLinesCleared', 0) is number && 
           rewardCriteria.get('minBlocksPlaced', 0) is number && 
           rewardCriteria.get('maxBlocksPlaced', 0) is number && 
-          rewardCriteria.get('maxTimeTaken', 0) is number;
+          rewardCriteria.get('maxTimeTakenMs', 0) is number;
       }
     	function isValidChallenge() {
         let finishCriteria = getProperty('finishCriteria', {});
@@ -110,10 +110,10 @@ service cloud.firestore {
           (allowedBlockLayoutIds.size() < 2 || allowedBlockLayoutIds[1] is string) &&
           (allowedBlockLayoutIds.size() < 3 || allowedBlockLayoutIds[2] is string) &&
           finishCriteria is map &&
-          finishCriteria.keys().hasOnly(['maxBlocksPlaced', 'maxLinesCleared', 'maxTimeTaken', 'gridEmpty']) &&
+          finishCriteria.keys().hasOnly(['maxBlocksPlaced', 'maxLinesCleared', 'maxTimeTakenMs', 'gridEmpty']) &&
           finishCriteria.get('maxBlocksPlaced', 0) is number && 
           finishCriteria.get('maxLinesCleared', 0) is number && 
-          finishCriteria.get('maxTimeTaken', 0) is number && 
+          finishCriteria.get('maxTimeTakenMs', 0) is number && 
           finishCriteria.get('gridEmpty', false) is bool && 
           rewardCriteria is map &&
           rewardCriteria.keys().hasOnly(['all', 'bronze', 'silver', 'gold']) &&
@@ -129,12 +129,25 @@ service cloud.firestore {
       
     }
     match /challengeAttempts/{challengeAttemptId} {
-      allow read, write: if false;
-      // TODO: before implementing this, add rate limiting
-      /*allow read: if isOwner();
+      function isValidChallengeAttempt() {
+        let challenge = get(/databases/$(database)/documents/challenges/$(request.resource.data.challengeId));
+        return
+          isLoggedIn() &&
+          baseRequestValid() &&
+          request.resource.data.keys().hasOnly(['created', 'challengeId', 'status', 'medalIndex', 'stats']) &&
+          challenge != null &&
+          challenge.data.isPublished &&
+          request.resource.data.status in ['success', 'failed'] &&
+          request.resource.data.medalIndex is number && request.resource.data.medalIndex > 0 && request.resource.data.medalIndex < 4 &&
+          request.resource.data.stats is map && request.resource.data.stats.keys().hasOnly(['linesCleared', 'blocksPlaced', 'timeTakenMs']) &&
+          request.resource.data.stats.linesCleared is number &&
+          request.resource.data.stats.blocksPlaced is number &&
+          request.resource.data.stats.timeTakenMs is number;
+      }
+      allow read: if false;
       allow delete: if false;
-      allow create: if request.resource.data.keys().hasOnly(['code', 'medalIndex', 'stats']);
-      allow update: if false;*/
+      allow create: if isValidChallengeAttempt();
+      allow update: if false;
     }
     match /ratings/{ratingId} {
       function isValidCollection() {

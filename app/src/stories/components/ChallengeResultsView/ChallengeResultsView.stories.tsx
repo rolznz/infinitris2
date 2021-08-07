@@ -30,7 +30,7 @@ const status: ChallengeStatus = {
   stats: {
     blocksPlaced: 1,
     linesCleared: 1,
-    timeTaken: 1500,
+    timeTakenMs: 1500,
   },
 };
 

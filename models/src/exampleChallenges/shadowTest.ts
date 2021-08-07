@@ -18,14 +18,6 @@ X000000X
 00000000
 X000000X
 `,
-  readOnly: {
-    numRatings: 0,
-    rating: 0,
-    summedRating: 0,
-    createdTimestamp: { seconds: 0, nanoseconds: 0 },
-    lastModifiedTimestamp: { seconds: 0, nanoseconds: 0 },
-    numTimesModified: 0,
-  },
   created: true,
 };
 

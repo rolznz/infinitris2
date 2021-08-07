@@ -1,39 +1,38 @@
 import * as functions from 'firebase-functions';
 import {
-  getUserPath,
+  getChallengePath,
   IChallenge,
-  IUser,
+  IChallengeAttempt,
   objectToDotNotation,
 } from 'infinitris2-models';
 import { getDb } from './utils/firebase';
-import firebase from 'firebase';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
+import firebase from 'firebase';
 
-export const onCreateChallenge = functions.firestore
-  .document('challenges/{challengeId}')
+export const onCreateChallengeAttempt = functions.firestore
+  .document('challengeAttempts/{challengeAttemptId}')
   .onCreate(async (snapshot, context) => {
     try {
       const userId = context.auth?.uid;
       if (!userId) {
         throw new Error('User not logged in');
       }
+      const challengeAttempt = snapshot.data() as IChallengeAttempt;
+      const challengeRef = getDb().doc(
+        getChallengePath(challengeAttempt.challengeId)
+      );
 
-      // reduce the number of coins the user has so they
-      // cannot create an infinite number of challenges
-      const userDocRef = getDb().doc(getUserPath(userId));
-
-      const updateUser = objectToDotNotation<IUser>(
+      const updateChallenge = objectToDotNotation<IChallenge>(
         {
           readOnly: {
-            coins: (firebase.firestore.FieldValue.increment(
-              -1
+            numAttempts: (firebase.firestore.FieldValue.increment(
+              1
             ) as any) as number,
           },
         },
-        ['readOnly.coins']
+        ['readOnly.numAttempts']
       );
-
-      await userDocRef.update(updateUser);
+      await challengeRef.update(updateChallenge);
 
       // apply update using current database instance
       await getDb()
@@ -42,13 +41,9 @@ export const onCreateChallenge = functions.firestore
           readOnly: {
             ...getDefaultEntityReadOnlyProperties(),
             userId,
-            numRatings: 0,
-            rating: 0,
-            summedRating: 0,
-            numAttempts: 0,
           },
           created: true,
-        } as Pick<IChallenge, 'readOnly' | 'created'>);
+        } as Pick<IChallengeAttempt, 'readOnly' | 'created'>);
     } catch (error) {
       console.error(error);
     }

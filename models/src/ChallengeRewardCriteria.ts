@@ -3,7 +3,7 @@ type ChallengeRewardCriteria = {
   maxLinesCleared?: number;
   maxBlocksPlaced?: number;
   minBlocksPlaced?: number;
-  maxTimeTaken?: number;
+  maxTimeTakenMs?: number;
 };
 
 export default ChallengeRewardCriteria;

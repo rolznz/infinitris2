@@ -41,14 +41,6 @@ rrrr00000000rrrrrrrrr000rrrrr
 00000000000XXX000XX0XXXXX0XXX
 00000000000XRX000XXIXXXXXIXXX
 `,
-  readOnly: {
-    numRatings: 0,
-    rating: 0,
-    summedRating: 0,
-    createdTimestamp: { seconds: 0, nanoseconds: 0 },
-    lastModifiedTimestamp: { seconds: 0, nanoseconds: 0 },
-    numTimesModified: 0,
-  },
   created: true,
 };
 

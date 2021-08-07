@@ -1,7 +1,7 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
-import { getNicknamePath } from 'infinitris2-models';
+import { getNicknamePath, INickname } from 'infinitris2-models';
 
 describe('Nickname Rules', () => {
   afterEach(async () => {
@@ -23,6 +23,22 @@ describe('Nickname Rules', () => {
         db.doc(getNicknamePath(nicknameId)).set(dummyData.creatableNickname)
       ).toAllow();
     }
+  });
+
+  test('should deny creating a nickname with created property set to true', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+      }
+    );
+
+    const nickname: INickname = {
+      ...dummyData.creatableNickname,
+      created: true,
+    };
+
+    await expect(db.doc(getNicknamePath('Test')).set(nickname)).toDeny();
   });
 
   test('should deny creating a nickname when logged out', async () => {

@@ -34,13 +34,13 @@ describe('Challenge Hooks', () => {
       await db.doc(dummyData.challenge1Path).get()
     ).data() as IChallenge;
     expect(challenge.created).toBe(true);
-    expect(challenge.readOnly.userId).toBe(dummyData.userId1);
-    expect(challenge.readOnly.createdTimestamp?.seconds).toBeGreaterThan(
+    expect(challenge.readOnly!.userId).toBe(dummyData.userId1);
+    expect(challenge.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
       firebase.firestore.Timestamp.now().seconds - 5
     );
-    expect(challenge.readOnly.numRatings).toBe(0);
-    expect(challenge.readOnly.summedRating).toBe(0);
-    expect(challenge.readOnly.rating).toBe(0);
+    expect(challenge.readOnly!.numRatings).toBe(0);
+    expect(challenge.readOnly!.summedRating).toBe(0);
+    expect(challenge.readOnly!.rating).toBe(0);
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
     expect(user.readOnly.coins).toEqual(2);

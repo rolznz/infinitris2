@@ -35,7 +35,7 @@ import IPlayer from './src/IPlayer';
 import IEntity from './src/IEntity';
 
 export * from './src/util/fireStorePaths';
-export * from './src/ChallengeStatus';
+export * from './src/IChallengeAttempt';
 export * from './src/IChallenge';
 export * from './src/INickname';
 export * from './src/IConversion';

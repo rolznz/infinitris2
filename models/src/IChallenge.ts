@@ -15,14 +15,15 @@ export interface IRateable {
 export interface IChallengeReadOnlyProperties
   extends IEntityReadOnlyProperties,
     IRateable {
-  readonly userId?: string;
+  readonly userId: string;
+  readonly numAttempts: number;
 }
 
 export type CreatableChallenge = Creatable<IChallenge>;
 export type UpdatableChallenge = Updatable<IChallenge>;
 
 export interface IChallenge extends IEntity {
-  readonly readOnly: IChallengeReadOnlyProperties;
+  readonly readOnly?: IChallengeReadOnlyProperties;
   readonly title: string;
   readonly description?: string;
 
@@ -38,7 +39,7 @@ export interface IChallenge extends IEntity {
   readonly finishCriteria: {
     readonly maxBlocksPlaced?: number;
     readonly maxLinesCleared?: number;
-    readonly maxTimeTaken?: number;
+    readonly maxTimeTakenMs?: number;
     readonly gridEmpty?: boolean;
   };
 

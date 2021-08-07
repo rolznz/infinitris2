@@ -180,7 +180,7 @@
     "description": "Drop action text"
   },
   "hK8RKE": {
-    "defaultMessage": "Time taken: {timeTaken} seconds",
+    "defaultMessage": "Time taken: {timeTakenMs} seconds",
     "description": "Time taken to complete challenge"
   },
   "iK6s4W": {

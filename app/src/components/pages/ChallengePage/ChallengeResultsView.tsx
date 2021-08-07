@@ -51,10 +51,10 @@ export default function ChallengeResultsView({
         {/* TODO: extract to a list of statistics, will this work with react-i18n? */}
         <Typography variant="caption">
           <FormattedMessage
-            defaultMessage="Time taken: {timeTaken} seconds"
+            defaultMessage="Time taken: {timeTakenMs} seconds"
             description="Time taken to complete challenge"
             values={{
-              timeTaken: (stats.timeTaken / 1000).toFixed(2),
+              timeTakenMs: (stats.timeTakenMs / 1000).toFixed(2),
             }}
           />
         </Typography>

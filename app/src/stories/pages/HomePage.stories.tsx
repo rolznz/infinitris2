@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Meta } from '@storybook/react';
-import HomePage from '@/components/pages/HomePage';
+import HomePage from '@/components/pages/HomePage/HomePage';
 
 export default {
   title: 'Pages',

@@ -8,6 +8,9 @@ declare module '@material-ui/core/styles/overrides' {
 }
 
 const theme = createMuiTheme({
+  typography: {
+    fontFamily: ['Nunito'].join(','),
+  },
   overrides: {
     MuiSkeleton: {
       rect: {

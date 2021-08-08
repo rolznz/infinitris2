@@ -5,7 +5,7 @@ import Header from './components/ui/Header';
 import AllSetPage from './components/pages/AllSetPage';
 import { CreateChallengePage } from './components/pages/CreateChallengePage/CreateChallengePage';
 import { LoadChallengePage } from './components/pages/CreateChallengePage/LoadChallengePage';
-import HomePage from './components/pages/HomePage';
+import HomePage from './components/pages/HomePage/HomePage';
 import LobbyPage from './components/pages/LobbyPage';
 import LoginPage from './components/pages/LoginPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
@@ -50,9 +50,7 @@ export default function Router() {
 
   return (
     <BrowserRouter>
-      <OutsideGameElement>
-        <Header />
-      </OutsideGameElement>
+      <OutsideGameElement>{/*<Header />*/}</OutsideGameElement>
       <Switch>
         <Route exact path={Routes.home}>
           <HomePage />
@@ -127,9 +125,6 @@ export default function Router() {
           <NotFoundPage />
         </Route>
       </Switch>
-      <OutsideGameElement>
-        <Footer />
-      </OutsideGameElement>
     </BrowserRouter>
   );
 }

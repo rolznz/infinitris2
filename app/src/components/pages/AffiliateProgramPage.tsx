@@ -10,9 +10,14 @@ import {
   useCollection,
   useDocument,
 } from '@nandorojo/swr-firestore';
-import { IAffiliate, IUser } from 'infinitris2-models';
+import {
+  affiliatesPath,
+  getAffiliatePath,
+  getUserPath,
+  IAffiliate,
+  IUser,
+} from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
-import { affiliatesPath, getAffiliatePath, getUserPath } from '../../firebase';
 import LoadingSpinner from '../LoadingSpinner';
 import { useCopyToClipboard } from 'react-use';
 import { toast } from 'react-toastify';

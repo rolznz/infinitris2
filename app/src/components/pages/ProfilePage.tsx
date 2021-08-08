@@ -9,9 +9,13 @@ import { useUserStore } from '../../state/UserStore';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import { useCollection, useDocument } from '@nandorojo/swr-firestore';
-import { IChallenge, IUser } from 'infinitris2-models';
+import {
+  challengesPath,
+  getUserPath,
+  IChallenge,
+  IUser,
+} from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
-import { challengesPath, getUserPath } from '../../firebase';
 import LoadingSpinner from '../LoadingSpinner';
 import { Link as RouterLink } from 'react-router-dom';
 import { YourBlockPreview } from '../ui/BlockPreview';
@@ -50,7 +54,7 @@ export default function ProfilePage() {
         <FormattedMessage
           defaultMessage="{nickname}'s Profile"
           description="Profile title"
-          values={{ nickname: user.nickname || 'Unknown' }}
+          values={{ nickname: user.readOnly.nickname || 'Unknown' }}
         />
       </Typography>
 
@@ -58,7 +62,9 @@ export default function ProfilePage() {
         <FormattedMessage
           defaultMessage="{count} completed challenges"
           description="Completed challenges statistic"
-          values={{ count: user.completedChallengeIds.length }}
+          values={{
+            count: /*FIXME: add backend counter user.completedChallengeIds.length*/ 0,
+          }}
         />
       </Typography>
 
@@ -75,7 +81,7 @@ export default function ProfilePage() {
           <FormattedMessage
             defaultMessage="{count} coins available"
             description="User coins statistic"
-            values={{ count: user.coins || 0 }}
+            values={{ count: user.readOnly.coins || 0 }}
           />
         </Typography>
         <Box ml={1} />
@@ -92,7 +98,7 @@ export default function ProfilePage() {
         <FormattedMessage
           defaultMessage="Network impact: {networkImpact}"
           description="Network impact statistic"
-          values={{ networkImpact: user.networkImpact }}
+          values={{ networkImpact: user.readOnly.networkImpact }}
         />
       </Typography>
       <FlexBox flexDirection="row">

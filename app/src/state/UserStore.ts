@@ -1,13 +1,14 @@
 import { useDocument } from '@nandorojo/swr-firestore';
 import {
   DEFAULT_KEYBOARD_CONTROLS,
+  getUserPath,
+  IChallengeAttempt,
   InputAction,
   InputMethod,
   IUser,
-  ChallengeStatus,
 } from 'infinitris2-models';
 import { StateSelector } from 'zustand';
-import { fuego, getUserPath } from '../firebase';
+import { fuego } from '../firebase';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
 import useLocalUserStore from './LocalUserStore';
@@ -31,7 +32,7 @@ type IUserStore = {
   markHasSeenWelcome(): void;
   markHasSeenAllSet(): void;
   setPreferredInputMethod(preferredInputMethod: InputMethod | undefined): void;
-  addChallengeAttempt(challengeId: string, attempt: ChallengeStatus): void;
+  addChallengeAttempt(challengeId: string, attempt: IChallengeAttempt): void;
   completeChallenge(challengeId: string): void;
   updateControl(inputAction: InputAction, control: string): void;
   resetControls(): void;
@@ -44,9 +45,9 @@ export function getUpdatableUserProperties(
   user: Partial<IUser>
 ): Partial<IUser> {
   return {
-    nickname: user.nickname,
-    challengeAttempts: user.challengeAttempts,
-    completedChallengeIds: user.completedChallengeIds,
+    //nickname: user.nickname,
+    //challengeAttempts: user.challengeAttempts,
+    //completedChallengeIds: user.completedChallengeIds,
     controls: user.controls,
     hasSeenAllSet: user.hasSeenAllSet,
     hasSeenWelcome: user.hasSeenWelcome,
@@ -91,9 +92,10 @@ export function useUserStore<StateSlice>(
       updateUser(userData, false);
     },
     setNickname: (nickname: string) => {
-      updateUser({
+      /*updateUser({
         nickname,
-      });
+      });*/
+      // FIXME: request nickname or store local if logged out
     },
     setLocale: (locale: string) => {
       updateUser({ locale });
@@ -109,29 +111,33 @@ export function useUserStore<StateSlice>(
     ) => {
       updateUser({ preferredInputMethod });
     },
-    addChallengeAttempt: (challengeId: string, attempt: ChallengeStatus) => {
-      const attempts = user.challengeAttempts[challengeId] || [];
+    addChallengeAttempt: (challengeId: string, attempt: IChallengeAttempt) => {
+      // TODO: store locally, plus challenge attempt sync
+      /*const attempts = user.challengeAttempts[challengeId] || [];
       updateUser({
         challengeAttempts: {
           ...user.challengeAttempts,
           [challengeId]: [...attempts, attempt],
         },
-      });
+      });*/
     },
     completeChallenge: (challengeId: string) => {
-      const uniqueIds = new Set([...user.completedChallengeIds, challengeId]);
+      // TODO: remove this function, just use addChallengeAttempt
+      /*const uniqueIds = new Set([...user.completedChallengeIds, challengeId]);
       updateUser({
         completedChallengeIds: Array.from(uniqueIds),
-      });
+      });*/
     },
     updateControl: (inputAction: InputAction, control: string) => {
-      updateUser({ controls: { ...user.controls, [inputAction]: control } });
+      updateUser({
+        controls: { ...(user.controls! || {}), [inputAction]: control },
+      });
     },
     resetControls: () => {
       updateUser({ controls: DEFAULT_KEYBOARD_CONTROLS });
     },
     clearProgress: () => {
-      updateUser({ completedChallengeIds: [], challengeAttempts: {} });
+      //updateUser({ completedChallengeIds: [], challengeAttempts: {} });
     },
     signOut: () => {
       signoutLocalUser();

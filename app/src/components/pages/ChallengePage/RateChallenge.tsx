@@ -1,6 +1,5 @@
 import FlexBox from '@/components/ui/FlexBox';
 import LoginDialog from '@/components/ui/modals/LoginDialog';
-import { getChallengePath, getRatingsPath as getRatingPath } from '@/firebase';
 import useAuthStore from '@/state/AuthStore';
 import { Typography } from '@material-ui/core';
 import {
@@ -9,7 +8,12 @@ import {
   set,
   useDocument,
 } from '@nandorojo/swr-firestore';
-import { IChallenge, IRating } from 'infinitris2-models';
+import {
+  getChallengePath,
+  getRatingPath,
+  IChallenge,
+  IRating,
+} from 'infinitris2-models';
 import React, { useState } from 'react';
 import { FormattedMessage, IntlShape, useIntl } from 'react-intl';
 import StarRatingComponent from 'react-star-rating-component';
@@ -37,6 +41,7 @@ async function addRating(
     value: nextValue,
     entityCollectionPath: 'challenges',
     entityId: challengeId,
+    created: false,
   };
   console.log('Adding rating', ratingPath, newRating);
   toast(
@@ -76,8 +81,8 @@ export default function RateChallenge({
     : null;
   const { data: userRating } = useDocument<IRating>(ratingPath);
 
-  const numRatings = challenge?.numRatings || 0;
-  const totalRating = challenge?.totalRating || 0;
+  const numRatings = challenge?.readOnly?.numRatings || 0;
+  const totalRating = challenge?.readOnly?.rating || 0;
   async function onStarClick(value: number) {
     if (userId && ratingPath) {
       addRating(value, userId, ratingPath, challengeId, intl, userRating);

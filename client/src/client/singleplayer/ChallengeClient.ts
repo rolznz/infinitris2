@@ -16,12 +16,17 @@ import ChallengeCompletionStats from '@models/ChallengeCompletionStats';
 import ChallengeCellType from '@models/ChallengeCellType';
 import createBehaviour from '@core/grid/cell/behaviours/createBehaviour';
 import ControlSettings from '@models/ControlSettings';
-import { ChallengeStatus, ChallengeStatusCode } from '@models/ChallengeStatus';
 import parseGrid from '@models/util/parseGrid';
 import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IPlayer from '@models/IPlayer';
+import {
+  ChallengeStatusCode,
+  IChallengeAttempt,
+  IIngameChallengeAttempt,
+} from '@models/IChallengeAttempt';
+import ChallengeRewardCriteria from '@models/ChallengeRewardCriteria';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -62,7 +67,7 @@ export default class ChallengeClient
    * @inheritdoc
    */
   onSimulationStep(simulation: ISimulation) {
-    if (this.getStatus().code !== 'pending') {
+    if (this.getChallengeAttempt().status !== 'pending') {
       simulation.stopInterval();
     }
   }
@@ -135,7 +140,7 @@ export default class ChallengeClient
     this._createTempObjects();
   }
 
-  getStatus(): ChallengeStatus {
+  getChallengeAttempt(): IIngameChallengeAttempt {
     const { finishCriteria, rewardCriteria } = this._challenge;
     const matchesFinishCriteria = () => {
       if (this._blockCreateFailed || this._blockDied) {
@@ -228,7 +233,7 @@ export default class ChallengeClient
 
     const medalIndex = finished ? getMedalIndex() : 0;
     //this._numLinesCleared >= (this._challenge.successLinesCleared || 0);
-    const code: ChallengeStatusCode = finished
+    const status: ChallengeStatusCode = finished
       ? medalIndex > 0
         ? 'success'
         : 'failed'
@@ -244,7 +249,7 @@ export default class ChallengeClient
 
     // TODO:
     return {
-      code,
+      status,
       medalIndex,
       stats,
     };

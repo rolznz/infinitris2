@@ -14,10 +14,9 @@ import RoomCard from '../RoomCard';
 import Routes from '../../models/Routes';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import { IRoom } from 'infinitris2-models';
+import { IRoom, roomsPath } from 'infinitris2-models';
 import { useCollection } from '@nandorojo/swr-firestore';
 import { useUserStore } from '../../state/UserStore';
-import { roomsPath } from '../../firebase';
 import useAuthStore from '@/state/AuthStore';
 import useIncompleteChallenges from '../hooks/useIncompleteChallenges';
 
@@ -55,7 +54,7 @@ export default function HomePage() {
                   defaultMessage: 'Nickname',
                   description: 'Nickname textbox placeholder',
                 })}
-                value={userStore.user.nickname}
+                value={userStore.user.readOnly?.nickname || ''}
                 onChange={(e) => userStore.setNickname(e.target.value)}
               />
               {(isLoggedIn ||

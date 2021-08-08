@@ -1,5 +1,11 @@
 import { Box, Button, Link, TextField, Typography } from '@material-ui/core';
-import { ChallengeCellType, IChallenge, parseGrid } from 'infinitris2-models';
+import {
+  ChallengeCellType,
+  CreatableChallenge,
+  getChallengePath,
+  IChallenge,
+  parseGrid,
+} from 'infinitris2-models';
 import React, { useCallback, useEffect, useState } from 'react';
 import { defaultLocale } from '../../../internationalization';
 
@@ -12,7 +18,6 @@ import { useCopyToClipboard, useLocalStorage } from 'react-use';
 import { v4 as uuidv4 } from 'uuid';
 import localStorageKeys from '../../../utils/localStorageKeys';
 import { revalidateDocument, set, useDocument } from '@nandorojo/swr-firestore';
-import { getChallengePath } from '../../../firebase';
 import useAuthStore from '../../../state/AuthStore';
 import prettyStringify from '../../../utils/prettyStringify';
 import stableStringify from '../../../utils/stableStringify';
@@ -23,6 +28,7 @@ import { getCellFillColor } from '../../../utils/getCellFillColor';
 import { detailedDiff } from 'deep-object-diff';
 import { useUser } from '../../../state/UserStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
+import { WithId } from '@/models/WithId';
 
 function removeSwrFields(challenge?: IChallenge): IChallenge | undefined {
   if (!challenge) {
@@ -34,18 +40,15 @@ function removeSwrFields(challenge?: IChallenge): IChallenge | undefined {
   return cleaned;
 }
 
-function createNewChallenge(userId: string): IChallenge {
+function createNewChallenge(userId: string): WithId<IChallenge> {
   return {
     id: uuidv4(),
     locale: defaultLocale,
     isOfficial: false,
     isPublished: false,
-    userId,
-    numRatings: 0,
-    totalRating: 0,
-    successCriteria: {},
+    rewardCriteria: {},
     finishCriteria: {
-      finishChallengeCellFilled: true,
+      //finishChallengeCellFilled: true,
     },
     title: '',
     grid: `
@@ -65,6 +68,7 @@ function createNewChallenge(userId: string): IChallenge {
 0X0000X00
 X00X00X0X
 FFFFFFFFF`.trim(),
+    created: false,
   };
 }
 
@@ -103,7 +107,7 @@ export function CreateChallengePage() {
     }
   );
 
-  let challenge: IChallenge | undefined;
+  let challenge: WithId<IChallenge> | undefined;
   let challengeInfoError: string | undefined;
   try {
     challenge = {
@@ -117,11 +121,11 @@ export function CreateChallengePage() {
   }
 
   const [initialChallenge, setInitialChallenge] = useState<
-    IChallenge | undefined
+    WithId<IChallenge> | undefined
   >(challenge);
 
   const resetChallenge = useCallback(
-    (initialValue?: IChallenge) => {
+    (initialValue?: WithId<IChallenge>) => {
       const newInitialChallenge = initialValue || createNewChallenge(userId!);
       setInitialChallenge(newInitialChallenge);
       const { grid, ...challengeWithoutGrid } = newInitialChallenge;
@@ -165,8 +169,7 @@ export function CreateChallengePage() {
     setIsSaving(true);
     try {
       // NB: when updating this list, also update firestore rules
-      const challengeToSave: Partial<IChallenge> = {
-        allowedActions: challenge.allowedActions,
+      const challengeToSave: CreatableChallenge = {
         description: challenge.description,
         finishCriteria: challenge.finishCriteria,
         firstBlockLayoutId: challenge.firstBlockLayoutId,
@@ -177,8 +180,9 @@ export function CreateChallengePage() {
         locale: challenge.locale,
         priority: challenge.priority,
         simulationSettings: challenge.simulationSettings,
-        successCriteria: challenge.successCriteria,
+        rewardCriteria: challenge.rewardCriteria,
         title: challenge.title,
+        created: false, // FIXME: omit when updating
       };
 
       await set(challengePath, removeUndefinedValues(challengeToSave), {
@@ -211,8 +215,6 @@ export function CreateChallengePage() {
                 ...syncedChallenge,
                 isPublished: false,
                 id: uuidv4(),
-                clonedFromChallengeId: syncedChallenge.id,
-                clonedFromUserId: syncedChallenge.userId,
               });
             }}
           >
@@ -436,7 +438,7 @@ export function CreateChallengePage() {
               color="primary"
               disabled={isSaving}
               onClick={() => {
-                if (user.coins <= 0) {
+                if (user.readOnly.coins <= 0) {
                   alert(
                     intl.formatMessage({
                       defaultMessage:

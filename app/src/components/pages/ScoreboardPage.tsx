@@ -3,9 +3,8 @@ import { Box, Typography } from '@material-ui/core';
 
 import FlexBox from '../ui/FlexBox';
 import { FormattedMessage } from 'react-intl';
-import { IScoreboardEntry } from 'infinitris2-models';
+import { IScoreboardEntry, scoreboardEntriesPath } from 'infinitris2-models';
 import { useCollection } from '@nandorojo/swr-firestore';
-import { scoreboardEntriesPath } from '@/firebase';
 import { DataGrid, GridColDef } from '@material-ui/data-grid';
 
 export default function ScoreboardPage() {

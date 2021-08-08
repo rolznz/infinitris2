@@ -1,4 +1,3 @@
-import IChallenge from '@models/IChallenge';
 import IInfinitrisApi from '@models/IInfinitrisApi';
 import IClientSocketEventListener from '@src/networking/IClientSocketEventListener';
 import IClient from '../../../models/src/IClient';
@@ -11,6 +10,7 @@ import InputMethod from '@models/InputMethod';
 import { exampleChallenges } from '@models/exampleChallenges';
 import ControlSettings from '@models/ControlSettings';
 import IPlayer from '@models/IPlayer';
+import { IChallenge } from '@models/IChallenge';
 
 export default class InfinitrisApi implements IInfinitrisApi {
   private _client?: IClient;
@@ -43,15 +43,9 @@ export default class InfinitrisApi implements IInfinitrisApi {
       );
     } else if (params.has('demo')) {
       this.launchDemo();
-    } else if (params.has('challenge')) {
-      const challengeId = params.get('challengeId');
-      console.log(
-        exampleChallenges.map((c) => c.id),
-        challengeId
-      );
-      const challenge = exampleChallenges.find(
-        (challenge) => challenge.id === challengeId
-      );
+    } else if (params.has('challengeId')) {
+      const challengeId = params.get('challengeId')!;
+      const challenge = exampleChallenges[challengeId];
       if (!challenge) {
         throw new Error('Could not find challenge matching ID: ' + challengeId);
       }

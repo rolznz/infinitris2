@@ -1,6 +1,5 @@
 import { useCollection } from '@nandorojo/swr-firestore';
-import { IChallenge } from 'infinitris2-models';
-import { challengesPath } from '../../firebase';
+import { challengesPath, IChallenge } from 'infinitris2-models';
 import { useUser } from '../../state/UserStore';
 
 export default function useIncompleteChallenges() {
@@ -13,12 +12,13 @@ export default function useIncompleteChallenges() {
 
   const isLoadingOfficialChallenges = !officialChallenges?.length;
 
+  // FIXME: use user challenge attempts
   const user = useUser();
   const incompleteChallenges =
     officialChallenges?.filter(
       (challenge) =>
-        challenge.isMandatory &&
-        user.completedChallengeIds.indexOf(challenge.id) < 0
+        challenge.isMandatory /* &&
+        user.completedChallengeIds.indexOf(challenge.id) < 0*/
     ) || [];
   return { incompleteChallenges, isLoadingOfficialChallenges };
 }

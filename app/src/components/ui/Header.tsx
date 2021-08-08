@@ -11,14 +11,12 @@ import FolderIcon from '@material-ui/icons/Folder';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import { Route } from 'react-router-dom';
-import useDemo from '../hooks/useDemo';
 import { useIntl } from 'react-intl';
 
 // TODO: use material UI app bar
 // TODO: use material UI drawer component (open from the right), add text next to icons in menu
 export default function Header() {
   const intl = useIntl();
-  useDemo();
 
   return (
     <Box

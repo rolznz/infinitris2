@@ -7,12 +7,15 @@ import useRoomStore from '../../state/RoomStore';
 import SignalCellularConnectedNoInternet0BarIcon from '@material-ui/icons/SignalCellularConnectedNoInternet0Bar';
 import HomeIcon from '@material-ui/icons/Home';
 import RefreshIcon from '@material-ui/icons/Refresh';
-import { IClientSocketEventListener, IRoom } from 'infinitris2-models';
+import {
+  getRoomPath,
+  IClientSocketEventListener,
+  IRoom,
+} from 'infinitris2-models';
 import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser } from '../../state/UserStore';
 import LoadingSpinner from '../LoadingSpinner';
 import { useDocument } from '@nandorojo/swr-firestore';
-import { getRoomPath } from '../../firebase';
 import useComingSoonRedirect from '../hooks/useComingSoonRedirect';
 
 interface RoomPageRouteParams {

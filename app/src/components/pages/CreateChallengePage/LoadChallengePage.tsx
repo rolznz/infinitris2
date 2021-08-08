@@ -1,10 +1,9 @@
 import { Card, Typography } from '@material-ui/core';
 import { Document, useCollection } from '@nandorojo/swr-firestore';
-import { IChallenge } from 'infinitris2-models';
+import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
-import { challengesPath } from '../../../firebase';
 import Routes from '../../../models/Routes';
 import useAuthStore from '../../../state/AuthStore';
 import localStorageKeys from '../../../utils/localStorageKeys';
@@ -30,12 +29,7 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
         <FlexBox key={challenge.id} margin={4}>
           <Card
             onClick={() => {
-              const {
-                grid,
-                totalRating,
-                numRatings,
-                ...challengeInfo
-              } = challenge;
+              const { grid, readOnly, ...challengeInfo } = challenge;
               // TODO: re-think local storage for the challenge editor - storing the info and grid separately is not ideal
               localStorage.setItem(
                 localStorageKeys.createChallengeGrid,

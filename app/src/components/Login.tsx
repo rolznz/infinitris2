@@ -22,6 +22,7 @@ import LoadingSpinner from './LoadingSpinner';
 import { getUserRequestPath, IUser, getUserPath } from 'infinitris2-models';
 import localStorageKeys from '@/utils/localStorageKeys';
 import { useLocalStorage } from 'react-use';
+import useAffiliateLinkRef from './hooks/useAffiliateLinkRef';
 
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
@@ -34,6 +35,7 @@ interface LoginProps {
 }
 
 export default function Login({ onLogin, showTitle = true }: LoginProps) {
+  useAffiliateLinkRef();
   const [isLoading, setIsLoading] = useState(false);
   const user = useUser();
   const userStore = useUserStore();

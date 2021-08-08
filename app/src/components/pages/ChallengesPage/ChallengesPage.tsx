@@ -1,7 +1,6 @@
 import { useCollection } from '@nandorojo/swr-firestore';
-import { IChallenge } from 'infinitris2-models';
+import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
-import { challengesPath } from '../../../firebase';
 
 import FlexBox from '../../ui/FlexBox';
 import ChallengeCard from './ChallengeCard';

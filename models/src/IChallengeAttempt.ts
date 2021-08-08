@@ -15,3 +15,8 @@ export interface IChallengeAttempt extends IEntity {
   stats?: ChallengeCompletionStats;
   challengeId: string;
 }
+
+export type IIngameChallengeAttempt = Omit<
+  IChallengeAttempt,
+  'challengeId' | 'created'
+>;

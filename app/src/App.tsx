@@ -10,13 +10,11 @@ import { FuegoProvider } from '@nandorojo/swr-firestore';
 import { fuego } from './firebase';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-import useAffiliateLinkRef from './components/hooks/useAffiliateLinkRef';
 
 interface AppProps {}
 
 function App({ children }: React.PropsWithChildren<AppProps>) {
   useInfinitrisClient();
-  useAffiliateLinkRef();
   const appStore = useAppStore();
   if (!appStore.clientApi) {
     return null;

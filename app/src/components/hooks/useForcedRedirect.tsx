@@ -1,6 +1,5 @@
-import { getChallengePath } from '@/firebase';
 import { useDocument } from '@nandorojo/swr-firestore';
-import { IChallenge } from 'infinitris2-models';
+import { getChallengePath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 import { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';

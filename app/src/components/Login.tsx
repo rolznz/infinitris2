@@ -21,7 +21,7 @@ import FlexBox from './ui/FlexBox';
 import LoadingSpinner from './LoadingSpinner';
 import { getUserRequestPath, IUser, getUserPath } from 'infinitris2-models';
 import localStorageKeys from '@/utils/localStorageKeys';
-import { useLocalStorage } from 'react-use';
+import useLocalStorage from 'react-use/lib/useLocalStorage';
 import useAffiliateLinkRef from './hooks/useAffiliateLinkRef';
 
 const googleProvider = new firebase.auth.GoogleAuthProvider();

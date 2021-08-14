@@ -1,4 +1,5 @@
-import { useKeyPress, useTimeout } from 'react-use';
+import useKeyPress from 'react-use/lib/useKeyPress';
+import useTimeout from 'react-use/lib/useTimeout';
 
 export default function useReceivedInput(
   key: string = 'Enter',

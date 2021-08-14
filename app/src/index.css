@@ -12,13 +12,13 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  opacity: 0;
-  animation: fadein 2s ease-in forwards;
+  opacity: 1;
+  /*animation: fadein 2s ease-in forwards;*/
 }
 
-#root {
+/*#root {
   animation: fadein 5s ease-in forwards;
-}
+}*/
 
 body > canvas {
   position: fixed;
@@ -30,7 +30,7 @@ body > canvas {
   user-select: none;
 }
 
-body > canvas .demo {
+/*body > canvas .demo {
   animation: fadein 2s ease-in forwards;
 }
 
@@ -41,4 +41,4 @@ body > canvas .demo {
   to {
     opacity: 1;
   }
-}
+}*/

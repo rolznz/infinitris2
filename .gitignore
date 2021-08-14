@@ -12,3 +12,4 @@ server/ts-out
 server/coverage
 
 client/coverage
+**/**Zone.Identifier

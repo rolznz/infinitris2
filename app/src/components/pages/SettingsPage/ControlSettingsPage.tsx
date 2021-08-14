@@ -8,7 +8,7 @@ import { useUserStore } from '../../../state/UserStore';
 import SettingsRow from './SettingsRow';
 import { getUserFriendlyKeyText, InputAction } from 'infinitris2-models';
 import { useState } from 'react';
-import { useKeyPress } from 'react-use';
+import useKeyPress from 'react-use/lib/useKeyPress';
 
 export default function ControlSettingsPage() {
   const userStore = useUserStore();

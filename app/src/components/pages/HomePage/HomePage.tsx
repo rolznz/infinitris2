@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Grid,
+  IconButton,
   Link,
   makeStyles,
   TextField,
@@ -21,13 +22,13 @@ import useAuthStore from '@/state/AuthStore';
 import useIncompleteChallenges from '../../hooks/useIncompleteChallenges';
 
 import logoImage from './assets/logo.png';
-import foregroundTopImage from './assets/foreground_top.png';
-import backgroundImage from './assets/background.png';
-import foregroundBottomImage from './assets/foreground_bottom.png';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+
 import FlexBox from '@/components/ui/FlexBox';
 import { useEffect } from 'react';
 import { storage } from '@/firebase';
 import ReactHowler from 'react-howler';
+import useWindowSize from 'react-use/lib/useWindowSize';
 
 export default function HomePage() {
   const userStore = useUserStore();
@@ -45,6 +46,9 @@ export default function HomePage() {
     isLoadingOfficialChallenges,
   } = useIncompleteChallenges();
 
+  const windowSize = useWindowSize();
+  const isLandscape = windowSize.width >= windowSize.height;
+
   useEffect(() => {
     if (musicOn) {
       storage
@@ -59,63 +63,81 @@ export default function HomePage() {
 
   const useStyles = makeStyles({
     playButton: {
-      borderRadius: '0px',
-      background: 'linear-gradient(45deg, #6dccee 10%, #6a35d5 160%)',
+      backgroundColor: '#57bb50',
+      borderColor: '#ffffff44',
+      borderWidth: 6,
+      borderStyle: 'solid',
+      backgroundClip: 'padding-box',
+      '&:hover': {
+        backgroundColor: '#8ad785',
+        filter: 'drop-shadow(0 0 0.75rem white) drop-shadow(0 0 1rem #ffffff)',
+      },
+      filter: 'drop-shadow(0 0 0.75rem white)',
+      animation: `$playButtonAnimation 2000ms alternate infinite`,
+      transform: 'scale(1.0)',
+    },
+    playButtonIcon: {
+      width: 48,
+      height: 48,
+    },
+    '@keyframes playButtonAnimation': {
+      '0%': {
+        transform: 'scale(1.0)',
+        filter: 'drop-shadow(0 0 0.75rem white)',
+      },
+      '100%': {
+        transform: 'scale(1.1)',
+        filter: 'drop-shadow(0 0 0.75rem white) drop-shadow(0 0 1rem #ffffff)',
+      },
+    },
+    nicknameInput: {
+      '&::placeholder': {
+        color: '#ffffffAA',
+      },
     },
   });
+
+  console.log('home page re-render');
 
   const classes = useStyles();
   const intl = useIntl();
 
   return (
-    <div
-      style={{
-        height: '100%',
-        backgroundImage: 'url(' + backgroundImage + ')',
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-      }}
-    >
-      {musicOn && menuUrl && <ReactHowler src={menuUrl} playing loop html5 />}
-      <img
-        src={foregroundTopImage}
-        style={{
-          width: '100vw',
-          height: 'auto',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-        }}
-      />
-      <img
-        src={foregroundBottomImage}
-        style={{
-          width: '100vw',
-          height: 'auto',
-          position: 'absolute',
-          bottom: 0,
-          left: 0,
-        }}
-      />
-      <FlexBox height="100%" alignItems="center">
+    <FlexBox height="100%" alignItems="center" justifyContent="center">
+      <Box height={isLandscape ? '30vh' : '20vh'}>
         <img
           src={logoImage}
           alt="Logo"
-          style={{ width: '25vh', height: 'auto' }}
+          style={{ width: 'auto', height: '100%' }}
         />
-        <Grid container justify="center" alignItems="center">
-          <Grid item xs={10} md={4} sm={6} style={{ maxWidth: '300px' }}>
-            <Box flex={1} display="flex" flexDirection="column">
-              <TextField
-                placeholder={intl.formatMessage({
-                  defaultMessage: 'Nickname',
-                  description: 'Nickname textbox placeholder',
-                })}
-                value={userStore.user.readOnly?.nickname || ''}
-                onChange={(e) => userStore.setNickname(e.target.value)}
-              />
-              {(isLoggedIn ||
+      </Box>
+      <Box mt={4} />
+      <TextField
+        placeholder={intl.formatMessage({
+          defaultMessage: 'Enter your nickname',
+          description: 'Nickname textbox placeholder',
+        })}
+        value={userStore.user.readOnly?.nickname || ''}
+        onChange={(e) => userStore.setNickname(e.target.value)}
+        inputProps={{ style: { textAlign: 'center', color: '#ffffff' } }}
+        InputProps={{
+          classes: { input: classes.nicknameInput },
+          disableUnderline: true,
+          autoFocus: true,
+          style: {
+            backgroundColor: '#a7d9f5',
+            borderRadius: 32,
+            padding: 4,
+            paddingLeft: 8,
+            borderColor: '#ffffff44',
+            borderWidth: 6,
+            borderStyle: 'solid',
+            backgroundClip: 'padding-box',
+            filter: 'drop-shadow(0 0 0.75rem white)',
+          },
+        }}
+      />
+      {/*(isLoggedIn ||
                 (!isLoadingOfficialChallenges &&
                   !incompleteChallenges.length)) && (
                 <Box mt={2} px={1} style={{ opacity: 0.5 }}>
@@ -128,41 +150,28 @@ export default function HomePage() {
                     <RoomCard loading={isLoading} room={selectedRoom} />
                   </Link>
                 </Box>
-              )}
+                  )*/}
 
-              <Box mt={2} display="flex" justifyContent="center">
-                {!isLoading ? (
-                  <Link
-                    ref={(element: HTMLSpanElement | null) => {
-                      if (element && !hasFocusedPlayButton) {
-                        setHasFocusedPlayButton(true);
-                        element.focus();
-                      }
-                    }}
-                    component={RouterLink}
-                    underline="none"
-                    to={`${Routes.rooms}/${selectedRoom?.id}`}
-                  >
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                      className={classes.playButton}
-                    >
-                      <FormattedMessage
-                        defaultMessage="Play"
-                        description="Play button text"
-                      />
-                    </Button>
-                  </Link>
-                ) : (
-                  <Skeleton width={80} height={40} variant="rect" />
-                )}
-              </Box>
-            </Box>
-          </Grid>
-        </Grid>
-      </FlexBox>
-    </div>
+      <Box mt={4} display="flex" justifyContent="center">
+        <Link
+          component={RouterLink}
+          underline="none"
+          to={/*`${Routes.rooms}/${selectedRoom?.id}`*/ '/'}
+          style={
+            /*isLoading
+                ? {
+                    pointerEvents: 'none',
+                  }
+                : */ {}
+          }
+        >
+          <IconButton className={classes.playButton}>
+            <PlayArrowIcon className={classes.playButtonIcon} />
+          </IconButton>
+        </Link>
+        )
+      </Box>
+      <Box mt={8} />
+    </FlexBox>
   );
 }

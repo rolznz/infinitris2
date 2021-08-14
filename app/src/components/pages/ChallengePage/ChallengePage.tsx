@@ -16,7 +16,7 @@ import ChallengeInfoView from './ChallengeInfoView';
 import ChallengeResultsView from './ChallengeResultsView';
 import ChallengeFailedView from './ChallengeFailedView';
 import { useUserStore } from '../../../state/UserStore';
-import { useSearchParam } from 'react-use';
+import useSearchParam from 'react-use/lib/useSearchParam';
 import { useDocument } from '@nandorojo/swr-firestore';
 import { IPlayer } from 'infinitris2-models';
 

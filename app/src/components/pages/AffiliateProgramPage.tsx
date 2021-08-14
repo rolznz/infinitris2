@@ -19,7 +19,7 @@ import {
 } from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
 import LoadingSpinner from '../LoadingSpinner';
-import { useCopyToClipboard } from 'react-use';
+import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import { toast } from 'react-toastify';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 

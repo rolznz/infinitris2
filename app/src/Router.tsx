@@ -27,6 +27,7 @@ import ScoreboardPage from './components/pages/ScoreboardPage';
 import AffiliateProgramPage from './components/pages/AffiliateProgramPage';
 import { ComingSoonPage } from './components/pages/ComingSoonPage';
 import CustomizeProfilePage from './components/pages/CustomizeProfilePage';
+import HomePageBackground from './components/pages/HomePage/HomePageBackground';
 
 export default function Router() {
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
@@ -53,7 +54,9 @@ export default function Router() {
       <OutsideGameElement>{/*<Header />*/}</OutsideGameElement>
       <Switch>
         <Route exact path={Routes.home}>
-          <HomePage />
+          <HomePageBackground>
+            <HomePage />
+          </HomePageBackground>
         </Route>
         <Route exact path={Routes.credits}>
           <CreditsPage />

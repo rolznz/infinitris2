@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, useMediaQuery } from '@material-ui/core';
 import foregroundTopImage from './assets/foreground_top.png';
 import backgroundImage from './assets/background.png';
 import foregroundBottomImage from './assets/foreground_bottom.png';
@@ -12,6 +12,7 @@ import foregroundLeftPortraitImage from './assets/foreground_left_portrait.png';
 import foregroundRightPortraitImage from './assets/foreground_right_portrait.png';
 
 import useWindowSize from 'react-use/lib/useWindowSize';
+import useOrientation from 'react-use/lib/useOrientation';
 import { useRef } from 'react';
 import { useEffect } from 'react';
 import FlexBox from '@/components/ui/FlexBox';
@@ -22,10 +23,14 @@ let alreadyLoaded = false;
 
 export default function HomePageBackground() {
   const windowSize = useWindowSize();
+  useOrientation(); // force re-render on orientation change
   const isLandscape = windowSize.width >= windowSize.height;
   const [loadCount, setLoadCount] = useState(0);
   const updateLoadCount = () => setLoadCount((prev) => prev + 1);
   const bgRef = useRef<HTMLDivElement>(null);
+  const shortScreen = useMediaQuery(
+    `(max-height:${isLandscape ? 400 : 600}px)`
+  );
 
   const isLoaded = alreadyLoaded || loadCount >= 5; // bg, fg top, fg left, fg right, fg bottom
   alreadyLoaded = alreadyLoaded || isLoaded;
@@ -73,20 +78,23 @@ export default function HomePageBackground() {
       </FlexBox>
       <div
         style={{
+          width: '100%',
           height: '100%',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           opacity: isLoaded ? 1 : 0,
           transition: 'opacity 0.5s',
+          overflow: 'hidden',
         }}
         ref={bgRef}
       >
-        <div className={classes.backgroundDarkening}>
+        <div className={classes.backgroundDarkening} role="presentation">
           <img
             src={
               isLandscape ? foregroundLeftImage : foregroundLeftPortraitImage
             }
+            alt=""
             style={{
               width: 'auto',
               height: '100vh',
@@ -100,6 +108,7 @@ export default function HomePageBackground() {
             src={
               isLandscape ? foregroundRightImage : foregroundRightPortraitImage
             }
+            alt=""
             style={{
               width: 'auto',
               height: '100vh',
@@ -111,11 +120,13 @@ export default function HomePageBackground() {
           />
           <img
             src={isLandscape ? foregroundTopImage : foregroundTopPortraitImage}
+            alt=""
             style={{
               width: '100vw',
               height: 'auto',
               position: 'absolute',
               top: 0,
+              marginTop: shortScreen ? '-50px' : 0,
               left: 0,
             }}
             onLoad={updateLoadCount}
@@ -126,11 +137,13 @@ export default function HomePageBackground() {
                 ? foregroundBottomImage
                 : foregroundBottomPortraitImage
             }
+            alt=""
             style={{
               width: '100vw',
               height: 'auto',
               position: 'absolute',
               bottom: 0,
+              marginTop: shortScreen ? '-50px' : 0,
               left: 0,
             }}
             onLoad={updateLoadCount}

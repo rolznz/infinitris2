@@ -41,6 +41,7 @@ type IUserStore = {
   signOut(): void;
   resyncLocalStorage(userData: IUser): void;
   setAppTheme(appTheme: AppTheme): void;
+  setMusicOn(musicOn: boolean): void;
 };
 
 export function getUpdatableUserProperties(
@@ -147,6 +148,9 @@ export function useUserStore<StateSlice>(
     },
     setAppTheme: (appTheme: AppTheme) => {
       updateUser({ appTheme });
+    },
+    setMusicOn: (musicOn: boolean) => {
+      updateUser({ musicOn });
     },
   };
 

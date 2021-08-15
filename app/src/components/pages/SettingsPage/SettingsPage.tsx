@@ -85,6 +85,30 @@ export default function SettingsPage() {
             <SettingsRow
               left={
                 <FormattedMessage
+                  defaultMessage="Music"
+                  description="Settings Page Table - Music"
+                />
+              }
+              right={
+                <Select
+                  defaultValue="on"
+                  value={userStore.user.musicOn ? 'on' : 'off'}
+                  onChange={(event) => {
+                    const value = event.target.value === 'on';
+                    userStore.setMusicOn(value);
+                  }}
+                >
+                  {['on', 'off'].map((option) => (
+                    <MenuItem key={option} value={option}>
+                      {option.toUpperCase()}
+                    </MenuItem>
+                  ))}
+                </Select>
+              }
+            />
+            <SettingsRow
+              left={
+                <FormattedMessage
                   defaultMessage="Preferred Input Method"
                   description="Settings Page Table - Preferred Input Method left column"
                 />

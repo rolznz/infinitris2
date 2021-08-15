@@ -1,11 +1,8 @@
 import React from 'react';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
-import Footer from './components/ui/Footer';
-import Header from './components/ui/Header';
 import AllSetPage from './components/pages/AllSetPage';
 import { CreateChallengePage } from './components/pages/CreateChallengePage/CreateChallengePage';
 import { LoadChallengePage } from './components/pages/CreateChallengePage/LoadChallengePage';
-import HomePage from './components/pages/HomePage/HomePage';
 import LobbyPage from './components/pages/LobbyPage';
 import LoginPage from './components/pages/LoginPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';

@@ -1,16 +1,4 @@
 import useAuthStore from '@/state/AuthStore';
-import {
-  getUpdatableUserProperties,
-  useUser,
-  useUserStore,
-} from '@/state/UserStore';
-import removeUndefinedValues from '@/utils/removeUndefinedValues';
-import {
-  getDocument,
-  set,
-  revalidateDocument,
-  Document,
-} from '@nandorojo/swr-firestore';
 import firebase from 'firebase';
 import React, { useState } from 'react';
 
@@ -19,7 +7,6 @@ import { FormattedMessage } from 'react-intl';
 import SocialLogo from 'social-logos';
 import FlexBox from './ui/FlexBox';
 import LoadingSpinner from './LoadingSpinner';
-import { getUserRequestPath, IUser, getUserPath } from 'infinitris2-models';
 import localStorageKeys from '@/utils/localStorageKeys';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import useAffiliateLinkRef from './hooks/useAffiliateLinkRef';
@@ -37,8 +24,8 @@ interface LoginProps {
 export default function Login({ onLogin, showTitle = true }: LoginProps) {
   useAffiliateLinkRef();
   const [isLoading, setIsLoading] = useState(false);
-  const user = useUser();
-  const userStore = useUserStore();
+  //const user = useUser();
+  //const userStore = useUserStore();
   const authUser = useAuthStore((authStore) => authStore.user);
   const [
     referredByAffiliateId,
@@ -58,7 +45,7 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
       const result = await firebase.auth().signInWithPopup(provider);
       if (result.user) {
         console.log('Authentication succeeded');
-        const userPath = getUserPath(result.user.uid);
+        //const userPath = getUserPath(result.user.uid);
         if (referredByAffiliateId) {
           deleteReferredByAffiliateId();
           // FIXME: create conversion

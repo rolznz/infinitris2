@@ -30,4 +30,5 @@ export default interface IUser extends IEntity {
   readonly preferredInputMethod?: InputMethod;
   readonly controls?: ControlSettings;
   readonly appTheme?: AppTheme;
+  readonly musicOn?: boolean;
 }

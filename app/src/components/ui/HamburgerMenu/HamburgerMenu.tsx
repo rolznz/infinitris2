@@ -2,11 +2,9 @@ import {
   Box,
   Divider,
   Drawer,
+  IconButton,
   Link,
   List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
   makeStyles,
   SvgIcon,
   Typography,
@@ -18,6 +16,8 @@ import useAppStore from '@/state/AppStore';
 import { FormattedMessage } from 'react-intl';
 import Routes from '@/models/Routes';
 import HamburgerListItem from './HamburgerListItem';
+import { Link as RouterLink } from 'react-router-dom';
+import FlexBox from '../FlexBox';
 
 type HamburgerMenuProps = {
   isOpen: boolean;
@@ -42,6 +42,13 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
       classes={{ paper: classes.paper }}
     >
       <div role="presentation" onClick={close} onKeyDown={close}>
+        <FlexBox alignItems="flex-end">
+          <Link component={RouterLink} underline="none" to={Routes.home}>
+            <IconButton>
+              <SvgIcon>{<ProfileIcon />}</SvgIcon>
+            </IconButton>
+          </Link>
+        </FlexBox>
         <List>
           <HamburgerListItem
             to={Routes.profile}

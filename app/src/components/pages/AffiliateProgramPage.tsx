@@ -1,17 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Button, Typography } from '@material-ui/core';
 
 import FlexBox from '../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import useLoginRedirect from '../hooks/useLoginRedirect';
+import { useDocument } from '@nandorojo/swr-firestore';
 import {
-  revalidateDocument,
-  useCollection,
-  useDocument,
-} from '@nandorojo/swr-firestore';
-import {
-  affiliatesPath,
   getAffiliatePath,
   getUserPath,
   IAffiliate,
@@ -34,8 +29,6 @@ export default function AffiliateProgramPage() {
   const { data: fireStoreUserDoc } = useDocument<IUser>(
     userId ? getUserPath(userId) : null
   );
-
-  var { add: addAffiliate } = useCollection<IAffiliate>(affiliatesPath);
 
   const affiliateId = fireStoreUserDoc?.readOnly.affiliateId;
 

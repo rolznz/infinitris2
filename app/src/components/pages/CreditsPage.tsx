@@ -6,21 +6,29 @@ export function CreditsPage() {
     <FlexBox flex={1} mx={10}>
       <h1>Credits</h1>
       <p>
-        Created by <a href="https://github.com/rolznz">rolznz</a>
+        Programming: <a href="https://github.com/rolznz">rolznz</a>
       </p>
       <p>
-        Icons made by{' '}
+        Art: <a href="https://rebeccabewick.com">Rebecca Bewick</a>
+      </p>
+      <p>
+        Music: <a href="https://www.youtube.com/user/allanzax">Allan Zax</a>
+      </p>
+
+      <p>
+        Special Thanks: AL Kong, Rob Hayes, Zorg from TigSource, Sven Obermaier,
+        Natalia Golovacheva, Jono Burch, Charles Liu, Nick van der Vis, Seth
+        Reid, Eugene van Staden, Linda Pettigrew
+      </p>
+
+      <p>
+        Gestures by Jeff Portaro from&nbsp;
         <a
           href="https://www.flaticon.com/authors/pixel-buddha"
           title="Pixel Buddha"
         >
           Pixel Buddha
-        </a>{' '}
-        obtained from{' '}
-        <a href="https://www.flaticon.com/" title="Flaticon">
-          www.flaticon.com
-        </a>{' '}
-        and/or other websites (Medals, Hand Gestures)
+        </a>
       </p>
     </FlexBox>
   );

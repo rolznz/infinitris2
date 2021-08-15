@@ -21,7 +21,7 @@ import ControlSettings, {
   DEFAULT_KEYBOARD_CONTROLS,
 } from './src/ControlSettings';
 import getUserFriendlyKeyText from './src/util/getUserFriendlyKeyText';
-import IUser, { IUserReadOnlyProperties } from './src/IUser';
+import IUser from './src/IUser';
 import parseGrid from './src/util/parseGrid';
 import IRating, { CreatableRating } from './src/IRating';
 import { exampleChallenges } from './src/exampleChallenges/index';
@@ -45,6 +45,7 @@ export * from './src/util/RecursivePartial';
 export * from './src/util/objectToDotNotation';
 export * from './src/IPurchase';
 export * from './src/IProduct';
+export * from './src/IUser';
 
 export {
   exampleChallenges,
@@ -70,7 +71,6 @@ export {
   ChallengeCellType,
   IRoom,
   IUser,
-  IUserReadOnlyProperties,
   IColor,
   IAffiliate,
   IRating,

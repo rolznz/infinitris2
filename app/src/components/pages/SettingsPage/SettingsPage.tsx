@@ -17,7 +17,7 @@ import { useUserStore } from '../../../state/UserStore';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import SettingsRow from './SettingsRow';
-import { InputMethod } from 'infinitris2-models';
+import { InputMethod, AppTheme } from 'infinitris2-models';
 
 export default function SettingsPage() {
   const userStore = useUserStore();
@@ -53,6 +53,32 @@ export default function SettingsPage() {
                       {language.toUpperCase()}
                     </MenuItem>
                   ))}
+                </Select>
+              }
+            />
+            <SettingsRow
+              left={
+                <FormattedMessage
+                  defaultMessage="App Theme"
+                  description="Settings Page Table - App Theme"
+                />
+              }
+              right={
+                <Select
+                  defaultValue="default"
+                  value={userStore.user.appTheme}
+                  onChange={(event) => {
+                    const value = event.target.value as AppTheme;
+                    userStore.setAppTheme(value);
+                  }}
+                >
+                  {(['light', 'dark', 'default'] as AppTheme[]).map(
+                    (appTheme) => (
+                      <MenuItem key={appTheme} value={appTheme}>
+                        {appTheme.toUpperCase()}
+                      </MenuItem>
+                    )
+                  )}
                 </Select>
               }
             />

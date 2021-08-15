@@ -28,6 +28,7 @@ import AffiliateProgramPage from './components/pages/AffiliateProgramPage';
 import { ComingSoonPage } from './components/pages/ComingSoonPage';
 import CustomizeProfilePage from './components/pages/CustomizeProfilePage';
 import HomePageBackground from './components/pages/HomePage/HomePageBackground';
+import HamburgerMenuButton from './components/ui/HamburgerMenu/HamburgerMenuButton';
 
 export default function Router() {
   function OutsideGameElement(props: React.PropsWithChildren<{}>) {
@@ -51,12 +52,13 @@ export default function Router() {
 
   return (
     <BrowserRouter>
-      <OutsideGameElement>{/*<Header />*/}</OutsideGameElement>
+      <OutsideGameElement>
+        <HamburgerMenuButton />
+        {/*<Header />*/}
+      </OutsideGameElement>
       <Switch>
         <Route exact path={Routes.home}>
-          <HomePageBackground>
-            <HomePage />
-          </HomePageBackground>
+          <HomePageBackground />
         </Route>
         <Route exact path={Routes.credits}>
           <CreditsPage />

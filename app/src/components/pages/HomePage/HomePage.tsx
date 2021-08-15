@@ -30,7 +30,13 @@ import { storage } from '@/firebase';
 import ReactHowler from 'react-howler';
 import useWindowSize from 'react-use/lib/useWindowSize';
 
-export default function HomePage() {
+let backgroundAlreadyLoaded = false;
+
+export default function HomePage({
+  backgroundLoaded,
+}: {
+  backgroundLoaded: boolean;
+}) {
   const userStore = useUserStore();
   const isLoggedIn = useAuthStore((authStore) => !!authStore.user);
   const homeStore = useHomeStore();
@@ -45,6 +51,9 @@ export default function HomePage() {
     incompleteChallenges,
     isLoadingOfficialChallenges,
   } = useIncompleteChallenges();
+
+  backgroundAlreadyLoaded = backgroundAlreadyLoaded || backgroundLoaded;
+  backgroundLoaded = backgroundLoaded || backgroundAlreadyLoaded;
 
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width >= windowSize.height;
@@ -97,18 +106,24 @@ export default function HomePage() {
     },
   });
 
-  console.log('home page re-render');
-
   const classes = useStyles();
   const intl = useIntl();
 
   return (
-    <FlexBox height="100%" alignItems="center" justifyContent="center">
+    <FlexBox height="100%">
+      {musicOn && menuUrl && (
+        <ReactHowler src={menuUrl} playing loop html5 on />
+      )}
       <Box height={isLandscape ? '30vh' : '20vh'}>
         <img
           src={logoImage}
           alt="Logo"
-          style={{ width: 'auto', height: '100%' }}
+          style={{
+            width: 'auto',
+            height: '100%',
+            opacity: backgroundLoaded ? 1 : 0,
+            transition: 'opacity 2s 0.5s',
+          }}
         />
       </Box>
       <Box mt={4} />
@@ -135,6 +150,10 @@ export default function HomePage() {
             backgroundClip: 'padding-box',
             filter: 'drop-shadow(0 0 0.75rem white)',
           },
+        }}
+        style={{
+          opacity: backgroundLoaded ? 1 : 0,
+          transition: 'opacity 2s 1s',
         }}
       />
       {/*(isLoggedIn ||
@@ -165,7 +184,13 @@ export default function HomePage() {
                 : */ {}
           }
         >
-          <IconButton className={classes.playButton}>
+          <IconButton
+            className={classes.playButton}
+            style={{
+              opacity: backgroundLoaded ? 1 : 0,
+              transition: 'opacity 2s 1.5s',
+            }}
+          >
             <PlayArrowIcon className={classes.playButtonIcon} />
           </IconButton>
         </Link>

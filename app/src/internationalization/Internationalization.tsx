@@ -12,7 +12,7 @@ export default function Internationalization(
   props: React.PropsWithChildren<{}>
 ) {
   const appStore = useAppStore();
-  const locale = useUser().locale;
+  const locale = useUser().locale || defaultLocale;
   const setInternationalizationMessages =
     appStore.setInternationalizationMessages;
   useEffect(() => {

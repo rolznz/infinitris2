@@ -6,6 +6,7 @@ import {
   InputAction,
   InputMethod,
   IUser,
+  AppTheme,
 } from 'infinitris2-models';
 import { StateSelector } from 'zustand';
 import { fuego } from '../firebase';
@@ -26,7 +27,7 @@ export function useUser(): IUser {
 }
 
 type IUserStore = {
-  user: IUser;
+  readonly user: IUser;
   setNickname(nickname: string): void;
   setLocale(locale: string): void;
   markHasSeenWelcome(): void;
@@ -39,6 +40,7 @@ type IUserStore = {
   clearProgress(): void;
   signOut(): void;
   resyncLocalStorage(userData: IUser): void;
+  setAppTheme(appTheme: AppTheme): void;
 };
 
 export function getUpdatableUserProperties(
@@ -142,6 +144,9 @@ export function useUserStore<StateSlice>(
     signOut: () => {
       signoutLocalUser();
       fuego.auth().signOut();
+    },
+    setAppTheme: (appTheme: AppTheme) => {
+      updateUser({ appTheme });
     },
   };
 

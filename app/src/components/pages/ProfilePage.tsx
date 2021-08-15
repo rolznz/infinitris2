@@ -54,7 +54,7 @@ export default function ProfilePage() {
         <FormattedMessage
           defaultMessage="{nickname}'s Profile"
           description="Profile title"
-          values={{ nickname: user.readOnly.nickname || 'Unknown' }}
+          values={{ nickname: user.readOnly?.nickname || 'Unknown' }}
         />
       </Typography>
 
@@ -81,7 +81,7 @@ export default function ProfilePage() {
           <FormattedMessage
             defaultMessage="{count} coins available"
             description="User coins statistic"
-            values={{ count: user.readOnly.coins || 0 }}
+            values={{ count: user.readOnly?.coins || 0 }}
           />
         </Typography>
         <Box ml={1} />
@@ -98,7 +98,7 @@ export default function ProfilePage() {
         <FormattedMessage
           defaultMessage="Network impact: {networkImpact}"
           description="Network impact statistic"
-          values={{ networkImpact: user.readOnly.networkImpact }}
+          values={{ networkImpact: user.readOnly?.networkImpact || 0 }}
         />
       </Typography>
       <FlexBox flexDirection="row">

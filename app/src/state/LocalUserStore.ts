@@ -1,43 +1,47 @@
-import { IUser, DEFAULT_KEYBOARD_CONTROLS } from 'infinitris2-models';
+import {
+  IUser,
+  DEFAULT_KEYBOARD_CONTROLS,
+  Creatable,
+} from 'infinitris2-models';
 import create from 'zustand';
 import { defaultLocale } from '../internationalization';
 import localStorageKeys from '../utils/localStorageKeys';
-
-const defaultColor = 0x666666;
 
 const localStorageValue = localStorage.getItem(localStorageKeys.localUser);
 const localStorageUser = localStorageValue
   ? (JSON.parse(localStorageValue) as IUser)
   : undefined;
 
-const defaultUser = {
+type LocalUser = Omit<IUser, 'readOnly' | 'created'>;
+
+const defaultUser: LocalUser = {
   preferredInputMethod: undefined,
   hasSeenWelcome: false,
   hasSeenAllSet: false,
-  nickname: '',
-  challengeAttempts: {},
+  //nickname: '',
+  //challengeAttempts: {},
   locale: defaultLocale,
-  completedChallengeIds: [],
+  //completedChallengeIds: [],
   controls: DEFAULT_KEYBOARD_CONTROLS,
-  coins: 0,
-  networkImpact: 0,
-  color: defaultColor,
+  //coins: 0,
+  //networkImpact: 0,
+  //color: defaultColor,
 };
-const initialUser: IUser = localStorageUser
+const initialUser = localStorageUser
   ? { ...defaultUser, ...localStorageUser }
   : defaultUser;
 
 type LocalUserStore = {
-  user: IUser;
+  user: LocalUser;
   updateLocalUser(changes: Partial<IUser>): void;
   signOutLocalUser(): void;
 };
 
 const useLocalUserStore = create<LocalUserStore>((set) => ({
   user: initialUser,
-  updateLocalUser: (changes: Partial<IUser>) =>
+  updateLocalUser: (changes: Partial<LocalUser>) =>
     set((current) => {
-      const user: IUser = { ...current.user, ...changes };
+      const user: LocalUser = { ...current.user, ...changes };
       localStorage.setItem(localStorageKeys.localUser, JSON.stringify(user));
       return { user };
     }),

@@ -20,6 +20,8 @@ export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly writeRate: number;
 }
 
+export type AppTheme = 'light' | 'dark' | 'default';
+
 export default interface IUser extends IEntity {
   readonly readOnly: IUserReadOnlyProperties;
   readonly hasSeenWelcome?: boolean;
@@ -27,4 +29,5 @@ export default interface IUser extends IEntity {
   readonly locale?: string;
   readonly preferredInputMethod?: InputMethod;
   readonly controls?: ControlSettings;
+  readonly appTheme?: AppTheme;
 }

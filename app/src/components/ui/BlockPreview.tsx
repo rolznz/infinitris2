@@ -12,7 +12,8 @@ export default function BlockPreview({ user }: IBlockPreviewProps) {
   return (
     <Typography
       style={{
-        color: `#${user.color.toString(16)}`,
+        //color: `#${user.readOnly?.colorId FIXME: need to load colors.toString(16)}`,
+        color: `#000`,
       }}
     >
       █

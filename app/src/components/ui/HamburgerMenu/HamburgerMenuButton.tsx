@@ -1,4 +1,4 @@
-import { IconButton, SvgIcon } from '@material-ui/core';
+import { Box, IconButton, SvgIcon } from '@material-ui/core';
 import React from 'react';
 import FlexBox from '../FlexBox';
 import { ReactComponent as ProfileIcon } from '@/icons/profile.svg';
@@ -8,13 +8,13 @@ import HamburgerMenu from './HamburgerMenu';
 export default function HamburgerMenuButton() {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div
+    <Box
       style={{
         position: 'absolute',
         top: 0,
         right: 0,
-        zIndex: 1,
       }}
+      zIndex="hamburgerButton"
     >
       <FlexBox padding={2}>
         <IconButton
@@ -27,6 +27,6 @@ export default function HamburgerMenuButton() {
         </IconButton>
       </FlexBox>
       <HamburgerMenu isOpen={isOpen} close={() => setIsOpen(false)} />
-    </div>
+    </Box>
   );
 }

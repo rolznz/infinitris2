@@ -18,22 +18,21 @@ import { useEffect } from 'react';
 import FlexBox from '@/components/ui/FlexBox';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import HomePage from './HomePage';
-
-let alreadyLoaded = false;
+import useLoaderStore from '@/state/LoaderStore';
+import Loadable from '@/components/ui/Loadable';
 
 export default function HomePageBackground() {
   const windowSize = useWindowSize();
   useOrientation(); // force re-render on orientation change
   const isLandscape = windowSize.width >= windowSize.height;
-  const [loadCount, setLoadCount] = useState(0);
-  const updateLoadCount = () => setLoadCount((prev) => prev + 1);
   const bgRef = useRef<HTMLDivElement>(null);
   const shortScreen = useMediaQuery(
     `(max-height:${isLandscape ? 400 : 600}px)`
   );
-
-  const isLoaded = alreadyLoaded || loadCount >= 5; // bg, fg top, fg left, fg right, fg bottom
-  alreadyLoaded = alreadyLoaded || isLoaded;
+  const loaderStore = useLoaderStore();
+  const isLoaded = loaderStore.isLoaded();
+  const increaseSteps = loaderStore.increaseSteps;
+  const increaseStepsCompleted = loaderStore.increaseStepsCompleted;
 
   const useStyles = makeStyles({
     backgroundDarkening: {
@@ -56,26 +55,18 @@ export default function HomePageBackground() {
 
   useEffect(() => {
     var bgImg = new Image();
+    increaseSteps();
     bgImg.onload = function () {
       if (bgRef.current) {
         bgRef.current.style.backgroundImage = 'url(' + bgImg.src + ')';
-        setTimeout(updateLoadCount, 100);
+        setTimeout(() => increaseStepsCompleted(), 100);
       }
     };
     bgImg.src = isLandscape ? backgroundImage : backgroundPortraitImage;
-  }, [isLandscape]);
-
-  console.log('Background re-render');
+  }, [isLandscape, increaseSteps, increaseStepsCompleted]);
 
   return (
     <>
-      <FlexBox
-        height="100%"
-        width="100%"
-        style={{ position: 'absolute', zIndex: -1 }}
-      >
-        <LoadingSpinner type="BallTriangle" />
-      </FlexBox>
       <div
         style={{
           width: '100%',
@@ -90,63 +81,85 @@ export default function HomePageBackground() {
         ref={bgRef}
       >
         <div className={classes.backgroundDarkening} role="presentation">
-          <img
-            src={
-              isLandscape ? foregroundLeftImage : foregroundLeftPortraitImage
-            }
-            alt=""
-            style={{
-              width: 'auto',
-              height: '100vh',
-              position: 'absolute',
-              bottom: 0,
-              left: 0,
-            }}
-            onLoad={updateLoadCount}
+          <Loadable
+            child={(onLoad) => (
+              <img
+                src={
+                  isLandscape
+                    ? foregroundLeftImage
+                    : foregroundLeftPortraitImage
+                }
+                alt=""
+                style={{
+                  width: 'auto',
+                  height: '100vh',
+                  position: 'absolute',
+                  bottom: 0,
+                  left: 0,
+                }}
+                onLoad={onLoad}
+              />
+            )}
           />
-          <img
-            src={
-              isLandscape ? foregroundRightImage : foregroundRightPortraitImage
-            }
-            alt=""
-            style={{
-              width: 'auto',
-              height: '100vh',
-              position: 'absolute',
-              bottom: 0,
-              right: 0,
-            }}
-            onLoad={updateLoadCount}
+          <Loadable
+            child={(onLoad) => (
+              <img
+                src={
+                  isLandscape
+                    ? foregroundRightImage
+                    : foregroundRightPortraitImage
+                }
+                alt=""
+                style={{
+                  width: 'auto',
+                  height: '100vh',
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                }}
+                onLoad={onLoad}
+              />
+            )}
           />
-          <img
-            src={isLandscape ? foregroundTopImage : foregroundTopPortraitImage}
-            alt=""
-            style={{
-              width: '100vw',
-              height: 'auto',
-              position: 'absolute',
-              top: 0,
-              marginTop: shortScreen ? '-50px' : 0,
-              left: 0,
-            }}
-            onLoad={updateLoadCount}
+          <Loadable
+            child={(onLoad) => (
+              <img
+                src={
+                  isLandscape ? foregroundTopImage : foregroundTopPortraitImage
+                }
+                alt=""
+                style={{
+                  width: '100vw',
+                  height: 'auto',
+                  position: 'absolute',
+                  top: 0,
+                  marginTop: shortScreen ? '-50px' : 0,
+                  left: 0,
+                }}
+                onLoad={onLoad}
+              />
+            )}
           />
-          <img
-            src={
-              isLandscape
-                ? foregroundBottomImage
-                : foregroundBottomPortraitImage
-            }
-            alt=""
-            style={{
-              width: '100vw',
-              height: 'auto',
-              position: 'absolute',
-              bottom: 0,
-              marginTop: shortScreen ? '-50px' : 0,
-              left: 0,
-            }}
-            onLoad={updateLoadCount}
+          <Loadable
+            child={(onLoad) => (
+              <img
+                src={
+                  isLandscape
+                    ? foregroundBottomImage
+                    : foregroundBottomPortraitImage
+                }
+                alt=""
+                style={{
+                  width: '100vw',
+                  height: 'auto',
+                  position: 'absolute',
+                  bottom: 0,
+                  marginTop: shortScreen ? '-50px' : 0,
+                  left: 0,
+                }}
+                onLoad={onLoad}
+              />
+            )}
           />
           <HomePage backgroundLoaded={isLoaded} />
         </div>

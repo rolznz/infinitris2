@@ -6,7 +6,7 @@ export function CreditsPage() {
     <FlexBox flex={1} mx={10}>
       <h1>Credits</h1>
       <p>
-        Programming: <a href="https://github.com/rolznz">rolznz</a>
+        Programming: <a href="https://github.com/rolznz">Roland Bewick</a>
       </p>
       <p>
         Art: <a href="https://rebeccabewick.com">Rebecca Bewick</a>
@@ -18,7 +18,8 @@ export function CreditsPage() {
       <p>
         Special Thanks: AL Kong, Rob Hayes, Zorg from TigSource, Sven Obermaier,
         Natalia Golovacheva, Jono Burch, Charles Liu, Nick van der Vis, Seth
-        Reid, Eugene van Staden, Linda Pettigrew
+        Reid, Eugene van Staden, Linda Pettigrew, Niamh Fitzgerald, Tim Bewick,
+        Michał Marcinkowski, Saintpoida
       </p>
 
       <p>

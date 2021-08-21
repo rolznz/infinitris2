@@ -15,6 +15,7 @@ import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import MusicPlayer from './components/sound/MusicPlayer';
+import Loader from './components/ui/Loader';
 
 interface AppProps {}
 
@@ -54,7 +55,7 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
                 : 'linear-gradient(180deg, rgba(30,68,143,1) 0%, rgba(49,168,221,1) 35%, rgba(26,34,82,1) 100%)',
             }}
           >
-            {children}
+            <Loader>{children}</Loader>
             <ToastContainer />
           </Box>
         </ThemeProvider>

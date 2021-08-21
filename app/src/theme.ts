@@ -11,6 +11,10 @@ const coreThemeOptions: ThemeOptions = {
   typography: {
     fontFamily: ['Nunito'].join(','),
   },
+  zIndex: {
+    hamburgerButton: 1,
+    loader: 9999,
+  } as any,
   overrides: {
     MuiSkeleton: {
       rect: {

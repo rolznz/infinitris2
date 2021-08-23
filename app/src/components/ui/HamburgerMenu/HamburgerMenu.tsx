@@ -24,19 +24,32 @@ import Routes from '@/models/Routes';
 import HamburgerListItem from './HamburgerListItem';
 import { Link as RouterLink } from 'react-router-dom';
 import FlexBox from '../FlexBox';
+import logoImage from './assets/logo.png';
 
 type HamburgerMenuProps = {
   isOpen: boolean;
   close(): void;
 };
 
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    width: 250,
+  },
+  topIcon: {
+    color: theme.palette.text.primary,
+  },
+  divider: {
+    //borderWidth: 2,
+    //border: none,
+    height: 2,
+    /* Set the hr color */
+    //color: #333; /* old IE */
+    //background-color: #333; /* Modern Browsers */
+  },
+}));
+
 export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
   const appStore = useAppStore();
-  const useStyles = makeStyles({
-    paper: {
-      width: 250,
-    },
-  });
 
   const classes = useStyles();
 
@@ -51,11 +64,11 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
         <FlexBox justifyContent="flex-end" flexDirection="row" padding={3}>
           <Link component={RouterLink} underline="none" to={Routes.home}>
             <IconButton>
-              <SvgIcon>{<HomeIcon />}</SvgIcon>
+              <SvgIcon className={classes.topIcon}>{<HomeIcon />}</SvgIcon>
             </IconButton>
           </Link>
           <IconButton onClick={close}>
-            <SvgIcon>{<CloseIcon />}</SvgIcon>
+            <SvgIcon className={classes.topIcon}>{<CloseIcon />}</SvgIcon>
           </IconButton>
         </FlexBox>
         <List>
@@ -110,19 +123,27 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
             }
           />
         </List>
-        <Divider />
-        <Box p={2}>
+        <Box px={4} pt={4}>
+          <Divider className={classes.divider} />
+        </Box>
+        <FlexBox justifyContent="flex-start" flexDirection="row" pt={2} pl={1}>
+          <img
+            src={logoImage}
+            alt="Logo"
+            style={{
+              width: '130px',
+            }}
+          />
           <Typography variant="caption" style={{ textTransform: 'uppercase' }}>
             <FormattedMessage
-              defaultMessage="{appName} build {clientVersion}"
-              description="Hamburger menu - App name and build"
+              defaultMessage="build {clientVersion}"
+              description="Hamburger menu - App build"
               values={{
-                appName,
                 clientVersion: appStore.clientApi?.getVersion(),
               }}
             />
           </Typography>
-        </Box>
+        </FlexBox>
       </div>
     </Drawer>
   );

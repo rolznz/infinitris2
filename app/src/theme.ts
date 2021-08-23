@@ -23,6 +23,16 @@ const coreThemeOptions: ThemeOptions = {
       },
     },
   },
+  palette: {
+    primary: {
+      main: '#2B57A6',
+      contrastText: '#ECECED',
+    },
+    secondary: {
+      main: '#a0a09f',
+      contrastText: '#ECECED',
+    },
+  },
 };
 
 const lightThemeOptions: ThemeOptions = {
@@ -33,21 +43,18 @@ const lightThemeOptions: ThemeOptions = {
       ...(coreThemeOptions.palette?.background || {}),
       paper: '#1c6cae',
     },
-    primary: {
-      //light: '#ECECED',
-
-      main: '#2B57A6',
-      contrastText: '#ECECED',
-    },
-    secondary: {
-      main: '#a0a09f', //'#0E0C66',
-      contrastText: '#ECECED',
-    },
     text: {
       primary: '#ECECED',
-      //secondary: '#2B57A6',
+      secondary: '#2B57A6',
+      //tertiary: '#0E0C66',
     },
-  } as Partial<PaletteOptions>,
+  },
+  typography: {
+    ...(coreThemeOptions.typography || {}),
+    allVariants: {
+      color: '#ECECED',
+    },
+  },
 };
 
 const darkThemeOptions: ThemeOptions = {
@@ -59,24 +66,17 @@ const darkThemeOptions: ThemeOptions = {
       ...(coreThemeOptions.palette?.background || {}),
       paper: '#0f1d22',
     },
-    secondary: {
-      //light: '#ECECED',
-      main: '#999999',
-      contrastText: '#ECECED',
-    },
-    primary: {
-      main: '#2B57A6', //'#a0a09f', //main: '#12232B',
-      contrastText: '#ECECED',
-    },
     text: {
-      primary: '#ECECED',
-      //secondary: '#2B57A6',
+      primary: '#999999',
+      //secondary: '#ECECED',
+      //tertiary: '#12232B'
     },
-    /*text: {
-      primary: '#ECECED',
-      secondary: '#999999',
-      tertiary: '#12232B',
-    }*/
+  },
+  typography: {
+    ...(coreThemeOptions.typography || {}),
+    allVariants: {
+      color: '#999999',
+    },
   },
 };
 

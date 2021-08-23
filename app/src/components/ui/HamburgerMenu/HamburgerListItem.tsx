@@ -18,10 +18,13 @@ type HamburgerListItemProps = {
 
 const useStyles = makeStyles((theme) => ({
   icon: {
-    backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.text.primary,
     color: theme.palette.background.paper,
     borderRadius: '50%',
     padding: 8,
+  },
+  text: {
+    color: theme.palette.text.primary,
   },
 }));
 
@@ -37,7 +40,7 @@ export default function HamburgerListItem({
         <ListItemIcon>
           <SvgIcon className={classes.icon}>{icon}</SvgIcon>
         </ListItemIcon>
-        <ListItemText primary={text} />
+        <ListItemText primary={text} className={classes.text} />
       </ListItem>
     </Link>
   );

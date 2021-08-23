@@ -30,13 +30,19 @@ export default function AffiliateProgramPage() {
     userId ? getUserPath(userId) : null
   );
 
-  const affiliateId = fireStoreUserDoc?.readOnly.affiliateId;
+  const affiliateId = '12345'; //fireStoreUserDoc?.readOnly?.affiliateId;
 
-  const { data: affiliateDoc } = useDocument<IAffiliate>(
+  /*const { data: affiliateDoc } = useDocument<IAffiliate>(
     affiliateId ? getAffiliatePath(affiliateId) : null
-  );
+  );*/
+  const affiliateDoc: IAffiliate = {
+    readOnly: {
+      numConversions: 3,
+    },
+    created: true,
+  };
 
-  const affiliateLink = `${process.env.REACT_APP_URL}?ref=${affiliateId}`;
+  const affiliateLink = `${window.location.origin}?ref=${affiliateId}`;
 
   if (!fireStoreUserDoc?.id || fireStoreUserDoc.id !== userId) {
     // wait for the user profile to load
@@ -65,11 +71,11 @@ export default function AffiliateProgramPage() {
       {affiliateDoc && (
         <Typography align="center" variant="caption">
           <FormattedMessage
-            defaultMessage="Your next friend will receive a bonus of {signupRewardCredits} coins"
+            defaultMessage="You and your next friend will both receive a bonus of {signupRewardCredits} coins"
             description="Affiliate Program Page - affiliate count statistic"
             values={{
               signupRewardCredits:
-                (affiliateDoc.readOnly?.numConversions || 0) + 3,
+                (affiliateDoc.readOnly?.numConversions || 0) + 1,
             }}
           />
         </Typography>
@@ -95,9 +101,7 @@ export default function AffiliateProgramPage() {
                 })
               );
             }}
-          >
-            {affiliateLink.substring(affiliateLink.indexOf('://') + 3)}
-          </Button>
+          ></Button>
           <Box mt={4} />
           <Typography align="center" variant="caption">
             <FormattedMessage

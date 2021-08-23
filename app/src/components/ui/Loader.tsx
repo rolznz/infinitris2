@@ -21,7 +21,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
           <FlexBox width="15vw">
             <Typography
               variant="caption"
-              color="textSecondary"
+              color="textPrimary"
               style={{ textTransform: 'uppercase' }}
             >
               loading{' '}
@@ -30,7 +30,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
               )}
               %
             </Typography>
-            <Box width="15vw">
+            <Box width="15vw" mt={2}>
               <LinearProgress
                 variant="determinate"
                 value={

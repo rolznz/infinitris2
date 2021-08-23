@@ -4,6 +4,8 @@ import {
   ListItemIcon,
   SvgIcon,
   ListItemText,
+  IconButton,
+  makeStyles,
 } from '@material-ui/core';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
@@ -14,16 +16,26 @@ type HamburgerListItemProps = {
   text: React.ReactNode;
 };
 
+const useStyles = makeStyles((theme) => ({
+  icon: {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.background.paper,
+    borderRadius: '50%',
+    padding: 8,
+  },
+}));
+
 export default function HamburgerListItem({
   to,
   text,
   icon,
 }: HamburgerListItemProps) {
+  const classes = useStyles();
   return (
     <Link component={RouterLink} underline="none" to={to}>
       <ListItem button>
         <ListItemIcon>
-          <SvgIcon>{icon}</SvgIcon>
+          <SvgIcon className={classes.icon}>{icon}</SvgIcon>
         </ListItemIcon>
         <ListItemText primary={text} />
       </ListItem>

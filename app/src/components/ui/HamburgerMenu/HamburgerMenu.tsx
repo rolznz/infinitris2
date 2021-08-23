@@ -11,6 +11,12 @@ import {
 } from '@material-ui/core';
 import React from 'react';
 import { ReactComponent as ProfileIcon } from '@/icons/profile.svg';
+import { ReactComponent as CloseIcon } from '@/icons/x.svg';
+import { ReactComponent as HomeIcon } from '@/icons/home.svg';
+import { ReactComponent as ShareEarnIcon } from '@/icons/share_earn.svg';
+import { ReactComponent as ScoreboardIcon } from '@/icons/scoreboard.svg';
+import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
+import { ReactComponent as AboutIcon } from '@/icons/about.svg';
 import { appName } from '@/utils/constants';
 import useAppStore from '@/state/AppStore';
 import { FormattedMessage } from 'react-intl';
@@ -42,12 +48,15 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
       classes={{ paper: classes.paper }}
     >
       <div role="presentation" onClick={close} onKeyDown={close}>
-        <FlexBox alignItems="flex-end">
+        <FlexBox justifyContent="flex-end" flexDirection="row" padding={3}>
           <Link component={RouterLink} underline="none" to={Routes.home}>
             <IconButton>
-              <SvgIcon>{<ProfileIcon />}</SvgIcon>
+              <SvgIcon>{<HomeIcon />}</SvgIcon>
             </IconButton>
           </Link>
+          <IconButton onClick={close}>
+            <SvgIcon>{<CloseIcon />}</SvgIcon>
+          </IconButton>
         </FlexBox>
         <List>
           <HamburgerListItem
@@ -62,7 +71,7 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
           />
           <HamburgerListItem
             to={Routes.affiliateProgram}
-            icon={<ProfileIcon />}
+            icon={<ShareEarnIcon />}
             text={
               <FormattedMessage
                 defaultMessage="Share & Earn"
@@ -72,7 +81,7 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
           />
           <HamburgerListItem
             to={Routes.scoreboard}
-            icon={<ProfileIcon />}
+            icon={<ScoreboardIcon />}
             text={
               <FormattedMessage
                 defaultMessage="Scoreboard"
@@ -82,7 +91,7 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
           />
           <HamburgerListItem
             to={Routes.settings}
-            icon={<ProfileIcon />}
+            icon={<SettingsIcon />}
             text={
               <FormattedMessage
                 defaultMessage="Settings"
@@ -92,7 +101,7 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
           />
           <HamburgerListItem
             to={Routes.credits}
-            icon={<ProfileIcon />}
+            icon={<AboutIcon />}
             text={
               <FormattedMessage
                 defaultMessage="About"

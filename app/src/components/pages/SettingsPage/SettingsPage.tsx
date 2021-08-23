@@ -7,6 +7,7 @@ import {
   Box,
   Link,
   Button,
+  Switch,
 } from '@material-ui/core';
 
 import FlexBox from '../../ui/FlexBox';
@@ -24,15 +25,15 @@ export default function SettingsPage() {
 
   return (
     <>
-      <FlexBox flex={1} justifyContent="flex-start">
-        <Typography variant="h6">
+      <FlexBox flex={1}>
+        <Typography variant="h1">
           <FormattedMessage
             defaultMessage="Settings"
             description="Settings Header"
           />
         </Typography>
         <Box mb={2} />
-        <FlexBox width={300}>
+        <FlexBox width={400}>
           <Grid container spacing={2} alignItems="center" justify="center">
             <SettingsRow
               left={
@@ -90,20 +91,17 @@ export default function SettingsPage() {
                 />
               }
               right={
-                <Select
-                  defaultValue="on"
-                  value={userStore.user.musicOn ? 'on' : 'off'}
+                <Switch
+                  color="primary"
+                  checked={
+                    userStore.user.musicOn !== undefined
+                      ? userStore.user.musicOn
+                      : true
+                  }
                   onChange={(event) => {
-                    const value = event.target.value === 'on';
-                    userStore.setMusicOn(value);
+                    userStore.setMusicOn(event.target.checked);
                   }}
-                >
-                  {['on', 'off'].map((option) => (
-                    <MenuItem key={option} value={option}>
-                      {option.toUpperCase()}
-                    </MenuItem>
-                  ))}
-                </Select>
+                />
               }
             />
             <SettingsRow

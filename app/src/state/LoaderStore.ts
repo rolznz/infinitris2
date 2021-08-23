@@ -13,7 +13,6 @@ const useLoaderStore = create<LoaderStore>((set, get) => ({
   steps: 0,
   stepsCompleted: 0,
   increaseSteps: () => {
-    console.log('STEPS: ' + get().steps);
     set((state) => ({ steps: state.steps + 1 }));
   },
   increaseStepsCompleted: () => {

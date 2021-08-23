@@ -11,7 +11,9 @@ export default function SettingsRow({ left, right }: SettingsRowProps) {
     <>
       <Grid item xs={7}>
         <FlexBox alignItems="flex-start">
-          <Typography variant="body1">{left}</Typography>
+          <Typography color="textPrimary" variant="body1">
+            {left}
+          </Typography>
         </FlexBox>
       </Grid>
       <Grid item xs={5}>

@@ -4,7 +4,6 @@ import {
   ListItemIcon,
   SvgIcon,
   ListItemText,
-  IconButton,
   makeStyles,
 } from '@material-ui/core';
 import React from 'react';

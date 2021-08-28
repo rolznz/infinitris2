@@ -25,8 +25,7 @@ const useLoaderStore = create<LoaderStore>((set, get) => ({
       steps: 0,
       stepsCompleted: 0,
     })),
-  isLoaded: () =>
-    get().stepsCompleted >= get().steps && (get().startClicked || !isMobile()),
+  isLoaded: () => get().stepsCompleted >= get().steps && get().startClicked,
 }));
 
 export default useLoaderStore;

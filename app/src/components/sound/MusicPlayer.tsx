@@ -1,12 +1,9 @@
 import { useUser } from '@/state/UserStore';
 import { useEffect } from 'react';
-import { Howl, Howler } from 'howler';
+import { Howl } from 'howler';
 import useLoaderStore from '@/state/LoaderStore';
-import isMobile from '@/utils/isMobile';
-import { toast } from 'react-toastify';
 
 const rootUrl = process.env.REACT_APP_MUSIC_ROOT_URL;
-Howler.autoUnlock = false;
 
 let _menuTheme: Howl;
 let _sounds: Howl;
@@ -23,9 +20,11 @@ export enum SoundKey {
 }
 
 export async function prepareSounds() {
+  // TODO: need to support loading music based on current page
+  // move sfx out to separate file or rename this one
   _menuTheme = new Howl({
     src: [`${rootUrl}/menu.mp3`],
-    html5: isMobile(),
+    html5: true,
     loop: true,
   });
 
@@ -42,7 +41,7 @@ export async function prepareSounds() {
   _sounds = new Howl({
     src: [`${rootUrl}/sounds.mp3`],
     //pool: 100,
-    html5: isMobile(),
+    html5: true,
     // generated using the following command:
     // audiosprite --silence 1 *.wav --export mp3 --output sounds
     sprite: {
@@ -80,16 +79,9 @@ export default function MusicPlayer() {
 
   useEffect(() => {
     if (musicOn) {
-      if (!_menuTheme) {
-        if (!isMobile()) {
-          // sounds can only be loaded after a user interaction, see Loader.tsx
-          prepareSounds();
-        }
-      } else {
-        _menuTheme.play();
-      }
-    } else if (_menuTheme) {
-      _menuTheme.stop();
+      _menuTheme?.play();
+    } else {
+      _menuTheme?.stop();
     }
   }, [musicOn]);
 

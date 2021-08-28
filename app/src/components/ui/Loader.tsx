@@ -21,7 +21,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
           bgcolor="background.paper"
           zIndex="loader"
         >
-          {loaderStore.startClicked || !isMobile() ? (
+          {loaderStore.startClicked ? (
             <FlexBox width={200}>
               <Typography
                 variant="caption"

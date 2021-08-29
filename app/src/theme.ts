@@ -1,5 +1,4 @@
 import { createTheme, ThemeOptions } from '@material-ui/core/styles';
-import { PaletteOptions } from '@material-ui/core/styles/createPalette';
 import { SkeletonClassKey } from '@material-ui/lab/Skeleton';
 
 declare module '@material-ui/core/styles/overrides' {
@@ -20,6 +19,17 @@ const coreThemeOptions: ThemeOptions = {
     MuiSkeleton: {
       rect: {
         borderRadius: 4,
+      },
+    },
+    MuiCheckbox: {
+      root: {
+        color: '#ECECED',
+      },
+    },
+    MuiDivider: {
+      root: {
+        background: '#ECECED !important',
+        height: 2,
       },
     },
   },

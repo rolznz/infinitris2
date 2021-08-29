@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.text.primary,
     color: theme.palette.background.paper,
     borderRadius: '50%',
-    padding: 8,
+    padding: 4,
   },
   text: {
     color: theme.palette.text.primary,
@@ -37,7 +37,9 @@ export default function HamburgerListItem({
     <Link component={RouterLink} underline="none" to={to}>
       <ListItem button>
         <ListItemIcon>
-          <SvgIcon className={classes.icon}>{icon}</SvgIcon>
+          <SvgIcon fontSize="large" className={classes.icon}>
+            {icon}
+          </SvgIcon>
         </ListItemIcon>
         <ListItemText primary={text} className={classes.text} />
       </ListItem>

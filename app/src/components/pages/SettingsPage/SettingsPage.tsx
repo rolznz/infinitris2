@@ -19,6 +19,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import SettingsRow from './SettingsRow';
 import { InputMethod, AppTheme } from 'infinitris2-models';
+import { setMusicPlaying } from '@/components/sound/MusicPlayer';
 
 export default function SettingsPage() {
   const userStore = useUserStore();
@@ -92,14 +93,15 @@ export default function SettingsPage() {
               }
               right={
                 <Switch
-                  color="primary"
                   checked={
                     userStore.user.musicOn !== undefined
                       ? userStore.user.musicOn
                       : true
                   }
                   onChange={(event) => {
-                    userStore.setMusicOn(event.target.checked);
+                    const isPlaying = event.target.checked;
+                    userStore.setMusicOn(isPlaying);
+                    setMusicPlaying(isPlaying);
                   }}
                 />
               }

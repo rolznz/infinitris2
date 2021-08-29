@@ -39,9 +39,9 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
   },
   divider: {
+    //background: '#ECECED',
     //borderWidth: 2,
     //border: none,
-    height: 2,
     /* Set the hr color */
     //color: #333; /* old IE */
     //background-color: #333; /* Modern Browsers */
@@ -134,7 +134,10 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
               width: '130px',
             }}
           />
-          <Typography variant="caption" style={{ textTransform: 'uppercase' }}>
+          <Typography
+            variant="caption"
+            style={{ textTransform: 'uppercase', color: 'white' }}
+          >
             <FormattedMessage
               defaultMessage="build {clientVersion}"
               description="Hamburger menu - App build"

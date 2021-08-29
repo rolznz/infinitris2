@@ -10,23 +10,18 @@ import { FuegoProvider } from '@nandorojo/swr-firestore';
 import { fuego } from './firebase';
 import 'react-toastify/dist/ReactToastify.css';
 import { ToastContainer } from 'react-toastify';
-import { useUser } from './state/UserStore';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useState } from 'react';
 import { useEffect } from 'react';
-import MusicPlayer from './components/sound/MusicPlayer';
 import Loader from './components/ui/Loader';
+import useDarkMode from './components/hooks/useDarkMode';
 
 interface AppProps {}
 
 function App({ children }: React.PropsWithChildren<AppProps>) {
   useInfinitrisClient();
   const appStore = useAppStore();
-  const isSystemDarkModeEnabled = useMediaQuery('(prefers-color-scheme: dark)');
-  const userAppTheme = useUser().appTheme;
-  const isDarkMode =
-    userAppTheme === 'dark' ||
-    ((!userAppTheme || userAppTheme === 'default') && isSystemDarkModeEnabled);
+
+  const isDarkMode = useDarkMode();
   const nextTheme = isDarkMode ? darkTheme : lightTheme;
   const [appTheme, setAppTheme] = useState<Theme>(nextTheme);
 
@@ -41,7 +36,6 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
 
   return (
     <FuegoProvider fuego={fuego}>
-      <MusicPlayer />
       <Internationalization>
         <ThemeProvider theme={appTheme}>
           <Box

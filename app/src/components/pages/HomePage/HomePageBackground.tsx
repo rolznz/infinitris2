@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import { makeStyles, useMediaQuery } from '@material-ui/core';
-import foregroundTopImage from './assets/foreground_top.png';
 import backgroundImage from './assets/background.png';
+import backgroundPortraitImage from './assets/background_portrait.png';
+import backgroundImageDark from './assets/background_dark.png';
+import backgroundPortraitImageDark from './assets/background_portrait_dark.png';
+
+import foregroundTopImage from './assets/foreground_top.png';
 import foregroundBottomImage from './assets/foreground_bottom.png';
 import foregroundLeftImage from './assets/foreground_left.png';
 import foregroundRightImage from './assets/foreground_right.png';
-import foregroundTopPortraitImage from './assets/foreground_top_portrait.png';
-import backgroundPortraitImage from './assets/background_portrait.png';
-import foregroundBottomPortraitImage from './assets/foreground_bottom_portrait.png';
-import foregroundLeftPortraitImage from './assets/foreground_left_portrait.png';
-import foregroundRightPortraitImage from './assets/foreground_right_portrait.png';
+import foregroundTopPortraitImage from './assets/foreground_portrait_top.png';
+import foregroundBottomPortraitImage from './assets/foreground_portrait_bottom.png';
+import foregroundLeftPortraitImage from './assets/foreground_portrait_left.png';
+import foregroundRightPortraitImage from './assets/foreground_portrait_right.png';
 
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useOrientation from 'react-use/lib/useOrientation';
@@ -20,8 +23,10 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import HomePage from './HomePage';
 import useLoaderStore from '@/state/LoaderStore';
 import Loadable from '@/components/ui/Loadable';
+import useDarkMode from '@/components/hooks/useDarkMode';
 
 export default function HomePageBackground() {
+  const isDarkMode = useDarkMode();
   const windowSize = useWindowSize();
   useOrientation(); // force re-render on orientation change
   const isLandscape = windowSize.width >= windowSize.height;
@@ -62,8 +67,14 @@ export default function HomePageBackground() {
         setTimeout(() => increaseStepsCompleted(), 100);
       }
     };
-    bgImg.src = isLandscape ? backgroundImage : backgroundPortraitImage;
-  }, [isLandscape, increaseSteps, increaseStepsCompleted]);
+    bgImg.src = isLandscape
+      ? isDarkMode
+        ? backgroundImageDark
+        : backgroundImage
+      : isDarkMode
+      ? backgroundPortraitImageDark
+      : backgroundPortraitImage;
+  }, [isLandscape, increaseSteps, increaseStepsCompleted, isDarkMode]);
 
   return (
     <>

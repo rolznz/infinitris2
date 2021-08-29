@@ -1,5 +1,3 @@
-import { useUser } from '@/state/UserStore';
-import { useEffect } from 'react';
 import { Howl } from 'howler';
 import useLoaderStore from '@/state/LoaderStore';
 
@@ -71,19 +69,14 @@ export function playSound(key: SoundKey) {
   _sounds?.play(key);
 }
 
-export default function MusicPlayer() {
-  const user = useUser();
-
-  //const [currentSongId, setCurrentSongId] = React.useState(0);
-  const musicOn = (user.musicOn === undefined || user.musicOn) && !!rootUrl;
-
-  useEffect(() => {
-    if (musicOn) {
-      _menuTheme?.play();
+export function setMusicPlaying(playing: boolean) {
+  if (playing) {
+    if (_menuTheme) {
+      _menuTheme.play();
     } else {
-      _menuTheme?.stop();
+      prepareSounds();
     }
-  }, [musicOn]);
-
-  return null;
+  } else {
+    _menuTheme?.stop();
+  }
 }

@@ -42,8 +42,8 @@ export default function HomePage({
 
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width >= windowSize.height;
-  const shortLandscapeScreen =
-    useMediaQuery('(max-height:400px)') && isLandscape;
+  /*const shortLandscapeScreen =
+    useMediaQuery('(max-height:400px)') && isLandscape;*/
 
   const useStyles = makeStyles({
     playButton: {
@@ -87,7 +87,6 @@ export default function HomePage({
   return (
     <FlexBox height="100%">
       {!isLandscape && <Box mt="10vh" />}
-      {shortLandscapeScreen && <Box mt="10vh" />}
       <Box height={isLandscape ? '30vh' : '20vh'}>
         <img
           src={logoImage}
@@ -101,8 +100,8 @@ export default function HomePage({
         />
       </Box>
       <Box mt={4} />
-      <FlexBox flexDirection={shortLandscapeScreen ? 'row' : 'column'}>
-        <TextField
+      <FlexBox /*flexDirection={shortLandscapeScreen ? 'row' : 'column'}*/>
+        {/*<TextField
           placeholder={intl.formatMessage({
             defaultMessage: 'Enter your nickname',
             description: 'Nickname textbox placeholder',
@@ -130,7 +129,7 @@ export default function HomePage({
             opacity: backgroundLoaded ? 1 : 0,
             transition: 'opacity 2s 1s',
           }}
-        />
+        />*/}
         {/*(isLoggedIn ||
                   (!isLoadingOfficialChallenges &&
                     !incompleteChallenges.length)) && (
@@ -145,10 +144,10 @@ export default function HomePage({
                     </Link>
                   </Box>
                     )*/}
-        <Box
+        {/*<Box
           mt={shortLandscapeScreen ? 0 : 4}
           ml={shortLandscapeScreen ? 4 : 0}
-        />
+        />*/}
         <Box display="flex" justifyContent="center">
           <Link
             component={RouterLink}
@@ -172,7 +171,6 @@ export default function HomePage({
               <PlayArrowIcon className={classes.playButtonIcon} />
             </IconButton>
           </Link>
-          )
         </Box>
       </FlexBox>
       <Box mt={8} />

@@ -14,40 +14,76 @@ import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { prepareSounds } from '../sound/MusicPlayer';
 import FlexBox from './FlexBox';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import useAppStore from '@/state/AppStore';
 
 export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const loaderStore = useLoaderStore();
   const userStore = useUserStore();
-  const isLoaded = loaderStore.isLoaded();
-  const setStartClicked = loaderStore.setStartClicked;
+  const hasFinished = loaderStore.hasFinished;
+  const initializeLoaderStore = loaderStore.initialize;
+  const setStartClicked = loaderStore.clickStart;
   const intl = useIntl();
   const [hasToggledSounds, setHasToggledSounds] = useState(false);
 
-  // TODO: only show start button if music is on
+  const clientLoaded = useAppStore((appStore) => !!appStore.clientApi);
 
-  const musicOn = userStore.user.musicOn;
+  useEffect(() => {
+    if (clientLoaded) {
+      initializeLoaderStore();
+    }
+  }, [initializeLoaderStore, clientLoaded]);
+
+  // only show start button if music is on
+  const musicOn =
+    userStore.user.musicOn !== undefined ? userStore.user.musicOn : true;
   useEffect(() => {
     if (musicOn === false && !hasToggledSounds) {
       // no interaction needed since sound is muted
-      setStartClicked(true);
+      setStartClicked(false);
     }
     setHasToggledSounds(true);
   }, [setStartClicked, musicOn, hasToggledSounds, setHasToggledSounds]);
 
+  useEffect(() => {
+    const htmlLoader = document.getElementById('html-loader');
+    if (htmlLoader) {
+      htmlLoader.style.display = hasFinished ? 'none' : 'flex';
+    }
+  }, [hasFinished]);
+
+  if (!hasToggledSounds) {
+    return null;
+  }
+
   return (
     <>
-      {!isLoaded && (
+      {!hasFinished && (
         <FlexBox
-          height="100%"
-          width="100%"
+          height="100vh"
+          width="100vw"
           style={{ position: 'absolute' }}
-          bgcolor="background.paper"
+          bgcolor="background.loader"
           zIndex="loader"
         >
-          {loaderStore.startClicked ? (
-            <FlexBox width={200}>
+          <FlexBox
+            height="50vh"
+            width="100vw"
+            style={{ position: 'absolute', left: 0, bottom: 0 }}
+          >
+            <FlexBox
+              position="absolute"
+              top="20px"
+              width="259px"
+              alignItems="flex-start"
+              style={{
+                opacity: loaderStore.stepsCompleted < loaderStore.steps ? 1 : 0,
+                transition: 'opacity 1s',
+              }}
+            >
               <Typography
-                variant="caption"
+                variant="body1"
                 color="textPrimary"
                 style={{ textTransform: 'uppercase' }}
               >
@@ -57,9 +93,12 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                 )}
                 %
               </Typography>
-              <Box width="15vw" mt={2}>
+              <Box width="100%">
                 <LinearProgress
+                  key={loaderStore.key}
+                  color="primary"
                   variant="determinate"
+                  style={{ height: '19px' }}
                   value={
                     loaderStore.steps === 0
                       ? 0
@@ -68,44 +107,49 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                 />
               </Box>
             </FlexBox>
-          ) : (
-            <FlexBox>
-              <Button
-                onClick={() => {
-                  if (musicOn) {
-                    // On mobile, sounds can only be loaded after an interaction
-                    prepareSounds();
-                  }
-                  loaderStore.setStartClicked(true);
-                }}
-              >
-                <FormattedMessage
-                  defaultMessage="Start"
-                  description="Loader - Start button text"
-                />
-              </Button>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    color={'white' as any}
-                    checked={
-                      userStore.user.musicOn !== undefined
-                        ? userStore.user.musicOn
-                        : true
-                    }
-                    onChange={(event) => {
-                      userStore.setMusicOn(event.target.checked);
+
+            {!loaderStore.startClicked &&
+              loaderStore.hasInitialized &&
+              loaderStore.stepsCompleted === loaderStore.steps && (
+                <FlexBox position="absolute" top="100px">
+                  <Button
+                    style={{ fontSize: 20 }}
+                    variant="contained"
+                    color="primary"
+                    onClick={() => {
+                      loaderStore.clickStart(musicOn);
+                      if (musicOn) {
+                        // On mobile, sounds can only be loaded after an interaction
+                        prepareSounds();
+                      }
                     }}
-                    inputProps={{ 'aria-label': 'primary checkbox' }}
+                  >
+                    <FormattedMessage
+                      defaultMessage="Start"
+                      description="Loader - Start button text"
+                    />
+                  </Button>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color={'white' as any}
+                        checked={musicOn}
+                        onChange={(event) => {
+                          userStore.setMusicOn(event.target.checked);
+                        }}
+                        inputProps={{ 'aria-label': 'primary checkbox' }}
+                        checkedIcon={<CheckCircleIcon />}
+                        icon={<RadioButtonUncheckedIcon />}
+                      />
+                    }
+                    label={intl.formatMessage({
+                      defaultMessage: 'Load Sounds',
+                      description: 'Loader - Load Music Sounds checkbox text',
+                    })}
                   />
-                }
-                label={intl.formatMessage({
-                  defaultMessage: 'Load Sounds',
-                  description: 'Loader - Load Music Sounds checkbox text',
-                })}
-              />
-            </FlexBox>
-          )}
+                </FlexBox>
+              )}
+          </FlexBox>
         </FlexBox>
       )}
       {children}

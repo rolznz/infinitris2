@@ -7,15 +7,25 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&display=swap"
+      rel="preload"
+      as="style"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&display=swap"
       rel="stylesheet"
     />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
     />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="theme-color" content="#000000" />
     <meta name="description" content="Multiplayer Block Puzzles" />
-    <meta property="og:image" content="%PUBLIC_URL%/og.png" />
+    <meta property="og:image" content="%PUBLIC_URL%/og2.png" />
+    <meta property="og:url" content="%PUBLIC_URL%" />
+    <meta property="og:title" content="Infinitris" />
+    <meta property="og:description" content="Multiplayer Block Puzzles" />
+    <meta property="og:type" content="website" />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
@@ -42,9 +52,44 @@
       }
       body {
         overflow: hidden;
+        background-color: #0f1d22;
       }
-      /* CSS loading spinner inspired by https://dev.to/dcodeyt/how-to-create-a-css-only-loading-spinner-5fh5 */
-      .loading {
+      #html-loader {
+        display: flex;
+        flex-direction: column;
+        width: 100vw;
+        height: 100vh;
+        justify-content: center;
+        align-items: center;
+        position: absolute;
+      }
+      #html-loader img {
+        margin-bottom: 20vh;
+        width: 289px;
+        height: 181px;
+        z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.5s 0.5s;
+      }
+
+      .html-loader-star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background-color: transparent;
+        z-index: 10000;
+        box-shadow: 2px 2px 2px white;
+      }
+      @keyframes html-loader-star-animation {
+        from {
+          transform: translateY(0vh);
+        }
+        to {
+          transform: translateY(-100vh);
+        }
+      }
+
+      #html-loader-pre {
         display: flex;
         width: 100%;
         height: 100%;
@@ -52,18 +97,21 @@
         align-items: center;
         position: absolute;
         z-index: -1;
+        opacity: 0;
+        transition: opacity 0.5s 0.5s;
       }
 
-      .loading::after {
+      #html-loader-pre::after {
         content: '';
-        width: 32px;
-        height: 32px;
-        border: 4px solid #1c6cae;
-        border-top-color: #0f1d22;
-        border-radius: 50%;
-        animation: loading 1s ease infinite;
+        width: 16px;
+        height: 16px;
+        background-color: #0f1d22;
+        border: 4px solid #ffffffff;
+        box-shadow: 0px 0px 8px #ffffff;
+        animation: html-loader-pre 2s ease infinite;
+        margin-top: 100px;
       }
-      @keyframes loading {
+      @keyframes html-loader-pre {
         to {
           transform: rotate(1turn);
         }
@@ -72,7 +120,15 @@
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div class="loading"></div>
+    <div id="html-loader">
+      <img
+        id="html-loader-image"
+        src="%PUBLIC_URL%/images/loader/logo.png"
+        onload="document.getElementById('html-loader-image').style.opacity = 1; document.getElementById('html-loader-pre').style.opacity = 1; for(var i = 0; i < 100; i++){var star = document.createElement('div'); star.className = 'html-loader-star'; var l = Math.floor(Math.random() * 100); var t = Math.floor(Math.random() * 100); star.style.top = t * 2 +'%'; star.style.left = l +'%'; star.style.opacity = (Math.sqrt((l-50)*(l-50) + (t-50)*(t-50))/100) * 2 + Math.random() * 0.25; star.style.animation = 'html-loader-star-animation ' + (Math.random() * 20 + 30) + 's linear infinite'; document.getElementById('html-loader').appendChild(star)}"
+      />
+      <div id="html-loader-pre"></div>
+      />
+    </div>
     <div id="root"></div>
     <!--
       This HTML file is a template.

@@ -1,3 +1,4 @@
+import useLoaderStore from '@/state/LoaderStore';
 import { IInfinitrisApi } from 'infinitris2-models';
 import { useEffect } from 'react';
 import useAppStore from '../../state/AppStore';
@@ -11,6 +12,7 @@ declare global {
 const useInfinitrisClient = () => {
   useEffect(() => {
     (async () => {
+      useLoaderStore.getState().increaseSteps();
       const clientManifest = await (
         await fetch(`${process.env.PUBLIC_URL}/client/manifest.json`, {
           headers: {
@@ -22,6 +24,7 @@ const useInfinitrisClient = () => {
       const clientScript = document.createElement('script');
       clientScript.onload = async () => {
         console.log('Loaded Infinitris Client');
+        useLoaderStore.getState().increaseStepsCompleted();
         useAppStore.setState({
           clientApi: window.infinitris2,
         });

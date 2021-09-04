@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-<ellipse fill="currentColor" cx="12.024" cy="2.889" rx="2.757" ry="2.633"/>
-<path fill="currentColor" d="M14.602,9.396c0-1.454-1.158-2.633-2.586-2.633S9.429,7.941,9.429,9.396c0,0.003,0,0.005,0,0.008h0v11.635
-	h0.003c-0.001,0.023-0.003,0.045-0.003,0.068c0,1.454,1.158,2.633,2.586,2.633s2.586-1.179,2.586-2.633
-	c0-0.023-0.003-0.045-0.003-0.068h0.003V9.404h0C14.602,9.401,14.602,9.398,14.602,9.396z"/>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="24px"
+	 height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g id="_x31_" display="none">
+	<ellipse display="inline" fill="currentColor" cx="12" cy="4.851" rx="2.164" ry="2.066"/>
+	<path display="inline" fill="currentColor" d="M14.023,9.957c0-1.141-0.909-2.066-2.03-2.066s-2.03,0.925-2.03,2.066
+		c0,0.002,0,0.004,0,0.006h0v9.131h0.003c0,0.018-0.003,0.036-0.003,0.054c0,1.141,0.909,2.066,2.03,2.066s2.03-0.925,2.03-2.066
+		c0-0.018-0.002-0.036-0.003-0.054h0.003V9.964h0C14.023,9.962,14.023,9.959,14.023,9.957z"/>
+</g>
+<g id="_x32___x28_with_circle_x29_">
+	<ellipse fill="currentColor" cx="12.006" cy="4.851" rx="2.164" ry="2.066"/>
+	<path fill="currentColor" d="M14.03,9.957c0-1.141-0.909-2.066-2.03-2.066S9.97,8.816,9.97,9.957c0,0.002,0,0.004,0,0.006h0v9.131h0.003
+		c0,0.018-0.003,0.036-0.003,0.054c0,1.141,0.909,2.066,2.03,2.066s2.03-0.925,2.03-2.066c0-0.018-0.002-0.036-0.003-0.054h0.003
+		V9.964h0C14.029,9.962,14.03,9.959,14.03,9.957z"/>
+</g>
 </svg>

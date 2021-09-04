@@ -1,6 +1,5 @@
 import React from 'react';
 import useInfinitrisClient from './components/hooks/useInfinitrisClient';
-import useAppStore from './state/AppStore';
 import { Box, Theme, ThemeProvider } from '@material-ui/core';
 import { lightTheme, darkTheme } from './theme';
 
@@ -14,12 +13,12 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import Loader from './components/ui/Loader';
 import useDarkMode from './components/hooks/useDarkMode';
+import Router from './Router';
 
 interface AppProps {}
 
 function App({ children }: React.PropsWithChildren<AppProps>) {
   useInfinitrisClient();
-  const appStore = useAppStore();
 
   const isDarkMode = useDarkMode();
   const nextTheme = isDarkMode ? darkTheme : lightTheme;
@@ -30,10 +29,6 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
     setAppTheme({ ...nextTheme });
   }, [nextTheme]);
 
-  if (!appStore.clientApi) {
-    return null;
-  }
-
   return (
     <FuegoProvider fuego={fuego}>
       <Internationalization>
@@ -43,13 +38,15 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
             display="flex"
             flexDirection="column"
             height="100%"
-            style={{
+            /*style={{
               background: isDarkMode
                 ? 'linear-gradient(180deg, rgba(8,27,41,1) 0%, rgba(0,60,67,1) 35%, rgba(10,21,41,1) 100%)'
                 : 'linear-gradient(180deg, rgba(30,68,143,1) 0%, rgba(49,168,221,1) 35%, rgba(26,34,82,1) 100%)',
-            }}
+            }}*/
           >
-            <Loader>{children}</Loader>
+            <Loader>
+              <Router />
+            </Loader>
             <ToastContainer />
           </Box>
         </ThemeProvider>

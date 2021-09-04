@@ -20,10 +20,14 @@ import { useRef } from 'react';
 import { useEffect } from 'react';
 import FlexBox from '@/components/ui/FlexBox';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import HomePage from './HomePage';
+import HomePage, {
+  firstTimeAnimationDelaySeconds as homePageFirstTimeAnimationDelaySeconds,
+} from './HomePage';
 import useLoaderStore from '@/state/LoaderStore';
 import Loadable from '@/components/ui/Loadable';
 import useDarkMode from '@/components/hooks/useDarkMode';
+
+export const homePageBackgroundDelaySeconds = 5;
 
 export default function HomePageBackground() {
   const isDarkMode = useDarkMode();
@@ -35,14 +39,16 @@ export default function HomePageBackground() {
     `(max-height:${isLandscape ? 400 : 600}px)`
   );
   const loaderStore = useLoaderStore();
-  const isLoaded = loaderStore.isLoaded();
+  const isLoaded = loaderStore.hasFinished;
   const increaseSteps = loaderStore.increaseSteps;
   const increaseStepsCompleted = loaderStore.increaseStepsCompleted;
 
   const useStyles = makeStyles({
     backgroundDarkening: {
       height: '100%',
-      animation: isLoaded ? `$backgroundDarkening 5000ms forwards` : '',
+      animation: isLoaded
+        ? `$backgroundDarkening ${homePageBackgroundDelaySeconds}s ${homePageFirstTimeAnimationDelaySeconds}s forwards`
+        : '',
       pointerEvents: isLoaded ? 'unset' : 'none',
       backgroundColor: '#00000000',
     },
@@ -86,7 +92,7 @@ export default function HomePageBackground() {
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat',
           opacity: isLoaded ? 1 : 0,
-          transition: 'opacity 0.5s',
+          transition: `opacity ${homePageBackgroundDelaySeconds}s`,
           overflow: 'hidden',
         }}
         ref={bgRef}

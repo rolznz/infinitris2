@@ -1,31 +1,74 @@
-import isMobile from '@/utils/isMobile';
 import create from 'zustand';
 
 type LoaderStore = {
+  readonly key: number;
   readonly stepsCompleted: number;
   readonly steps: number;
   readonly startClicked: boolean;
+  readonly hasInitialized: boolean;
+  readonly hasFinished: boolean;
   increaseSteps(): void;
   increaseStepsCompleted(): void;
-  setStartClicked(startClicked: boolean): void;
+  clickStart(resetLoader: boolean): void;
   reset(): void;
-  isLoaded(): boolean;
+  initialize(): void;
 };
 
-const useLoaderStore = create<LoaderStore>((set, get) => ({
+const calculateHasFinished = (state: LoaderStore) => {
+  console.log(state);
+  return (
+    state.stepsCompleted >= state.steps &&
+    state.hasInitialized &&
+    state.startClicked
+  );
+};
+
+const useLoaderStore = create<LoaderStore>((set) => ({
+  key: 0,
   steps: 0,
   stepsCompleted: 0,
   startClicked: false,
-  increaseSteps: () => set((state) => ({ steps: state.steps + 1 })),
+  hasInitialized: false,
+  hasFinished: false,
+  increaseSteps: () =>
+    set((state) => ({
+      steps: state.steps + 1,
+      hasFinished: calculateHasFinished({ ...state, steps: state.steps + 1 }),
+    })),
   increaseStepsCompleted: () =>
-    set((state) => ({ stepsCompleted: state.stepsCompleted + 1 })),
-  setStartClicked: (startClicked) => set(() => ({ startClicked })),
+    set((state) => ({
+      stepsCompleted: state.stepsCompleted + 1,
+      hasFinished: calculateHasFinished({
+        ...state,
+        stepsCompleted: state.stepsCompleted + 1,
+      }),
+    })),
+  clickStart: (resetLoader) =>
+    set(
+      (state) =>
+        ({
+          startClicked: true,
+          hasFinished: resetLoader
+            ? false
+            : calculateHasFinished({ ...state, startClicked: true }),
+          ...(resetLoader
+            ? { steps: 0, stepsCompleted: 0, key: state.key + 1 }
+            : {}),
+        } as LoaderStore)
+    ),
   reset: () =>
     set((_) => ({
       steps: 0,
       stepsCompleted: 0,
+      hasFinished: false,
     })),
-  isLoaded: () => get().stepsCompleted >= get().steps && get().startClicked,
+  initialize: () =>
+    setTimeout(() => {
+      set((state) => ({
+        hasInitialized: true,
+        hasFinished: calculateHasFinished({ ...state, hasInitialized: true }),
+      }));
+    }, 500),
 }));
 
 export default useLoaderStore;

@@ -45,6 +45,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
+    "deploy": "(cd .. && yarn firebase:deploy:hosting)",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
     "formatjs:extract": "formatjs extract 'src/**/*.tsx' --out-file src/internationalization/lang/en.json --id-interpolation-pattern '[sha512:contenthash:base64:6]'",

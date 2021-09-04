@@ -18,6 +18,9 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import FlexBox from '@/components/ui/FlexBox';
 import useWindowSize from 'react-use/lib/useWindowSize';
 
+const isFirstTimeAnimation = true;
+export const firstTimeAnimationDelaySeconds = 3.5;
+
 let backgroundAlreadyLoaded = false;
 
 export default function HomePage({
@@ -42,6 +45,7 @@ export default function HomePage({
 
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width >= windowSize.height;
+
   /*const shortLandscapeScreen =
     useMediaQuery('(max-height:400px)') && isLandscape;*/
 
@@ -95,7 +99,7 @@ export default function HomePage({
             width: 'auto',
             height: '100%',
             opacity: backgroundLoaded ? 1 : 0,
-            transition: 'opacity 2s 0.5s',
+            transition: `opacity 2s ${firstTimeAnimationDelaySeconds}s`,
           }}
         />
       </Box>
@@ -165,7 +169,7 @@ export default function HomePage({
               className={classes.playButton}
               style={{
                 opacity: backgroundLoaded ? 1 : 0,
-                transition: 'opacity 2s 1.5s',
+                transition: `opacity 2s ${firstTimeAnimationDelaySeconds}s`,
               }}
             >
               <PlayArrowIcon className={classes.playButtonIcon} />

@@ -2,8 +2,14 @@ import { createTheme, ThemeOptions } from '@material-ui/core/styles';
 import { SkeletonClassKey } from '@material-ui/lab/Skeleton';
 
 declare module '@material-ui/core/styles/overrides' {
-  export interface ComponentNameToClassKey {
+  interface ComponentNameToClassKey {
     MuiSkeleton: SkeletonClassKey;
+  }
+}
+
+declare module '@material-ui/core/styles/createPalette' {
+  interface TypeBackground {
+    loader: string;
   }
 }
 
@@ -24,6 +30,9 @@ const coreThemeOptions: ThemeOptions = {
     MuiCheckbox: {
       root: {
         color: '#ECECED',
+        border: '4px solid #233035',
+        padding: 0,
+        margin: 4,
       },
     },
     MuiDivider: {
@@ -32,15 +41,42 @@ const coreThemeOptions: ThemeOptions = {
         height: 2,
       },
     },
+    MuiLinearProgress: {
+      colorPrimary: {
+        backgroundColor: 'transparent',
+        border: '1px solid #ECECED',
+        boxSizing: 'border-box',
+      },
+      barColorPrimary: {
+        backgroundColor: '#ECECED',
+      },
+    },
+    MuiButton: {
+      contained: {
+        borderRadius: 32,
+        paddingTop: 0,
+        paddingBottom: 0,
+        textTransform: 'lowercase',
+        border: '4px solid #233035',
+      },
+    },
+    MuiFormControlLabel: {
+      label: {
+        textTransform: 'lowercase',
+      },
+    },
   },
   palette: {
     primary: {
-      main: '#2B57A6',
+      main: '#a4daf2', //'#2B57A6',
       contrastText: '#ECECED',
     },
     secondary: {
       main: '#a0a09f',
       contrastText: '#ECECED',
+    },
+    background: {
+      loader: '#0f1d22',
     },
   },
 };
@@ -79,7 +115,7 @@ const darkThemeOptions: ThemeOptions = {
     text: {
       primary: '#999999',
       //secondary: '#ECECED',
-      //tertiary: '#12232B'
+      //tertiary: '#12232B'  // loader: 081428
     },
   },
   typography: {

@@ -142,7 +142,9 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
               defaultMessage="build {clientVersion}"
               description="Hamburger menu - App build"
               values={{
-                clientVersion: appStore.clientApi?.getVersion(),
+                clientVersion: `${
+                  process.env.REACT_APP_VERSION
+                }.${appStore.clientApi?.getVersion()}`,
               }}
             />
           </Typography>

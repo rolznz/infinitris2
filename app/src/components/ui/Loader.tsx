@@ -6,6 +6,7 @@ import {
   Checkbox,
   FormControlLabel,
   LinearProgress,
+  makeStyles,
   Typography,
 } from '@material-ui/core';
 import React from 'react';
@@ -18,6 +19,18 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import useAppStore from '@/state/AppStore';
 
+const useStyles = makeStyles((theme) => ({
+  startButton: {
+    backgroundColor: theme.palette.tertiary.main,
+    fontSize: 20,
+  },
+  checkbox: {
+    '& span': {
+      margin: '-2px',
+    },
+  },
+}));
+
 export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const loaderStore = useLoaderStore();
   const userStore = useUserStore();
@@ -26,6 +39,8 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const setStartClicked = loaderStore.clickStart;
   const intl = useIntl();
   const [hasToggledSounds, setHasToggledSounds] = useState(false);
+
+  const classes = useStyles();
 
   const clientLoaded = useAppStore((appStore) => !!appStore.clientApi);
 
@@ -124,11 +139,14 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
             loaderStore.stepsCompleted === loaderStore.steps && (
               <FlexBox position="absolute" top="100px">
                 <Button
-                  style={{ fontSize: 20 }}
                   variant="contained"
-                  color="primary"
+                  color="primary" // TODO: tertiary
+                  className={classes.startButton}
                   onClick={() => {
-                    loaderStore.clickStart(musicOn);
+                    if (musicOn) {
+                      loaderStore.reset();
+                    }
+                    loaderStore.clickStart();
                     if (musicOn) {
                       // On mobile, sounds can only be loaded after an interaction
                       prepareSounds();
@@ -148,9 +166,9 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                       onChange={(event) => {
                         userStore.setMusicOn(event.target.checked);
                       }}
-                      inputProps={{ 'aria-label': 'primary checkbox' }}
                       checkedIcon={<CheckCircleIcon />}
                       icon={<RadioButtonUncheckedIcon />}
+                      className={classes.checkbox}
                     />
                   }
                   label={intl.formatMessage({

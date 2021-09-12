@@ -1,6 +1,5 @@
 import { createTheme, ThemeOptions } from '@material-ui/core/styles';
 import { SkeletonClassKey } from '@material-ui/lab/Skeleton';
-
 declare module '@material-ui/core/styles/overrides' {
   interface ComponentNameToClassKey {
     MuiSkeleton: SkeletonClassKey;
@@ -8,10 +7,18 @@ declare module '@material-ui/core/styles/overrides' {
 }
 
 declare module '@material-ui/core/styles/createPalette' {
+  interface PaletteOptions {
+    tertiary?: PaletteColorOptions;
+  }
+  interface Palette {
+    tertiary: PaletteColor;
+  }
   interface TypeBackground {
     loader: string;
   }
 }
+
+export const borderColor = 'rgba(249, 248, 247, 0.3)';
 
 export const zIndexes = {
   above: 1,
@@ -61,7 +68,7 @@ const coreThemeOptions: ThemeOptions = {
     MuiCheckbox: {
       root: {
         color: '#ECECED',
-        border: '2px solid #233035',
+        border: `4px solid ${borderColor}`,
         padding: 0,
         margin: 4,
       },
@@ -82,13 +89,21 @@ const coreThemeOptions: ThemeOptions = {
         backgroundColor: '#ECECED',
       },
     },
+    MuiIconButton: {
+      label: {
+        //margin: '-2px',
+        //transform: 'translateX(0.5px)',
+      },
+    },
     MuiButton: {
       contained: {
         borderRadius: 32,
         paddingTop: 0,
         paddingBottom: 0,
         textTransform: 'lowercase',
-        border: '4px solid #233035',
+        border: `4px solid ${borderColor}`,
+        boxShadow: 'none',
+        backgroundClip: 'padding-box',
       },
     },
     MuiFormControlLabel: {
@@ -105,11 +120,15 @@ const coreThemeOptions: ThemeOptions = {
   },
   palette: {
     primary: {
-      main: '#a4daf2', //'#2B57A6',
+      main: '#3A59A1',
       contrastText: '#ECECED',
     },
     secondary: {
-      main: '#a0a09f',
+      main: '#A0A09F',
+      contrastText: '#ECECED',
+    },
+    tertiary: {
+      main: '#A4DAF2',
       contrastText: '#ECECED',
     },
     background: {
@@ -124,7 +143,7 @@ const lightThemeOptions: ThemeOptions = {
     ...(coreThemeOptions.palette || {}),
     background: {
       ...(coreThemeOptions.palette?.background || {}),
-      paper: '#1c6cae',
+      paper: '#1E448F',
     },
     text: {
       primary: '#ECECED',
@@ -147,7 +166,7 @@ const darkThemeOptions: ThemeOptions = {
     type: 'dark',
     background: {
       ...(coreThemeOptions.palette?.background || {}),
-      paper: '#0f1d22',
+      paper: '#081B29',
     },
     text: {
       primary: '#999999',

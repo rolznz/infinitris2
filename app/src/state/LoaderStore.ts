@@ -9,7 +9,7 @@ type LoaderStore = {
   readonly hasFinished: boolean;
   increaseSteps(): void;
   increaseStepsCompleted(): void;
-  clickStart(resetLoader: boolean): void;
+  clickStart(): void;
   reset(): void;
   initialize(): void;
 };
@@ -42,24 +42,20 @@ const useLoaderStore = create<LoaderStore>((set) => ({
         stepsCompleted: state.stepsCompleted + 1,
       }),
     })),
-  clickStart: (resetLoader) =>
+  clickStart: () =>
     set(
       (state) =>
         ({
           startClicked: true,
-          hasFinished: resetLoader
-            ? false
-            : calculateHasFinished({ ...state, startClicked: true }),
-          ...(resetLoader
-            ? { steps: 0, stepsCompleted: 0, key: state.key + 1 }
-            : {}),
+          hasFinished: calculateHasFinished({ ...state, startClicked: true }),
         } as LoaderStore)
     ),
   reset: () =>
-    set((_) => ({
+    set((state) => ({
       steps: 0,
       stepsCompleted: 0,
       hasFinished: false,
+      key: state.key + 1,
     })),
   initialize: () =>
     setTimeout(() => {

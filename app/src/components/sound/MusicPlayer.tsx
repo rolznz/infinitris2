@@ -17,6 +17,10 @@ export enum SoundKey {
   rotate2 = 'rotate2',
 }
 
+export function soundsLoaded(): boolean {
+  return !!_menuTheme;
+}
+
 export async function prepareSounds() {
   // TODO: need to support loading music based on current page
   // move sfx out to separate file or rename this one

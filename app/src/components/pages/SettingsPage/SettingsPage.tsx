@@ -25,35 +25,19 @@ import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import SettingsRow from './SettingsRow';
 import { InputMethod, AppTheme } from 'infinitris2-models';
-import { setMusicPlaying } from '@/components/sound/MusicPlayer';
+import { setMusicPlaying, soundsLoaded } from '@/components/sound/MusicPlayer';
 import { Page } from '@/components/ui/Page';
 import MusicNoteIcon from '@material-ui/icons/MusicNote';
 import MusicOffIcon from '@material-ui/icons/MusicOff';
 import useLoaderStore from '@/state/LoaderStore';
-
-function CustomIconSwitch(props: SwitchProps) {
-  return (
-    <ThemeProvider
-      theme={createTheme({
-        overrides: {
-          MuiIconButton: {
-            label: {
-              background: 'red',
-              borderRadius: '50%',
-              marginTop: '-2px',
-              padding: '2px', // FIXME:
-            },
-          },
-        },
-      })}
-    >
-      <Switch {...props} />
-    </ThemeProvider>
-  );
-}
+import useDarkMode from '@/components/hooks/useDarkMode';
+import { IconSwitch } from '@/components/ui/IconSwitch';
+import { ReactComponent as LightModeIcon } from '@/icons/lightmode.svg';
+import { ReactComponent as DarkModeIcon } from '@/icons/darkmode.svg';
 
 export default function SettingsPage() {
   const userStore = useUserStore();
+  const isDarkMode = useDarkMode();
 
   return (
     <Page
@@ -97,25 +81,20 @@ export default function SettingsPage() {
               />
             }
             right={
-              <Select
-                disableUnderline
-                defaultValue="default"
-                value={userStore.user.appTheme}
+              <IconSwitch
+                checked={isDarkMode}
+                checkediconStyle={{ color: 'black' }}
+                iconStyle={{ color: 'white' }}
+                icon={<LightModeIcon />}
+                checkedIcon={<DarkModeIcon />}
                 onChange={(event) => {
-                  const value = event.target.value as AppTheme;
-                  userStore.setAppTheme(value);
-                  useLoaderStore.getState().reset();
-                  useLoaderStore.getState().initialize();
+                  userStore.setAppTheme(
+                    event.target.checked ? 'dark' : 'light'
+                  );
+                  //useLoaderStore.getState().reset();
+                  //useLoaderStore.getState().initialize();
                 }}
-              >
-                {(['light', 'dark', 'default'] as AppTheme[]).map(
-                  (appTheme) => (
-                    <MenuItem key={appTheme} value={appTheme}>
-                      {appTheme.toUpperCase()}
-                    </MenuItem>
-                  )
-                )}
-              </Select>
+              />
             }
           />
           <SettingsRow
@@ -126,20 +105,19 @@ export default function SettingsPage() {
               />
             }
             right={
-              <CustomIconSwitch
+              <IconSwitch
                 checked={
                   userStore.user.musicOn !== undefined
                     ? userStore.user.musicOn
                     : true
                 }
-                icon={
-                  <SvgIcon fontSize="small">
-                    <MusicOffIcon />
-                  </SvgIcon>
-                }
+                icon={<MusicOffIcon />}
                 checkedIcon={<MusicNoteIcon />}
                 onChange={(event) => {
                   const isPlaying = event.target.checked;
+                  if (!soundsLoaded()) {
+                    useLoaderStore.getState().reset();
+                  }
                   userStore.setMusicOn(isPlaying);
                   setMusicPlaying(isPlaying);
                 }}

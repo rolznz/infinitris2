@@ -16,6 +16,7 @@ export function Page(props: React.PropsWithChildren<PageProps>) {
     page: {
       flex: 1,
       padding: theme.spacing(4),
+      maxWidth: '100%',
       ...(props.useGradient
         ? {
             background: isDarkMode

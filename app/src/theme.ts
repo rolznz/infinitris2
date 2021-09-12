@@ -13,24 +13,55 @@ declare module '@material-ui/core/styles/createPalette' {
   }
 }
 
+export const zIndexes = {
+  above: 1,
+  hamburgerButton: 100,
+  drawer: 9950,
+  loader: 9999,
+};
+
 const coreThemeOptions: ThemeOptions = {
   typography: {
-    fontFamily: ['Nunito'].join(','),
+    fontFamily: ['Comfortaa'].join(','),
+
+    h1: {
+      fontSize: 36,
+      textTransform: 'lowercase',
+    },
+    body1: {
+      textTransform: 'lowercase',
+    },
   },
-  zIndex: {
-    hamburgerButton: 1,
-    loader: 9999,
-  } as any,
+  zIndex: zIndexes as any,
   overrides: {
+    MuiDrawer: {
+      root: {
+        zIndex: zIndexes.drawer,
+      },
+    },
     MuiSkeleton: {
       rect: {
         borderRadius: 4,
       },
     },
+    MuiSwitch: {
+      /*thumb: {
+        backgroundColor: '#ECECED',
+        color: '#ECECED',
+      },
+      input: {
+        backgroundColor: '#ECECED',
+        color: '#ECECED',
+      },
+      checked: {
+        backgroundColor: '#ECECED',
+        color: '#ECECED',
+      },*/
+    },
     MuiCheckbox: {
       root: {
         color: '#ECECED',
-        border: '4px solid #233035',
+        border: '2px solid #233035',
         padding: 0,
         margin: 4,
       },
@@ -63,6 +94,12 @@ const coreThemeOptions: ThemeOptions = {
     MuiFormControlLabel: {
       label: {
         textTransform: 'lowercase',
+      },
+    },
+    MuiSelect: {
+      root: {},
+      icon: {
+        color: '#ECECED',
       },
     },
   },

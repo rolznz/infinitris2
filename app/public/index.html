@@ -6,14 +6,15 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap"
       rel="preload"
       as="style"
     />
     <link
-      href="https://fonts.googleapis.com/css2?family=Nunito:wght@800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;700&display=swap"
       rel="stylesheet"
     />
+
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover"
@@ -52,7 +53,9 @@
       }
       body {
         overflow: hidden;
-        background-color: #0f1d22;
+        background-color: #0f1d22 !important; /*override material ui CssBaseline background color reset */
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
       }
       #html-loader {
         display: flex;
@@ -62,14 +65,13 @@
         justify-content: center;
         align-items: center;
         position: absolute;
+        transition: opacity 1s;
       }
       #html-loader img {
         margin-bottom: 20vh;
         width: 289px;
         height: 181px;
         z-index: 10000;
-        opacity: 0;
-        transition: opacity 0.5s 0.5s;
       }
 
       .html-loader-star {
@@ -89,7 +91,7 @@
         }
       }
 
-      #html-loader-pre {
+      #html-loader-spinner {
         display: flex;
         width: 100%;
         height: 100%;
@@ -101,17 +103,17 @@
         transition: opacity 0.5s 0.5s;
       }
 
-      #html-loader-pre::after {
+      #html-loader-spinner::after {
         content: '';
         width: 16px;
         height: 16px;
         background-color: #0f1d22;
         border: 4px solid #ffffffff;
         box-shadow: 0px 0px 8px #ffffff;
-        animation: html-loader-pre 2s ease infinite;
+        animation: html-loader-spinner 2s ease infinite;
         margin-top: 100px;
       }
-      @keyframes html-loader-pre {
+      @keyframes html-loader-spinner {
         to {
           transform: rotate(1turn);
         }
@@ -124,10 +126,9 @@
       <img
         id="html-loader-image"
         src="%PUBLIC_URL%/images/loader/logo.png"
-        onload="document.getElementById('html-loader-image').style.opacity = 1; document.getElementById('html-loader-pre').style.opacity = 1; for(var i = 0; i < 100; i++){var star = document.createElement('div'); star.className = 'html-loader-star'; var l = Math.floor(Math.random() * 100); var t = Math.floor(Math.random() * 100); star.style.top = t * 2 +'%'; star.style.left = l +'%'; star.style.opacity = (Math.sqrt((l-50)*(l-50) + (t-50)*(t-50))/100) * 2 + Math.random() * 0.25; star.style.animation = 'html-loader-star-animation ' + (Math.random() * 20 + 30) + 's linear infinite'; document.getElementById('html-loader').appendChild(star)}"
+        onload="document.getElementById('html-loader-image').style.opacity = 1; document.getElementById('html-loader-spinner').style.opacity = 1; for(var i = 0; i < 100; i++){var star = document.createElement('div'); star.className = 'html-loader-star'; var l = Math.floor(Math.random() * 100); var t = Math.floor(Math.random() * 100); star.style.top = t * 2 +'%'; star.style.left = l +'%'; star.style.opacity = (Math.sqrt((l-50)*(l-50) + (t-50)*(t-50))/100) * 2 + Math.random() * 0.25; star.style.animation = 'html-loader-star-animation ' + (Math.random() * 20 + 30) + 's linear infinite'; document.getElementById('html-loader').appendChild(star)}"
       />
-      <div id="html-loader-pre"></div>
-      />
+      <div id="html-loader-spinner"></div>
     </div>
     <div id="root"></div>
     <!--

@@ -24,6 +24,7 @@ const useStyles = makeStyles((theme) => ({
   },
   text: {
     color: theme.palette.text.primary,
+    textTransform: 'lowercase',
   },
 }));
 

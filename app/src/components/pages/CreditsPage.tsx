@@ -1,10 +1,17 @@
 import React from 'react';
-import FlexBox from '../ui/FlexBox';
+import { FormattedMessage } from 'react-intl';
+import { Page } from '../ui/Page';
 
 export function CreditsPage() {
   return (
-    <FlexBox flex={1} mx={10}>
-      <h1>Credits</h1>
+    <Page
+      title={
+        <FormattedMessage
+          defaultMessage="Credits"
+          description="Credits Header"
+        />
+      }
+    >
       <p>
         Programming: <a href="https://github.com/rolznz">Roland Bewick</a>
       </p>
@@ -19,7 +26,7 @@ export function CreditsPage() {
         Special Thanks: AL Kong, Rob Hayes, Zorg from TigSource, Sven Obermaier,
         Natalia Golovacheva, Jono Burch, Charles Liu, Nick van der Vis, Seth
         Reid, Eugene van Staden, Linda Pettigrew, Niamh Fitzgerald, Tim Bewick,
-        Michał Marcinkowski, Saintpoida
+        Michał Marcinkowski, Saintpoida, Jonathan Derrough
       </p>
 
       <p>
@@ -31,6 +38,6 @@ export function CreditsPage() {
           Pixel Buddha
         </a>
       </p>
-    </FlexBox>
+    </Page>
   );
 }

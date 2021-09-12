@@ -1,5 +1,5 @@
 import React from 'react';
-import FlexBox from './ui/FlexBox';
+import FlexBox from '@/components/ui/FlexBox';
 
 export function TermsOfServicePage() {
   return (

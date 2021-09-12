@@ -15,7 +15,6 @@ type LoaderStore = {
 };
 
 const calculateHasFinished = (state: LoaderStore) => {
-  console.log(state);
   return (
     state.stepsCompleted >= state.steps &&
     state.hasInitialized &&

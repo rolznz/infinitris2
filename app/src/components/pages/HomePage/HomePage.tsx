@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  Box,
-  IconButton,
-  Link,
-  makeStyles,
-  TextField,
-  useMediaQuery,
-} from '@material-ui/core';
+import { Box, IconButton, Link, makeStyles } from '@material-ui/core';
 import { Link as RouterLink } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
@@ -17,17 +10,49 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 
 import FlexBox from '@/components/ui/FlexBox';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import useLoaderStore from '@/state/LoaderStore';
+import { zIndexes } from '@/theme';
 
 const isFirstTimeAnimation = true;
 export const firstTimeAnimationDelaySeconds = 3.5;
 
-let backgroundAlreadyLoaded = false;
+const useStyles = makeStyles({
+  playButton: {
+    backgroundColor: '#57bb50',
+    borderColor: '#ffffff44',
+    borderWidth: 6,
+    borderStyle: 'solid',
+    backgroundClip: 'padding-box',
+    '&:hover': {
+      backgroundColor: '#8ad785',
+      filter: 'drop-shadow(0 0 0.75rem white) drop-shadow(0 0 1rem #ffffff)',
+    },
+    filter: 'drop-shadow(0 0 0.75rem white)',
+    animation: `$playButtonAnimation 2000ms alternate infinite`,
+    transform: 'scale(1.0)',
+  },
+  playButtonIcon: {
+    width: 48,
+    height: 48,
+  },
+  '@keyframes playButtonAnimation': {
+    '0%': {
+      transform: 'scale(1.0)',
+      filter: 'drop-shadow(0 0 0.75rem white)',
+    },
+    '100%': {
+      transform: 'scale(1.1)',
+      filter: 'drop-shadow(0 0 0.75rem white) drop-shadow(0 0 1rem #ffffff)',
+    },
+  },
+  nicknameInput: {
+    '&::placeholder': {
+      color: '#ffffffAA',
+    },
+  },
+});
 
-export default function HomePage({
-  backgroundLoaded,
-}: {
-  backgroundLoaded: boolean;
-}) {
+const _HomePage = () => {
   const userStore = useUserStore();
   //const isLoggedIn = useAuthStore((authStore) => !!authStore.user);
   //const homeStore = useHomeStore();
@@ -40,56 +65,18 @@ export default function HomePage({
     isLoadingOfficialChallenges,
   } = useIncompleteChallenges();*/
 
-  backgroundAlreadyLoaded = backgroundAlreadyLoaded || backgroundLoaded;
-  backgroundLoaded = backgroundLoaded || backgroundAlreadyLoaded;
-
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width >= windowSize.height;
+  const isLoaded = useLoaderStore((loaderStore) => loaderStore.hasFinished);
 
   /*const shortLandscapeScreen =
     useMediaQuery('(max-height:400px)') && isLandscape;*/
-
-  const useStyles = makeStyles({
-    playButton: {
-      backgroundColor: '#57bb50',
-      borderColor: '#ffffff44',
-      borderWidth: 6,
-      borderStyle: 'solid',
-      backgroundClip: 'padding-box',
-      '&:hover': {
-        backgroundColor: '#8ad785',
-        filter: 'drop-shadow(0 0 0.75rem white) drop-shadow(0 0 1rem #ffffff)',
-      },
-      filter: 'drop-shadow(0 0 0.75rem white)',
-      animation: `$playButtonAnimation 2000ms alternate infinite`,
-      transform: 'scale(1.0)',
-    },
-    playButtonIcon: {
-      width: 48,
-      height: 48,
-    },
-    '@keyframes playButtonAnimation': {
-      '0%': {
-        transform: 'scale(1.0)',
-        filter: 'drop-shadow(0 0 0.75rem white)',
-      },
-      '100%': {
-        transform: 'scale(1.1)',
-        filter: 'drop-shadow(0 0 0.75rem white) drop-shadow(0 0 1rem #ffffff)',
-      },
-    },
-    nicknameInput: {
-      '&::placeholder': {
-        color: '#ffffffAA',
-      },
-    },
-  });
 
   const classes = useStyles();
   const intl = useIntl();
 
   return (
-    <FlexBox height="100%">
+    <FlexBox height="100%" zIndex={zIndexes.above}>
       {!isLandscape && <Box mt="10vh" />}
       <Box height={isLandscape ? '30vh' : '20vh'}>
         <img
@@ -98,7 +85,7 @@ export default function HomePage({
           style={{
             width: 'auto',
             height: '100%',
-            opacity: backgroundLoaded ? 1 : 0,
+            opacity: isLoaded ? 1 : 0,
             transition: `opacity 2s ${firstTimeAnimationDelaySeconds}s`,
           }}
         />
@@ -168,7 +155,7 @@ export default function HomePage({
             <IconButton
               className={classes.playButton}
               style={{
-                opacity: backgroundLoaded ? 1 : 0,
+                opacity: isLoaded ? 1 : 0,
                 transition: `opacity 2s ${firstTimeAnimationDelaySeconds}s`,
               }}
             >
@@ -180,4 +167,6 @@ export default function HomePage({
       <Box mt={8} />
     </FlexBox>
   );
-}
+};
+
+export const HomePage = React.memo(_HomePage);

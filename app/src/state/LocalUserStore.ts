@@ -1,3 +1,4 @@
+import isMobile from '@/utils/isMobile';
 import { IUser, DEFAULT_KEYBOARD_CONTROLS } from 'infinitris2-models';
 import create from 'zustand';
 import { defaultLocale } from '../internationalization';
@@ -9,7 +10,7 @@ const localStorageUser = localStorageValue
   : undefined;
 
 const defaultUser: IUser = {
-  preferredInputMethod: undefined,
+  preferredInputMethod: isMobile() ? 'touch' : 'keyboard',
   hasSeenWelcome: false,
   hasSeenAllSet: false,
   //nickname: '',
@@ -20,6 +21,7 @@ const defaultUser: IUser = {
   //coins: 0,
   //networkImpact: 0,
   //color: defaultColor,
+
   readOnly: {
     createdTimestamp: { seconds: 0, nanoseconds: 0 },
     lastModifiedTimestamp: { seconds: 0, nanoseconds: 0 },

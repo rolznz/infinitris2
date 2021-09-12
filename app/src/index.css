@@ -1,17 +1,3 @@
-body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  opacity: 1;
-  /*animation: fadein 2s ease-in forwards;*/
-}
-
-/*#root {
-  animation: fadein 5s ease-in forwards;
-}*/
-
 body > canvas {
   position: fixed;
   z-index: -1;

@@ -1,6 +1,6 @@
 import { appName } from '@/utils/constants';
 import React from 'react';
-import FlexBox from './ui/FlexBox';
+import FlexBox from '../ui/FlexBox';
 
 export function PrivacyPolicyPage() {
   return (

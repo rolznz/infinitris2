@@ -11,13 +11,18 @@ import { homePageBackgroundDelaySeconds } from '@/components/pages/HomePage/Home
 import useLoaderStore from '@/state/LoaderStore';
 import { firstTimeAnimationDelaySeconds } from '@/components/pages/HomePage/HomePage';
 
+let hasAnimated = window.location.pathname !== '/';
 const useStyles = makeStyles({
   button: {
     position: 'absolute',
     top: 0,
     right: 0,
-    opacity: 0,
-    animation: `$button ${homePageBackgroundDelaySeconds}s ${firstTimeAnimationDelaySeconds}s forwards`,
+    opacity: hasAnimated ? 1 : 0,
+    ...(hasAnimated
+      ? {}
+      : {
+          animation: `$button ${homePageBackgroundDelaySeconds}s ${firstTimeAnimationDelaySeconds}s forwards`,
+        }),
   },
   '@keyframes button': {
     '0%': {
@@ -40,6 +45,15 @@ export default function HamburgerMenuButton() {
   const classes = useStyles();
 
   const isLoading = useLoaderStore((store) => !store.hasFinished);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setTimeout(
+        () => (hasAnimated = true),
+        (homePageBackgroundDelaySeconds + firstTimeAnimationDelaySeconds) * 1000
+      );
+    }
+  }, [isLoading]);
 
   if (isLoading) {
     return null;

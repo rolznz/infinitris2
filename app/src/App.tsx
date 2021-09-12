@@ -13,7 +13,8 @@ import { useState } from 'react';
 import { useEffect } from 'react';
 import Loader from './components/ui/Loader';
 import useDarkMode from './components/hooks/useDarkMode';
-import Router from './Router';
+import PageRouter from './PageRouter';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 interface AppProps {}
 
@@ -30,28 +31,26 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
   }, [nextTheme]);
 
   return (
-    <FuegoProvider fuego={fuego}>
-      <Internationalization>
-        <ThemeProvider theme={appTheme}>
-          <Box
-            className="App"
-            display="flex"
-            flexDirection="column"
-            height="100%"
-            /*style={{
-              background: isDarkMode
-                ? 'linear-gradient(180deg, rgba(8,27,41,1) 0%, rgba(0,60,67,1) 35%, rgba(10,21,41,1) 100%)'
-                : 'linear-gradient(180deg, rgba(30,68,143,1) 0%, rgba(49,168,221,1) 35%, rgba(26,34,82,1) 100%)',
-            }}*/
-          >
-            <Loader>
-              <Router />
-            </Loader>
-            <ToastContainer />
-          </Box>
-        </ThemeProvider>
-      </Internationalization>
-    </FuegoProvider>
+    <>
+      <CssBaseline />
+      <FuegoProvider fuego={fuego}>
+        <Internationalization>
+          <ThemeProvider theme={appTheme}>
+            <Box
+              className="App"
+              display="flex"
+              flexDirection="column"
+              height="100%"
+            >
+              <Loader>
+                <PageRouter />
+              </Loader>
+              <ToastContainer />
+            </Box>
+          </ThemeProvider>
+        </Internationalization>
+      </FuegoProvider>
+    </>
   );
 }
 

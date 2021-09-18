@@ -1,72 +1,56 @@
 import React from 'react';
-import { Box, Button, Typography } from '@material-ui/core';
+import { Box, Button, IconButton, Typography } from '@material-ui/core';
 
-import FlexBox from '../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import useLoginRedirect from '../hooks/useLoginRedirect';
 import { useDocument } from '@nandorojo/swr-firestore';
-import {
-  getAffiliatePath,
-  getUserPath,
-  IAffiliate,
-  IUser,
-} from 'infinitris2-models';
+import { getAffiliatePath, IAffiliate } from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
-import LoadingSpinner from '../LoadingSpinner';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import { toast } from 'react-toastify';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
+import { useUser } from '@/state/UserStore';
+import { Page } from '../ui/Page';
+import useDialogStore, { openLoginDialog } from '@/state/DialogStore';
 
 export default function AffiliateProgramPage() {
-  useLoginRedirect();
   const intl = useIntl();
   const [, copy] = useCopyToClipboard();
 
-  //const [userStore, user] = useUserStore((store) => [store, store.user]);
+  const user = useUser();
   const userId = useAuthStore().user?.uid;
 
-  const { data: fireStoreUserDoc } = useDocument<IUser>(
-    userId ? getUserPath(userId) : null
+  const affiliateId = user.readOnly?.affiliateId;
+
+  const { data: affiliateDoc } = useDocument<IAffiliate>(
+    affiliateId ? getAffiliatePath(affiliateId) : null
   );
 
-  const affiliateId = '12345'; //fireStoreUserDoc?.readOnly?.affiliateId;
-
-  /*const { data: affiliateDoc } = useDocument<IAffiliate>(
-    affiliateId ? getAffiliatePath(affiliateId) : null
-  );*/
-  const affiliateDoc: IAffiliate = {
-    readOnly: {
-      numConversions: 3,
-    },
-    created: true,
-  };
-
-  const affiliateLink = `${window.location.origin}?ref=${affiliateId}`;
-
-  if (!fireStoreUserDoc?.id || fireStoreUserDoc.id !== userId) {
-    // wait for the user profile to load
-    return (
-      <FlexBox flex={1}>
-        <LoadingSpinner />
-      </FlexBox>
-    );
-  }
+  const affiliateLink = `${window.location.origin}${
+    affiliateId ? `?ref=${affiliateId}` : ''
+  }`;
 
   return (
-    <FlexBox flex={1}>
-      <Typography variant="h1" align="center">
+    <Page
+      title={
         <FormattedMessage
-          defaultMessage="Invite your Friends"
-          description="Affiliate Program page title - invite your friends"
+          defaultMessage="Share & earn"
+          description="Affiliate Program page title - share and earn"
         />
-      </Typography>
-      <Box mt={4} />
+      }
+    >
       <Typography align="center">
-        <FormattedMessage
-          defaultMessage="Share the below link with your friends and you will both earn bonus coins when your friends sign up."
-          description="Affiliate Program page title - invite your friends description"
-        />
+        {userId ? (
+          <FormattedMessage
+            defaultMessage="Share the below link with your friends and you will both earn bonus coins when your friends sign up."
+            description="Affiliate Program page title - invite your friends description"
+          />
+        ) : (
+          <FormattedMessage
+            defaultMessage="Share the below link with your friends"
+            description="Affiliate Program page title - invite your friends description"
+          />
+        )}
       </Typography>
       {affiliateDoc && (
         <Typography align="center" variant="caption">
@@ -81,16 +65,9 @@ export default function AffiliateProgramPage() {
         </Typography>
       )}
       <Box mt={4} />
-      {!fireStoreUserDoc || !affiliateDoc ? (
-        <FlexBox>
-          <LoadingSpinner />
-        </FlexBox>
-      ) : (
+      {
         <>
-          <Button
-            variant="contained"
-            color="primary"
-            startIcon={<FileCopyIcon />}
+          <IconButton
             onClick={() => {
               copy(affiliateLink);
               toast(
@@ -101,21 +78,39 @@ export default function AffiliateProgramPage() {
                 })
               );
             }}
-          ></Button>
+          >
+            <FileCopyIcon fontSize="large" />
+          </IconButton>
           <Box mt={4} />
-          <Typography align="center" variant="caption">
-            <FormattedMessage
-              defaultMessage="So far {affiliateCount} friends have signed up"
-              description="Affiliate Program Page - affiliate count statistic"
-              values={{
-                affiliateCount: affiliateDoc.readOnly?.numConversions || 0,
-              }}
-            />
-          </Typography>
+          {userId ? (
+            <Typography align="center" variant="caption">
+              <FormattedMessage
+                defaultMessage="So far {affiliateCount} friends have signed up"
+                description="Affiliate Program Page - affiliate count statistic"
+                values={{
+                  affiliateCount: affiliateDoc?.readOnly.numConversions || 0,
+                }}
+              />
+            </Typography>
+          ) : (
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={openLoginDialog}
+            >
+              <FormattedMessage
+                defaultMessage="Log in to earn"
+                description="Affiliate Program Page - affiliate count statistic"
+                values={{
+                  affiliateCount: affiliateDoc?.readOnly.numConversions || 0,
+                }}
+              />
+            </Button>
+          )}
 
           {/* TODO: OG images for sharing */}
         </>
-      )}
-    </FlexBox>
+      }
+    </Page>
   );
 }

@@ -33,7 +33,7 @@ export default function LoginDialog({
         />
       }
     >
-      <Login onLogin={handleLogin} showTitle={false} />
+      <Login onLogin={handleLogin} onClose={handleClose} showTitle={false} />
     </CustomDialog>
   );
 }

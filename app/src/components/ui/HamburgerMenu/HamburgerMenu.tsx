@@ -17,6 +17,7 @@ import { ReactComponent as ShareEarnIcon } from '@/icons/share_earn.svg';
 import { ReactComponent as ScoreboardIcon } from '@/icons/scoreboard.svg';
 import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
 import { ReactComponent as AboutIcon } from '@/icons/about.svg';
+import { ReactComponent as LogoutIcon } from '@/icons/logout.svg';
 import { appName } from '@/utils/constants';
 import useAppStore from '@/state/AppStore';
 import { FormattedMessage } from 'react-intl';
@@ -25,6 +26,8 @@ import HamburgerListItem from './HamburgerListItem';
 import { Link as RouterLink } from 'react-router-dom';
 import FlexBox from '../FlexBox';
 import logoImage from './assets/logo.png';
+import useAuthStore from '@/state/AuthStore';
+import { useUserStore } from '@/state/UserStore';
 
 type HamburgerMenuProps = {
   isOpen: boolean;
@@ -50,6 +53,8 @@ const useStyles = makeStyles((theme) => ({
 
 export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
   const appStore = useAppStore();
+  const userId = useAuthStore().user?.uid;
+  const signOut = useUserStore((userStore) => userStore.signOut);
 
   const classes = useStyles();
 
@@ -122,6 +127,18 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
               />
             }
           />
+          {userId && (
+            <HamburgerListItem
+              onClick={signOut}
+              icon={<LogoutIcon />}
+              text={
+                <FormattedMessage
+                  defaultMessage="Logout"
+                  description="Hamburger menu - Logout item"
+                />
+              }
+            />
+          )}
         </List>
         <Box px={4} pt={4}>
           <Divider className={classes.divider} />

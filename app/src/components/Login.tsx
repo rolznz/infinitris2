@@ -2,7 +2,13 @@ import useAuthStore from '@/state/AuthStore';
 import firebase from 'firebase';
 import React, { useState } from 'react';
 
-import { Box, IconButton, Typography } from '@material-ui/core';
+import {
+  Box,
+  IconButton,
+  makeStyles,
+  SvgIcon,
+  Typography,
+} from '@material-ui/core';
 import { FormattedMessage } from 'react-intl';
 import SocialLogo from 'social-logos';
 import FlexBox from './ui/FlexBox';
@@ -11,17 +17,26 @@ import localStorageKeys from '@/utils/localStorageKeys';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import useAffiliateLinkRef from './hooks/useAffiliateLinkRef';
 
+import { ReactComponent as GoogleIcon } from '@/icons/google.svg';
+import { ReactComponent as FacebookIcon } from '@/icons/facebook.svg';
+import { ReactComponent as CrossIcon } from '@/icons/x.svg';
+
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
 
 export const loginTitleId = 'login-title';
 
-interface LoginProps {
+export interface LoginProps {
   showTitle?: boolean;
   onLogin?(userId: string): void;
+  onClose?(): void;
 }
 
-export default function Login({ onLogin, showTitle = true }: LoginProps) {
+export default function Login({
+  onLogin,
+  onClose,
+  showTitle = true,
+}: LoginProps) {
   useAffiliateLinkRef();
   const [isLoading, setIsLoading] = useState(false);
   //const user = useUser();
@@ -64,12 +79,15 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
           userStore.resyncLocalStorage(userDoc);
         */
         onLogin?.(result.user.uid);
+        onClose?.();
       } else {
         console.log('Signin canceled');
       }
     } catch (e) {
       console.error(e);
-      alert(e.message || 'Unknown error occurred. Please try again.');
+      alert(
+        (e as Error)?.message || 'Unknown error occurred. Please try again.'
+      );
       setIsLoading(false);
     }
   }
@@ -90,24 +108,46 @@ export default function Login({ onLogin, showTitle = true }: LoginProps) {
   }
 
   return (
-    <FlexBox flex={1}>
+    <FlexBox flex={1} py={20} px={8} bgcolor="background.paper">
       {showTitle && (
-        <Typography align="center" id={loginTitleId}>
+        <Typography variant="h5" align="center" id={loginTitleId}>
           <FormattedMessage
-            defaultMessage="Login with"
+            defaultMessage="Login to continue"
             description="Login page title"
           />
         </Typography>
       )}
-      <Box mt={2} />
-      <FlexBox flexDirection="row">
-        <IconButton color="primary" onClick={loginWithGoogle}>
-          <SocialLogo icon="google" size={18} />
-        </IconButton>
-        <IconButton color="primary" onClick={loginWithFacebook}>
-          <SocialLogo icon="facebook" size={18} />
-        </IconButton>
+      <Box mt={4} />
+      <FlexBox flexDirection="row" style={{ gap: '20px' }}>
+        <LoginIcon icon={<GoogleIcon />} onClick={loginWithGoogle} />
+        <LoginIcon icon={<FacebookIcon />} onClick={loginWithFacebook} />
       </FlexBox>
+      <Box mt={4} />
+      <IconButton onClick={onClose}>
+        <SvgIcon>
+          <CrossIcon />
+        </SvgIcon>
+      </IconButton>
     </FlexBox>
+  );
+}
+
+const useLoginIconStyles = makeStyles((theme) => ({
+  icon: {
+    fontSize: theme.spacing(10),
+    margin: theme.spacing(1),
+  },
+}));
+type LoginIconProps = {
+  icon: JSX.Element;
+  onClick(): void;
+};
+function LoginIcon({ icon, onClick }: LoginIconProps) {
+  const classes = useLoginIconStyles();
+
+  return (
+    <IconButton onClick={onClick}>
+      <SvgIcon className={classes.icon}>{icon}</SvgIcon>
+    </IconButton>
   );
 }

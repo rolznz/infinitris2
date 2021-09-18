@@ -1,12 +1,13 @@
 import { Box, makeStyles, Typography } from '@material-ui/core';
 import { AnimatePresence, motion } from 'framer-motion';
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import useDarkMode from '../hooks/useDarkMode';
 import FlexBox from './FlexBox';
 
 type PageProps = {
   title?: React.ReactElement;
   useGradient?: boolean;
+  style?: CSSProperties;
 };
 
 export function Page(props: React.PropsWithChildren<PageProps>) {
@@ -32,9 +33,14 @@ export function Page(props: React.PropsWithChildren<PageProps>) {
   const classes = useStyles();
 
   return (
-    <FlexBox className={classes.page}>
+    <FlexBox
+      className={classes.page}
+      style={props.style}
+      justifyContent="flex-start"
+    >
       {props.title && (
         <>
+          <Box mt={10} />
           <Typography variant="h1" className={classes.title}>
             {props.title}
           </Typography>

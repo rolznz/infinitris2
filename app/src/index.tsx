@@ -4,10 +4,16 @@ import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import './firebase/index';
+import Loader from './components/ui/Loader';
+import PageRouter from './PageRouter';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <App>
+      <Loader>
+        <PageRouter />
+      </Loader>
+    </App>
   </React.StrictMode>,
   document.getElementById('root')
 );

@@ -9,6 +9,7 @@ import SettingsRow from './SettingsRow';
 import { getUserFriendlyKeyText, InputAction } from 'infinitris2-models';
 import { useState } from 'react';
 import useKeyPress from 'react-use/lib/useKeyPress';
+import { Page } from '@/components/ui/Page';
 
 export default function ControlSettingsPage() {
   const userStore = useUserStore();
@@ -79,64 +80,64 @@ export default function ControlSettingsPage() {
   }
 
   return (
-    <>
-      <FlexBox flex={1} justifyContent="flex-start">
-        <Typography variant="h6">
-          <FormattedMessage
-            defaultMessage="Control Settings"
-            description="Control Settings Header"
-          />
-        </Typography>
-        <Box mb={2} />
-        {editingInputAction ? (
-          <FormattedMessage
-            defaultMessage="Press a key for {inputAction}"
-            description="Press a key for the selected input action"
-            values={{ inputAction: editingInputAction }}
-          />
-        ) : (
-          <FlexBox width={300} height="100%">
-            <Grid container spacing={2} alignItems="center" justify="center">
-              {(Object.values(InputAction) as InputAction[]).map(
-                (inputAction) => {
-                  return (
-                    <SettingsRow
-                      key={inputAction}
-                      left={getInputActionMessage(inputAction)}
-                      right={
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => setEditingInputAction(inputAction)}
-                        >
-                          {getUserFriendlyKeyText(user.controls[inputAction])}
-                        </Button>
-                      }
-                    />
-                  );
-                }
-              )}
-            </Grid>
-            <Box mb={4} />
-            <FlexBox flex={1} justifyContent="flex-end" mb={4}>
-              <Button
-                variant="contained"
-                color="secondary"
-                onClick={() =>
-                  window.confirm(
-                    'Are you sure you wish to reset your controls?'
-                  ) && resetControls()
-                }
-              >
-                <FormattedMessage
-                  defaultMessage="Reset Controls"
-                  description="Reset Controls button text"
-                />
-              </Button>
-            </FlexBox>
+    <Page
+      title={
+        <FormattedMessage
+          defaultMessage="Control Settings"
+          description="Control Settings Header"
+        />
+      }
+    >
+      {editingInputAction ? (
+        <FormattedMessage
+          defaultMessage="Press a key for {inputAction}"
+          description="Press a key for the selected input action"
+          values={{ inputAction: editingInputAction }}
+        />
+      ) : (
+        <FlexBox width={300} maxWidth="100%">
+          <Grid container spacing={2} alignItems="center" justify="center">
+            {(Object.values(InputAction) as InputAction[]).map(
+              (inputAction) => {
+                return (
+                  <SettingsRow
+                    key={inputAction}
+                    left={getInputActionMessage(inputAction)}
+                    right={
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => setEditingInputAction(inputAction)}
+                      >
+                        {getUserFriendlyKeyText(
+                          user.controls?.[inputAction] || 'Unset'
+                        )}
+                      </Button>
+                    }
+                  />
+                );
+              }
+            )}
+          </Grid>
+          <Box mb={10} />
+          <FlexBox flex={1} justifyContent="flex-end" mb={4}>
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() =>
+                window.confirm(
+                  'Are you sure you wish to reset your controls?'
+                ) && resetControls()
+              }
+            >
+              <FormattedMessage
+                defaultMessage="Reset Controls"
+                description="Reset Controls button text"
+              />
+            </Button>
           </FlexBox>
-        )}
-      </FlexBox>
-    </>
+        </FlexBox>
+      )}
+    </Page>
   );
 }

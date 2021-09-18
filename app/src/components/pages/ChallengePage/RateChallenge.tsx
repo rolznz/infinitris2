@@ -92,6 +92,7 @@ export default function RateChallenge({
     }
   }
 
+  // TODO: use openLoginDialog
   return (
     <FlexBox my={2}>
       <LoginDialog

@@ -10,9 +10,10 @@ import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
 type HamburgerListItemProps = {
-  to: string;
+  to?: string;
   icon: React.ReactNode;
   text: React.ReactNode;
+  onClick?(): void;
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -32,10 +33,16 @@ export default function HamburgerListItem({
   to,
   text,
   icon,
+  onClick,
 }: HamburgerListItemProps) {
   const classes = useStyles();
   return (
-    <Link component={RouterLink} underline="none" to={to}>
+    <Link
+      component={RouterLink}
+      underline="none"
+      to={to || '#'}
+      onClick={onClick}
+    >
       <ListItem button>
         <ListItemIcon>
           <SvgIcon fontSize="large" className={classes.icon}>

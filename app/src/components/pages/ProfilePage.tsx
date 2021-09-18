@@ -19,48 +19,34 @@ import useAuthStore from '../../state/AuthStore';
 import LoadingSpinner from '../LoadingSpinner';
 import { Link as RouterLink } from 'react-router-dom';
 import { YourBlockPreview } from '../ui/BlockPreview';
+import { Page } from '../ui/Page';
 
 export default function ProfilePage() {
-  useLoginRedirect();
-
   const [userStore, user] = useUserStore((store) => [store, store.user]);
   const userId = useAuthStore().user?.uid;
-  const history = useHistory();
-  const { data: userChallenges } = useCollection<IChallenge>(challengesPath, {
-    where: [['userId', '==', userId]],
-  });
-
-  const { data: fireStoreUserDoc } = useDocument<IUser>(
-    userId ? getUserPath(userId) : null
+  const { data: userChallenges } = useCollection<IChallenge>(
+    userId ? challengesPath : null,
+    {
+      where: [['userId', '==', userId]],
+    }
   );
 
   function signOut() {
     userStore.signOut();
-    history.replace(Routes.home);
-  }
-
-  if (!fireStoreUserDoc?.id || fireStoreUserDoc.id !== userId) {
-    // wait for the user profile to load
-    return (
-      <FlexBox flex={1}>
-        <LoadingSpinner />
-      </FlexBox>
-    );
   }
 
   return (
-    <FlexBox flex={1}>
-      <Typography align="center">
+    <Page
+      title={
         <FormattedMessage
-          defaultMessage="{nickname}'s Profile"
+          defaultMessage="Profile"
           description="Profile title"
-          values={{ nickname: user.readOnly?.nickname || 'Unknown' }}
         />
-      </Typography>
-
+      }
+    >
       <Typography align="center">
         <FormattedMessage
-          defaultMessage="{count} completed challenges"
+          defaultMessage="{count} challenges completed"
           description="Completed challenges statistic"
           values={{
             count: /*FIXME: add backend counter user.completedChallengeIds.length*/ 0,
@@ -72,7 +58,7 @@ export default function ProfilePage() {
         <FormattedMessage
           defaultMessage="{count} challenges created"
           description="Created challenges statistic"
-          values={{ count: userChallenges?.length }}
+          values={{ count: userChallenges?.length || 0 }}
         />
       </Typography>
 
@@ -118,20 +104,22 @@ export default function ProfilePage() {
         </Link>
       </FlexBox>
 
-      <FlexBox flex={1} justifyContent="flex-end" mb={4}>
-        <Button
-          variant="contained"
-          color="secondary"
-          onClick={() =>
-            window.confirm('Are you sure you wish to sign out?') && signOut()
-          }
-        >
-          <FormattedMessage
-            defaultMessage="Sign out"
-            description="Sign out button text"
-          />
-        </Button>
-      </FlexBox>
-    </FlexBox>
+      {userId && (
+        <FlexBox flex={1} justifyContent="flex-end" mb={4}>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() =>
+              window.confirm('Are you sure you wish to sign out?') && signOut()
+            }
+          >
+            <FormattedMessage
+              defaultMessage="Sign out"
+              description="Sign out button text"
+            />
+          </Button>
+        </FlexBox>
+      )}
+    </Page>
   );
 }

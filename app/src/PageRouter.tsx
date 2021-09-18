@@ -30,6 +30,7 @@ import { TermsOfServicePage } from './components/pages/TermsOfServicePage';
 import { AnimatePresence, motion, TargetAndTransition } from 'framer-motion';
 import FlexBox from './components/ui/FlexBox';
 import { zIndexes } from './theme';
+import { DialogManager } from './components/ui/modals/DialogManager';
 
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
@@ -74,8 +75,8 @@ function SlideUpPageAnimation(props: React.PropsWithChildren<{}>) {
 function DefaultPageAnimation(props: React.PropsWithChildren<{}>) {
   return (
     <motion.div
-      exit={{ opacity: 1 }}
-      initial={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 1 }}
       style={{
@@ -121,6 +122,7 @@ function RouterContents() {
   const location = useLocation();
   return (
     <>
+      <DialogManager />
       <OutsideGameElement>
         <HamburgerMenuButton />
         {/*<Header />*/}

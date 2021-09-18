@@ -15,6 +15,7 @@ import Loader from './components/ui/Loader';
 import useDarkMode from './components/hooks/useDarkMode';
 import PageRouter from './PageRouter';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { DialogManager } from './components/ui/modals/DialogManager';
 
 interface AppProps {}
 
@@ -42,9 +43,7 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
               flexDirection="column"
               height="100%"
             >
-              <Loader>
-                <PageRouter />
-              </Loader>
+              {children}
               <ToastContainer />
             </Box>
           </ThemeProvider>

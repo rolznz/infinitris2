@@ -49,9 +49,9 @@ describe('Rating Hooks', () => {
     const challenge = (
       await db.doc(dummyData.challenge1Path).get()
     ).data() as IChallenge;
-    expect(challenge.readOnly.numRatings).toBe(1);
-    expect(challenge.readOnly.summedRating).toBe(rating.value);
-    expect(challenge.readOnly.rating).toBe(rating.value);
+    expect(challenge.readOnly?.numRatings).toBe(1);
+    expect(challenge.readOnly?.summedRating).toBe(rating.value);
+    expect(challenge.readOnly?.rating).toBe(rating.value);
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
 

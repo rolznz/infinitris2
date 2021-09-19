@@ -4,7 +4,6 @@ import { IChallenge, IUser } from 'infinitris2-models';
 import firebase from 'firebase';
 import dummyData from './helpers/dummyData';
 import { onUpdateEntity } from '../onUpdateEntity';
-//import * as admin from 'firebase-admin';
 import { RATE_LIMIT_USER_WRITE_RATE_CHANGE } from '../utils/updateUserRateLimit';
 import { onCreateEntity } from '../onCreateEntity';
 
@@ -38,10 +37,10 @@ test('modified properties are updated when entity is updated without last modifi
     await db.doc(dummyData.challenge1Path).get()
   ).data() as IChallenge;
 
-  expect(challenge.readOnly.lastModifiedTimestamp?.seconds).toBeGreaterThan(
+  expect(challenge.readOnly?.lastModifiedTimestamp.seconds).toBeGreaterThan(
     firebase.firestore.Timestamp.now().seconds - 5
   );
-  expect(challenge.readOnly.numTimesModified).toEqual(1);
+  expect(challenge.readOnly?.numTimesModified).toEqual(1);
 });
 
 test('modified properties are not updated recursively', async () => {
@@ -64,7 +63,7 @@ test('modified properties are not updated recursively', async () => {
           readOnly: {
             lastModifiedTimestamp: {
               seconds:
-                dummyData.existingPublishedChallenge.readOnly
+                dummyData.existingPublishedChallenge.readOnly!
                   .lastModifiedTimestamp.seconds - 1,
               nanoseconds: 0,
             },
@@ -87,10 +86,10 @@ test('modified properties are not updated recursively', async () => {
   ).data() as IChallenge;
 
   // last modified date and num times modified should not have changed
-  expect(challenge.readOnly.lastModifiedTimestamp?.seconds).toBeLessThan(
+  expect(challenge.readOnly?.lastModifiedTimestamp?.seconds).toBeLessThan(
     firebase.firestore.Timestamp.now().seconds - 5
   );
-  expect(challenge.readOnly.numTimesModified).toEqual(0);
+  expect(challenge.readOnly?.numTimesModified).toEqual(0);
 });
 
 test('rate limit updated when user creates an entity', async () => {

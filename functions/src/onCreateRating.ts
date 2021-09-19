@@ -24,8 +24,8 @@ export const onCreateRating = functions.firestore
 
       // race condition in rating property accounted for as numRatings and summedRating are atomic
       const expectedNewRatingValue =
-        (challenge.readOnly.summedRating + rating.value) /
-        (challenge.readOnly.numRatings + 1);
+        (challenge.readOnly!.summedRating + rating.value) /
+        (challenge.readOnly!.numRatings + 1);
 
       const updateChallenge = objectToDotNotation<IChallenge>(
         {
@@ -46,7 +46,7 @@ export const onCreateRating = functions.firestore
 
       if (rating.value > 2) {
         // only reward positive ratings
-        updateNetworkImpact(challenge.readOnly.userId!, userId);
+        updateNetworkImpact(challenge.readOnly!.userId, userId);
       }
 
       // apply update using current database instance

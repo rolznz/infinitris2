@@ -20,6 +20,7 @@ import LoadingSpinner from '../LoadingSpinner';
 import { Link as RouterLink } from 'react-router-dom';
 import { YourBlockPreview } from '../ui/BlockPreview';
 import { Page } from '../ui/Page';
+import { openLoginDialog } from '@/state/DialogStore';
 
 export default function ProfilePage() {
   const [userStore, user] = useUserStore((store) => [store, store.user]);
@@ -44,6 +45,15 @@ export default function ProfilePage() {
         />
       }
     >
+      {!userId && (
+        <Button color="primary" variant="contained" onClick={openLoginDialog}>
+          <FormattedMessage
+            defaultMessage="Log in"
+            description="User Profile Page - login button"
+          />
+        </Button>
+      )}
+
       <Typography align="center">
         <FormattedMessage
           defaultMessage="{count} challenges completed"

@@ -100,10 +100,7 @@ export default function AffiliateProgramPage() {
             >
               <FormattedMessage
                 defaultMessage="Log in to earn"
-                description="Affiliate Program Page - affiliate count statistic"
-                values={{
-                  affiliateCount: affiliateDoc?.readOnly.numConversions || 0,
-                }}
+                description="Affiliate Program Page - login button"
               />
             </Button>
           )}

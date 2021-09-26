@@ -1,0 +1,13 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": {
+    "predeploy": [
+      "(cd functions && yarn lint)",
+      "(cd functions && yarn build-webpack)"
+    ],
+    "source": "webpack/functions-deploy"
+  }
+}

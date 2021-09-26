@@ -1,5 +1,4 @@
-import { getDb } from './firebase';
-import firebase from 'firebase';
+import { getDb, increment } from './firebase';
 import { IUser, objectToDotNotation, usersPath } from 'infinitris2-models';
 
 /**
@@ -12,7 +11,7 @@ export default async function scheduledCreditReward(): Promise<void> {
   const updateUser = objectToDotNotation<IUser>(
     {
       readOnly: {
-        coins: (firebase.firestore.FieldValue.increment(1) as any) as number,
+        coins: increment(1),
       },
     },
     ['readOnly.coins']

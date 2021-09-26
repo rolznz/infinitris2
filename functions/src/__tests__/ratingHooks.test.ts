@@ -6,9 +6,9 @@ import {
   IRating,
   IUser,
 } from 'infinitris2-models';
-import firebase from 'firebase';
 import { onCreateRating } from '../onCreateRating';
 import dummyData from './helpers/dummyData';
+import { firestore } from '@firebase/rules-unit-testing';
 
 describe('Rating Hooks', () => {
   afterEach(async () => {
@@ -43,7 +43,7 @@ describe('Rating Hooks', () => {
     expect(rating.readOnly!.userId).toBe(dummyData.userId2);
     expect(rating.created).toBe(true);
     expect(rating.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
-      firebase.firestore.Timestamp.now().seconds - 5
+      firestore.Timestamp.now().seconds - 5
     );
 
     const challenge = (

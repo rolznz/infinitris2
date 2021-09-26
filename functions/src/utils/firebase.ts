@@ -22,3 +22,7 @@ export function getDb(): firestore.Firestore {
 export function getCurrentTimestamp(): admin.firestore.Timestamp {
   return admin.firestore.Timestamp.now();
 }
+
+export function increment(n: number): number {
+  return admin.firestore.FieldValue.increment(n) as any as number;
+}

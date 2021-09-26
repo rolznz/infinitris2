@@ -1,8 +1,7 @@
 import * as functions from 'firebase-functions';
 import { IEntity, objectToDotNotation } from 'infinitris2-models';
 import { updateUserRateLimit } from './utils/updateUserRateLimit';
-import firebase from 'firebase';
-import { getCurrentTimestamp, getDb } from './utils/firebase';
+import { getCurrentTimestamp, getDb, increment } from './utils/firebase';
 
 // This trigger only fires for top level collections.
 // subcollections must have their own rules to avoid spam as user rate limits are not updated.
@@ -26,9 +25,7 @@ export const onUpdateEntity = functions.firestore
           {
             readOnly: {
               lastModifiedTimestamp: currentTime,
-              numTimesModified: (firebase.firestore.FieldValue.increment(
-                1
-              ) as any) as number,
+              numTimesModified: increment(1),
             },
           },
           ['readOnly.lastModifiedTimestamp', 'readOnly.numTimesModified']

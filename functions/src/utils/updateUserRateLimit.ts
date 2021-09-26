@@ -4,8 +4,7 @@ import {
   objectToDotNotation,
   Timestamp,
 } from 'infinitris2-models';
-import { getDb } from './firebase';
-import firebase from 'firebase';
+import { getDb, increment } from './firebase';
 
 // simple rate limiter that allows up to 10 writes over 5 seconds
 export const RATE_LIMIT_USER_WRITE_RATE_CHANGE = 0.1;
@@ -52,12 +51,8 @@ export async function updateUserRateLimit(
     {
       readOnly: {
         lastWriteTimestamp: currentTime,
-        writeRate: (firebase.firestore.FieldValue.increment(
-          writeRateChange
-        ) as any) as number,
-        numWrites: (firebase.firestore.FieldValue.increment(
-          1
-        ) as any) as number,
+        writeRate: increment(writeRateChange),
+        numWrites: increment(1),
       },
     },
     ['readOnly.lastWriteTimestamp', 'readOnly.writeRate', 'readOnly.numWrites']

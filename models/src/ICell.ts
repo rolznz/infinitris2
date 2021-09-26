@@ -1,5 +1,6 @@
-import { IBlock, ICellBehaviour } from '../index';
+import IBlock from './IBlock';
 import CellType from './CellType';
+import ICellBehaviour from './ICellBehaviour';
 
 export default interface ICell {
   row: number;

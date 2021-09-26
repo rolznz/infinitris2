@@ -7,7 +7,7 @@ import {
   IAffiliate,
   IUser,
 } from 'infinitris2-models';
-import firebase from 'firebase';
+import { firestore } from '@firebase/rules-unit-testing';
 
 describe('Auth User Hooks', () => {
   afterEach(async () => {
@@ -32,7 +32,7 @@ describe('Auth User Hooks', () => {
     expect(user.readOnly.email).toBe(email);
     expect(user.readOnly.networkImpact).toBe(0);
     expect(user.readOnly.createdTimestamp?.seconds).toBeGreaterThan(
-      firebase.firestore.Timestamp.now().seconds - 5
+      firestore.Timestamp.now().seconds - 5
     );
 
     const affiliate = (
@@ -42,7 +42,7 @@ describe('Auth User Hooks', () => {
     expect(affiliate.readOnly?.userId).toBe(uid);
     expect(affiliate.readOnly?.numConversions).toBe(0);
     expect(affiliate.readOnly?.createdTimestamp?.seconds).toBeGreaterThan(
-      firebase.firestore.Timestamp.now().seconds - 5
+      firestore.Timestamp.now().seconds - 5
     );
   });
 });

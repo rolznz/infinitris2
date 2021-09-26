@@ -1,7 +1,7 @@
 import { setup, teardown } from './helpers/setup';
-import './helpers/extensions';
-import dummyData from './helpers/dummyData';
+require('./helpers/extensions.ts');
 import { getNicknamePath, INickname } from 'infinitris2-models';
+import dummyData from './helpers/dummyData';
 
 describe('Nickname Rules', () => {
   afterEach(async () => {

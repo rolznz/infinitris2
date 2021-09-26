@@ -7,10 +7,10 @@ process.env.FIRESTORE_EMULATOR_HOST = 'localhost:8080';
 import {
   initializeTestApp,
   loadFirestoreRules,
+  firestore as firestoreTest,
 } from '@firebase/rules-unit-testing';
 import * as fs from 'fs';
 import * as admin from 'firebase-admin';
-import firebase from 'firebase';
 import * as fft from 'firebase-functions-test';
 
 import * as firebaseUtils from '../../utils/firebase';
@@ -25,24 +25,29 @@ const getDbMock = firebaseUtils.getDb as jest.MockedFunction<
   typeof firebaseUtils.getDb
 >;
 
-const getCurrentTimestampMock = firebaseUtils.getCurrentTimestamp as jest.MockedFunction<
-  typeof firebaseUtils.getCurrentTimestamp
+const getCurrentTimestampMock =
+  firebaseUtils.getCurrentTimestamp as jest.MockedFunction<
+    typeof firebaseUtils.getCurrentTimestamp
+  >;
+
+const incrementMock = firebaseUtils.increment as jest.MockedFunction<
+  typeof firebaseUtils.increment
 >;
 
 interface TestAuth {
   uid: string;
 }
 
-type TestData = { [path: string]: firebase.firestore.DocumentData };
+type TestData = { [path: string]: admin.firestore.DocumentData };
 
-let app: firebase.app.App;
+let app: admin.app.App;
 let test: FeaturesList;
 
 export async function setup(
   auth?: TestAuth,
   data?: TestData,
   applySecurityRules = true
-): Promise<{ db: firebase.firestore.Firestore; test: FeaturesList }> {
+): Promise<{ db: admin.firestore.Firestore; test: FeaturesList }> {
   // Create a unique projectId for every firebase simulated app
   const projectId = `rules-spec-${Date.now()}`;
 
@@ -51,22 +56,25 @@ export async function setup(
   });
 
   // Create the test app using the unique ID and the given user auth object
-  app = await initializeTestApp({
+  app = (await initializeTestApp({
     projectId,
     auth,
-  });
+  })) as any as admin.app.App;
 
   // Get the db linked to the new firebase app that we created
   const db = app.firestore();
 
   // FIXME: Google typings are incompatible (firebase.app.App vs admin.app.App)
-  getAppMock.mockReturnValue((app as any) as admin.app.App);
+  getAppMock.mockReturnValue(app as any as admin.app.App);
   // FIXME: Google typings are incompatible
   // (@firebase/rules-unit-testing.firestore.Firestore vs firebase-admin/firestore.Firestore)
-  getDbMock.mockReturnValue((db as any) as firestore.Firestore);
+  getDbMock.mockReturnValue(db as any as firestore.Firestore);
   // don't use admin timestamp in tests, since admin is not connected to the test app :/
   getCurrentTimestampMock.mockImplementation(() =>
-    firebase.firestore.Timestamp.now()
+    firestoreTest.Timestamp.now()
+  );
+  incrementMock.mockImplementation(
+    (n) => firestoreTest.FieldValue.increment(n) as any as number
   );
 
   // Apply the test rules so we can write documents

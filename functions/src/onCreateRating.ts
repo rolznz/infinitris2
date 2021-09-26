@@ -5,8 +5,7 @@ import {
   IRating,
   objectToDotNotation,
 } from 'infinitris2-models';
-import { getDb } from './utils/firebase';
-import firebase from 'firebase';
+import { getDb, increment } from './utils/firebase';
 import updateNetworkImpact from './utils/updateNetworkImpact';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
 
@@ -30,12 +29,8 @@ export const onCreateRating = functions.firestore
       const updateChallenge = objectToDotNotation<IChallenge>(
         {
           readOnly: {
-            numRatings: (firebase.firestore.FieldValue.increment(
-              1
-            ) as any) as number,
-            summedRating: (firebase.firestore.FieldValue.increment(
-              rating.value
-            ) as any) as number,
+            numRatings: increment(1),
+            summedRating: increment(rating.value),
             rating: expectedNewRatingValue,
           },
         },

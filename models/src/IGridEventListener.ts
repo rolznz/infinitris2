@@ -1,4 +1,4 @@
-import { ICellEventListener } from '../index';
+import ICellEventListener from './ICellEventListener';
 
 export default interface IGridEventListener extends ICellEventListener {
   /**

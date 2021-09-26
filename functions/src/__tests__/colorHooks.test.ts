@@ -2,8 +2,8 @@ import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
 import { IColor } from 'infinitris2-models';
-import firebase from 'firebase';
 import { onCreateColor } from '../onCreateColor';
+import { firestore } from '@firebase/rules-unit-testing';
 
 describe('Color Hooks', () => {
   afterEach(async () => {
@@ -32,7 +32,7 @@ describe('Color Hooks', () => {
     expect(color.created).toBe(true);
     expect(color.readOnly!.numPurchases).toBe(0);
     expect(color.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
-      firebase.firestore.Timestamp.now().seconds - 5
+      firestore.Timestamp.now().seconds - 5
     );
   });
 });

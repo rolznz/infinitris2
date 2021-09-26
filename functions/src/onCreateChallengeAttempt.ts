@@ -5,9 +5,8 @@ import {
   IChallengeAttempt,
   objectToDotNotation,
 } from 'infinitris2-models';
-import { getDb } from './utils/firebase';
+import { getDb, increment } from './utils/firebase';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
-import firebase from 'firebase';
 
 export const onCreateChallengeAttempt = functions.firestore
   .document('challengeAttempts/{challengeAttemptId}')
@@ -25,9 +24,7 @@ export const onCreateChallengeAttempt = functions.firestore
       const updateChallenge = objectToDotNotation<IChallenge>(
         {
           readOnly: {
-            numAttempts: (firebase.firestore.FieldValue.increment(
-              1
-            ) as any) as number,
+            numAttempts: increment(1),
           },
         },
         ['readOnly.numAttempts']

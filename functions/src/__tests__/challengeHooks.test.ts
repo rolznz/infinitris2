@@ -1,9 +1,9 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import { IChallenge, IUser } from 'infinitris2-models';
-import firebase from 'firebase';
 import { onCreateChallenge } from '../onCreateChallenge';
 import dummyData from './helpers/dummyData';
+import { firestore } from '@firebase/rules-unit-testing';
 
 describe('Challenge Hooks', () => {
   afterEach(async () => {
@@ -36,7 +36,7 @@ describe('Challenge Hooks', () => {
     expect(challenge.created).toBe(true);
     expect(challenge.readOnly!.userId).toBe(dummyData.userId1);
     expect(challenge.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
-      firebase.firestore.Timestamp.now().seconds - 5
+      firestore.Timestamp.now().seconds - 5
     );
     expect(challenge.readOnly!.numRatings).toBe(0);
     expect(challenge.readOnly!.summedRating).toBe(0);

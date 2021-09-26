@@ -5,7 +5,6 @@ import FlexBox from '../ui/FlexBox';
 import { FormattedMessage } from 'react-intl';
 import { IScoreboardEntry, scoreboardEntriesPath } from 'infinitris2-models';
 import { useCollection } from '@nandorojo/swr-firestore';
-import { DataGrid, GridColDef } from '@material-ui/data-grid';
 import { Page } from '../ui/Page';
 
 export default function ScoreboardPage() {
@@ -13,7 +12,7 @@ export default function ScoreboardPage() {
     scoreboardEntriesPath
   );
 
-  const columns: GridColDef[] = [
+  /*const columns: GridColDef[] = [
     { field: 'nickname', headerName: 'Player', width: 150, sortable: false },
     { field: 'coins', headerName: 'Coins', width: 130 },
     { field: 'networkImpact', headerName: 'Network Impact', width: 170 },
@@ -23,7 +22,7 @@ export default function ScoreboardPage() {
       headerName: 'Challenges Completed',
       width: 200,
     },
-  ];
+  ];*/
 
   return (
     <Page>
@@ -48,7 +47,7 @@ export default function ScoreboardPage() {
         </Typography>
         {scoreboardEntries && (
           <Box width="90vw" maxWidth={1000} flex={1} mt={4}>
-            <DataGrid
+            {/*<DataGrid
               sortingOrder={['desc', 'asc']}
               sortModel={[
                 {
@@ -60,7 +59,7 @@ export default function ScoreboardPage() {
               columns={columns}
               pageSize={10}
               autoHeight
-            />
+            />*/}
           </Box>
         )}
       </FlexBox>

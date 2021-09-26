@@ -1,5 +1,5 @@
-import { ICellEventListener } from '../index';
 import IBlockEventListener from './IBlockEventListener';
+import ICellEventListener from './ICellEventListener';
 import IGrid from './IGrid';
 import IGridEventListener from './IGridEventListener';
 

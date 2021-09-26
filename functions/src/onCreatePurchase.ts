@@ -7,8 +7,7 @@ import {
   IUser,
   objectToDotNotation,
 } from 'infinitris2-models';
-import { getDb } from './utils/firebase';
-import firebase from 'firebase';
+import { getDb, increment } from './utils/firebase';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
 
 export const onCreatePurchase = functions.firestore
@@ -30,9 +29,7 @@ export const onCreatePurchase = functions.firestore
       const updateProduct = objectToDotNotation<IProduct>(
         {
           readOnly: {
-            numPurchases: (firebase.firestore.FieldValue.increment(
-              1
-            ) as any) as number,
+            numPurchases: increment(1),
           },
         },
         ['readOnly.numPurchases']
@@ -45,9 +42,7 @@ export const onCreatePurchase = functions.firestore
       const updateUser = objectToDotNotation<IUser>(
         {
           readOnly: {
-            coins: (firebase.firestore.FieldValue.increment(
-              -product.price
-            ) as any) as number,
+            coins: increment(-product.price),
             purchasedEntityIds: [
               ...user.readOnly.purchasedEntityIds,
               purchase.entityId,

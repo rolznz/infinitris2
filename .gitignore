@@ -13,3 +13,5 @@ server/coverage
 
 client/coverage
 **/**Zone.Identifier
+.yarn
+*.log

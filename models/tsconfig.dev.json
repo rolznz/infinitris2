@@ -1,3 +1,6 @@
 {
-  "include": [".eslintrc.js"]
+  "include": [".eslintrc.js"],
+  "compilerOptions": {
+    "types": ["node", "jest"]
+  }
 }

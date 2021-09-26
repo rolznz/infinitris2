@@ -1,9 +1,9 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import { INickname, IUser, nicknamesPath } from 'infinitris2-models';
-import firebase from 'firebase';
 import dummyData from './helpers/dummyData';
 import { onCreateNickname } from '../onCreateNickname';
+import { firestore } from '@firebase/rules-unit-testing';
 
 describe('Nickname Hooks', () => {
   afterEach(async () => {
@@ -50,7 +50,7 @@ describe('Nickname Hooks', () => {
     expect(nickname.readOnly!.userId).toBe(dummyData.userId1);
     expect(nickname.created).toBe(true);
     expect(nickname.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
-      firebase.firestore.Timestamp.now().seconds - 5
+      firestore.Timestamp.now().seconds - 5
     );
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;

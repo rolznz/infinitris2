@@ -1,8 +1,10 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
-import { IChallengeAttempt } from '../../../models/dist';
-import ChallengeCompletionStats from '../../../models/dist/src/ChallengeCompletionStats';
+import {
+  IChallengeAttempt,
+  ChallengeCompletionStats,
+} from 'infinitris2-models';
 
 describe('Challenge Attempt Rules', () => {
   afterEach(async () => {
@@ -133,9 +135,9 @@ describe('Challenge Attempt Rules', () => {
     await expect(
       db.doc(dummyData.challengeAttempt1Path).set({
         ...dummyData.creatableChallengeAttempt,
-        stats: ({
+        stats: {
           nonExistentProperty: 5,
-        } as any) as ChallengeCompletionStats,
+        } as any as ChallengeCompletionStats,
       } as IChallengeAttempt)
     ).toDeny();
 
@@ -143,8 +145,8 @@ describe('Challenge Attempt Rules', () => {
       db.doc(dummyData.challengeAttempt1Path).set({
         ...dummyData.creatableChallengeAttempt,
         stats: {
-          blocksPlaced: ('5' as any) as number,
-        },
+          blocksPlaced: '5',
+        } as any as ChallengeCompletionStats,
       } as IChallengeAttempt)
     ).toDeny();
 
@@ -152,8 +154,8 @@ describe('Challenge Attempt Rules', () => {
       db.doc(dummyData.challengeAttempt1Path).set({
         ...dummyData.creatableChallengeAttempt,
         stats: {
-          linesCleared: ('5' as any) as number,
-        },
+          linesCleared: '5',
+        } as any as ChallengeCompletionStats,
       } as IChallengeAttempt)
     ).toDeny();
 
@@ -161,8 +163,8 @@ describe('Challenge Attempt Rules', () => {
       db.doc(dummyData.challengeAttempt1Path).set({
         ...dummyData.creatableChallengeAttempt,
         stats: {
-          linesCleared: ('5' as any) as number,
-        },
+          linesCleared: '5',
+        } as any as ChallengeCompletionStats,
       } as IChallengeAttempt)
     ).toDeny();
 
@@ -170,8 +172,8 @@ describe('Challenge Attempt Rules', () => {
       db.doc(dummyData.challengeAttempt1Path).set({
         ...dummyData.creatableChallengeAttempt,
         stats: {
-          timeTakenMs: ('5' as any) as number,
-        },
+          timeTakenMs: '5',
+        } as any as ChallengeCompletionStats,
       } as IChallengeAttempt)
     ).toDeny();
   });

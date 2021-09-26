@@ -4,11 +4,13 @@
     "moduleResolution": "node",
     "noImplicitReturns": true,
     "noUnusedLocals": true,
-    "outDir": "lib",
+    "outDir": "dist",
     "sourceMap": true,
     "strict": true,
     "target": "es5"
+    //"types": ["node", "jest", "infinitris2-models"]
   },
-  "compileOnSave": true,
-  "include": ["src"]
+  "compileOnSave": true
+  //"include": ["src", "webpack.config.js"],
+  //"exclude": ["src/__tests__"]
 }

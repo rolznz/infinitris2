@@ -1,6 +1,5 @@
 import * as functions from 'firebase-functions';
 
-import firebase from 'firebase';
 import {
   getAffiliatePath,
   getUserPath,
@@ -9,7 +8,7 @@ import {
   IConversion,
   objectToDotNotation,
 } from 'infinitris2-models';
-import { getDb } from './utils/firebase';
+import { getDb, increment } from './utils/firebase';
 import updateNetworkImpact from './utils/updateNetworkImpact';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
 
@@ -52,9 +51,7 @@ export const onCreateConversion = functions.firestore
         {
           readOnly: {
             referredByAffiliateId: affiliateId,
-            coins: (firebase.firestore.FieldValue.increment(
-              3
-            ) as any) as number,
+            coins: increment(3),
           },
         },
         ['readOnly.referredByAffiliateId', 'readOnly.coins']
@@ -72,9 +69,7 @@ export const onCreateConversion = functions.firestore
       const updateAffiliateUser = objectToDotNotation<IUser>(
         {
           readOnly: {
-            coins: (firebase.firestore.FieldValue.increment(
-              affiliate.readOnly.numConversions + 2
-            ) as any) as number,
+            coins: increment(affiliate.readOnly.numConversions + 2),
           },
         },
         ['readOnly.coins']
@@ -86,9 +81,7 @@ export const onCreateConversion = functions.firestore
       const updateAffiliate = objectToDotNotation<IAffiliate>(
         {
           readOnly: {
-            numConversions: (firebase.firestore.FieldValue.increment(
-              1
-            ) as any) as number,
+            numConversions: increment(1),
           },
         },
         ['readOnly.numConversions']

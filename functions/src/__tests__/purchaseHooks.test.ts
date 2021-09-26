@@ -2,8 +2,8 @@ import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
 import { IColor, IPurchase, IUser } from 'infinitris2-models';
+import { firestore } from '@firebase/rules-unit-testing';
 import { onCreatePurchase } from '../onCreatePurchase';
-import firebase from 'firebase';
 
 describe('Purchase Hooks', () => {
   afterEach(async () => {
@@ -48,7 +48,7 @@ describe('Purchase Hooks', () => {
     expect(purchase.readOnly!.userId).toBe(dummyData.userId1);
     expect(purchase.created).toBe(true);
     expect(purchase.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
-      firebase.firestore.Timestamp.now().seconds - 5
+      firestore.Timestamp.now().seconds - 5
     );
 
     const color = (await db.doc(dummyData.color1Path).get()).data() as IColor;

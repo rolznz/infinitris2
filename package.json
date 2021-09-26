@@ -1,13 +1,25 @@
 {
   "private": true,
+  "workspaces": {
+    "packages": [
+      "app",
+      "functions",
+      "models",
+      "webpack/functions-deploy"
+    ]
+  },
   "scripts": {
     "prettier:write": "prettier \"**/*.{ts,tsx}\" --write",
     "prettier:check": "prettier \"**/*.{ts,tsx}\" --check",
     "firebase:deploy:hosting": "firebase deploy --only hosting",
     "firebase:deploy:rules": "firebase deploy --only firestore:rules",
-    "firebase:deploy:functions": "firebase deploy --only functions"
+    "firebase:deploy:functions": "firebase deploy --only functions",
+    "delete-node-modules": "bash -c 'find . -type d -name node_modules -prune -exec rm -rf {} \\;'"
   },
   "devDependencies": {
     "prettier": "^2.2.1"
+  },
+  "resolutions": {
+    "babel-jest": "^24.9.0"
   }
 }

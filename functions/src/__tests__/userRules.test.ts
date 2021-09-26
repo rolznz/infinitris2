@@ -8,7 +8,9 @@ import {
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
-import firebase from 'firebase';
+import { getCurrentTimestamp } from '../utils/firebase';
+
+import { firestore } from '@firebase/rules-unit-testing';
 
 describe('Users Rules', () => {
   afterEach(async () => {
@@ -187,7 +189,7 @@ describe('Users Rules', () => {
       readOnly: {
         ...dummyData.existingUser.readOnly,
         writeRate: 0.9999,
-        lastWriteTimestamp: firebase.firestore.Timestamp.now(),
+        lastWriteTimestamp: getCurrentTimestamp(),
       },
     };
 
@@ -210,8 +212,8 @@ describe('Users Rules', () => {
         ...dummyData.existingUser.readOnly,
         // user should not be able to write until more than 1.2 * 5 seconds has passed since the last write
         writeRate: 1.2,
-        lastWriteTimestamp: firebase.firestore.Timestamp.fromMillis(
-          firebase.firestore.Timestamp.now().toMillis() - 1.5 * 5000
+        lastWriteTimestamp: firestore.Timestamp.fromMillis(
+          getCurrentTimestamp().toMillis() - 1.5 * 5000
         ),
       },
     };
@@ -234,7 +236,7 @@ describe('Users Rules', () => {
       readOnly: {
         ...dummyData.existingUser.readOnly,
         writeRate: 1.2,
-        lastWriteTimestamp: firebase.firestore.Timestamp.now(),
+        lastWriteTimestamp: firestore.Timestamp.now(),
       },
     };
 

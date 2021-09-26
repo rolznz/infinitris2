@@ -8,7 +8,7 @@ import {
   INetworkImpact,
   IUser,
 } from 'infinitris2-models';
-import firebase from 'firebase';
+import { getCurrentTimestamp } from '../utils/firebase';
 
 describe('Update Network Impact', () => {
   afterEach(async () => {
@@ -56,7 +56,7 @@ describe('Update Network Impact', () => {
     expect(networkImpact.fromUserId).toBe(dummyData.userId2);
     expect(networkImpact.distance).toBe(1);
     expect(networkImpact.readOnly?.createdTimestamp?.seconds).toBeGreaterThan(
-      firebase.firestore.Timestamp.now().seconds - 5
+      getCurrentTimestamp().seconds - 5
     );
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;

@@ -1,9 +1,9 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import { IChallenge, IChallengeAttempt } from 'infinitris2-models';
-import firebase from 'firebase';
 import dummyData from './helpers/dummyData';
 import { onCreateChallengeAttempt } from '../onCreateChallengeAttempt';
+import { firestore } from '@firebase/rules-unit-testing';
 
 describe('Challenge Attempt Hooks', () => {
   afterEach(async () => {
@@ -43,6 +43,6 @@ describe('Challenge Attempt Hooks', () => {
     expect(challengeAttempt.readOnly!.userId).toBe(dummyData.userId1);
     expect(
       challengeAttempt.readOnly!.createdTimestamp!.seconds
-    ).toBeGreaterThan(firebase.firestore.Timestamp.now().seconds - 5);
+    ).toBeGreaterThan(firestore.Timestamp.now().seconds - 5);
   });
 });

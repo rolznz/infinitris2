@@ -1,5 +1,6 @@
-import { IBlock, ICell } from '../index';
 import CellType from './CellType';
+import IBlock from './IBlock';
+import ICell from './ICell';
 
 export default interface ICellBehaviour {
   step?(): void;

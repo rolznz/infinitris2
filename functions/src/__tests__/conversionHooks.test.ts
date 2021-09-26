@@ -8,7 +8,7 @@ import {
 } from 'infinitris2-models';
 import { onCreateConversion } from '../onCreateConversion';
 import dummyData from './helpers/dummyData';
-import firebase from 'firebase';
+import { firestore } from '@firebase/rules-unit-testing';
 
 describe('Conversion Hooks', () => {
   afterEach(async () => {
@@ -81,7 +81,7 @@ describe('Conversion Hooks', () => {
     ).data() as IConversion;
 
     expect(conversion.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
-      firebase.firestore.Timestamp.now().seconds - 5
+      firestore.Timestamp.now().seconds - 5
     );
   });
 

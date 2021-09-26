@@ -1,4 +1,3 @@
-import firebase from 'firebase';
 import {
   getNetworkImpactPath,
   getUserPath,
@@ -7,7 +6,7 @@ import {
   networkImpactsPath,
   objectToDotNotation,
 } from 'infinitris2-models';
-import { getDb } from './firebase';
+import { getDb, increment } from './firebase';
 import { getDefaultEntityReadOnlyProperties } from './getDefaultEntityReadOnlyProperties';
 
 /**
@@ -53,12 +52,8 @@ export default async function updateNetworkImpact(
       const updateUser = objectToDotNotation<IUser>(
         {
           readOnly: {
-            coins: (firebase.firestore.FieldValue.increment(
-              1
-            ) as any) as number,
-            networkImpact: (firebase.firestore.FieldValue.increment(
-              1
-            ) as any) as number,
+            coins: increment(1),
+            networkImpact: increment(1),
           },
         },
         ['readOnly.coins', 'readOnly.networkImpact']

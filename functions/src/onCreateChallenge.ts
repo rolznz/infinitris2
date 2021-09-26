@@ -5,8 +5,7 @@ import {
   IUser,
   objectToDotNotation,
 } from 'infinitris2-models';
-import { getDb } from './utils/firebase';
-import firebase from 'firebase';
+import { getDb, increment } from './utils/firebase';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
 
 export const onCreateChallenge = functions.firestore
@@ -25,9 +24,7 @@ export const onCreateChallenge = functions.firestore
       const updateUser = objectToDotNotation<IUser>(
         {
           readOnly: {
-            coins: (firebase.firestore.FieldValue.increment(
-              -1
-            ) as any) as number,
+            coins: increment(-1),
           },
         },
         ['readOnly.coins']

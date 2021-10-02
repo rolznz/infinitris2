@@ -5,7 +5,8 @@
       "app",
       "functions",
       "models",
-      "webpack/functions-deploy"
+      "webpack/functions-deploy",
+      "character-generator"
     ]
   },
   "scripts": {

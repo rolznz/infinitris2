@@ -31,6 +31,7 @@ import FlexBox from './components/ui/FlexBox';
 import { zIndexes } from './theme';
 import { DialogManager } from './components/ui/modals/DialogManager';
 import AboutPage from './components/pages/AboutPage/AboutPage';
+import DonatePage from './components/pages/AboutPage/DonatePage';
 
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
@@ -140,6 +141,9 @@ function RouterContents() {
           </AnimatedRoute>
           <AnimatedRoute exact path={Routes.termsOfService}>
             <TermsOfServicePage />
+          </AnimatedRoute>
+          <AnimatedRoute exact path={Routes.donate}>
+            <DonatePage />
           </AnimatedRoute>
           <AnimatedRoute exact path={Routes.privacyPolicy}>
             <PrivacyPolicyPage />

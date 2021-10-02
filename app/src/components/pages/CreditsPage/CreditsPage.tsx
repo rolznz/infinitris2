@@ -6,7 +6,8 @@ import { Page } from '../../ui/Page';
 import coneFace from './assets/faces/cone.png';
 import athleteFace from './assets/faces/athlete.png';
 import chillFace from './assets/faces/chill.png';
-import LinkIcon from '@mui/icons-material/Link';
+import LinkIcon from '@material-ui/icons/Link';
+import { RingIconButton } from '@/components/ui/RingIconButton';
 
 type PrimaryContributorProps = {
   name: string;
@@ -29,8 +30,9 @@ function PrimaryContributor({
       <Box mt={4} />
       <FlexBox
         flexDirection="row"
-        gridGap={20}
-        width={300}
+        gridGap={30}
+        width={375}
+        maxWidth="100%"
         justifyContent="flex-start"
       >
         <img
@@ -41,12 +43,15 @@ function PrimaryContributor({
             height: '200px',
           }}
         />
-        <FlexBox>
+        <FlexBox alignItems="flex-start">
           <Typography variant="h4">{name}</Typography>
+          <Box mt={2} />
           <a href={url}>
-            <SvgIcon color="primary" fontSize="large">
-              <LinkIcon />
-            </SvgIcon>
+            <RingIconButton>
+              <SvgIcon color="primary">
+                <LinkIcon />
+              </SvgIcon>
+            </RingIconButton>
           </a>
         </FlexBox>
       </FlexBox>

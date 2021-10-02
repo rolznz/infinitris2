@@ -9,7 +9,7 @@ type AboutIconProps = {
   icon: React.ReactNode;
 };
 
-export function AboutIcon({ to, url, icon }: AboutIconProps) {
+export function AboutIconButton({ to, url, icon }: AboutIconProps) {
   function wrapper(children: React.ReactNode): React.ReactNode {
     return to ? (
       <Link component={RouterLink} to={to}>
@@ -20,11 +20,15 @@ export function AboutIcon({ to, url, icon }: AboutIconProps) {
     );
   }
 
-  return wrapper(
-    <RingIconButton>
-      <SvgIcon color="primary" fontSize="large">
-        {icon}
-      </SvgIcon>
-    </RingIconButton>
+  return (
+    <>
+      {wrapper(
+        <RingIconButton>
+          <SvgIcon color="primary" fontSize="large">
+            {icon}
+          </SvgIcon>
+        </RingIconButton>
+      )}
+    </>
   );
 }

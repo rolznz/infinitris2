@@ -5,6 +5,7 @@ enum Routes {
   home = '/',
   credits = '/credits',
   termsOfService = '/tos',
+  donate = '/donate',
   privacyPolicy = '/privacy',
   profile = '/profile',
   customizeProfile = '/profile/customize',

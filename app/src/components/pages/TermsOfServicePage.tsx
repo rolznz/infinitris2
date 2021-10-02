@@ -1,15 +1,14 @@
 import React from 'react';
-import FlexBox from '@/components/ui/FlexBox';
+import { Page } from '../ui/Page';
+import { Typography } from '@material-ui/core';
 
 export function TermsOfServicePage() {
   return (
-    <FlexBox flex={1} marginX={10}>
-      <h1>Terms of Service</h1>
-      <p>Last updated: March 14, 2021</p>
-      <p>
+    <Page title={<>Terms of Service</>}>
+      <Typography variant="body1">Last updated: October 2, 2021</Typography>
+      <Typography variant="body1">
         By using this service you agree to the following:
         <ul>
-          <li>You are over 13 years of age.</li>
           <li>
             You are responsible of your own activity on this service, including
             anything that you share with others.
@@ -42,11 +41,11 @@ export function TermsOfServicePage() {
             destroying the dreams of others.
           </li>
         </ul>
-      </p>
-      <p>
+      </Typography>
+      <Typography variant="body1">
         We may occasionally revise our terms of service by posting the changes
         here.
-      </p>
-    </FlexBox>
+      </Typography>
+    </Page>
   );
 }

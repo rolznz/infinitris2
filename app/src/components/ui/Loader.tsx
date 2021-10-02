@@ -21,8 +21,11 @@ import useAppStore from '@/state/AppStore';
 
 const useStyles = makeStyles((theme) => ({
   startButton: {
-    backgroundColor: theme.palette.tertiary.main,
+    backgroundColor: '#A4DAF2CC',
     fontSize: 20,
+    '&:hover': {
+      backgroundColor: '#A4DAF2AA',
+    },
   },
   checkbox: {
     '& span': {

@@ -7,36 +7,24 @@ import HamburgerMenu from './HamburgerMenu';
 import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
 import { useEffect } from 'react';
 import usePrevious from 'react-use/lib/usePrevious';
-import { homePageBackgroundDelaySeconds } from '@/components/pages/HomePage/HomePageBackground';
+import { homePageBackgroundTransitionSeconds } from '@/components/pages/HomePage/HomePageBackground';
 import useLoaderStore from '@/state/LoaderStore';
 import { firstTimeAnimationDelaySeconds } from '@/components/pages/HomePage/HomePage';
 
-let hasAnimated = window.location.pathname !== '/';
 const useStyles = makeStyles({
   button: {
     position: 'absolute',
     top: 0,
     right: 0,
-    opacity: hasAnimated ? 1 : 0,
-    ...(hasAnimated
-      ? {}
-      : {
-          animation: `$button ${homePageBackgroundDelaySeconds}s ${firstTimeAnimationDelaySeconds}s forwards`,
-        }),
-  },
-  '@keyframes button': {
-    '0%': {
-      opacity: 0,
-    },
-    '100%': {
-      opacity: 1,
-    },
   },
 });
 
 export default function HamburgerMenuButton() {
   const [isOpen, setIsOpen] = useState(false);
   const wasOpen = usePrevious(isOpen);
+  const [hasAnimated, setHasAnimated] = useState(
+    window.location.pathname !== '/'
+  );
   useEffect(() => {
     if (isOpen || wasOpen) {
       playSound(SoundKey.click);
@@ -49,18 +37,25 @@ export default function HamburgerMenuButton() {
   useEffect(() => {
     if (!isLoading) {
       setTimeout(
-        () => (hasAnimated = true),
-        (homePageBackgroundDelaySeconds + firstTimeAnimationDelaySeconds) * 1000
+        () => setHasAnimated(true),
+        firstTimeAnimationDelaySeconds * 1.1 * 1000
       );
     }
-  }, [isLoading]);
+  }, [isLoading, setHasAnimated]);
 
   if (isLoading) {
     return null;
   }
 
   return (
-    <Box className={classes.button} zIndex="hamburgerButton">
+    <Box
+      className={classes.button}
+      zIndex="hamburgerButton"
+      style={{
+        opacity: hasAnimated ? 1 : 0,
+        transition: `opacity ${firstTimeAnimationDelaySeconds}s`,
+      }}
+    >
       <FlexBox padding={2}>
         <IconButton style={{}} onClick={() => setIsOpen(true)}>
           <SvgIcon

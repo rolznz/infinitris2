@@ -72,10 +72,8 @@ export function useUserStore<StateSlice>(
     store.signOutLocalUser,
   ]);
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
-  const {
-    data: fireStoreUserDoc,
-    update: updateFirestoreDoc,
-  } = useDocument<IUser>(authStoreUserId ? getUserPath(authStoreUserId) : null);
+  const { data: fireStoreUserDoc, update: updateFirestoreDoc } =
+    useDocument<IUser>(authStoreUserId ? getUserPath(authStoreUserId) : null);
 
   const updateUser = (
     changes: Partial<IUser>,
@@ -145,6 +143,7 @@ export function useUserStore<StateSlice>(
     signOut: () => {
       signoutLocalUser();
       fuego.auth().signOut();
+      useAuthStore.getState().setUser(undefined);
     },
     setAppTheme: (appTheme: AppTheme) => {
       updateUser({ appTheme });

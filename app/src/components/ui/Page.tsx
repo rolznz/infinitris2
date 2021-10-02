@@ -8,14 +8,17 @@ type PageProps = {
   title?: React.ReactElement;
   useGradient?: boolean;
   style?: CSSProperties;
+  narrow?: boolean;
 };
 
 export function Page(props: React.PropsWithChildren<PageProps>) {
   const isDarkMode = useDarkMode();
+  // TODO: move out of component
   const useStyles = makeStyles((theme) => ({
     title: {},
     page: {
       flex: 1,
+      overflowY: 'auto',
       padding: theme.spacing(4),
       maxWidth: '100%',
       ...(props.useGradient
@@ -31,6 +34,14 @@ export function Page(props: React.PropsWithChildren<PageProps>) {
   }));
 
   const classes = useStyles();
+  const childContainer = (children?: React.ReactNode) =>
+    props.narrow ? (
+      <FlexBox width={375} maxWidth="100%">
+        {children}
+      </FlexBox>
+    ) : (
+      <>{children}</>
+    );
 
   return (
     <FlexBox
@@ -47,7 +58,7 @@ export function Page(props: React.PropsWithChildren<PageProps>) {
           <Box mb={4} />
         </>
       )}
-      {props.children}
+      {childContainer(props.children)}
     </FlexBox>
   );
 }

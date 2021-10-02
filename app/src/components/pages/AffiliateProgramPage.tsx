@@ -1,5 +1,13 @@
 import React from 'react';
-import { Box, Button, IconButton, Typography } from '@material-ui/core';
+import {
+  Box,
+  Button,
+  Divider,
+  IconButton,
+  makeStyles,
+  SvgIcon,
+  Typography,
+} from '@material-ui/core';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -12,8 +20,22 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { useUser } from '@/state/UserStore';
 import { Page } from '../ui/Page';
 import useDialogStore, { openLoginDialog } from '@/state/DialogStore';
+import { appName } from '@/utils/constants';
+import FlexBox from '../ui/FlexBox';
+import MailIcon from '@material-ui/icons/Mail';
+import { ReactComponent as FacebookIcon } from '@/icons/facebook2.svg';
+
+import { EmailShareButton, FacebookShareButton } from 'react-share';
+import { RingIconButton } from '../ui/RingIconButton';
+
+const useStyles = makeStyles((theme) => ({
+  shareButton: {
+    display: 'flex',
+  },
+}));
 
 export default function AffiliateProgramPage() {
+  const classes = useStyles();
   const intl = useIntl();
   const [, copy] = useCopyToClipboard();
 
@@ -38,36 +60,38 @@ export default function AffiliateProgramPage() {
           description="Affiliate Program page title - share and earn"
         />
       }
+      narrow
     >
-      <Typography align="center">
+      <Typography align="center" variant="body1">
         {userId ? (
           <FormattedMessage
-            defaultMessage="Share the below link with your friends and you will both earn bonus coins when your friends sign up."
-            description="Affiliate Program page title - invite your friends description"
+            defaultMessage="Share {appName} with your friends and you will both earn rewards when they sign up."
+            description="Affiliate Program page title - invite your friends logged in description"
+            values={{ appName }}
           />
         ) : (
           <FormattedMessage
-            defaultMessage="Share the below link with your friends"
-            description="Affiliate Program page title - invite your friends description"
+            defaultMessage="You're not logged in. You can still share {appName} with your friends, but you won't receive any rewards."
+            description="Affiliate Program page title - invite your friends logged out description"
+            values={{ appName }}
           />
         )}
       </Typography>
-      {affiliateDoc && (
-        <Typography align="center" variant="caption">
-          <FormattedMessage
-            defaultMessage="You and your next friend will both receive a bonus of {signupRewardCredits} coins"
-            description="Affiliate Program Page - affiliate count statistic"
-            values={{
-              signupRewardCredits:
-                (affiliateDoc.readOnly?.numConversions || 0) + 1,
-            }}
-          />
-        </Typography>
+      {!userId && (
+        <>
+          <Box mt={2} />
+          <Button color="primary" variant="contained" onClick={openLoginDialog}>
+            <FormattedMessage
+              defaultMessage="Log in"
+              description="Affiliate Program Page - login button"
+            />
+          </Button>
+        </>
       )}
       <Box mt={4} />
-      {
-        <>
-          <IconButton
+      {(!userId || affiliateDoc) && (
+        <FlexBox flexDirection="row" flexWrap="wrap" gridGap={10}>
+          <RingIconButton
             onClick={() => {
               copy(affiliateLink);
               toast(
@@ -79,35 +103,87 @@ export default function AffiliateProgramPage() {
               );
             }}
           >
-            <FileCopyIcon fontSize="large" />
-          </IconButton>
-          <Box mt={4} />
-          {userId ? (
-            <Typography align="center" variant="caption">
+            <FileCopyIcon color="primary" fontSize="large" />
+          </RingIconButton>
+          <RingIconButton>
+            <EmailShareButton
+              className={classes.shareButton}
+              url={affiliateLink}
+              subject={intl.formatMessage(
+                {
+                  defaultMessage: 'Join me on {appName}',
+                  description: 'email share button subject',
+                },
+                { appName }
+              )}
+            >
+              <MailIcon color="primary" fontSize="large" />
+            </EmailShareButton>
+          </RingIconButton>
+          <RingIconButton>
+            <FacebookShareButton url={affiliateLink}>
+              <SvgIcon
+                color="primary"
+                fontSize="large"
+                className={classes.shareButton}
+              >
+                <FacebookIcon />
+              </SvgIcon>
+            </FacebookShareButton>
+          </RingIconButton>
+        </FlexBox>
+      )}
+      <Box mt={4} />
+
+      {affiliateDoc && (
+        <>
+          <Typography align="center" variant="h4">
+            <FormattedMessage
+              defaultMessage="Next Signup"
+              description="Affiliate Program Page - your next share"
+            />
+          </Typography>
+          <FlexBox flexDirection="row" mt={2}>
+            <Typography align="center" variant="h6">
               <FormattedMessage
-                defaultMessage="So far {affiliateCount} friends have signed up"
-                description="Affiliate Program Page - affiliate count statistic"
+                defaultMessage="You: {referralRewardCredits}"
+                description="Affiliate Program Page - referral reward statistic"
                 values={{
-                  affiliateCount: affiliateDoc?.readOnly.numConversions || 0,
+                  referralRewardCredits:
+                    (affiliateDoc.readOnly?.numConversions || 0) + 3,
+                  signupRewardCredits: 3,
                 }}
               />
             </Typography>
-          ) : (
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={openLoginDialog}
-            >
+            <Box mx={2} />
+            <Divider orientation="vertical" />
+            <Box mx={2} />
+            <Typography align="center" variant="h6">
               <FormattedMessage
-                defaultMessage="Log in to earn"
-                description="Affiliate Program Page - login button"
+                defaultMessage="Friend: {signupRewardCredits}"
+                description="Affiliate Program Page - referral reward statistic"
+                values={{
+                  referralRewardCredits:
+                    (affiliateDoc.readOnly?.numConversions || 0) + 3,
+                  signupRewardCredits: 3,
+                }}
               />
-            </Button>
-          )}
-
-          {/* TODO: OG images for sharing */}
+            </Typography>
+          </FlexBox>
+          <Box mt={4} />
+          <Typography align="center" variant="caption">
+            <FormattedMessage
+              defaultMessage="So far {affiliateCount} friends have signed up"
+              description="Affiliate Program Page - affiliate count statistic"
+              values={{
+                affiliateCount: affiliateDoc?.readOnly.numConversions || 0,
+              }}
+            />
+          </Typography>
         </>
-      }
+      )}
+
+      {/* TODO: OG images for sharing */}
     </Page>
   );
 }

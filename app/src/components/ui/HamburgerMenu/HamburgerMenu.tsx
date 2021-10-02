@@ -118,7 +118,7 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
             }
           />
           <HamburgerListItem
-            to={Routes.credits}
+            to={Routes.about}
             icon={<AboutIcon />}
             text={
               <FormattedMessage

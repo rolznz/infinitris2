@@ -15,6 +15,7 @@ declare module '@material-ui/core/styles/createPalette' {
   }
   interface TypeBackground {
     loader: string;
+    paperDark: string;
   }
 }
 
@@ -35,12 +36,38 @@ const coreThemeOptions: ThemeOptions = {
       fontSize: 36,
       textTransform: 'lowercase',
     },
+    h2: {
+      fontSize: 32,
+      textTransform: 'lowercase',
+    },
+    h3: {
+      fontSize: 28,
+      textTransform: 'lowercase',
+    },
+    h4: {
+      fontSize: 24,
+      textTransform: 'lowercase',
+    },
+    h5: {
+      fontSize: 20,
+      textTransform: 'lowercase',
+    },
+    h6: {
+      fontSize: 18,
+      textTransform: 'lowercase',
+    },
     body1: {
       textTransform: 'lowercase',
+      fontSize: 16,
     },
   },
   zIndex: zIndexes as any,
   overrides: {
+    MuiSvgIcon: {
+      colorPrimary: {
+        color: '#ECECED',
+      },
+    },
     MuiDrawer: {
       root: {
         zIndex: zIndexes.drawer,
@@ -120,11 +147,11 @@ const coreThemeOptions: ThemeOptions = {
   },
   palette: {
     primary: {
-      main: '#3A59A1',
+      main: '#2F67D7',
       contrastText: '#ECECED',
     },
     secondary: {
-      main: '#A0A09F',
+      main: '#A0BDD9',
       contrastText: '#ECECED',
     },
     tertiary: {
@@ -144,6 +171,7 @@ const lightThemeOptions: ThemeOptions = {
     background: {
       ...(coreThemeOptions.palette?.background || {}),
       paper: '#1E448F',
+      paperDark: '#113b77',
     },
     text: {
       primary: '#ECECED',
@@ -167,11 +195,24 @@ const darkThemeOptions: ThemeOptions = {
     background: {
       ...(coreThemeOptions.palette?.background || {}),
       paper: '#081B29',
+      paperDark: '#081B29',
     },
     text: {
       primary: '#999999',
       //secondary: '#ECECED',
       //tertiary: '#12232B'  // loader: 081428
+    },
+    primary: {
+      main: '#103950',
+      contrastText: '#ECECED',
+    },
+    secondary: {
+      main: '#889796',
+      contrastText: '#ECECED',
+    },
+    tertiary: {
+      main: '#A4DAF2',
+      contrastText: '#ECECED',
     },
   },
   typography: {

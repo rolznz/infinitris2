@@ -25,7 +25,14 @@ export default function ScoreboardPage() {
   ];*/
 
   return (
-    <Page>
+    <Page
+      title={
+        <FormattedMessage
+          defaultMessage="Scoreboard"
+          description="Scoreboard page title"
+        />
+      }
+    >
       <FlexBox
         flex={1}
         justifyContent="flex-start"
@@ -33,12 +40,6 @@ export default function ScoreboardPage() {
         width="100%"
         marginX="auto"
       >
-        <Typography variant="h1" align="center">
-          <FormattedMessage
-            defaultMessage="Scoreboard"
-            description="Scoreboard page title"
-          />
-        </Typography>
         <Typography variant="body1" align="center">
           <FormattedMessage
             defaultMessage="Updates once a day"

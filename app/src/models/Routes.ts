@@ -21,6 +21,7 @@ enum Routes {
   allSet = '/all-set',
   earnCoins = '/earn-coins',
   affiliateProgram = '/affiliate-program',
+  about = '/about',
 }
 
 export default Routes;

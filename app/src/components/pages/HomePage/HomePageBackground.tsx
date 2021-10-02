@@ -26,7 +26,7 @@ import Loadable from '@/components/ui/Loadable';
 import useDarkMode from '@/components/hooks/useDarkMode';
 import { zIndexes } from '@/theme';
 
-export const homePageBackgroundDelaySeconds = 5;
+export const homePageBackgroundTransitionSeconds = 5;
 
 const _HomePageBackground = () => {
   const isDarkMode = useDarkMode();
@@ -64,7 +64,7 @@ const _HomePageBackground = () => {
           opacity: isLoaded ? 0.5 : 0,
           width: '100%',
           height: '100%',
-          transition: `opacity ${homePageBackgroundDelaySeconds}s ${homePageFirstTimeAnimationDelaySeconds}s`,
+          transition: `opacity ${homePageBackgroundTransitionSeconds}s ${homePageFirstTimeAnimationDelaySeconds}s`,
         }}
         role="presentation"
       />

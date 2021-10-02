@@ -9452,7 +9452,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"debug@npm:2.6.9, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.0, debug@npm:^2.6.9":
+"debug@npm:2.6.9, debug@npm:^2.1.3, debug@npm:^2.2.0, debug@npm:^2.3.3, debug@npm:^2.6.0, debug@npm:^2.6.9":
   version: 2.6.9
   resolution: "debug@npm:2.6.9"
   dependencies:
@@ -13489,6 +13489,7 @@ fsevents@^1.2.7:
     react-router-dom: ^5.2.0
     react-script-tag: ^1.1.2
     react-scripts: 3.4.3
+    react-share: ^4.4.0
     react-star-rating-component: ^1.4.1
     react-toastify: ^7.0.3
     react-use: ^15.3.4
@@ -15717,6 +15718,15 @@ fsevents@^1.2.7:
   version: 0.0.0
   resolution: "jsonify@npm:0.0.0"
   checksum: d8d4ed476c116e6987a460dcb82f22284686caae9f498ac87b0502c1765ac1522f4f450a4cad4cc368d202fd3b27a3860735140a82867fc6d558f5f199c38bce
+  languageName: node
+  linkType: hard
+
+"jsonp@npm:^0.2.1":
+  version: 0.2.1
+  resolution: "jsonp@npm:0.2.1"
+  dependencies:
+    debug: ^2.1.3
+  checksum: 90aabd9deb3a9ba83aedf8d40e1aaff1fc29f3f3fe42985a661782498dde526a7cd9b7bec4b8721f7d0beafab9e5ccfdafd46640f7dd6c58d529a6bb5238e2b8
   languageName: node
   linkType: hard
 
@@ -20358,6 +20368,18 @@ fsevents@^1.2.7:
   bin:
     react-scripts: bin/react-scripts.js
   checksum: bfa712f317aef20d7783f891fd5a9e76ab93d19ab5ae858e662ca213ef2421d0e03c22b7df0265ccb8cce938db8cb6fdd0d9754fa5d19d28846bd4c47ba9e8cf
+  languageName: node
+  linkType: hard
+
+"react-share@npm:^4.4.0":
+  version: 4.4.0
+  resolution: "react-share@npm:4.4.0"
+  dependencies:
+    classnames: ^2.2.5
+    jsonp: ^0.2.1
+  peerDependencies:
+    react: ^16.3.0 || ^17
+  checksum: 69306d4593cbbc8043383d03a6aea254affb9d74f79da79903bfb6fb044451516761b955786a4b1bf54b84ff9ddeaa4512f3722388e80b073defcd3949f1abc4
   languageName: node
   linkType: hard
 

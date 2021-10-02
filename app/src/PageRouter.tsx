@@ -1,6 +1,5 @@
 import React from 'react';
 import { Route, Switch, BrowserRouter, useLocation } from 'react-router-dom';
-import { Location } from 'history';
 import AllSetPage from './components/pages/AllSetPage';
 import { CreateChallengePage } from './components/pages/CreateChallengePage/CreateChallengePage';
 import { LoadChallengePage } from './components/pages/CreateChallengePage/LoadChallengePage';
@@ -17,7 +16,7 @@ import ChallengeRequiredPage from './components/pages/ChallengeRequiredPage';
 import { ChallengesPage } from './components/pages/ChallengesPage/ChallengesPage';
 import WelcomePage from './components/pages/WelcomePage';
 import Routes from './models/Routes';
-import { CreditsPage } from './components/pages/CreditsPage';
+import { CreditsPage } from './components/pages/CreditsPage/CreditsPage';
 import { PrivacyPolicyPage } from './components/pages/PrivacyPolicyPage';
 import EarnCreditsPage from './components/pages/EarnCreditsPage';
 import ScoreboardPage from './components/pages/ScoreboardPage';
@@ -31,6 +30,7 @@ import { AnimatePresence, motion, TargetAndTransition } from 'framer-motion';
 import FlexBox from './components/ui/FlexBox';
 import { zIndexes } from './theme';
 import { DialogManager } from './components/ui/modals/DialogManager';
+import AboutPage from './components/pages/AboutPage/AboutPage';
 
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
@@ -135,13 +135,16 @@ function RouterContents() {
           <AnimatedRoute exact path={Routes.credits}>
             <CreditsPage />
           </AnimatedRoute>
+          <AnimatedRoute exact path={Routes.about}>
+            <AboutPage />
+          </AnimatedRoute>
           <AnimatedRoute exact path={Routes.termsOfService}>
             <TermsOfServicePage />
           </AnimatedRoute>
           <AnimatedRoute exact path={Routes.privacyPolicy}>
             <PrivacyPolicyPage />
           </AnimatedRoute>
-          <AnimatedRoute animation="slideup" exact path={Routes.settings}>
+          <AnimatedRoute /*animation="slideup"*/ exact path={Routes.settings}>
             <SettingsPage />
           </AnimatedRoute>
           <AnimatedRoute exact path={Routes.controlSettings}>

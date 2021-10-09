@@ -1,2 +1,3 @@
-Checklist
-* Please install the tslint extension in vs code and ensure you have no warnings before sending a pull request
+Currently no contributing guide has been set up.
+
+Please open a github ticket describing how you wish to contribute.

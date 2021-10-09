@@ -20,6 +20,7 @@ import useAffiliateLinkRef from './hooks/useAffiliateLinkRef';
 import { ReactComponent as GoogleIcon } from '@/icons/google.svg';
 import { ReactComponent as FacebookIcon } from '@/icons/facebook.svg';
 import { ReactComponent as CrossIcon } from '@/icons/x.svg';
+import { RingIconButton } from './ui/RingIconButton';
 
 const googleProvider = new firebase.auth.GoogleAuthProvider();
 const facebookProvider = new firebase.auth.FacebookAuthProvider();
@@ -42,17 +43,10 @@ export default function Login({
   //const user = useUser();
   //const userStore = useUserStore();
   const authUser = useAuthStore((authStore) => authStore.user);
-  const [
-    referredByAffiliateId,
-    ,
-    deleteReferredByAffiliateId,
-  ] = useLocalStorage<string>(
-    localStorageKeys.referredByAffiliateId,
-    undefined,
-    {
+  const [referredByAffiliateId, , deleteReferredByAffiliateId] =
+    useLocalStorage<string>(localStorageKeys.referredByAffiliateId, undefined, {
       raw: true,
-    }
-  );
+    });
 
   async function loginWithProvider(provider: firebase.auth.AuthProvider) {
     try {
@@ -123,11 +117,11 @@ export default function Login({
         <LoginIcon icon={<FacebookIcon />} onClick={loginWithFacebook} />
       </FlexBox>
       <Box mt={4} />
-      <IconButton onClick={onClose}>
+      <RingIconButton padding="large" onClick={onClose}>
         <SvgIcon>
           <CrossIcon />
         </SvgIcon>
-      </IconButton>
+      </RingIconButton>
     </FlexBox>
   );
 }

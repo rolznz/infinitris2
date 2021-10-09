@@ -10,13 +10,39 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     backgroundColor: theme.palette.background.paperDark,
     border: `6px solid ${borderColor}`,
-    padding: '6px',
+  },
+  /*inverted: {
+    border: `6px solid ${borderColor}`,
+    backgroundColor: theme.palette.primary.contrastText,
+    '& svg': {
+      color: theme.palette.background.paperDark,
+    },
+  },*/
+  'padding-medium': {
+    padding: theme.spacing(1),
+  },
+  'padding-large': {
+    padding: theme.spacing(2),
   },
 }));
 
-export function RingIconButton(props: React.PropsWithChildren<{}>) {
+export type RingIconButtonProps = {
+  onClick?(): void;
+  padding?: 'medium' | 'large';
+};
+
+export function RingIconButton({
+  children,
+  padding = 'medium',
+  onClick,
+}: React.PropsWithChildren<RingIconButtonProps>) {
   const classes = useStyles();
   return (
-    <IconButton className={classes.iconButton}>{props.children}</IconButton>
+    <IconButton
+      className={`${classes.iconButton} ${classes[`padding-${padding}`]}`}
+      onClick={onClick}
+    >
+      {children}
+    </IconButton>
   );
 }

@@ -19,7 +19,7 @@ import Routes from './models/Routes';
 import { CreditsPage } from './components/pages/CreditsPage/CreditsPage';
 import { PrivacyPolicyPage } from './components/pages/PrivacyPolicyPage';
 import EarnCreditsPage from './components/pages/EarnCreditsPage';
-import ScoreboardPage from './components/pages/ScoreboardPage';
+import ScoreboardPage from './components/pages/ScoreboardPage/ScoreboardPage';
 import AffiliateProgramPage from './components/pages/AffiliateProgramPage';
 import { ComingSoonPage } from './components/pages/ComingSoonPage';
 import CustomizeProfilePage from './components/pages/CustomizeProfilePage';

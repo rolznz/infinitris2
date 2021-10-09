@@ -92,6 +92,7 @@ export default function AffiliateProgramPage() {
       {(!userId || affiliateDoc) && (
         <FlexBox flexDirection="row" flexWrap="wrap" gridGap={10}>
           <RingIconButton
+            padding="large"
             onClick={() => {
               copy(affiliateLink);
               toast(
@@ -105,7 +106,7 @@ export default function AffiliateProgramPage() {
           >
             <FileCopyIcon color="primary" fontSize="large" />
           </RingIconButton>
-          <RingIconButton>
+          <RingIconButton padding="large">
             <EmailShareButton
               className={classes.shareButton}
               url={affiliateLink}
@@ -120,7 +121,7 @@ export default function AffiliateProgramPage() {
               <MailIcon color="primary" fontSize="large" />
             </EmailShareButton>
           </RingIconButton>
-          <RingIconButton>
+          <RingIconButton padding="large">
             <FacebookShareButton url={affiliateLink}>
               <SvgIcon
                 color="primary"

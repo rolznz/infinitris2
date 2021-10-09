@@ -23,7 +23,7 @@ export function AboutIconButton({ to, url, icon }: AboutIconProps) {
   return (
     <>
       {wrapper(
-        <RingIconButton>
+        <RingIconButton padding="large">
           <SvgIcon color="primary" fontSize="large">
             {icon}
           </SvgIcon>

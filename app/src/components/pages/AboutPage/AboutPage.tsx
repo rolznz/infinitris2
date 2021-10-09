@@ -13,9 +13,11 @@ import { ReactComponent as PrivacyIcon } from '@/icons/privacy.svg';
 import { ReactComponent as TermsIcon } from '@/icons/terms.svg';
 import { ReactComponent as DonateIcon } from '@/icons/donate.svg';
 import { ReactComponent as FacebookIcon } from '@/icons/facebook2.svg';
+import { ReactComponent as YouTubeIcon } from '@/icons/youtube.svg';
+import { ReactComponent as TwitterIcon } from '@/icons/twitter.svg';
 import { AboutIconButton } from './AboutIconButton';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   shareButton: {
     display: 'flex',
   },
@@ -57,11 +59,11 @@ export default function AboutPage() {
         />
         <AboutIconButton
           url={'https://www.youtube.com/channel/UCUdKTOTclz00c2BR9_m5sRg'}
-          icon={<FacebookIcon />}
+          icon={<YouTubeIcon />}
         />
         <AboutIconButton
           url={'https://twitter.com/infinitris_io'}
-          icon={<FacebookIcon />}
+          icon={<TwitterIcon />}
         />
       </FlexBox>
     </Page>

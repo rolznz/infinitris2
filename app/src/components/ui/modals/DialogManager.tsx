@@ -11,16 +11,11 @@ export function DialogManager() {
     dialogStore.close,
   ]);
 
-  // TODO: remove LoginDialog
   return (
     <>
-      {isMobile() ? (
-        <Drawer anchor="bottom" open={dialogType === 'login'} onClose={close}>
-          <Login onClose={close} />
-        </Drawer>
-      ) : (
-        <LoginDialog isOpen={dialogType === 'login'} onClose={close} />
-      )}
+      <Drawer anchor="bottom" open={dialogType === 'login'} onClose={close}>
+        <Login onClose={close} />
+      </Drawer>
     </>
   );
 }

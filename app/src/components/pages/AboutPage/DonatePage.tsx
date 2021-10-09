@@ -25,7 +25,7 @@ export default function AboutPage() {
     >
       <Typography align="center" variant="body1">
         <FormattedMessage
-          defaultMessage="{appName} is open source, ad-free, and will always be free to play. Donations will fund future development and operating costs."
+          defaultMessage="{appName} is open source and ad-free. Donations will fund future development and operating costs."
           description="Donate page description"
           values={{ appName }}
         />
@@ -38,7 +38,10 @@ export default function AboutPage() {
           values={{
             email: (
               <Link href="mailto:infinitris2@googlegroups.com">
-                send an email
+                <FormattedMessage
+                  defaultMessage="send an email to the infinitris2 Google Group"
+                  description="send an email link (google group)"
+                />
               </Link>
             ),
           }}

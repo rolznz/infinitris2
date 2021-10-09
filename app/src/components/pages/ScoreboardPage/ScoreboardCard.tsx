@@ -1,4 +1,10 @@
-import { Box, Card, SvgIcon, Typography } from '@material-ui/core';
+import {
+  Box,
+  Card,
+  SvgIcon,
+  Typography,
+  useMediaQuery,
+} from '@material-ui/core';
 import { IScoreboardEntry } from 'infinitris2-models';
 import React from 'react';
 // TODO: load assets from firebase storage
@@ -6,26 +12,101 @@ import coneFace from './assets/faces/cone.png';
 
 import { ReactComponent as StarIcon } from '@/icons/scoreboard_star.svg';
 import FlexBox from '@/components/ui/FlexBox';
+import { ReactComponent as ImpactIcon } from '@/icons/twitter.svg';
+import { ReactComponent as CoinIcon } from '@/icons/twitter.svg';
+import { ReactComponent as BadgeIcon } from '@/icons/twitter.svg';
 
 export type ScoreboardCardProps = {
   entry: IScoreboardEntry;
+  placing: number;
 };
 
-export function ScoreboardCard({ entry }: ScoreboardCardProps) {
+// https://stackoverflow.com/a/39466341/4562693
+const getOrdinalSuffix = (n: number) =>
+  [, 'st', 'nd', 'rd'][(n / 10) % 10 ^ 1 && n % 10] || 'th';
+
+const getScoreColor = (n: number) =>
+  n === 1 ? '#FAA81A' : n === 2 ? '#CCCBCB' : n === 3 ? '#D28E57' : '#DE5E5E';
+
+const getScoreSize = (n: number) => (n < 4 ? 120 : 80);
+const getScoreFontSize = (n: number) =>
+  getScoreSize(n) * 0.25 * (1 / (1 + (n.toString().length - 1) * 0.15));
+
+export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
+  const isSmallScreen = useMediaQuery(`(max-width:600px)`);
+
   return (
-    <Card style={{ position: 'relative' }}>
-      <FlexBox style={{ position: 'absolute', top: 0, left: 0 }}>
-        <StarIcon style={{ width: '40px' }} />
+    <Card>
+      <FlexBox p={1}>
+        <Typography variant="h6" align="center">
+          {entry.nickname}
+        </Typography>
+        <FlexBox position="relative">
+          <FlexBox
+            style={{
+              position: 'absolute',
+              top: '50px',
+              left: '50px',
+            }}
+          >
+            <StarIcon
+              style={{
+                position: 'absolute',
+                width: getScoreSize(placing) + 'px',
+                height: getScoreSize(placing) + 'px',
+                color: getScoreColor(placing),
+              }}
+            />
+            <Typography
+              variant="body1"
+              style={{
+                position: 'absolute',
+                fontSize: getScoreFontSize(placing) + 'px',
+              }}
+            >
+              {placing}
+              <sup>{getOrdinalSuffix(placing)}</sup>
+            </Typography>
+          </FlexBox>
+          <img
+            src={coneFace}
+            alt="character"
+            style={{
+              height: 'auto',
+              width: '200px',
+            }}
+          />
+        </FlexBox>
+        <FlexBox flexDirection="row" gridGap="10px" mt={1}>
+          <ScoreboardCardStatistic
+            statistic={entry.networkImpact}
+            icon={<ImpactIcon />}
+          />
+          <ScoreboardCardStatistic
+            statistic={entry.coins}
+            icon={<CoinIcon />}
+          />
+          <ScoreboardCardStatistic
+            statistic={entry.numBadges}
+            icon={<BadgeIcon />}
+          />
+        </FlexBox>
       </FlexBox>
-      <Typography variant="body1">{entry.nickname}</Typography>
-      <img
-        src={coneFace}
-        alt="character"
-        style={{
-          height: 'auto',
-          width: '200px',
-        }}
-      />
     </Card>
+  );
+}
+type ScoreboardCardStatisticProps = {
+  statistic: number;
+  icon: React.ReactNode;
+};
+function ScoreboardCardStatistic({
+  icon,
+  statistic,
+}: ScoreboardCardStatisticProps) {
+  return (
+    <FlexBox flexDirection="row">
+      <SvgIcon>{icon}</SvgIcon>
+      <Typography variant="h6">{statistic || 0}</Typography>
+    </FlexBox>
   );
 }

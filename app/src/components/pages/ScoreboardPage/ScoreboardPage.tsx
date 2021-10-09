@@ -21,6 +21,7 @@ export default function ScoreboardPage() {
           description="Scoreboard page title"
         />
       }
+      useGradient
     >
       <Typography variant="body1" align="center">
         <FormattedMessage
@@ -29,9 +30,9 @@ export default function ScoreboardPage() {
         />
       </Typography>
       {scoreboardEntries && (
-        <FlexBox flexDirection="row" flexWrap="wrap" mt={4}>
-          {scoreboardEntries?.map((entry) => (
-            <ScoreboardCard key={entry.id} entry={entry} />
+        <FlexBox flexDirection="row" flexWrap="wrap" mt={4} gridGap={4}>
+          {scoreboardEntries?.map((entry, index) => (
+            <ScoreboardCard key={entry.id} entry={entry} placing={index + 1} />
           ))}
         </FlexBox>
       )}

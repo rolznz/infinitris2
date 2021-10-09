@@ -78,19 +78,11 @@ const coreThemeOptions: ThemeOptions = {
         borderRadius: 4,
       },
     },
-    MuiSwitch: {
-      /*thumb: {
-        backgroundColor: '#ECECED',
-        color: '#ECECED',
+    MuiCard: {
+      root: {
+        boxShadow: 'none',
+        borderRadius: '0',
       },
-      input: {
-        backgroundColor: '#ECECED',
-        color: '#ECECED',
-      },
-      checked: {
-        backgroundColor: '#ECECED',
-        color: '#ECECED',
-      },*/
     },
     MuiCheckbox: {
       root: {
@@ -186,6 +178,18 @@ const lightThemeOptions: ThemeOptions = {
       color: '#ECECED',
     },
   },
+  overrides: {
+    // TODO: lodash merge
+    ...coreThemeOptions.overrides,
+    MuiCard: {
+      ...coreThemeOptions.overrides?.MuiCard,
+      root: {
+        ...coreThemeOptions.overrides?.MuiCard?.root,
+        background:
+          'linear-gradient(180deg, #3A9AD1 0%, #1F72B7 48.44%, #0B61B1 85.94%);',
+      },
+    },
+  },
 };
 
 const darkThemeOptions: ThemeOptions = {
@@ -220,6 +224,17 @@ const darkThemeOptions: ThemeOptions = {
     ...(coreThemeOptions.typography || {}),
     allVariants: {
       color: '#999999',
+    },
+  },
+  overrides: {
+    ...coreThemeOptions.overrides,
+    MuiCard: {
+      ...coreThemeOptions.overrides?.MuiCard,
+      root: {
+        ...coreThemeOptions.overrides?.MuiCard?.root,
+        background:
+          'linear-gradient(180deg, #137781 0%, #145F66 26.56%, #0D5058 57.81%, #114650 85.94%)',
+      },
     },
   },
 };

@@ -24,8 +24,8 @@ export const borderColor = 'rgba(249, 248, 247, 0.3)';
 export const zIndexes = {
   above: 1,
   hamburgerButton: 100,
-  drawer: 9950,
-  loader: 9999,
+  drawer: 950,
+  loader: 1000,
 };
 
 const coreThemeOptions: ThemeOptions = {
@@ -120,6 +120,7 @@ const coreThemeOptions: ThemeOptions = {
       label: {
         //margin: '-2px',
         //transform: 'translateX(0.5px)',
+        color: '#ECECED',
       },
     },
     MuiButton: {
@@ -151,7 +152,7 @@ const coreThemeOptions: ThemeOptions = {
       contrastText: '#ECECED',
     },
     secondary: {
-      main: '#A0BDD9',
+      main: '#789AB8',
       contrastText: '#ECECED',
     },
     tertiary: {

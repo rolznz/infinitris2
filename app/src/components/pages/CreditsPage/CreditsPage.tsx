@@ -6,7 +6,7 @@ import { Page } from '../../ui/Page';
 import coneFace from './assets/faces/cone.png';
 import athleteFace from './assets/faces/athlete.png';
 import chillFace from './assets/faces/chill.png';
-import LinkIcon from '@material-ui/icons/Link';
+import GlobeIcon from '@material-ui/icons/Public';
 import { RingIconButton } from '@/components/ui/RingIconButton';
 
 type PrimaryContributorProps = {
@@ -39,8 +39,8 @@ function PrimaryContributor({
           src={image}
           alt="character"
           style={{
-            width: 'auto',
-            height: '200px',
+            height: 'auto',
+            width: '200px',
           }}
         />
         <FlexBox alignItems="flex-start">
@@ -49,7 +49,7 @@ function PrimaryContributor({
           <a href={url}>
             <RingIconButton>
               <SvgIcon color="primary">
-                <LinkIcon />
+                <GlobeIcon />
               </SvgIcon>
             </RingIconButton>
           </a>
@@ -70,6 +70,7 @@ export function CreditsPage() {
       }
       narrow
     >
+      <Box mt={4} />
       <FlexBox gridGap={100}>
         <PrimaryContributor
           image={coneFace}

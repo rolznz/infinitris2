@@ -50,5 +50,13 @@
   "Im4nof": {
     "defaultMessage": "ภาษา",
     "description": "Settings Page Table - Language left column"
+  },
+  "uJkrsw": {
+    "defaultMessage": "เริ่มเล่น",
+    "description": "Loader - Start button text"
+  },
+  "AqPGfL": {
+    "defaultMessage": "โหลดเสียง",
+    "description": "Loader - Load Music Sounds checkbox text"
   }
 }

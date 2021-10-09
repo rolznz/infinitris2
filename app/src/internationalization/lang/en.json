@@ -7,13 +7,29 @@
     "defaultMessage": "Create Challenge",
     "description": "Create Challenge button tooltip"
   },
+  "+dJZFq": {
+    "defaultMessage": "Logout",
+    "description": "Hamburger menu - Logout item"
+  },
   "/ALJ+x": {
     "defaultMessage": "Move Down",
     "description": "MoveDown action text"
   },
+  "/WyAIi": {
+    "defaultMessage": "¹Saving a new challenge will cost 1 credit. This is to reduce spam. A new network impact will be created for each unique user that rates your challenge.",
+    "description": "Earn coins information - challenges fine print"
+  },
   "0/CUau": {
     "defaultMessage": "This challenge is published and can no longer be edited.",
     "description": "Challenge published text"
+  },
+  "0/T6QS": {
+    "defaultMessage": "Mutual network impacts³",
+    "description": "Earn coins information - mutual network impacts"
+  },
+  "0QQU+8": {
+    "defaultMessage": "Scoreboard",
+    "description": "Scoreboard page title"
   },
   "0cwr0n": {
     "defaultMessage": "Press a key for {inputAction}",
@@ -31,6 +47,14 @@
     "defaultMessage": "Load Challenge",
     "description": "Load Challenge button tooltip"
   },
+  "3PTDF3": {
+    "defaultMessage": "Time taken: {timeTakenMs} seconds",
+    "description": "Time taken to complete challenge"
+  },
+  "3s73DJ": {
+    "defaultMessage": "Continue",
+    "description": "Continue button text"
+  },
   "4q7Kpa": {
     "defaultMessage": "Sign out",
     "description": "Sign out button text"
@@ -38,6 +62,14 @@
   "5VgUMU": {
     "defaultMessage": "Control Select",
     "description": "Control selection heading"
+  },
+  "5iXutI": {
+    "defaultMessage": "About",
+    "description": "About page title"
+  },
+  "5y+TXY": {
+    "defaultMessage": "Log in",
+    "description": "User Profile Page - login button"
   },
   "68Rafq": {
     "defaultMessage": "Import",
@@ -51,6 +83,10 @@
     "defaultMessage": "Help",
     "description": "Help button text"
   },
+  "7LLoeQ": {
+    "defaultMessage": "Customize Your Block",
+    "description": "Customize Profile title"
+  },
   "8dd5jf": {
     "defaultMessage": "Touchscreen",
     "description": "Choose touch controls"
@@ -59,21 +95,45 @@
     "defaultMessage": "Reset",
     "description": "Reset challenge button text"
   },
+  "9S4YbG": {
+    "defaultMessage": "Earn coins",
+    "description": "Earn coins link"
+  },
   "9hmrYe": {
     "defaultMessage": "Publish",
     "description": "Publish button text"
+  },
+  "AqPGfL": {
+    "defaultMessage": "Load Sounds",
+    "description": "Loader - Load Music Sounds checkbox text"
+  },
+  "AwOLMv": {
+    "defaultMessage": "{count} challenges completed",
+    "description": "Completed challenges statistic"
+  },
+  "B+Z6Mw": {
+    "defaultMessage": "Input",
+    "description": "Settings Page Table - Preferred Input Method left column"
   },
   "BhPh8A": {
     "defaultMessage": "{count} incomplete {count, plural, one {challenge} other {challenges}} to be completed",
     "description": "Incompleted challenges"
   },
-  "C1C3gi": {
-    "defaultMessage": "Play",
-    "description": "Play button text"
+  "CDSL5u": {
+    "defaultMessage": "Donate",
+    "description": "Donate page title"
+  },
+  "CH9HsI": {
+    "defaultMessage": "Invite your friends²",
+    "description": "Earn coins information - invite your friends (affiliate program) link"
   },
   "E0BKYv": {
     "defaultMessage": "Blocks placed: {blocksPlaced}",
     "description": "Number of blocks placed in challenge"
+  },
+  "ENTm9K": {
+    "defaultMessage": "Increase your network impact - 1 credit per new impact",
+    "description": "Earn coins information - increase network impact"
   },
   "FJsJQx": {
     "defaultMessage": "Single Player",
@@ -83,9 +143,17 @@
     "defaultMessage": "Export",
     "description": "Export JSON button text"
   },
+  "FsdBQi": {
+    "defaultMessage": "You do not have enough coins to publish. Try again in 24 hours.",
+    "description": "Not enough coins to publish alert message"
+  },
   "G1Ftjd": {
     "defaultMessage": "Rotate Clockwise",
     "description": "RotateClockwise action text"
+  },
+  "GbkQR1": {
+    "defaultMessage": "You: {referralRewardCredits}",
+    "description": "Affiliate Program Page - referral reward statistic"
   },
   "H4fDqx": {
     "defaultMessage": "Clear Progress",
@@ -95,33 +163,93 @@
     "defaultMessage": "Language",
     "description": "Settings Page Table - Language left column"
   },
+  "ItaVcN": {
+    "defaultMessage": "Color",
+    "description": "Customize Profile color header"
+  },
+  "Jm87fF": {
+    "defaultMessage": "Thanks for rating!",
+    "description": "Thanks for rating toast message"
+  },
+  "KxPwi2": {
+    "defaultMessage": "Continue",
+    "description": "Challenge Results View - Continue button text"
+  },
   "MhW9iO": {
     "defaultMessage": "Change",
     "description": "Settings Page Table - Change controls button text"
   },
-  "P5qtEF": {
-    "defaultMessage": "You do not have enough coins to publish. Try again in 24 hours.",
-    "description": "Not enough coins to publish alert message"
+  "MnYQLd": {
+    "defaultMessage": "Credits",
+    "description": "Credits Header"
+  },
+  "NZVbaN": {
+    "defaultMessage": "Rate this challenge",
+    "description": "Give a rating for this challenge text"
+  },
+  "O8M+hl": {
+    "defaultMessage": "Music",
+    "description": "Settings Page Table - Music"
+  },
+  "O9f+Ix": {
+    "defaultMessage": "Coins can be used to purchase ingame items and create challenges, and holding coins will place you higher on the scoreboard. You can earn coins in a variety of ways.",
+    "description": "Earn coins information"
+  },
+  "P1a4eM": {
+    "defaultMessage": "Settings",
+    "description": "Hamburger menu - Settings list item"
+  },
+  "PDEzks": {
+    "defaultMessage": "Friend: {signupRewardCredits}",
+    "description": "Affiliate Program Page - referral reward statistic"
   },
   "QXpu7n": {
     "defaultMessage": "All Challenges",
     "description": "Challenges Page - All Challenges section title"
   },
-  "QnqQTB": {
-    "defaultMessage": "{nickname}'s Profile",
-    "description": "Profile title"
+  "QceU/I": {
+    "defaultMessage": "{appName} is a multiplayer puzzle falling block puzzle game. Place blocks on a giant grid that expands and contracts based on the number of players in-game. Customize your character, create challenges to share with the community and refine your skills in {appName} story mode.",
+    "description": "About page description"
   },
-  "REvIMN": {
-    "defaultMessage": "R to retry, F for feedback",
-    "description": "Keyboard context menu text (retry, feedback, etc)"
+  "RxWEYS": {
+    "defaultMessage": "Stay tuned - block patterns coming soon!",
+    "description": "Customize Profile stay tuned"
+  },
+  "SGFCtK": {
+    "defaultMessage": "This credit system is designed to reward players who positively contribute to the game. Credit rewards may change over time.",
+    "description": "Earn coins information - credit rewards may change"
   },
   "SLA8kK": {
     "defaultMessage": "Settings",
     "description": "Settings Header"
   },
+  "TCry77": {
+    "defaultMessage": "Profile",
+    "description": "Profile button tooltip"
+  },
+  "TVMwKW": {
+    "defaultMessage": "You're not logged in. You can still share {appName} with your friends, but you won't receive any rewards.",
+    "description": "Affiliate Program page title - invite your friends logged out description"
+  },
+  "U+G+qI": {
+    "defaultMessage": "Share {appName} with your friends and you will both earn rewards when they sign up.",
+    "description": "Affiliate Program page title - invite your friends logged in description"
+  },
   "VWWoDA": {
     "defaultMessage": "No description provided",
     "description": "No description provided"
+  },
+  "WuvGzt": {
+    "defaultMessage": "Customize",
+    "description": "Customize block link"
+  },
+  "WvvVfJ": {
+    "defaultMessage": "Link copied to clipboard",
+    "description": "Affiliate Link copied to clipboard toast message"
+  },
+  "X53BS8": {
+    "defaultMessage": "Share & Earn",
+    "description": "Hamburger menu - Share list item"
   },
   "X5AYXU": {
     "defaultMessage": "New Challenge",
@@ -131,13 +259,29 @@
     "defaultMessage": "Move Left",
     "description": "MoveLeft action text"
   },
+  "YClRfy": {
+    "defaultMessage": "Rated {totalRating} ({numRatings} votes)",
+    "description": "Current rating statistics"
+  },
+  "YnGl6I": {
+    "defaultMessage": "Profile",
+    "description": "Profile title"
+  },
   "YxmKee": {
     "defaultMessage": "{numRooms} Rooms",
     "description": "Number of rooms"
   },
-  "Z27sHP": {
-    "defaultMessage": "{count} completed challenges",
-    "description": "Completed challenges statistic"
+  "Z5Qilg": {
+    "defaultMessage": "Retry",
+    "description": "Challenge Results View - Retry button text"
+  },
+  "a7RHG6": {
+    "defaultMessage": "Scoreboard",
+    "description": "Scoreboard button tooltip"
+  },
+  "axKU//": {
+    "defaultMessage": "So far {affiliateCount} friends have signed up",
+    "description": "Affiliate Program Page - affiliate count statistic"
   },
   "cX/GDI": {
     "defaultMessage": "Your Challenges",
@@ -155,21 +299,29 @@
     "defaultMessage": "Challenges",
     "description": "Challenges button tooltip"
   },
-  "e0MIw6": {
-    "defaultMessage": "Login with",
-    "description": "Login page title"
+  "e4dHLS": {
+    "defaultMessage": "Passive daily reward - 1 credit",
+    "description": "Earn coins information - passive reward"
   },
   "eA1i8I": {
     "defaultMessage": "Press Enter to continue",
     "description": "Keyboard continue text"
   },
-  "eoqvCV": {
-    "defaultMessage": "Nickname",
-    "description": "Nickname textbox placeholder"
+  "f/3QZk": {
+    "defaultMessage": "Create a challenge¹",
+    "description": "Earn coins information - receive positive challenge rating"
+  },
+  "f3yeSH": {
+    "defaultMessage": "Network impact: {networkImpact}",
+    "description": "Network impact statistic"
   },
   "fFqua5": {
     "defaultMessage": "Lines cleared: {linesCleared}",
     "description": "Number of lines cleared in challenge"
+  },
+  "fzhUyN": {
+    "defaultMessage": "Share & earn",
+    "description": "Affiliate Program page title - share and earn"
   },
   "g6B6Ge": {
     "defaultMessage": "Challenge imported successfully",
@@ -179,53 +331,97 @@
     "defaultMessage": "Drop",
     "description": "Drop action text"
   },
-  "hK8RKE": {
-    "defaultMessage": "Time taken: {timeTakenMs} seconds",
-    "description": "Time taken to complete challenge"
+  "i7dqDK": {
+    "defaultMessage": "Updates once a day",
+    "description": "Scoreboard page updates message"
   },
   "iK6s4W": {
     "defaultMessage": "Test",
     "description": "Test challenge button text"
   },
-  "ilOHgt": {
-    "defaultMessage": "Long press to retry or leave feedback",
-    "description": "Touchscreen context menu text (retry, feedback, etc)"
+  "isXnkA": {
+    "defaultMessage": "build {clientVersion}",
+    "description": "Hamburger menu - App build"
+  },
+  "jVu45w": {
+    "defaultMessage": "{count} coins available",
+    "description": "User coins statistic"
   },
   "juwrlQ": {
     "defaultMessage": "Reset Controls",
     "description": "Reset Controls button text"
   },
-  "jz3Nwb": {
-    "defaultMessage": "{count} coins available",
-    "description": "User coins statistic"
+  "jyvygv": {
+    "defaultMessage": "About",
+    "description": "Hamburger menu - About list item"
+  },
+  "kdZs4E": {
+    "defaultMessage": "³If a player (B) who was impacted by you (A) goes on to impact another player (C), an impact from A -> C will be created. Up to 5 levels of recursion.",
+    "description": "Earn coins information - mutual network impacts fine print"
+  },
+  "kfmWtH": {
+    "defaultMessage": "{appName} is open source, ad-free, and will always be free to play. Donations will fund future development and operating costs.",
+    "description": "Donate page description"
   },
   "l0mRWy": {
     "defaultMessage": "Move Right",
     "description": "MoveRight action text"
   },
-  "mL3PCN": {
-    "defaultMessage": "Preferred Input Method",
-    "description": "Settings Page Table - Preferred Input Method left column"
+  "lxNrWJ": {
+    "defaultMessage": "Join me on {appName}",
+    "description": "email share button subject"
   },
   "n9WhjL": {
     "defaultMessage": "Clear",
     "description": "Settings Page Table - Clear progress button text"
   },
-  "oLa/Am": {
-    "defaultMessage": "Tap to continue",
-    "description": "Touchscreen continue text"
+  "nVfyVT": {
+    "defaultMessage": "Profile",
+    "description": "Hamburger menu - Profile list item"
+  },
+  "oC1llx": {
+    "defaultMessage": "App Theme",
+    "description": "Settings Page Table - App Theme"
   },
   "p/3SgT": {
     "defaultMessage": "Controls",
     "description": "Settings Page Table - Controls left column"
   },
+  "p9Zxox": {
+    "defaultMessage": "Scoreboard",
+    "description": "Hamburger menu - Scoreboard list item"
+  },
+  "ptes0g": {
+    "defaultMessage": "Please {email} if you would like to make a donation.",
+    "description": "Donate page contact info"
+  },
+  "q3h5nb": {
+    "defaultMessage": "Log in",
+    "description": "Affiliate Program Page - login button"
+  },
+  "qFQUx/": {
+    "defaultMessage": "Login to continue",
+    "description": "Login dialog title"
+  },
   "qXu1tt": {
     "defaultMessage": "Attempt: #{attemptCount}",
     "description": "Number of times the user has attempted this challenge"
   },
+  "sUfzwf": {
+    "defaultMessage": "²A new network impact will be created for each new user that creates an account by using your referral link.",
+    "description": "Earn coins information - affiliate program fine print"
+  },
   "tbkOWC": {
     "defaultMessage": "Rotate Anticlockwise",
     "description": "RotateAnticlockwise action text"
+  },
+  "tvYE5g": {
+    "defaultMessage": "Login to continue",
+    "description": "Login page title"
+  },
+  "uJkrsw": {
+    "defaultMessage": "Start",
+    "description": "Loader - Start button text"
   },
   "vuGMBE": {
     "defaultMessage": "Control Settings",
@@ -238,6 +434,18 @@
   "yOghGo": {
     "defaultMessage": "Save",
     "description": "Save challenge button text"
+  },
+  "yXNCWp": {
+    "defaultMessage": "Your Block",
+    "description": "Your Block"
+  },
+  "ycYJT1": {
+    "defaultMessage": "Earn Coins",
+    "description": "Earn Coins page title"
+  },
+  "yoHCB6": {
+    "defaultMessage": "Next Signup",
+    "description": "Affiliate Program Page - your next share"
   },
   "zMemJF": {
     "defaultMessage": "Clone Challenge",

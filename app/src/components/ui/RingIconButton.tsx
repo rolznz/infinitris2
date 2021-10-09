@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme) => ({
   iconButton: {
     backgroundColor: theme.palette.background.paperDark,
     border: `6px solid ${borderColor}`,
+    padding: '6px',
   },
 }));
 

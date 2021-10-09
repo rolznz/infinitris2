@@ -35,6 +35,24 @@ import { IconSwitch } from '@/components/ui/IconSwitch';
 import { ReactComponent as LightModeIcon } from '@/icons/lightmode.svg';
 import { ReactComponent as DarkModeIcon } from '@/icons/darkmode.svg';
 
+export function LanguagePicker() {
+  const userStore = useUserStore();
+  console.log(userStore.user.locale, supportedLocales);
+  return (
+    <Select
+      disableUnderline
+      value={userStore.user.locale}
+      onChange={(event) => userStore.setLocale(event.target.value as string)}
+    >
+      {supportedLocales.map((language) => (
+        <MenuItem key={language} value={language}>
+          {language.toUpperCase()}
+        </MenuItem>
+      ))}
+    </Select>
+  );
+}
+
 export default function SettingsPage() {
   const userStore = useUserStore();
   const isDarkMode = useDarkMode();
@@ -57,21 +75,7 @@ export default function SettingsPage() {
                 description="Settings Page Table - Language left column"
               />
             }
-            right={
-              <Select
-                disableUnderline
-                value={userStore.user.locale}
-                onChange={(event) =>
-                  userStore.setLocale(event.target.value as string)
-                }
-              >
-                {supportedLocales.map((language) => (
-                  <MenuItem key={language} value={language}>
-                    {language.toUpperCase()}
-                  </MenuItem>
-                ))}
-              </Select>
-            }
+            right={<LanguagePicker />}
           />
           <SettingsRow
             left={

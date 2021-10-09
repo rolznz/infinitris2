@@ -18,6 +18,7 @@ import FlexBox from './FlexBox';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
 import useAppStore from '@/state/AppStore';
+import { LanguagePicker } from '../pages/SettingsPage/SettingsPage';
 
 const useStyles = makeStyles((theme) => ({
   startButton: {
@@ -66,7 +67,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   useEffect(() => {
     if (musicOn === false && !hasToggledSounds) {
       // no interaction needed since sound is muted
-      setStartClicked(false);
+      setStartClicked();
     }
     setHasToggledSounds(true);
   }, [setStartClicked, musicOn, hasToggledSounds, setHasToggledSounds]);
@@ -96,6 +97,13 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
         bgcolor="background.loader"
         zIndex="loader"
       >
+        <Box
+          style={{ position: 'absolute', top: 0, right: 0 }}
+          padding={2}
+          height={100}
+        >
+          <LanguagePicker />
+        </Box>
         <FlexBox
           height="50vh"
           width="100vw"
@@ -164,7 +172,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                 <FormControlLabel
                   control={
                     <Checkbox
-                      color={'white' as any}
+                      color="primary"
                       checked={musicOn}
                       onChange={(event) => {
                         userStore.setMusicOn(event.target.checked);

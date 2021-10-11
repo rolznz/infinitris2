@@ -5,7 +5,7 @@ import { Typography } from '@material-ui/core';
 export function TermsOfServicePage() {
   return (
     <Page title={<>Terms of Service</>}>
-      <Typography variant="body1">Last updated: October 2, 2021</Typography>
+      <Typography variant="body1">Last updated: October 11, 2021</Typography>
       <Typography variant="body1">
         By using this service you agree to the following:
         <ul>
@@ -29,6 +29,10 @@ export function TermsOfServicePage() {
           <li>
             This service does not take responsibility for any content shared by
             its users.
+          </li>
+          <li>
+            Characters are randomly generated and do not represent real people
+            nor intend to cause offense.
           </li>
           <li>
             We work on this FREE game at a loss of our own time, money and

@@ -7534,6 +7534,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"bad-words@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "bad-words@npm:3.0.4"
+  dependencies:
+    badwords-list: ^1.0.0
+  checksum: 49595ab6ce5012b2dd5c4237839e450e4bbd349fccc7c66f11f06a1ab91cddfaa65e9855b63536297be6e0a22e3868b26b6012659a2cea0968f3caebf026bc9d
+  languageName: node
+  linkType: hard
+
+"badwords-list@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "badwords-list@npm:1.0.0"
+  checksum: fa7a4fbf3428aa15a86c303e0dd794cb9acda521e28c9eb83875f000b63f7940127c9d26368defe550a261ea546d5e8baeba2eaf5eebaf14f3c0774f69738ac8
+  languageName: node
+  linkType: hard
+
 "bail@npm:^1.0.0":
   version: 1.0.5
   resolution: "bail@npm:1.0.5"
@@ -13772,6 +13788,7 @@ fsevents@^1.2.7:
     "@types/sharp": ^0.29.2
     "@typescript-eslint/eslint-plugin": ^4.22.0
     "@typescript-eslint/parser": ^4.22.0
+    bad-words: ^3.0.4
     eslint: ^7.6.0
     eslint-plugin-import: ^2.22.0
     random: ^3.0.6

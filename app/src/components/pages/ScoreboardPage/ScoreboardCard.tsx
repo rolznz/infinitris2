@@ -38,7 +38,7 @@ export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
   return (
     <Card>
       <FlexBox p={1}>
-        <Typography variant="h6" align="center">
+        <Typography variant="h3" align="center">
           {entry.nickname}
         </Typography>
         <FlexBox position="relative">

@@ -1,88 +1,42 @@
-import sharp from 'sharp';
-import fs from 'fs';
 import random from 'random';
+import { clearDirectory } from './utils/clearDirectory';
+import {
+  facesDirectory,
+  numCombinations,
+  outputDirectory,
+  thumnailsDirectory,
+} from './constants';
+import { generateCharacterImage as generateCharacter } from './generateCharacterImage';
+import { generateCharacterNames as generateCharacterNames } from './generateCharacterNames';
 const seedrandom = require('seedrandom');
 
-//sharp('./assets/skin_1.svg');
+random.use(seedrandom('gen-1'));
+clearDirectory(outputDirectory);
+clearDirectory(facesDirectory);
+clearDirectory(thumnailsDirectory);
 
-const assetsDirectory = 'assets';
-const outputDirectory = 'out';
+console.log('Generating names');
+const names = generateCharacterNames(random);
 
-if (!fs.existsSync(outputDirectory)) {
-  fs.mkdirSync(outputDirectory);
+if (names.length < numCombinations) {
+  throw new Error('Not enough names generated');
 }
 
-const files = fs.readdirSync(assetsDirectory);
-const getFile = (filename: string) => `${assetsDirectory}/${filename}`;
-
-const skinFilenames = files.filter((file) => file.startsWith('skin_'));
-const eyesFilenames = files.filter((file) => file.startsWith('eyes_'));
-const mouthFilenames = files.filter((file) => file.startsWith('mouth_'));
-const noseFilenames = files.filter((file) => file.startsWith('nose_'));
-const headgearFilenames = files.filter((file) => file.startsWith('headgear_'));
-
-const outputSize = 256;
-const padding = 28;
-
-random.use(seedrandom('gen-1'));
-
-console.log('Making faces');
+console.log('Generating characters');
 (async () => {
-  for (let i = 1; i < 10; i++) {
-    const skinFilename = skinFilenames[random.int(0, skinFilenames.length - 1)];
-    const eyesFilename = eyesFilenames[random.int(0, eyesFilenames.length - 1)];
-    const noseFilename = noseFilenames[random.int(0, noseFilenames.length - 1)];
-    const mouthFilename =
-      mouthFilenames[random.int(0, mouthFilenames.length - 1)];
-    const skin = await sharp(getFile(skinFilename))
-      .resize(outputSize - padding, outputSize - padding)
-      .toBuffer();
-    const eyes = await sharp(`assets/${eyesFilename}`);
-
-    const eyesHeight = (await eyes.metadata()).height;
-    const eyesBuffer = await eyes
-      .resize(outputSize - padding, outputSize - padding)
-      .toBuffer();
-
-    const noseBuffer = await sharp(`assets/${noseFilename}`)
-      .resize(outputSize - padding, outputSize - padding)
-      .toBuffer();
-
-    const mouthBuffer = await sharp(`assets/${mouthFilename}`)
-      .resize(outputSize - padding, outputSize - padding)
-      .toBuffer();
-
-    sharp({
-      create: {
-        width: outputSize,
-        height: outputSize,
-        channels: 4,
-        background: '#00000000',
-      },
-    })
-      .composite([
-        {
-          input: skin,
-        },
-        {
-          input: noseBuffer,
-          //top: eyesHeight,
-          //left: 0,
-        },
-        {
-          input: mouthBuffer,
-          //top: eyesHeight,
-          //left: 0,
-        },
-        {
-          input: eyesBuffer,
-        },
-      ])
-      .toFile(`${outputDirectory}/face${i}.png`);
-
-    process.stdout.write('.');
-  }
+  await generateCharacters();
   console.log('Done');
 })();
 
-//.resize(320, 320).toFile('out/output.png');
+async function generateCharacters() {
+  for (let i = 0; i < numCombinations; i++) {
+    const name = names[i];
+    await generateCharacter(random, i);
+
+    // TODO: JSON export character
+
+    process.stdout.write('.');
+  }
+}
+
+// TODO: upload characters

@@ -5,6 +5,7 @@ import { IColor } from 'infinitris2-models';
 import { onCreateColor } from '../onCreateColor';
 import { firestore } from '@firebase/rules-unit-testing';
 
+// TODO: change to characters
 describe('Color Hooks', () => {
   afterEach(async () => {
     await teardown();

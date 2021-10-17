@@ -20,6 +20,7 @@ enum Routes {
   challengeRequired = '/challenge-required',
   scoreboard = '/scoreboard',
   allSet = '/all-set',
+  market = '/market',
   earnCoins = '/earn-coins',
   affiliateProgram = '/affiliate-program',
   about = '/about',

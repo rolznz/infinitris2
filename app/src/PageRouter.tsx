@@ -32,6 +32,7 @@ import { zIndexes } from './theme';
 import { DialogManager } from './components/ui/modals/DialogManager';
 import AboutPage from './components/pages/AboutPage/AboutPage';
 import DonatePage from './components/pages/AboutPage/DonatePage';
+import MarketPage from './components/pages/MarketPage/MarketPage';
 
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
@@ -183,6 +184,9 @@ function RouterContents() {
           </AnimatedRoute>
           <AnimatedRoute exact path={Routes.allSet}>
             <AllSetPage />
+          </AnimatedRoute>
+          <AnimatedRoute exact path={Routes.market}>
+            <MarketPage />
           </AnimatedRoute>
           <AnimatedRoute exact path={Routes.lobby}>
             <LobbyPage />

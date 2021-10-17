@@ -20,6 +20,7 @@ declare module '@material-ui/core/styles/createPalette' {
 }
 
 export const borderColor = 'rgba(249, 248, 247, 0.3)';
+export const white = '#ECECED';
 
 export const zIndexes = {
   above: 1,
@@ -65,7 +66,7 @@ const coreThemeOptions: ThemeOptions = {
   overrides: {
     MuiSvgIcon: {
       colorPrimary: {
-        color: '#ECECED',
+        color: white,
       },
     },
     MuiDrawer: {
@@ -86,7 +87,7 @@ const coreThemeOptions: ThemeOptions = {
     },
     MuiCheckbox: {
       root: {
-        color: '#ECECED',
+        color: white,
         border: `4px solid ${borderColor}`,
         padding: 0,
         margin: 4,
@@ -94,25 +95,25 @@ const coreThemeOptions: ThemeOptions = {
     },
     MuiDivider: {
       root: {
-        background: '#ECECED !important',
+        background: `${white} !important`,
         height: 2,
       },
     },
     MuiLinearProgress: {
       colorPrimary: {
         backgroundColor: 'transparent',
-        border: '1px solid #ECECED',
+        border: `1px solid ${white}`,
         boxSizing: 'border-box',
       },
       barColorPrimary: {
-        backgroundColor: '#ECECED',
+        backgroundColor: white,
       },
     },
     MuiIconButton: {
       label: {
         //margin: '-2px',
         //transform: 'translateX(0.5px)',
-        color: '#ECECED',
+        color: white,
       },
     },
     MuiButton: {
@@ -134,22 +135,22 @@ const coreThemeOptions: ThemeOptions = {
     MuiSelect: {
       root: {},
       icon: {
-        color: '#ECECED',
+        color: white,
       },
     },
   },
   palette: {
     primary: {
       main: '#2F67D7',
-      contrastText: '#ECECED',
+      contrastText: white,
     },
     secondary: {
       main: '#789AB8',
-      contrastText: '#ECECED',
+      contrastText: white,
     },
     tertiary: {
       main: '#A4DAF2',
-      contrastText: '#ECECED',
+      contrastText: white,
     },
     background: {
       loader: '#0f1d22',
@@ -167,7 +168,7 @@ const lightThemeOptions: ThemeOptions = {
       paperDark: '#113b77',
     },
     text: {
-      primary: '#ECECED',
+      primary: white,
       secondary: '#2B57A6',
       //tertiary: '#0E0C66',
     },
@@ -175,7 +176,7 @@ const lightThemeOptions: ThemeOptions = {
   typography: {
     ...(coreThemeOptions.typography || {}),
     allVariants: {
-      color: '#ECECED',
+      color: white,
     },
   },
   overrides: {
@@ -204,20 +205,20 @@ const darkThemeOptions: ThemeOptions = {
     },
     text: {
       primary: '#999999',
-      //secondary: '#ECECED',
+      secondary: white,
       //tertiary: '#12232B'  // loader: 081428
     },
     primary: {
       main: '#103950',
-      contrastText: '#ECECED',
+      contrastText: white,
     },
     secondary: {
       main: '#889796',
-      contrastText: '#ECECED',
+      contrastText: white,
     },
     tertiary: {
       main: '#A4DAF2',
-      contrastText: '#ECECED',
+      contrastText: white,
     },
   },
   typography: {

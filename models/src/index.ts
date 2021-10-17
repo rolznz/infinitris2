@@ -45,6 +45,7 @@ export * from './util/objectToDotNotation';
 export * from './IPurchase';
 export * from './IProduct';
 export * from './IUser';
+export * from './ICharacter';
 
 export {
   exampleChallenges,

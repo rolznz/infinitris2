@@ -4,6 +4,9 @@ export const getNicknamePath = (nicknameId: string) =>
 export const colorsPath = 'colors';
 export const getColorPath = (colorId: string) =>
   getEntityPath(colorsPath, colorId);
+export const charactersPath = 'characters';
+export const getCharacterPath = (characterId: string) =>
+  getEntityPath(charactersPath, characterId);
 export const usersPath = 'users';
 export const getUserPath = (userId: string) => getEntityPath(usersPath, userId);
 export const affiliatesPath = 'affiliates';
@@ -68,6 +71,7 @@ export type EntityCollectionPath =
   | typeof nicknamesPath
   | typeof adminsPath
   | typeof challengeAttemptsPath
+  | typeof charactersPath
   | typeof purchasesPath;
 
 export function getEntityPath(

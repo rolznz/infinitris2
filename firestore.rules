@@ -220,7 +220,7 @@ service cloud.firestore {
         request.resource.data.keys().hasOnly(['created']);
       allow update, delete: if false;
     }
-    match /colors/{document=**} {
+    match /characters/{document=**} {
       allow read: if true;
     }
     match /scoreboardEntries/{document=**} {

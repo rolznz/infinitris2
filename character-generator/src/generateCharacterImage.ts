@@ -37,23 +37,40 @@ function randomFlop(random: Random, image: sharp.Sharp): sharp.Sharp {
     return image;
   }
 }
-export async function generateCharacterImage(random: Random, index: number) {
+
+type CharacterImageResult = {
+  price: number;
+  color: string;
+  patternFilename: string;
+};
+
+export async function generateCharacterImage(
+  random: Random,
+  index: number
+): Promise<CharacterImageResult> {
+  let price = 0;
   const maskDimensions = await blockMask.metadata();
-  const eyes = await loadImage(
-    getPath(pickRandomFilename(random, eyesFilenames))
+  const eyesFilename = pickRandomFilename(random, eyesFilenames);
+  price += getPrice(eyesFilename);
+  const eyes = await loadImage(getPath(eyesFilename));
+  const headgearFilename = pickRandomFilename(random, headgearFilenames);
+  price += getPrice(headgearFilename);
+  const headgear = await loadImage(getPath(headgearFilename), (image) =>
+    randomFlop(random, image)
   );
-  const headgear = await loadImage(
-    getPath(pickRandomFilename(random, headgearFilenames)),
-    (image) => randomFlop(random, image)
+
+  const mouthFilename = pickRandomFilename(random, mouthFilenames);
+  const mouth = await loadImage(getPath(mouthFilename), (image) =>
+    randomFlop(random, image)
   );
-  const mouth = await loadImage(
-    getPath(pickRandomFilename(random, mouthFilenames)),
-    (image) => randomFlop(random, image)
-  );
+  price += getPrice(mouthFilename);
 
   // each color+pattern combo can only show once
   const color = colors[index % colors.length];
+  price *= 1 + Math.pow(color.price, 2);
+
   const patternFilename = patternFilenames[Math.floor(index / colors.length)];
+  price += getPrice(patternFilename);
 
   const border = await loadImage(
     colorizeSvg(
@@ -72,11 +89,13 @@ export async function generateCharacterImage(random: Random, index: number) {
   const eyesY = Math.floor(outputSize * (eyesStartY + eyesRandomY));
   const mouthRandomY = outputSize * random.next() * (eyesRangeY - eyesRandomY);
   const mouthRandomX =
-    mouth.metadata.width! * (random.next() - 0.5) * mouthRandomXMultiplier;
+    mouth.metadata.width! *
+    (random.next() - 0.5) *
+    (getCustomXMultiplier(mouthFilename) ?? mouthRandomXMultiplier);
   const headgearRandomX =
     (outputSize - headgear.metadata.width!) *
     (random.next() - 0.5) *
-    headgearRandomXMultiplier;
+    (getCustomXMultiplier(headgearFilename) ?? headgearRandomXMultiplier);
   const headgearRandomY = random.next() * eyesRandomY;
 
   const patternComposite = await blockMask
@@ -88,8 +107,8 @@ export async function generateCharacterImage(random: Random, index: number) {
     ])
     .toBuffer();
 
-  const filename = `${facesDirectory}/face${index}.png`;
-  const thumbnailFilename = `${thumnailsDirectory}/face${index}.png`;
+  const filename = `${facesDirectory}/${index}.png`;
+  const thumbnailFilename = `${thumnailsDirectory}/${index}.png`;
 
   await sharp({
     create: {
@@ -144,4 +163,29 @@ export async function generateCharacterImage(random: Random, index: number) {
 
   // generate thumbnail
   await sharp(filename).resize(thumbnailSize).toFile(thumbnailFilename);
+
+  return {
+    price,
+    color: color.hex,
+    patternFilename,
+  };
+}
+function getCustomXMultiplier(filename: string): number | undefined {
+  const parts = filename.split('_');
+  const xMultiplierIndex = parts.indexOf('x');
+  if (xMultiplierIndex > 0) {
+    return parseFloat(parts[xMultiplierIndex + 1]);
+  } else {
+    return undefined;
+  }
+}
+
+function getPrice(filename: string): number {
+  const parts = filename.split('_');
+  const priceIndex = parts.indexOf('price');
+  if (priceIndex > 0) {
+    return parseInt(parts[priceIndex + 1]);
+  } else {
+    return 0;
+  }
 }

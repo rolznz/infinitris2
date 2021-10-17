@@ -14,3 +14,4 @@ node_modules/
 *.log
 
 ./infinitris2-models
+infinitris2-admin-service-key.json

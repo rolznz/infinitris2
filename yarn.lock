@@ -12354,6 +12354,7 @@ fsevents@^1.2.7:
     jest: ^26.6.3
     ts-jest: ^26.5.6
     ts-loader: 8.x
+    ts-node: ^10.2.1
     typescript: ^4.3.5
     webpack: 4.42.0
     webpack-cli: ^3.3.7

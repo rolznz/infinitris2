@@ -6,6 +6,8 @@ export const assetsDirectory = 'assets';
 export const outputDirectory = 'out';
 export const facesDirectory = 'out/faces';
 export const thumnailsDirectory = 'out/thumbnails';
+export const charactersDirectory = 'out/characters';
+export const patternsDirectory = 'out/patterns';
 
 export const files = fs.readdirSync(assetsDirectory);
 export const getPath = (filename: string) => `${assetsDirectory}/${filename}`;
@@ -21,6 +23,7 @@ export const headgearFilenames = files.filter((file) =>
 );
 
 export const outputSize = 512;
+export const patternSize = 256;
 export const thumbnailSize = 64;
 export const numCombinations = colors.length * patternFilenames.length;
 export const borderFilename = 'block_border.svg';
@@ -32,8 +35,8 @@ export const sharpOptions: sharp.SharpOptions = {
 
 export const blockMask = sharp(getPath(maskFilename), sharpOptions);
 
-export const eyesStartY = 0.23;
-export const eyesRangeY = 0.16;
+export const eyesStartY = 0.25;
+export const eyesRangeY = 0.14;
 export const mouthRandomXMultiplier = 0.3;
 export const headgearRandomXMultiplier = 0.5;
 export const upsideDownChance = 0.025; // chance of flipping the character

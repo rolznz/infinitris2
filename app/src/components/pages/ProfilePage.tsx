@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Typography, Link, Box } from '@material-ui/core';
 
 import FlexBox from '../ui/FlexBox';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 import useLoginRedirect from '../hooks/useLoginRedirect';
 import { useUserStore } from '../../state/UserStore';
@@ -23,6 +23,7 @@ import { Page } from '../ui/Page';
 import { openLoginDialog } from '@/state/DialogStore';
 
 export default function ProfilePage() {
+  const intl = useIntl();
   const [userStore, user] = useUserStore((store) => [store, store.user]);
   const userId = useAuthStore().user?.uid;
   const { data: userChallenges } = useCollection<IChallenge>(
@@ -38,12 +39,10 @@ export default function ProfilePage() {
 
   return (
     <Page
-      title={
-        <FormattedMessage
-          defaultMessage="Profile"
-          description="Profile title"
-        />
-      }
+      title={intl.formatMessage({
+        defaultMessage: 'Profile',
+        description: 'Profile title',
+      })}
     >
       {!userId && (
         <Button color="primary" variant="contained" onClick={openLoginDialog}>
@@ -100,11 +99,7 @@ export default function ProfilePage() {
       <FlexBox flexDirection="row">
         <YourBlockPreview user={user} />
         <Box ml={1} />
-        <Link
-          component={RouterLink}
-          underline="none"
-          to={Routes.customizeProfile}
-        >
+        <Link component={RouterLink} underline="none" to={Routes.market}>
           <Typography align="center">
             <FormattedMessage
               defaultMessage="Customize"

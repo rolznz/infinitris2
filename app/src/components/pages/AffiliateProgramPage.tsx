@@ -54,12 +54,10 @@ export default function AffiliateProgramPage() {
 
   return (
     <Page
-      title={
-        <FormattedMessage
-          defaultMessage="Share & earn"
-          description="Affiliate Program page title - share and earn"
-        />
-      }
+      title={intl.formatMessage({
+        defaultMessage: 'Share & earn',
+        description: 'Affiliate Program page title - share and earn',
+      })}
       narrow
     >
       <Typography align="center" variant="body1">

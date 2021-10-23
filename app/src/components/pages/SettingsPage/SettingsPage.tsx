@@ -18,7 +18,7 @@ import {
 
 import FlexBox from '../../ui/FlexBox';
 
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { supportedLocales } from '../../../internationalization';
 import { useUserStore } from '../../../state/UserStore';
 import { Link as RouterLink } from 'react-router-dom';
@@ -54,17 +54,16 @@ export function LanguagePicker() {
 }
 
 export default function SettingsPage() {
+  const intl = useIntl();
   const userStore = useUserStore();
   const isDarkMode = useDarkMode();
 
   return (
     <Page
-      title={
-        <FormattedMessage
-          defaultMessage="Settings"
-          description="Settings Header"
-        />
-      }
+      title={intl.formatMessage({
+        defaultMessage: 'Settings',
+        description: 'Settings page title',
+      })}
     >
       <FlexBox width={400} maxWidth="100%">
         <Grid container spacing={2} alignItems="center" justify="center">

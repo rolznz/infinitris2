@@ -167,7 +167,8 @@ export async function generateCharacterImage(
   return {
     price,
     color: color.hex,
-    patternFilename,
+    patternFilename:
+      patternFilename.substring(0, patternFilename.length - 3) + 'png',
   };
 }
 function getCustomXMultiplier(filename: string): number | undefined {

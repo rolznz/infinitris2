@@ -2,7 +2,7 @@ import { Page } from '@/components/ui/Page';
 import { appName } from '@/utils/constants';
 import { makeStyles, Typography, Box, Link } from '@material-ui/core';
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 
 const useStyles = makeStyles((theme) => ({
   shareButton: {
@@ -12,15 +12,14 @@ const useStyles = makeStyles((theme) => ({
 
 export default function AboutPage() {
   const classes = useStyles();
+  const intl = useIntl();
 
   return (
     <Page
-      title={
-        <FormattedMessage
-          defaultMessage="Donate"
-          description="Donate page title"
-        />
-      }
+      title={intl.formatMessage({
+        defaultMessage: 'Donate',
+        description: 'Donate page title',
+      })}
       narrow
     >
       <Typography align="center" variant="body1">

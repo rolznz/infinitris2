@@ -4,7 +4,7 @@ import { Typography } from '@material-ui/core';
 
 export function TermsOfServicePage() {
   return (
-    <Page title={<>Terms of Service</>}>
+    <Page title="Terms of Service">
       <Typography variant="body1">Last updated: October 11, 2021</Typography>
       <Typography variant="body1">
         By using this service you agree to the following:

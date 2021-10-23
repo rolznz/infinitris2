@@ -3,7 +3,7 @@ import { Typography, Grid, Box, Button } from '@material-ui/core';
 
 import FlexBox from '../../ui/FlexBox';
 
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useUserStore } from '../../../state/UserStore';
 import SettingsRow from './SettingsRow';
 import { getUserFriendlyKeyText, InputAction } from 'infinitris2-models';
@@ -12,6 +12,7 @@ import useKeyPress from 'react-use/lib/useKeyPress';
 import { Page } from '@/components/ui/Page';
 
 export default function ControlSettingsPage() {
+  const intl = useIntl();
   const userStore = useUserStore();
   const { user, resetControls, updateControl } = userStore;
   const [editingInputAction, setEditingInputAction] = useState<
@@ -81,12 +82,10 @@ export default function ControlSettingsPage() {
 
   return (
     <Page
-      title={
-        <FormattedMessage
-          defaultMessage="Control Settings"
-          description="Control Settings Header"
-        />
-      }
+      title={intl.formatMessage({
+        defaultMessage: 'Control Settings',
+        description: 'Control Settings page title',
+      })}
     >
       {editingInputAction ? (
         <FormattedMessage

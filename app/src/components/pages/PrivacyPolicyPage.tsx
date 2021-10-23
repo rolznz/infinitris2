@@ -6,7 +6,7 @@ import { Page } from '../ui/Page';
 
 export function PrivacyPolicyPage() {
   return (
-    <Page title={<>Privacy Policy</>}>
+    <Page title="Privacy Policy">
       <Typography variant="body1">Last updated: October 2, 2021</Typography>
       <Typography variant="body1">
         {appName} stores your gameplay progress in your browser's local storage.

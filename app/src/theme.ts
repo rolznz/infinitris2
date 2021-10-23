@@ -21,6 +21,12 @@ declare module '@material-ui/core/styles/createPalette' {
 
 export const borderColor = 'rgba(249, 248, 247, 0.3)';
 export const white = '#ECECED';
+export const grey = '#A0997D';
+export const gold = '#D37953';
+
+export const boxShadows = {
+  small: '0px 4px 4px rgba(0, 0, 0, 0.3)',
+};
 
 export const zIndexes = {
   above: 1,

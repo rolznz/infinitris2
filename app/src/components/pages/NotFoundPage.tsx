@@ -1,19 +1,19 @@
-import { IconButton, Link } from '@material-ui/core';
+import { Box, IconButton, Link } from '@material-ui/core';
 import React from 'react';
-import FlexBox from '../ui/FlexBox';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import HomeIcon from '@material-ui/icons/Home';
+import { Page } from '../ui/Page';
 
 export function NotFoundPage() {
   return (
-    <FlexBox flex={1}>
-      <p>Not Found</p>
+    <Page title="404" style={{ height: '100%', justifyContent: 'center' }}>
       <Link component={RouterLink} underline="none" to={Routes.home}>
         <IconButton>
-          <HomeIcon />
+          <HomeIcon fontSize="large" />
         </IconButton>
       </Link>
-    </FlexBox>
+      <Box mt={10} />
+    </Page>
   );
 }

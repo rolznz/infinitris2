@@ -1,17 +1,24 @@
+import { appName } from '@/utils/constants';
 import { Box, makeStyles, Typography } from '@material-ui/core';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { CSSProperties } from 'react';
+import { Helmet } from 'react-helmet';
 import useDarkMode from '../hooks/useDarkMode';
 import FlexBox from './FlexBox';
 
 type PageProps = {
-  title?: React.ReactElement;
+  title?: string;
+  showTitle?: boolean;
   useGradient?: boolean;
   style?: CSSProperties;
   narrow?: boolean;
+  paddingX?: number;
 };
 
-export function Page(props: React.PropsWithChildren<PageProps>) {
+export function Page({
+  showTitle = true,
+  ...props
+}: React.PropsWithChildren<PageProps>) {
   const isDarkMode = useDarkMode();
   // TODO: move out of component
   const useStyles = makeStyles((theme) => ({
@@ -20,6 +27,12 @@ export function Page(props: React.PropsWithChildren<PageProps>) {
       flex: 1,
       overflowY: 'auto',
       padding: theme.spacing(4),
+      ...(props.paddingX !== undefined
+        ? {
+            paddingLeft: props.paddingX,
+            paddingRight: props.paddingX,
+          }
+        : {}),
       maxWidth: '100%',
       ...(props.useGradient
         ? {
@@ -46,16 +59,25 @@ export function Page(props: React.PropsWithChildren<PageProps>) {
   return (
     <FlexBox
       className={classes.page}
-      style={props.style}
       justifyContent="flex-start"
+      style={props.style}
     >
       {props.title && (
         <>
-          <Box mt={10} />
-          <Typography variant="h1" className={classes.title}>
-            {props.title}
-          </Typography>
-          <Box mb={4} />
+          <Helmet>
+            <title>
+              {appName} - {props.title}
+            </title>
+          </Helmet>
+          {showTitle && (
+            <>
+              <Box mt={10} />
+              <Typography variant="h1" className={classes.title}>
+                {props.title}
+              </Typography>
+              <Box mb={4} />
+            </>
+          )}
         </>
       )}
       {childContainer(props.children)}

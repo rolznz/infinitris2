@@ -28,9 +28,8 @@ class Fuego {
   }
 }
 
-export const fuego = new Fuego(JSON.parse(firebaseOptions));
-
 // Fuego will call firebase.initializeApp()
+export const fuego = new Fuego(JSON.parse(firebaseOptions));
 
 firebase.auth().useDeviceLanguage();
 

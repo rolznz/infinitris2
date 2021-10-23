@@ -1,6 +1,6 @@
 import { Box, SvgIcon, Typography } from '@material-ui/core';
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import FlexBox from '../../ui/FlexBox';
 import { Page } from '../../ui/Page';
 import coneFace from './assets/faces/cone.png';
@@ -60,14 +60,13 @@ function PrimaryContributor({
 }
 
 export function CreditsPage() {
+  const intl = useIntl();
   return (
     <Page
-      title={
-        <FormattedMessage
-          defaultMessage="Credits"
-          description="Credits Header"
-        />
-      }
+      title={intl.formatMessage({
+        defaultMessage: 'Credits',
+        description: 'Credits page title',
+      })}
       narrow
     >
       <Box mt={4} />

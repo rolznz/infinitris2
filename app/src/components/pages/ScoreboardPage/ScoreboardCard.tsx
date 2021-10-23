@@ -12,9 +12,9 @@ import coneFace from './assets/faces/cone.png';
 
 import { ReactComponent as StarIcon } from '@/icons/scoreboard_star.svg';
 import FlexBox from '@/components/ui/FlexBox';
-import { ReactComponent as ImpactIcon } from '@/icons/twitter.svg';
-import { ReactComponent as CoinIcon } from '@/icons/twitter.svg';
-import { ReactComponent as BadgeIcon } from '@/icons/twitter.svg';
+import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
+import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
+import { ReactComponent as BadgeIcon } from '@/icons/badge.svg';
 
 export type ScoreboardCardProps = {
   entry: IScoreboardEntry;
@@ -34,6 +34,7 @@ const getScoreFontSize = (n: number) =>
 
 export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
   const isSmallScreen = useMediaQuery(`(max-width:600px)`);
+  const width = isSmallScreen ? 150 : 200;
 
   return (
     <Card>
@@ -73,11 +74,11 @@ export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
             alt="character"
             style={{
               height: 'auto',
-              width: '200px',
+              width: width + 'px',
             }}
           />
         </FlexBox>
-        <FlexBox flexDirection="row" gridGap="10px" mt={1}>
+        <FlexBox flexDirection="row" gridGap={10} mt={1}>
           <ScoreboardCardStatistic
             statistic={entry.networkImpact}
             icon={<ImpactIcon />}

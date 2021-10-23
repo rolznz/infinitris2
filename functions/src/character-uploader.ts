@@ -26,10 +26,12 @@ for (const filename of characterFilenames) {
   const contents = JSON.parse(
     readFileSync(`${charactersDirectory}/${filename}`).toString()
   );
-  console.log(contents);
-  getDb().doc(`characters/${contents.id}`).set(contents);
+  const id = parseInt(filename.substring(0, filename.indexOf('.')));
 
-  const imageFilename = `${contents.id}.png`;
+  console.log(contents);
+  getDb().doc(`characters/${id}`).set(contents);
+
+  const imageFilename = `${id}.png`;
   uploadFile(
     `${inputDir}/faces/${imageFilename}`,
     `characters/faces/${imageFilename}`

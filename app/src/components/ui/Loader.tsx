@@ -97,13 +97,15 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
         bgcolor="background.loader"
         zIndex="loader"
       >
-        <Box
-          style={{ position: 'absolute', top: 0, right: 0 }}
-          padding={2}
-          height={100}
-        >
-          <LanguagePicker />
-        </Box>
+        {!loaderStore.startClicked && (
+          <Box
+            style={{ position: 'absolute', top: 0, right: 0 }}
+            padding={2}
+            height={100}
+          >
+            <LanguagePicker />
+          </Box>
+        )}
         <FlexBox
           height="50vh"
           width="100vw"

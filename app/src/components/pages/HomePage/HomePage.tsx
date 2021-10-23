@@ -12,6 +12,8 @@ import FlexBox from '@/components/ui/FlexBox';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useLoaderStore from '@/state/LoaderStore';
 import { zIndexes } from '@/theme';
+import { Helmet } from 'react-helmet';
+import { appName } from '@/utils/constants';
 
 const isFirstTimeAnimation = true;
 export const firstTimeAnimationDelaySeconds = 3.5;
@@ -77,6 +79,9 @@ const _HomePage = () => {
 
   return (
     <FlexBox height="100%" zIndex={zIndexes.above}>
+      <Helmet>
+        <title>{appName}</title>
+      </Helmet>
       {!isLandscape && <Box mt="10vh" />}
       <Box height={isLandscape ? '30vh' : '20vh'}>
         <img

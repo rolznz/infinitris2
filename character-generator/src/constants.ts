@@ -35,8 +35,10 @@ export const sharpOptions: sharp.SharpOptions = {
 
 export const blockMask = sharp(getPath(maskFilename), sharpOptions);
 
-export const eyesStartY = 0.25;
-export const eyesRangeY = 0.14;
+export const headgearStartY = 0.15;
+export const eyesRangeY = 0.1;
+export const paddingY = 0.17;
+export const availableY = outputSize * (1 - paddingY * 2);
 export const mouthRandomXMultiplier = 0.3;
 export const headgearRandomXMultiplier = 0.5;
 export const upsideDownChance = 0.025; // chance of flipping the character

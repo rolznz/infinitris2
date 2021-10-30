@@ -42,7 +42,6 @@
   "scripts": {
     "start": "REACT_APP_VERSION=$(git rev-list HEAD --count) react-app-rewired start",
     "build": "REACT_APP_VERSION=$(git rev-list HEAD --count) react-app-rewired build",
-    "build-old": "REACT_APP_VERSION=`git rev-list HEAD --count` react-app-rewired build",
     "deploy": "(cd .. && yarn firebase:deploy:hosting)",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",

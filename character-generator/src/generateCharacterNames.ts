@@ -34,7 +34,7 @@ const letters = [
 
 export function generateCharacterNames(random: Random) {
   let names: string[] = [];
-  for (let i = 0; i < letters.length * sounds.length; i++) {
+  for (let i = 0; i < 1000; i++) {
     let numParts = 2 + random.int(0, 3);
     let isLetter = random.next() > 0.2;
     for (let j = 0; j < numParts; j++) {

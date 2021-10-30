@@ -12,16 +12,16 @@ import {
   borderAdjustAmount,
   eyesRangeY,
   outputSize,
-  eyesStartY,
   mouthRandomXMultiplier,
   headgearRandomXMultiplier,
-  outputDirectory,
-  upsideDownChance,
   blockMask,
   thumbnailSize,
   maskFilename,
   facesDirectory,
   thumnailsDirectory,
+  headgearStartY,
+  paddingY,
+  availableY,
 } from './constants';
 import { adjustColor } from './utils/adjustColor';
 import { colorizeSvg } from './utils/colorizeSvg';
@@ -67,10 +67,11 @@ export async function generateCharacterImage(
 
   // each color+pattern combo can only show once
   const color = colors[index % colors.length];
-  price *= 1 + Math.pow(color.price, 2);
 
   const patternFilename = patternFilenames[Math.floor(index / colors.length)];
   price += getPrice(patternFilename);
+
+  price *= 1 + Math.pow(color.price, 2);
 
   const border = await loadImage(
     colorizeSvg(
@@ -85,9 +86,6 @@ export async function generateCharacterImage(
     image.resize(maskDimensions.width, maskDimensions.height)
   );
 
-  const eyesRandomY = random.next() * eyesRangeY;
-  const eyesY = Math.floor(outputSize * (eyesStartY + eyesRandomY));
-  const mouthRandomY = outputSize * random.next() * (eyesRangeY - eyesRandomY);
   const mouthRandomX =
     mouth.metadata.width! *
     (random.next() - 0.5) *
@@ -96,7 +94,26 @@ export async function generateCharacterImage(
     (outputSize - headgear.metadata.width!) *
     (random.next() - 0.5) *
     (getCustomXMultiplier(headgearFilename) ?? headgearRandomXMultiplier);
-  const headgearRandomY = random.next() * eyesRandomY;
+  const headgearOffsetY =
+    headgearStartY *
+    outputSize; /* + (getCustomY(headgearFilename) ?? 0) * outputSize*/
+  const headgearRandomY =
+    random.next() *
+    (getCustomYMultiplier(headgearFilename) ?? 0.2) *
+    (availableY - headgear.metadata.height! * 4);
+
+  const headgearY = headgearOffsetY + headgearRandomY;
+  const eyesStartY = headgearY + headgear.metadata.height!;
+
+  const eyesRandomY = random.next() * eyesRangeY * availableY;
+
+  const eyesY = eyesStartY + eyesRandomY;
+
+  const mouthRandomY =
+    Math.max(
+      outputSize - outputSize * paddingY * 2 - eyesY - eyes.metadata.height!,
+      0
+    ) * random.next();
 
   const patternComposite = await blockMask
     .composite([
@@ -142,9 +159,7 @@ export async function generateCharacterImage(
       },
       {
         input: headgear.buffer,
-        top: Math.floor(
-          eyesY - headgear.metadata.height! * 0.9 + headgearRandomY
-        ),
+        top: Math.floor(headgearY),
         left: Math.floor(
           (outputSize - headgear.metadata.width!) / 2 + headgearRandomX
         ),
@@ -152,14 +167,14 @@ export async function generateCharacterImage(
     ])
     .toFile(filename);
 
-  if (random.next() < upsideDownChance) {
+  /*if (random.next() < upsideDownChance) {
     // rare upside down character
     // TODO: why can't the composited image above be flipped?
     const tmpFilename = `${filename}.tmp`;
     await sharp(filename).flip().toFile(tmpFilename);
     fs.rmSync(filename);
     fs.renameSync(tmpFilename, filename);
-  }
+  }*/
 
   // generate thumbnail
   await sharp(filename).resize(thumbnailSize).toFile(thumbnailFilename);
@@ -173,9 +188,27 @@ export async function generateCharacterImage(
 }
 function getCustomXMultiplier(filename: string): number | undefined {
   const parts = filename.split('_');
-  const xMultiplierIndex = parts.indexOf('x');
-  if (xMultiplierIndex > 0) {
-    return parseFloat(parts[xMultiplierIndex + 1]);
+  const index = parts.indexOf('rx');
+  if (index > 0) {
+    return parseFloat(parts[index + 1]);
+  } else {
+    return undefined;
+  }
+}
+function getCustomYMultiplier(filename: string): number | undefined {
+  const parts = filename.split('_');
+  const index = parts.indexOf('ry');
+  if (index > 0) {
+    return parseFloat(parts[index + 1]);
+  } else {
+    return undefined;
+  }
+}
+function getCustomY(filename: string): number | undefined {
+  const parts = filename.split('_');
+  const index = parts.indexOf('y');
+  if (index > 0) {
+    return parseFloat(parts[index + 1]);
   } else {
     return undefined;
   }
@@ -183,9 +216,9 @@ function getCustomXMultiplier(filename: string): number | undefined {
 
 function getPrice(filename: string): number {
   const parts = filename.split('_');
-  const priceIndex = parts.indexOf('price');
-  if (priceIndex > 0) {
-    return parseInt(parts[priceIndex + 1]);
+  const index = parts.indexOf('price');
+  if (index > 0) {
+    return parseInt(parts[index + 1]);
   } else {
     return 0;
   }

@@ -20,10 +20,8 @@ export default function useForcedRedirect(
   const setReturnToUrl = appStore.setReturnToUrl;
   const location = useLocation();
   const history = useHistory();
-  const {
-    incompleteChallenges,
-    isLoadingOfficialChallenges,
-  } = useIncompleteChallenges();
+  const { incompleteChallenges, isLoadingOfficialChallenges } =
+    useIncompleteChallenges();
   const { pathname } = location;
 
   const isTest = isTestChallenge(challengeId);

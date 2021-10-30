@@ -1,4 +1,5 @@
 import FlexBox from '@/components/ui/FlexBox';
+import { borderRadiuses } from '@/theme';
 import { Button, Typography } from '@material-ui/core';
 import { ChallengeStatus } from 'infinitris2-models';
 import ChallengeCompletionStats from 'infinitris2-models/dist/src/ChallengeCompletionStats';
@@ -39,7 +40,7 @@ export default function ChallengeResultsView({
         color="primary.main"
         bgcolor="background.paper"
         padding={4}
-        borderRadius={16}
+        borderRadius={borderRadiuses.base}
       >
         <Typography variant="h6">
           <FormattedMessage

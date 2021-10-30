@@ -3,4 +3,5 @@ export default interface IScoreboardEntry {
   coins: number;
   networkImpact: number;
   numBadges: number;
+  characterId: string;
 }

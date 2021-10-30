@@ -30,7 +30,7 @@ export default function ScoreboardPage() {
         />
       </Typography>
       {scoreboardEntries && (
-        <FlexBox flexDirection="row" flexWrap="wrap" mt={4} gridGap={10}>
+        <FlexBox flexDirection="row" flexWrap="wrap" mt={4}>
           {scoreboardEntries?.map((entry, index) => (
             <ScoreboardCard key={entry.id} entry={entry} placing={index + 1} />
           ))}

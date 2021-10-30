@@ -1,26 +1,16 @@
 import React from 'react';
-import { Button, Typography, Link, Box } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 
-import FlexBox from '../ui/FlexBox';
+import FlexBox from '../../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import useLoginRedirect from '../hooks/useLoginRedirect';
-import { useUserStore } from '../../state/UserStore';
-import { useHistory } from 'react-router-dom';
-import Routes from '../../models/Routes';
-import { useCollection, useDocument } from '@nandorojo/swr-firestore';
-import {
-  challengesPath,
-  getUserPath,
-  IChallenge,
-  IUser,
-} from 'infinitris2-models';
-import useAuthStore from '../../state/AuthStore';
-import LoadingSpinner from '../LoadingSpinner';
-import { Link as RouterLink } from 'react-router-dom';
-import { YourBlockPreview } from '../ui/BlockPreview';
-import { Page } from '../ui/Page';
+import { useUserStore } from '../../../state/UserStore';
+import { useCollection } from '@nandorojo/swr-firestore';
+import { challengesPath, IChallenge } from 'infinitris2-models';
+import useAuthStore from '../../../state/AuthStore';
+import { Page } from '../../ui/Page';
 import { openLoginDialog } from '@/state/DialogStore';
+import { ProfilePageCharacterCard } from './ProfilePageCharacterCard';
 
 export default function ProfilePage() {
   const intl = useIntl();
@@ -43,6 +33,7 @@ export default function ProfilePage() {
         defaultMessage: 'Profile',
         description: 'Profile title',
       })}
+      useGradient
     >
       {!userId && (
         <Button color="primary" variant="contained" onClick={openLoginDialog}>
@@ -53,12 +44,16 @@ export default function ProfilePage() {
         </Button>
       )}
 
-      <Typography align="center">
+      <FlexBox py={2}>
+        <ProfilePageCharacterCard />
+      </FlexBox>
+
+      {/* <Typography align="center">
         <FormattedMessage
           defaultMessage="{count} challenges completed"
           description="Completed challenges statistic"
           values={{
-            count: /*FIXME: add backend counter user.completedChallengeIds.length*/ 0,
+            count: 0,//FIXME: add backend counter user.completedChallengeIds.length
           }}
         />
       </Typography>
@@ -95,36 +90,7 @@ export default function ProfilePage() {
           description="Network impact statistic"
           values={{ networkImpact: user.readOnly?.networkImpact || 0 }}
         />
-      </Typography>
-      <FlexBox flexDirection="row">
-        <YourBlockPreview user={user} />
-        <Box ml={1} />
-        <Link component={RouterLink} underline="none" to={Routes.market}>
-          <Typography align="center">
-            <FormattedMessage
-              defaultMessage="Customize"
-              description="Customize block link"
-            />
-          </Typography>
-        </Link>
-      </FlexBox>
-
-      {userId && (
-        <FlexBox flex={1} justifyContent="flex-end" mb={4}>
-          <Button
-            variant="contained"
-            color="secondary"
-            onClick={() =>
-              window.confirm('Are you sure you wish to sign out?') && signOut()
-            }
-          >
-            <FormattedMessage
-              defaultMessage="Sign out"
-              description="Sign out button text"
-            />
-          </Button>
-        </FlexBox>
-      )}
+      </Typography> */}
     </Page>
   );
 }

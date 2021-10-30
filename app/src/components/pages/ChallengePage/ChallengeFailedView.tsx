@@ -1,4 +1,5 @@
 import useContinueButton from '@/components/hooks/useContinueButton';
+import { borderRadiuses } from '@/theme';
 import { Box, Typography } from '@material-ui/core';
 import React from 'react';
 import useTrue from '../../hooks/useTrue';
@@ -20,7 +21,7 @@ export default function ChallengeFailedView({
         color="primary.main"
         bgcolor="background.paper"
         padding={4}
-        borderRadius={16}
+        borderRadius={borderRadiuses.base}
       >
         <Typography variant="h6">Challenge Failed</Typography>
         <Box pt={2}>{continueButton}</Box>

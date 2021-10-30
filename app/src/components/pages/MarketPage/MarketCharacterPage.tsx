@@ -3,7 +3,7 @@ import { ICharacter, getCharacterPath } from 'infinitris2-models';
 import { useDocument } from '@nandorojo/swr-firestore';
 import { Page } from '../../ui/Page';
 import { useParams } from 'react-router-dom';
-import { LargeCharacterTile } from './LargeCharacterTile';
+import { LargeCharacterTile } from './CharacterPageTile';
 import { useUser } from '@/state/UserStore';
 import FlexBox from '@/components/ui/FlexBox';
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';

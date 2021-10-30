@@ -21,6 +21,7 @@ import Routes from '@/models/Routes';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { DialogManager } from '@/components/ui/modals/DialogManager';
 import useDialogStore from '@/state/DialogStore';
+import { CharacterImage } from '../Characters/CharacterImage';
 
 const useStyles = makeStyles((theme) => ({
   coin: {
@@ -40,15 +41,9 @@ export function LargeCharacterTile({ character }: LargeCharacterTileProps) {
   const styles = useStyles();
   return (
     <FlexBox>
-      <img
-        src={`${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/faces/${character.id}.png`}
-        style={{
-          marginTop: -size * 0.1 + 'px',
-          width: size + 'px',
-          maxWidth: '100%',
-          height: 'auto',
-        }}
-      />
+      <Box style={{ marginTop: -size * 0.1 + 'px' }} />
+      <CharacterImage characterId={character.id} width={size} />
+
       <FlexBox
         className={styles.coin}
         style={{ position: 'relative' }}

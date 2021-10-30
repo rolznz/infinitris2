@@ -6,7 +6,7 @@ import { LoadChallengePage } from './components/pages/CreateChallengePage/LoadCh
 import LobbyPage from './components/pages/LobbyPage';
 import LoginPage from './components/pages/LoginPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
-import ProfilePage from './components/pages/ProfilePage';
+import ProfilePage from './components/pages/ProfilePage/ProfilePage';
 import RoomPage from './components/pages/RoomPage';
 import ControlSettingsPage from './components/pages/SettingsPage/ControlSettingsPage';
 import SettingsPage from './components/pages/SettingsPage/SettingsPage';
@@ -22,7 +22,6 @@ import EarnCreditsPage from './components/pages/EarnCreditsPage';
 import ScoreboardPage from './components/pages/ScoreboardPage/ScoreboardPage';
 import AffiliateProgramPage from './components/pages/AffiliateProgramPage';
 import { ComingSoonPage } from './components/pages/ComingSoonPage';
-import CustomizeProfilePage from './components/pages/CustomizeProfilePage';
 import { HomePageBackground } from './components/pages/HomePage/HomePageBackground';
 import HamburgerMenuButton from './components/ui/HamburgerMenu/HamburgerMenuButton';
 import { TermsOfServicePage } from './components/pages/TermsOfServicePage';
@@ -164,9 +163,6 @@ function RouterContents() {
           </AnimatedRoute>
           <AnimatedRoute exact path={Routes.profile}>
             <ProfilePage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.customizeProfile}>
-            <CustomizeProfilePage />
           </AnimatedRoute>
           <AnimatedRoute exact path={Routes.earnCoins}>
             <EarnCreditsPage />

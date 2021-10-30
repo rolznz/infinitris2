@@ -5,7 +5,7 @@ import { useIntl } from 'react-intl';
 import { ICharacter, charactersPath } from 'infinitris2-models';
 import { useCollection } from '@nandorojo/swr-firestore';
 import { Page } from '../../ui/Page';
-import { CharacterTile } from './CharacterTile';
+import { CharacterTile } from './MarketPageCharacterTile';
 
 export default function MarketPage() {
   const intl = useIntl();
@@ -21,7 +21,6 @@ export default function MarketPage() {
         defaultMessage: 'Market',
         description: 'Market page title',
       })}
-      showTitle={false}
       useGradient
       paddingX={0}
     >

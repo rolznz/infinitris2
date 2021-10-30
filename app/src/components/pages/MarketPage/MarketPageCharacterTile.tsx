@@ -14,9 +14,11 @@ import { ICharacter, charactersPath } from 'infinitris2-models';
 import { useCollection, Document } from '@nandorojo/swr-firestore';
 import { Page } from '../../ui/Page';
 import { borderColor, boxShadows, grey, white, zIndexes } from '@/theme';
-import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
+
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
+import { CharacterImage } from '../Characters/CharacterImage';
+import { CharacterCoinStatChip } from '../Characters/CharacterStatChip';
 
 type CharacterTileProps = {
   character: Document<ICharacter>;
@@ -36,35 +38,9 @@ export function CharacterTile({ character }: CharacterTileProps) {
         height={size * (1 / contentPortion)}
         style={{ position: 'relative' }}
       >
-        <img
-          src={`${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/faces/${character.id}.png`}
-          style={{
-            width: size * 1.2 + 'px',
-            height: 'auto',
-          }}
-        />
-        <FlexBox
-          mt={-size * 0.02}
-          mb={size * 0.02}
-          borderRadius={20}
-          paddingX={1}
-          paddingY={0.5}
-          gridGap={5}
-          flexDirection="row"
-          style={{
-            backgroundColor: borderColor,
-            boxShadow: boxShadows.small,
-          }}
-        >
-          <SvgIcon>
-            <CoinIcon />
-          </SvgIcon>
-          <Typography
-            variant="h5"
-            style={{ color: white, fontWeight: 700, marginTop: '3px' }}
-          >
-            {character.price}
-          </Typography>
+        <CharacterImage characterId={character.id} width={size * 1.2} />
+        <FlexBox mt={-size * 0.02} mb={size * 0.02}>
+          <CharacterCoinStatChip value={character.price} />
         </FlexBox>
       </FlexBox>
     </Link>

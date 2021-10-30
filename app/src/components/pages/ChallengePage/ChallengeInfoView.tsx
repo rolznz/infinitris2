@@ -1,4 +1,5 @@
 import useContinueButton from '@/components/hooks/useContinueButton';
+import { borderRadiuses } from '@/theme';
 import { Box, Typography } from '@material-ui/core';
 import { IChallenge } from 'infinitris2-models';
 import React from 'react';
@@ -28,7 +29,7 @@ export default function ChallengeInfoView({
         color="primary.main"
         bgcolor="background.paper"
         padding={4}
-        borderRadius={16}
+        borderRadius={borderRadiuses.base}
       >
         <Typography variant="h6">
           {translation?.title || challenge?.title}

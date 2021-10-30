@@ -8,7 +8,6 @@ enum Routes {
   donate = '/donate',
   privacyPolicy = '/privacy',
   profile = '/profile',
-  customizeProfile = '/profile/customize',
   login = '/login',
   comingSoon = '/coming-soon',
   singlePlayer = '/single-player',

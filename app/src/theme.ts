@@ -35,6 +35,14 @@ export const zIndexes = {
   loader: 1000,
 };
 
+export const borderRadiuses = {
+  xs: 4,
+  sm: 8,
+  base: 16,
+  lg: 20,
+  xl: 32,
+};
+
 const coreThemeOptions: ThemeOptions = {
   typography: {
     fontFamily: ['Comfortaa'].join(','),

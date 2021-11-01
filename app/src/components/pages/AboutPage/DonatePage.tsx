@@ -1,18 +1,19 @@
+import FlexBox from '@/components/ui/FlexBox';
 import { Page } from '@/components/ui/Page';
 import { appName } from '@/utils/constants';
 import { makeStyles, Typography, Box, Link } from '@material-ui/core';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
+import QRCode from 'react-qr-code';
+import { useTheme } from '@material-ui/core/styles';
+import { white } from '@/theme';
 
-const useStyles = makeStyles((theme) => ({
-  shareButton: {
-    display: 'flex',
-  },
-}));
+const useStyles = makeStyles((theme) => ({}));
 
 export default function AboutPage() {
   const classes = useStyles();
   const intl = useIntl();
+  const theme = useTheme();
 
   return (
     <Page
@@ -29,23 +30,33 @@ export default function AboutPage() {
           values={{ appName }}
         />
       </Typography>
-      <Box mt={4} />
+      <Box mt={2} />
       <Typography align="center" variant="body1">
         <FormattedMessage
-          defaultMessage="Please {email} if you would like to make a donation."
-          description="Donate page contact info"
+          defaultMessage="You can send Bitcoin via the {lightningNetwork} to the below address. An easy way to get started is with the {walletOfSatoshi}."
+          description="Donate page lightning QR info"
           values={{
-            email: (
-              <Link href="mailto:infinitris2@googlegroups.com">
-                <FormattedMessage
-                  defaultMessage="send an email to the infinitris2 Google Group"
-                  description="send an email link (google group)"
-                />
+            lightningNetwork: (
+              <Link href="https://lightning.network/">Lightning Network</Link>
+            ),
+            walletOfSatoshi: (
+              <Link href="https://www.walletofsatoshi.com/">
+                Wallet of Satoshi
               </Link>
             ),
           }}
         />
       </Typography>
+      {process.env.REACT_APP_LIGHTNING_DONATION && (
+        <FlexBox width={400} my={4} maxWidth="100%">
+          <QRCode
+            value={process.env.REACT_APP_LIGHTNING_DONATION}
+            level="L"
+            fgColor={white}
+            bgColor={theme.palette.text.secondary}
+          />
+        </FlexBox>
+      )}
     </Page>
   );
 }

@@ -107,6 +107,11 @@ const coreThemeOptions: ThemeOptions = {
         margin: 4,
       },
     },
+    MuiLink: {
+      root: {
+        color: white,
+      },
+    },
     MuiDivider: {
       root: {
         background: `${white} !important`,
@@ -183,8 +188,7 @@ const lightThemeOptions: ThemeOptions = {
     },
     text: {
       primary: white,
-      secondary: '#2B57A6',
-      //tertiary: '#0E0C66',
+      secondary: '#002369',
     },
   },
   typography: {
@@ -204,6 +208,13 @@ const lightThemeOptions: ThemeOptions = {
           'linear-gradient(180deg, #3A9AD1 0%, #1F72B7 48.44%, #0B61B1 85.94%);',
       },
     },
+    MuiLink: {
+      ...coreThemeOptions.overrides?.MuiLink,
+      root: {
+        ...coreThemeOptions.overrides?.MuiLink?.root,
+        color: '#ccccff',
+      },
+    },
   },
 };
 
@@ -218,9 +229,8 @@ const darkThemeOptions: ThemeOptions = {
       paperDark: '#081B29',
     },
     text: {
-      primary: '#999999',
-      secondary: white,
-      //tertiary: '#12232B'  // loader: 081428
+      primary: '#9A9A9A',
+      secondary: '#444444',
     },
     primary: {
       main: '#103950',

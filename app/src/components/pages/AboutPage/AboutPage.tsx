@@ -1,11 +1,9 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { Page } from '@/components/ui/Page';
-import { RingIconButton } from '@/components/ui/RingIconButton';
 import { appName } from '@/utils/constants';
-import { makeStyles, Typography, Box, SvgIcon, Link } from '@material-ui/core';
+import { makeStyles, Typography, Box } from '@material-ui/core';
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
-import { Link as RouterLink } from 'react-router-dom';
+import { FormattedMessage, useIntl } from 'react-intl';
 import Routes from '@/models/Routes';
 import { ReactComponent as CreditsIcon } from '@/icons/credits.svg';
 import { ReactComponent as GithubIcon } from '@/icons/github.svg';
@@ -25,15 +23,14 @@ const useStyles = makeStyles(() => ({
 
 export default function AboutPage() {
   const classes = useStyles();
+  const intl = useIntl();
 
   return (
     <Page
-      title={
-        <FormattedMessage
-          defaultMessage="About"
-          description="About page title"
-        />
-      }
+      title={intl.formatMessage({
+        defaultMessage: 'About',
+        description: 'About page title',
+      })}
       narrow
     >
       <Typography align="center" variant="body1">

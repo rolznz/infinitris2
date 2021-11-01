@@ -16,6 +16,7 @@ const useStyles = makeStyles({
     position: 'absolute',
     top: 0,
     right: 0,
+    pointerEvents: 'none',
   },
 });
 
@@ -56,7 +57,7 @@ export default function HamburgerMenuButton() {
         transition: `opacity ${firstTimeAnimationDelaySeconds}s`,
       }}
     >
-      <FlexBox padding={2}>
+      <FlexBox margin={2} style={{ pointerEvents: 'all' }}>
         <IconButton style={{}} onClick={() => setIsOpen(true)}>
           <SvgIcon
             color="secondary"

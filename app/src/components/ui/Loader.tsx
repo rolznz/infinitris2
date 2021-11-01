@@ -75,7 +75,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   useEffect(() => {
     const htmlLoader = document.getElementById('html-loader');
     if (htmlLoader) {
-      htmlLoader.style.opacity = hasFinished ? '0' : '1';
+      htmlLoader.style.display = hasFinished ? 'none' : 'block'; //opacity = hasFinished ? '0' : '1';
     }
   }, [hasFinished]);
 
@@ -86,8 +86,8 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   return (
     <>
       <FlexBox
-        height="100vh"
-        width="100vw"
+        height="100%"
+        width="100%"
         style={{
           position: 'absolute',
           opacity: hasFinished ? 0 : 1,

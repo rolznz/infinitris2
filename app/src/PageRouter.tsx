@@ -25,8 +25,6 @@ import { ComingSoonPage } from './components/pages/ComingSoonPage';
 import { HomePageBackground } from './components/pages/HomePage/HomePageBackground';
 import HamburgerMenuButton from './components/ui/HamburgerMenu/HamburgerMenuButton';
 import { TermsOfServicePage } from './components/pages/TermsOfServicePage';
-import { AnimatePresence, motion, TargetAndTransition } from 'framer-motion';
-import FlexBox from './components/ui/FlexBox';
 import { zIndexes } from './theme';
 import { DialogManager } from './components/ui/modals/DialogManager';
 import AboutPage from './components/pages/AboutPage/AboutPage';
@@ -55,62 +53,11 @@ function OutsideGameElement(props: React.PropsWithChildren<{}>) {
 
 type PageAnimationType = 'slideup';
 
-function SlideUpPageAnimation(props: React.PropsWithChildren<{}>) {
-  return (
-    <motion.div
-      animate={{ y: '0vw' }}
-      exit={{ y: '100vh' }}
-      initial={{ y: '100vh' }}
-      transition={{ duration: 0.5 }}
-      style={{
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        zIndex: zIndexes.above,
-      }}
-    >
-      {props.children}
-    </motion.div>
-  );
-}
-function DefaultPageAnimation(props: React.PropsWithChildren<{}>) {
-  return (
-    <motion.div
-      exit={{ opacity: 0 }}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 1 }}
-      style={{
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-      }}
-    >
-      {props.children}
-    </motion.div>
-  );
-}
-
-type AnimatedRouteProps = React.PropsWithChildren<{
+type RouteProps = React.PropsWithChildren<{
   exact?: boolean;
   path?: string;
   animation?: PageAnimationType;
 }>;
-
-const AnimatedRoute = React.memo((props: AnimatedRouteProps) => {
-  const { animation, ...routerProps } = props;
-  return (
-    <Route {...routerProps}>
-      {animation === 'slideup' ? (
-        <SlideUpPageAnimation>{props.children}</SlideUpPageAnimation>
-      ) : (
-        <DefaultPageAnimation>{props.children}</DefaultPageAnimation>
-      )}
-    </Route>
-  );
-});
 
 export default function PageRouter() {
   return (
@@ -129,91 +76,89 @@ function RouterContents() {
         <HamburgerMenuButton />
         {/*<Header />*/}
       </OutsideGameElement>
-      <AnimatePresence initial={false}>
-        <Switch location={location} key={location.pathname}>
-          <AnimatedRoute exact path={Routes.home}>
-            <HomePageBackground />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.credits}>
-            <CreditsPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.about}>
-            <AboutPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.termsOfService}>
-            <TermsOfServicePage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.donate}>
-            <DonatePage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.privacyPolicy}>
-            <PrivacyPolicyPage />
-          </AnimatedRoute>
-          <AnimatedRoute /*animation="slideup"*/ exact path={Routes.settings}>
-            <SettingsPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.controlSettings}>
-            <ControlSettingsPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.login}>
-            <LoginPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.comingSoon}>
-            <ComingSoonPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.profile}>
-            <ProfilePage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.earnCoins}>
-            <EarnCreditsPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.affiliateProgram}>
-            <AffiliateProgramPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.scoreboard}>
-            <ScoreboardPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.welcome}>
-            <WelcomePage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.challengeRequired}>
-            <ChallengeRequiredPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.allSet}>
-            <AllSetPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.market}>
-            <MarketPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={`${Routes.market}/:id`}>
-            <MarketCharacterPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.lobby}>
-            <LobbyPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.singlePlayer}>
-            <SinglePlayerPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.challenges}>
-            <ChallengesPage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.createChallenge}>
-            <CreateChallengePage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={Routes.loadChallenge}>
-            <LoadChallengePage />
-          </AnimatedRoute>
-          <AnimatedRoute path={`${Routes.challenges}/:id`}>
-            <ChallengePage />
-          </AnimatedRoute>
-          <AnimatedRoute exact path={`${Routes.rooms}/:id`}>
-            <RoomPage />
-          </AnimatedRoute>
-          <AnimatedRoute>
-            <NotFoundPage />
-          </AnimatedRoute>
-        </Switch>
-      </AnimatePresence>
+      <Switch location={location}>
+        <Route exact path={Routes.home}>
+          <HomePageBackground />
+        </Route>
+        <Route exact path={Routes.credits}>
+          <CreditsPage />
+        </Route>
+        <Route exact path={Routes.about}>
+          <AboutPage />
+        </Route>
+        <Route exact path={Routes.termsOfService}>
+          <TermsOfServicePage />
+        </Route>
+        <Route exact path={Routes.donate}>
+          <DonatePage />
+        </Route>
+        <Route exact path={Routes.privacyPolicy}>
+          <PrivacyPolicyPage />
+        </Route>
+        <Route /*animation="slideup"*/ exact path={Routes.settings}>
+          <SettingsPage />
+        </Route>
+        <Route exact path={Routes.controlSettings}>
+          <ControlSettingsPage />
+        </Route>
+        <Route exact path={Routes.login}>
+          <LoginPage />
+        </Route>
+        <Route exact path={Routes.comingSoon}>
+          <ComingSoonPage />
+        </Route>
+        <Route exact path={Routes.profile}>
+          <ProfilePage />
+        </Route>
+        <Route exact path={Routes.earnCoins}>
+          <EarnCreditsPage />
+        </Route>
+        <Route exact path={Routes.affiliateProgram}>
+          <AffiliateProgramPage />
+        </Route>
+        <Route exact path={Routes.scoreboard}>
+          <ScoreboardPage />
+        </Route>
+        <Route exact path={Routes.welcome}>
+          <WelcomePage />
+        </Route>
+        <Route exact path={Routes.challengeRequired}>
+          <ChallengeRequiredPage />
+        </Route>
+        <Route exact path={Routes.allSet}>
+          <AllSetPage />
+        </Route>
+        <Route exact path={Routes.market}>
+          <MarketPage />
+        </Route>
+        <Route exact path={`${Routes.market}/:id`}>
+          <MarketCharacterPage />
+        </Route>
+        <Route exact path={Routes.lobby}>
+          <LobbyPage />
+        </Route>
+        <Route exact path={Routes.singlePlayer}>
+          <SinglePlayerPage />
+        </Route>
+        <Route exact path={Routes.challenges}>
+          <ChallengesPage />
+        </Route>
+        <Route exact path={Routes.createChallenge}>
+          <CreateChallengePage />
+        </Route>
+        <Route exact path={Routes.loadChallenge}>
+          <LoadChallengePage />
+        </Route>
+        <Route path={`${Routes.challenges}/:id`}>
+          <ChallengePage />
+        </Route>
+        <Route exact path={`${Routes.rooms}/:id`}>
+          <RoomPage />
+        </Route>
+        <Route>
+          <NotFoundPage />
+        </Route>
+      </Switch>
     </>
   );
 }

@@ -1,6 +1,5 @@
 import { appName } from '@/utils/constants';
 import { Box, makeStyles, Typography } from '@material-ui/core';
-import { AnimatePresence, motion } from 'framer-motion';
 import React, { CSSProperties } from 'react';
 import { Helmet } from 'react-helmet';
 import useDarkMode from '../hooks/useDarkMode';

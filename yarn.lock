@@ -13776,6 +13776,7 @@ fsevents@^1.2.7:
     react-helmet: ^6.1.0
     react-intl: ^5.10.9
     react-loader-spinner: ^3.1.14
+    react-qr-code: ^2.0.2
     react-router-dom: ^5.2.0
     react-script-tag: ^1.1.2
     react-scripts: 3.4.3
@@ -20156,6 +20157,13 @@ fsevents@^1.2.7:
   languageName: node
   linkType: hard
 
+"qr.js@npm:0.0.0":
+  version: 0.0.0
+  resolution: "qr.js@npm:0.0.0"
+  checksum: 5ac6c393967bdeaa660e7fd3a501a25eb538c1f6008a4d30ab2b97bbe520e5c236530090773f1578aa0a523cdaa6923c866615e21143f9e7cd22abd41c789b69
+  languageName: node
+  linkType: hard
+
 "qs@npm:6.7.0":
   version: 6.7.0
   resolution: "qs@npm:6.7.0"
@@ -20651,6 +20659,19 @@ fsevents@^1.2.7:
     "@popperjs/core": ^2.0.0
     react: ^16.8.0 || ^17
   checksum: 915fcf08e1da4fd48a200074fcdd936f601ee2173f1e730cfed8a54fd47716aa8bf9cce2392463e3bcbe64a096d0baf463809ed2874b94d3a9d430ae6d817b5d
+  languageName: node
+  linkType: hard
+
+"react-qr-code@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "react-qr-code@npm:2.0.2"
+  dependencies:
+    prop-types: ^15.7.2
+    qr.js: 0.0.0
+  peerDependencies:
+    react: ^16.x || ^17.x
+    react-native-svg: "*"
+  checksum: e844e9fb809631584ec134692eaa9e901ca491af7b1dee37171c6fa762e482a8c62e0b609e285a7c29a970faf0cd666777ffaae6263932508f7b1f615448fd69
   languageName: node
   linkType: hard
 

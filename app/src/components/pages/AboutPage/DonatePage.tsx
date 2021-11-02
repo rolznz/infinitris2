@@ -1,19 +1,43 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { Page } from '@/components/ui/Page';
 import { appName } from '@/utils/constants';
-import { makeStyles, Typography, Box, Link } from '@material-ui/core';
+import {
+  makeStyles,
+  Typography,
+  Box,
+  Link,
+  LinearProgress,
+} from '@material-ui/core';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import QRCode from 'react-qr-code';
 import { useTheme } from '@material-ui/core/styles';
 import { white } from '@/theme';
+import { toast } from 'react-toastify';
+import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
+import { useCollection } from '@nandorojo/swr-firestore';
+import { Donation, Timestamp } from 'infinitris2-models';
 
 const useStyles = makeStyles((theme) => ({}));
+const target = 10;
+const ONE_MONTH_IN_SECONDS = 60 * 60 * 24 * 30;
 
 export default function AboutPage() {
   const classes = useStyles();
+  const [, copy] = useCopyToClipboard();
   const intl = useIntl();
   const theme = useTheme();
+  const { data: donations } = useCollection<Donation>('donations');
+  const donationsThisMonth = donations
+    ?.filter(
+      (d) =>
+        d.createdTimestamp.seconds > Date.now() / 1000 - ONE_MONTH_IN_SECONDS
+    )
+    ?.map((d) => d.amount);
+
+  const valueOfDonationsThisMonth = donationsThisMonth?.length
+    ? donationsThisMonth.reduce((a, b) => a + b)
+    : 0;
 
   return (
     <Page
@@ -48,15 +72,72 @@ export default function AboutPage() {
         />
       </Typography>
       {process.env.REACT_APP_LIGHTNING_DONATION && (
-        <FlexBox width={400} my={4} maxWidth="100%">
+        <FlexBox
+          width={400}
+          my={4}
+          maxWidth="100%"
+          onClick={() => {
+            copy(process.env.REACT_APP_LIGHTNING_DONATION!);
+            toast(
+              intl.formatMessage({
+                defaultMessage: 'Address copied to clipboard',
+                description:
+                  'Lightning Donation Address copied to clipboard toast message',
+              })
+            );
+          }}
+        >
           <QRCode
             value={process.env.REACT_APP_LIGHTNING_DONATION}
             level="L"
             fgColor={white}
             bgColor={theme.palette.text.secondary}
           />
+          <Box mt={4} />
+
+          <Typography align="center" variant="body1">
+            <FormattedMessage
+              defaultMessage="This month's target: {valueOfDonationsThisMonth} / {target} sats"
+              description="Latest Donations title"
+              values={{
+                valueOfDonationsThisMonth,
+                target,
+              }}
+            />
+          </Typography>
+          <LinearProgress
+            value={(valueOfDonationsThisMonth / target) * 100}
+            style={{ height: '19px', width: '200px' }}
+            color="primary"
+            variant="determinate"
+          />
+        </FlexBox>
+      )}
+      {donations && (
+        <FlexBox>
+          <Typography align="center" variant="h4">
+            <FormattedMessage
+              defaultMessage="Latest Donations"
+              description="Latest Donations title"
+            />
+          </Typography>
+          {donations.map((donation) => (
+            <FlexBox key={donation.id}>
+              <Typography variant="body1">
+                {getTime(donation.createdTimestamp)} -{' '}
+                <strong>{donation.amount} sats</strong> -{' '}
+                {donation.comment || 'No comment'}
+              </Typography>
+            </FlexBox>
+          ))}
         </FlexBox>
       )}
     </Page>
   );
+}
+
+function getTime(timestamp: Timestamp) {
+  const date = new Date(0);
+  date.setSeconds(timestamp.seconds);
+  return date.toDateString();
 }

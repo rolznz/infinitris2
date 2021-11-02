@@ -20,9 +20,9 @@ export default function updateScoreboard() {
         const entry: IScoreboardEntry = {
           nickname: user.readOnly.nickname,
           coins: user.readOnly.coins,
-          numCompletedChallenges: 0, // TODO: increment on completed new challenge
+          characterId: '0',
+          numBadges: 0,
           networkImpact: user.readOnly.networkImpact,
-          numBlocksPlaced: 0, // TODO: number of blocks placed
         };
         scoreboardEntryRef.set(entry);
       });

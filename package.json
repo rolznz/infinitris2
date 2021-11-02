@@ -16,6 +16,7 @@
     "firebase:deploy:rules": "firebase deploy --only firestore:rules",
     "firebase:deploy:functions": "firebase --config firebase.functions-deploy.json deploy --only functions",
     "firebase:deploy:functions:onCreateAuthUser": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateAuthUser",
+    "firebase:deploy:functions:webhooks": "firebase --config firebase.functions-deploy.json deploy --only functions:webhooks",
     "delete-node-modules": "bash -c 'find . -type d -name node_modules -prune -exec rm -rf {} \\;'"
   },
   "devDependencies": {

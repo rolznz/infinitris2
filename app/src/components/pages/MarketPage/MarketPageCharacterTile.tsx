@@ -28,21 +28,27 @@ export function CharacterTile({ character }: CharacterTileProps) {
   const contentPortion = 0.8;
   const size = (isMobile ? 150 : 300) * contentPortion;
   return (
-    <Link
-      component={RouterLink}
-      underline="none"
-      to={`${Routes.market}/${character.id}`}
+    <FlexBox
+      width={size}
+      height={size * (1 / contentPortion)}
+      style={{ position: 'relative' }}
     >
       <FlexBox
-        width={size}
-        height={size * (1 / contentPortion)}
-        style={{ position: 'relative' }}
+        position="absolute"
+        width={size * contentPortion}
+        height={size * contentPortion}
       >
-        <CharacterImage characterId={character.id} width={size * 1.2} />
-        <FlexBox mt={-size * 0.02} mb={size * 0.02}>
-          <CharacterCoinStatChip value={character.price} />
-        </FlexBox>
+        <Link
+          component={RouterLink}
+          underline="none"
+          to={`${Routes.market}/${character.id}`}
+          style={{ width: '100%', height: '100%' }}
+        ></Link>
       </FlexBox>
-    </Link>
+      <CharacterImage characterId={character.id} width={size * 1.2} />
+      <FlexBox mt={-size * 0.02} mb={size * 0.02}>
+        <CharacterCoinStatChip value={character.price} />
+      </FlexBox>
+    </FlexBox>
   );
 }

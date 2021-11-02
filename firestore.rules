@@ -229,5 +229,8 @@ service cloud.firestore {
     match /rooms/{document=**} {
       allow read: if true;
     }
+    match /donations/{document=**} {
+      allow read: if true;
+    }
   }
 }

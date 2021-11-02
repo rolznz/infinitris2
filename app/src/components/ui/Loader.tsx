@@ -75,7 +75,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   useEffect(() => {
     const htmlLoader = document.getElementById('html-loader');
     if (htmlLoader) {
-      htmlLoader.style.display = hasFinished ? 'none' : 'block'; //opacity = hasFinished ? '0' : '1';
+      htmlLoader.style.opacity = hasFinished ? '0' : '1';
     }
   }, [hasFinished]);
 

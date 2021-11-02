@@ -46,6 +46,7 @@ export * from './IPurchase';
 export * from './IProduct';
 export * from './IUser';
 export * from './ICharacter';
+export * from './Donation';
 
 export {
   exampleChallenges,

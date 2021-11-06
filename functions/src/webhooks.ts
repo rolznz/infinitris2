@@ -5,7 +5,7 @@ import { Donation } from 'infinitris2-models';
 const app = express();
 app.use(express.json());
 
-type LNURLpRequest = {
+export type LNURLpRequest = {
   // eslint-disable-next-line camelcase
   payment_hash: string;
   // eslint-disable-next-line camelcase
@@ -16,8 +16,15 @@ type LNURLpRequest = {
   lnurlp: number;
 };
 
-app.post('/v1/donation', async (req, res) => {
+app.post('/v1/donations', async (req, res) => {
   const body: LNURLpRequest = req.body;
+  const key = functions.config().webhooks.key;
+
+  if (req.query['key'] !== key) {
+    res.status(401);
+    res.end();
+    return;
+  }
 
   const donation: Donation = {
     amount: body.amount / 1000,
@@ -26,9 +33,12 @@ app.post('/v1/donation', async (req, res) => {
   };
 
   await getDb().collection('donations').add(donation);
-
+  res.status(204);
   res.end();
 });
+
+// expose for testing only
+export const webhooksExpressApp = app;
 
 // Expose Express API as a single Cloud Function:
 export const webhooks = functions.https.onRequest(app);

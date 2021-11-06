@@ -61,6 +61,8 @@ export const getPurchasePath = (
     getUniqueUserEntityId(entityCollectionPath, entityId, userId)
   );
 
+export const donationsPath = 'donations';
+
 export type EntityCollectionPath =
   | typeof colorsPath
   | typeof usersPath

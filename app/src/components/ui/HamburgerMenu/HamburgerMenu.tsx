@@ -17,6 +17,7 @@ import { ReactComponent as ShareEarnIcon } from '@/icons/share_earn.svg';
 import { ReactComponent as ScoreboardIcon } from '@/icons/scoreboard.svg';
 import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
 import { ReactComponent as AboutIcon } from '@/icons/about.svg';
+import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { ReactComponent as LogoutIcon } from '@/icons/logout.svg';
 import { appName } from '@/utils/constants';
 import useAppStore from '@/state/AppStore';
@@ -104,6 +105,16 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
               <FormattedMessage
                 defaultMessage="Scoreboard"
                 description="Hamburger menu - Scoreboard list item"
+              />
+            }
+          />
+          <HamburgerListItem
+            to={Routes.market}
+            icon={<MarketIcon />}
+            text={
+              <FormattedMessage
+                defaultMessage="Market"
+                description="Hamburger menu - Market list item"
               />
             }
           />

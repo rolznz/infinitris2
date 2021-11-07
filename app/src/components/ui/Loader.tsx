@@ -107,19 +107,19 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
           </Box>
         )}
         <FlexBox
-          height="50vh"
+          height="50%"
           width="100vw"
           style={{ position: 'absolute', left: 0, bottom: 0 }}
+          justifyContent="flex-start"
         >
           <FlexBox
-            position="absolute"
-            top="20px"
             width="259px"
-            alignItems="flex-start"
             style={{
               opacity: loaderStore.stepsCompleted < loaderStore.steps ? 1 : 0,
               transition: 'opacity 1s',
+              marginTop: '30px',
             }}
+            alignItems="flex-start"
           >
             <Typography
               variant="body1"

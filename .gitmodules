@@ -1,0 +1,3 @@
+[submodule "swr-firestore"]
+	path = swr-firestore
+	url = git@github.com:rolznz/swr-firestore.git

@@ -3,6 +3,7 @@ import {
   Divider,
   Drawer,
   IconButton,
+  LinearProgress,
   Link,
   List,
   makeStyles,
@@ -19,7 +20,8 @@ import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
 import { ReactComponent as AboutIcon } from '@/icons/about.svg';
 import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { ReactComponent as LogoutIcon } from '@/icons/logout.svg';
-import { appName } from '@/utils/constants';
+import { ReactComponent as DonateIcon } from '@/icons/donate.svg';
+import FavoriteIcon from '@material-ui/icons/Favorite';
 import useAppStore from '@/state/AppStore';
 import { FormattedMessage } from 'react-intl';
 import Routes from '@/models/Routes';
@@ -29,6 +31,8 @@ import FlexBox from '../FlexBox';
 import logoImage from './assets/logo.png';
 import useAuthStore from '@/state/AuthStore';
 import { useUserStore } from '@/state/UserStore';
+import { donationTarget, useDonations } from '@/components/hooks/useDonations';
+import { zIndexes } from '@/theme';
 
 type HamburgerMenuProps = {
   isOpen: boolean;
@@ -56,6 +60,7 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
   const appStore = useAppStore();
   const userId = useAuthStore().user?.uid;
   const signOut = useUserStore((userStore) => userStore.signOut);
+  const { donations, monthDonationSum } = useDonations();
 
   const classes = useStyles();
 
@@ -177,6 +182,40 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
             />
           </Typography>
         </FlexBox>
+        <Link component={RouterLink} underline="none" to={Routes.donate}>
+          <FlexBox
+            px={2}
+            pl={2}
+            width="100%"
+            boxSizing="border-box"
+            style={{
+              opacity: donations ? 0.3 : 0,
+              transition: 'opacity 1s 1s',
+            }}
+            position="relative"
+          >
+            <FlexBox
+              justifyContent="flex-start"
+              flexDirection="row"
+              position="absolute"
+              style={{ zIndex: zIndexes.above }}
+            >
+              <SvgIcon color="secondary" fontSize="small">
+                <FavoriteIcon />
+              </SvgIcon>
+              <Typography align="center" variant="caption" color="primary">
+                {(monthDonationSum * 100) / donationTarget}%
+              </Typography>
+            </FlexBox>
+
+            <LinearProgress
+              value={Math.min(monthDonationSum / donationTarget, 1) * 100}
+              style={{ height: '19px', width: '100%' }}
+              color="primary"
+              variant="determinate"
+            />
+          </FlexBox>
+        </Link>
       </div>
     </Drawer>
   );

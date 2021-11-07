@@ -17,27 +17,18 @@ import { toast } from 'react-toastify';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import { useCollection } from '@nandorojo/swr-firestore';
 import { Donation, Timestamp } from 'infinitris2-models';
+import firebase from 'firebase';
+import { donationTarget, useDonations } from '@/components/hooks/useDonations';
 
 const useStyles = makeStyles((theme) => ({}));
-const target = 10;
-const ONE_MONTH_IN_SECONDS = 60 * 60 * 24 * 30;
 
 export default function AboutPage() {
   const classes = useStyles();
   const [, copy] = useCopyToClipboard();
   const intl = useIntl();
   const theme = useTheme();
-  const { data: donations } = useCollection<Donation>('donations');
-  const donationsThisMonth = donations
-    ?.filter(
-      (d) =>
-        d.createdTimestamp.seconds > Date.now() / 1000 - ONE_MONTH_IN_SECONDS
-    )
-    ?.map((d) => d.amount);
 
-  const valueOfDonationsThisMonth = donationsThisMonth?.length
-    ? donationsThisMonth.reduce((a, b) => a + b)
-    : 0;
+  const { donations, monthDonationSum } = useDonations();
 
   return (
     <Page
@@ -97,16 +88,16 @@ export default function AboutPage() {
 
           <Typography align="center" variant="body1">
             <FormattedMessage
-              defaultMessage="This month's target: {valueOfDonationsThisMonth} / {target} sats"
-              description="Latest Donations title"
+              defaultMessage="This month's target: {monthDonationSum} / {donationTarget} sats"
+              description="This month's donations progress"
               values={{
-                valueOfDonationsThisMonth,
-                target,
+                monthDonationSum,
+                donationTarget,
               }}
             />
           </Typography>
           <LinearProgress
-            value={(valueOfDonationsThisMonth / target) * 100}
+            value={Math.min(monthDonationSum / donationTarget, 1) * 100}
             style={{ height: '19px', width: '200px' }}
             color="primary"
             variant="determinate"

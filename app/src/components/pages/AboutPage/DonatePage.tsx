@@ -15,7 +15,7 @@ import { useTheme } from '@material-ui/core/styles';
 import { white } from '@/theme';
 import { toast } from 'react-toastify';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
-import { useCollection } from '@nandorojo/swr-firestore';
+import { useCollection } from 'swr-firestore';
 import { Donation, Timestamp } from 'infinitris2-models';
 import firebase from 'firebase';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';

@@ -7,6 +7,7 @@ import FlexBox from './FlexBox';
 
 type PageProps = {
   title?: string;
+  titleImage?: React.ReactNode;
   showTitle?: boolean;
   useGradient?: boolean;
   style?: CSSProperties;
@@ -25,8 +26,7 @@ export function Page({
     page: {
       flex: 1,
       width: '100%',
-      height: '100%',
-      overflowY: 'auto',
+      minHeight: '100vh',
       padding: theme.spacing(4),
       ...(props.paddingX !== undefined
         ? {
@@ -35,7 +35,7 @@ export function Page({
           }
         : {}),
       maxWidth: '100%',
-      ...(props.useGradient
+      ...(props.useGradient && false
         ? {
             background: isDarkMode
               ? 'linear-gradient(180deg, rgba(8,27,41,1) 0%, rgba(0,60,67,1) 35%, rgba(10,21,41,1) 100%)'
@@ -63,6 +63,7 @@ export function Page({
       justifyContent="flex-start"
       style={props.style}
     >
+      {props.titleImage}
       {props.title && (
         <>
           <Helmet>
@@ -72,7 +73,7 @@ export function Page({
           </Helmet>
           {showTitle && (
             <>
-              <Box mt={10} />
+              <Box mt={props.titleImage ? 5 : 10} />
               <Typography variant="h1" className={classes.title}>
                 {props.title}
               </Typography>

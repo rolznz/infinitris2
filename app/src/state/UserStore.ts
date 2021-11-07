@@ -1,4 +1,4 @@
-import { useDocument } from '@nandorojo/swr-firestore';
+import { useDocument } from 'swr-firestore';
 import {
   DEFAULT_KEYBOARD_CONTROLS,
   getUserPath,

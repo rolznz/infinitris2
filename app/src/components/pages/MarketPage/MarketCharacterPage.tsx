@@ -1,6 +1,6 @@
 import React from 'react';
 import { ICharacter, getCharacterPath } from 'infinitris2-models';
-import { useDocument } from '@nandorojo/swr-firestore';
+import { useDocument } from 'swr-firestore';
 import { Page } from '../../ui/Page';
 import { useParams } from 'react-router-dom';
 import { LargeCharacterTile } from './CharacterPageTile';
@@ -14,6 +14,9 @@ export default function MarketPage() {
   const { id } = useParams<{ id: string }>();
   const { data: character } = useDocument<ICharacter>(getCharacterPath(id));
   const user = useUser();
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+  });
 
   return (
     <Page

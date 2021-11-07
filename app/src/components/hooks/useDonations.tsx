@@ -1,4 +1,4 @@
-import { useCollection } from '@nandorojo/swr-firestore';
+import { useCollection } from 'swr-firestore';
 import { Donation } from 'infinitris2-models';
 
 const ONE_MONTH_IN_SECONDS = 60 * 60 * 24 * 30;
@@ -20,7 +20,7 @@ export function useDonations() {
     ],*/
     orderBy: ['createdTimestamp', 'desc'],
   });
-  //console.log(donations);
+  console.log(donations);
   const donationsThisMonth = donations
     ?.filter(
       (d) =>

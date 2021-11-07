@@ -47,12 +47,14 @@
       html,
       body,
       #root {
-        height: 100%;
+        /*in-app: height: 100%;*/
+        min-height: 100vh;
         margin: 0;
         user-select: none;
       }
       body {
-        overflow: hidden;
+        overflow-x: hidden;
+        /* in-app: overflow: hidden*/
         background-color: #0f1d22 !important; /*override material ui CssBaseline background color reset */
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
@@ -60,19 +62,21 @@
       #html-loader {
         display: flex;
         flex-direction: column;
+        top: 0;
+        left: 0;
         width: 100vw;
         height: 100vh;
         justify-content: center;
         align-items: center;
-        position: absolute;
+        position: fixed;
         transition: opacity 1s;
+        z-index: 10000;
         pointer-events: none;
       }
       #html-loader img {
         margin-bottom: 20vh;
         width: 289px;
         height: 181px;
-        z-index: 10000;
       }
 
       .html-loader-star {

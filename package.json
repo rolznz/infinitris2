@@ -6,7 +6,8 @@
       "functions",
       "models",
       "webpack/functions-deploy",
-      "character-generator"
+      "character-generator",
+      "swr-firestore"
     ]
   },
   "scripts": {
@@ -21,8 +22,5 @@
   },
   "devDependencies": {
     "prettier": "^2.2.1"
-  },
-  "resolutions": {
-    "babel-jest": "^24.9.0"
   }
 }

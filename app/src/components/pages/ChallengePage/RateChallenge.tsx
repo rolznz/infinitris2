@@ -2,12 +2,7 @@ import FlexBox from '@/components/ui/FlexBox';
 import LoginDialog from '@/components/ui/modals/LoginDialog';
 import useAuthStore from '@/state/AuthStore';
 import { Typography } from '@material-ui/core';
-import {
-  Document,
-  revalidateDocument,
-  set,
-  useDocument,
-} from '@nandorojo/swr-firestore';
+import { Document, revalidateDocument, set, useDocument } from 'swr-firestore';
 import {
   getChallengePath,
   getRatingPath,

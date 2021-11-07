@@ -5,7 +5,7 @@ import { lightTheme, darkTheme } from './theme';
 
 import Internationalization from './internationalization/Internationalization';
 
-import { FuegoProvider } from '@nandorojo/swr-firestore';
+import { FuegoProvider } from 'swr-firestore';
 import { fuego } from './firebase';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -34,7 +34,7 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
       <FuegoProvider fuego={fuego}>
         <Internationalization>
           <ThemeProvider theme={appTheme}>
-            <FlexBox className="App" height="100%">
+            <FlexBox className="App">
               {children}
               <Toasts />
             </FlexBox>

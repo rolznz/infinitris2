@@ -89,7 +89,9 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
         height="100%"
         width="100%"
         style={{
-          position: 'absolute',
+          position: 'fixed',
+          top: 0,
+          left: 0,
           opacity: hasFinished ? 0 : 1,
           transition: hasFinished ? 'opacity 1s' : '',
           pointerEvents: hasFinished ? 'none' : 'all',

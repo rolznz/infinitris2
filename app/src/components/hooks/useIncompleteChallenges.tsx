@@ -1,4 +1,4 @@
-import { useCollection } from '@nandorojo/swr-firestore';
+import { useCollection } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 //import { useUser } from '../../state/UserStore';
 
@@ -16,8 +16,7 @@ export default function useIncompleteChallenges() {
   //const user = useUser();
   const incompleteChallenges =
     officialChallenges?.filter(
-      (challenge) =>
-        challenge.isMandatory /* &&
+      (challenge) => challenge.isMandatory /* &&
         user.completedChallengeIds.indexOf(challenge.id) < 0*/
     ) || [];
   return { incompleteChallenges, isLoadingOfficialChallenges };

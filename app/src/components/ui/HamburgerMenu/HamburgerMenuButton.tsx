@@ -13,7 +13,7 @@ import { firstTimeAnimationDelaySeconds } from '@/components/pages/HomePage/Home
 
 const useStyles = makeStyles({
   button: {
-    position: 'absolute',
+    position: 'fixed',
     top: 0,
     right: 0,
     pointerEvents: 'none',

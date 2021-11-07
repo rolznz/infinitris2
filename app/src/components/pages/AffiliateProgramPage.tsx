@@ -11,7 +11,7 @@ import {
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import { useDocument } from '@nandorojo/swr-firestore';
+import { useDocument } from 'swr-firestore';
 import { getAffiliatePath, IAffiliate } from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';

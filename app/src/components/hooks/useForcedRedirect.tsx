@@ -1,4 +1,4 @@
-import { useDocument } from '@nandorojo/swr-firestore';
+import { useDocument } from 'swr-firestore';
 import { getChallengePath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 import { useEffect } from 'react';

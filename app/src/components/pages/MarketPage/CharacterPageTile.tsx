@@ -12,7 +12,7 @@ import {
 import FlexBox from '../../ui/FlexBox';
 import { useIntl } from 'react-intl';
 import { ICharacter, charactersPath } from 'infinitris2-models';
-import { useCollection, Document } from '@nandorojo/swr-firestore';
+import { useCollection, Document } from 'swr-firestore';
 import { Page } from '../../ui/Page';
 import { borderColor, boxShadows, gold, grey, white, zIndexes } from '@/theme';
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';

@@ -11,7 +11,7 @@ import {
 import FlexBox from '../../ui/FlexBox';
 import { useIntl } from 'react-intl';
 import { ICharacter, charactersPath } from 'infinitris2-models';
-import { useCollection, Document } from '@nandorojo/swr-firestore';
+import { useCollection, Document } from 'swr-firestore';
 import { Page } from '../../ui/Page';
 import { borderColor, boxShadows, grey, white, zIndexes } from '@/theme';
 
@@ -22,21 +22,20 @@ import { CharacterCoinStatChip } from '../Characters/CharacterStatChip';
 
 type CharacterTileProps = {
   character: Document<ICharacter>;
+  size: number;
 };
-export function CharacterTile({ character }: CharacterTileProps) {
-  const isMobile = useMediaQuery('(max-width:600px)');
-  const contentPortion = 0.8;
-  const size = (isMobile ? 150 : 300) * contentPortion;
+export const characterTileContentPortion = 0.8;
+function _CharacterTile({ character, size }: CharacterTileProps) {
   return (
     <FlexBox
       width={size}
-      height={size * (1 / contentPortion)}
+      height={size * (1 / characterTileContentPortion)}
       style={{ position: 'relative' }}
     >
       <FlexBox
         position="absolute"
-        width={size * contentPortion}
-        height={size * contentPortion}
+        width={size * characterTileContentPortion}
+        height={size * characterTileContentPortion}
       >
         <Link
           component={RouterLink}
@@ -52,3 +51,9 @@ export function CharacterTile({ character }: CharacterTileProps) {
     </FlexBox>
   );
 }
+
+export const CharacterTile = React.memo(
+  _CharacterTile,
+  (prevProps, nextProps) =>
+    prevProps?.character?.id === nextProps?.character?.id
+);

@@ -17,7 +17,7 @@ import ChallengeResultsView from './ChallengeResultsView';
 import ChallengeFailedView from './ChallengeFailedView';
 import { useUserStore } from '../../../state/UserStore';
 import useSearchParam from 'react-use/lib/useSearchParam';
-import { useDocument } from '@nandorojo/swr-firestore';
+import { useDocument } from 'swr-firestore';
 import { IPlayer } from 'infinitris2-models';
 
 interface ChallengePageRouteParams {
@@ -65,12 +65,8 @@ export default function ChallengePage() {
 
   const [checkChallengeStatus, setCheckChallengeStatus] = useState(false);
 
-  const {
-    preferredInputMethod,
-    controls,
-    hasSeenAllSet,
-    readOnly,
-  } = userStore.user;
+  const { preferredInputMethod, controls, hasSeenAllSet, readOnly } =
+    userStore.user;
   const playerInfo: IPlayer = {
     color: 0xff0000, // FIXME: use player's color
     nickname: readOnly.nickname || 'New Player',

@@ -1,4 +1,4 @@
-import { useCollection } from '@nandorojo/swr-firestore';
+import { useCollection } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 

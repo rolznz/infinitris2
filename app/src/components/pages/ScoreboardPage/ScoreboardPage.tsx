@@ -4,7 +4,7 @@ import { Box, Card, Typography } from '@material-ui/core';
 import FlexBox from '../../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { IScoreboardEntry, scoreboardEntriesPath } from 'infinitris2-models';
-import { useCollection } from '@nandorojo/swr-firestore';
+import { useCollection } from 'swr-firestore';
 import { Page } from '../../ui/Page';
 import { ScoreboardCard } from './ScoreboardCard';
 

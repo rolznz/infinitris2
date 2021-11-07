@@ -1,5 +1,5 @@
 import { Card, Typography } from '@material-ui/core';
-import { Document, useCollection } from '@nandorojo/swr-firestore';
+import { Document, useCollection } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';

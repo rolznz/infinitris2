@@ -18,7 +18,7 @@ import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import { v4 as uuidv4 } from 'uuid';
 import localStorageKeys from '../../../utils/localStorageKeys';
-import { revalidateDocument, set, useDocument } from '@nandorojo/swr-firestore';
+import { revalidateDocument, set, useDocument } from 'swr-firestore';
 import useAuthStore from '../../../state/AuthStore';
 import prettyStringify from '../../../utils/prettyStringify';
 import stableStringify from '../../../utils/stableStringify';

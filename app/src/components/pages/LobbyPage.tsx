@@ -8,7 +8,7 @@ import useHomeStore from '../../state/HomeStore';
 import RoomCard from '../RoomCard';
 import Routes from '../../models/Routes';
 import { FormattedMessage } from 'react-intl';
-import { useCollection } from '@nandorojo/swr-firestore';
+import { useCollection } from 'swr-firestore';
 
 export default function LobbyPage() {
   const { data: rooms } = useCollection<IRoom>(roomsPath);

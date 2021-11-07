@@ -11,6 +11,7 @@ module.exports = override(
     },
   ]),
   addWebpackAlias({
+    ['react']: path.resolve(__dirname, 'node_modules', 'react'),
     ['@']: path.resolve(__dirname, 'src'),
     ['@components']: path.resolve(__dirname, 'src', 'components'),
     ['@images']: path.resolve(__dirname, 'src', 'images'),

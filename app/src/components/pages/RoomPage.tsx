@@ -15,7 +15,7 @@ import {
 import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser } from '../../state/UserStore';
 import LoadingSpinner from '../LoadingSpinner';
-import { useDocument } from '@nandorojo/swr-firestore';
+import { useDocument } from 'swr-firestore';
 import useComingSoonRedirect from '../hooks/useComingSoonRedirect';
 
 interface RoomPageRouteParams {
@@ -39,17 +39,14 @@ export default function RoomPage() {
   useComingSoonRedirect();
   const appStore = useAppStore();
   const client = appStore.clientApi;
-  const [
-    connected,
-    setConnected,
-    disconnected,
-    setDisconnected,
-  ] = useRoomStore((store) => [
-    store.connected,
-    store.setConnected,
-    store.disconnected,
-    store.setDisconnected,
-  ]);
+  const [connected, setConnected, disconnected, setDisconnected] = useRoomStore(
+    (store) => [
+      store.connected,
+      store.setConnected,
+      store.disconnected,
+      store.setDisconnected,
+    ]
+  );
   const setIsDemo = appStore.setIsDemo;
   const { id } = useParams<RoomPageRouteParams>();
 

@@ -128,7 +128,7 @@ function RouterContents() {
         <Route exact path={Routes.allSet}>
           <AllSetPage />
         </Route>
-        <Route exact path={Routes.market}>
+        <Route exact path={Routes.market} key="market">
           <MarketPage />
         </Route>
         <Route exact path={`${Routes.market}/:id`}>

@@ -18,9 +18,13 @@ export default function MarketPage() {
     window.scrollTo(0, 0);
   });
 
+  console.log('CHARACTER: ', character?.ref?.path);
+
   return (
     <Page
-      title={character ? `#${character?.id} ${character?.name}` : undefined}
+      title={
+        character ? `#${character?.id} ${character?.data()?.name}` : undefined
+      }
     >
       {character && <LargeCharacterTile character={character} />}
       <FlexBox

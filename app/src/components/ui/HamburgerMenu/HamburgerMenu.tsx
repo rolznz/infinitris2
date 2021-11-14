@@ -60,7 +60,7 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
   const appStore = useAppStore();
   const userId = useAuthStore().user?.uid;
   const signOut = useUserStore((userStore) => userStore.signOut);
-  const { donations, monthDonationSum } = useDonations();
+  const { donations, monthDonationSum } = useDonations(isOpen);
 
   const classes = useStyles();
 

@@ -5,8 +5,6 @@ import { lightTheme, darkTheme } from './theme';
 
 import Internationalization from './internationalization/Internationalization';
 
-import { FuegoProvider } from 'swr-firestore';
-import { fuego } from './firebase';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import useDarkMode from './components/hooks/useDarkMode';
@@ -31,16 +29,14 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
   return (
     <>
       <CssBaseline />
-      <FuegoProvider fuego={fuego}>
-        <Internationalization>
-          <ThemeProvider theme={appTheme}>
-            <FlexBox className="App">
-              {children}
-              <Toasts />
-            </FlexBox>
-          </ThemeProvider>
-        </Internationalization>
-      </FuegoProvider>
+      <Internationalization>
+        <ThemeProvider theme={appTheme}>
+          <FlexBox className="App">
+            {children}
+            <Toasts />
+          </FlexBox>
+        </ThemeProvider>
+      </Internationalization>
     </>
   );
 }

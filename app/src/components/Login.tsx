@@ -1,5 +1,6 @@
 import useAuthStore from '@/state/AuthStore';
-import firebase from 'firebase';
+// TODO: remove compat library
+import firebase from 'firebase/compat';
 import React, { useState } from 'react';
 
 import {
@@ -10,7 +11,6 @@ import {
   Typography,
 } from '@material-ui/core';
 import { FormattedMessage } from 'react-intl';
-import SocialLogo from 'social-logos';
 import FlexBox from './ui/FlexBox';
 import LoadingSpinner from './LoadingSpinner';
 import localStorageKeys from '@/utils/localStorageKeys';

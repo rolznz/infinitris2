@@ -1,27 +1,17 @@
 import React from 'react';
-import {
-  Box,
-  Card,
-  Link,
-  SvgIcon,
-  Typography,
-  useMediaQuery,
-} from '@material-ui/core';
+import { Link } from '@material-ui/core';
 
 import FlexBox from '../../ui/FlexBox';
-import { useIntl } from 'react-intl';
-import { ICharacter, charactersPath } from 'infinitris2-models';
-import { useCollection, Document } from 'swr-firestore';
-import { Page } from '../../ui/Page';
-import { borderColor, boxShadows, grey, white, zIndexes } from '@/theme';
+import { ICharacter } from 'infinitris2-models';
 
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { CharacterCoinStatChip } from '../Characters/CharacterStatChip';
+import { DocumentSnapshot } from 'firebase/firestore';
 
 type CharacterTileProps = {
-  character: Document<ICharacter>;
+  character: DocumentSnapshot<ICharacter>;
   size: number;
 };
 export const characterTileContentPortion = 0.8;
@@ -46,7 +36,7 @@ function _CharacterTile({ character, size }: CharacterTileProps) {
       </FlexBox>
       <CharacterImage characterId={character.id} width={size * 1.2} />
       <FlexBox mt={-size * 0.02} mb={size * 0.02}>
-        <CharacterCoinStatChip value={character.price} />
+        <CharacterCoinStatChip value={character.data()!.price} />
       </FlexBox>
     </FlexBox>
   );

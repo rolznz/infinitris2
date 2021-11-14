@@ -3,55 +3,45 @@ import React from 'react';
 import FlexBox from '../../ui/FlexBox';
 import { useIntl } from 'react-intl';
 import { ICharacter, charactersPath } from 'infinitris2-models';
-import { useCollection, Document } from 'swr-firestore';
+import { useCollection } from 'swr-firestore';
 import { Page } from '../../ui/Page';
-import {
-  CharacterTile,
-  characterTileContentPortion,
-} from './MarketPageCharacterTile';
+import { CharacterTile } from './MarketPageCharacterTile';
 import marketImage from './assets/market.png';
 import { useInView } from 'react-intersection-observer';
-import { Button, useMediaQuery } from '@material-ui/core';
+import { useMediaQuery } from '@material-ui/core';
+import {
+  limit,
+  orderBy,
+  QueryDocumentSnapshot,
+  startAfter,
+} from 'firebase/firestore';
 
-let cachedCharacters: Document<ICharacter>[] = [];
-let lastCharacter = undefined;
+let cachedCharacters: QueryDocumentSnapshot<ICharacter>[] = [];
 
 function _MarketPage() {
   const intl = useIntl();
-  const [loadMore, setLoadMore] = React.useState(true);
-  const [startsAt, setStartsAt] = React.useState(0);
+  const [loadMore, setLoadMore] = React.useState(cachedCharacters.length === 0);
   const isMobile = useMediaQuery('(max-width:600px)');
   const columns = isMobile ? 3 : 5;
-  const limit = columns * 2;
-  const { data: characters } = useCollection<ICharacter>(charactersPath, {
-    orderBy: 'price',
-    startAt: startsAt, //cachedCharacters.length + 1,
-    limit,
-  });
-  lastCharacter = characters?.[0].id;
-
-  console.log(
-    'startAt is now',
-    characters,
-    lastCharacter,
-    'loadMore',
-    loadMore
+  const fetchLimit = columns * 4;
+  const lastCharacter = cachedCharacters[cachedCharacters.length - 1];
+  const { data: characters } = useCollection<ICharacter>(
+    loadMore ? charactersPath : null,
+    orderBy('price'),
+    ...(lastCharacter ? [startAfter(lastCharacter)] : []),
+    limit(fetchLimit)
   );
 
-  const [loadedCharacters, setLoadedCharacters] =
-    React.useState<Document<ICharacter>[]>(cachedCharacters);
   React.useEffect(() => {
     if (characters?.length) {
-      cachedCharacters = loadedCharacters.concat(characters);
-      setLoadedCharacters(cachedCharacters);
+      cachedCharacters = cachedCharacters.concat(characters);
+      console.log('Loaded', cachedCharacters.length, 'characters');
       setLoadMore(false);
     }
-  }, [characters, loadedCharacters, setLoadedCharacters]);
+  }, [characters]);
 
   const gridGap = 5;
   const size = window.innerWidth / columns - gridGap * columns;
-
-  console.log('Characters: ', loadedCharacters);
 
   return (
     <Page
@@ -70,28 +60,26 @@ function _MarketPage() {
             maxHeight: '50vh',
             objectFit: 'contain',
           }}
+          alt=""
         />
       }
     >
       <FlexBox flexDirection="row" flexWrap="wrap" mt={0} gridGap={gridGap}>
-        {loadedCharacters.map((character, index) => (
+        {cachedCharacters.map((character, index) => (
           <Intersection
             key={character.id}
             width={size}
             height={size + gridGap * 4}
             onInView={() => {
-              if (index > loadedCharacters.length - columns) {
-                console.log('In view, load more: ' + index);
+              if (index > cachedCharacters.length - columns * 2) {
                 setLoadMore(true);
               }
             }}
           >
-            <p>{index}</p>
             <CharacterTile character={character} size={size} />
           </Intersection>
         ))}
       </FlexBox>
-      <Button onClick={() => setStartsAt((s) => s + limit)}>Load more</Button>
     </Page>
   );
 }
@@ -111,7 +99,7 @@ const _Intersection = ({
     if (inView) {
       onInView();
     }
-  }, [inView]);
+  }, [inView, onInView]);
 
   return (
     <div ref={ref} style={{ width, height, overflow: 'hidden' }}>

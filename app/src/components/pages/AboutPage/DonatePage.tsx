@@ -15,9 +15,7 @@ import { useTheme } from '@material-ui/core/styles';
 import { white } from '@/theme';
 import { toast } from 'react-toastify';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
-import { useCollection } from 'swr-firestore';
-import { Donation, Timestamp } from 'infinitris2-models';
-import firebase from 'firebase';
+import { Timestamp } from 'infinitris2-models';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';
 
 const useStyles = makeStyles((theme) => ({}));
@@ -115,9 +113,9 @@ export default function AboutPage() {
           {donations.map((donation) => (
             <FlexBox key={donation.id}>
               <Typography variant="body1">
-                {getTime(donation.createdTimestamp)} -{' '}
-                <strong>{donation.amount} sats</strong> -{' '}
-                {donation.comment || 'No comment'}
+                {getTime(donation.data()!.createdTimestamp)} -{' '}
+                <strong>{donation.data()!.amount} sats</strong> -{' '}
+                {donation.data()!.comment || 'No comment'}
               </Typography>
             </FlexBox>
           ))}

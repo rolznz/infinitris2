@@ -9,10 +9,11 @@ import {
   AppTheme,
 } from 'infinitris2-models';
 import { StateSelector } from 'zustand';
-import { fuego } from '../firebase';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
 import useLocalUserStore from './LocalUserStore';
+// TODO: remove compat library
+import firebase from 'firebase/compat/app';
 
 export function useUser(): IUser {
   const localUser = useLocalUserStore((store) => store.user);
@@ -72,7 +73,7 @@ export function useUserStore<StateSlice>(
     store.signOutLocalUser,
   ]);
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
-  const { data: fireStoreUserDoc, update: updateFirestoreDoc } =
+  const { data: fireStoreUserDoc /*, update: updateFirestoreDoc*/ } =
     useDocument<IUser>(authStoreUserId ? getUserPath(authStoreUserId) : null);
 
   const updateUser = (
@@ -81,8 +82,8 @@ export function useUserStore<StateSlice>(
   ) => {
     if (fireStoreUserDoc && updateSyncedUser) {
       // NB: when updating this list, also update firestore rules
-
-      updateFirestoreDoc(getUpdatableUserProperties(changes));
+      // FIXME: update user
+      //updateFirestoreDoc(getUpdatableUserProperties(changes));
     }
     updateLocalUser(removeUndefinedValues(changes));
   };
@@ -142,7 +143,7 @@ export function useUserStore<StateSlice>(
     },
     signOut: () => {
       signoutLocalUser();
-      fuego.auth().signOut();
+      firebase.auth().signOut();
       useAuthStore.getState().setUser(undefined);
     },
     setAppTheme: (appTheme: AppTheme) => {

@@ -11,7 +11,7 @@
     "babel-plugin-react-intl": "^8.2.22",
     "customize-cra": "^1.0.0",
     "deep-object-diff": "^1.1.0",
-    "firebase": "^8.6.7",
+    "firebase": "^9.4.1",
     "howler": "^2.2.3",
     "infinitris2-models": "^0.1",
     "json-stable-stringify": "^1.0.1",

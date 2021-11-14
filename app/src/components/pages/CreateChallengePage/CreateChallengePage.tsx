@@ -1,4 +1,4 @@
-import { Box, Button, Link, TextField, Typography } from '@material-ui/core';
+/*import { Box, Button, Link, TextField, Typography } from '@material-ui/core';
 import {
   ChallengeCellType,
   CreatableChallenge,
@@ -18,7 +18,7 @@ import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import { v4 as uuidv4 } from 'uuid';
 import localStorageKeys from '../../../utils/localStorageKeys';
-import { revalidateDocument, set, useDocument } from 'swr-firestore';
+import { useDocument } from 'swr-firestore';
 import useAuthStore from '../../../state/AuthStore';
 import prettyStringify from '../../../utils/prettyStringify';
 import stableStringify from '../../../utils/stableStringify';
@@ -481,4 +481,10 @@ export function CreateChallengePage() {
       )}
     </FlexBox>
   );
+}*/
+
+import React from 'react';
+
+export function CreateChallengePage() {
+  return <p>TODO</p>;
 }

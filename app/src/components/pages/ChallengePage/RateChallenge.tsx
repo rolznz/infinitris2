@@ -2,7 +2,7 @@ import FlexBox from '@/components/ui/FlexBox';
 import LoginDialog from '@/components/ui/modals/LoginDialog';
 import useAuthStore from '@/state/AuthStore';
 import { Typography } from '@material-ui/core';
-import { Document, revalidateDocument, set, useDocument } from 'swr-firestore';
+import { useDocument } from 'swr-firestore';
 import {
   getChallengePath,
   getRatingPath,
@@ -46,15 +46,16 @@ async function addRating(
     })
   );
   try {
-    await set(ratingPath, newRating);
-    await revalidateDocument(ratingPath); // TODO: why is this needed in order for the local cache to be updated?
+    // FIXME: save rating
+    //await set(ratingPath, newRating);
+    //await revalidateDocument(ratingPath); // TODO: why is this needed in order for the local cache to be updated?
     // wait for the firebase onCreateRating function to run
     await new Promise((resolve) => setTimeout(resolve, 3000));
-    await revalidateDocument(getChallengePath(challengeId));
+    //await revalidateDocument(getChallengePath(challengeId));
     console.log('Vote sent');
   } catch (e) {
     console.error(e);
-    alert(`Failed to vote\n${e.message}`);
+    alert(`Failed to vote`);
   }
 }
 
@@ -76,8 +77,8 @@ export default function RateChallenge({
     : null;
   const { data: userRating } = useDocument<IRating>(ratingPath);
 
-  const numRatings = challenge?.readOnly?.numRatings || 0;
-  const totalRating = challenge?.readOnly?.rating || 0;
+  const numRatings = challenge?.data()?.readOnly?.numRatings || 0;
+  const totalRating = challenge?.data()?.readOnly?.rating || 0;
   async function onStarClick(value: number) {
     if (userId && ratingPath) {
       addRating(value, userId, ratingPath, challengeId, intl, userRating);
@@ -118,7 +119,7 @@ export default function RateChallenge({
           name="challenge-score"
           editing={true}
           starCount={5}
-          value={userRating?.exists ? userRating.value : hoverRating}
+          value={userRating?.data()?.value ?? hoverRating}
           onStarClick={onStarClick}
           onStarHover={(value) => setHoverRating(value)}
           onStarHoverOut={() => setHoverRating(0)}

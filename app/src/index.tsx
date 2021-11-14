@@ -1,9 +1,9 @@
+import './firebase/index';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import './firebase/index';
 import Loader from './components/ui/Loader';
 import PageRouter from './PageRouter';
 

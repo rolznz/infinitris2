@@ -14,11 +14,6 @@ export default function MarketPage() {
   const { id } = useParams<{ id: string }>();
   const { data: character } = useDocument<ICharacter>(getCharacterPath(id));
   const user = useUser();
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-  });
-
-  console.log('CHARACTER: ', character?.ref?.path);
 
   return (
     <Page

@@ -20,7 +20,6 @@ import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
 import { ReactComponent as AboutIcon } from '@/icons/about.svg';
 import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { ReactComponent as LogoutIcon } from '@/icons/logout.svg';
-import { ReactComponent as DonateIcon } from '@/icons/donate.svg';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 import useAppStore from '@/state/AppStore';
 import { FormattedMessage } from 'react-intl';

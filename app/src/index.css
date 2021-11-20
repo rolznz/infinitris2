@@ -20,3 +20,7 @@ body > canvas {
     opacity: 1;
   }
 }*/
+
+.MuiPaper-root::before {
+  display: none !important;
+}

@@ -9,7 +9,8 @@ import { CharacterStatList } from '../Characters/CharacterStatList';
 import { PlacingStar } from '../Characters/PlacingStar';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
-import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
+import { ReactComponent as MarketIcon } from '@/icons/market.svg';
+import { FilledIcon } from '@/components/ui/FilledIcon';
 
 export function ProfilePageCharacterCard() {
   const isSmallScreen = useMediaQuery(`(max-width:600px)`);
@@ -29,15 +30,15 @@ export function ProfilePageCharacterCard() {
     >
       <FlexBox position="absolute" top={0} right={0}>
         <Link component={RouterLink} underline="none" to={Routes.market}>
-          <SvgIcon
+          <FilledIcon
             style={{
               width: '50px',
               height: '50px',
               transform: 'translate(50%, -50%)',
             }}
           >
-            <CoinIcon />
-          </SvgIcon>
+            <MarketIcon />
+          </FilledIcon>
         </Link>
       </FlexBox>
       <FlexBox position="relative">

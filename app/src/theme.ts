@@ -78,6 +78,35 @@ const coreThemeOptions: ThemeOptions = {
   },
   zIndex: zIndexes as any,
   overrides: {
+    MuiPaper: {
+      root: {
+        boxShadow: 'none !important',
+      },
+    },
+    MuiAccordion: {
+      root: {
+        width: '100%',
+      },
+    },
+    MuiAccordionSummary: {
+      root: {
+        backgroundColor: borderColor,
+        boxShadow: boxShadows.small,
+        marginLeft: 10,
+        marginRight: 10,
+        borderRadius: borderRadiuses.xl,
+        marginTop: 4,
+        marginBottom: 4,
+        border: 'none',
+        //maxWidth: 200,
+        '&::before': {
+          background: 'yellow',
+        },
+      },
+      content: {
+        alignItems: 'center',
+      },
+    },
     MuiSvgIcon: {
       colorPrimary: {
         color: white,

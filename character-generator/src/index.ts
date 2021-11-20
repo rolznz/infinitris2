@@ -54,6 +54,7 @@ async function generateCharacters() {
     // TODO: JSON export character
 
     const character = {
+      id: i,
       name,
       ...createCharacterResult,
     };

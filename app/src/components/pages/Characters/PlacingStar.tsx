@@ -14,7 +14,7 @@ const getScoreColor = (n?: number) =>
     : n === 1
     ? '#FAA81A'
     : n === 2
-    ? '#CCCBCB'
+    ? '#B4B4B4'
     : n === 3
     ? '#D28E57'
     : '#DE5E5E';

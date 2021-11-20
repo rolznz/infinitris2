@@ -5,9 +5,10 @@ import FlexBox from '@/components/ui/FlexBox';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { PlacingStar } from '../Characters/PlacingStar';
 import { CharacterStatList } from '../Characters/CharacterStatList';
+import { DocumentSnapshot } from 'firebase/firestore';
 
 export type ScoreboardCardProps = {
-  entry: IScoreboardEntry;
+  entry: DocumentSnapshot<IScoreboardEntry>;
   placing: number;
 };
 
@@ -19,7 +20,7 @@ export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
   return (
     <FlexBox mb={8} mx={-2.5}>
       <Typography variant="h4" align="center">
-        {entry.nickname}
+        {entry.data()!.nickname}
       </Typography>
       <FlexBox position="relative" mt={-1}>
         <PlacingStar placing={placing} offset={starOffset} />
@@ -27,8 +28,8 @@ export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
       </FlexBox>
       <FlexBox mt={-3}>
         <CharacterStatList
-          networkImpact={entry.networkImpact}
-          coins={entry.coins}
+          networkImpact={entry.data()!.networkImpact}
+          coins={entry.data()!.coins}
         />
       </FlexBox>
     </FlexBox>

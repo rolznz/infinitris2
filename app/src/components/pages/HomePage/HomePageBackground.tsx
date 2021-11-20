@@ -39,7 +39,16 @@ const _HomePageBackground = () => {
   const isLoaded = useLoaderStore((loaderStore) => loaderStore.hasFinished);
 
   return (
-    <FlexBox flex={1}>
+    <FlexBox
+      flex={1}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        width: '100vw',
+        height: '100vh',
+      }}
+    >
       <HomePageBackgroundImage
         src={
           isLandscape

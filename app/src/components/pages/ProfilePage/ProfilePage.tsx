@@ -16,12 +16,12 @@ export default function ProfilePage() {
   const intl = useIntl();
   const [userStore, user] = useUserStore((store) => [store, store.user]);
   const userId = useAuthStore().user?.uid;
-  const { data: userChallenges } = useCollection<IChallenge>(
+  /*const { data: userChallenges } = useCollection<IChallenge>(
     userId ? challengesPath : null,
     {
       where: [['userId', '==', userId]],
     }
-  );
+  );*/
 
   function signOut() {
     userStore.signOut();

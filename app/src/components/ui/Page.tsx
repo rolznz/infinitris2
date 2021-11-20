@@ -25,7 +25,7 @@ export function Page({
     title: {},
     page: {
       flex: 1,
-      width: '100%',
+      width: '100vw',
       minHeight: '100vh',
       padding: theme.spacing(4),
       ...(props.paddingX !== undefined

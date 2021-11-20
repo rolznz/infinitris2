@@ -2,9 +2,23 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="50.451px" height="8.877px" viewBox="0 0 50.451 8.877" enable-background="new 0 0 50.451 8.877" xml:space="preserve">
-<path fill="#985627" d="M50.363,2.419c-0.814-1.549-5.633-2.68-7.142-2.366c-1.53,0.318-4.098,3.055-2.889,4.529
-	c1.252,1.526,5.656,0.84,7.162,0.395C48.519,4.673,50.944,3.525,50.363,2.419z"/>
-<path fill="#985627" d="M0.029,5.054C0.497,6.74,4.968,8.864,6.51,8.877c1.563,0.013,4.652-2.119,3.781-3.815
-	C9.39,3.305,4.941,3.044,3.374,3.161C2.308,3.24-0.305,3.849,0.029,5.054z"/>
+	 width="67.112px" height="22.137px" viewBox="0 0 67.112 22.137" enable-background="new 0 0 67.112 22.137" xml:space="preserve">
+<g>
+	
+		<image overflow="visible" opacity="0.2" width="49" height="38" xlink:href="64AF25CFD2220B2C.png"  transform="matrix(0.48 0 0 0.48 43.5916 0)">
+	</image>
+	<g>
+		<path fill="#985627" d="M60.861,8.635c-0.887-1.688-6.137-2.919-7.78-2.578c-1.667,0.346-4.464,3.327-3.147,4.933
+			c1.364,1.663,6.161,0.915,7.802,0.43C58.852,11.09,61.494,9.84,60.861,8.635z"/>
+	</g>
+</g>
+<g>
+	
+		<image overflow="visible" opacity="0.2" width="49" height="39" xlink:href="64AF25CFD2220B2D.png"  transform="matrix(0.48 0 0 0.48 0 3.4174)">
+	</image>
+	<g>
+		<path fill="#985627" d="M6.032,11.505c0.51,1.837,5.38,4.151,7.059,4.165c1.702,0.014,5.067-2.308,4.119-4.156
+			c-0.981-1.914-5.828-2.198-7.535-2.071C8.514,9.53,5.668,10.193,6.032,11.505z"/>
+	</g>
+</g>
 </svg>

@@ -3,7 +3,7 @@ import { readdirSync, readFileSync } from 'fs';
 
 const inputDir = '../character-generator/out';
 const patternsDir = `${inputDir}/patterns`;
-const charactersDirectory = `${inputDir}/characters`;
+const definitionsDirectory = `${inputDir}/definitions`;
 
 const uploadFile = (src: string, destination: string) =>
   getApp().storage().bucket('infinitris2-images').upload(src, {
@@ -15,8 +15,8 @@ const patternFilenames = readdirSync(patternsDir).filter((filename) =>
   filename.endsWith('.png')
 );
 
-const characterFilenames = readdirSync(charactersDirectory).filter((filename) =>
-  filename.endsWith('.json')
+const characterFilenames = readdirSync(definitionsDirectory).filter(
+  (filename) => filename.endsWith('.json')
 );
 
 for (const filename of patternFilenames) {
@@ -24,7 +24,7 @@ for (const filename of patternFilenames) {
 }
 for (const filename of characterFilenames) {
   const contents = JSON.parse(
-    readFileSync(`${charactersDirectory}/${filename}`).toString()
+    readFileSync(`${definitionsDirectory}/${filename}`).toString()
   );
   const id = parseInt(filename.substring(0, filename.indexOf('.')));
 

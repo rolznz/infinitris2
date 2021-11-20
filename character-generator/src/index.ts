@@ -1,17 +1,17 @@
 import random from 'random';
 import { clearDirectory } from './utils/clearDirectory';
 import {
-  charactersDirectory,
+  definitionsDirectory,
   facesDirectory,
   numCombinations,
   outputDirectory,
-  thumnailsDirectory,
   patternsDirectory,
   patternFilenames,
   getPath,
   patternSize,
+  charactersDirectory,
 } from './constants';
-import { generateCharacterImage } from './generateCharacterImage';
+import { generateCharacterImage as generateCharacterImages } from './generateCharacterImage';
 import { generateCharacterNames } from './generateCharacterNames';
 import fs from 'fs';
 import sharp from 'sharp';
@@ -20,8 +20,8 @@ const seedrandom = require('seedrandom');
 random.use(seedrandom('gen-1'));
 clearDirectory(outputDirectory);
 clearDirectory(facesDirectory);
-clearDirectory(thumnailsDirectory);
 clearDirectory(charactersDirectory);
+clearDirectory(definitionsDirectory);
 clearDirectory(patternsDirectory);
 
 console.log('Generating names');
@@ -47,9 +47,9 @@ if (names.length < numCombinations) {
 })();
 
 async function generateCharacters() {
-  for (let i = 0; i < numCombinations; i++) {
+  for (let i = 0; i < Math.min(numCombinations, 15); i++) {
     const name = names[i];
-    const createCharacterResult = await generateCharacterImage(random, i);
+    const createCharacterResult = await generateCharacterImages(random, i);
 
     // TODO: JSON export character
 
@@ -59,7 +59,7 @@ async function generateCharacters() {
       ...createCharacterResult,
     };
     fs.writeFileSync(
-      `${charactersDirectory}/${i}.json`,
+      `${definitionsDirectory}/${i}.json`,
       JSON.stringify(character)
     );
 

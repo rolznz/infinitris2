@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="65.113px" height="18.399px" viewBox="0 0 65.113 18.399" enable-background="new 0 0 65.113 18.399" xml:space="preserve">
+<g>
+	
+		<image overflow="visible" opacity="0.3" width="47" height="36" xlink:href="2CFD88C897F67B2F.png"  transform="matrix(0.48 0 0 0.48 42.5527 0)">
+	</image>
+	<g>
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="48.5527" y1="8.6028" x2="59.0596" y2="8.6028">
+			<stop  offset="0" style="stop-color:#7FC1C9"/>
+			<stop  offset="0.1376" style="stop-color:#75B1B7"/>
+			<stop  offset="0.5398" style="stop-color:#598E8E"/>
+			<stop  offset="0.8392" style="stop-color:#447B79"/>
+			<stop  offset="1" style="stop-color:#3C7573"/>
+		</linearGradient>
+		<path fill="url(#SVGID_1_)" d="M58.961,7.993c-0.903-1.718-4.682-2.239-6.356-1.891c-1.697,0.353-5.087,2.165-3.745,3.8
+			c1.389,1.693,5.248,1.422,6.919,0.927C56.916,10.494,59.606,9.22,58.961,7.993z"/>
+	</g>
+</g>
+<g>
+	
+		<image overflow="visible" opacity="0.3" width="49" height="36" xlink:href="2CFD88C897F67B2D.png"  transform="matrix(0.48 0 0 0.48 0 1.1195)">
+	</image>
+	<g>
+		<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="6" y1="9.6794" x2="17.0707" y2="9.6794">
+			<stop  offset="0" style="stop-color:#7FC1C9"/>
+			<stop  offset="0.1376" style="stop-color:#75B1B7"/>
+			<stop  offset="0.5398" style="stop-color:#598E8E"/>
+			<stop  offset="0.8392" style="stop-color:#447B79"/>
+			<stop  offset="1" style="stop-color:#3C7573"/>
+		</linearGradient>
+		<path fill="url(#SVGID_2_)" d="M6.028,9.402c0.519,1.868,3.948,2.824,5.656,2.838c1.731,0.014,6.217-1.083,5.253-2.962
+			c-0.998-1.946-4.963-2.261-6.699-2.132C9.056,7.233,5.658,8.067,6.028,9.402z"/>
+	</g>
+</g>
+</svg>

@@ -4,9 +4,9 @@ import { colors } from './colors';
 
 export const assetsDirectory = 'assets';
 export const outputDirectory = 'out';
-export const facesDirectory = 'out/faces';
-export const thumnailsDirectory = 'out/thumbnails';
 export const charactersDirectory = 'out/characters';
+export const facesDirectory = 'out/faces';
+export const definitionsDirectory = 'out/definitions';
 export const patternsDirectory = 'out/patterns';
 
 export const files = fs.readdirSync(assetsDirectory);
@@ -15,9 +15,10 @@ export const getPath = (filename: string) => `${assetsDirectory}/${filename}`;
 export const patternFilenames = files.filter((file) =>
   file.startsWith('pattern_')
 );
+export const earsFilenames = files.filter((file) => file.startsWith('ears_'));
 export const eyesFilenames = files.filter((file) => file.startsWith('eyes_'));
 export const mouthFilenames = files.filter((file) => file.startsWith('mouth_'));
-//export const noseFilenames = files.filter((file) => file.startsWith('nose_'));
+export const noseFilenames = files.filter((file) => file.startsWith('nose_'));
 export const headgearFilenames = files.filter((file) =>
   file.startsWith('headgear_')
 );
@@ -37,9 +38,13 @@ export const blockMask = sharp(getPath(maskFilename), sharpOptions);
 
 export const headgearStartY = 0.15;
 export const eyesRangeY = 0.1;
+export const noseRangeY = 0.4;
 export const paddingY = 0.17;
+export const noseStartY = 0.17;
+export const earsStartY = 0.3;
+export const earsRangeY = 0.3;
 export const availableY = outputSize * (1 - paddingY * 2);
-export const mouthRandomXMultiplier = 0.3;
+export const mouthRandomXMultiplier = 0.1;
 export const headgearRandomXMultiplier = 0.5;
 export const upsideDownChance = 0.025; // chance of flipping the character
 export const borderAdjustAmount = -20;

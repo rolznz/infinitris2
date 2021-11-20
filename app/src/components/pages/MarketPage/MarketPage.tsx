@@ -13,6 +13,7 @@ import {
 } from '@material-ui/core';
 import { MarketPageCharacterList } from './MarketPageCharacterList';
 import { ReactComponent as MarketIcon } from '@/icons/market.svg';
+import { ReactComponent as MyBlocksIcon } from '@/icons/my-blocks.svg';
 import { borderColor } from '@/theme';
 import { FilledIcon } from '@/components/ui/FilledIcon';
 
@@ -50,7 +51,7 @@ function _MarketPage() {
       >
         <AccordionSummary aria-controls="panel1d-content" id="panel1d-header">
           <FilledIcon>
-            <MarketIcon />
+            <MyBlocksIcon />
           </FilledIcon>
           <Typography>
             <FormattedMessage

@@ -17,6 +17,7 @@ type PageProps = {
 
 export function Page({
   showTitle = true,
+  background,
   ...props
 }: React.PropsWithChildren<PageProps>) {
   const isDarkMode = useDarkMode();

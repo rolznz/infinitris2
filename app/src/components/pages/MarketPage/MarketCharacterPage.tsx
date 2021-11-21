@@ -14,13 +14,34 @@ export default function MarketPage() {
   const { id } = useParams<{ id: string }>();
   const { data: character } = useDocument<ICharacter>(getCharacterPath(id));
   const user = useUser();
-
   return (
     <Page
+      style={{
+        background: `url(${process.env.REACT_APP_IMAGES_ROOT_URL}/habitats/${id}.svg)`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+      }}
       title={
         character ? `#${character?.id} ${character?.data()?.name}` : undefined
       }
     >
+      {character && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            right: 0,
+            width: '100vw',
+            height: '100vh',
+            background: `url(${
+              process.env.REACT_APP_IMAGES_ROOT_URL
+            }/patterns/${character.data()!.patternFilename})`,
+            backgroundRepeat: 'repeat',
+            opacity: 0.2,
+            pointerEvents: 'none',
+          }}
+        ></div>
+      )}
       {character && <LargeCharacterTile character={character} />}
       <FlexBox
         top={0}

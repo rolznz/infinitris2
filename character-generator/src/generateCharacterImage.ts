@@ -28,10 +28,18 @@ import {
   earsFilenames,
   earsStartY,
   earsRangeY,
+  habitatsDirectory,
 } from './constants';
 import { adjustColor } from './utils/adjustColor';
-import { colorizeSvg, colorizeSvg2 } from './utils/colorizeSvg';
+import {
+  colorizeSvg,
+  colorizeSvg2,
+  colorizeSvg3,
+  colorizeSvg5,
+} from './utils/colorizeSvg';
 import { loadImage } from './utils/loadImage';
+import { mergeSvgs } from './utils/mergeSvgs';
+import { rotateColor } from './utils/rotateColor';
 
 const pickRandomFilename = (random: Random, filenames: string[]) =>
   filenames[random.int(0, filenames.length - 1)];
@@ -57,6 +65,31 @@ export async function generateCharacterImage(
   // each color+pattern combo can only show once
   const color = colors[index % colors.length];
   const borderColor = adjustColor(color.hex, borderAdjustAmount);
+
+  const comp1 = rotateColor(color.hex, 200);
+  const comp1b = adjustColor(comp1, -10);
+  const comp1c = adjustColor(comp1, -20);
+
+  const comp2 = rotateColor(color.hex, 160);
+  const comp2b = adjustColor(comp2, -10);
+  const comp2c = adjustColor(comp2, -20);
+  const comp2d = adjustColor(comp2, -30);
+  const comp2e = adjustColor(comp2, -40);
+
+  const habitatBackgroundSvg = colorizeSvg3(
+    getPath('habitat_background.svg'),
+    comp1,
+    comp1b,
+    comp1c
+  ).toString();
+  const habitatGroundSvg = colorizeSvg5(
+    getPath('habitat_ground.svg'),
+    comp2,
+    comp2b,
+    comp2c,
+    comp2d,
+    comp2e
+  ).toString();
 
   let price = 0;
   const maskDimensions = await blockMask.metadata();
@@ -149,6 +182,7 @@ export async function generateCharacterImage(
     .toBuffer();
 
   const blockFilename = `${charactersDirectory}/${index}.png`;
+  const habitatFilename = `${habitatsDirectory}/${index}.svg`;
   const thumbnailFilename = `${charactersDirectory}/${index}_thumbnail.png`;
   const faceFilename = `${facesDirectory}/${index}.png`;
 
@@ -216,6 +250,12 @@ export async function generateCharacterImage(
 
   // generate thumbnail
   await sharp(blockFilename).resize(thumbnailSize).toFile(thumbnailFilename);
+
+  // generate habitat
+  fs.writeFileSync(
+    habitatFilename,
+    mergeSvgs(habitatBackgroundSvg, habitatGroundSvg)
+  );
 
   return {
     price,

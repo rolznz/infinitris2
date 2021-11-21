@@ -8,12 +8,13 @@ type CharacterImageProps = {
 export function CharacterImage({ characterId, width }: CharacterImageProps) {
   return (
     <img
-      src={`${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/faces/${characterId}.png`}
+      src={`${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/${characterId}.png`}
       style={{
         width: width + 'px',
         height: 'auto',
         maxWidth: '100%',
       }}
+      alt=""
     />
   );
 }

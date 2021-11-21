@@ -23,7 +23,7 @@ type LargeCharacterTileProps = {
 };
 export function LargeCharacterTile({ character }: LargeCharacterTileProps) {
   const windowSize = useWindowSize();
-  const size = Math.min(windowSize.width, windowSize.height, 512) - 100;
+  const size = Math.min(windowSize.width, windowSize.height, 612) - 100;
   const openDialog = useDialogStore((store) => store.open);
   const styles = useStyles();
   return (

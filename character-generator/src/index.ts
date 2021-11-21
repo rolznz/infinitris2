@@ -10,6 +10,7 @@ import {
   getPath,
   patternSize,
   charactersDirectory,
+  habitatsDirectory,
 } from './constants';
 import { generateCharacterImage as generateCharacterImages } from './generateCharacterImage';
 import { generateCharacterNames } from './generateCharacterNames';
@@ -23,6 +24,7 @@ clearDirectory(facesDirectory);
 clearDirectory(charactersDirectory);
 clearDirectory(definitionsDirectory);
 clearDirectory(patternsDirectory);
+clearDirectory(habitatsDirectory);
 
 console.log('Generating names');
 const names = generateCharacterNames(random);
@@ -47,7 +49,7 @@ if (names.length < numCombinations) {
 })();
 
 async function generateCharacters() {
-  for (let i = 0; i < Math.min(numCombinations, 15); i++) {
+  for (let i = 0; i < /*Math.min(numCombinations, 15)*/ numCombinations; i++) {
     const name = names[i];
     const createCharacterResult = await generateCharacterImages(random, i);
 

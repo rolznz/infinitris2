@@ -28,16 +28,22 @@ for (const filename of characterFilenames) {
   );
   const id = parseInt(filename.substring(0, filename.indexOf('.')));
 
-  console.log(contents);
+  // console.log(contents);
   getDb().doc(`characters/${id}`).set(contents);
 
   const imageFilename = `${id}.png`;
+  const thumbnailFilename = `${id}_thumbnail.png`;
+  const habitatFilename = `${id}.svg`;
   uploadFile(
-    `${inputDir}/faces/${imageFilename}`,
-    `characters/faces/${imageFilename}`
+    `${inputDir}/characters/${imageFilename}`,
+    `characters/${imageFilename}`
   );
   uploadFile(
-    `${inputDir}/thumbnails/${imageFilename}`,
-    `characters/thumbnails/${imageFilename}`
+    `${inputDir}/characters/${thumbnailFilename}`,
+    `characters/${thumbnailFilename}`
+  );
+  uploadFile(
+    `${inputDir}/habitats/${habitatFilename}`,
+    `habitats/${habitatFilename}`
   );
 }

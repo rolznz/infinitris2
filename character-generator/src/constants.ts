@@ -5,6 +5,7 @@ import { colors } from './colors';
 export const assetsDirectory = 'assets';
 export const outputDirectory = 'out';
 export const charactersDirectory = 'out/characters';
+export const habitatsDirectory = 'out/habitats';
 export const facesDirectory = 'out/faces';
 export const definitionsDirectory = 'out/definitions';
 export const patternsDirectory = 'out/patterns';

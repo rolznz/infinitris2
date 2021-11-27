@@ -31,7 +31,7 @@
     "react-star-rating-component": "^1.4.1",
     "react-toastify": "^7.0.3",
     "react-use": "^15.3.4",
-    "swr-firestore": "^0.17.0",
+    "swr-firestore": "^1.0.0",
     "typescript": "^3.9.5",
     "uuid": "^8.3.2",
     "webpack": "4.44.2",

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Meta } from '@storybook/react';
-import AffiliateProgramPage from '@/components/pages/AffiliateProgramPage';
+import AffiliateProgramPage from '@/components/pages/AffiliateProgramPage/AffiliateProgramPage';
 
 export default {
   title: 'Pages',

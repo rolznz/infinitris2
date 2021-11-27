@@ -20,7 +20,7 @@ import { CreditsPage } from './components/pages/CreditsPage/CreditsPage';
 import { PrivacyPolicyPage } from './components/pages/PrivacyPolicyPage';
 import EarnCreditsPage from './components/pages/EarnCreditsPage';
 import ScoreboardPage from './components/pages/ScoreboardPage/ScoreboardPage';
-import AffiliateProgramPage from './components/pages/AffiliateProgramPage';
+import AffiliateProgramPage from './components/pages/AffiliateProgramPage/AffiliateProgramPage';
 import { ComingSoonPage } from './components/pages/ComingSoonPage';
 import { HomePageBackground } from './components/pages/HomePage/HomePageBackground';
 import HamburgerMenuButton from './components/ui/HamburgerMenu/HamburgerMenuButton';
@@ -69,9 +69,10 @@ export default function PageRouter() {
 
 function RouterContents() {
   const location = useLocation();
-  React.useEffect(() => {
+  // FIXME: only scroll to 0,0 on new page, not on back
+  /*React.useEffect(() => {
     window.scrollTo(0, 0);
-  }, [location]);
+  }, [location]);*/
   return (
     <>
       <DialogManager />

@@ -15,7 +15,7 @@ import useLocalUserStore from './LocalUserStore';
 // TODO: remove compat library
 import firebase from 'firebase/compat/app';
 
-export function useUser(): IUser {
+export function useUser(): IUser & { id?: string } {
   const localUser = useLocalUserStore((store) => store.user);
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
   const { data: user } = useDocument<IUser>(
@@ -23,7 +23,8 @@ export function useUser(): IUser {
   );
   return {
     ...localUser,
-    ...(user || {}),
+    id: user?.id,
+    ...(user?.data() || {}),
   };
 }
 

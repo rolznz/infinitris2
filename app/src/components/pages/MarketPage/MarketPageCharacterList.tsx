@@ -44,9 +44,15 @@ export function MarketPageCharacterList({
   // TODO: useCollection purchases for my-blocks
   const { data: characters } = useCollection<ICharacter>(
     loadMore ? charactersPath : null,
-    ...(filter === 'my-blocks' ? [where('id', 'in', [0])] : [orderBy('price')]),
-    ...(lastCharacter ? [startAfter(lastCharacter)] : []),
-    limit(fetchLimit)
+    {
+      constraints: [
+        ...(filter === 'my-blocks'
+          ? [where('id', 'in', [0])]
+          : [orderBy('price')]),
+        ...(lastCharacter ? [startAfter(lastCharacter)] : []),
+        limit(fetchLimit),
+      ],
+    }
   );
 
   React.useEffect(() => {

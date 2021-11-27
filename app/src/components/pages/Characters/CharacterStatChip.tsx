@@ -9,13 +9,14 @@ import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
 
 type CharacterStatProps = {
   value: number;
+  plus?: boolean;
 };
 
 type CharacterStatWithIconProps = CharacterStatProps & {
   icon: React.ReactNode;
 };
 
-function CharacterStatChip({ icon, value }: CharacterStatWithIconProps) {
+function CharacterStatChip({ icon, value, plus }: CharacterStatWithIconProps) {
   return (
     <FlexBox
       borderRadius={20}
@@ -31,6 +32,7 @@ function CharacterStatChip({ icon, value }: CharacterStatWithIconProps) {
         style={{ color: white, fontWeight: 700, marginTop: '3px' }}
       >
         {value || 0}
+        {plus && '+'}
       </Typography>
     </FlexBox>
   );

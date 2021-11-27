@@ -63,7 +63,7 @@ export const onCreateConversion = functions.firestore
       await updateNetworkImpact(affiliate.readOnly.userId, convertedUserId);
 
       // give the affiliate user additional coins based on number of conversions
-      const affiliateUserRef = getDb().doc(
+      /* const affiliateUserRef = getDb().doc(
         getUserPath(affiliate.readOnly.userId)
       );
       const updateAffiliateUser = objectToDotNotation<IUser>(
@@ -75,7 +75,7 @@ export const onCreateConversion = functions.firestore
         ['readOnly.coins']
       );
 
-      await affiliateUserRef.update(updateAffiliateUser);
+      await affiliateUserRef.update(updateAffiliateUser);*/
 
       // update the affiliate conversion count
       const updateAffiliate = objectToDotNotation<IAffiliate>(

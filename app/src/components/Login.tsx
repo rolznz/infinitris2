@@ -1,6 +1,4 @@
 import useAuthStore from '@/state/AuthStore';
-// TODO: remove compat library
-import firebase from 'firebase/compat';
 import React, { useState } from 'react';
 
 import {
@@ -21,9 +19,16 @@ import { ReactComponent as GoogleIcon } from '@/icons/google.svg';
 import { ReactComponent as FacebookIcon } from '@/icons/facebook.svg';
 import { ReactComponent as CrossIcon } from '@/icons/x.svg';
 import { RingIconButton } from './ui/RingIconButton';
+import {
+  AuthProvider,
+  FacebookAuthProvider,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from 'firebase/auth';
+import { auth } from '@/firebase';
 
-const googleProvider = new firebase.auth.GoogleAuthProvider();
-const facebookProvider = new firebase.auth.FacebookAuthProvider();
+const googleProvider = new GoogleAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
 
 export const loginTitleId = 'login-title';
 
@@ -48,10 +53,10 @@ export default function Login({
       raw: true,
     });
 
-  async function loginWithProvider(provider: firebase.auth.AuthProvider) {
+  async function loginWithProvider(provider: AuthProvider) {
     try {
       setIsLoading(true);
-      const result = await firebase.auth().signInWithPopup(provider);
+      const result = await signInWithPopup(auth, provider);
       if (result.user) {
         console.log('Authentication succeeded');
         //const userPath = getUserPath(result.user.uid);

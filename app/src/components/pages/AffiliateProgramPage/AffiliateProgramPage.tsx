@@ -2,8 +2,6 @@ import React from 'react';
 import {
   Box,
   Button,
-  Divider,
-  IconButton,
   makeStyles,
   SvgIcon,
   Typography,
@@ -13,26 +11,33 @@ import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useDocument } from 'swr-firestore';
 import { getAffiliatePath, IAffiliate } from 'infinitris2-models';
-import useAuthStore from '../../state/AuthStore';
+import useAuthStore from '../../../state/AuthStore';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import { toast } from 'react-toastify';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import { useUser } from '@/state/UserStore';
-import { Page } from '../ui/Page';
-import useDialogStore, { openLoginDialog } from '@/state/DialogStore';
+import { Page } from '../../ui/Page';
+import { openLoginDialog } from '@/state/DialogStore';
 import { appName } from '@/utils/constants';
-import FlexBox from '../ui/FlexBox';
+import FlexBox from '../../ui/FlexBox';
 import MailIcon from '@material-ui/icons/Mail';
 import { ReactComponent as FacebookIcon } from '@/icons/facebook2.svg';
 
 import { EmailShareButton, FacebookShareButton } from 'react-share';
-import { RingIconButton } from '../ui/RingIconButton';
+import { RingIconButton } from '../../ui/RingIconButton';
+import { borderColorLight, boxShadows } from '@/theme';
+import { CharacterImage } from '../Characters/CharacterImage';
+import { AffiliatePageCharacter } from './AffiliatePageCharacter';
+
+import friendImage from './assets/friend.png';
 
 const useStyles = makeStyles((theme) => ({
   shareButton: {
     display: 'flex',
   },
 }));
+
+const characterSize = 185;
 
 export default function AffiliateProgramPage() {
   const classes = useStyles();
@@ -47,6 +52,8 @@ export default function AffiliateProgramPage() {
   const { data: affiliateDoc } = useDocument<IAffiliate>(
     affiliateId ? getAffiliatePath(affiliateId) : null
   );
+
+  console.log('Affiliate doc: ', affiliateDoc, affiliateId, user);
 
   const affiliateLink = `${window.location.origin}${
     affiliateId ? `?ref=${affiliateId}` : ''
@@ -63,7 +70,7 @@ export default function AffiliateProgramPage() {
       <Typography align="center" variant="body1">
         {userId ? (
           <FormattedMessage
-            defaultMessage="Share {appName} with your friends and you will both earn rewards when they sign up."
+            defaultMessage="Share {appName} with your friends to earn coins when they sign up!"
             description="Affiliate Program page title - invite your friends logged in description"
             values={{ appName }}
           />
@@ -86,7 +93,7 @@ export default function AffiliateProgramPage() {
           </Button>
         </>
       )}
-      <Box mt={4} />
+      <Box mt={2} />
       {(!userId || affiliateDoc) && (
         <FlexBox flexDirection="row" flexWrap="wrap" gridGap={10}>
           <RingIconButton
@@ -132,42 +139,57 @@ export default function AffiliateProgramPage() {
           </RingIconButton>
         </FlexBox>
       )}
-      <Box mt={4} />
+      <Box mt={2} />
 
       {affiliateDoc && (
         <>
-          <Typography align="center" variant="h4">
-            <FormattedMessage
-              defaultMessage="Next Signup"
-              description="Affiliate Program Page - your next share"
+          <FlexBox
+            borderRadius={20}
+            paddingX={2}
+            paddingY={0.5}
+            gridGap={5}
+            flexDirection="row"
+            style={{
+              backgroundColor: borderColorLight,
+              boxShadow: boxShadows.small,
+            }}
+            mb={1}
+            mt={2}
+          >
+            <Typography align="center" variant="h4">
+              <FormattedMessage
+                defaultMessage="Next Signup"
+                description="Affiliate Program Page - your next share"
+              />
+            </Typography>
+          </FlexBox>
+          <FlexBox flexDirection="row" mt={2} mx={-20}>
+            <AffiliatePageCharacter
+              title={
+                <FormattedMessage
+                  defaultMessage="You"
+                  description="Affiliate Program Page - you header"
+                />
+              }
+              characterImage={
+                <CharacterImage characterId="0" width={characterSize} />
+              }
+              coins={1}
+              impact={1}
+              plus
             />
-          </Typography>
-          <FlexBox flexDirection="row" mt={2}>
-            <Typography align="center" variant="h6">
-              <FormattedMessage
-                defaultMessage="You: {referralRewardCredits}"
-                description="Affiliate Program Page - referral reward statistic"
-                values={{
-                  referralRewardCredits:
-                    (affiliateDoc.readOnly?.numConversions || 0) + 3,
-                  signupRewardCredits: 3,
-                }}
-              />
-            </Typography>
-            <Box mx={2} />
-            <Divider orientation="vertical" />
-            <Box mx={2} />
-            <Typography align="center" variant="h6">
-              <FormattedMessage
-                defaultMessage="Friend: {signupRewardCredits}"
-                description="Affiliate Program Page - referral reward statistic"
-                values={{
-                  referralRewardCredits:
-                    (affiliateDoc.readOnly?.numConversions || 0) + 3,
-                  signupRewardCredits: 3,
-                }}
-              />
-            </Typography>
+            <AffiliatePageCharacter
+              title={
+                <FormattedMessage
+                  defaultMessage="Friend"
+                  description="Affiliate Program Page - friend header"
+                />
+              }
+              characterImage={
+                <img src={friendImage} alt="friend" width={characterSize} />
+              }
+              coins={3}
+            />
           </FlexBox>
           <Box mt={4} />
           <Typography align="center" variant="caption">
@@ -175,14 +197,13 @@ export default function AffiliateProgramPage() {
               defaultMessage="So far {affiliateCount} friends have signed up"
               description="Affiliate Program Page - affiliate count statistic"
               values={{
-                affiliateCount: affiliateDoc?.readOnly.numConversions || 0,
+                affiliateCount:
+                  affiliateDoc.data()?.readOnly.numConversions || 0,
               }}
             />
           </Typography>
         </>
       )}
-
-      {/* TODO: OG images for sharing */}
     </Page>
   );
 }

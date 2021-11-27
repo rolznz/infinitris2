@@ -20,6 +20,7 @@ declare module '@material-ui/core/styles/createPalette' {
 }
 
 export const borderColor = 'rgba(249, 248, 247, 0.3)';
+export const borderColorLight = 'rgba(249, 248, 247, 0.1)';
 export const white = '#ECECED';
 export const grey = '#A0997D';
 export const gold = '#D37953';
@@ -41,6 +42,7 @@ export const borderRadiuses = {
   base: 16,
   lg: 20,
   xl: 32,
+  full: 1000,
 };
 
 const coreThemeOptions: ThemeOptions = {
@@ -92,9 +94,9 @@ const coreThemeOptions: ThemeOptions = {
       root: {
         backgroundColor: borderColor,
         boxShadow: boxShadows.small,
-        marginLeft: 10,
-        marginRight: 10,
-        borderRadius: borderRadiuses.xl,
+        marginLeft: 20,
+        marginRight: 20,
+        borderRadius: borderRadiuses.full,
         marginTop: 4,
         marginBottom: 4,
         border: 'none',

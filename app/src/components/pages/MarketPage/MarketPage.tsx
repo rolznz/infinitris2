@@ -53,7 +53,7 @@ function _MarketPage() {
           <FilledIcon>
             <MyBlocksIcon />
           </FilledIcon>
-          <Typography>
+          <Typography variant="h6">
             <FormattedMessage
               defaultMessage="My Blocks"
               description="Market Page - My blocks accordion header"
@@ -72,7 +72,7 @@ function _MarketPage() {
           <FilledIcon>
             <MarketIcon />
           </FilledIcon>
-          <Typography>
+          <Typography variant="h6">
             <FormattedMessage
               defaultMessage="Available Blocks"
               description="Market Page - Available blocks accordion header"

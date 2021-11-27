@@ -19,3 +19,4 @@ onAuthStateChanged(auth, (user) => {
 });
 
 export const storage = getStorage(app);
+export { auth };

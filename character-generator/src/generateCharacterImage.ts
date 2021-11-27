@@ -66,29 +66,21 @@ export async function generateCharacterImage(
   const color = colors[index % colors.length];
   const borderColor = adjustColor(color.hex, borderAdjustAmount);
 
-  const comp1 = rotateColor(color.hex, 200);
-  const comp1b = adjustColor(comp1, -10);
-  const comp1c = adjustColor(comp1, -20);
+  const comp1 = rotateColor(color.hex, 160);
+  const comp1b = rotateColor(color.hex, 130);
 
-  const comp2 = rotateColor(color.hex, 160);
-  const comp2b = adjustColor(comp2, -10);
-  const comp2c = adjustColor(comp2, -20);
-  const comp2d = adjustColor(comp2, -30);
-  const comp2e = adjustColor(comp2, -40);
+  const comp2 = rotateColor(color.hex, 200);
+  const comp2b = rotateColor(color.hex, 230);
 
-  const habitatBackgroundSvg = colorizeSvg3(
+  const habitatBackgroundSvg = colorizeSvg2(
     getPath('habitat_background.svg'),
     comp1,
-    comp1b,
-    comp1c
+    comp1b
   ).toString();
-  const habitatGroundSvg = colorizeSvg5(
+  const habitatGroundSvg = colorizeSvg2(
     getPath('habitat_ground.svg'),
     comp2,
-    comp2b,
-    comp2c,
-    comp2d,
-    comp2e
+    comp2b
   ).toString();
 
   let price = 0;

@@ -4,7 +4,7 @@ import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
   icon: {
-    backgroundColor: theme.palette.text.primary,
+    backgroundColor: '#E4E6E7', //theme.palette.text.primary,
     color: theme.palette.background.paper,
     borderRadius: '50%',
     padding: 4,

@@ -11,11 +11,11 @@ import {
 import { StateSelector } from 'zustand';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
-import useLocalUserStore from './LocalUserStore';
+import useLocalUserStore, { LocalUser } from './LocalUserStore';
 // TODO: remove compat library
 import firebase from 'firebase/compat/app';
 
-export function useUser(): IUser & { id?: string } {
+export function useUser(): (IUser | LocalUser) & { id?: string } {
   const localUser = useLocalUserStore((store) => store.user);
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
   const { data: user } = useDocument<IUser>(
@@ -98,7 +98,7 @@ export function useUserStore<StateSlice>(
       /*updateUser({
         nickname,
       });*/
-      // FIXME: request nickname or store local if logged out
+      updateLocalUser({ nickname });
     },
     setLocale: (locale: string) => {
       updateUser({ locale });

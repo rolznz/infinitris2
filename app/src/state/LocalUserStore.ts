@@ -9,7 +9,9 @@ const localStorageUser = localStorageValue
   ? (JSON.parse(localStorageValue) as IUser)
   : undefined;
 
-const defaultUser: IUser = {
+export type LocalUser = IUser & { nickname?: string };
+
+const defaultUser: LocalUser = {
   preferredInputMethod: isMobile() ? 'touch' : 'keyboard',
   hasSeenWelcome: false,
   hasSeenAllSet: false,
@@ -41,16 +43,16 @@ const initialUser = localStorageUser
   : defaultUser;
 
 type LocalUserStore = {
-  user: IUser;
-  updateLocalUser(changes: Partial<IUser>): void;
+  user: LocalUser;
+  updateLocalUser(changes: Partial<LocalUser>): void;
   signOutLocalUser(): void;
 };
 
 const useLocalUserStore = create<LocalUserStore>((set) => ({
   user: initialUser,
-  updateLocalUser: (changes: Partial<IUser>) =>
+  updateLocalUser: (changes: Partial<LocalUser>) =>
     set((current) => {
-      const user: IUser = { ...current.user, ...changes };
+      const user: LocalUser = { ...current.user, ...changes };
       localStorage.setItem(localStorageKeys.localUser, JSON.stringify(user));
       return { user };
     }),

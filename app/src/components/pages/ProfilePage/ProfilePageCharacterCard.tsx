@@ -1,6 +1,6 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { useUser, useUserStore } from '@/state/UserStore';
-import { borderRadiuses } from '@/theme';
+import { borderColor, borderColorLight, borderRadiuses } from '@/theme';
 import { Link, SvgIcon, TextField, useMediaQuery } from '@material-ui/core';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -11,6 +11,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { FilledIcon } from '@/components/ui/FilledIcon';
+import { LocalUser } from '@/state/LocalUserStore';
 
 export function ProfilePageCharacterCard() {
   const isSmallScreen = useMediaQuery(`(max-width:600px)`);
@@ -20,9 +21,9 @@ export function ProfilePageCharacterCard() {
   return (
     <FlexBox
       style={{
-        border: '4px solid rgba(255, 255, 255, 0.3)',
+        border: '4px solid rgba(255, 255, 255, 0.1)',
         boxShadow: '0px 4px 4px 2px rgba(0, 0, 0, 0.5)',
-        background: 'rgba(248, 248, 246, 0.3)',
+        background: 'rgba(248, 248, 246, 0.1)',
       }}
       borderRadius={borderRadiuses.base}
       py={5}
@@ -44,10 +45,13 @@ export function ProfilePageCharacterCard() {
       <FlexBox position="relative">
         <TextField
           placeholder={intl.formatMessage({
-            defaultMessage: 'Enter your nickname',
+            defaultMessage: 'nickname',
             description: 'Nickname textbox placeholder',
           })}
-          value={user.readOnly?.nickname || 'New Player'}
+          // TODO: nickname tick when matches
+          // TODO: add nickname to IUser
+          defaultValue={(user as LocalUser).nickname || user.readOnly?.nickname}
+          //value={user.readOnly?.nickname}
           onChange={(e) => userStore.setNickname(e.target.value)}
           inputProps={{ style: { textAlign: 'center', color: '#ffffff' } }}
           InputProps={{
@@ -55,7 +59,7 @@ export function ProfilePageCharacterCard() {
             disableUnderline: true,
             autoFocus: true,
             style: {
-              backgroundColor: '#a7d9f5',
+              backgroundColor: borderColorLight,
               borderRadius: 32,
               padding: 4,
               paddingLeft: 8,

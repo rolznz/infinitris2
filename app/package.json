@@ -29,6 +29,7 @@
     "react-scripts": "^4.0.3",
     "react-share": "^4.4.0",
     "react-star-rating-component": "^1.4.1",
+    "react-swipeable-views": "^0.14.0",
     "react-toastify": "^7.0.3",
     "react-use": "^15.3.4",
     "swr-firestore": "^1.0.0",
@@ -102,6 +103,7 @@
     "@types/react-loader-spinner": "^3.1.2",
     "@types/react-router-dom": "^5.1.6",
     "@types/react-star-rating-component": "^1.4.0",
+    "@types/react-swipeable-views": "^0.13.1",
     "@types/uuid": "^8.3.0"
   }
 }

@@ -23,10 +23,6 @@ export default function ProfilePage() {
     }
   );*/
 
-  function signOut() {
-    userStore.signOut();
-  }
-
   return (
     <Page
       title={intl.formatMessage({

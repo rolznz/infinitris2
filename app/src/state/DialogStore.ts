@@ -1,6 +1,6 @@
 import create from 'zustand';
 
-type DialogType = 'login';
+type DialogType = 'login' | 'coinInfo' | 'impactInfo';
 
 type DialogStore = {
   readonly dialogType?: DialogType;
@@ -18,3 +18,8 @@ const useDialogStore = create<DialogStore>((set) => ({
 export default useDialogStore;
 
 export const openLoginDialog = () => useDialogStore.getState().open('login');
+export const openCoinInfoDialog = () =>
+  useDialogStore.getState().open('coinInfo');
+export const openImpactInfoDialog = () =>
+  useDialogStore.getState().open('impactInfo');
+export const closeDialog = () => useDialogStore.getState().close();

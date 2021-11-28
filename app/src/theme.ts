@@ -83,6 +83,12 @@ const coreThemeOptions: ThemeOptions = {
     MuiPaper: {
       root: {
         boxShadow: 'none !important',
+        justifyContent: 'center !important',
+      },
+    },
+    MuiMobileStepper: {
+      root: {
+        background: 'none',
       },
     },
     MuiAccordion: {
@@ -92,7 +98,7 @@ const coreThemeOptions: ThemeOptions = {
     },
     MuiAccordionSummary: {
       root: {
-        backgroundColor: borderColor,
+        backgroundColor: borderColorLight,
         boxShadow: boxShadows.small,
         marginLeft: 20,
         marginRight: 20,
@@ -175,6 +181,9 @@ const coreThemeOptions: ThemeOptions = {
         border: `4px solid ${borderColor}`,
         boxShadow: 'none',
         backgroundClip: 'padding-box',
+      },
+      sizeLarge: {
+        fontSize: '20px',
       },
     },
     MuiFormControlLabel: {

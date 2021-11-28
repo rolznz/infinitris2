@@ -1,10 +1,11 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { borderColor, boxShadows, white } from '@/theme';
+import { boxShadows, white, zIndexes } from '@/theme';
 import { SvgIcon, Typography } from '@material-ui/core';
 import React from 'react';
 
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
 import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
+import { openCoinInfoDialog, openImpactInfoDialog } from '@/state/DialogStore';
 //import { ReactComponent as BadgeIcon } from '@/icons/badge.svg';
 
 type CharacterStatProps = {
@@ -12,11 +13,17 @@ type CharacterStatProps = {
   plus?: boolean;
 };
 
-type CharacterStatWithIconProps = CharacterStatProps & {
+type CharacterStatInternalProps = CharacterStatProps & {
   icon: React.ReactNode;
+  onClick(): void;
 };
 
-function CharacterStatChip({ icon, value, plus }: CharacterStatWithIconProps) {
+function CharacterStatChip({
+  icon,
+  value,
+  plus,
+  onClick,
+}: CharacterStatInternalProps) {
   return (
     <FlexBox
       borderRadius={20}
@@ -24,7 +31,13 @@ function CharacterStatChip({ icon, value, plus }: CharacterStatWithIconProps) {
       paddingY={0.5}
       gridGap={5}
       flexDirection="row"
-      style={{ backgroundColor: borderColor, boxShadow: boxShadows.small }}
+      style={{
+        backgroundColor: 'borderColor',
+        boxShadow: boxShadows.small,
+        cursor: 'pointer',
+        zIndex: zIndexes.above,
+      }}
+      onClick={onClick}
     >
       <SvgIcon>{icon}</SvgIcon>
       <Typography
@@ -39,9 +52,21 @@ function CharacterStatChip({ icon, value, plus }: CharacterStatWithIconProps) {
 }
 
 export function CharacterCoinStatChip(props: CharacterStatProps) {
-  return <CharacterStatChip icon={<CoinIcon />} {...props} />;
+  return (
+    <CharacterStatChip
+      icon={<CoinIcon />}
+      {...props}
+      onClick={openCoinInfoDialog}
+    />
+  );
 }
 
 export function CharacterImpactStatChip(props: CharacterStatProps) {
-  return <CharacterStatChip icon={<ImpactIcon />} {...props} />;
+  return (
+    <CharacterStatChip
+      icon={<ImpactIcon />}
+      {...props}
+      onClick={openImpactInfoDialog}
+    />
+  );
 }

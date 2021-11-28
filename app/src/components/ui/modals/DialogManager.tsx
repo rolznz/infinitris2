@@ -1,9 +1,8 @@
 import Login from '@/components/Login';
 import useDialogStore from '@/state/DialogStore';
-import isMobile from '@/utils/isMobile';
 import { Drawer } from '@material-ui/core';
 import React from 'react';
-import LoginDialog from './LoginDialog';
+import CoinInfo from './CoinInfo';
 
 export function DialogManager() {
   const [dialogType, close] = useDialogStore((dialogStore) => [
@@ -13,8 +12,10 @@ export function DialogManager() {
 
   return (
     <>
-      <Drawer anchor="bottom" open={dialogType === 'login'} onClose={close}>
-        <Login onClose={close} />
+      <Drawer anchor="bottom" open={!!dialogType} onClose={close}>
+        {dialogType === 'login' && <Login onClose={close} />}
+        {dialogType === 'coinInfo' && <CoinInfo onClose={close} />}
+        {dialogType === 'impactInfo' && <CoinInfo onClose={close} />}
       </Drawer>
     </>
   );

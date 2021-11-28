@@ -5,7 +5,7 @@
 	 width="21.749px" height="21.464px" viewBox="0 0 21.749 21.464" enable-background="new 0 0 21.749 21.464" xml:space="preserve">
 <g>
 	
-		<image overflow="visible" opacity="0.5" width="58" height="58" xlink:href="C9966E09FBE42483.png"  transform="matrix(0.48 0 0 0.48 -3 -3)">
+		<image overflow="visible" opacity="0.03" width="108" height="108" xlink:href="C9966E09FBE42483.png"  transform="matrix(0.48 0 0 0.48 -15 -15)">
 	</image>
 	<g>
 		<g>
@@ -918,4 +918,16 @@
 		</g>
 	</g>
 </g>
+<linearGradient id="SVGID_91_" gradientUnits="userSpaceOnUse" x1="7.0743" y1="10.7289" x2="14.5816" y2="10.7289">
+	<stop  offset="0" style="stop-color:#F3E23C"/>
+	<stop  offset="0.2508" style="stop-color:#EACD30"/>
+	<stop  offset="0.5194" style="stop-color:#E6C026"/>
+	<stop  offset="0.7745" style="stop-color:#E4B823"/>
+	<stop  offset="1" style="stop-color:#E4B623"/>
+</linearGradient>
+<ellipse fill="url(#SVGID_91_)" cx="10.828" cy="10.729" rx="3.754" ry="3.735"/>
+<path opacity="0.5" fill="#D1D6E1" d="M7.688,10.931c0.007,0.253,0.153,0.825,0.399,0.838c0.215,0.011,0.276-0.565,0.321-0.801
+	c0.044-0.233,0.21-0.679-0.001-0.898C8.24,9.897,7.676,10.51,7.688,10.931z"/>
+<path opacity="0.5" fill="#D1D6E1" d="M13.121,11.996c-0.181-0.117-0.306,0.141-0.373,0.237c-0.067,0.095-0.264,0.233-0.113,0.451
+	c0.119,0.172,0.675,0.155,0.719-0.062C13.38,12.492,13.328,12.129,13.121,11.996z"/>
 </svg>

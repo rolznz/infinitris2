@@ -5,11 +5,11 @@
 	 width="37.92px" height="23.52px" viewBox="0 0 37.92 23.52" enable-background="new 0 0 37.92 23.52" xml:space="preserve">
 <g>
 	
-		<image overflow="visible" opacity="0.3" width="79" height="49" xlink:href="66AFB5679498E2F.png"  transform="matrix(0.48 0 0 0.48 0 0)">
+		<image overflow="visible" opacity="0.2" width="79" height="49" xlink:href="66AFB5679498E2F.png"  transform="matrix(0.48 0 0 0.48 0 0)">
 	</image>
 	<g>
 		
-			<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="42.0338" y1="625.4292" x2="67.5085" y2="625.4292" gradientTransform="matrix(0.9817 -0.1906 0.1906 0.9817 -153.9828 -592.0557)">
+			<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="42.0521" y1="625.2385" x2="67.5268" y2="625.2385" gradientTransform="matrix(0.9817 -0.1906 0.1906 0.9817 -153.9644 -591.865)">
 			<stop  offset="0" style="stop-color:#001E1E"/>
 			<stop  offset="0.0297" style="stop-color:#001F1F"/>
 			<stop  offset="0.3777" style="stop-color:#002B2E"/>
@@ -23,35 +23,14 @@
 	</g>
 </g>
 <g>
-	
-		<image overflow="visible" opacity="0.3" width="37" height="35" xlink:href="66AFB5679498E2D.png"  transform="matrix(0.48 0 0 0.48 7.499 1.4208)">
-	</image>
-	<g>
-		<g>
-			<path fill="#D0E5F7" d="M15.868,12.107c-1.105-0.115-3.162-3.039-2.047-4.065c0.817-0.751,4.261-0.901,4.907,0.002
-				C19.608,9.276,16.973,12.221,15.868,12.107z"/>
-		</g>
-	</g>
+	<path fill="#D0E5F7" d="M15.868,12.107c-1.105-0.115-3.162-3.039-2.047-4.065c0.817-0.751,4.261-0.901,4.907,0.002
+		C19.608,9.276,16.973,12.221,15.868,12.107z"/>
 </g>
 <g>
-	
-		<image overflow="visible" opacity="0.3" width="38" height="36" xlink:href="66AFB5679498E33.png"  transform="matrix(0.48 0 0 0.48 12.618 0.4481)">
-	</image>
-	<g>
-		<g>
-			<path fill="#D0E5F7" d="M22.706,11.371c-1.217,0.321-4.75-1.794-3.979-3.328c0.565-1.124,4.367-2.053,5.413-1.354
-				C25.567,7.644,23.923,11.05,22.706,11.371z"/>
-		</g>
-	</g>
+	<path fill="#D0E5F7" d="M22.706,11.371c-1.217,0.321-4.75-1.794-3.979-3.328c0.565-1.124,4.367-2.053,5.413-1.354
+		C25.567,7.644,23.923,11.05,22.706,11.371z"/>
 </g>
-<g>
-	
-		<image overflow="visible" opacity="0.3" width="64" height="36" xlink:href="66AFB5679498E35.png"  transform="matrix(0.48 0 0 0.48 4.9578 6.11)">
-	</image>
-	<g>
-		<path fill="#C78593" d="M29.195,13.866c-1.341,1.089-4.24,2.172-5.816,2.615c-1.71,0.48-5.388,0.89-7.178,0.855
-			c-1.346-0.026-4.397-0.272-5.114-0.904c-0.861-0.76,2.795-1.723,3.898-2.186c1.846-0.775,5.792-1.67,7.762-2.059
-			C24.951,11.751,29.876,13.312,29.195,13.866z"/>
-	</g>
-</g>
+<path fill="#C78593" d="M29.195,13.866c-1.341,1.089-4.24,2.172-5.816,2.615c-1.71,0.48-5.388,0.89-7.178,0.855
+	c-1.346-0.026-4.397-0.272-5.114-0.904c-0.861-0.76,2.795-1.723,3.898-2.186c1.846-0.775,5.792-1.67,7.762-2.059
+	C24.951,11.751,29.876,13.312,29.195,13.866z"/>
 </svg>

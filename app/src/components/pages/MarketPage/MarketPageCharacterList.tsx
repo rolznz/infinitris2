@@ -76,7 +76,7 @@ export function MarketPageCharacterList({
         <Intersection
           key={character.id}
           width={size}
-          height={size + gridGap * 4}
+          height={size + gridGap * 10}
           onInView={() => {
             if (index > cachedCharacters[filter].length - columns * 2) {
               setLoadMore(true);

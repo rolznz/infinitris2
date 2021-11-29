@@ -49,7 +49,7 @@ if (names.length < numCombinations) {
 })();
 
 async function generateCharacters() {
-  for (let i = 0; i < Math.min(numCombinations, 23); i++) {
+  for (let i = 0; i < Math.min(numCombinations, 100); i++) {
     const name = names[i];
     const createCharacterResult = await generateCharacterImages(random, i);
 

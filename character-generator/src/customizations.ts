@@ -13,6 +13,7 @@ type Customization = {
   pushY?: number;
   x?: number;
   y?: number;
+  hasMouth?: boolean;
 };
 
 const customizations: { [filename: string]: Customization } = {
@@ -32,25 +33,25 @@ const customizations: { [filename: string]: Customization } = {
   'eyes_10.svg': { tier: 4 },
   'eyes_11.svg': { tier: 2 },
   'eyes_12.svg': { tier: 0 },
-  'eyes_13.svg': { tier: 4 },
+  'eyes_13.svg': { tier: 4, pushY: -0.1 },
   'eyes_14.svg': { tier: 2 },
   'eyes_15.svg': { tier: 4, y: -0.25 },
   'eyes_16.svg': { tier: 1 },
   'eyes_17.svg': { tier: 3 },
-  'eyes_18.svg': { tier: 1 },
-  'eyes_19.svg': { tier: 4 },
+  'eyes_18.svg': { tier: 1, pushY: -0.1 },
+  'eyes_19.svg': { tier: 4, y: -0.1 },
   'eyes_2.svg': { tier: 2 },
   'eyes_20.svg': { tier: 2 },
   'eyes_21.svg': { tier: 1 },
   'eyes_22.svg': { tier: 4 },
-  'eyes_23.svg': { tier: 2 },
+  'eyes_23.svg': { tier: 2, pushY: -0.1 },
   'eyes_24.svg': { tier: 2, pushY: -0.1 },
   'eyes_3.svg': { tier: 1 },
   'eyes_4.svg': { tier: 3 },
-  'eyes_5.svg': { tier: 2, y: -0.1, pushY: -0.1 },
+  'eyes_5.svg': { tier: 2, y: -0.06, pushY: -0.1 },
   'eyes_6.svg': { tier: 1 },
   'eyes_7.svg': { tier: 2 },
-  'eyes_8.svg': { tier: 3 },
+  'eyes_8.svg': { tier: 3, hasMouth: false },
   'eyes_9.svg': { tier: 3 },
   'headgear_10.svg': { tier: 1 },
   'headgear_12.svg': { tier: 2, randomX: 0, randomY: 0 },
@@ -137,6 +138,9 @@ export function getOffsetY(filename: string): number | undefined {
 }
 export function getPushY(filename: string): number | undefined {
   return customizations[filename]?.pushY;
+}
+export function hasMouth(filename: string): boolean {
+  return customizations[filename]?.hasMouth ?? true;
 }
 
 export function getPrice(filename: string): number {

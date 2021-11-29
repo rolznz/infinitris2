@@ -43,6 +43,7 @@ import {
   getOffsetY,
   getPushY,
   getOffsetX,
+  hasMouth,
 } from './customizations';
 
 const pickRandomFilename = (random: Random, filenames: string[]) =>
@@ -120,10 +121,14 @@ export async function generateCharacterImage(
     index === 0
       ? mouthFilenames[0]
       : pickRandomFilename(random, mouthFilenames);
-  const mouth = await loadImage(getPath(mouthFilename), (image) =>
-    randomFlop(random, image)
-  );
-  price += getPrice(mouthFilename);
+  const mouth = hasMouth(eyesFilename)
+    ? await loadImage(getPath(mouthFilename), (image) =>
+        randomFlop(random, image)
+      )
+    : null;
+  if (mouth) {
+    price += getPrice(mouthFilename);
+  }
 
   const patternFilename = patternFilenames[Math.floor(index / colors.length)];
   price += getPrice(patternFilename);
@@ -138,10 +143,11 @@ export async function generateCharacterImage(
     image.resize(maskDimensions.width, maskDimensions.height)
   );
 
-  const mouthRandomX =
-    mouth.metadata.width! *
-    (random.next() - 0.5) *
-    (getRandomX(mouthFilename) ?? mouthRandomXMultiplier);
+  const mouthRandomX = mouth
+    ? mouth.metadata.width! *
+      (random.next() - 0.5) *
+      (getRandomX(mouthFilename) ?? mouthRandomXMultiplier)
+    : 0;
   const headgearRandomX = headgear
     ? (outputSize - headgear!.metadata.width!) *
       (random.next() - 0.5) *
@@ -175,7 +181,7 @@ export async function generateCharacterImage(
     Math.max(
       availableY * outputSize -
         eyes.metadata.height! -
-        mouth.metadata.height! -
+        (mouth?.metadata.height! || 0) -
         (headgear?.metadata?.height || 0),
       0
     );
@@ -196,11 +202,13 @@ export async function generateCharacterImage(
       0
     ) * random.next();
 
-  const mouthY =
-    eyesY +
-    eyes.metadata.height! +
-    mouthRandomY +
-    (getPushY(eyesFilename) ?? 0) * outputSize;
+  const mouthY = mouth
+    ? eyesY +
+      eyes.metadata.height! +
+      mouthRandomY +
+      (getPushY(eyesFilename) ?? 0) * outputSize +
+      (getOffsetY(mouthFilename) ?? 0) * outputSize
+    : 0;
 
   const patternComposite = await blockMask
     .composite([
@@ -238,11 +246,17 @@ export async function generateCharacterImage(
           },
         ]
       : []),
-    {
-      input: mouth.buffer,
-      top: Math.floor(mouthY),
-      left: Math.floor((outputSize - mouth.metadata.width!) / 2 + mouthRandomX),
-    },
+    ...(mouth
+      ? [
+          {
+            input: mouth.buffer,
+            top: Math.floor(mouthY),
+            left: Math.floor(
+              (outputSize - mouth.metadata.width!) / 2 + mouthRandomX
+            ),
+          },
+        ]
+      : []),
     {
       input: eyes.buffer,
       top: Math.floor(eyesY),

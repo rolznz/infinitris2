@@ -9,6 +9,7 @@ import Routes from '@/models/Routes';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { CharacterCoinStatChip } from '../Characters/CharacterStatChip';
 import { DocumentSnapshot } from 'firebase/firestore';
+import { zIndexes } from '@/theme';
 
 type CharacterTileProps = {
   character: DocumentSnapshot<ICharacter>;
@@ -26,6 +27,9 @@ function _CharacterTile({ character, size }: CharacterTileProps) {
         position="absolute"
         width={size * characterTileContentPortion}
         height={size * characterTileContentPortion}
+        style={{
+          zIndex: zIndexes.above,
+        }}
       >
         <Link
           component={RouterLink}
@@ -34,7 +38,11 @@ function _CharacterTile({ character, size }: CharacterTileProps) {
           style={{ width: '100%', height: '100%' }}
         ></Link>
       </FlexBox>
-      <CharacterImage characterId={character.id} width={size * 1.2} />
+      <CharacterImage
+        characterId={character.id}
+        width={size * 1.2}
+        thumbnail={character.data()!.thumbnail}
+      />
       <FlexBox mt={-size * 0.02} mb={size * 0.02}>
         <CharacterCoinStatChip value={character.data()!.price} />
       </FlexBox>

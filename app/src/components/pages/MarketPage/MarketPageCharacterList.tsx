@@ -47,7 +47,7 @@ export function MarketPageCharacterList({
     {
       constraints: [
         ...(filter === 'my-blocks'
-          ? [where('id', 'in', [0])]
+          ? [where('id', 'in', [0])] // TODO: my ids
           : [orderBy('price')]),
         ...(lastCharacter ? [startAfter(lastCharacter)] : []),
         limit(fetchLimit),
@@ -57,7 +57,11 @@ export function MarketPageCharacterList({
 
   React.useEffect(() => {
     if (characters?.length) {
-      cachedCharacters[filter] = cachedCharacters[filter].concat(characters);
+      cachedCharacters[filter] = cachedCharacters[filter].concat(
+        characters.filter(
+          (character) => filter === 'my-blocks' || character.id !== '0' // TODO: my ids
+        )
+      );
       console.log('Loaded', cachedCharacters[filter].length, 'characters');
       setLoadMore(false);
     }

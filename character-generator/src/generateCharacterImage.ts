@@ -44,6 +44,7 @@ import {
   getPushY,
   getOffsetX,
   hasMouth,
+  hasHeadgear,
 } from './customizations';
 
 const pickRandomFilename = (random: Random, filenames: string[]) =>
@@ -94,7 +95,7 @@ export async function generateCharacterImage(
 
   const maskDimensions = await blockMask.metadata();
   const earsFilename =
-    index === 0 && random.next() < earsChance
+    index !== 0 && random.next() < earsChance
       ? pickRandomFilename(random, earsFilenames)
       : null;
   const eyesFilename =
@@ -105,9 +106,12 @@ export async function generateCharacterImage(
         colorizeSvg2(getPath(earsFilename), color.hex, borderColor)
       )
     : null;
+  if (earsFilename) {
+    price += getPrice(earsFilename);
+  }
   const eyes = await loadImage(getPath(eyesFilename));
   const headgearFilename =
-    index > 0 && random.next() < headgearChance
+    index > 0 && hasHeadgear(eyesFilename) && random.next() < headgearChance
       ? pickRandomFilename(random, headgearFilenames)
       : null;
   price += headgearFilename ? getPrice(headgearFilename) : 0;

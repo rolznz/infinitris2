@@ -2,6 +2,7 @@ import React from 'react';
 
 type CharacterImageProps = {
   characterId: string;
+  thumbnail?: string;
   width: number;
 };
 
@@ -14,7 +15,11 @@ const imageStyle: React.CSSProperties = {
   left: 0,
 };
 
-export function CharacterImage({ characterId, width }: CharacterImageProps) {
+export function CharacterImage({
+  characterId,
+  width,
+  thumbnail,
+}: CharacterImageProps) {
   const [isLoaded, setLoaded] = React.useState(false);
   return (
     <div
@@ -26,7 +31,11 @@ export function CharacterImage({ characterId, width }: CharacterImageProps) {
     >
       {!isLoaded && (
         <img
-          src={`${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/${characterId}_thumbnail.png`}
+          src={
+            thumbnail
+              ? `data:image/png;base64,${thumbnail}`
+              : `${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/${characterId}_thumbnail.png`
+          }
           style={{ ...imageStyle, filter: 'blur(8px)' }}
           alt=""
         />

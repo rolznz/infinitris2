@@ -7,22 +7,35 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   makeStyles,
   SvgIcon,
+  Tab,
   Typography,
 } from '@material-ui/core';
-import { MarketPageCharacterList } from './MarketPageCharacterList';
+import {
+  MarketPageCharacterList,
+  MarketPageCharacterListFilter,
+} from './MarketPageCharacterList';
 import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { ReactComponent as MyBlocksIcon } from '@/icons/my-blocks.svg';
-import { borderColor } from '@/theme';
 import { FilledIcon } from '@/components/ui/FilledIcon';
+import { TabContext, TabList, TabPanel } from '@material-ui/lab';
+import FlexBox from '@/components/ui/FlexBox';
+
+// TODO: use zustand
+let lastSelectedTab: MarketPageCharacterListFilter = 'available-all';
 
 function _MarketPage() {
   const intl = useIntl();
 
+  const [availableBlocksTab, setAvailableBlocksTab] =
+    React.useState<MarketPageCharacterListFilter>(lastSelectedTab);
   const [myBlocksExpanded, setMyBlocksExpanded] = React.useState(true);
   const [availableBlocksExpanded, setAvailableBlocksExpanded] =
     React.useState(true);
+
+  console.log('Re-render market page');
 
   return (
     <Page
@@ -80,7 +93,38 @@ function _MarketPage() {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <MarketPageCharacterList filter="available" />
+          <TabContext value={availableBlocksTab}>
+            <FlexBox alignItems="flex-start">
+              <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+                <TabList
+                  onChange={(
+                    _event: React.SyntheticEvent,
+                    value: MarketPageCharacterListFilter
+                  ) => {
+                    setAvailableBlocksTab(value);
+                    lastSelectedTab = value;
+                  }}
+                  aria-label="lab API tabs example"
+                >
+                  <Tab label="All" value="available-all" />
+                  <Tab
+                    label="Cheap"
+                    value="available-free" /* TODO: Change back to Free */
+                  />
+                  <Tab label="Premium" value="available-premium" />
+                </TabList>
+              </Box>
+              <TabPanel value="available-all">
+                <MarketPageCharacterList filter="available-all" />
+              </TabPanel>
+              <TabPanel value="available-free">
+                <MarketPageCharacterList filter="available-free" />
+              </TabPanel>
+              <TabPanel value="available-premium">
+                <MarketPageCharacterList filter="available-premium" />
+              </TabPanel>
+            </FlexBox>
+          </TabContext>
         </AccordionDetails>
       </Accordion>
     </Page>

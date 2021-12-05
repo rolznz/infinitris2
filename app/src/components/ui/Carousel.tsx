@@ -1,27 +1,21 @@
-import {
-  Button,
-  makeStyles,
-  MobileStepper,
-  Paper,
-  Typography,
-  useTheme,
-} from '@material-ui/core';
-import { KeyboardArrowLeft, KeyboardArrowRight } from '@material-ui/icons';
+import { MobileStepper } from '@material-ui/core';
+import lodashMerge from 'lodash.merge';
 import React from 'react';
 import SwipeableViews from 'react-swipeable-views';
 
-type CarouselProps = {
-  pages: React.ReactNode[];
+type SwipeableViewsStyles = {
+  root: React.CSSProperties;
+  slideContainer: React.CSSProperties;
+  slide: React.CSSProperties;
 };
 
-const swipeableViewsStyles = {
-  root: {
-    padding: '0 50px',
-    maxWidth: '400px',
-  },
+const coreSwipeableViewsStyles: SwipeableViewsStyles = {
+  root: {},
   slideContainer: {
     padding: '0 0px',
     display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   slide: {
     padding: 15,
@@ -30,7 +24,26 @@ const swipeableViewsStyles = {
   },
 };
 
-export function Carousel({ pages }: React.PropsWithChildren<CarouselProps>) {
+export const narrowSwipeableViewsStyles: SwipeableViewsStyles = lodashMerge(
+  {},
+  coreSwipeableViewsStyles,
+  {
+    root: {
+      padding: '0 50px',
+      maxWidth: '400px',
+    },
+  }
+);
+
+type CarouselProps = {
+  pages: React.ReactNode[];
+  styles?: SwipeableViewsStyles;
+};
+
+export function Carousel({
+  pages,
+  styles = coreSwipeableViewsStyles,
+}: React.PropsWithChildren<CarouselProps>) {
   const [activeStep, setActiveStep] = React.useState(0);
 
   const handleStepChange = (step: number) => {
@@ -43,8 +56,8 @@ export function Carousel({ pages }: React.PropsWithChildren<CarouselProps>) {
         index={activeStep}
         onChangeIndex={handleStepChange}
         enableMouseEvents
-        style={swipeableViewsStyles.root}
-        slideStyle={swipeableViewsStyles.slideContainer}
+        style={styles.root}
+        slideStyle={styles.slideContainer}
       >
         {pages}
       </SwipeableViews>

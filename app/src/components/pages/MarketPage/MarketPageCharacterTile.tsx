@@ -16,27 +16,34 @@ type CharacterTileProps = {
   size: number;
 };
 export const characterTileContentPortion = 0.8;
+
+const linkStyle = { width: '100%', height: '100%' };
+
 function _CharacterTile({ character, size }: CharacterTileProps) {
+  console.log('Re-render character tile ' + character.id);
   return (
     <FlexBox
       width={size}
-      height={size * (1 / characterTileContentPortion)}
-      style={{ position: 'relative' }}
+      height={size * (1 / (characterTileContentPortion - 0.2))}
+      position="relative"
     >
       <FlexBox
         position="absolute"
         width={size * characterTileContentPortion}
         height={size * characterTileContentPortion}
-        style={{
+        zIndex={zIndexes.above}
+        /*style={{
           zIndex: zIndexes.above,
-        }}
+        }}*/
       >
         <Link
           component={RouterLink}
           underline="none"
           to={`${Routes.market}/${character.id}`}
-          style={{ width: '100%', height: '100%' }}
-        ></Link>
+          style={linkStyle}
+        >
+          <div style={linkStyle} />
+        </Link>
       </FlexBox>
       <CharacterImage
         characterId={character.id}

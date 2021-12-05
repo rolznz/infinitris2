@@ -30,6 +30,7 @@ export const boxShadows = {
 };
 
 export const zIndexes = {
+  below: -1,
   above: 1,
   hamburgerButton: 100,
   drawer: 950,

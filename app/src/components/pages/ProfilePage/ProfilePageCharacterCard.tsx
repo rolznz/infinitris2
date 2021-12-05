@@ -72,12 +72,12 @@ export function ProfilePageCharacterCard() {
           }}
         />
         <FlexBox mt={-2} position="relative">
+          <CharacterImage characterId="0" width={400} />
           <PlacingStar
             placing={undefined}
             offset={isSmallScreen ? 60 : 90}
             scale={1.7}
           />
-          <CharacterImage characterId="0" width={400} />
         </FlexBox>
         <FlexBox mt={-5}>
           <CharacterStatList

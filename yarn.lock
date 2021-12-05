@@ -6211,6 +6211,22 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/lodash.merge@npm:^4.6.6":
+  version: 4.6.6
+  resolution: "@types/lodash.merge@npm:4.6.6"
+  dependencies:
+    "@types/lodash": "*"
+  checksum: 62ec56f14b3077f7174497856e9b277db811943cd11b1d67d2a8e51a1803bd49319e8aaf62e745c696af972354a575dbb8a85d3aecf4ae774caf062dc31ac46e
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:*":
+  version: 4.14.177
+  resolution: "@types/lodash@npm:4.14.177"
+  checksum: 00f9eb300ed5219cfbabb3448d4a71744895edad60dcfda9f028c0808a50eb6ad1ca9f673b56a85f85668a4ea54b9870643625468a747039c435643e52253a75
+  languageName: node
+  linkType: hard
+
 "@types/lodash@npm:^4.14.104, @types/lodash@npm:^4.14.150":
   version: 4.14.176
   resolution: "@types/lodash@npm:4.14.176"
@@ -14459,6 +14475,7 @@ fsevents@^1.2.7:
     "@storybook/theming": ^6.3.10
     "@types/howler": ^2.2.3
     "@types/json-stable-stringify": ^1.0.32
+    "@types/lodash.merge": ^4.6.6
     "@types/node": ^12.0.0
     "@types/react": ^16.9.51
     "@types/react-dom": ^17.0.11
@@ -14476,6 +14493,7 @@ fsevents@^1.2.7:
     howler: ^2.2.3
     infinitris2-models: ^0.1
     json-stable-stringify: ^1.0.1
+    lodash.merge: ^4.6.2
     lottie-react: ^2.1.0
     react: ^17.0.2
     react-app-rewired: ^2.1.8

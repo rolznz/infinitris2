@@ -10,6 +10,7 @@ import {
 import { ICharacter, charactersPath } from 'infinitris2-models';
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
+import { useWindowSize } from 'react-use';
 import { useCollection } from 'swr-firestore';
 import { CharacterTile } from './MarketPageCharacterTile';
 
@@ -17,11 +18,17 @@ const cachedCharacters: Record<
   MarketPageCharacterListFilter,
   QueryDocumentSnapshot<ICharacter>[]
 > = {
-  available: [],
+  'available-all': [],
+  'available-free': [],
+  'available-premium': [],
   'my-blocks': [],
 };
 
-type MarketPageCharacterListFilter = 'available' | 'my-blocks';
+export type MarketPageCharacterListFilter =
+  | 'available-all'
+  | 'available-free'
+  | 'available-premium'
+  | 'my-blocks';
 
 type MarketPageCharacterListProps = {
   filter: MarketPageCharacterListFilter;
@@ -33,13 +40,13 @@ export function MarketPageCharacterList({
   const [loadMore, setLoadMore] = React.useState(
     cachedCharacters[filter].length === 0
   );
-  const isMobile = useMediaQuery('(max-width:600px)');
-  const columns = isMobile ? 3 : 5;
+  const windowWidth = useWindowSize().width;
+  const columns = Math.max(3, Math.min(8, Math.floor(windowWidth / 150)));
   const fetchLimit = columns * 4;
   const lastCharacter =
     cachedCharacters[filter][cachedCharacters[filter].length - 1];
-  const gridGap = 5;
-  const size = window.innerWidth / columns - gridGap * columns;
+  const gridGap = 0;
+  const size = window.innerWidth / (columns * (columns > 3 ? 1.2 : 1.1));
 
   // TODO: useCollection purchases for my-blocks
   const { data: characters } = useCollection<ICharacter>(
@@ -48,7 +55,13 @@ export function MarketPageCharacterList({
       constraints: [
         ...(filter === 'my-blocks'
           ? [where('id', 'in', [0])] // TODO: my ids
-          : [orderBy('price')]),
+          : [
+              ...(filter === 'available-free'
+                ? [where('price', '<', 50)]
+                : filter === 'available-premium'
+                ? [where('price', '>', 400)]
+                : [orderBy('price')]),
+            ]),
         ...(lastCharacter ? [startAfter(lastCharacter)] : []),
         limit(fetchLimit),
       ],
@@ -67,6 +80,15 @@ export function MarketPageCharacterList({
     }
   }, [characters, filter]);
 
+  const onCharacterInView = React.useCallback(
+    (index) => {
+      if (index > cachedCharacters[filter].length - columns * 2) {
+        setLoadMore(true);
+      }
+    },
+    [setLoadMore, columns, filter]
+  );
+
   return (
     <FlexBox
       width="100%"
@@ -75,17 +97,15 @@ export function MarketPageCharacterList({
       justifyContent="flex-start"
       mt={0}
       gridGap={gridGap}
+      minHeight={filter === 'my-blocks' ? '0' : '100vh'}
     >
       {cachedCharacters[filter].map((character, index) => (
         <Intersection
           key={character.id}
           width={size}
-          height={size + gridGap * 10}
-          onInView={() => {
-            if (index > cachedCharacters[filter].length - columns * 2) {
-              setLoadMore(true);
-            }
-          }}
+          height={size + 50 + size * 0.1}
+          index={index}
+          onInView={onCharacterInView}
         >
           <CharacterTile character={character} size={size} />
         </Intersection>
@@ -98,21 +118,28 @@ const _Intersection = ({
   children,
   width,
   height,
+  index,
   onInView,
 }: React.PropsWithChildren<{
   width: number;
   height: number;
-  onInView: () => void;
+  index: number;
+  onInView: (index: number) => void;
 }>) => {
   const { ref, inView } = useInView({ threshold: 0, rootMargin: '500px' });
   React.useEffect(() => {
     if (inView) {
-      onInView();
+      onInView(index);
     }
-  }, [inView, onInView]);
+  }, [inView, onInView, index]);
+
+  const style = React.useMemo(
+    () => ({ width, height, overflow: 'hidden' }),
+    [width, height]
+  );
 
   return (
-    <div ref={ref} style={{ width, height, overflow: 'hidden' }}>
+    <div ref={ref} style={style}>
       {inView && children}
     </div>
   );

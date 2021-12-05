@@ -13,6 +13,7 @@ type PageProps = {
   style?: CSSProperties;
   narrow?: boolean;
   paddingX?: number;
+  background?: React.ReactNode;
 };
 
 export function Page({
@@ -36,7 +37,9 @@ export function Page({
           }
         : {}),
       maxWidth: '100%',
-      ...(props.useGradient && false
+      ...(background
+        ? {}
+        : props.useGradient && false
         ? {
             background: isDarkMode
               ? 'linear-gradient(180deg, rgba(8,27,41,1) 0%, rgba(0,60,67,1) 35%, rgba(10,21,41,1) 100%)'
@@ -64,6 +67,7 @@ export function Page({
       justifyContent="flex-start"
       style={props.style}
     >
+      {background}
       {props.titleImage}
       {props.title && (
         <>

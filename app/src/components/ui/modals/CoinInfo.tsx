@@ -6,14 +6,12 @@ import { FormattedMessage } from 'react-intl';
 import { ReactComponent as CrossIcon } from '@/icons/x.svg';
 import FlexBox from '../FlexBox';
 import { RingIconButton } from '../RingIconButton';
-import { Carousel } from '../Carousel';
+import { Carousel, narrowSwipeableViewsStyles } from '../Carousel';
 import { borderColorLight, borderRadiuses, boxShadows } from '@/theme';
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import { closeDialog } from '@/state/DialogStore';
-import { ReactComponent as MarketIcon } from '@/icons/market.svg';
-import { FilledIcon } from '../FilledIcon';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 
 export interface CoinInfoProps {
@@ -132,7 +130,7 @@ export default function CoinInfo({ onClose }: CoinInfoProps) {
       <Box mt={4} />
       <FlexBox flexDirection="row" style={{ gap: '20px' }}></FlexBox>
       <Box mt={4} />
-      <Carousel pages={pages} />
+      <Carousel pages={pages} styles={narrowSwipeableViewsStyles} />
       <Box mt={2} />
       <RingIconButton padding="large" onClick={onClose}>
         <SvgIcon>

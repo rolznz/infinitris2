@@ -1,3 +1,4 @@
+import { Box } from '@material-ui/core';
 import React from 'react';
 
 type CharacterImageProps = {
@@ -13,22 +14,19 @@ const imageStyle: React.CSSProperties = {
   position: 'absolute',
   top: 0,
   left: 0,
+  pointerEvents: 'none',
 };
 
-export function CharacterImage({
+const placeholderImageStyle = { ...imageStyle, filter: 'blur(8px)' };
+
+function _CharacterImage({
   characterId,
   width,
   thumbnail,
 }: CharacterImageProps) {
   const [isLoaded, setLoaded] = React.useState(false);
   return (
-    <div
-      style={{
-        width: width + 'px',
-        height: width + 'px',
-        position: 'relative',
-      }}
-    >
+    <Box width={width + 'px'} height={width + 'px'} position="relative">
       {!isLoaded && (
         <img
           src={
@@ -36,7 +34,7 @@ export function CharacterImage({
               ? `data:image/png;base64,${thumbnail}`
               : `${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/${characterId}_thumbnail.png`
           }
-          style={{ ...imageStyle, filter: 'blur(8px)' }}
+          style={placeholderImageStyle}
           alt=""
         />
       )}
@@ -47,6 +45,13 @@ export function CharacterImage({
         alt=""
         onLoad={() => setLoaded(true)}
       />
-    </div>
+    </Box>
   );
 }
+
+export const CharacterImage = React.memo(
+  _CharacterImage,
+  (prevProps, nextProps) =>
+    prevProps.characterId === nextProps.characterId &&
+    prevProps.width === nextProps.width
+);

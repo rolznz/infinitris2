@@ -29,6 +29,7 @@ import {
   earsChance,
   headgearChance,
   noHeadgearStartY,
+  habitatPreview,
 } from './constants';
 import { adjustColor } from './utils/adjustColor';
 import { colorizeSvg, colorizeSvg2 } from './utils/colorizeSvg';
@@ -46,6 +47,8 @@ import {
   hasMouth,
   hasHeadgear,
 } from './customizations';
+import { hexToRgb } from './utils/hexToRgb';
+import { rgbToHex } from './utils/rgbToHex';
 
 const pickRandomFilename = (random: Random, filenames: string[]) =>
   filenames[random.int(0, filenames.length - 1)];
@@ -73,11 +76,63 @@ export async function generateCharacterImage(
   const color = colors[index % colors.length];
   const borderColor = adjustColor(color.hex, borderAdjustAmount);
 
-  const comp1 = rotateColor(color.hex, 160);
-  const comp1b = rotateColor(color.hex, 130);
+  let { r, g, b } = hexToRgb(color.hex);
 
-  const comp2 = rotateColor(color.hex, 200);
-  const comp2b = rotateColor(color.hex, 230);
+  // isShade approximation https://stackoverflow.com/a/34622484/4562693
+  const brightness = Math.min(r, g, b);
+  const darkness = Math.max(r, g, b);
+  const colorfulness = darkness - brightness;
+  const isShade = colorfulness < 20;
+  let habitatBaseColor = color.hex;
+  //console.log(color.hex, colorfulness, isShade, darkness, brightness);
+
+  if (!isShade && colorfulness < 150) {
+    const decreaseComponent = (c: number) =>
+      Math.max(c - (150 - colorfulness) * 3, 0);
+    // make habitat more colorful
+    if (r > g && r > b) {
+      habitatBaseColor = rgbToHex(
+        r,
+        decreaseComponent(g),
+        decreaseComponent(b)
+      );
+    } else if (g > r && g > b) {
+      habitatBaseColor = rgbToHex(
+        decreaseComponent(r),
+        g,
+        decreaseComponent(b)
+      );
+    } else {
+      habitatBaseColor = rgbToHex(
+        decreaseComponent(r),
+        decreaseComponent(g),
+        b
+      );
+    }
+    //console.log('Colorfied');
+  }
+
+  if (brightness > 200) {
+    habitatBaseColor = adjustColor(habitatBaseColor, -30);
+    //console.log('Darkened');
+  } else if (brightness < 50) {
+    habitatBaseColor = adjustColor(habitatBaseColor, 50);
+    //console.log('Brightened');
+  }
+
+  const comp1 = isShade
+    ? adjustColor(habitatBaseColor, -20)
+    : rotateColor(habitatBaseColor, 160);
+  const comp1b = isShade
+    ? adjustColor(habitatBaseColor, -50)
+    : rotateColor(habitatBaseColor, 130);
+
+  const comp2 = isShade
+    ? adjustColor(habitatBaseColor, 20)
+    : rotateColor(habitatBaseColor, 200);
+  const comp2b = isShade
+    ? adjustColor(habitatBaseColor, 50)
+    : rotateColor(habitatBaseColor, 230);
 
   const habitatBackgroundSvg = colorizeSvg2(
     getPath('habitat_background.svg'),
@@ -308,6 +363,24 @@ export async function generateCharacterImage(
     habitatFilename,
     mergeSvgs(habitatBackgroundSvg, habitatGroundSvg)
   );
+
+  if (habitatPreview) {
+    await sharp(habitatFilename).toFile(habitatFilename + '.png');
+    fs.rmSync(habitatFilename);
+
+    const habitatOrigin = colorizeSvg2(
+      getPath('habitat_background.svg'),
+      color.hex,
+      color.hex
+    ).toString();
+
+    const habitatOriginFilename = habitatFilename + '_o';
+    // generate habitat from
+    fs.writeFileSync(habitatOriginFilename, habitatOrigin);
+    // TODO: remove
+    await sharp(habitatOriginFilename).toFile(habitatOriginFilename + '.png');
+    fs.rmSync(habitatOriginFilename);
+  }
 
   return {
     price,

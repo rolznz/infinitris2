@@ -1,3 +1,6 @@
+import { hexToRgb } from './hexToRgb';
+import { rgbToHex } from './rgbToHex';
+
 // from https://stackoverflow.com/a/37657940/4562693
 /* rotateColor : Converts hex value to HSL, shifts
  * hue by a number of degrees and then converts hex, giving complimentary color
@@ -6,24 +9,7 @@
  * @return [String] : complimentary color as hex value
  */
 export function rotateColor(hex: string, shift: number) {
-  // Convert hex to rgb
-  // Credit to Denis http://stackoverflow.com/a/36253499/4939630
-  const rgbString =
-    'rgb(' +
-    (hex = hex.replace('#', ''))
-      .match(new RegExp('(.{' + hex.length / 3 + '})', 'g'))!
-      .map(function (l) {
-        return parseInt(hex.length % 2 ? l + l : l, 16);
-      })
-      .join(',') +
-    ')';
-
-  // Get array of RGB values
-  const rgb = rgbString.replace(/[^\d,]/g, '').split(',');
-
-  let r = parseInt(rgb[0]),
-    g = parseInt(rgb[1]),
-    b = parseInt(rgb[2]);
+  let { r, g, b } = hexToRgb(hex);
 
   // Convert RGB to HSL
   // Adapted from answer by 0x000f http://stackoverflow.com/a/34946092/4939630
@@ -93,7 +79,5 @@ export function rotateColor(hex: string, shift: number) {
   g = Math.round(g * 255);
   b = Math.round(b * 255);
 
-  // Convert r b and g values to hex
-  const newRgb = b | (g << 8) | (r << 16);
-  return '#' + (0x1000000 | newRgb).toString(16).substring(1);
+  return rgbToHex(r, g, b);
 }

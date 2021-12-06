@@ -50,3 +50,5 @@ export const borderAdjustAmount = -20;
 
 export const earsChance = 0.5;
 export const headgearChance = 0.2;
+
+export const habitatPreview = true;

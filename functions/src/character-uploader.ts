@@ -32,19 +32,19 @@ for (const filename of characterFilenames) {
   getDb().doc(`characters/${id}`).set(contents);
 
   const imageFilename = `${id}.png`;
-  //const thumbnailFilename = `${id}_thumbnail.png`;
-  //const habitatFilename = `${id}.svg`;
-  /*uploadFile(
+  const thumbnailFilename = `${id}_thumbnail.png`;
+  const habitatFilename = `${id}.svg`;
+  uploadFile(
     `${inputDir}/characters/${imageFilename}`,
     `characters/${imageFilename}`
   );
   uploadFile(
     `${inputDir}/characters/${thumbnailFilename}`,
     `characters/${thumbnailFilename}`
-  );*/
+  );
   uploadFile(`${inputDir}/faces/${imageFilename}`, `faces/${imageFilename}`);
-  /*uploadFile(
+  uploadFile(
     `${inputDir}/habitats/${habitatFilename}`,
     `habitats/${habitatFilename}`
-  );*/
+  );
 }

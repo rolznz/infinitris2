@@ -39,7 +39,7 @@ export const blockMask = sharp(getPath(maskFilename), sharpOptions);
 export const headgearStartY = 0.15;
 export const noHeadgearStartY = 0.25;
 export const eyesRangeY = 0.1;
-export const paddingY = 0.17;
+export const paddingY = 0.21;
 export const earsStartY = 0.3;
 export const earsRangeY = 0.3;
 export const availableY = 1 - paddingY * 2;
@@ -50,5 +50,6 @@ export const borderAdjustAmount = -20;
 
 export const earsChance = 0.5;
 export const headgearChance = 0.2;
+export const headgearRandomYMultiplier = 0.2;
 
-export const habitatPreview = true;
+export const habitatPreview = false;

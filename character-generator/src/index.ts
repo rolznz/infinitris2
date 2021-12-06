@@ -12,7 +12,7 @@ import {
   charactersDirectory,
   habitatsDirectory,
 } from './constants';
-import { generateCharacterImage as generateCharacterImages } from './generateCharacterImage';
+import { generateCharacterImage } from './generateCharacterImage';
 import { generateCharacterNames } from './generateCharacterNames';
 import fs from 'fs';
 import sharp from 'sharp';
@@ -51,7 +51,7 @@ if (names.length < numCombinations) {
 async function generateCharacters() {
   for (let i = 0; i < numCombinations; i++) {
     const name = names[i];
-    const createCharacterResult = await generateCharacterImages(random, i);
+    const createCharacterResult = await generateCharacterImage(random, i);
 
     // TODO: JSON export character
 

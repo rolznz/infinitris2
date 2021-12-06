@@ -30,6 +30,7 @@ import {
   headgearChance,
   noHeadgearStartY,
   habitatPreview,
+  headgearRandomYMultiplier,
 } from './constants';
 import { adjustColor } from './utils/adjustColor';
 import { colorizeSvg, colorizeSvg2 } from './utils/colorizeSvg';
@@ -46,12 +47,22 @@ import {
   getOffsetX,
   hasMouth,
   hasHeadgear,
+  getRarity,
 } from './customizations';
 import { hexToRgb } from './utils/hexToRgb';
 import { rgbToHex } from './utils/rgbToHex';
 
-const pickRandomFilename = (random: Random, filenames: string[]) =>
-  filenames[random.int(0, filenames.length - 1)];
+const pickRandomFilename = (random: Random, filenames: string[]) => {
+  while (true) {
+    const filename = filenames[random.int(0, filenames.length - 1)];
+    const rarity = getRarity(filename);
+
+    // minimum chance is 20%
+    if (random.next() > rarity * 0.8) {
+      return filename;
+    }
+  }
+};
 
 function randomFlop(random: Random, image: sharp.Sharp): sharp.Sharp {
   if (random.boolean()) {
@@ -84,30 +95,34 @@ export async function generateCharacterImage(
   const colorfulness = darkness - brightness;
   const isShade = colorfulness < 20;
   let habitatBaseColor = color.hex;
-  //console.log(color.hex, colorfulness, isShade, darkness, brightness);
+  //console.log(index, color.hex, colorfulness, isShade, darkness, brightness);
 
   if (!isShade && colorfulness < 150) {
     const decreaseComponent = (c: number) =>
-      Math.max(c - (150 - colorfulness) * 3, 0);
+      Math.max(c - (150 - colorfulness) * 4, 0);
+    const increaseComponent = (c: number) =>
+      Math.min(c + Math.floor((150 - colorfulness) * 2), 230);
     // make habitat more colorful
-    if (r > g && r > b) {
-      habitatBaseColor = rgbToHex(
-        r,
-        decreaseComponent(g),
-        decreaseComponent(b)
-      );
-    } else if (g > r && g > b) {
-      habitatBaseColor = rgbToHex(
-        decreaseComponent(r),
-        g,
-        decreaseComponent(b)
-      );
-    } else {
-      habitatBaseColor = rgbToHex(
-        decreaseComponent(r),
-        decreaseComponent(g),
-        b
-      );
+    for (let i = 0; i < 2; i++) {
+      if (r > g && r > b) {
+        habitatBaseColor = rgbToHex(
+          increaseComponent(r),
+          decreaseComponent(g),
+          decreaseComponent(b)
+        );
+      } else if (g > r && g > b) {
+        habitatBaseColor = rgbToHex(
+          decreaseComponent(r),
+          increaseComponent(g),
+          decreaseComponent(b)
+        );
+      } else {
+        habitatBaseColor = rgbToHex(
+          decreaseComponent(r),
+          decreaseComponent(g),
+          increaseComponent(b)
+        );
+      }
     }
     //console.log('Colorfied');
   }
@@ -121,14 +136,14 @@ export async function generateCharacterImage(
   }
 
   const comp1 = isShade
-    ? adjustColor(habitatBaseColor, -20)
+    ? adjustColor(habitatBaseColor, -30)
     : rotateColor(habitatBaseColor, 160);
   const comp1b = isShade
     ? adjustColor(habitatBaseColor, -50)
     : rotateColor(habitatBaseColor, 130);
 
   const comp2 = isShade
-    ? adjustColor(habitatBaseColor, 20)
+    ? adjustColor(habitatBaseColor, 30)
     : rotateColor(habitatBaseColor, 200);
   const comp2b = isShade
     ? adjustColor(habitatBaseColor, 50)
@@ -218,7 +233,7 @@ export async function generateCharacterImage(
     : 0;
   const headgearRandomY = headgear
     ? random.next() *
-      (getRandomY(headgearFilename!) ?? 0.2) *
+      (getRandomY(headgearFilename!) ?? headgearRandomYMultiplier) *
       (availableY * outputSize - headgear.metadata.height! * 4)
     : 0;
 
@@ -257,7 +272,11 @@ export async function generateCharacterImage(
 
   const mouthRandomY =
     Math.max(
-      (availableY - paddingY * 2) * outputSize - eyesY - eyes.metadata.height!,
+      (availableY - paddingY * 2) * outputSize -
+        eyesY -
+        eyes.metadata.height! -
+        (mouth?.metadata.height || 0) -
+        (headgear?.metadata.height || 0),
       0
     ) * random.next();
 

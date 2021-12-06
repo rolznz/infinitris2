@@ -29,7 +29,7 @@ import { borderColorLight, boxShadows } from '@/theme';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { AffiliatePageCharacter } from './AffiliatePageCharacter';
 
-import friendImage from './assets/friend.png';
+import friendImage from './assets/friend.svg';
 
 const useStyles = makeStyles((theme) => ({
   shareButton: {

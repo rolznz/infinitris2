@@ -97,7 +97,12 @@ const coreThemeOptions: ThemeOptions = {
         height: 12,
         marginLeft: 4,
         marginRight: 4,
-        border: `1px solid ${borderColorDark}`,
+        border: `1px solid #555555`,
+        backgroundColor: '#88888866',
+      },
+      dotActive: {
+        backgroundColor: '#FFFFFFAA',
+        boxShadow: boxShadows.small,
       },
     },
     MuiAccordion: {

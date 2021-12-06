@@ -1,3 +1,4 @@
+import { white } from '@/theme';
 import { appName } from '@/utils/constants';
 import { Box, makeStyles, Typography } from '@material-ui/core';
 import React, { CSSProperties } from 'react';
@@ -14,9 +15,11 @@ type PageProps = {
   narrow?: boolean;
   paddingX?: number;
   background?: React.ReactNode;
+  whiteTitle?: boolean;
 };
 
 export function Page({
+  whiteTitle,
   showTitle = true,
   background,
   ...props
@@ -24,7 +27,9 @@ export function Page({
   const isDarkMode = useDarkMode();
   // TODO: move out of component
   const useStyles = makeStyles((theme) => ({
-    title: {},
+    title: {
+      color: whiteTitle ? white : undefined,
+    },
     page: {
       flex: 1,
       width: '100vw',

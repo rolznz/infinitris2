@@ -23,8 +23,8 @@ export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
         {entry.data()!.nickname}
       </Typography>
       <FlexBox position="relative" mt={-1}>
-        <PlacingStar placing={placing} offset={starOffset} />
         <CharacterImage characterId={placing.toString()} width={width} />
+        <PlacingStar placing={placing} offset={starOffset} />
       </FlexBox>
       <FlexBox mt={-3}>
         <CharacterStatList

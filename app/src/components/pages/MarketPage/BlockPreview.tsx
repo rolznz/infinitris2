@@ -34,7 +34,7 @@ export function BlockPreview({ character }: BlockPreviewProps) {
             character.data()!.patternFilename
           })`,
           backgroundRepeat: 'repeat',
-          backgroundSize: 128,
+          backgroundSize: 256,
           pointerEvents: 'none',
           border: `${size * 0.1}px solid ${character.data()!.color + '88'}`,
           boxShadow: boxShadows.small,

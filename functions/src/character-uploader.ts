@@ -22,29 +22,42 @@ const characterFilenames = readdirSync(definitionsDirectory).filter(
 for (const filename of patternFilenames) {
   uploadFile(`${patternsDir}/${filename}`, `patterns/${filename}`);
 }
-for (const filename of characterFilenames) {
-  const contents = JSON.parse(
-    readFileSync(`${definitionsDirectory}/${filename}`).toString()
-  );
-  const id = parseInt(filename.substring(0, filename.indexOf('.')));
+(async () => {
+  for (const filename of characterFilenames) {
+    const promises: Promise<any>[] = [];
+    const contents = JSON.parse(
+      readFileSync(`${definitionsDirectory}/${filename}`).toString()
+    );
+    const id = parseInt(filename.substring(0, filename.indexOf('.')));
 
-  // console.log(contents);
-  getDb().doc(`characters/${id}`).set(contents);
+    // console.log(contents);
+    promises.push(getDb().doc(`characters/${id}`).set(contents));
 
-  const imageFilename = `${id}.png`;
-  const thumbnailFilename = `${id}_thumbnail.png`;
-  const habitatFilename = `${id}.svg`;
-  uploadFile(
-    `${inputDir}/characters/${imageFilename}`,
-    `characters/${imageFilename}`
-  );
-  uploadFile(
-    `${inputDir}/characters/${thumbnailFilename}`,
-    `characters/${thumbnailFilename}`
-  );
-  uploadFile(`${inputDir}/faces/${imageFilename}`, `faces/${imageFilename}`);
-  uploadFile(
-    `${inputDir}/habitats/${habitatFilename}`,
-    `habitats/${habitatFilename}`
-  );
-}
+    const imageFilename = `${id}.png`;
+    const thumbnailFilename = `${id}_thumbnail.png`;
+    const habitatFilename = `${id}.svg`;
+    promises.push(
+      uploadFile(
+        `${inputDir}/characters/${imageFilename}`,
+        `characters/${imageFilename}`
+      )
+    );
+    promises.push(
+      uploadFile(
+        `${inputDir}/characters/${thumbnailFilename}`,
+        `characters/${thumbnailFilename}`
+      )
+    );
+    promises.push(
+      uploadFile(`${inputDir}/faces/${imageFilename}`, `faces/${imageFilename}`)
+    );
+    promises.push(
+      uploadFile(
+        `${inputDir}/habitats/${habitatFilename}`,
+        `habitats/${habitatFilename}`
+      )
+    );
+    await Promise.all(promises);
+    process.stdout.write('.');
+  }
+})();

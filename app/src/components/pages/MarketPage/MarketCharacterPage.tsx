@@ -29,6 +29,7 @@ export default function MarketPage() {
       title={
         character ? `#${character?.id} ${character?.data()?.name}` : undefined
       }
+      whiteTitle
       background={
         <FlexBox zIndex={zIndexes.below}>
           {character && (
@@ -58,6 +59,8 @@ export default function MarketPage() {
                   process.env.REACT_APP_IMAGES_ROOT_URL
                 }/patterns/${character.data()!.patternFilename})`,
                 backgroundRepeat: 'repeat',
+                backgroundSize:
+                  Math.max(window.innerWidth, window.innerHeight) / 4,
                 opacity: 0.2,
                 pointerEvents: 'none',
               }}

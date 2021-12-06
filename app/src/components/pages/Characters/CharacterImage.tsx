@@ -26,7 +26,12 @@ function _CharacterImage({
 }: CharacterImageProps) {
   const [isLoaded, setLoaded] = React.useState(false);
   return (
-    <Box width={width + 'px'} height={width + 'px'} position="relative">
+    <Box
+      width={width + 'px'}
+      height={width + 'px'}
+      position="relative"
+      flexShrink={0}
+    >
       {!isLoaded && (
         <img
           src={

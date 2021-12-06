@@ -1,5 +1,5 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { boxShadows } from '@/theme';
+import { borderRadiuses, boxShadows } from '@/theme';
 import { DocumentSnapshot } from 'firebase/firestore';
 import { ICharacter } from 'infinitris2-models';
 import React from 'react';
@@ -20,6 +20,7 @@ export function BlockPreview({ character }: BlockPreviewProps) {
       height={size * 4}
       style={{
         backgroundColor: character.data()!.color,
+        borderRadius: borderRadiuses.lg,
       }}
     >
       <div
@@ -37,6 +38,7 @@ export function BlockPreview({ character }: BlockPreviewProps) {
           pointerEvents: 'none',
           border: `${size * 0.1}px solid ${character.data()!.color + '88'}`,
           boxShadow: boxShadows.small,
+          borderRadius: borderRadiuses.lg,
         }}
       />
       <div

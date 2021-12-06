@@ -8,6 +8,7 @@
 
 type Customization = {
   tier: number;
+  rarity?: number;
   randomX?: number;
   randomY?: number;
   pushY?: number;
@@ -18,12 +19,6 @@ type Customization = {
 };
 
 const customizations: { [filename: string]: Customization } = {
-  'cheeks_11.svg': { tier: 1 },
-  'cheeks_16.svg': { tier: 2 },
-  'cheeks_22.svg': { tier: 3 },
-  'cheeks_3.svg': { tier: 0 },
-  'cheeks_8.svg': { tier: 0 },
-  'cheeks_9.svg': { tier: 0 },
   'ears_16.svg': { tier: 2 },
   'ears_17.svg': { tier: 2 },
   'ears_18.svg': { tier: 1 },
@@ -45,7 +40,7 @@ const customizations: { [filename: string]: Customization } = {
   'eyes_20.svg': { tier: 2 },
   'eyes_21.svg': { tier: 1 },
   'eyes_22.svg': { tier: 4, pushY: -0.1 },
-  'eyes_23.svg': { tier: 2, pushY: -0.1 },
+  'eyes_23.svg': { tier: 2, pushY: -0.05 },
   'eyes_24.svg': { tier: 2, pushY: -0.15, y: -0.05 },
   'eyes_3.svg': { tier: 1 },
   'eyes_4.svg': { tier: 3 },
@@ -67,8 +62,6 @@ const customizations: { [filename: string]: Customization } = {
     tier: 4,
     randomX: 0,
     randomY: 0,
-    x: -0.05,
-    y: -0.12,
     pushY: -0.2,
   },
   'headgear_24.svg': { tier: 1, pushY: -0.1 },

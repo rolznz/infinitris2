@@ -19,6 +19,7 @@ declare module '@material-ui/core/styles/createPalette' {
   }
 }
 
+export const borderColorDark = 'rgba(249, 248, 247, 0.5)';
 export const borderColor = 'rgba(249, 248, 247, 0.3)';
 export const borderColorLight = 'rgba(249, 248, 247, 0.1)';
 export const white = '#ECECED';
@@ -84,12 +85,19 @@ const coreThemeOptions: ThemeOptions = {
     MuiPaper: {
       root: {
         boxShadow: 'none !important',
-        justifyContent: 'center !important',
       },
     },
     MuiMobileStepper: {
       root: {
         background: 'none',
+        justifyContent: 'center !important',
+      },
+      dot: {
+        width: 12,
+        height: 12,
+        marginLeft: 4,
+        marginRight: 4,
+        border: `1px solid ${borderColorDark}`,
       },
     },
     MuiAccordion: {

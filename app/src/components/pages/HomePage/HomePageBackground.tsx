@@ -5,14 +5,22 @@ import backgroundPortraitImage from './assets/background_portrait.png';
 import backgroundImageDark from './assets/background_dark.png';
 import backgroundPortraitImageDark from './assets/background_portrait_dark.png';
 
-import foregroundTopImage from './assets/foreground_top.png';
-import foregroundBottomImage from './assets/foreground_bottom.png';
-import foregroundLeftImage from './assets/foreground_left.png';
-import foregroundRightImage from './assets/foreground_right.png';
-import foregroundTopPortraitImage from './assets/foreground_portrait_top.png';
-import foregroundBottomPortraitImage from './assets/foreground_portrait_bottom.png';
-import foregroundLeftPortraitImage from './assets/foreground_portrait_left.png';
-import foregroundRightPortraitImage from './assets/foreground_portrait_right.png';
+import foregroundTopImage from './assets/foreground_top_light.png';
+import foregroundTopImageDark from './assets/foreground_top.png';
+import foregroundBottomImage from './assets/foreground_bottom_light.png';
+import foregroundBottomImageDark from './assets/foreground_bottom.png';
+import foregroundLeftImage from './assets/foreground_left_light.png';
+import foregroundLeftImageDark from './assets/foreground_left.png';
+import foregroundRightImage from './assets/foreground_right_light.png';
+import foregroundRightImageDark from './assets/foreground_right.png';
+import foregroundTopPortraitImage from './assets/foreground_portrait_top_light.png';
+import foregroundTopPortraitImageDark from './assets/foreground_portrait_top.png';
+import foregroundBottomPortraitImage from './assets/foreground_portrait_bottom_light.png';
+import foregroundBottomPortraitImageDark from './assets/foreground_portrait_bottom.png';
+import foregroundLeftPortraitImage from './assets/foreground_portrait_left_light.png';
+import foregroundLeftPortraitImageDark from './assets/foreground_portrait_left.png';
+import foregroundRightPortraitImage from './assets/foreground_portrait_right_light.png';
+import foregroundRightPortraitImageDark from './assets/foreground_portrait_right.png';
 
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useOrientation from 'react-use/lib/useOrientation';
@@ -80,33 +88,63 @@ const _HomePageBackground = () => {
         role="presentation"
       />
       <HomePageBackgroundImage
-        src={isLandscape ? foregroundLeftImage : foregroundLeftPortraitImage}
+        src={
+          isLandscape
+            ? isDarkMode
+              ? foregroundLeftImageDark
+              : foregroundLeftImage
+            : isDarkMode
+            ? foregroundLeftPortraitImageDark
+            : foregroundLeftPortraitImage
+        }
         width="auto"
         height="100vh"
         bottom="0"
         left="0"
       />
       <HomePageBackgroundImage
-        src={isLandscape ? foregroundRightImage : foregroundRightPortraitImage}
+        src={
+          isLandscape
+            ? isDarkMode
+              ? foregroundRightImageDark
+              : foregroundRightImage
+            : isDarkMode
+            ? foregroundRightPortraitImageDark
+            : foregroundRightPortraitImage
+        }
         width="auto"
         height="100vh"
         bottom="0"
         right="0"
       />
       <HomePageBackgroundImage
-        src={isLandscape ? foregroundTopImage : foregroundTopPortraitImage}
+        src={
+          isLandscape
+            ? isDarkMode
+              ? foregroundTopImageDark
+              : foregroundTopImage
+            : isDarkMode
+            ? foregroundTopPortraitImageDark
+            : foregroundTopPortraitImage
+        }
         width="100vw"
         height="auto"
-        top={isShortScreen ? '-50px' : '0'}
+        top={isShortScreen || !isLandscape ? '-50px' : '0'}
         left="0"
       />
       <HomePageBackgroundImage
         src={
-          isLandscape ? foregroundBottomImage : foregroundBottomPortraitImage
+          isLandscape
+            ? isDarkMode
+              ? foregroundBottomImageDark
+              : foregroundBottomImage
+            : isDarkMode
+            ? foregroundBottomPortraitImageDark
+            : foregroundBottomPortraitImage
         }
         width="100vw"
         height="auto"
-        bottom={isShortScreen ? '-50px' : '0'}
+        bottom={isShortScreen || !isLandscape ? '-50px' : '0'}
         left="0"
       />
     </FlexBox>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, IconButton, Link } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+
 import { Link as RouterLink } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
@@ -19,7 +19,7 @@ import { appName } from '@/utils/constants';
 const isFirstTimeAnimation = true;
 export const firstTimeAnimationDelaySeconds = 3.5;
 
-const useStyles = makeStyles({
+/*const useStyles = makeStyles({
   playButton: {
     backgroundColor: '#57bb50',
     borderColor: '#ffffff44',
@@ -53,7 +53,7 @@ const useStyles = makeStyles({
       color: '#ffffffAA',
     },
   },
-});
+});*/
 
 const _HomePage = () => {
   const userStore = useUserStore();
@@ -67,6 +67,11 @@ const _HomePage = () => {
     incompleteChallenges,
     isLoadingOfficialChallenges,
   } = useIncompleteChallenges();*/
+  const classes = {
+    playButton: '',
+    playButtonIcon: '',
+    nicknameInput: '',
+  };
 
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width >= windowSize.height;
@@ -75,7 +80,6 @@ const _HomePage = () => {
   /*const shortLandscapeScreen =
     useMediaQuery('(max-height:400px)') && isLandscape;*/
 
-  const classes = useStyles();
   const intl = useIntl();
 
   return (
@@ -164,7 +168,8 @@ const _HomePage = () => {
                 opacity: isLoaded ? 1 : 0,
                 transition: `opacity 2s ${firstTimeAnimationDelaySeconds}s`,
               }}
-              size="large">
+              size="large"
+            >
               <PlayArrowIcon className={classes.playButtonIcon} />
             </IconButton>
           </Link>

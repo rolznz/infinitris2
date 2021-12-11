@@ -1,7 +1,14 @@
 import useLoaderStore from '@/state/LoaderStore';
 import { useUserStore } from '@/state/UserStore';
-import { Box, Button, Checkbox, FormControlLabel, LinearProgress, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import {
+  Box,
+  Button,
+  Checkbox,
+  FormControlLabel,
+  LinearProgress,
+  Typography,
+} from '@mui/material';
+
 import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
@@ -13,7 +20,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import useAppStore from '@/state/AppStore';
 import { LanguagePicker } from '../pages/SettingsPage/SettingsPage';
 
-const useStyles = makeStyles((theme) => ({
+/*const useStyles = makeStyles((theme) => ({
   startButton: {
     backgroundColor: '#A4DAF2CC',
     fontSize: 20,
@@ -26,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
       margin: '-2px',
     },
   },
-}));
+}));*/
 
 export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const loaderStore = useLoaderStore();
@@ -37,7 +44,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const intl = useIntl();
   const [hasToggledSounds, setHasToggledSounds] = useState(false);
 
-  const classes = useStyles();
+  const classes = { startButton: '', checkbox: '' }; //useStyles();
 
   const clientLoaded = useAppStore((appStore) => !!appStore.clientApi);
 

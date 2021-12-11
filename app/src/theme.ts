@@ -1,8 +1,4 @@
-import {
-  createTheme,
-  DeprecatedThemeOptions,
-  adaptV4Theme,
-} from '@mui/material/styles';
+import { createTheme, DeprecatedThemeOptions } from '@mui/material/styles';
 import { SkeletonClassKey } from '@mui/material/Skeleton';
 declare module '@mui/material/styles/overrides' {
   interface ComponentNameToClassKey {
@@ -322,7 +318,7 @@ const darkThemeOptions: DeprecatedThemeOptions = {
   },
 };
 
-const lightTheme = createTheme(adaptV4Theme(lightThemeOptions));
-const darkTheme = createTheme(adaptV4Theme(darkThemeOptions));
+const lightTheme = createTheme(lightThemeOptions);
+const darkTheme = createTheme(darkThemeOptions);
 
 export { lightTheme, darkTheme };

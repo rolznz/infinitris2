@@ -2,7 +2,6 @@ import useAuthStore from '@/state/AuthStore';
 import React, { useState } from 'react';
 
 import { Box, IconButton, SvgIcon, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
 import { FormattedMessage } from 'react-intl';
 import FlexBox from './ui/FlexBox';
 import LoadingSpinner from './LoadingSpinner';
@@ -126,18 +125,18 @@ export default function Login({
   );
 }
 
-const useLoginIconStyles = makeStyles((theme) => ({
+/*const useLoginIconStyles = makeStyles((theme) => ({
   icon: {
     fontSize: theme.spacing(10),
     margin: theme.spacing(1),
   },
-}));
+}));*/
 type LoginIconProps = {
   icon: JSX.Element;
   onClick(): void;
 };
 function LoginIcon({ icon, onClick }: LoginIconProps) {
-  const classes = useLoginIconStyles();
+  const classes = { icon: '' };
 
   return (
     <IconButton onClick={onClick} size="large">

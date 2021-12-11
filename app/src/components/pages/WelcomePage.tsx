@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Button, Card, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+
 import TouchAppIcon from '@mui/icons-material/TouchApp';
 import KeyboardIcon from '@mui/icons-material/Keyboard';
 import { useHistory } from 'react-router-dom';
@@ -20,7 +20,7 @@ export default function WelcomePage() {
     InputMethod | undefined
   >(undefined);
 
-  const useStyles = makeStyles({
+  /*const useStyles = makeStyles({
     icon: {
       width: 'min(20vw, 20vh)',
       height: 'min(20vw, 20vh)',
@@ -32,10 +32,10 @@ export default function WelcomePage() {
       padding: 'min(5vw, 5vh)',
       cursor: 'pointer',
     },
-  });
+  });*/
 
   function ControlOptionCard(props: { option: InputMethod }) {
-    const classes = useStyles();
+    const classes = { icon: '', card: '' };
     const Icon = props.option === 'keyboard' ? KeyboardIcon : TouchAppIcon;
     const text =
       props.option === 'keyboard' ? (

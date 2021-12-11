@@ -1,11 +1,9 @@
 import React from 'react';
 import { IconButton } from '@mui/material';
 
-import makeStyles from '@mui/styles/makeStyles';
-
 import { borderColor } from '@/theme';
 
-const useStyles = makeStyles((theme) => ({
+/*const useStyles = makeStyles((theme) => ({
   shareButton: {
     display: 'flex',
   },
@@ -13,20 +11,13 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.background.paperDark,
     border: `6px solid ${borderColor}`,
   },
-  /*inverted: {
-    border: `6px solid ${borderColor}`,
-    backgroundColor: theme.palette.primary.contrastText,
-    '& svg': {
-      color: theme.palette.background.paperDark,
-    },
-  },*/
   'padding-medium': {
     padding: theme.spacing(1),
   },
   'padding-large': {
     padding: theme.spacing(2),
   },
-}));
+}));*/
 
 export type RingIconButtonProps = {
   onClick?(): void;
@@ -38,12 +29,13 @@ export function RingIconButton({
   padding = 'medium',
   onClick,
 }: React.PropsWithChildren<RingIconButtonProps>) {
-  const classes = useStyles();
+  //const classes = useStyles();
   return (
     <IconButton
-      className={`${classes.iconButton} ${classes[`padding-${padding}`]}`}
+      //className={`${classes.iconButton} ${classes[`padding-${padding}`]}`}
       onClick={onClick}
-      size="large">
+      size="large"
+    >
       {children}
     </IconButton>
   );

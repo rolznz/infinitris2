@@ -1,5 +1,11 @@
-import { Link, ListItem, ListItemIcon, SvgIcon, ListItemText } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+import {
+  Link,
+  ListItem,
+  ListItemIcon,
+  SvgIcon,
+  ListItemText,
+} from '@mui/material';
+
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 
@@ -10,7 +16,7 @@ type HamburgerListItemProps = {
   onClick?(): void;
 };
 
-const useStyles = makeStyles((theme) => ({
+/*const useStyles = makeStyles((theme) => ({
   icon: {
     backgroundColor: theme.palette.text.primary,
     color: theme.palette.background.paper,
@@ -21,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.text.primary,
     textTransform: 'lowercase',
   },
-}));
+}));*/
 
 export default function HamburgerListItem({
   to,
@@ -29,7 +35,7 @@ export default function HamburgerListItem({
   icon,
   onClick,
 }: HamburgerListItemProps) {
-  const classes = useStyles();
+  //const classes = useStyles();
   return (
     <Link
       component={RouterLink}
@@ -39,11 +45,11 @@ export default function HamburgerListItem({
     >
       <ListItem button>
         <ListItemIcon>
-          <SvgIcon fontSize="large" className={classes.icon}>
+          <SvgIcon fontSize="large" /*className={classes.icon}*/>
             {icon}
           </SvgIcon>
         </ListItemIcon>
-        <ListItemText primary={text} className={classes.text} />
+        <ListItemText primary={text} /*className={classes.text}*/ />
       </ListItem>
     </Link>
   );

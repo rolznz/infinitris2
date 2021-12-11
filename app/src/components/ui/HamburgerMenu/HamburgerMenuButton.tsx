@@ -1,5 +1,5 @@
 import { Box, IconButton, SvgIcon } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+
 import React from 'react';
 import FlexBox from '../FlexBox';
 import { ReactComponent as HamburgerIcon } from '@/icons/hamburger.svg';
@@ -12,14 +12,14 @@ import { homePageBackgroundTransitionSeconds } from '@/components/pages/HomePage
 import useLoaderStore from '@/state/LoaderStore';
 import { firstTimeAnimationDelaySeconds } from '@/components/pages/HomePage/HomePage';
 
-const useStyles = makeStyles({
+/*const useStyles = makeStyles({
   button: {
     position: 'fixed',
     top: 0,
     right: 0,
     pointerEvents: 'none',
   },
-});
+});*/
 
 export default function HamburgerMenuButton() {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +32,7 @@ export default function HamburgerMenuButton() {
       playSound(SoundKey.click);
     }
   }, [isOpen, wasOpen]);
-  const classes = useStyles();
+  const classes = { button: '' }; //useStyles();
 
   const isLoading = useLoaderStore((store) => !store.hasFinished);
 
@@ -51,7 +51,7 @@ export default function HamburgerMenuButton() {
 
   return (
     <Box
-      className={classes.button}
+      //className={classes.button}
       zIndex="hamburgerButton"
       style={{
         opacity: hasAnimated ? 1 : 0,

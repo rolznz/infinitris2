@@ -1,5 +1,4 @@
 import FlexBox from '@/components/ui/FlexBox';
-import LoginDialog from '@/components/ui/modals/LoginDialog';
 import useAuthStore from '@/state/AuthStore';
 import { Typography } from '@mui/material';
 import { useDocument } from 'swr-firestore';
@@ -91,7 +90,7 @@ export default function RateChallenge({
   // TODO: use openLoginDialog
   return (
     <FlexBox my={2}>
-      <LoginDialog
+      {/* <LoginDialog
         isOpen={isLoginModalOpen}
         onLogin={(newUserId) => {
           // rating path and user ID cannot be used because are not set in the current component state (user just logged in)
@@ -107,7 +106,7 @@ export default function RateChallenge({
         onClose={() => {
           setLoginModalOpen(false);
         }}
-      />
+      /> */}
       <Typography>
         <FormattedMessage
           defaultMessage="Rate this challenge"

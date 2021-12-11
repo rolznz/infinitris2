@@ -1,20 +1,10 @@
-import makeStyles from '@mui/styles/makeStyles';
+import useTheme from '@mui/material/styles/useTheme';
 import React from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-const useStyles = makeStyles((theme) => ({
-  body: {},
-  toast: {
-    backgroundColor: theme.palette.background.paper,
-    '& svg': {
-      color: 'white',
-    },
-  },
-}));
-
 export function Toasts() {
-  const classes = useStyles();
+  const theme = useTheme();
   return (
     <ToastContainer
       position="top-right"
@@ -26,8 +16,12 @@ export function Toasts() {
       pauseOnFocusLoss
       draggable
       pauseOnHover
-      bodyClassName={classes.body}
-      toastClassName={classes.toast}
+      toastStyle={{
+        backgroundColor: theme.palette.background.paper,
+        /*'& svg': {
+          color: 'white',
+        },*/
+      }}
     />
   );
 }

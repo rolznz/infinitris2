@@ -1,7 +1,7 @@
 import { white } from '@/theme';
 import { appName } from '@/utils/constants';
 import { Box, Typography } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+
 import React, { CSSProperties } from 'react';
 import { Helmet } from 'react-helmet';
 import useDarkMode from '../hooks/useDarkMode';
@@ -19,15 +19,8 @@ type PageProps = {
   whiteTitle?: boolean;
 };
 
-export function Page({
-  whiteTitle,
-  showTitle = true,
-  background,
-  ...props
-}: React.PropsWithChildren<PageProps>) {
-  const isDarkMode = useDarkMode();
-  // TODO: move out of component
-  const useStyles = makeStyles((theme) => ({
+/*
+const useStyles = makeStyles((theme) => ({
     title: {
       color: whiteTitle ? white : undefined,
     },
@@ -57,8 +50,17 @@ export function Page({
           }),
     },
   }));
+  */
 
-  const classes = useStyles();
+export function Page({
+  whiteTitle,
+  showTitle = true,
+  background,
+  ...props
+}: React.PropsWithChildren<PageProps>) {
+  const isDarkMode = useDarkMode();
+  // TODO: move out of component
+
   const childContainer = (children?: React.ReactNode) =>
     props.narrow ? (
       <FlexBox width={375} maxWidth="100%">
@@ -69,11 +71,7 @@ export function Page({
     );
 
   return (
-    <FlexBox
-      className={classes.page}
-      justifyContent="flex-start"
-      style={props.style}
-    >
+    <FlexBox justifyContent="flex-start" style={props.style}>
       {background}
       {props.titleImage}
       {props.title && (
@@ -86,9 +84,7 @@ export function Page({
           {showTitle && (
             <>
               <Box mt={props.titleImage ? 5 : 10} />
-              <Typography variant="h1" className={classes.title}>
-                {props.title}
-              </Typography>
+              <Typography variant="h1">{props.title}</Typography>
               <Box mb={4} />
             </>
           )}

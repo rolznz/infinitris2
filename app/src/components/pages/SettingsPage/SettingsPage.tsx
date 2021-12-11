@@ -17,8 +17,6 @@ import {
   SvgIcon,
 } from '@mui/material';
 
-import makeStyles from '@mui/styles/makeStyles';
-
 import FlexBox from '../../ui/FlexBox';
 
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -37,13 +35,6 @@ import useDarkMode from '@/components/hooks/useDarkMode';
 import { IconSwitch } from '@/components/ui/IconSwitch';
 import { ReactComponent as LightModeIcon } from '@/icons/lightmode.svg';
 import { ReactComponent as DarkModeIcon } from '@/icons/darkmode.svg';
-
-
-declare module '@mui/styles/defaultTheme' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
-
 
 export function LanguagePicker() {
   const userStore = useUserStore();

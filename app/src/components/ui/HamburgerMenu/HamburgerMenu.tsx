@@ -9,7 +9,7 @@ import {
   SvgIcon,
   Typography,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+
 import React from 'react';
 import { ReactComponent as ProfileIcon } from '@/icons/profile.svg';
 import { ReactComponent as CloseIcon } from '@/icons/x.svg';
@@ -38,47 +38,32 @@ type HamburgerMenuProps = {
   close(): void;
 };
 
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    width: 250,
-  },
-  topIcon: {
-    color: theme.palette.text.primary,
-  },
-  divider: {
-    //background: '#ECECED',
-    //borderWidth: 2,
-    //border: none,
-    /* Set the hr color */
-    //color: #333; /* old IE */
-    //background-color: #333; /* Modern Browsers */
-  },
-}));
-
 export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
   const appStore = useAppStore();
   const userId = useAuthStore().user?.uid;
   const signOut = useUserStore((userStore) => userStore.signOut);
   const { donations, monthDonationSum } = useDonations(isOpen);
 
-  const classes = useStyles();
-
   return (
     <Drawer
       anchor="right"
       open={isOpen}
       onClose={close}
-      classes={{ paper: classes.paper }}
+      sx={{
+        paper: {
+          width: 250,
+        },
+      }}
     >
       <div role="presentation" onClick={close} onKeyDown={close}>
         <FlexBox justifyContent="flex-end" flexDirection="row" padding={3}>
           <Link component={RouterLink} underline="none" to={Routes.home}>
             <IconButton size="large">
-              <SvgIcon className={classes.topIcon}>{<HomeIcon />}</SvgIcon>
+              <SvgIcon sx={{ color: 'primary' }}>{<HomeIcon />}</SvgIcon>
             </IconButton>
           </Link>
           <IconButton onClick={close} size="large">
-            <SvgIcon className={classes.topIcon}>{<CloseIcon />}</SvgIcon>
+            <SvgIcon sx={{ color: 'primary' }}>{<CloseIcon />}</SvgIcon>
           </IconButton>
         </FlexBox>
         <List>
@@ -156,7 +141,7 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
           )}
         </List>
         <Box px={4} pt={4}>
-          <Divider className={classes.divider} />
+          <Divider />
         </Box>
         <FlexBox justifyContent="flex-start" flexDirection="row" pt={2} pl={1}>
           <img

@@ -1,9 +1,9 @@
 import { borderColor } from '@/theme';
 import { SvgIcon, SvgIconProps } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+
 import React from 'react';
 
-const useStyles = makeStyles((theme) => ({
+/*const useStyles = makeStyles((theme) => ({
   icon: {
     backgroundColor: '#E4E6E7', //theme.palette.text.primary,
     color: theme.palette.background.paper,
@@ -14,13 +14,13 @@ const useStyles = makeStyles((theme) => ({
     border: `4px solid ${borderColor}`,
     backgroundClip: 'padding-box',
   },
-}));
+}));*/
 
 export function FilledIcon({
   children,
   ...otherProps
 }: React.PropsWithChildren<SvgIconProps>) {
-  const classes = useStyles();
+  const classes = { icon: '' }; //useStyles();
   return (
     <SvgIcon className={classes.icon} {...otherProps}>
       {children}

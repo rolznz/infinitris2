@@ -2,7 +2,7 @@ import FlexBox from '@/components/ui/FlexBox';
 import { Page } from '@/components/ui/Page';
 import { appName } from '@/utils/constants';
 import { Typography, Box } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Routes from '@/models/Routes';
@@ -16,14 +16,14 @@ import { ReactComponent as YouTubeIcon } from '@/icons/youtube.svg';
 import { ReactComponent as TwitterIcon } from '@/icons/twitter.svg';
 import { AboutIconButton } from './AboutIconButton';
 
-const useStyles = makeStyles(() => ({
+/*const useStyles = makeStyles(() => ({
   shareButton: {
     display: 'flex',
   },
-}));
+}));*/
 
 export default function AboutPage() {
-  const classes = useStyles();
+  const classes = { shareButton: '' }; //useStyles();
   const intl = useIntl();
 
   return (

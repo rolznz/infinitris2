@@ -1,8 +1,6 @@
 import React from 'react';
 import { Box, Button, SvgIcon, Typography } from '@mui/material';
 
-import makeStyles from '@mui/styles/makeStyles';
-
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import { useDocument } from 'swr-firestore';
@@ -27,16 +25,16 @@ import { AffiliatePageCharacter } from './AffiliatePageCharacter';
 
 import friendImage from './assets/friend.svg';
 
-const useStyles = makeStyles((theme) => ({
+/*const useStyles = makeStyles((theme) => ({
   shareButton: {
     display: 'flex',
   },
-}));
+}));*/
 
 const characterSize = 185;
 
 export default function AffiliateProgramPage() {
-  const classes = useStyles();
+  const classes = { shareButton: '' }; //useStyles();
   const intl = useIntl();
   const [, copy] = useCopyToClipboard();
 

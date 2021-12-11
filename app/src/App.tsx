@@ -12,18 +12,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import FlexBox from './components/ui/FlexBox';
 import { Toasts } from './components/ui/Toasts';
 
-
-declare module '@mui/styles/defaultTheme' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
-
-
-declare module '@mui/styles/defaultTheme' {
-  // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface DefaultTheme extends Theme {}
-}
-
 interface AppProps {}
 
 function App({ children }: React.PropsWithChildren<AppProps>) {

@@ -12,7 +12,7 @@ import {
   Tab,
   Typography,
 } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+
 import {
   MarketPageCharacterList,
   MarketPageCharacterListFilter,

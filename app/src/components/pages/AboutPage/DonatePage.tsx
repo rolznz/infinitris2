@@ -2,7 +2,7 @@ import FlexBox from '@/components/ui/FlexBox';
 import { Page } from '@/components/ui/Page';
 import { appName } from '@/utils/constants';
 import { Typography, Box, Link, LinearProgress } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import QRCode from 'react-qr-code';
@@ -13,10 +13,7 @@ import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import { Timestamp } from 'infinitris2-models';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';
 
-const useStyles = makeStyles((theme) => ({}));
-
 export default function AboutPage() {
-  const classes = useStyles();
   const [, copy] = useCopyToClipboard();
   const intl = useIntl();
   const theme = useTheme();

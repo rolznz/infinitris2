@@ -1,10 +1,10 @@
 import { borderColor } from '@/theme';
 import { SvgIcon, Switch, SwitchProps } from '@mui/material';
-import makeStyles from '@mui/styles/makeStyles';
+
 import React from 'react';
 import { CSSProperties } from 'react-transition-group/node_modules/@types/react';
 
-const useStyles = makeStyles((theme) => ({
+/*const useStyles = makeStyles((theme) => ({
   iconBase: {
     position: 'relative',
     borderRadius: '50%',
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     backgroundColor: theme.palette.secondary.main,
   },
-}));
+}));*/
 
 type IconSwitchProps = SwitchProps & {
   checkediconStyle?: CSSProperties;
@@ -33,14 +33,14 @@ export function IconSwitch({
   iconStyle,
   ...props
 }: IconSwitchProps) {
-  const styles = useStyles();
+  //const styles = useStyles();
   function wrapIcon(icon: React.ReactNode, checked: boolean) {
     return (
       <SvgIcon
         fontSize="small"
         className={[
-          styles.iconBase,
-          checked ? styles.iconChecked : styles.icon,
+          //styles.iconBase,
+          //checked ? styles.iconChecked : styles.icon,
         ].join(' ')}
         style={checked ? checkediconStyle : iconStyle}
       >

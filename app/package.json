@@ -9,7 +9,6 @@
     "@mui/icons-material": "^5.2.1",
     "@mui/lab": "^5.0.0-alpha.59",
     "@mui/material": "^5.2.3",
-    "@mui/styles": "^5.2.3",
     "babel-loader": "8.1.0",
     "babel-plugin-react-intl": "^8.2.22",
     "customize-cra": "^1.0.0",

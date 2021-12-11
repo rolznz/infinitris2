@@ -7,7 +7,7 @@ import { LargeCharacterTile } from './CharacterPageTile';
 import { useUser } from '@/state/UserStore';
 import FlexBox from '@/components/ui/FlexBox';
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
-import { SvgIcon, Typography } from '@material-ui/core';
+import { SvgIcon, Typography } from '@mui/material';
 import { white, zIndexes } from '@/theme';
 import { Carousel } from '@/components/ui/Carousel';
 import { BlockPreview } from './BlockPreview';

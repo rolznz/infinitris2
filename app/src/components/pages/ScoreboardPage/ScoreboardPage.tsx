@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Card, Typography } from '@material-ui/core';
+import { Box, Card, Typography } from '@mui/material';
 
 import FlexBox from '../../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';

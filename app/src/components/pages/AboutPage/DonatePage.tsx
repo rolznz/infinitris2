@@ -1,17 +1,12 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { Page } from '@/components/ui/Page';
 import { appName } from '@/utils/constants';
-import {
-  makeStyles,
-  Typography,
-  Box,
-  Link,
-  LinearProgress,
-} from '@material-ui/core';
+import { Typography, Box, Link, LinearProgress } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import QRCode from 'react-qr-code';
-import { useTheme } from '@material-ui/core/styles';
+import { useTheme } from '@mui/material/styles';
 import { white } from '@/theme';
 import { toast } from 'react-toastify';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';

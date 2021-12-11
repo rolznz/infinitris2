@@ -2,11 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useAppStore from '../../state/AppStore';
 import { Link as RouterLink } from 'react-router-dom';
-import { Box, IconButton, Link, Typography } from '@material-ui/core';
+import { Box, IconButton, Link, Typography } from '@mui/material';
 import useRoomStore from '../../state/RoomStore';
-import SignalCellularConnectedNoInternet0BarIcon from '@material-ui/icons/SignalCellularConnectedNoInternet0Bar';
-import HomeIcon from '@material-ui/icons/Home';
-import RefreshIcon from '@material-ui/icons/Refresh';
+import SignalCellularConnectedNoInternet0BarIcon from '@mui/icons-material/SignalCellularConnectedNoInternet0Bar';
+import HomeIcon from '@mui/icons-material/Home';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import {
   getRoomPath,
   IClientSocketEventListener,
@@ -128,7 +128,7 @@ export default function RoomPage() {
         {disconnected && (
           <Box width={130} display="flex" justifyContent="space-between">
             <Link component={RouterLink} underline="none" to={`/`}>
-              <IconButton>
+              <IconButton size="large">
                 <HomeIcon fontSize="large" />
               </IconButton>
             </Link>
@@ -137,7 +137,7 @@ export default function RoomPage() {
                 setDisconnected(false);
                 setRetryCount(retryCount + 1);
               }}
-            >
+              size="large">
               <RefreshIcon fontSize="large" />
             </IconButton>
           </Box>

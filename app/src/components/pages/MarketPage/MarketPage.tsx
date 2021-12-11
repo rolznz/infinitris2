@@ -8,11 +8,11 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
-  makeStyles,
   SvgIcon,
   Tab,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import {
   MarketPageCharacterList,
   MarketPageCharacterListFilter,
@@ -20,7 +20,7 @@ import {
 import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { ReactComponent as MyBlocksIcon } from '@/icons/my-blocks.svg';
 import { FilledIcon } from '@/components/ui/FilledIcon';
-import { TabContext, TabList, TabPanel } from '@material-ui/lab';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
 import FlexBox from '@/components/ui/FlexBox';
 
 // TODO: use zustand

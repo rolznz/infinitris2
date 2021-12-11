@@ -1,4 +1,4 @@
-import { MobileStepper } from '@material-ui/core';
+import { MobileStepper } from '@mui/material';
 import lodashMerge from 'lodash.merge';
 import React from 'react';
 import SwipeableViews from 'react-swipeable-views';

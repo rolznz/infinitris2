@@ -1,5 +1,5 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { ReactComponent as StarIcon } from '@/icons/scoreboard_star.svg';
 import React from 'react';
 import { white } from '@/theme';

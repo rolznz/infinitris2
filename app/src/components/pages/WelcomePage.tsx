@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Box, Button, Card, makeStyles, Typography } from '@material-ui/core';
-import TouchAppIcon from '@material-ui/icons/TouchApp';
-import KeyboardIcon from '@material-ui/icons/Keyboard';
+import { Box, Button, Card, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import TouchAppIcon from '@mui/icons-material/TouchApp';
+import KeyboardIcon from '@mui/icons-material/Keyboard';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import useIncompleteChallenges from '../hooks/useIncompleteChallenges';

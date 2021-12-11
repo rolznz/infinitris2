@@ -10,11 +10,14 @@ import {
   Switch,
   Paper,
   SwitchProps,
-  makeStyles,
   ThemeProvider,
+  Theme,
+  StyledEngineProvider,
   createTheme,
   SvgIcon,
-} from '@material-ui/core';
+} from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import FlexBox from '../../ui/FlexBox';
 
@@ -27,13 +30,20 @@ import SettingsRow from './SettingsRow';
 import { InputMethod, AppTheme } from 'infinitris2-models';
 import { setMusicPlaying, soundsLoaded } from '@/components/sound/MusicPlayer';
 import { Page } from '@/components/ui/Page';
-import MusicNoteIcon from '@material-ui/icons/MusicNote';
-import MusicOffIcon from '@material-ui/icons/MusicOff';
+import MusicNoteIcon from '@mui/icons-material/MusicNote';
+import MusicOffIcon from '@mui/icons-material/MusicOff';
 import useLoaderStore from '@/state/LoaderStore';
 import useDarkMode from '@/components/hooks/useDarkMode';
 import { IconSwitch } from '@/components/ui/IconSwitch';
 import { ReactComponent as LightModeIcon } from '@/icons/lightmode.svg';
 import { ReactComponent as DarkModeIcon } from '@/icons/darkmode.svg';
+
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
 
 export function LanguagePicker() {
   const userStore = useUserStore();
@@ -66,7 +76,7 @@ export default function SettingsPage() {
       })}
     >
       <FlexBox width={400} maxWidth="100%">
-        <Grid container spacing={2} alignItems="center" justify="center">
+        <Grid container spacing={2} alignItems="center" justifyContent="center">
           <SettingsRow
             left={
               <FormattedMessage

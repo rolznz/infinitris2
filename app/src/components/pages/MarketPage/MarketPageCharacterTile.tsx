@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from '@material-ui/core';
+import { Link } from '@mui/material';
 
 import FlexBox from '../../ui/FlexBox';
 import { ICharacter } from 'infinitris2-models';

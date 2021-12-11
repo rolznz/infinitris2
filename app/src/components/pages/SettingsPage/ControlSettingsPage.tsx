@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Typography, Grid, Box, Button } from '@material-ui/core';
+import { Typography, Grid, Box, Button } from '@mui/material';
 
 import FlexBox from '../../ui/FlexBox';
 
@@ -95,7 +95,7 @@ export default function ControlSettingsPage() {
         />
       ) : (
         <FlexBox width={300} maxWidth="100%">
-          <Grid container spacing={2} alignItems="center" justify="center">
+          <Grid container spacing={2} alignItems="center" justifyContent="center">
             {(Object.values(InputAction) as InputAction[]).map(
               (inputAction) => {
                 return (

@@ -1,6 +1,6 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { boxShadows, white, zIndexes } from '@/theme';
-import { SvgIcon, Typography } from '@material-ui/core';
+import { SvgIcon, Typography } from '@mui/material';
 import React from 'react';
 
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';

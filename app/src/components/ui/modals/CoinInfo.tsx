@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Box, Button, SvgIcon, Typography, Link } from '@material-ui/core';
+import { Box, Button, SvgIcon, Typography, Link } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 
 import { ReactComponent as CrossIcon } from '@/icons/x.svg';

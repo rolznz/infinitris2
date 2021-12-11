@@ -1,5 +1,6 @@
 import { borderColor } from '@/theme';
-import { makeStyles, SvgIcon, Switch, SwitchProps } from '@material-ui/core';
+import { SvgIcon, Switch, SwitchProps } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { CSSProperties } from 'react-transition-group/node_modules/@types/react';
 

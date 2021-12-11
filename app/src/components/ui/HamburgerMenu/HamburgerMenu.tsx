@@ -6,10 +6,10 @@ import {
   LinearProgress,
   Link,
   List,
-  makeStyles,
   SvgIcon,
   Typography,
-} from '@material-ui/core';
+} from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { ReactComponent as ProfileIcon } from '@/icons/profile.svg';
 import { ReactComponent as CloseIcon } from '@/icons/x.svg';
@@ -20,7 +20,7 @@ import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
 import { ReactComponent as AboutIcon } from '@/icons/about.svg';
 import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { ReactComponent as LogoutIcon } from '@/icons/logout.svg';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import useAppStore from '@/state/AppStore';
 import { FormattedMessage } from 'react-intl';
 import Routes from '@/models/Routes';
@@ -73,11 +73,11 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
       <div role="presentation" onClick={close} onKeyDown={close}>
         <FlexBox justifyContent="flex-end" flexDirection="row" padding={3}>
           <Link component={RouterLink} underline="none" to={Routes.home}>
-            <IconButton>
+            <IconButton size="large">
               <SvgIcon className={classes.topIcon}>{<HomeIcon />}</SvgIcon>
             </IconButton>
           </Link>
-          <IconButton onClick={close}>
+          <IconButton onClick={close} size="large">
             <SvgIcon className={classes.topIcon}>{<CloseIcon />}</SvgIcon>
           </IconButton>
         </FlexBox>

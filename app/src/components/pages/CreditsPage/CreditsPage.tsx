@@ -1,4 +1,4 @@
-import { Box, SvgIcon, Typography } from '@material-ui/core';
+import { Box, SvgIcon, Typography } from '@mui/material';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import FlexBox from '../../ui/FlexBox';
@@ -6,7 +6,7 @@ import { Page } from '../../ui/Page';
 import coneFace from './assets/faces/cone.png';
 import athleteFace from './assets/faces/athlete.png';
 import chillFace from './assets/faces/chill.png';
-import GlobeIcon from '@material-ui/icons/Public';
+import GlobeIcon from '@mui/icons-material/Public';
 import { RingIconButton } from '@/components/ui/RingIconButton';
 
 type PrimaryContributorProps = {

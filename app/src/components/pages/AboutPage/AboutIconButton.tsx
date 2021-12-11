@@ -1,5 +1,5 @@
 import { RingIconButton } from '@/components/ui/RingIconButton';
-import { Link, SvgIcon } from '@material-ui/core';
+import { Link, SvgIcon } from '@mui/material';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 

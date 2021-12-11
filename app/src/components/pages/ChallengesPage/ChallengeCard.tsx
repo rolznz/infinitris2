@@ -1,4 +1,4 @@
-import { Card, Link, Typography } from '@material-ui/core';
+import { Card, Link, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { IChallenge } from 'infinitris2-models';
 import React from 'react';

@@ -1,13 +1,13 @@
-import { Box, IconButton, Link, Tooltip } from '@material-ui/core';
+import { Box, IconButton, Link, Tooltip } from '@mui/material';
 import React from 'react';
-import SportsEsportsIcon from '@material-ui/icons/SportsEsports';
-import SettingsIcon from '@material-ui/icons/Settings';
-import FaceIcon from '@material-ui/icons/Face';
-import HomeIcon from '@material-ui/icons/Home';
-import AddIcon from '@material-ui/icons/Add';
-import ScoreIcon from '@material-ui/icons/Score';
-import ExtensionIcon from '@material-ui/icons/Extension';
-import FolderIcon from '@material-ui/icons/Folder';
+import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
+import SettingsIcon from '@mui/icons-material/Settings';
+import FaceIcon from '@mui/icons-material/Face';
+import HomeIcon from '@mui/icons-material/Home';
+import AddIcon from '@mui/icons-material/Add';
+import ScoreIcon from '@mui/icons-material/Score';
+import ExtensionIcon from '@mui/icons-material/Extension';
+import FolderIcon from '@mui/icons-material/Folder';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import { Route } from 'react-router-dom';
@@ -34,7 +34,7 @@ export default function Header() {
           })}
         >
           <Link component={RouterLink} underline="none" to={Routes.scoreboard}>
-            <IconButton>
+            <IconButton size="large">
               <ScoreIcon />
             </IconButton>
           </Link>
@@ -46,7 +46,7 @@ export default function Header() {
           })}
         >
           <Link component={RouterLink} underline="none" to={Routes.challenges}>
-            <IconButton>
+            <IconButton size="large">
               <ExtensionIcon />
             </IconButton>
           </Link>
@@ -62,7 +62,7 @@ export default function Header() {
             underline="none"
             to={Routes.singlePlayer}
           >
-            <IconButton>
+            <IconButton size="large">
               <SportsEsportsIcon />
             </IconButton>
           </Link>
@@ -74,13 +74,13 @@ export default function Header() {
               description: 'Profile button tooltip',
             })}
           >
-            <IconButton>
+            <IconButton size="large">
               <FaceIcon />
             </IconButton>
           </Tooltip>
         </Link>
         <Link component={RouterLink} underline="none" to={Routes.settings}>
-          <IconButton>
+          <IconButton size="large">
             <SettingsIcon />
           </IconButton>
         </Link>
@@ -97,7 +97,7 @@ export default function Header() {
             underline="none"
             to={Routes.createChallenge}
           >
-            <IconButton>
+            <IconButton size="large">
               <AddIcon />
             </IconButton>
           </Link>
@@ -115,7 +115,7 @@ export default function Header() {
             underline="none"
             to={Routes.loadChallenge}
           >
-            <IconButton>
+            <IconButton size="large">
               <FolderIcon />
             </IconButton>
           </Link>
@@ -125,7 +125,7 @@ export default function Header() {
         render={({ location }) =>
           location.pathname !== Routes.home ? (
             <Link component={RouterLink} underline="none" to={Routes.home}>
-              <IconButton>
+              <IconButton size="large">
                 <HomeIcon />
               </IconButton>
             </Link>

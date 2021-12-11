@@ -1,4 +1,4 @@
-import { Card, Typography } from '@material-ui/core';
+import { Card, Typography } from '@mui/material';
 import { Document, useCollection } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';

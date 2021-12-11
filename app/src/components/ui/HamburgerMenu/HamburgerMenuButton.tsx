@@ -1,4 +1,5 @@
-import { Box, IconButton, makeStyles, SvgIcon } from '@material-ui/core';
+import { Box, IconButton, SvgIcon } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import FlexBox from '../FlexBox';
 import { ReactComponent as HamburgerIcon } from '@/icons/hamburger.svg';
@@ -58,7 +59,7 @@ export default function HamburgerMenuButton() {
       }}
     >
       <FlexBox margin={2} style={{ pointerEvents: 'all' }}>
-        <IconButton style={{}} onClick={() => setIsOpen(true)}>
+        <IconButton style={{}} onClick={() => setIsOpen(true)} size="large">
           <SvgIcon
             color="secondary"
             fontSize="large"

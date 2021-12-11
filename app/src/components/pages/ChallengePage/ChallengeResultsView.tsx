@@ -1,6 +1,6 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { borderRadiuses } from '@/theme';
-import { Button, Typography } from '@material-ui/core';
+import { Button, Typography } from '@mui/material';
 import { ChallengeStatus } from 'infinitris2-models';
 import ChallengeCompletionStats from 'infinitris2-models/dist/src/ChallengeCompletionStats';
 import React from 'react';

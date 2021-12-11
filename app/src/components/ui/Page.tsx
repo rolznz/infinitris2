@@ -1,6 +1,7 @@
 import { white } from '@/theme';
 import { appName } from '@/utils/constants';
-import { Box, makeStyles, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React, { CSSProperties } from 'react';
 import { Helmet } from 'react-helmet';
 import useDarkMode from '../hooks/useDarkMode';

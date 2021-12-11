@@ -1,5 +1,5 @@
 import { appName } from '@/utils/constants';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import React from 'react';
 import FlexBox from '../ui/FlexBox';
 import { Page } from '../ui/Page';

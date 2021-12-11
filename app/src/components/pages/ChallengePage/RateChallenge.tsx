@@ -1,7 +1,7 @@
 import FlexBox from '@/components/ui/FlexBox';
 import LoginDialog from '@/components/ui/modals/LoginDialog';
 import useAuthStore from '@/state/AuthStore';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 import { useDocument } from 'swr-firestore';
 import {
   getChallengePath,

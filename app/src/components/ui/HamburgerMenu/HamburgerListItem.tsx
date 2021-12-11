@@ -1,11 +1,5 @@
-import {
-  Link,
-  ListItem,
-  ListItemIcon,
-  SvgIcon,
-  ListItemText,
-  makeStyles,
-} from '@material-ui/core';
+import { Link, ListItem, ListItemIcon, SvgIcon, ListItemText } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 

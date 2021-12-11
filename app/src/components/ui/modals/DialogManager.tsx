@@ -1,6 +1,6 @@
 import Login from '@/components/Login';
 import useDialogStore from '@/state/DialogStore';
-import { Drawer } from '@material-ui/core';
+import { Drawer } from '@mui/material';
 import React from 'react';
 import CoinInfo from './CoinInfo';
 

@@ -1,5 +1,6 @@
 import { borderColor } from '@/theme';
-import { makeStyles, SvgIcon, SvgIconProps } from '@material-ui/core';
+import { SvgIcon, SvgIconProps } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 
 const useStyles = makeStyles((theme) => ({

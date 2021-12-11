@@ -1,22 +1,15 @@
 import useLoaderStore from '@/state/LoaderStore';
 import { useUserStore } from '@/state/UserStore';
-import {
-  Box,
-  Button,
-  Checkbox,
-  FormControlLabel,
-  LinearProgress,
-  makeStyles,
-  Typography,
-} from '@material-ui/core';
+import { Box, Button, Checkbox, FormControlLabel, LinearProgress, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { prepareSounds } from '../sound/MusicPlayer';
 import FlexBox from './FlexBox';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
-import RadioButtonUncheckedIcon from '@material-ui/icons/RadioButtonUnchecked';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import useAppStore from '@/state/AppStore';
 import { LanguagePicker } from '../pages/SettingsPage/SettingsPage';
 

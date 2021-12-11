@@ -1,5 +1,7 @@
 import React from 'react';
-import { IconButton, makeStyles } from '@material-ui/core';
+import { IconButton } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import { borderColor } from '@/theme';
 
@@ -41,7 +43,7 @@ export function RingIconButton({
     <IconButton
       className={`${classes.iconButton} ${classes[`padding-${padding}`]}`}
       onClick={onClick}
-    >
+      size="large">
       {children}
     </IconButton>
   );

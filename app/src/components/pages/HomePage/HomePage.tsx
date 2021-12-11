@@ -1,12 +1,13 @@
 import React from 'react';
-import { Box, IconButton, Link, makeStyles } from '@material-ui/core';
+import { Box, IconButton, Link } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { Link as RouterLink } from 'react-router-dom';
 import { useIntl } from 'react-intl';
 
 import { useUserStore } from '../../../state/UserStore';
 
 import logoImage from './assets/logo.png';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import FlexBox from '@/components/ui/FlexBox';
 import useWindowSize from 'react-use/lib/useWindowSize';
@@ -163,7 +164,7 @@ const _HomePage = () => {
                 opacity: isLoaded ? 1 : 0,
                 transition: `opacity 2s ${firstTimeAnimationDelaySeconds}s`,
               }}
-            >
+              size="large">
               <PlayArrowIcon className={classes.playButtonIcon} />
             </IconButton>
           </Link>

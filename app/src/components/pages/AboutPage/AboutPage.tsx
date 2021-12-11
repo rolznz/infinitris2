@@ -1,7 +1,8 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { Page } from '@/components/ui/Page';
 import { appName } from '@/utils/constants';
-import { makeStyles, Typography, Box } from '@material-ui/core';
+import { Typography, Box } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import Routes from '@/models/Routes';

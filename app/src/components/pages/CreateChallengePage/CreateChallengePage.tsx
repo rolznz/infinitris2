@@ -1,4 +1,4 @@
-/*import { Box, Button, Link, TextField, Typography } from '@material-ui/core';
+/*import { Box, Button, Link, TextField, Typography } from '@mui/material';
 import {
   ChallengeCellType,
   CreatableChallenge,

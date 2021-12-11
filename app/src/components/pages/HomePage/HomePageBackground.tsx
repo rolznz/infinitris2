@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { makeStyles, useMediaQuery } from '@material-ui/core';
+import { useMediaQuery } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import backgroundImage from './assets/background.png';
 import backgroundPortraitImage from './assets/background_portrait.png';
 import backgroundImageDark from './assets/background_dark.png';

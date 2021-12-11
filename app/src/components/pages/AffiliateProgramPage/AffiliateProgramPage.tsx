@@ -1,11 +1,7 @@
 import React from 'react';
-import {
-  Box,
-  Button,
-  makeStyles,
-  SvgIcon,
-  Typography,
-} from '@material-ui/core';
+import { Box, Button, SvgIcon, Typography } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -14,13 +10,13 @@ import { getAffiliatePath, IAffiliate } from 'infinitris2-models';
 import useAuthStore from '../../../state/AuthStore';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import { toast } from 'react-toastify';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
 import { useUser } from '@/state/UserStore';
 import { Page } from '../../ui/Page';
 import { openLoginDialog } from '@/state/DialogStore';
 import { appName } from '@/utils/constants';
 import FlexBox from '../../ui/FlexBox';
-import MailIcon from '@material-ui/icons/Mail';
+import MailIcon from '@mui/icons-material/Mail';
 import { ReactComponent as FacebookIcon } from '@/icons/facebook2.svg';
 
 import { EmailShareButton, FacebookShareButton } from 'react-share';

@@ -1,6 +1,6 @@
 import useContinueButton from '@/components/hooks/useContinueButton';
 import { borderRadiuses } from '@/theme';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography } from '@mui/material';
 import { IChallenge } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';

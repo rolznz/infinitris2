@@ -1,6 +1,6 @@
 import React from 'react';
 import { Page } from '../ui/Page';
-import { Typography } from '@material-ui/core';
+import { Typography } from '@mui/material';
 
 export function TermsOfServicePage() {
   return (

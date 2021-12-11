@@ -33,7 +33,7 @@ import {
 import useLoaderStore from '@/state/LoaderStore';
 import Loadable from '@/components/ui/Loadable';
 import useDarkMode from '@/components/hooks/useDarkMode';
-import { zIndexes } from '@/theme';
+import { zIndexes } from '@/theme/theme';
 
 export const homePageBackgroundTransitionSeconds = 5;
 

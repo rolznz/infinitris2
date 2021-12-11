@@ -9,7 +9,7 @@ import Routes from '@/models/Routes';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { CharacterCoinStatChip } from '../Characters/CharacterStatChip';
 import { DocumentSnapshot } from 'firebase/firestore';
-import { zIndexes } from '@/theme';
+import { zIndexes } from '@/theme/theme';
 
 type CharacterTileProps = {
   character: DocumentSnapshot<ICharacter>;

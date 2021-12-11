@@ -7,7 +7,7 @@ import { ReactComponent as CrossIcon } from '@/icons/x.svg';
 import FlexBox from '../FlexBox';
 import { RingIconButton } from '../RingIconButton';
 import { Carousel, narrowSwipeableViewsStyles } from '../Carousel';
-import { borderColorLight, borderRadiuses, boxShadows } from '@/theme';
+import { borderColorLight, borderRadiuses, boxShadows } from '@/theme/theme';
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';

@@ -7,7 +7,7 @@ import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import QRCode from 'react-qr-code';
 import { useTheme } from '@mui/material/styles';
-import { white } from '@/theme';
+import { colors } from '@/theme/theme';
 import { toast } from 'react-toastify';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import { Timestamp } from 'infinitris2-models';
@@ -71,7 +71,7 @@ export default function AboutPage() {
           <QRCode
             value={process.env.REACT_APP_LIGHTNING_DONATION}
             level="L"
-            fgColor={white}
+            fgColor={colors.white}
             bgColor={theme.palette.text.secondary}
           />
           <Box mt={4} />

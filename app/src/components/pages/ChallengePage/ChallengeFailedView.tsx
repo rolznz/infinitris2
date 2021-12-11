@@ -1,5 +1,5 @@
 import useContinueButton from '@/components/hooks/useContinueButton';
-import { borderRadiuses } from '@/theme';
+import { borderRadiuses } from '@/theme/theme';
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 import useTrue from '../../hooks/useTrue';

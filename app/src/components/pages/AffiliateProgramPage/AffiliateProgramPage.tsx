@@ -19,7 +19,7 @@ import { ReactComponent as FacebookIcon } from '@/icons/facebook2.svg';
 
 import { EmailShareButton, FacebookShareButton } from 'react-share';
 import { RingIconButton } from '../../ui/RingIconButton';
-import { borderColorLight, boxShadows } from '@/theme';
+import { borderColorLight, boxShadows } from '@/theme/theme';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { AffiliatePageCharacter } from './AffiliatePageCharacter';
 

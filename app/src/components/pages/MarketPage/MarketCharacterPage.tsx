@@ -8,7 +8,7 @@ import { useUser } from '@/state/UserStore';
 import FlexBox from '@/components/ui/FlexBox';
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
 import { SvgIcon, Typography } from '@mui/material';
-import { white, zIndexes } from '@/theme';
+import { colors, zIndexes } from '@/theme/theme';
 import { Carousel } from '@/components/ui/Carousel';
 import { BlockPreview } from './BlockPreview';
 
@@ -19,8 +19,8 @@ export default function MarketPage() {
 
   const pages: React.ReactNode[] = character
     ? [
-        <LargeCharacterTile character={character} />,
-        <BlockPreview character={character} />,
+        <LargeCharacterTile key="1" character={character} />,
+        <BlockPreview key="2" character={character} />,
       ]
     : [];
 
@@ -86,7 +86,7 @@ export default function MarketPage() {
         </SvgIcon>
         <Typography
           variant="h4"
-          style={{ color: white, fontWeight: 700, marginTop: '3px' }}
+          style={{ color: colors.white, fontWeight: 700, marginTop: '3px' }}
         >
           {user.readOnly.coins || 0}
         </Typography>

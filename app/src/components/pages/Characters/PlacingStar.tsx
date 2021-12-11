@@ -2,7 +2,7 @@ import FlexBox from '@/components/ui/FlexBox';
 import { Typography } from '@mui/material';
 import { ReactComponent as StarIcon } from '@/icons/scoreboard_star.svg';
 import React from 'react';
-import { white } from '@/theme';
+import { colors } from '@/theme/theme';
 
 // https://stackoverflow.com/a/39466341/4562693
 const getOrdinalSuffix = (n: number) =>
@@ -54,7 +54,7 @@ export function PlacingStar({ placing, offset, scale = 1 }: PlacingStarProps) {
         style={{
           position: 'absolute',
           fontSize: getScoreFontSize(placing) * scale + 'px',
-          color: white,
+          color: colors.white,
         }}
       >
         {placing || '?'}

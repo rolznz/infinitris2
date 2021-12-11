@@ -12,15 +12,6 @@ import { homePageBackgroundTransitionSeconds } from '@/components/pages/HomePage
 import useLoaderStore from '@/state/LoaderStore';
 import { firstTimeAnimationDelaySeconds } from '@/components/pages/HomePage/HomePage';
 
-/*const useStyles = makeStyles({
-  button: {
-    position: 'fixed',
-    top: 0,
-    right: 0,
-    pointerEvents: 'none',
-  },
-});*/
-
 export default function HamburgerMenuButton() {
   const [isOpen, setIsOpen] = useState(false);
   const wasOpen = usePrevious(isOpen);
@@ -51,11 +42,14 @@ export default function HamburgerMenuButton() {
 
   return (
     <Box
-      //className={classes.button}
       zIndex="hamburgerButton"
-      style={{
+      sx={{
         opacity: hasAnimated ? 1 : 0,
         transition: `opacity ${firstTimeAnimationDelaySeconds}s`,
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        pointerEvents: 'none',
       }}
     >
       <FlexBox margin={2} style={{ pointerEvents: 'all' }}>

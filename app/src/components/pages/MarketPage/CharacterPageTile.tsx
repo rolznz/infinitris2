@@ -26,12 +26,11 @@ export function LargeCharacterTile({ character }: LargeCharacterTileProps) {
   const isLandscape = windowSize.width > windowSize.height;
   const size =
     Math.min(windowSize.width, windowSize.height) -
-    (isLandscape ? windowSize.width * 0.05 : 0);
+    (isLandscape ? windowSize.width * 0.15 : 0);
   //const openDialog = useDialogStore((store) => store.open);
   //const styles = useStyles();
   return (
     <FlexBox>
-      <Box style={{ marginTop: -size * 0.1 + 'px' }} />
       <CharacterImage characterId={character.id} width={size} />
 
       {/*<FlexBox

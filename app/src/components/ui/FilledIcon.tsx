@@ -1,4 +1,4 @@
-import { borderColor } from '@/theme';
+import { borderColor } from '@/theme/theme';
 import { SvgIcon, SvgIconProps } from '@mui/material';
 
 import React from 'react';

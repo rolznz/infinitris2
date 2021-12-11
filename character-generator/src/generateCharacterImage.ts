@@ -85,6 +85,7 @@ export async function generateCharacterImage(
 ): Promise<CharacterImageResult> {
   // each color+pattern combo can only show once
   const color = colors[index % colors.length];
+  // TODO: consume models project
   const borderColor = adjustColor(color.hex, borderAdjustAmount);
 
   let { r, g, b } = hexToRgb(color.hex);

@@ -1,7 +1,6 @@
 import React from 'react';
 import useInfinitrisClient from './components/hooks/useInfinitrisClient';
 import { Theme, ThemeProvider, StyledEngineProvider } from '@mui/material';
-import { lightTheme, darkTheme } from './theme';
 
 import Internationalization from './internationalization/Internationalization';
 
@@ -11,6 +10,8 @@ import useDarkMode from './components/hooks/useDarkMode';
 import CssBaseline from '@mui/material/CssBaseline';
 import FlexBox from './components/ui/FlexBox';
 import { Toasts } from './components/ui/Toasts';
+import { darkTheme } from './theme/darkTheme';
+import { lightTheme } from './theme/lightTheme';
 
 interface AppProps {}
 

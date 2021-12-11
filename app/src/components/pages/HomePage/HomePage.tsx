@@ -12,7 +12,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import FlexBox from '@/components/ui/FlexBox';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useLoaderStore from '@/state/LoaderStore';
-import { zIndexes } from '@/theme';
+import { zIndexes } from '@/theme/theme';
 import { Helmet } from 'react-helmet';
 import { appName } from '@/utils/constants';
 

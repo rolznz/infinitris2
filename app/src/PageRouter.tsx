@@ -25,7 +25,7 @@ import { ComingSoonPage } from './components/pages/ComingSoonPage';
 import { HomePageBackground } from './components/pages/HomePage/HomePageBackground';
 import HamburgerMenuButton from './components/ui/HamburgerMenu/HamburgerMenuButton';
 import { TermsOfServicePage } from './components/pages/TermsOfServicePage';
-import { zIndexes } from './theme';
+import { zIndexes } from './theme/theme';
 import { DialogManager } from './components/ui/modals/DialogManager';
 import AboutPage from './components/pages/AboutPage/AboutPage';
 import DonatePage from './components/pages/AboutPage/DonatePage';

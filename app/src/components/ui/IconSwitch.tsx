@@ -1,4 +1,4 @@
-import { borderColor } from '@/theme';
+import { borderColor } from '@/theme/theme';
 import { SvgIcon, Switch, SwitchProps } from '@mui/material';
 
 import React from 'react';

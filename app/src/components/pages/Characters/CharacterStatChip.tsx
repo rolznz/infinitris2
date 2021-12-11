@@ -1,5 +1,5 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { boxShadows, white, zIndexes } from '@/theme';
+import { boxShadows, colors, zIndexes } from '@/theme/theme';
 import { SvgIcon, Typography } from '@mui/material';
 import React from 'react';
 
@@ -42,7 +42,7 @@ function CharacterStatChip({
       <SvgIcon>{icon}</SvgIcon>
       <Typography
         variant="h5"
-        style={{ color: white, fontWeight: 700, marginTop: '3px' }}
+        style={{ color: colors.white, fontWeight: 700, marginTop: '3px' }}
       >
         {value || 0}
         {plus && '+'}

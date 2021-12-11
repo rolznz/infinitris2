@@ -1,4 +1,4 @@
-import { white } from '@/theme';
+import { colors } from '@/theme/theme';
 import { appName } from '@/utils/constants';
 import { Box, Typography } from '@mui/material';
 
@@ -22,7 +22,7 @@ type PageProps = {
 /*
 const useStyles = makeStyles((theme) => ({
     title: {
-      color: whiteTitle ? white : undefined,
+      color: colors.whiteTitle ? white : undefined,
     },
     page: {
       flex: 1,
@@ -71,7 +71,35 @@ export function Page({
     );
 
   return (
-    <FlexBox justifyContent="flex-start" style={props.style}>
+    <FlexBox
+      justifyContent="flex-start"
+      style={props.style}
+      sx={{
+        flex: 1,
+        width: '100vw',
+        overflowX: 'hidden',
+        minHeight: '100%',
+        padding: 4,
+        ...(props.paddingX !== undefined
+          ? {
+              paddingLeft: props.paddingX,
+              paddingRight: props.paddingX,
+            }
+          : {}),
+        maxWidth: '100%',
+        ...(background
+          ? {}
+          : props.useGradient && false
+          ? {
+              background: isDarkMode
+                ? 'linear-gradient(180deg, rgba(8,27,41,1) 0%, rgba(0,60,67,1) 35%, rgba(10,21,41,1) 100%)'
+                : 'linear-gradient(180deg, rgba(30,68,143,1) 0%, rgba(49,168,221,1) 35%, rgba(26,34,82,1) 100%)',
+            }
+          : {
+              backgroundColor: 'background.paper',
+            }),
+      }}
+    >
       {background}
       {props.titleImage}
       {props.title && (
@@ -84,7 +112,12 @@ export function Page({
           {showTitle && (
             <>
               <Box mt={props.titleImage ? 5 : 10} />
-              <Typography variant="h1">{props.title}</Typography>
+              <Typography
+                variant="h1"
+                color={whiteTitle ? colors.white : undefined}
+              >
+                {props.title}
+              </Typography>
               <Box mb={4} />
             </>
           )}

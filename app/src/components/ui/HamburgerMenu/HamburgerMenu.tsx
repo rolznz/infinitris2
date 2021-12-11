@@ -31,7 +31,7 @@ import logoImage from './assets/logo.png';
 import useAuthStore from '@/state/AuthStore';
 import { useUserStore } from '@/state/UserStore';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';
-import { zIndexes } from '@/theme';
+import { zIndexes } from '@/theme/theme';
 
 type HamburgerMenuProps = {
   isOpen: boolean;

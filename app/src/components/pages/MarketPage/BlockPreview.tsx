@@ -1,7 +1,7 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { borderRadiuses, boxShadows } from '@/theme';
+import { borderRadiuses, boxShadows } from '@/theme/theme';
 import { DocumentSnapshot } from 'firebase/firestore';
-import { ICharacter } from 'infinitris2-models';
+import { getBorderColor, ICharacter } from 'infinitris2-models';
 import React from 'react';
 import { useWindowSize } from 'react-use';
 
@@ -12,7 +12,7 @@ type BlockPreviewProps = {
 export function BlockPreview({ character }: BlockPreviewProps) {
   const windowSize = useWindowSize();
   const size =
-    (Math.min(windowSize.width, windowSize.height) - windowSize.width * 0.05) /
+    (Math.min(windowSize.width, windowSize.height) - windowSize.width * 0.15) /
     5;
 
   return (
@@ -32,13 +32,27 @@ export function BlockPreview({ character }: BlockPreviewProps) {
           right: 0,
           width: '100%',
           height: '100%',
+          pointerEvents: 'none',
+          border: `${size * 0.1}px solid ${getBorderColor(
+            character.data()!.color
+          )}`,
+          boxShadow: boxShadows.small,
+          borderRadius: borderRadiuses.lg,
+        }}
+      />
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          width: '100%',
+          height: '100%',
           background: `url(${process.env.REACT_APP_IMAGES_ROOT_URL}/patterns/${
             character.data()!.patternFilename
           })`,
           backgroundRepeat: 'repeat',
           backgroundSize: 256,
           pointerEvents: 'none',
-          border: `${size * 0.1}px solid ${character.data()!.color + '88'}`,
           boxShadow: boxShadows.small,
           borderRadius: borderRadiuses.lg,
         }}

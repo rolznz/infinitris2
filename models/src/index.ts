@@ -42,6 +42,7 @@ export * from './IEntity';
 export * from './util/RecursiveKeyOf';
 export * from './util/RecursivePartial';
 export * from './util/objectToDotNotation';
+export * from './util/adjustColor';
 export * from './IPurchase';
 export * from './IProduct';
 export * from './IUser';

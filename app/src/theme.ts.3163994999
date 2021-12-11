@@ -1,4 +1,4 @@
-import { createTheme, DeprecatedThemeOptions } from '@mui/material/styles';
+import { createTheme, DeprecatedThemeOptions, adaptV4Theme } from '@mui/material/styles';
 import { SkeletonClassKey } from '@mui/material/Skeleton';
 declare module '@mui/material/styles/overrides' {
   interface ComponentNameToClassKey {
@@ -131,7 +131,7 @@ const coreThemeOptions: DeprecatedThemeOptions = {
     },
     MuiSvgIcon: {
       colorPrimary: {
-        color: white,
+        color: colors.white,
       },
     },
     MuiDrawer: {
@@ -152,7 +152,7 @@ const coreThemeOptions: DeprecatedThemeOptions = {
     },
     MuiCheckbox: {
       root: {
-        color: white,
+        color: colors.white,
         border: `4px solid ${borderColor}`,
         padding: 0,
         margin: 4,
@@ -160,7 +160,7 @@ const coreThemeOptions: DeprecatedThemeOptions = {
     },
     MuiLink: {
       root: {
-        color: white,
+        color: colors.white,
       },
     },
     MuiDivider: {
@@ -176,14 +176,14 @@ const coreThemeOptions: DeprecatedThemeOptions = {
         boxSizing: 'border-box',
       },
       barColorPrimary: {
-        backgroundColor: white,
+        backgroundColor: colors.white,
       },
     },
     MuiIconButton: {
       label: {
         //margin: '-2px',
         //transform: 'translateX(0.5px)',
-        color: white,
+        color: colors.white,
       },
     },
     MuiButton: {
@@ -208,22 +208,22 @@ const coreThemeOptions: DeprecatedThemeOptions = {
     MuiSelect: {
       root: {},
       icon: {
-        color: white,
+        color: colors.white,
       },
     },
   },
   palette: {
     primary: {
       main: '#2F67D7',
-      contrastText: white,
+      contrastText: colors.white,
     },
     secondary: {
       main: '#789AB8',
-      contrastText: white,
+      contrastText: colors.white,
     },
     tertiary: {
       main: '#A4DAF2',
-      contrastText: white,
+      contrastText: colors.white,
     },
     background: {
       loader: '#0f1d22',
@@ -241,14 +241,14 @@ const lightThemeOptions: DeprecatedThemeOptions = {
       paperDark: '#113b77',
     },
     text: {
-      primary: white,
+      primary: colors.white,
       secondary: '#002369',
     },
   },
   typography: {
     ...(coreThemeOptions.typography || {}),
     allVariants: {
-      color: white,
+      color: colors.white,
     },
   },
   overrides: {
@@ -288,15 +288,15 @@ const darkThemeOptions: DeprecatedThemeOptions = {
     },
     primary: {
       main: '#103950',
-      contrastText: white,
+      contrastText: colors.white,
     },
     secondary: {
       main: '#889796',
-      contrastText: white,
+      contrastText: colors.white,
     },
     tertiary: {
       main: '#A4DAF2',
-      contrastText: white,
+      contrastText: colors.white,
     },
   },
   typography: {
@@ -318,7 +318,7 @@ const darkThemeOptions: DeprecatedThemeOptions = {
   },
 };
 
-const lightTheme = createTheme(lightThemeOptions);
-const darkTheme = createTheme(darkThemeOptions);
+const lightTheme = createTheme(adaptV4Theme(lightThemeOptions));
+const darkTheme = createTheme(adaptV4Theme(darkThemeOptions));
 
 export { lightTheme, darkTheme };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconButton } from '@mui/material';
 
-import { borderColor } from '@/theme';
+import { borderColor } from '@/theme/theme';
 
 /*const useStyles = makeStyles((theme) => ({
   shareButton: {

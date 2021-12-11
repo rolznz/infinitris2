@@ -1,6 +1,6 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { useUser, useUserStore } from '@/state/UserStore';
-import { borderColor, borderColorLight, borderRadiuses } from '@/theme';
+import { borderColor, borderColorLight, borderRadiuses } from '@/theme/theme';
 import { Link, SvgIcon, TextField, useMediaQuery } from '@mui/material';
 import React from 'react';
 import { useIntl } from 'react-intl';

@@ -1,7 +1,12 @@
-import { MobileStepper } from '@mui/material';
+import { MobileStepper, SvgIcon, SxProps } from '@mui/material';
 import lodashMerge from 'lodash.merge';
 import React from 'react';
 import SwipeableViews from 'react-swipeable-views';
+import { useWindowSize } from 'react-use';
+import LeftIcon from '@mui/icons-material/ChevronLeft';
+import RightIcon from '@mui/icons-material/ChevronRight';
+import FlexBox from './FlexBox';
+import { colors, zIndexes } from '@/theme/theme';
 
 type SwipeableViewsStyles = {
   root: React.CSSProperties;
@@ -45,16 +50,36 @@ export function Carousel({
   styles = coreSwipeableViewsStyles,
 }: React.PropsWithChildren<CarouselProps>) {
   const [activeStep, setActiveStep] = React.useState(0);
-
-  const handleStepChange = (step: number) => {
-    setActiveStep(step);
-  };
+  const windowSize = useWindowSize();
+  const isLandscape = windowSize.width > windowSize.height;
 
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
+      {isLandscape && (
+        <CarouselArrow
+          icon={<LeftIcon />}
+          sx={{
+            left: 0,
+            transform: 'translate(-50%,-50%)',
+          }}
+          onClick={() => setActiveStep(activeStep - 1)}
+          enabled={activeStep > 0}
+        />
+      )}
+      {isLandscape && (
+        <CarouselArrow
+          icon={<RightIcon />}
+          sx={{
+            right: 0,
+            transform: 'translate(50%,-50%)',
+          }}
+          onClick={() => setActiveStep(activeStep + 1)}
+          enabled={activeStep < pages.length - 1}
+        />
+      )}
       <SwipeableViews
         index={activeStep}
-        onChangeIndex={handleStepChange}
+        onChangeIndex={setActiveStep}
         enableMouseEvents
         style={styles.root}
         slideStyle={styles.slideContainer}
@@ -70,5 +95,39 @@ export function Carousel({
         backButton={null}
       />
     </div>
+  );
+}
+
+type CarouselArrowProps = {
+  icon: React.ReactNode;
+  sx: SxProps;
+  onClick(): void;
+  enabled: boolean;
+};
+
+function CarouselArrow({ icon, sx, onClick, enabled }: CarouselArrowProps) {
+  return (
+    <FlexBox
+      sx={{
+        position: 'absolute',
+        top: '50%',
+        padding: 1,
+        zIndex: zIndexes.above,
+        filter: 'drop-shadow( 0px 0px 5px rgba(0, 0, 0, .9))',
+        cursor: 'pointer',
+        opacity: enabled ? 0.9 : 0.3,
+        ...sx,
+      }}
+      onClick={() => enabled && onClick()}
+    >
+      <SvgIcon
+        sx={{
+          fontSize: '80px',
+          color: colors.white,
+        }}
+      >
+        {icon}
+      </SvgIcon>
+    </FlexBox>
   );
 }

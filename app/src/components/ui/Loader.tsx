@@ -111,7 +111,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
         <FlexBox
           height="50%"
           width="100vw"
-          style={{ position: 'absolute', left: 0, bottom: 0 }}
+          style={{ position: 'fixed', left: 0, bottom: 0 }}
           justifyContent="flex-start"
         >
           <FlexBox

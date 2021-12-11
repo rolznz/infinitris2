@@ -11,7 +11,9 @@ type BlockPreviewProps = {
 
 export function BlockPreview({ character }: BlockPreviewProps) {
   const windowSize = useWindowSize();
-  const size = (Math.min(windowSize.width, windowSize.height, 612) - 100) / 5;
+  const size =
+    (Math.min(windowSize.width, windowSize.height) - windowSize.width * 0.05) /
+    5;
 
   return (
     <FlexBox

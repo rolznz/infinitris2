@@ -53,8 +53,8 @@ const _HomePageBackground = () => {
         position: 'fixed',
         top: 0,
         left: 0,
-        width: '100vw',
-        height: '100vh',
+        width: '100%',
+        height: '100%',
       }}
     >
       <HomePageBackgroundImage
@@ -67,8 +67,8 @@ const _HomePageBackground = () => {
             ? backgroundPortraitImageDark
             : backgroundPortraitImage
         }
-        width="100vw"
-        height="100vh"
+        width="100%"
+        height="100%"
         objectFit="cover"
         bottom="0"
         left="0"
@@ -81,8 +81,8 @@ const _HomePageBackground = () => {
           left: 0,
           backgroundColor: '#000000',
           opacity: isLoaded ? 0.5 : 0,
-          width: '100vw',
-          height: '100vh',
+          width: '100%',
+          height: '100%',
           transition: `opacity ${homePageBackgroundTransitionSeconds}s ${homePageFirstTimeAnimationDelaySeconds}s`,
         }}
         role="presentation"
@@ -98,7 +98,7 @@ const _HomePageBackground = () => {
             : foregroundLeftPortraitImage
         }
         width="auto"
-        height="100vh"
+        height="100%"
         bottom="0"
         left="0"
       />
@@ -113,7 +113,7 @@ const _HomePageBackground = () => {
             : foregroundRightPortraitImage
         }
         width="auto"
-        height="100vh"
+        height="100%"
         bottom="0"
         right="0"
       />

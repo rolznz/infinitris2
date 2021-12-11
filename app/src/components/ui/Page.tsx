@@ -33,7 +33,8 @@ export function Page({
     page: {
       flex: 1,
       width: '100vw',
-      minHeight: '100vh',
+      overflowX: 'hidden',
+      minHeight: '100%',
       padding: theme.spacing(4),
       ...(props.paddingX !== undefined
         ? {

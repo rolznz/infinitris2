@@ -48,10 +48,9 @@ function _MarketPage() {
       titleImage={
         <img
           src={marketImage}
-          width="100%"
           style={{
+            height: '30vh',
             maxWidth: '562px',
-            maxHeight: '50vh',
             objectFit: 'contain',
           }}
           alt=""

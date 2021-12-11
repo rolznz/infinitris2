@@ -1,13 +1,8 @@
 import useAuthStore from '@/state/AuthStore';
 import React, { useState } from 'react';
 
-import {
-  Box,
-  IconButton,
-  makeStyles,
-  SvgIcon,
-  Typography,
-} from '@material-ui/core';
+import { Box, IconButton, SvgIcon, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
 import { FormattedMessage } from 'react-intl';
 import FlexBox from './ui/FlexBox';
 import LoadingSpinner from './LoadingSpinner';
@@ -145,7 +140,7 @@ function LoginIcon({ icon, onClick }: LoginIconProps) {
   const classes = useLoginIconStyles();
 
   return (
-    <IconButton onClick={onClick}>
+    <IconButton onClick={onClick} size="large">
       <SvgIcon className={classes.icon}>{icon}</SvgIcon>
     </IconButton>
   );

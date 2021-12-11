@@ -1,12 +1,16 @@
-import { createTheme, ThemeOptions } from '@material-ui/core/styles';
-import { SkeletonClassKey } from '@material-ui/lab/Skeleton';
-declare module '@material-ui/core/styles/overrides' {
+import {
+  createTheme,
+  DeprecatedThemeOptions,
+  adaptV4Theme,
+} from '@mui/material/styles';
+import { SkeletonClassKey } from '@mui/material/Skeleton';
+declare module '@mui/material/styles/overrides' {
   interface ComponentNameToClassKey {
     MuiSkeleton: SkeletonClassKey;
   }
 }
 
-declare module '@material-ui/core/styles/createPalette' {
+declare module '@mui/material/styles/createPalette' {
   interface PaletteOptions {
     tertiary?: PaletteColorOptions;
   }
@@ -47,7 +51,7 @@ export const borderRadiuses = {
   full: 1000,
 };
 
-const coreThemeOptions: ThemeOptions = {
+const coreThemeOptions: DeprecatedThemeOptions = {
   typography: {
     fontFamily: ['Comfortaa'].join(','),
 
@@ -231,7 +235,7 @@ const coreThemeOptions: ThemeOptions = {
   },
 };
 
-const lightThemeOptions: ThemeOptions = {
+const lightThemeOptions: DeprecatedThemeOptions = {
   ...coreThemeOptions,
   palette: {
     ...(coreThemeOptions.palette || {}),
@@ -272,7 +276,7 @@ const lightThemeOptions: ThemeOptions = {
   },
 };
 
-const darkThemeOptions: ThemeOptions = {
+const darkThemeOptions: DeprecatedThemeOptions = {
   ...coreThemeOptions,
   palette: {
     ...(coreThemeOptions.palette || {}),
@@ -318,7 +322,7 @@ const darkThemeOptions: ThemeOptions = {
   },
 };
 
-const lightTheme = createTheme(lightThemeOptions);
-const darkTheme = createTheme(darkThemeOptions);
+const lightTheme = createTheme(adaptV4Theme(lightThemeOptions));
+const darkTheme = createTheme(adaptV4Theme(darkThemeOptions));
 
 export { lightTheme, darkTheme };

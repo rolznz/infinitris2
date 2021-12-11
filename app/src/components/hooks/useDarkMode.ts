@@ -1,5 +1,5 @@
 import { useUser } from '../../state/UserStore';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 export default function useDarkMode() {
   const isSystemDarkModeEnabled = useMediaQuery('(prefers-color-scheme: dark)');

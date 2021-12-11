@@ -1,7 +1,7 @@
-import { Box, Typography, Chip } from '@material-ui/core';
-import { Skeleton } from '@material-ui/lab';
+import { Box, Typography, Chip } from '@mui/material';
+import { Skeleton } from '@mui/material';
 import React from 'react';
-import FaceIcon from '@material-ui/icons/Face';
+import FaceIcon from '@mui/icons-material/Face';
 import { IRoom } from 'infinitris2-models';
 
 interface RoomCardProps {

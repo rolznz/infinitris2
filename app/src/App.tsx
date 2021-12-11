@@ -1,6 +1,6 @@
 import React from 'react';
 import useInfinitrisClient from './components/hooks/useInfinitrisClient';
-import { Theme, ThemeProvider } from '@material-ui/core';
+import { Theme, ThemeProvider, StyledEngineProvider } from '@mui/material';
 import { lightTheme, darkTheme } from './theme';
 
 import Internationalization from './internationalization/Internationalization';
@@ -8,9 +8,21 @@ import Internationalization from './internationalization/Internationalization';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import useDarkMode from './components/hooks/useDarkMode';
-import CssBaseline from '@material-ui/core/CssBaseline';
+import CssBaseline from '@mui/material/CssBaseline';
 import FlexBox from './components/ui/FlexBox';
 import { Toasts } from './components/ui/Toasts';
+
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
+
+
+declare module '@mui/styles/defaultTheme' {
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
+  interface DefaultTheme extends Theme {}
+}
 
 interface AppProps {}
 
@@ -30,12 +42,14 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
     <>
       <CssBaseline />
       <Internationalization>
-        <ThemeProvider theme={appTheme}>
-          <FlexBox className="App">
-            {children}
-            <Toasts />
-          </FlexBox>
-        </ThemeProvider>
+        <StyledEngineProvider injectFirst>
+          <ThemeProvider theme={appTheme}>
+            <FlexBox className="App">
+              {children}
+              <Toasts />
+            </FlexBox>
+          </ThemeProvider>
+        </StyledEngineProvider>
       </Internationalization>
     </>
   );

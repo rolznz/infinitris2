@@ -15,7 +15,7 @@ export function CharacterStatList({
   networkImpact,
 }: CharacterStatListProps) {
   return (
-    <FlexBox flexDirection="row" gridGap={10}>
+    <FlexBox flexDirection="row" gap={1}>
       <CharacterImpactStatChip value={networkImpact} />
       <CharacterCoinStatChip value={coins} />
     </FlexBox>

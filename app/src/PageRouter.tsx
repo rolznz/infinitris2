@@ -26,11 +26,12 @@ import { HomePageBackground } from './components/pages/HomePage/HomePageBackgrou
 import HamburgerMenuButton from './components/ui/HamburgerMenu/HamburgerMenuButton';
 import { TermsOfServicePage } from './components/pages/TermsOfServicePage';
 import { zIndexes } from './theme/theme';
-import { DialogManager } from './components/ui/modals/DialogManager';
+import { DialogManager } from './components/ui/drawers/DialogManager';
 import AboutPage from './components/pages/AboutPage/AboutPage';
 import DonatePage from './components/pages/AboutPage/DonatePage';
 import MarketPage from './components/pages/MarketPage/MarketPage';
 import MarketCharacterPage from './components/pages/MarketPage/MarketCharacterPage';
+import BackButton from './components/ui/BackButton';
 
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
@@ -78,6 +79,7 @@ function RouterContents() {
       <DialogManager />
       <OutsideGameElement>
         <HamburgerMenuButton />
+        <BackButton />
         {/*<Header />*/}
       </OutsideGameElement>
       <Switch location={location}>

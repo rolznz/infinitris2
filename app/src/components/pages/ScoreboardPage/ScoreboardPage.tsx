@@ -7,11 +7,15 @@ import { IScoreboardEntry, scoreboardEntriesPath } from 'infinitris2-models';
 import { useCollection } from 'swr-firestore';
 import { Page } from '../../ui/Page';
 import { ScoreboardCard } from './ScoreboardCard';
+import { orderBy } from 'firebase/firestore';
 
 export default function ScoreboardPage() {
   const intl = useIntl();
   const { data: scoreboardEntries } = useCollection<IScoreboardEntry>(
-    scoreboardEntriesPath
+    scoreboardEntriesPath,
+    {
+      constraints: [orderBy('networkImpact', 'desc')],
+    }
   );
 
   return (

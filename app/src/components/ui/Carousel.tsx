@@ -1,4 +1,4 @@
-import { MobileStepper, SvgIcon, SxProps } from '@mui/material';
+import { Box, MobileStepper, SvgIcon, SxProps } from '@mui/material';
 import lodashMerge from 'lodash.merge';
 import React from 'react';
 import SwipeableViews from 'react-swipeable-views';
@@ -17,13 +17,13 @@ type SwipeableViewsStyles = {
 const coreSwipeableViewsStyles: SwipeableViewsStyles = {
   root: {},
   slideContainer: {
-    padding: '0 0px',
+    padding: '15px 5px',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
   },
   slide: {
-    padding: 15,
+    padding: '0 15px',
     color: '#fff',
     flexGrow: 1,
   },
@@ -34,32 +34,50 @@ export const narrowSwipeableViewsStyles: SwipeableViewsStyles = lodashMerge(
   coreSwipeableViewsStyles,
   {
     root: {
-      padding: '0 50px',
+      padding: '0px 50px',
       maxWidth: '400px',
     },
   }
 );
 
 type CarouselProps = {
-  pages: React.ReactNode[];
+  slides: React.ReactNode[];
   styles?: SwipeableViewsStyles;
+  blurEdges?: boolean;
 };
 
 export function Carousel({
-  pages,
+  slides: pages,
   styles = coreSwipeableViewsStyles,
+  blurEdges,
 }: React.PropsWithChildren<CarouselProps>) {
   const [activeStep, setActiveStep] = React.useState(0);
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width > windowSize.height;
+  const arrowDistance = 100;
 
   return (
     <div style={{ position: 'relative' }}>
+      {blurEdges && (
+        <Box
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            zIndex: 1,
+            boxShadow: (theme) =>
+              `inset 12px 0 15px 0px ${theme.palette.background.paper}, inset -12px 0 15px 0px ${theme.palette.background.paper}`,
+            pointerEvents: 'none',
+          }}
+        />
+      )}
       {isLandscape && (
         <CarouselArrow
           icon={<LeftIcon />}
           sx={{
-            left: 0,
+            left: -arrowDistance,
             transform: 'translate(-50%,-50%)',
           }}
           onClick={() => setActiveStep(activeStep - 1)}
@@ -70,7 +88,7 @@ export function Carousel({
         <CarouselArrow
           icon={<RightIcon />}
           sx={{
-            right: 0,
+            right: -arrowDistance,
             transform: 'translate(50%,-50%)',
           }}
           onClick={() => setActiveStep(activeStep + 1)}

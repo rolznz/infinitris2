@@ -1,6 +1,8 @@
 import create from 'zustand';
 
-type DialogType = 'login' | 'coinInfo' | 'impactInfo';
+export type DialogType = 'login' | 'coinInfo' | 'impactInfo';
+
+export const dialogAnimationLength = 500;
 
 type DialogStore = {
   readonly dialogType?: DialogType;
@@ -9,9 +11,16 @@ type DialogStore = {
   close(): void;
 };
 
-const useDialogStore = create<DialogStore>((set) => ({
+const useDialogStore = create<DialogStore>((set, get) => ({
   dialog: null,
-  open: (dialogType: DialogType = 'login') => set((_) => ({ dialogType })),
+  open: (dialogType: DialogType = 'login') => {
+    const currentDialogType = get().dialogType;
+    if (currentDialogType) {
+      get().close();
+    }
+    const executeOpen = () => set((_) => ({ dialogType }));
+    setTimeout(executeOpen, currentDialogType ? dialogAnimationLength : 0);
+  },
   close: () => set((_) => ({ dialogType: undefined })),
 }));
 

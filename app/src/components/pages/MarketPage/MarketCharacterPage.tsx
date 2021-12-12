@@ -70,7 +70,7 @@ export default function MarketPage() {
       }
     >
       <FlexBox zIndex={zIndexes.above}>
-        {character && <Carousel pages={pages} />}
+        {character && <Carousel slides={pages} />}
         {/*<FlexBox
         top={0}
         left={0}

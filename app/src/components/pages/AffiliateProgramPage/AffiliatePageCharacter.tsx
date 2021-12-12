@@ -27,7 +27,7 @@ export function AffiliatePageCharacter({
         {title}
       </Typography>
       {characterImage}
-      <FlexBox flexDirection="row" gridGap={10} mt={-2}>
+      <FlexBox flexDirection="row" gap={1} mt={-2}>
         {impact && <CharacterImpactStatChip value={impact} plus={plus} />}
         <CharacterCoinStatChip value={coins} plus={plus} />
       </FlexBox>

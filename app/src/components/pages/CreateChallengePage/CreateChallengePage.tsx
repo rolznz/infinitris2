@@ -483,8 +483,23 @@ export function CreateChallengePage() {
   );
 }*/
 
+import FlexBox from '@/components/ui/FlexBox';
+import { Page } from '@/components/ui/Page';
 import React from 'react';
+import { useIntl } from 'react-intl';
+import { CreateChallengeHeader } from './CreateChallengeHeader';
 
 export function CreateChallengePage() {
-  return <p>TODO</p>;
+  const intl = useIntl();
+  return (
+    <Page
+      title={intl.formatMessage({
+        defaultMessage: 'Challenge Editor',
+        description: 'Challenge Editor Page title',
+      })}
+      showTitle={false}
+    >
+      <CreateChallengeHeader />
+    </Page>
+  );
 }

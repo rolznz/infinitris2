@@ -1,4 +1,3 @@
-import { Typography, useMediaQuery } from '@mui/material';
 import { IScoreboardEntry } from 'infinitris2-models';
 import React from 'react';
 import FlexBox from '@/components/ui/FlexBox';
@@ -6,16 +5,26 @@ import { CharacterImage } from '../Characters/CharacterImage';
 import { PlacingStar } from '../Characters/PlacingStar';
 import { CharacterStatList } from '../Characters/CharacterStatList';
 import { DocumentSnapshot } from 'firebase/firestore';
+import { Link as RouterLink } from 'react-router-dom';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { characterTileContentPortion } from '../MarketPage/MarketPageCharacterTile';
+import { zIndexes } from '@/theme/theme';
+import Routes from '@/models/Routes';
 
 export type ScoreboardCardProps = {
   entry: DocumentSnapshot<IScoreboardEntry>;
   placing: number;
 };
 
+const linkStyle = { width: '100%', height: '100%' };
+
 export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
   const isSmallScreen = useMediaQuery(`(max-width:600px)`);
   const width = isSmallScreen ? 220 : 250;
   const starOffset = isSmallScreen ? 50 : 60;
+  const characterId = placing.toString(); /*entry.data()!.characterId*/
 
   return (
     <FlexBox mb={8} mx={-2.5}>
@@ -23,7 +32,25 @@ export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
         {entry.data()!.nickname}
       </Typography>
       <FlexBox position="relative" mt={-1}>
-        <CharacterImage characterId={placing.toString()} width={width} />
+        <FlexBox
+          position="absolute"
+          width={width * characterTileContentPortion}
+          height={width * characterTileContentPortion}
+          zIndex={zIndexes.above}
+          /*style={{
+          zIndex: zIndexes.above,
+        }}*/
+        >
+          <Link
+            component={RouterLink}
+            underline="none"
+            to={`${Routes.market}/${characterId}`}
+            style={linkStyle}
+          >
+            <div style={linkStyle} />
+          </Link>
+        </FlexBox>
+        <CharacterImage characterId={characterId} width={width} />
         <PlacingStar placing={placing} offset={starOffset} />
       </FlexBox>
       <FlexBox mt={-3}>

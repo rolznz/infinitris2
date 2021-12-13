@@ -33,7 +33,7 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
       <Internationalization>
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={appTheme}>
-            <FlexBox className="App">
+            <FlexBox className="App" width="100%">
               {children}
               <Toasts />
             </FlexBox>

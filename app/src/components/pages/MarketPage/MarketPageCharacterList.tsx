@@ -10,7 +10,7 @@ import {
 import { ICharacter, charactersPath } from 'infinitris2-models';
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useWindowSize } from 'react-use';
+import useWindowSize from 'react-use/lib/useWindowSize';
 import { useCollection } from 'swr-firestore';
 import { CharacterTile } from './MarketPageCharacterTile';
 

@@ -1,12 +1,20 @@
+import FlexBox from '@/components/ui/FlexBox';
+import { Typography } from '@mui/material';
 import { parseGrid, ChallengeCellType } from 'infinitris2-models';
 import React, { useEffect, useRef } from 'react';
 import { getCellFillColor } from '../../../utils/getCellFillColor';
 
 interface ChallengePreviewProps {
   grid: string;
+  width: number;
+  height: number;
 }
 
-export default function ChallengeGridPreview({ grid }: ChallengePreviewProps) {
+export default function ChallengeGridPreview({
+  grid,
+  width,
+  height,
+}: ChallengePreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -20,13 +28,8 @@ export default function ChallengeGridPreview({ grid }: ChallengePreviewProps) {
     }
     const numRows = cellTypes.length;
     const numColumns = cellTypes[0].length;
-    const cellSize = Math.min(
-      context.canvas.width / numColumns,
-      context.canvas.height / numRows
-    );
-
-    const sx = (context.canvas.width - numColumns * cellSize) * 0.5;
-    const sy = (context.canvas.height - numRows * cellSize) * 0.5;
+    const cellWidth = context.canvas.width / numColumns;
+    const cellHeight = context.canvas.height / numRows;
 
     for (let r = 0; r < numRows; r++) {
       for (let c = 0; c < numColumns; c++) {
@@ -34,18 +37,63 @@ export default function ChallengeGridPreview({ grid }: ChallengePreviewProps) {
         if (cellType !== ChallengeCellType.Empty) {
           context.fillStyle = getCellFillColor(cellType);
           context.fillRect(
-            sx + c * cellSize,
-            sy + r * cellSize,
-            cellSize,
-            cellSize
+            c * cellWidth,
+            r * cellHeight,
+            cellWidth,
+            cellHeight
           );
         }
       }
     }
     context.beginPath();
-    context.rect(sx, sy, numColumns * cellSize, numRows * cellSize);
+    context.rect(0, 0, numColumns * cellWidth, numRows * cellHeight);
     context.stroke();
-  }, [grid]);
+  }, [grid, width, height]);
 
-  return <canvas ref={canvasRef} style={{ width: '100%', height: '100%' }} />;
+  return <canvas ref={canvasRef} width={width + 'px'} height={height + 'px'} />;
+}
+
+type FittedChallengeGridPreviewProps = {
+  grid: string;
+  maxWidth: number;
+  maxHeight: number;
+};
+
+export function FittedChallengeGridPreview({
+  grid,
+  maxWidth,
+  maxHeight,
+}: FittedChallengeGridPreviewProps) {
+  let challengeCells;
+  try {
+    challengeCells = parseGrid(grid);
+  } catch (e) {
+    return (
+      <FlexBox
+        width={maxWidth}
+        height={maxHeight}
+        sx={{
+          backgroundColor: '#ff0000AA',
+        }}
+      >
+        <Typography fontSize={maxWidth / 5 + 'px'}>
+          Invalid
+          <br />
+          Grid
+        </Typography>
+      </FlexBox>
+    );
+  }
+  const width = challengeCells[0].length;
+  const height = challengeCells.length;
+
+  const scale = Math.min(maxWidth / width, maxHeight / height);
+
+  return (
+    <ChallengeGridPreview
+      grid={grid}
+      width={width * scale}
+      height={height * scale}
+    />
+  );
 }

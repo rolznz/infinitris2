@@ -9,6 +9,7 @@ import { Carousel, narrowSwipeableViewsStyles } from '../../Carousel';
 
 import { CoinInfoUseCoinsSlide } from './CoinInfoUseCoinsSlide';
 import { CoinInfoEarnCoinsSlide } from './CoinInfoEarnCoinsSlide';
+import { FilledIcon } from '../../FilledIcon';
 
 export interface CoinInfoProps {
   onClose?(): void;
@@ -28,9 +29,9 @@ export function CoinInfoDrawerContent({ onClose }: CoinInfoProps) {
       <Carousel slides={pages} styles={narrowSwipeableViewsStyles} blurEdges />
       <Box mt={2} />
       <RingIconButton padding="large" onClick={onClose}>
-        <SvgIcon>
+        <FilledIcon>
           <CrossIcon />
-        </SvgIcon>
+        </FilledIcon>
       </RingIconButton>
     </FlexBox>
   );

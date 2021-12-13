@@ -76,10 +76,10 @@ function RouterContents() {
   }, [location]);*/
   return (
     <>
+      <BackButton />
       <DialogManager />
       <OutsideGameElement>
         <HamburgerMenuButton />
-        <BackButton />
         {/*<Header />*/}
       </OutsideGameElement>
       <Switch location={location}>

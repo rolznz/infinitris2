@@ -1,5 +1,6 @@
 import { ThemeOptions } from '@mui/material/styles';
 import { SkeletonClassKey } from '@mui/material/Skeleton';
+import '@mui/lab/themeAugmentation';
 declare module '@mui/material/styles/overrides' {
   interface ComponentNameToClassKey {
     MuiSkeleton: SkeletonClassKey;
@@ -90,6 +91,23 @@ export const coreThemeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           boxShadow: 'none !important',
+        },
+      },
+    },
+    MuiTab: {
+      defaultProps: {
+        sx: {
+          color: borderColor,
+        },
+      },
+    },
+    MuiTabPanel: {
+      styleOverrides: {
+        root: {
+          display: 'flex',
+          width: '100%',
+          padding: 0,
+          alignSelf: 'flex-start',
         },
       },
     },

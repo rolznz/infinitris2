@@ -20,9 +20,20 @@ export function FilledIcon({
   children,
   ...otherProps
 }: React.PropsWithChildren<SvgIconProps>) {
-  const classes = { icon: '' }; //useStyles();
   return (
-    <SvgIcon className={classes.icon} {...otherProps}>
+    <SvgIcon
+      sx={{
+        backgroundColor: '#E4E6E7', //theme.palette.text.primary,
+        color: 'background.paper',
+        borderRadius: '50%',
+        padding: 0.5,
+        fontSize: 56,
+        marginRight: 1,
+        border: `4px solid ${borderColor}`,
+        backgroundClip: 'padding-box',
+      }}
+      {...otherProps}
+    >
       {children}
     </SvgIcon>
   );

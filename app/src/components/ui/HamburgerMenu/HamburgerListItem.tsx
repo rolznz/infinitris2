@@ -16,26 +16,12 @@ type HamburgerListItemProps = {
   onClick?(): void;
 };
 
-/*const useStyles = makeStyles((theme) => ({
-  icon: {
-    backgroundColor: theme.palette.text.primary,
-    color: theme.palette.background.paper,
-    borderRadius: '50%',
-    padding: 4,
-  },
-  text: {
-    color: theme.palette.text.primary,
-    textTransform: 'lowercase',
-  },
-}));*/
-
 export default function HamburgerListItem({
   to,
   text,
   icon,
   onClick,
 }: HamburgerListItemProps) {
-  //const classes = useStyles();
   return (
     <Link
       component={RouterLink}
@@ -45,11 +31,25 @@ export default function HamburgerListItem({
     >
       <ListItem button>
         <ListItemIcon>
-          <SvgIcon fontSize="large" /*className={classes.icon}*/>
+          <SvgIcon
+            fontSize="large"
+            sx={{
+              backgroundColor: 'text.primary',
+              color: 'background.paper',
+              borderRadius: '50%',
+              padding: 0.5,
+            }}
+          >
             {icon}
           </SvgIcon>
         </ListItemIcon>
-        <ListItemText primary={text} /*className={classes.text}*/ />
+        <ListItemText
+          primary={text}
+          sx={{
+            color: 'text.primary',
+            textTransform: 'lowercase',
+          }}
+        />
       </ListItem>
     </Link>
   );

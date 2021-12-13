@@ -31,7 +31,7 @@ import logoImage from './assets/logo.png';
 import useAuthStore from '@/state/AuthStore';
 import { useUserStore } from '@/state/UserStore';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';
-import { zIndexes } from '@/theme/theme';
+import { colors, zIndexes } from '@/theme/theme';
 
 type HamburgerMenuProps = {
   isOpen: boolean;
@@ -45,25 +45,21 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
   const { donations, monthDonationSum } = useDonations(isOpen);
 
   return (
-    <Drawer
-      anchor="right"
-      open={isOpen}
-      onClose={close}
-      sx={{
-        paper: {
-          width: 250,
-        },
-      }}
-    >
-      <div role="presentation" onClick={close} onKeyDown={close}>
-        <FlexBox justifyContent="flex-end" flexDirection="row" padding={3}>
+    <Drawer anchor="right" open={isOpen} onClose={close}>
+      <Box role="presentation" onClick={close} onKeyDown={close} px={1}>
+        <FlexBox
+          justifyContent="flex-end"
+          flexDirection="row"
+          padding={3}
+          pr={1}
+        >
           <Link component={RouterLink} underline="none" to={Routes.home}>
             <IconButton size="large">
-              <SvgIcon sx={{ color: 'primary' }}>{<HomeIcon />}</SvgIcon>
+              <SvgIcon sx={{ color: colors.white }}>{<HomeIcon />}</SvgIcon>
             </IconButton>
           </Link>
           <IconButton onClick={close} size="large">
-            <SvgIcon sx={{ color: 'primary' }}>{<CloseIcon />}</SvgIcon>
+            <SvgIcon sx={{ color: colors.white }}>{<CloseIcon />}</SvgIcon>
           </IconButton>
         </FlexBox>
         <List>
@@ -153,7 +149,11 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
           />
           <Typography
             variant="caption"
-            style={{ textTransform: 'uppercase', color: 'white' }}
+            style={{
+              textTransform: 'uppercase',
+              color: colors.white,
+              fontSize: '10px',
+            }}
           >
             <FormattedMessage
               defaultMessage="build {clientVersion}"
@@ -200,7 +200,7 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
             />
           </FlexBox>
         </Link>
-      </div>
+      </Box>
     </Drawer>
   );
 }

@@ -29,10 +29,6 @@ body > canvas {
   max-height: 90% !important;
 }
 
-.MuiTabPanel-root {
-  padding: 0 !important;
-}
-
 .react-swipeable-view-container [aria-hidden='true'] {
   transform: scale(0.9);
   transition: transform 0.3s;

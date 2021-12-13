@@ -2,7 +2,7 @@ import { Box, MobileStepper, SvgIcon, SxProps } from '@mui/material';
 import lodashMerge from 'lodash.merge';
 import React from 'react';
 import SwipeableViews from 'react-swipeable-views';
-import { useWindowSize } from 'react-use';
+import useWindowSize from 'react-use/lib/useWindowSize';
 import LeftIcon from '@mui/icons-material/ChevronLeft';
 import RightIcon from '@mui/icons-material/ChevronRight';
 import FlexBox from './FlexBox';

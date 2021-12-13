@@ -3,7 +3,7 @@ import { borderRadiuses, boxShadows } from '@/theme/theme';
 import { DocumentSnapshot } from 'firebase/firestore';
 import { getBorderColor, ICharacter } from 'infinitris2-models';
 import React from 'react';
-import { useWindowSize } from 'react-use';
+import useWindowSize from 'react-use/lib/useWindowSize';
 
 type BlockPreviewProps = {
   character: DocumentSnapshot<ICharacter>;

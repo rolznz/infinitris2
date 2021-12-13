@@ -21,29 +21,30 @@ export default function ChallengeInfoView({
   const [hasReceivedInput, continueButton] = useContinueButton();
 
   useTrue(hasReceivedInput, onReceivedInput);
-  const translation = challenge?.translations?.[user.locale];
+  //const translation = challenge?.translations?.[user.locale];
 
   return (
-    <FlexBox flex={1} maxWidth="100%" padding={4}>
+    <FlexBox flex={1} padding={4}>
       <FlexBox
         color="primary.main"
         bgcolor="background.paper"
-        padding={4}
+        px={6}
+        py={4}
         borderRadius={borderRadiuses.base}
       >
         <Typography variant="h6">
-          {translation?.title || challenge?.title}
+          {challenge.title || 'Untitled Challenge'}
         </Typography>
-        <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
+        {/* <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
           {translation?.description || challenge?.description || (
             <FormattedMessage
               defaultMessage="No description provided"
               description="No description provided"
             />
           )}
-        </Typography>
+        </Typography> */}
         <Box pt={2}>{continueButton}</Box>
-        <Typography variant="caption">
+        {/*<Typography variant="caption">
           <FormattedMessage
             defaultMessage="Attempt: #{attemptCount}"
             description="Number of times the user has attempted this challenge"
@@ -52,7 +53,7 @@ export default function ChallengeInfoView({
                 (user.challengeAttempts[challenge.id]?.length || 0) + 1,
             }}
           />
-        </Typography>
+          </Typography>*/}
       </FlexBox>
     </FlexBox>
   );

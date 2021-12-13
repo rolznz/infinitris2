@@ -36,8 +36,9 @@ export default function ChallengePage() {
   const { id } = useParams<ChallengePageRouteParams>();
   const challengeId = id!; // guaranteed not to be null due to router
   const isTest = isTestChallenge(challengeId);
+  console.log('isTest', isTest);
 
-  const requiresRedirect = useForcedRedirect(true, challengeId);
+  const requiresRedirect = useForcedRedirect(true, challengeId, !isTest);
   const { incompleteChallenges } = useIncompleteChallenges();
 
   const { data: syncedChallenge } = useDocument<IChallenge>(
@@ -67,16 +68,20 @@ export default function ChallengePage() {
 
   const { preferredInputMethod, controls, hasSeenAllSet, readOnly } =
     userStore.user;
-  const playerInfo: IPlayer = {
-    color: 0xff0000, // FIXME: use player's color
-    nickname: readOnly.nickname || 'New Player',
-    id: -1,
-  };
+  const playerInfo: IPlayer = React.useMemo(
+    () => ({
+      color: 0xff0000, // FIXME: use player's color
+      nickname: readOnly.nickname || 'New Player',
+      id: -1,
+    }),
+    [readOnly.nickname]
+  );
 
   // TODO: load challenge from firebase
 
   useEffect(() => {
     if (challenge && !requiresRedirect && launchChallenge && !hasLaunched) {
+      console.log('passed');
       setLaunched(true);
 
       const simulationEventListener: ISimulationEventListener = {
@@ -129,12 +134,13 @@ export default function ChallengePage() {
   useEffect(() => {
     if (challenge && checkChallengeStatus && challengeClient) {
       setCheckChallengeStatus(false);
-      const status = challengeClient.getStatus();
-      if (status && status.code !== 'pending') {
+      const attempt = challengeClient.getChallengeAttempt();
+      if (attempt && attempt.status !== 'pending') {
         if (!isTest) {
-          addChallengeAttempt(challenge.id, status);
+          // TODO:
+          //addChallengeAttempt(challenge.id, attempt);
         }
-        if (status.code === 'success') {
+        if (attempt.status === 'success') {
           setChallengeCompleted(true);
         } else {
           setChallengeFailed(true);
@@ -169,7 +175,7 @@ export default function ChallengePage() {
       <ChallengeResultsView
         challengeId={challenge.id}
         isTest={isTest}
-        status={challengeClient.getStatus()}
+        status={challengeClient.getChallengeAttempt()}
         onContinue={() => {
           completeChallenge(challenge.id);
           const remainingChallenges = incompleteChallenges.filter(

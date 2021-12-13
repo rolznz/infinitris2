@@ -41,38 +41,6 @@ function removeSwrFields(challenge?: IChallenge): IChallenge | undefined {
   return cleaned;
 }
 
-function createNewChallenge(userId: string): WithId<IChallenge> {
-  return {
-    id: uuidv4(),
-    locale: defaultLocale,
-    isOfficial: false,
-    isPublished: false,
-    rewardCriteria: {},
-    finishCriteria: {
-      //finishChallengeCellFilled: true,
-    },
-    title: '',
-    grid: `
-000000000
-000000000
-000000000
-000000000
-000000000
-000000000
-000000000
-000000000
-000000000
-000000000
-000000000
-000000000
-0000X0000
-0X0000X00
-X00X00X0X
-FFFFFFFFF`.trim(),
-    created: false,
-  };
-}
-
 function getGridError(challenge: IChallenge): string | null {
   try {
     parseGrid(challenge.grid as string);
@@ -483,7 +451,6 @@ export function CreateChallengePage() {
   );
 }*/
 
-import FlexBox from '@/components/ui/FlexBox';
 import { Page } from '@/components/ui/Page';
 import React from 'react';
 import { useIntl } from 'react-intl';

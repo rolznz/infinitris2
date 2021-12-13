@@ -1,8 +1,7 @@
 const prefix = 'infinitris2-';
 const localStorageKeys = {
   localUser: `${prefix}localUser`,
-  createChallengeGrid: `${prefix}createChallengeGrid`,
-  createChallengeInfo: `${prefix}createChallengeInfo`,
+  challenge: `${prefix}challenge`,
   referredByAffiliateId: `${prefix}affiliateLinkRef`,
 };
 export default localStorageKeys;

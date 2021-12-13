@@ -36,7 +36,7 @@ export interface IChallenge extends IEntity {
   //readonly firstBlockColumn?: number;
   readonly grid: string;
 
-  readonly finishCriteria: {
+  readonly finishCriteria?: {
     readonly maxBlocksPlaced?: number;
     readonly maxLinesCleared?: number;
     readonly maxTimeTakenMs?: number;
@@ -45,7 +45,7 @@ export interface IChallenge extends IEntity {
 
   readonly simulationSettings?: ISimulationSettings;
 
-  readonly rewardCriteria: {
+  readonly rewardCriteria?: {
     bronze?: ChallengeRewardCriteria;
     silver?: ChallengeRewardCriteria;
     gold?: ChallengeRewardCriteria;

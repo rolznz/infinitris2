@@ -1,27 +1,28 @@
 import FlexBox from '@/components/ui/FlexBox';
 import React from 'react';
 import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
-import FolderIcon from '@mui/icons-material/Folder';
-import SaveIcon from '@mui/icons-material/Save';
-import { TabContext, TabList, TabPanel } from '@mui/lab';
-import { Tab, Typography } from '@mui/material';
 import Grid4x4Icon from '@mui/icons-material/Grid4x4';
-import JavascriptIcon from '@mui/icons-material/Javascript';
-import { ChallengeInfo } from './ChallengeInfo';
-import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
+import { ChallengeEditorInfo } from './tabs/ChallengeEditorInfo';
+import { ChallengeEditorGrid } from './tabs/ChallengeEditorGrid';
+import TabContext from '@mui/lab/TabContext';
+import TabList from '@mui/lab/TabList/TabList';
+import TabPanel from '@mui/lab/TabPanel/TabPanel';
+import { useIsLandscape } from '@/components/hooks/useIsLandscape';
+import Tab from '@mui/material/Tab';
+import { ChallengeEditorJson } from './tabs/ChallengeEditorJson';
 
 type ChallengeEditorTab = 'info' | 'grid' | 'json';
 
 export function CreateChallengeHeader() {
   const [availableBlocksTab, setAvailableBlocksTab] =
-    React.useState<ChallengeEditorTab>('info');
-  /* <SaveIcon />
-    <FolderIcon /> */
+    React.useState<ChallengeEditorTab>('grid');
+
+  const isLandscape = useIsLandscape();
 
   return (
     <TabContext value={availableBlocksTab}>
       <>
-        <FlexBox flexDirection="row" gap={4}>
+        <FlexBox flexDirection="row" gap={4} mt={isLandscape ? 0 : 6}>
           <TabList
             onChange={(
               _event: React.SyntheticEvent,
@@ -34,31 +35,20 @@ export function CreateChallengeHeader() {
             <Tab label={<FormatAlignLeftIcon />} value="info" />
             <Tab label={<Grid4x4Icon />} value="grid" />
             <Tab
-              label={
-                <Typography sx={{ fontSize: 10, textTransform: 'capitalize' }}>
-                  JSON
-                </Typography>
-              }
+              label={<span style={{ fontSize: 14 }}>{'{}'}</span>}
               value="json"
             />
           </TabList>
         </FlexBox>
-        <FlexBox pt={1}>
+        <FlexBox pt={2} width="100%" height="100%" justifyContent="flex-start">
           <TabPanel value="info">
-            <ChallengeInfo />
+            <ChallengeEditorInfo />
           </TabPanel>
           <TabPanel value="grid">
-            Play / Edit
-            <ChallengeGridPreview
-              grid={`
-XXX
-000
-XXX
-          `}
-            />
+            <ChallengeEditorGrid />
           </TabPanel>
-          <TabPanel value="preview">
-            <p>Hi2</p>
+          <TabPanel value="json" sx={{ height: '100%' }}>
+            <ChallengeEditorJson />
           </TabPanel>
         </FlexBox>
       </>

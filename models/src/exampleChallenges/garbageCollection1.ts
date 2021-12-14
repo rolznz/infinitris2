@@ -1,6 +1,8 @@
 import { IChallenge } from '../IChallenge';
+import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
 const garbageCollection1: IChallenge = {
+  ...exampleChallengeDefaultFields,
   isOfficial: true,
   title: 'Garbage Collection 1',
   description: '',

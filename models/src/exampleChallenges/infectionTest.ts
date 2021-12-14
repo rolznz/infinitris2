@@ -1,6 +1,8 @@
 import { IChallenge } from '../IChallenge';
+import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
 const infectionTest: IChallenge = {
+  ...exampleChallengeDefaultFields,
   isOfficial: true,
   title: 'Infection 1',
   description: '',

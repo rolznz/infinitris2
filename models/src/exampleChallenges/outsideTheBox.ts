@@ -1,6 +1,8 @@
 import { IChallenge } from '../IChallenge';
+import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
 const outsideTheBox: IChallenge = {
+  ...exampleChallengeDefaultFields,
   isOfficial: true,
   title: 'Outside The Box',
   description: '',

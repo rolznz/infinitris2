@@ -1,8 +1,6 @@
 import IEntity, { Creatable, IEntityReadOnlyProperties } from './IEntity';
 
-export interface IRatingReadOnlyProperties extends IEntityReadOnlyProperties {
-  readonly userId: string;
-}
+export interface IRatingReadOnlyProperties extends IEntityReadOnlyProperties {}
 
 export default interface IRating extends IEntity {
   readonly readOnly?: IRatingReadOnlyProperties;

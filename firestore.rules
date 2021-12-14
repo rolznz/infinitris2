@@ -32,7 +32,7 @@ service cloud.firestore {
     }
 
     function baseRequestValid() {
-      return createdFieldValid() && readOnlyFieldsUntouched() && !rateLimitHit();
+      return authMatchesUser(request.resource.data.userId) && createdFieldValid() && readOnlyFieldsUntouched() && !rateLimitHit();
     }
 
     function getEntityFromCollection() {
@@ -201,7 +201,6 @@ service cloud.firestore {
         let user = get(/databases/$(database)/documents/users/$(userId));
         return
           baseRequestValid() &&
-          authMatchesUser(userId) &&
           request.resource.data.keys().hasOnly(['created']) &&
           affiliate.data.readOnly.userId != userId &&
           !('referredByAffiliateId' in user.data.readOnly);

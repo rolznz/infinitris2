@@ -1,8 +1,10 @@
 import tetrominoes from '../exampleBlockLayouts/Tetrominoes';
 import { IChallenge } from '../IChallenge';
+import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
 // TODO: delete
 const controlCheck: IChallenge = {
+  ...exampleChallengeDefaultFields,
   isOfficial: true,
   title: 'Control Check',
   locale: 'en',

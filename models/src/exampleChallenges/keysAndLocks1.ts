@@ -1,6 +1,8 @@
 import { IChallenge } from '../IChallenge';
+import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
 const keysAndLocks1: IChallenge = {
+  ...exampleChallengeDefaultFields,
   isOfficial: true,
   title: 'Keys and Locks 1',
   description: '',

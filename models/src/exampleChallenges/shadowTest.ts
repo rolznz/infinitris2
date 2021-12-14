@@ -1,6 +1,8 @@
 import { IChallenge } from '../IChallenge';
+import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
 const shadowTest: IChallenge = {
+  ...exampleChallengeDefaultFields,
   isOfficial: true,
   title: 'Shadow Test',
   locale: 'en',

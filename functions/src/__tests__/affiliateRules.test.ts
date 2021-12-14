@@ -5,12 +5,12 @@ import dummyData from './helpers/dummyData';
 
 const existingAffiliate: IAffiliate = {
   readOnly: {
-    userId: dummyData.userId1,
     numConversions: 0,
     createdTimestamp: dummyData.createdTimestamp,
     lastModifiedTimestamp: dummyData.lastModifiedTimestamp,
     numTimesModified: 0,
   },
+  userId: dummyData.userId1,
   created: true,
 };
 
@@ -65,11 +65,11 @@ describe('Affiliate Rules', () => {
     const affiliate: IAffiliate = {
       readOnly: {
         numConversions: 9999,
-        userId: dummyData.userId1,
         createdTimestamp: dummyData.createdTimestamp,
         lastModifiedTimestamp: dummyData.lastModifiedTimestamp,
         numTimesModified: 0,
       },
+      userId: dummyData.userId1,
       created: true,
     };
 
@@ -89,11 +89,11 @@ describe('Affiliate Rules', () => {
     const affiliate: IAffiliate = {
       readOnly: {
         numConversions: 9999,
-        userId: dummyData.userId1,
         createdTimestamp: dummyData.createdTimestamp,
         lastModifiedTimestamp: dummyData.lastModifiedTimestamp,
         numTimesModified: 0,
       },
+      userId: dummyData.userId1,
       created: true,
     };
 

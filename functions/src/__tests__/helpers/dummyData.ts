@@ -95,6 +95,7 @@ const updatableChallenge: UpdatableChallenge = {
   0000
   XXX0
   000X`,
+  userId: userId1,
 };
 
 const creatableChallenge: CreatableChallenge = {
@@ -128,6 +129,7 @@ const creatableRating: CreatableRating = {
   entityId: challengeId1,
   value: 3,
   created: false,
+  userId: userId2,
 };
 
 const rating1Path = getRatingPath(
@@ -141,17 +143,18 @@ const affiliate1Path = getAffiliatePath(affiliateId1);
 const affiliate1: IAffiliate = {
   readOnly: {
     numConversions: 0,
-    userId: userId2,
     createdTimestamp,
     lastModifiedTimestamp,
     numTimesModified: 0,
   },
+  userId: userId2,
   created: true,
 };
 
 const conversion1Path = getConversionPath(affiliateId1, userId1);
 const conversion1: IConversion = {
   created: false,
+  userId: userId1,
 };
 
 const nicknameId1 = 'Bob';
@@ -165,12 +168,13 @@ const existingNickname: INickname = {
     createdTimestamp: createdTimestamp,
     lastModifiedTimestamp: createdTimestamp,
     numTimesModified: 0,
-    userId: userId1,
   },
+  userId: userId1,
   created: true,
 };
 const creatableNickname: INickname = {
   created: false,
+  userId: userId1,
 };
 
 const colorId1 = 'red';
@@ -186,11 +190,13 @@ const color1: IColor = {
   price: 3,
   value: 0xff0000,
   created: true,
+  userId: userId1,
 };
 const creatableColor: Creatable<IColor> = {
   value: 0xff0000,
   price: 3,
   created: false,
+  userId: userId1,
 };
 
 const purchase1Path = getPurchasePath('colors', colorId1, userId1);
@@ -198,6 +204,7 @@ const purchase1: IPurchase = {
   entityCollectionPath: 'colors',
   entityId: colorId1,
   created: false,
+  userId: userId1,
 };
 
 const challengeAttemptId1 = 'challenge-attempt-1';
@@ -213,6 +220,7 @@ const creatableChallengeAttempt: Creatable<IChallengeAttempt> = {
     timeTakenMs: 3500,
   },
   created: false,
+  userId: userId1,
 };
 
 // TODO: rename userId1 to user1Id etc

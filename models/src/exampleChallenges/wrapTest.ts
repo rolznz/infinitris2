@@ -1,6 +1,8 @@
 import { IChallenge } from '../IChallenge';
+import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
 const wrapTest: IChallenge = {
+  ...exampleChallengeDefaultFields,
   isOfficial: true,
   title: 'Wrap Test',
   locale: 'en',

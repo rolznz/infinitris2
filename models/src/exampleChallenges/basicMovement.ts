@@ -1,6 +1,8 @@
 import { IChallenge } from '../IChallenge';
+import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
 const basicMovement: IChallenge = {
+  ...exampleChallengeDefaultFields,
   isOfficial: true,
   title: 'Basic Movement',
   description: '',

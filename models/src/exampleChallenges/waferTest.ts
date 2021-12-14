@@ -1,6 +1,8 @@
 import { IChallenge } from '../IChallenge';
+import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
 const waferTest: IChallenge = {
+  ...exampleChallengeDefaultFields,
   isOfficial: true,
   title: 'Wafers 1',
   description: '',

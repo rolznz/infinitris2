@@ -15,7 +15,6 @@ export interface IRateable {
 export interface IChallengeReadOnlyProperties
   extends IEntityReadOnlyProperties,
     IRateable {
-  readonly userId: string;
   readonly numAttempts: number;
 }
 

@@ -1,6 +1,8 @@
 import { IChallenge } from '../IChallenge';
+import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
 const tSpins1: IChallenge = {
+  ...exampleChallengeDefaultFields,
   isOfficial: true,
   title: 'T Spins 1',
   description: '',

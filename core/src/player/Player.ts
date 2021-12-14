@@ -136,11 +136,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   /**
    * @inheritdoc
    */
-  onBlockWrapped(block: IBlock, wrapIndexChange: number) {
+  /*onBlockWrapped(block: IBlock, wrapIndexChange: number) {
     this._eventListeners.forEach((listener) =>
       listener.onBlockWrapped(block, wrapIndexChange)
     );
-  }
+  }*/
 
   /**
    * @inheritdoc

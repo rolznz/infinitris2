@@ -31,7 +31,8 @@ import ChallengeRewardCriteria from '@models/ChallengeRewardCriteria';
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
 export default class ChallengeClient
-  implements IChallengeClient, ISimulationEventListener {
+  implements IChallengeClient, ISimulationEventListener
+{
   // FIXME: restructure to not require definite assignment
   private _renderer!: IRenderer;
   private _simulation!: ISimulation;
@@ -154,22 +155,22 @@ export default class ChallengeClient
         return false;
       }
       if (
-        finishCriteria.maxBlocksPlaced &&
+        finishCriteria?.maxBlocksPlaced &&
         this._numBlocksPlaced < finishCriteria.maxBlocksPlaced
       ) {
         return false;
       }
-      if (finishCriteria.gridEmpty && !this._simulation.grid.isEmpty) {
+      if (finishCriteria?.gridEmpty && !this._simulation.grid.isEmpty) {
         return false;
       }
       if (
-        finishCriteria.maxLinesCleared &&
+        finishCriteria?.maxLinesCleared &&
         this._numLinesCleared < finishCriteria.maxLinesCleared
       ) {
         return false;
       }
       if (
-        finishCriteria.maxTimeTakenMs &&
+        finishCriteria?.maxTimeTakenMs &&
         this._simulation.runningTime < finishCriteria.maxTimeTakenMs
       ) {
         return false;
@@ -221,12 +222,16 @@ export default class ChallengeClient
 
       const mergeRewardCriteria = (criteria?: ChallengeRewardCriteria) => {
         return {
-          ...rewardCriteria.all,
+          ...(rewardCriteria?.all || {}),
           ...(criteria || {}),
         };
       };
 
-      return [rewardCriteria.bronze, rewardCriteria.silver, rewardCriteria.gold]
+      return [
+        rewardCriteria?.bronze,
+        rewardCriteria?.silver,
+        rewardCriteria?.gold,
+      ]
         .map((criteria) => matchesRewardCriteria(mergeRewardCriteria(criteria)))
         .filter((result) => result).length;
     };
@@ -252,6 +257,7 @@ export default class ChallengeClient
       status,
       medalIndex,
       stats,
+      userId: null as unknown as string,
     };
   }
 

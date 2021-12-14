@@ -161,11 +161,11 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
-  onBlockWrapped(block: IBlock, wrapIndexChange: number) {
+  /*onBlockWrapped(block: IBlock, wrapIndexChange: number) {
     this._eventListeners.forEach((listener) =>
       listener.onBlockWrapped(block, wrapIndexChange)
     );
-  }
+  }*/
 
   /**
    * @inheritdoc

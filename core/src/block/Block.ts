@@ -12,7 +12,7 @@ type LoopCellEvent = (cell?: ICell) => void;
 export default class Block implements IBlock {
   private _player: IPlayer;
   private readonly _cells: ICell[];
-  private _wrapIndex: number;
+  //private _wrapIndex: number;
   private _column: number;
   private _row: number;
   private _rotation: number;
@@ -36,7 +36,7 @@ export default class Block implements IBlock {
     eventListener?: IBlockEventListener
   ) {
     this._player = player;
-    this._wrapIndex = 0;
+    //this._wrapIndex = 0;
     this._column = column;
     this._row = row;
     this._rotation = rotation;
@@ -109,9 +109,9 @@ export default class Block implements IBlock {
     return this._isAlive;
   }
 
-  get wrapIndex(): number {
+  /*get wrapIndex(): number {
     return this._wrapIndex;
-  }
+  }*/
 
   // TODO: rename numColumns
   get width(): number {
@@ -285,7 +285,7 @@ export default class Block implements IBlock {
       if (canMove) {
         const gridNumColumns = gridCells[0].length;
         this._column += dx;
-        const oldWrapIndex = this._wrapIndex;
+        /*const oldWrapIndex = this._wrapIndex;
         while (this._column > gridNumColumns) {
           this._column -= gridNumColumns;
           ++this._wrapIndex;
@@ -299,7 +299,7 @@ export default class Block implements IBlock {
             this,
             this._wrapIndex - oldWrapIndex
           );
-        }
+        }*/
 
         this._row += dy;
         this._rotation += drClamped;

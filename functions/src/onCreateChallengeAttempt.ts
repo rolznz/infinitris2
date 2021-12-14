@@ -12,6 +12,7 @@ export const onCreateChallengeAttempt = functions.firestore
   .document('challengeAttempts/{challengeAttemptId}')
   .onCreate(async (snapshot, context) => {
     try {
+      // FIXME: firestore does not support context.auth - pass userId as part of payload
       const userId = context.auth?.uid;
       if (!userId) {
         throw new Error('User not logged in');

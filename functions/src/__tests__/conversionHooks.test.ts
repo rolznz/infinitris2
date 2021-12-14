@@ -71,8 +71,8 @@ describe('Conversion Hooks', () => {
     ).data() as IUser;
     // network impact user 1 => user 2 after conversion
     expect(affiliateUser.readOnly.networkImpact).toEqual(1);
-    // 3 initial coins + 1 network impact, + 2 bonus conversion coins
-    expect(affiliateUser.readOnly.coins).toEqual(6);
+    // 3 initial coins + 1 for increased network impact
+    expect(affiliateUser.readOnly.coins).toEqual(4);
 
     const conversion = (
       await db
@@ -83,64 +83,5 @@ describe('Conversion Hooks', () => {
     expect(conversion.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
       firestore.Timestamp.now().seconds - 5
     );
-  });
-
-  test('conversions provide increasing revenue', async () => {
-    const user2: IUser = {
-      ...dummyData.existingUser,
-      readOnly: {
-        ...dummyData.existingUser.readOnly,
-        affiliateId: dummyData.affiliateId1,
-      },
-    };
-
-    const numConversions = 5;
-
-    const affiliate1: IAffiliate = {
-      ...dummyData.affiliate1,
-      readOnly: {
-        ...dummyData.affiliate1.readOnly,
-        numConversions,
-      },
-    };
-
-    const { db, test } = await setup(
-      undefined,
-      {
-        [dummyData.affiliate1Path]: affiliate1,
-        [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.user2Path]: user2,
-        [dummyData.conversion1Path]: dummyData.conversion1,
-      },
-      false
-    );
-
-    await test.wrap(onCreateConversion)(
-      test.firestore.makeDocumentSnapshot(
-        dummyData.conversion1,
-        dummyData.conversion1Path
-      ),
-      {
-        auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }), // user 1 was referred by user 2
-        params: {
-          affiliateId: dummyData.affiliateId1,
-          convertedUserId: dummyData.userId1,
-        },
-      }
-    );
-
-    const affiliate = (
-      await db.doc(dummyData.affiliate1Path).get()
-    ).data() as IAffiliate;
-
-    expect(affiliate.readOnly.numConversions).toBe(numConversions + 1);
-
-    const affiliateUser = (
-      await db.doc(dummyData.user2Path).get()
-    ).data() as IUser;
-    // network impact user 1 => user 2 after conversion
-    expect(affiliateUser.readOnly.networkImpact).toEqual(1);
-    // 3 initial coins + 1 network impact, + (2 + numConversions) bonus conversion coins
-    expect(affiliateUser.readOnly.coins).toEqual(3 + 1 + 2 + numConversions);
   });
 });

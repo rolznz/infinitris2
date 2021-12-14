@@ -8,6 +8,7 @@ import LoadingSpinner from './LoadingSpinner';
 import localStorageKeys from '@/utils/localStorageKeys';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import useAffiliateLinkRef from './hooks/useAffiliateLinkRef';
+import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
 
 import { ReactComponent as GoogleIcon } from '@/icons/google.svg';
 import { ReactComponent as FacebookIcon } from '@/icons/facebook.svg';
@@ -20,6 +21,10 @@ import {
   signInWithPopup,
 } from 'firebase/auth';
 import { auth } from '@/firebase';
+import { getConversionPath, IConversion } from 'infinitris2-models';
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
+import { FilledIcon } from './ui/FilledIcon';
+import { CharacterCoinStatChip } from './pages/Characters/CharacterStatChip';
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
@@ -37,7 +42,6 @@ export default function Login({
   onClose,
   showTitle = true,
 }: LoginProps) {
-  useAffiliateLinkRef();
   const [isLoading, setIsLoading] = useState(false);
   //const user = useUser();
   //const userStore = useUserStore();
@@ -55,16 +59,25 @@ export default function Login({
         console.log('Authentication succeeded');
         //const userPath = getUserPath(result.user.uid);
         if (referredByAffiliateId) {
+          const conversionPath = getConversionPath(
+            referredByAffiliateId,
+            result.user.uid
+          );
+          const conversion: IConversion = {
+            created: false,
+            userId: result.user.uid,
+          };
+
+          console.log('Setting conversion ' + conversionPath, conversion);
+          try {
+            await setDoc(doc(getFirestore(), conversionPath), conversion);
+          } catch (error) {
+            console.error('Failed to create conversion', error);
+          }
           deleteReferredByAffiliateId();
-          // FIXME: create conversion
-          /*await set(
-            getUserRequestPath(result.user.uid, 'referredByAffiliate'),
-            {
-              referredByAffiliateId,
-            } as 
-          );*/
         }
         /*
+        // FIXME: this is an ugly way to do it
         // wait for the firebase onCreateUser function to run
           await new Promise((resolve) => setTimeout(resolve, 3000));
           // re-retrieve the user with updated properties
@@ -101,7 +114,7 @@ export default function Login({
   }
 
   return (
-    <FlexBox flex={1} py={20} px={8} bgcolor="background.paper">
+    <FlexBox flex={1} pt={8} px={8} bgcolor="background.paper">
       {showTitle && (
         <Typography variant="h5" align="center" id={loginTitleId}>
           <FormattedMessage
@@ -115,32 +128,42 @@ export default function Login({
         <LoginIcon icon={<GoogleIcon />} onClick={loginWithGoogle} />
         <LoginIcon icon={<FacebookIcon />} onClick={loginWithFacebook} />
       </FlexBox>
+      {referredByAffiliateId && (
+        <FlexBox flexDirection="row" gap={2} mt={2}>
+          <Typography variant="caption" align="center" id={loginTitleId} pt={1}>
+            <FormattedMessage
+              defaultMessage="Referral ID: {referredByAffiliateId}"
+              description="Login page Referral ID"
+              values={{
+                referredByAffiliateId,
+              }}
+            />
+          </Typography>
+          <FlexBox display="inline-flex">
+            <CharacterCoinStatChip value={3} />
+          </FlexBox>
+        </FlexBox>
+      )}
       <Box mt={4} />
-      <RingIconButton padding="large" onClick={onClose}>
-        <SvgIcon>
-          <CrossIcon />
-        </SvgIcon>
-      </RingIconButton>
     </FlexBox>
   );
 }
 
-/*const useLoginIconStyles = makeStyles((theme) => ({
-  icon: {
-    fontSize: theme.spacing(10),
-    margin: theme.spacing(1),
-  },
-}));*/
 type LoginIconProps = {
   icon: JSX.Element;
   onClick(): void;
 };
 function LoginIcon({ icon, onClick }: LoginIconProps) {
-  const classes = { icon: '' };
-
   return (
-    <IconButton onClick={onClick} size="large">
-      <SvgIcon className={classes.icon}>{icon}</SvgIcon>
-    </IconButton>
+    <RingIconButton onClick={onClick} padding="none" borderWidth={8}>
+      <SvgIcon
+        sx={{
+          fontSize: '60px',
+          margin: -0.25,
+        }}
+      >
+        {icon}
+      </SvgIcon>
+    </RingIconButton>
   );
 }

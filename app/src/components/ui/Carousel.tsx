@@ -3,8 +3,8 @@ import lodashMerge from 'lodash.merge';
 import React from 'react';
 import SwipeableViews from 'react-swipeable-views';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import LeftIcon from '@mui/icons-material/ChevronLeft';
-import RightIcon from '@mui/icons-material/ChevronRight';
+import { ReactComponent as LeftIcon } from '@/icons/left.svg';
+import { ReactComponent as RightIcon } from '@/icons/right.svg';
 import FlexBox from './FlexBox';
 import { colors, zIndexes } from '@/theme/theme';
 
@@ -140,7 +140,7 @@ function CarouselArrow({ icon, sx, onClick, enabled }: CarouselArrowProps) {
     >
       <SvgIcon
         sx={{
-          fontSize: '80px',
+          fontSize: '60px',
           color: colors.white,
         }}
       >

@@ -32,6 +32,7 @@ import DonatePage from './components/pages/AboutPage/DonatePage';
 import MarketPage from './components/pages/MarketPage/MarketPage';
 import MarketCharacterPage from './components/pages/MarketPage/MarketCharacterPage';
 import BackButton from './components/ui/BackButton';
+import useAffiliateLinkRef from './components/hooks/useAffiliateLinkRef';
 
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
@@ -69,6 +70,7 @@ export default function PageRouter() {
 }
 
 function RouterContents() {
+  useAffiliateLinkRef(); // depends on location
   const location = useLocation();
   // FIXME: only scroll to 0,0 on new page, not on back
   /*React.useEffect(() => {

@@ -25,17 +25,12 @@ const pages = [
 
 export function ImpactInfoDrawerContent({ onClose }: ImpactInfoProps) {
   return (
-    <FlexBox flex={1} pb={5} pt={0} px={8} bgcolor="background.paper">
+    <FlexBox flex={1} px={8} bgcolor="background.paper">
       <Box mt={4} />
       <FlexBox flexDirection="row" style={{ gap: '20px' }}></FlexBox>
       <Box mt={4} />
       <Carousel slides={pages} styles={narrowSwipeableViewsStyles} blurEdges />
       <Box mt={2} />
-      <RingIconButton padding="large" onClick={onClose}>
-        <SvgIcon>
-          <CrossIcon />
-        </SvgIcon>
-      </RingIconButton>
     </FlexBox>
   );
 }

@@ -8,6 +8,7 @@ export const onCreateEntity = functions.firestore
   .document('{collectionId}/{entityId}')
   .onCreate(async (_snapshot, context: functions.EventContext) => {
     try {
+      // FIXME: firestore does not support context.auth - pass userId as part of payload in every request
       await updateUserRateLimit(context.auth?.uid, getCurrentTimestamp());
     } catch (error) {
       console.error(error);

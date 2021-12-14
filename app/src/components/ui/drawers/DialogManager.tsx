@@ -3,15 +3,22 @@ import useDialogStore, {
   dialogAnimationLength,
   DialogType,
 } from '@/state/DialogStore';
-import { Drawer } from '@mui/material';
+import { Drawer, SvgIcon } from '@mui/material';
 import React from 'react';
+import { RingIconButton } from '../RingIconButton';
 import { CoinInfoDrawerContent } from './CoinInfo/CoinInfoDrawerContent';
 import { ImpactInfoDrawerContent } from './ImpactInfo/ImpactInfoDrawerContent';
+import { ReactComponent as CrossIcon } from '@/icons/x.svg';
+import FlexBox from '../FlexBox';
+import { useHistory } from 'react-router-dom';
+import Routes from '@/models/Routes';
+import { borderColor, borderColorDark, colors } from '@/theme/theme';
 
 export function DialogManager() {
   const [prevDialogType, setPrevDialogType] = React.useState<
     DialogType | undefined
   >(undefined);
+  const history = useHistory();
   const [dialogType, close] = useDialogStore((dialogStore) => [
     dialogStore.dialogType,
     dialogStore.close,
@@ -28,6 +35,10 @@ export function DialogManager() {
     }
   }, [setPrevDialogType, dialogType]);
 
+  const onLogin = React.useCallback(() => {
+    history.push(Routes.profile);
+  }, [history]);
+
   return (
     <>
       <Drawer
@@ -39,12 +50,23 @@ export function DialogManager() {
           exit: dialogAnimationLength,
         }}
       >
-        {prevDialogType === 'login' && <Login onClose={close} />}
+        {prevDialogType === 'login' && (
+          <Login onClose={close} onLogin={onLogin} />
+        )}
         {prevDialogType === 'coinInfo' && (
           <CoinInfoDrawerContent onClose={close} />
         )}
         {prevDialogType === 'impactInfo' && (
           <ImpactInfoDrawerContent onClose={close} />
+        )}
+        {prevDialogType && (
+          <FlexBox mt={2} mb={4}>
+            <RingIconButton padding="large" onClick={close}>
+              <SvgIcon sx={{ color: borderColorDark }}>
+                <CrossIcon />
+              </SvgIcon>
+            </RingIconButton>
+          </FlexBox>
         )}
       </Drawer>
     </>

@@ -12,8 +12,7 @@ import { StateSelector } from 'zustand';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
 import useLocalUserStore, { LocalUser } from './LocalUserStore';
-// TODO: remove compat library
-import firebase from 'firebase/compat/app';
+import { getAuth, signOut } from 'firebase/auth';
 
 export function useUser(): (IUser | LocalUser) & { id?: string } {
   const localUser = useLocalUserStore((store) => store.user);
@@ -144,7 +143,7 @@ export function useUserStore<StateSlice>(
     },
     signOut: () => {
       signoutLocalUser();
-      firebase.auth().signOut();
+      signOut(getAuth());
       useAuthStore.getState().setUser(undefined);
     },
     setAppTheme: (appTheme: AppTheme) => {

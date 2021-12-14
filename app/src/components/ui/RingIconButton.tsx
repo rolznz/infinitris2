@@ -3,38 +3,27 @@ import { IconButton } from '@mui/material';
 
 import { borderColor } from '@/theme/theme';
 
-/*const useStyles = makeStyles((theme) => ({
-  shareButton: {
-    display: 'flex',
-  },
-  iconButton: {
-    backgroundColor: theme.palette.background.paperDark,
-    border: `6px solid ${borderColor}`,
-  },
-  'padding-medium': {
-    padding: theme.spacing(1),
-  },
-  'padding-large': {
-    padding: theme.spacing(2),
-  },
-}));*/
-
 export type RingIconButtonProps = {
   onClick?(): void;
-  padding?: 'medium' | 'large';
+  padding?: 'medium' | 'large' | 'none';
+  borderWidth?: number;
 };
 
 export function RingIconButton({
   children,
   padding = 'medium',
+  borderWidth = 6,
   onClick,
 }: React.PropsWithChildren<RingIconButtonProps>) {
-  //const classes = useStyles();
   return (
     <IconButton
-      //className={`${classes.iconButton} ${classes[`padding-${padding}`]}`}
       onClick={onClick}
       size="large"
+      sx={{
+        backgroundColor: 'background.paperDark',
+        border: `${borderWidth}px solid ${borderColor}`,
+        padding: padding === 'none' ? 0 : padding === 'medium' ? 1 : 2,
+      }}
     >
       {children}
     </IconButton>

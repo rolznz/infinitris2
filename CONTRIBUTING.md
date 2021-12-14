@@ -19,7 +19,24 @@ Coming Soon
 
 # Development
 
-Coming Soon
+Basic instructions are here. For further instructions, please see individual project READMEs.
+After checking out the repository, please run `yarn install` in the root of the project on a linux terminal (or WSL)
+
+## Models package
+
+The models package is used by all parts of the game (react app, client/server, firebase functions) and must be built first.
+`(cd models && yarn build)`
+
+## Client
+
+The client app must be built in order to run the react app.
+`(cd client && yarn build)`
+
+## App
+
+// TODO: .env setup
+`cd app`
+`yarn start`
 
 ## Create your own AI
 

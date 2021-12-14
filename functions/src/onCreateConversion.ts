@@ -20,6 +20,7 @@ export const onCreateConversion = functions.firestore
       const affiliateId: string = context.params.affiliateId;
       const convertedUserId: string = context.params.convertedUserId;
 
+      // FIXME: firestore does not support context.auth - pass userId as part of payload
       const userId = context.auth?.uid;
       if (!userId) {
         throw new Error('User not logged in');

@@ -18,7 +18,7 @@ export default class Simulation implements ISimulation {
   private _followingPlayer?: Player;
   private _grid: Grid;
   private _eventListeners: ISimulationEventListener[];
-  private _interval?: NodeJS.Timeout;
+  private _interval?: ReturnType<typeof setTimeout>;
   private _settings: ISimulationSettings;
   private _runningTime: number;
 

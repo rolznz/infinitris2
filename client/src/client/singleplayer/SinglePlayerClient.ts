@@ -11,15 +11,24 @@ import ControlSettings from '@models/ControlSettings';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IPlayer from '@models/IPlayer';
+import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
+
+// TODO: move to models
+type RendererType = 'minimal' | 'infinitris2';
 
 export default class SinglePlayerClient
-  implements IClient, ISimulationEventListener {
+  implements IClient, ISimulationEventListener
+{
   // FIXME: restructure to not require definite assignment
   private _renderer!: IRenderer;
   private _simulation!: Simulation;
   private _input!: Input;
   private _controls?: ControlSettings;
-  constructor(controls?: ControlSettings, playerInfo?: IPlayer) {
+  constructor(
+    controls?: ControlSettings,
+    playerInfo?: IPlayer,
+    rendererType?: RendererType
+  ) {
     this._controls = controls;
     this._create(playerInfo);
   }
@@ -85,8 +94,11 @@ export default class SinglePlayerClient
     this._input.destroy();
   }
 
-  private async _create(playerInfo?: IPlayer) {
-    this._renderer = new MinimalRenderer();
+  private async _create(playerInfo?: IPlayer, rendererType?: RendererType) {
+    this._renderer =
+      rendererType === 'minimal'
+        ? new MinimalRenderer()
+        : new Infinitris2Renderer();
     await this._renderer.create();
 
     this._simulation = new Simulation(new Grid());

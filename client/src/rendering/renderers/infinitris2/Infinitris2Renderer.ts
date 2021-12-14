@@ -62,7 +62,7 @@ interface IParticle extends IRenderableEntity<PIXI.Graphics> {
   maxLife: number;
 }
 
-export default class MinimalRenderer
+export default class Infinitris2Renderer
   implements IRenderer, ISimulationEventListener
 {
   // FIXME: restructure to not require definite assignment
@@ -71,6 +71,7 @@ export default class MinimalRenderer
   private _virtualKeyboardGraphics?: PIXI.Graphics;
   private _virtualKeyboardCurrentKeyText!: PIXI.Text;
   private _virtualGestureSprites?: PIXI.Sprite[];
+  private _layerSprites: PIXI.TilingSprite[] = [];
   private _app!: PIXI.Application;
   private _world!: PIXI.Container;
 
@@ -119,10 +120,38 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   async create() {
+    console.log('Infinitris 2 Renderer');
     this._app = new PIXI.Application({
       resizeTo: window,
       antialias: true,
     });
+
+    /*for (let i = 1; i <= 12; i++) {
+      this._app.loader.add(`${imagesDirectory}/worlds/grass/layer_${i}.png`);
+    }*/
+    await new Promise((resolve) => this._app.loader.load(resolve));
+
+    const createLayerSprite = async (url: string) => {
+      this._app.loader.add(url);
+      await new Promise((resolve) => this._app.loader.load(resolve));
+      const texture = PIXI.Texture.from(url);
+      const sprite = new PIXI.TilingSprite(texture);
+      console.log(texture.width, texture.height);
+      sprite.width = Math.max(this._app.renderer.width, 2000);
+      sprite.height = texture.height;
+      sprite.tileScale.set(this._app.renderer.width / texture.width);
+      sprite.x = 0;
+      sprite.y = 0;
+      sprite.alpha = 1;
+      return sprite;
+    };
+    for (let i = 1; i <= 12; i++) {
+      this._layerSprites.push(
+        await createLayerSprite(
+          `${imagesDirectory}/worlds/grass/layer_${i}.png`
+        )
+      );
+    }
 
     if (this._preferredInputMethod === 'touch' && this._teachControls) {
       const gesturesDirectory = `${imagesDirectory}/gestures`;
@@ -190,6 +219,10 @@ export default class MinimalRenderer
       if (!this._hasShadows) {
         this._wrapObjects();
       }
+      this._layerSprites[2].tilePosition.x = this._camera.wrappedX * 0.2;
+      this._layerSprites[3].tilePosition.x = this._camera.wrappedX * 0.1;
+      this._layerSprites[4].tilePosition.x = this._camera.wrappedX * 0.3;
+      this._layerSprites[5].tilePosition.x = this._camera.wrappedX * 0.4;
     }
     if (this._scrollY) {
       this._grid.graphics.y =
@@ -239,6 +272,17 @@ export default class MinimalRenderer
     this._simulation = simulation;
     this._app.stage.removeChildren();
 
+    for (let i = 0; i < 12; i++) {
+      //this._app.stage.addChild(this._layerSprites[i]);
+    }
+    this._app.stage.addChild(this._layerSprites[0]);
+    this._app.stage.addChild(this._layerSprites[2]);
+    this._app.stage.addChild(this._layerSprites[3]);
+    this._app.stage.addChild(this._layerSprites[4]);
+    this._app.stage.addChild(this._layerSprites[5]);
+    this._layerSprites[1].y = this._layerSprites[1].height / 2;
+    this._layerSprites[4].y = this._app.renderer.height / 2;
+    this._layerSprites[5].y = this._app.renderer.height / 1.8;
     this._grid = {
       grid: simulation.grid,
       graphics: new PIXI.Graphics(),

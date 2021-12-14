@@ -283,7 +283,7 @@ export default class Block implements IBlock {
       }
       canMove = force || this.canMove(gridCells, dx, dy, drClamped);
       if (canMove) {
-        const gridNumColumns = gridCells[0].length;
+        //const gridNumColumns = gridCells[0].length;
         this._column += dx;
         /*const oldWrapIndex = this._wrapIndex;
         while (this._column > gridNumColumns) {

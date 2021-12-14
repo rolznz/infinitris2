@@ -10,17 +10,15 @@ export default class Camera {
   private _dy!: number;
   private _followingId?: number;
   private _gridWidth!: number;
-  private _wrapIndex: number;
   constructor() {
     this.reset();
-    this._wrapIndex = 0;
   }
 
   get wrappedX(): number {
-    const wrappedX =
-      ((this._x % this._gridWidth) - this._gridWidth) % this._gridWidth;
+    //const wrappedX =
+    //  ((this._x % this._gridWidth) - this._gridWidth) % this._gridWidth;
 
-    return wrappedX;
+    return this._x; //wrappedX;
   }
   get y(): number {
     return this._y;
@@ -28,10 +26,6 @@ export default class Camera {
 
   set gridWidth(gridWidth: number) {
     this._gridWidth = gridWidth;
-  }
-
-  moveWrapIndex(wrapIndexChange: number) {
-    this._wrapIndex += wrapIndexChange;
   }
 
   reset() {
@@ -45,7 +39,7 @@ export default class Camera {
   }
 
   follow(x: number, y: number, id: number) {
-    this._dx = -(x + this._wrapIndex * this._gridWidth);
+    this._dx = -x;
     this._dy = -y;
     if (this._followingId != id) {
       this._x = this._dx;
@@ -66,6 +60,7 @@ export default class Camera {
     }*/
 
     const ax = this._dx - this._x;
+    //console.log('ax: ' + ax);
 
     this._vx += ax * cameraSpeed;
     this._vy += (this._dy - this._y) * cameraSpeed;

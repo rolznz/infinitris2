@@ -114,7 +114,7 @@ export default function Login({
   }
 
   return (
-    <FlexBox flex={1} pt={8} px={8} bgcolor="background.paper">
+    <FlexBox flex={1} pt={8} px={8}>
       {showTitle && (
         <Typography variant="h5" align="center" id={loginTitleId}>
           <FormattedMessage

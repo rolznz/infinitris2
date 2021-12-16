@@ -8,9 +8,8 @@ import HamburgerMenu from './HamburgerMenu';
 import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
 import { useEffect } from 'react';
 import usePrevious from 'react-use/lib/usePrevious';
-import { homePageBackgroundTransitionSeconds } from '@/components/pages/HomePage/HomePageBackground';
 import useLoaderStore from '@/state/LoaderStore';
-import { firstTimeAnimationDelaySeconds } from '@/components/pages/HomePage/HomePage';
+import { firstTimeAnimationDelaySeconds } from '@/components/pages/HomePage/homePageConstants';
 
 export default function HamburgerMenuButton() {
   const [isOpen, setIsOpen] = useState(false);

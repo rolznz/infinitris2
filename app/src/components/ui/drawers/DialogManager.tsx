@@ -12,7 +12,8 @@ import { ReactComponent as CrossIcon } from '@/icons/x.svg';
 import FlexBox from '../FlexBox';
 import { useHistory } from 'react-router-dom';
 import Routes from '@/models/Routes';
-import { borderColor, borderColorDark, colors } from '@/theme/theme';
+import { borderColorDark } from '@/theme/theme';
+import { GameModePickerDrawerContent } from './GameModePicker/GameModePickerDrawerContent';
 
 export function DialogManager() {
   const [prevDialogType, setPrevDialogType] = React.useState<
@@ -58,6 +59,9 @@ export function DialogManager() {
         )}
         {prevDialogType === 'impactInfo' && (
           <ImpactInfoDrawerContent onClose={close} />
+        )}
+        {prevDialogType === 'gameModePicker' && (
+          <GameModePickerDrawerContent onClose={close} />
         )}
         {prevDialogType && (
           <FlexBox mt={2} mb={4}>

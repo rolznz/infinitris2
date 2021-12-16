@@ -1,20 +1,14 @@
 import React from 'react';
 
-import { Box, SvgIcon } from '@mui/material';
+import { Box } from '@mui/material';
 
-import { ReactComponent as CrossIcon } from '@/icons/x.svg';
 import FlexBox from '../../FlexBox';
-import { RingIconButton } from '../../RingIconButton';
 import { Carousel, narrowSwipeableViewsStyles } from '../../Carousel';
 
 import { ImpactInfoIncreaseImpactSlide } from './ImpactInfoIncreaseImpactSlide';
 import { ImpactInfoIncreaseImpactSlide2 } from './ImpactInfoIncreaseImpactSlide2';
 import { ImpactInfoIncreaseImpactSlide3 } from './ImpactInfoIncreaseImpactSlide3';
 import { ImpactInfoIncreaseImpactSlide4 } from './ImpactInfoIncreaseImpactSlide4';
-
-export interface ImpactInfoProps {
-  onClose?(): void;
-}
 
 const pages = [
   <ImpactInfoIncreaseImpactSlide key="1" />,
@@ -23,9 +17,9 @@ const pages = [
   <ImpactInfoIncreaseImpactSlide4 key="4" />,
 ];
 
-export function ImpactInfoDrawerContent({ onClose }: ImpactInfoProps) {
+export function ImpactInfoDrawerContent() {
   return (
-    <FlexBox flex={1} px={8} bgcolor="background.paper">
+    <FlexBox flex={1}>
       <Box mt={4} />
       <FlexBox flexDirection="row" style={{ gap: '20px' }}></FlexBox>
       <Box mt={4} />

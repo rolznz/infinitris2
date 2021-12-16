@@ -1,6 +1,6 @@
 import create from 'zustand';
 
-export type DialogType = 'login' | 'coinInfo' | 'impactInfo';
+export type DialogType = 'login' | 'coinInfo' | 'impactInfo' | 'gameModePicker';
 
 export const dialogAnimationLength = 500;
 
@@ -31,4 +31,6 @@ export const openCoinInfoDialog = () =>
   useDialogStore.getState().open('coinInfo');
 export const openImpactInfoDialog = () =>
   useDialogStore.getState().open('impactInfo');
+export const openGameModePickerDialog = () =>
+  useDialogStore.getState().open('gameModePicker');
 export const closeDialog = () => useDialogStore.getState().close();

@@ -26,14 +26,12 @@ import foregroundRightPortraitImageDark from './assets/foreground_portrait_right
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useOrientation from 'react-use/lib/useOrientation';
 import FlexBox from '@/components/ui/FlexBox';
-import {
-  HomePage,
-  firstTimeAnimationDelaySeconds as homePageFirstTimeAnimationDelaySeconds,
-} from './HomePage';
+import { HomePage } from './HomePage';
 import useLoaderStore from '@/state/LoaderStore';
 import Loadable from '@/components/ui/Loadable';
 import useDarkMode from '@/components/hooks/useDarkMode';
 import { zIndexes } from '@/theme/theme';
+import { firstTimeAnimationDelaySeconds } from './homePageConstants';
 
 export const homePageBackgroundTransitionSeconds = 5;
 
@@ -84,7 +82,7 @@ const _HomePageBackground = () => {
           opacity: isLoaded ? 0.5 : 0,
           width: '100%',
           height: '100%',
-          transition: `opacity ${homePageBackgroundTransitionSeconds}s ${homePageFirstTimeAnimationDelaySeconds}s`,
+          transition: `opacity ${homePageBackgroundTransitionSeconds}s ${firstTimeAnimationDelaySeconds}s`,
         }}
         role="presentation"
       />

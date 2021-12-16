@@ -72,6 +72,9 @@ export default class Infinitris2Renderer
   private _virtualKeyboardCurrentKeyText!: PIXI.Text;
   private _virtualGestureSprites?: PIXI.Sprite[];
   private _layerSprites: PIXI.TilingSprite[] = [];
+  private _groundContainer = new PIXI.Container();
+  private _groundMask = new PIXI.Graphics();
+
   private _app!: PIXI.Application;
   private _world!: PIXI.Container;
 
@@ -137,9 +140,24 @@ export default class Infinitris2Renderer
       const texture = PIXI.Texture.from(url);
       const sprite = new PIXI.TilingSprite(texture);
       console.log(texture.width, texture.height);
-      sprite.width = Math.max(this._app.renderer.width, 2000);
-      sprite.height = texture.height;
-      sprite.tileScale.set(this._app.renderer.width / texture.width);
+
+      sprite.tileScale.set(
+        Math.max(
+          this._app.renderer.width / texture.width,
+          (this._app.renderer.height / texture.height) * 2
+        )
+      );
+      sprite.width = this._app.renderer.width * sprite.tileScale.x;
+      sprite.height = this._app.renderer.height * sprite.tileScale.x;
+
+      console.log(
+        url,
+        sprite.tileScale.y,
+        sprite.height,
+        this._app.renderer.height
+      );
+      //2.1623188405797102 746 746
+      //sprite.til
       sprite.x = 0;
       sprite.y = 0;
       sprite.alpha = 1;
@@ -219,10 +237,18 @@ export default class Infinitris2Renderer
       if (!this._hasShadows) {
         this._wrapObjects();
       }
-      this._layerSprites[2].tilePosition.x = this._camera.wrappedX * 0.2;
+      /*this._layerSprites[2].tilePosition.x = this._camera.wrappedX * 0.2;
       this._layerSprites[3].tilePosition.x = this._camera.wrappedX * 0.1;
       this._layerSprites[4].tilePosition.x = this._camera.wrappedX * 0.3;
-      this._layerSprites[5].tilePosition.x = this._camera.wrappedX * 0.4;
+      this._layerSprites[5].tilePosition.x = this._camera.wrappedX * 0.4;*/
+
+      this._layerSprites[5].y = Math.floor(
+        Math.max(
+          this._camera.y * 0.4 + this._app.renderer.height * 1,
+          this._app.renderer.height -
+            this._app.renderer.height * this._layerSprites[5].tileScale.y
+        )
+      );
     }
     if (this._scrollY) {
       this._grid.graphics.y =
@@ -276,13 +302,32 @@ export default class Infinitris2Renderer
       //this._app.stage.addChild(this._layerSprites[i]);
     }
     this._app.stage.addChild(this._layerSprites[0]);
-    this._app.stage.addChild(this._layerSprites[2]);
-    this._app.stage.addChild(this._layerSprites[3]);
-    this._app.stage.addChild(this._layerSprites[4]);
+    //this._app.stage.addChild(this._layerSprites[2]);
+    //this._app.stage.addChild(this._layerSprites[3]);
+    //this._app.stage.addChild(this._layerSprites[4]);
     this._app.stage.addChild(this._layerSprites[5]);
-    this._layerSprites[1].y = this._layerSprites[1].height / 2;
+    //this._app.stage.addChild(this._groundContainer);
+
+    //this._layerSprites[5].y = this._app.renderer.height / 1.5;
+    //this._groundContainer.addChild(this._layerSprites[5]);
+    /*this._layerSprites[5].mask = this._groundMask;
+    this._groundMask.beginFill(0xffffff);
+    this._groundMask.drawRect(
+      0,
+      0,
+      this._app.renderer.width,
+      this._app.renderer.height
+    );*/
+    //this._groundMask.y = -this._app.renderer.height * 0.5;
+
+    /*stage.addChild(thing);
+    thing.position.x = renderer.width / 2;
+    thing.position.y = renderer.height / 2;
+    thing.lineStyle(0);*/
+
+    /*this._layerSprites[1].y = this._layerSprites[1].height / 2;
     this._layerSprites[4].y = this._app.renderer.height / 2;
-    this._layerSprites[5].y = this._app.renderer.height / 1.8;
+    this._layerSprites[5].y = this._app.renderer.height / 1.8;*/
     this._grid = {
       grid: simulation.grid,
       graphics: new PIXI.Graphics(),

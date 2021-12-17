@@ -15,8 +15,10 @@ import ControlSettings from '@models/ControlSettings';
 import getUserFriendlyKeyText from '@models/util/getUserFriendlyKeyText';
 import InputMethod from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
+import { WorldBackground } from './WorldBackground';
 
-const minCellSize = 32;
+const idealCellSize = 32;
+const minCellCount = 12;
 const particleDivisions = 4;
 interface IRenderableGrid {
   grid: Grid;
@@ -71,9 +73,6 @@ export default class Infinitris2Renderer
   private _virtualKeyboardGraphics?: PIXI.Graphics;
   private _virtualKeyboardCurrentKeyText!: PIXI.Text;
   private _virtualGestureSprites?: PIXI.Sprite[];
-  private _layerSprites: PIXI.TilingSprite[] = [];
-  private _groundContainer = new PIXI.Container();
-  private _groundMask = new PIXI.Graphics();
 
   private _app!: PIXI.Application;
   private _world!: PIXI.Container;
@@ -88,7 +87,7 @@ export default class Infinitris2Renderer
 
   private _simulation!: Simulation;
 
-  private _camera!: Camera;
+  private _camera: Camera;
   private _gridWidth!: number;
   private _gridHeight!: number;
   private _cellSize!: number;
@@ -99,6 +98,7 @@ export default class Infinitris2Renderer
   private _virtualKeyboardControls?: ControlSettings;
   private _preferredInputMethod: InputMethod;
   private _teachControls: boolean;
+  private _worldBackground!: WorldBackground;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
@@ -106,6 +106,7 @@ export default class Infinitris2Renderer
   ) {
     this._preferredInputMethod = preferredInputMethod;
     this._teachControls = teachControls;
+    this._camera = new Camera();
   }
 
   set virtualKeyboardControls(
@@ -129,48 +130,17 @@ export default class Infinitris2Renderer
       antialias: true,
     });
 
-    /*for (let i = 1; i <= 12; i++) {
-      this._app.loader.add(`${imagesDirectory}/worlds/grass/layer_${i}.png`);
-    }*/
+    this._worldBackground = new WorldBackground(
+      this._app,
+      this._camera,
+      'grass'
+    );
+
     await new Promise((resolve) => this._app.loader.load(resolve));
 
-    const createLayerSprite = async (url: string) => {
-      this._app.loader.add(url);
-      await new Promise((resolve) => this._app.loader.load(resolve));
-      const texture = PIXI.Texture.from(url);
-      const sprite = new PIXI.TilingSprite(texture);
-      console.log(texture.width, texture.height);
+    this._worldBackground.createImages();
 
-      sprite.tileScale.set(
-        Math.max(
-          this._app.renderer.width / texture.width,
-          (this._app.renderer.height / texture.height) * 2
-        )
-      );
-      sprite.width = this._app.renderer.width * sprite.tileScale.x;
-      sprite.height = this._app.renderer.height * sprite.tileScale.x;
-
-      console.log(
-        url,
-        sprite.tileScale.y,
-        sprite.height,
-        this._app.renderer.height
-      );
-      //2.1623188405797102 746 746
-      //sprite.til
-      sprite.x = 0;
-      sprite.y = 0;
-      sprite.alpha = 1;
-      return sprite;
-    };
-    for (let i = 1; i <= 12; i++) {
-      this._layerSprites.push(
-        await createLayerSprite(
-          `${imagesDirectory}/worlds/grass/layer_${i}.png`
-        )
-      );
-    }
-
+    // TODO: extract from here and minimal renderer
     if (this._preferredInputMethod === 'touch' && this._teachControls) {
       const gesturesDirectory = `${imagesDirectory}/gestures`;
       const swipeLeftUrl = `${gesturesDirectory}/swipe-left.png`;
@@ -237,18 +207,8 @@ export default class Infinitris2Renderer
       if (!this._hasShadows) {
         this._wrapObjects();
       }
-      /*this._layerSprites[2].tilePosition.x = this._camera.wrappedX * 0.2;
-      this._layerSprites[3].tilePosition.x = this._camera.wrappedX * 0.1;
-      this._layerSprites[4].tilePosition.x = this._camera.wrappedX * 0.3;
-      this._layerSprites[5].tilePosition.x = this._camera.wrappedX * 0.4;*/
 
-      this._layerSprites[5].y = Math.floor(
-        Math.max(
-          this._camera.y * 0.4 + this._app.renderer.height * 1,
-          this._app.renderer.height -
-            this._app.renderer.height * this._layerSprites[5].tileScale.y
-        )
-      );
+      this._worldBackground.update(this._scrollX, this._scrollY);
     }
     if (this._scrollY) {
       this._grid.graphics.y =
@@ -298,36 +258,7 @@ export default class Infinitris2Renderer
     this._simulation = simulation;
     this._app.stage.removeChildren();
 
-    for (let i = 0; i < 12; i++) {
-      //this._app.stage.addChild(this._layerSprites[i]);
-    }
-    this._app.stage.addChild(this._layerSprites[0]);
-    //this._app.stage.addChild(this._layerSprites[2]);
-    //this._app.stage.addChild(this._layerSprites[3]);
-    //this._app.stage.addChild(this._layerSprites[4]);
-    this._app.stage.addChild(this._layerSprites[5]);
-    //this._app.stage.addChild(this._groundContainer);
-
-    //this._layerSprites[5].y = this._app.renderer.height / 1.5;
-    //this._groundContainer.addChild(this._layerSprites[5]);
-    /*this._layerSprites[5].mask = this._groundMask;
-    this._groundMask.beginFill(0xffffff);
-    this._groundMask.drawRect(
-      0,
-      0,
-      this._app.renderer.width,
-      this._app.renderer.height
-    );*/
-    //this._groundMask.y = -this._app.renderer.height * 0.5;
-
-    /*stage.addChild(thing);
-    thing.position.x = renderer.width / 2;
-    thing.position.y = renderer.height / 2;
-    thing.lineStyle(0);*/
-
-    /*this._layerSprites[1].y = this._layerSprites[1].height / 2;
-    this._layerSprites[4].y = this._app.renderer.height / 2;
-    this._layerSprites[5].y = this._app.renderer.height / 1.8;*/
+    this._worldBackground.addChildren();
     this._grid = {
       grid: simulation.grid,
       graphics: new PIXI.Graphics(),
@@ -480,7 +411,7 @@ export default class Infinitris2Renderer
     );
     if (followingPlayer && followingPlayer.block) {
       // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
-      const cellSize = this._getClampedCellSize();
+      const cellSize = this._getCellSize();
       const block = followingPlayer.block;
       const blockX = block.column * cellSize;
       const y = block.row * cellSize;
@@ -543,25 +474,26 @@ export default class Infinitris2Renderer
   }
 
   private _getCellSize = () => {
-    const height = this._app.renderer.height;
-    return Math.ceil((minCellSize * height) / 768);
-  };
-
-  private _getClampedCellSize = () => {
-    return Math.max(this._getCellSize(), minCellSize);
+    const minDimension = Math.min(
+      this._app.renderer.width,
+      this._app.renderer.height
+    );
+    if (minDimension < idealCellSize * minCellCount * window.devicePixelRatio) {
+      return Math.floor(minDimension / minCellCount);
+    }
+    return idealCellSize;
   };
 
   private _resize = async () => {
     this._blocks = {};
     this._cells = {};
-    this._camera = new Camera();
     this._camera.reset();
 
     this._particles = [];
 
     const appWidth = this._app.renderer.width;
     const appHeight = this._app.renderer.height;
-    const cellSize = this._getClampedCellSize();
+    const cellSize = this._getCellSize();
     this._cellSize = cellSize;
 
     this._renderVirtualKeyboard();
@@ -598,15 +530,18 @@ export default class Infinitris2Renderer
         ? Math.ceil(appWidth / cellSize) + 1
         : this._grid.grid.numColumns;
 
-      this._grid.graphics.lineStyle(1, 0xaaaaaa, 0.5);
-      for (let r = 0; r < gridRows + 1; r++) {
-        this._grid.graphics.moveTo(0, r * cellSize);
-        this._grid.graphics.lineTo(gridColumns * cellSize, r * cellSize);
-      }
-
-      for (let c = 0; c < gridColumns + 1; c++) {
-        this._grid.graphics.moveTo(c * cellSize, 0);
-        this._grid.graphics.lineTo(c * cellSize, gridHeight);
+      const cellPadding = cellSize * 0.05;
+      for (let r = 0; r < gridRows; r++) {
+        for (let c = 0; c < gridColumns + 1; c++) {
+          this._grid.graphics.beginFill(0xffffff, 0.05);
+          this._grid.graphics.drawRect(
+            c * cellSize + cellPadding,
+            r * cellSize + cellPadding,
+            cellSize - cellPadding * 2,
+            cellSize - cellPadding * 2
+          );
+          this._grid.graphics.endFill();
+        }
       }
 
       this._renderCells(this._grid.grid.reducedCells);
@@ -649,7 +584,7 @@ export default class Infinitris2Renderer
     const renderableCell: IRenderableCell = this._cells[cellIndex];
 
     if (!cell.isEmpty || cell.behaviour.type !== CellType.Normal) {
-      const cellSize = this._getClampedCellSize();
+      const cellSize = this._getCellSize();
       renderableCell.container.x = renderableCell.cell.column * cellSize;
       renderableCell.container.y = renderableCell.cell.row * cellSize;
       this._renderCellCopies(
@@ -694,7 +629,7 @@ export default class Infinitris2Renderer
   }
 
   private _moveBlock(block: IBlock) {
-    const cellSize = this._getClampedCellSize();
+    const cellSize = this._getCellSize();
     const renderableBlock: IRenderableBlock = this._blocks[block.player.id];
 
     for (let i = 0; i < block.cells.length; i++) {
@@ -737,7 +672,7 @@ export default class Infinitris2Renderer
       opacity,
       (graphics: PIXI.Graphics) => {
         graphics.clear();
-        const cellSize = this._getClampedCellSize();
+        const cellSize = this._getCellSize();
         // TODO: extract rendering of different behaviours
         if (
           renderCellType !== RenderCellType.Cell ||
@@ -902,7 +837,7 @@ export default class Infinitris2Renderer
   }
 
   private _renderBlockPlacementShadow(block: IBlock) {
-    const cellSize = this._getClampedCellSize();
+    const cellSize = this._getCellSize();
     const lowestCells = block.cells.filter(
       (cell) =>
         !block.cells.find(

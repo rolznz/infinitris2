@@ -186,7 +186,7 @@ export default class Infinitris2Renderer
     this._camera.update();
 
     // clamp the camera to fit within the grid
-    const cameraY = Math.min(
+    const clampedCameraY = Math.min(
       Math.max(
         this._camera.y,
         -(this._gridHeight - this._app.renderer.height + visibilityY)
@@ -197,7 +197,7 @@ export default class Infinitris2Renderer
       this._world.x = this._camera.wrappedX + visibilityX;
     }
     if (this._scrollY) {
-      this._world.y = cameraY + visibilityY;
+      this._world.y = clampedCameraY + visibilityY;
     }
 
     if (this._scrollX) {
@@ -208,11 +208,15 @@ export default class Infinitris2Renderer
         this._wrapObjects();
       }
 
-      this._worldBackground.update(this._scrollX, this._scrollY);
+      this._worldBackground.update(
+        this._scrollX,
+        this._scrollY,
+        clampedCameraY
+      );
     }
     if (this._scrollY) {
       this._grid.graphics.y =
-        ((cameraY + visibilityY) % this._cellSize) - this._cellSize;
+        ((clampedCameraY + visibilityY) % this._cellSize) - this._cellSize;
     }
 
     Object.values(this._cells).forEach((cell) => {
@@ -624,8 +628,12 @@ export default class Infinitris2Renderer
           font: 'bold italic 60px Arvo',
           fill: PIXI.utils.hex2string(block.player.color),
           align: 'center',
-          stroke: '#000000',
-          strokeThickness: 7,
+          //stroke: '#000000',
+          //strokeThickness: 7,
+          dropShadow: true,
+          dropShadowAngle: Math.PI / 2,
+          dropShadowDistance: 1,
+          dropShadowBlur: 2,
         });
         text.anchor.set(0.5, 0);
         return text;

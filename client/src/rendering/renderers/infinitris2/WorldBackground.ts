@@ -7,6 +7,8 @@ import {
   worldBackgroundConfigs,
 } from './worldBackgroundConfigs';
 
+const small = true;
+
 export class WorldBackground {
   private _layerSprites: PIXI.TilingSprite[] = [];
   private _app: PIXI.Application;
@@ -27,7 +29,13 @@ export class WorldBackground {
     }
   }
   private _getLayerImage(layer: WorldBackgroundLayerConfig): any {
-    return `${imagesDirectory}/worlds/${this._worldConfig.worldName}/${layer.filename}`;
+    const layerFilenameParts = layer.filename.split('.');
+    if (small) {
+      layerFilenameParts[layerFilenameParts.length - 2] += '_s';
+    }
+    return `${imagesDirectory}/worlds/${
+      this._worldConfig.worldName
+    }/${layerFilenameParts.join('.')}`;
   }
 
   destroy() {
@@ -46,7 +54,7 @@ export class WorldBackground {
     }
   }
 
-  update(scrollX: boolean, scrollY: boolean) {
+  update(scrollX: boolean, scrollY: boolean, clampedCameraY: number) {
     for (let i = 0; i < this._layerSprites.length; i++) {
       if (scrollX) {
         this._layerSprites[i].tilePosition.x =
@@ -54,7 +62,7 @@ export class WorldBackground {
       }
       this._layerSprites[i].y = Math.floor(
         Math.max(
-          (scrollY ? this._camera.y : 0) * this._worldConfig.layers[i].speedY +
+          (scrollY ? clampedCameraY : 0) * this._worldConfig.layers[i].speedY +
             this._app.renderer.height * this._worldConfig.layers[i].offsetY,
           //this._app.renderer.height -
           //this._app.renderer.height * this._layerSprites[i].tileScale.y

@@ -101,7 +101,7 @@ export default class SinglePlayerClient
         : new Infinitris2Renderer();
     await this._renderer.create();
 
-    this._simulation = new Simulation(new Grid(80, 20));
+    this._simulation = new Simulation(new Grid(10, 20));
     this._simulation.addEventListener(this, this._renderer);
 
     this._simulation.init();

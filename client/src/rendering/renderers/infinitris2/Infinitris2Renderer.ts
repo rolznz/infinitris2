@@ -263,6 +263,7 @@ export default class Infinitris2Renderer
       grid: simulation.grid,
       graphics: new PIXI.Graphics(),
     };
+    this._grid.graphics.cacheAsBitmap = true;
     this._app.stage.addChild(this._grid.graphics);
 
     this._shadowGradientGraphics = new PIXI.Graphics();
@@ -270,7 +271,7 @@ export default class Infinitris2Renderer
     this._world = new PIXI.Container();
     this._world.sortableChildren = true;
     this._app.stage.addChild(this._world);
-    this._app.stage.addChild(this._shadowGradientGraphics);
+    //this._app.stage.addChild(this._shadowGradientGraphics);
 
     this._placementHelperShadowCells = [];
 
@@ -558,12 +559,20 @@ export default class Infinitris2Renderer
         for (let x = 0; x < appWidth; x++) {
           this._shadowGradientGraphics.lineStyle(
             1,
-            0x00000,
-            easeInOutQuad(Math.abs(appWidth * 0.5 - x) / (appWidth * 0.5))
+            0xffffff,
+            1 - easeInOutQuad(Math.abs(appWidth * 0.5 - x) / (appWidth * 0.5))
           );
           this._shadowGradientGraphics.moveTo(x, 0);
           this._shadowGradientGraphics.lineTo(x, appHeight);
         }
+
+        // TODO: store these and make sure the old one is removed on resize
+        var texture = this._app.renderer.generateTexture(
+          this._shadowGradientGraphics,
+          PIXI.SCALE_MODES.LINEAR,
+          1
+        );
+        this._world.mask = PIXI.Sprite.from(texture);
       }
     }
   };

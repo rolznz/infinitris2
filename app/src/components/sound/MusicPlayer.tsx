@@ -63,6 +63,7 @@ export async function prepareSounds() {
   _menuTheme.volume(0.5);
   _menuTheme.play();
 
+  // TODO: have a specific sprite for menu sounds
   _sounds = new Howl({
     src: [`${rootUrl}/sounds.mp3`],
     //pool: 100,

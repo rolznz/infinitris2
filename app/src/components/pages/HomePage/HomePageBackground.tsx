@@ -136,13 +136,13 @@ const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
       </FlexBox>
       <FlexBox
         position="absolute"
-        top="calc(100vh - 214px)"
+        top="calc(100vh - 112px)"
         left={0}
         width="100vw"
         height="214px"
         sx={{
           background: (theme) =>
-            `linear-gradient(180deg, #00000000 0%, ${theme.palette.background.paper} 100%)`,
+            `linear-gradient(180deg, #00000000 0%, ${theme.palette.background.paper} 50%, #00000000 100%)`,
         }}
       />
       <FlexBox zIndex={zIndexes.above}>{children}</FlexBox>

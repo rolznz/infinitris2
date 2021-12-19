@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
-import { boxShadows } from '@/theme/theme';
+import { borderRadiuses, boxShadows } from '@/theme/theme';
 import Routes from '@/models/Routes';
 import { Link as RouterLink } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
@@ -17,6 +17,7 @@ const imageStyle: React.CSSProperties = {
   height: '100%',
   objectFit: 'cover',
   boxShadow: boxShadows.small,
+  borderRadius: borderRadiuses.base,
 };
 
 export function GameModeCard({
@@ -39,8 +40,19 @@ export function GameModeCard({
   return (
     <RouterLink to={link} style={linkStyle}>
       <img src={image} alt="" style={imageStyle} />
-      <FlexBox position="absolute" bottom={0} left={0} p={1} pb={0.5}>
-        <Typography variant="h6">{title}</Typography>
+      <FlexBox
+        position="absolute"
+        bottom={0}
+        left={0}
+        pl={2}
+        pb={isLandscape ? 0.5 : 1.5}
+      >
+        <Typography
+          variant={isLandscape ? 'h4' : 'h5'}
+          lineHeight={isLandscape ? undefined : 1}
+        >
+          {title}
+        </Typography>
       </FlexBox>
     </RouterLink>
   );

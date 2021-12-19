@@ -3,7 +3,7 @@ export type WorldBackgroundLayerConfig = {
   speedY: number;
   speedX: number;
   offsetY: number;
-  optional?: boolean; // should be discarded on low quality devices
+  minQuality?: 'medium' | 'high'; // optional layers that will only show when the quality is high enough. Unset = required on all layers
 };
 
 export type WorldBackgroundConfig = {
@@ -32,24 +32,28 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedY: 0.2,
         speedX: 0.2,
         offsetY: 0,
+        minQuality: 'high',
       },
       {
         filename: 'theme_grass_3.png',
         speedY: 0.25,
         speedX: 0.25,
         offsetY: 0.3,
+        minQuality: 'high',
       },
       {
         filename: 'theme_grass_4.png',
         speedY: 0.3,
         speedX: 0.3,
         offsetY: 0.5,
+        minQuality: 'medium',
       },
       {
         filename: 'theme_grass_5.png',
         speedY: 0.35,
         speedX: 0.35,
         offsetY: 0.8,
+        minQuality: 'medium',
       },
       {
         filename: 'theme_grass_6.png',
@@ -62,6 +66,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedY: 0.45,
         speedX: 0.45,
         offsetY: 1.0,
+        minQuality: 'high',
       },
       {
         filename: 'theme_grass_8.png',
@@ -74,6 +79,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedY: 0.55,
         speedX: 0.55,
         offsetY: 1.2,
+        minQuality: 'medium',
       },
       {
         filename: 'theme_grass_10.png',
@@ -86,6 +92,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedY: 0.65,
         speedX: 0.65,
         offsetY: 1.6,
+        minQuality: 'high',
       },
     ],
   },

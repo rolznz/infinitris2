@@ -21,6 +21,29 @@ export function soundsLoaded(): boolean {
   return !!_menuTheme;
 }
 
+export function playGameMusic() {
+  if (_menuTheme) {
+    _menuTheme.fade(0.5, 0, 2000);
+  }
+
+  const _gameTheme = new Howl({
+    src: [`${rootUrl}/grass_1.mp3`],
+    html5: true,
+    loop: true,
+  });
+
+  useLoaderStore.getState().increaseSteps();
+  _gameTheme.once('play', () => {
+    setTimeout(() => {
+      useLoaderStore.getState().increaseStepsCompleted();
+    }, 500);
+  });
+  _gameTheme.load();
+  _gameTheme.volume(0);
+  _gameTheme.play();
+  _gameTheme.fade(0, 1, 2000);
+}
+
 export async function prepareSounds() {
   // TODO: need to support loading music based on current page
   // move sfx out to separate file or rename this one

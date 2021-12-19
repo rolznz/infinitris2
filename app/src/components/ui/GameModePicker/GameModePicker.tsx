@@ -30,6 +30,7 @@ import useDarkMode from '@/components/hooks/useDarkMode';
 import { GameModeCard } from './GameModeCard';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import Routes from '@/models/Routes';
+import { FormattedMessage } from 'react-intl';
 
 export const gameModePickerId = 'game-mode-picker';
 
@@ -61,6 +62,12 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
             ? desertImagePortraitDark
             : desertImagePortrait
         }
+        title={
+          <FormattedMessage
+            defaultMessage="Story Mode"
+            description="Game Mode Picker Card - Story Mode"
+          />
+        }
       />
       <GameModeCard
         image={
@@ -71,6 +78,12 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
             : isDarkMode
             ? multiplayerImagePortraitDark
             : multiplayerImagePortrait
+        }
+        title={
+          <FormattedMessage
+            defaultMessage="Multiplayer"
+            description="Game Mode Picker Card - Multiplayer"
+          />
         }
       />
       <GameModeCard
@@ -83,6 +96,12 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
             ? communityChallengesImagePortraitDark
             : communityChallengesImagePortrait
         }
+        title={
+          <FormattedMessage
+            defaultMessage="Community Challenges"
+            description="Game Mode Picker Card - Community Challenges"
+          />
+        }
       />
       <GameModeCard
         image={
@@ -94,6 +113,13 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
             ? challengemakerImagePortraitDark
             : challengemakerImagePortrait
         }
+        title={
+          <FormattedMessage
+            defaultMessage="Challenge Maker"
+            description="Game Mode Picker Card - Challenge Maker"
+          />
+        }
+        link={Routes.createChallenge}
       />
       <GameModeCard
         image={
@@ -104,6 +130,12 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
             : isDarkMode
             ? singleplayerImagePortraitDark
             : singleplayerImagePortrait
+        }
+        title={
+          <FormattedMessage
+            defaultMessage="Single Player"
+            description="Game Mode Picker Card - Single Player"
+          />
         }
       />
       <GameModeCard
@@ -116,6 +148,12 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
             : isDarkMode
             ? marketImagePortraitDark
             : marketImagePortrait
+        }
+        title={
+          <FormattedMessage
+            defaultMessage="Market"
+            description="Game Mode Picker Card - Market"
+          />
         }
       />
     </FlexBox>

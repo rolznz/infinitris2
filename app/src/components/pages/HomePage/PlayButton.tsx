@@ -5,7 +5,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import { keyframes } from '@mui/system';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
-import { openGameModePickerDialog } from '@/state/DialogStore';
+import Routes from '@/models/Routes';
 
 const playButtonAnimation = keyframes`
   0% {
@@ -42,7 +42,6 @@ function _PlayButton({ isLoaded }: PlayButtonProps) {
         transform: 'scale(1.0)',
       }}
       size="large"
-      onClick={openGameModePickerDialog}
     >
       <PlayArrowIcon sx={{ width: 48, height: 48 }} />
     </IconButton>

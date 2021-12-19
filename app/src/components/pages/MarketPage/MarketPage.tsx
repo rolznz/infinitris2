@@ -8,7 +8,6 @@ import {
   AccordionDetails,
   AccordionSummary,
   Box,
-  SvgIcon,
   Tab,
   Typography,
 } from '@mui/material';
@@ -34,8 +33,6 @@ function _MarketPage() {
   const [myBlocksExpanded, setMyBlocksExpanded] = React.useState(true);
   const [availableBlocksExpanded, setAvailableBlocksExpanded] =
     React.useState(true);
-
-  console.log('Re-render market page');
 
   return (
     <Page

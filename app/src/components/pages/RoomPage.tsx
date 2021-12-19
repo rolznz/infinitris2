@@ -14,7 +14,7 @@ import {
 } from 'infinitris2-models';
 import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser } from '../../state/UserStore';
-import LoadingSpinner from '../LoadingSpinner';
+import LoadingSpinner from '../ui/LoadingSpinner';
 import { useDocument } from 'swr-firestore';
 import useComingSoonRedirect from '../hooks/useComingSoonRedirect';
 
@@ -137,7 +137,8 @@ export default function RoomPage() {
                 setDisconnected(false);
                 setRetryCount(retryCount + 1);
               }}
-              size="large">
+              size="large"
+            >
               <RefreshIcon fontSize="large" />
             </IconButton>
           </Box>

@@ -3,17 +3,17 @@ import React, { useState } from 'react';
 
 import { Box, IconButton, SvgIcon, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
-import FlexBox from './ui/FlexBox';
-import LoadingSpinner from './LoadingSpinner';
+import FlexBox from '../FlexBox';
+import LoadingSpinner from '../LoadingSpinner';
 import localStorageKeys from '@/utils/localStorageKeys';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
-import useAffiliateLinkRef from './hooks/useAffiliateLinkRef';
+import useAffiliateLinkRef from '../../hooks/useAffiliateLinkRef';
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
 
 import { ReactComponent as GoogleIcon } from '@/icons/google.svg';
 import { ReactComponent as FacebookIcon } from '@/icons/facebook.svg';
 import { ReactComponent as CrossIcon } from '@/icons/x.svg';
-import { RingIconButton } from './ui/RingIconButton';
+import { RingIconButton } from '../RingIconButton';
 import {
   AuthProvider,
   FacebookAuthProvider,
@@ -23,8 +23,8 @@ import {
 import { auth } from '@/firebase';
 import { getConversionPath, IConversion } from 'infinitris2-models';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
-import { FilledIcon } from './ui/FilledIcon';
-import { CharacterCoinStatChip } from './pages/Characters/CharacterStatChip';
+import { FilledIcon } from '../FilledIcon';
+import { CharacterCoinStatChip } from '../../pages/Characters/CharacterStatChip';
 
 const googleProvider = new GoogleAuthProvider();
 const facebookProvider = new FacebookAuthProvider();

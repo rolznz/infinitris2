@@ -23,6 +23,7 @@ enum Routes {
   earnCoins = '/earn-coins',
   affiliateProgram = '/affiliate-program',
   about = '/about',
+  play = '/play',
 }
 
 export default Routes;

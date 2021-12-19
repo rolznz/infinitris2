@@ -10,7 +10,7 @@ import localStorageKeys from '../../../utils/localStorageKeys';
 import prettyStringify from '../../../utils/prettyStringify';
 
 import FlexBox from '../../ui/FlexBox';
-import LoadingSpinner from '../../LoadingSpinner';
+import LoadingSpinner from '../../ui/LoadingSpinner';
 import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
 
 interface ChallengesRowProps {

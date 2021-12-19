@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState } from 'react';
-import ContinueButton from '../ContinueButton';
+import ContinueButton from '@components/ui/ContinueButton';
 import useReceivedInput from './useReceivedInput';
 
 export default function useContinueButton(

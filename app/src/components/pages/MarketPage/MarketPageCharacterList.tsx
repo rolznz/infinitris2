@@ -45,7 +45,6 @@ export function MarketPageCharacterList({
   const fetchLimit = columns * 4;
   const lastCharacter =
     cachedCharacters[filter][cachedCharacters[filter].length - 1];
-  const gridGap = 0;
   const size = window.innerWidth / (columns * (columns > 3 ? 1.2 : 1.1));
 
   // TODO: useCollection purchases for my-blocks
@@ -89,6 +88,8 @@ export function MarketPageCharacterList({
     [setLoadMore, columns, filter]
   );
 
+  const characterBlockHeight = size + 50 + size * 0.1;
+
   return (
     <FlexBox
       width="100%"
@@ -96,14 +97,13 @@ export function MarketPageCharacterList({
       flexWrap="wrap"
       justifyContent="flex-start"
       mt={0}
-      gridGap={gridGap}
-      minHeight={filter === 'my-blocks' ? '0' : '100vh'}
+      minHeight={filter === 'my-blocks' ? characterBlockHeight : '100vh'}
     >
       {cachedCharacters[filter].map((character, index) => (
         <Intersection
           key={character.id}
           width={size}
-          height={size + 50 + size * 0.1}
+          height={characterBlockHeight}
           index={index}
           onInView={onCharacterInView}
         >

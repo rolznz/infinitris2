@@ -15,6 +15,7 @@ type PageProps = {
   style?: CSSProperties;
   narrow?: boolean;
   paddingX?: number;
+  paddingY?: number;
   background?: React.ReactNode;
   whiteTitle?: boolean;
 };
@@ -86,8 +87,14 @@ export function Page({
               paddingRight: props.paddingX,
             }
           : {}),
+        ...(props.paddingY !== undefined
+          ? {
+              paddingTop: props.paddingY,
+              paddingBottom: props.paddingY,
+            }
+          : {}),
         maxWidth: '100%',
-        ...(background
+        ...(background !== undefined
           ? {}
           : props.useGradient && false
           ? {

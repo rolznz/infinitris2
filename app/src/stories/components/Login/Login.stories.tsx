@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { Meta, Story } from '@storybook/react';
-import Login, { LoginProps } from '@/components/Login';
+import Login, { LoginProps } from '@/components/ui/Login/Login';
 
 export default {
   title: 'Components/Login',

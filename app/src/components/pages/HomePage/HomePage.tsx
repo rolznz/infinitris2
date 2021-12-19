@@ -16,6 +16,7 @@ import { Helmet } from 'react-helmet';
 import { appName } from '@/utils/constants';
 import { PlayButton } from './PlayButton';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
+import Routes from '@/models/Routes';
 
 //const isFirstTimeAnimation = true;
 
@@ -66,18 +67,7 @@ const _HomePage = () => {
           ml={shortLandscapeScreen ? 4 : 0}
         />*/}
         <Box display="flex" justifyContent="center">
-          <Link
-            component={RouterLink}
-            underline="none"
-            to={/*`${Routes.rooms}/${selectedRoom?.id}`*/ '/'}
-            style={
-              /*isLoading
-                  ? {
-                      pointerEvents: 'none',
-                    }
-                  : */ {}
-            }
-          >
+          <Link component={RouterLink} underline="none" to={Routes.play}>
             <PlayButton isLoaded={isLoaded} />
           </Link>
         </Box>

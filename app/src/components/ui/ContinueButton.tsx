@@ -1,8 +1,8 @@
 import { Button, Typography } from '@mui/material';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useUser } from '../state/UserStore';
-import FlexBox from './ui/FlexBox';
+import { useUser } from '@/state/UserStore';
+import FlexBox from '@/components/ui/FlexBox';
 
 interface ContinueButtonProps {
   onClick(): void;

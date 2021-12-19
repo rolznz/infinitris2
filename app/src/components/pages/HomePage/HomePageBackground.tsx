@@ -26,16 +26,14 @@ import foregroundRightPortraitImageDark from './assets/foreground_portrait_right
 import useWindowSize from 'react-use/lib/useWindowSize';
 import useOrientation from 'react-use/lib/useOrientation';
 import FlexBox from '@/components/ui/FlexBox';
-import { HomePage } from './HomePage';
 import useLoaderStore from '@/state/LoaderStore';
-import Loadable from '@/components/ui/Loadable';
 import useDarkMode from '@/components/hooks/useDarkMode';
-import { zIndexes } from '@/theme/theme';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
+import { zIndexes } from '@/theme/theme';
 
 export const homePageBackgroundTransitionSeconds = 5;
 
-const _HomePageBackground = () => {
+const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
   const isDarkMode = useDarkMode();
   const windowSize = useWindowSize();
   useOrientation(); // force re-render on orientation change
@@ -72,7 +70,7 @@ const _HomePageBackground = () => {
         bottom="0"
         left="0"
       />
-      <HomePage />
+      <FlexBox zIndex={zIndexes.above}>{children}</FlexBox>
       <div
         style={{
           position: 'fixed',

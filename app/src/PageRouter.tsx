@@ -33,6 +33,8 @@ import MarketPage from './components/pages/MarketPage/MarketPage';
 import MarketCharacterPage from './components/pages/MarketPage/MarketCharacterPage';
 import BackButton from './components/ui/BackButton';
 import useAffiliateLinkRef from './components/hooks/useAffiliateLinkRef';
+import PlayPage from './components/pages/PlayPage/PlayPage';
+import { HomePage } from './components/pages/HomePage/HomePage';
 
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
@@ -86,7 +88,9 @@ function RouterContents() {
       </OutsideGameElement>
       <Switch location={location}>
         <Route exact path={Routes.home}>
-          <HomePageBackground />
+          <HomePageBackground>
+            <HomePage />
+          </HomePageBackground>
         </Route>
         <Route exact path={Routes.credits}>
           <CreditsPage />
@@ -111,6 +115,9 @@ function RouterContents() {
         </Route>
         <Route exact path={Routes.login}>
           <LoginPage />
+        </Route>
+        <Route exact path={Routes.play}>
+          <PlayPage />
         </Route>
         <Route exact path={Routes.comingSoon}>
           <ComingSoonPage />

@@ -13,7 +13,6 @@ import FlexBox from '../FlexBox';
 import { useHistory } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import { borderColorDark } from '@/theme/theme';
-import { GameModePicker } from '../GameModePicker/GameModePicker';
 
 export function DialogManager() {
   const [prevDialogType, setPrevDialogType] = React.useState<
@@ -59,9 +58,6 @@ export function DialogManager() {
         )}
         {prevDialogType === 'impactInfo' && (
           <ImpactInfoDrawerContent onClose={close} />
-        )}
-        {prevDialogType === 'gameModePicker' && (
-          <GameModePicker onClose={close} />
         )}
         {prevDialogType && (
           <FlexBox mt={2} mb={4}>

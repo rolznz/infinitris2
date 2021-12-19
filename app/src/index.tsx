@@ -6,6 +6,8 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import Loader from './components/ui/Loader';
 import PageRouter from './PageRouter';
+import smoothscroll from 'smoothscroll-polyfill';
+smoothscroll.polyfill();
 
 ReactDOM.render(
   <React.StrictMode>

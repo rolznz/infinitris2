@@ -46,29 +46,104 @@ const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
   return (
     <FlexBox
       flex={1}
-      style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '100%',
-        height: '100%',
-      }}
+      position="relative"
+      bgcolor={'background.paper'}
+      overflow="hidden"
     >
-      <HomePageBackgroundImage
-        src={
-          isLandscape
-            ? isDarkMode
-              ? backgroundImageDark
-              : backgroundImage
-            : isDarkMode
-            ? backgroundPortraitImageDark
-            : backgroundPortraitImage
-        }
-        width="100%"
-        height="100%"
-        objectFit="cover"
-        bottom="0"
-        left="0"
+      <FlexBox
+        position="absolute"
+        top={0}
+        left={0}
+        width="100vw"
+        height="100vh"
+      >
+        <HomePageBackgroundImage
+          src={
+            isLandscape
+              ? isDarkMode
+                ? backgroundImageDark
+                : backgroundImage
+              : isDarkMode
+              ? backgroundPortraitImageDark
+              : backgroundPortraitImage
+          }
+          width="100vw"
+          height="100vh"
+          objectFit="cover"
+          bottom="0"
+          left="0"
+        />
+        <HomePageBackgroundImage
+          src={
+            isLandscape
+              ? isDarkMode
+                ? foregroundLeftImageDark
+                : foregroundLeftImage
+              : isDarkMode
+              ? foregroundLeftPortraitImageDark
+              : foregroundLeftPortraitImage
+          }
+          width="auto"
+          height="100vh"
+          bottom="0"
+          left="0"
+        />
+        <HomePageBackgroundImage
+          src={
+            isLandscape
+              ? isDarkMode
+                ? foregroundRightImageDark
+                : foregroundRightImage
+              : isDarkMode
+              ? foregroundRightPortraitImageDark
+              : foregroundRightPortraitImage
+          }
+          width="auto"
+          height="100vh"
+          bottom="0"
+          right="0"
+        />
+        <HomePageBackgroundImage
+          src={
+            isLandscape
+              ? isDarkMode
+                ? foregroundTopImageDark
+                : foregroundTopImage
+              : isDarkMode
+              ? foregroundTopPortraitImageDark
+              : foregroundTopPortraitImage
+          }
+          width="100vw"
+          height="auto"
+          top={isShortScreen || !isLandscape ? '-50px' : '0'}
+          left="0"
+        />
+        <HomePageBackgroundImage
+          src={
+            isLandscape
+              ? isDarkMode
+                ? foregroundBottomImageDark
+                : foregroundBottomImage
+              : isDarkMode
+              ? foregroundBottomPortraitImageDark
+              : foregroundBottomPortraitImage
+          }
+          width="100vw"
+          height="auto"
+          bottom={isShortScreen || !isLandscape ? '-50px' : '0'}
+          left="0"
+        />
+      </FlexBox>
+      <FlexBox
+        position="absolute"
+        top="calc(100vh - 214px)"
+        left={0}
+        width="100vw"
+        height="214px"
+        sx={{
+          background: (theme) =>
+            `linear-gradient(180deg, #00000000 0%, ${theme.palette.background.paper} 100%)`,
+        }}
       />
       <FlexBox zIndex={zIndexes.above}>{children}</FlexBox>
       <div
@@ -83,66 +158,6 @@ const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
           transition: `opacity ${homePageBackgroundTransitionSeconds}s ${firstTimeAnimationDelaySeconds}s`,
         }}
         role="presentation"
-      />
-      <HomePageBackgroundImage
-        src={
-          isLandscape
-            ? isDarkMode
-              ? foregroundLeftImageDark
-              : foregroundLeftImage
-            : isDarkMode
-            ? foregroundLeftPortraitImageDark
-            : foregroundLeftPortraitImage
-        }
-        width="auto"
-        height="100%"
-        bottom="0"
-        left="0"
-      />
-      <HomePageBackgroundImage
-        src={
-          isLandscape
-            ? isDarkMode
-              ? foregroundRightImageDark
-              : foregroundRightImage
-            : isDarkMode
-            ? foregroundRightPortraitImageDark
-            : foregroundRightPortraitImage
-        }
-        width="auto"
-        height="100%"
-        bottom="0"
-        right="0"
-      />
-      <HomePageBackgroundImage
-        src={
-          isLandscape
-            ? isDarkMode
-              ? foregroundTopImageDark
-              : foregroundTopImage
-            : isDarkMode
-            ? foregroundTopPortraitImageDark
-            : foregroundTopPortraitImage
-        }
-        width="100vw"
-        height="auto"
-        top={isShortScreen || !isLandscape ? '-50px' : '0'}
-        left="0"
-      />
-      <HomePageBackgroundImage
-        src={
-          isLandscape
-            ? isDarkMode
-              ? foregroundBottomImageDark
-              : foregroundBottomImage
-            : isDarkMode
-            ? foregroundBottomPortraitImageDark
-            : foregroundBottomPortraitImage
-        }
-        width="100vw"
-        height="auto"
-        bottom={isShortScreen || !isLandscape ? '-50px' : '0'}
-        left="0"
       />
     </FlexBox>
   );

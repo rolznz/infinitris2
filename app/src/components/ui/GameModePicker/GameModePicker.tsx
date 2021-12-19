@@ -31,16 +31,25 @@ import { GameModeCard } from './GameModeCard';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import Routes from '@/models/Routes';
 
-export function GameModePicker() {
+export const gameModePickerId = 'game-mode-picker';
+
+type GameModePickerProps = {
+  paddingTop?: 10;
+  display: 'flex' | 'none';
+};
+
+export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
   const isDarkMode = useDarkMode();
   const isLandscape = useIsLandscape();
   return (
     <FlexBox
-      pt={10}
+      pt={paddingTop}
       flexDirection="row"
       flexWrap="wrap"
       justifyContent="space-evenly"
       alignItems="flex-start"
+      display={display}
+      id={gameModePickerId}
     >
       <GameModeCard
         image={

@@ -6,6 +6,7 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { keyframes } from '@mui/system';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
 import Routes from '@/models/Routes';
+import { gameModePickerId } from '@/components/ui/GameModePicker/GameModePicker';
 
 const playButtonAnimation = keyframes`
   0% {
@@ -20,6 +21,19 @@ const playButtonAnimation = keyframes`
 `;
 
 type PlayButtonProps = { isLoaded: boolean };
+
+function scrollGameModePickerIntoView() {
+  const gameModePicker = document.getElementById(gameModePickerId);
+  if (!gameModePicker) {
+    return;
+  }
+  gameModePicker.style.display = 'flex';
+  gameModePicker.scrollIntoView({
+    behavior: 'smooth',
+    block: 'nearest',
+    inline: 'start',
+  });
+}
 
 function _PlayButton({ isLoaded }: PlayButtonProps) {
   return (
@@ -42,6 +56,7 @@ function _PlayButton({ isLoaded }: PlayButtonProps) {
         transform: 'scale(1.0)',
       }}
       size="large"
+      onClick={scrollGameModePickerIntoView}
     >
       <PlayArrowIcon sx={{ width: 48, height: 48 }} />
     </IconButton>

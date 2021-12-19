@@ -1,6 +1,6 @@
 import create from 'zustand';
 
-export type DialogType = 'login' | 'coinInfo' | 'impactInfo' | 'gameModePicker';
+export type DialogType = 'login' | 'coinInfo' | 'impactInfo';
 
 export const dialogAnimationLength = 500;
 

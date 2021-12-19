@@ -17,7 +17,7 @@ export default function ScoreboardPage() {
       paddingY={0}
       showTitle={false}
     >
-      <GameModePicker />
+      <GameModePicker display="flex" paddingTop={10} />
     </Page>
   );
 }

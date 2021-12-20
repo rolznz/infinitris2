@@ -16,6 +16,7 @@ import getUserFriendlyKeyText from '@models/util/getUserFriendlyKeyText';
 import InputMethod from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { WorldBackground } from './WorldBackground';
+import { GridFloor } from './GridFloor';
 
 const idealCellSize = 32;
 const minCellCount = 12;
@@ -99,6 +100,7 @@ export default class Infinitris2Renderer
   private _preferredInputMethod: InputMethod;
   private _teachControls: boolean;
   private _worldBackground!: WorldBackground;
+  private _gridFloor!: GridFloor;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
@@ -136,9 +138,12 @@ export default class Infinitris2Renderer
       'grass'
     );
 
+    this._gridFloor = new GridFloor(this._app, this._camera, 'grass');
+
     await new Promise((resolve) => this._app.loader.load(resolve));
 
     this._worldBackground.createImages();
+    this._gridFloor.createImages();
 
     // TODO: extract from here and minimal renderer
     if (this._preferredInputMethod === 'touch' && this._teachControls) {
@@ -189,7 +194,12 @@ export default class Infinitris2Renderer
     const clampedCameraY = Math.min(
       Math.max(
         this._camera.y,
-        -(this._gridHeight - this._app.renderer.height + visibilityY)
+        -(
+          this._gridHeight -
+          this._app.renderer.height +
+          visibilityY +
+          this._getCellSize() * 2
+        )
       ),
       -visibilityY
     );
@@ -212,6 +222,11 @@ export default class Infinitris2Renderer
         this._scrollX,
         this._scrollY,
         clampedCameraY
+      );
+      this._gridFloor.update(
+        !this._scrollY
+          ? this._grid.graphics.y + this._grid.graphics.height
+          : this._world.y + this._gridHeight
       );
     }
     if (this._scrollY) {
@@ -275,6 +290,9 @@ export default class Infinitris2Renderer
     this._world = new PIXI.Container();
     this._world.sortableChildren = true;
     this._app.stage.addChild(this._world);
+
+    this._gridFloor.addChildren();
+
     //this._app.stage.addChild(this._shadowGradientGraphics);
 
     this._placementHelperShadowCells = [];

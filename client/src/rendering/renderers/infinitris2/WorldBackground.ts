@@ -7,7 +7,7 @@ import {
   worldBackgroundConfigs,
 } from './worldBackgroundConfigs';
 
-const small = true;
+const small = false;
 
 export class WorldBackground {
   private _layerSprites: PIXI.TilingSprite[] = [];
@@ -28,7 +28,7 @@ export class WorldBackground {
       this._app.loader.add(this._getLayerImage(layer));
     }
   }
-  private _getLayerImage(layer: WorldBackgroundLayerConfig): any {
+  private _getLayerImage(layer: WorldBackgroundLayerConfig): string {
     const layerFilenameParts = layer.filename.split('.');
     if (small) {
       layerFilenameParts[layerFilenameParts.length - 2] += '_s';
@@ -83,14 +83,7 @@ export class WorldBackground {
     const url = this._getLayerImage(layer);
     const texture = PIXI.Texture.from(url);
     const sprite = new PIXI.TilingSprite(texture);
-    console.log(texture.width, texture.height);
-
-    console.log(
-      this._app.renderer.width,
-      texture.width,
-      this._app.renderer.height,
-      texture.height
-    );
+    console.log(url, texture.width, texture.height);
     sprite.tileScale.set(
       Math.max(
         this._app.renderer.width / texture.width,

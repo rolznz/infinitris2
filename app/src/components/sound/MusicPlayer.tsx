@@ -2,6 +2,7 @@ import { Howl } from 'howler';
 import useLoaderStore from '@/state/LoaderStore';
 
 const rootUrl = process.env.REACT_APP_MUSIC_ROOT_URL;
+const musicFadeTimeMs = 2000;
 
 let _menuTheme: Howl;
 let _sounds: Howl;
@@ -23,7 +24,8 @@ export function soundsLoaded(): boolean {
 
 export function playGameMusic() {
   if (_menuTheme) {
-    _menuTheme.fade(0.5, 0, 2000);
+    _menuTheme.fade(0.5, 0, musicFadeTimeMs);
+    setTimeout(() => _menuTheme.stop(), musicFadeTimeMs);
   }
 
   const _gameTheme = new Howl({
@@ -41,7 +43,7 @@ export function playGameMusic() {
   _gameTheme.load();
   _gameTheme.volume(0);
   _gameTheme.play();
-  _gameTheme.fade(0, 1, 2000);
+  _gameTheme.fade(0, 1, musicFadeTimeMs);
 }
 
 export async function prepareSounds() {

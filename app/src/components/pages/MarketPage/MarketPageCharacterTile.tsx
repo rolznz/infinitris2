@@ -20,7 +20,6 @@ export const characterTileContentPortion = 0.8;
 const linkStyle = { width: '100%', height: '100%' };
 
 function _CharacterTile({ character, size }: CharacterTileProps) {
-  console.log('Re-render character tile ' + character.id);
   return (
     <FlexBox
       width={size}

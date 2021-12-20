@@ -93,6 +93,7 @@ export default function AffiliateProgramPage() {
           <RingIconButton
             padding="large"
             onClick={() => {
+              //console.log(affiliateLink);
               copy(affiliateLink);
               toast(
                 intl.formatMessage({

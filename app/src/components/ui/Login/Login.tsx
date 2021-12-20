@@ -1,7 +1,7 @@
 import useAuthStore from '@/state/AuthStore';
 import React, { useState } from 'react';
 
-import { Box, IconButton, SvgIcon, Typography } from '@mui/material';
+import { Box, Button, IconButton, SvgIcon, Typography } from '@mui/material';
 import { FormattedMessage } from 'react-intl';
 import FlexBox from '../FlexBox';
 import LoadingSpinner from '../LoadingSpinner';
@@ -142,6 +142,16 @@ export default function Login({
           <FlexBox display="inline-flex">
             <CharacterCoinStatChip value={3} />
           </FlexBox>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => deleteReferredByAffiliateId()}
+          >
+            <FormattedMessage
+              defaultMessage="Remove"
+              description="Affiliate Program Page - Remove referral code"
+            />
+          </Button>
         </FlexBox>
       )}
       <Box mt={4} />

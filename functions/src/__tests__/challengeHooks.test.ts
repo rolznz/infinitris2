@@ -24,17 +24,14 @@ describe('Challenge Hooks', () => {
       test.firestore.makeDocumentSnapshot(
         dummyData.creatableChallenge,
         dummyData.challenge1Path
-      ),
-      {
-        auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }),
-      }
+      )
     );
 
     const challenge = (
       await db.doc(dummyData.challenge1Path).get()
     ).data() as IChallenge;
     expect(challenge.created).toBe(true);
-    expect(challenge.readOnly!.userId).toBe(dummyData.userId1);
+    expect(challenge.userId).toBe(dummyData.userId1);
     expect(challenge.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
       firestore.Timestamp.now().seconds - 5
     );

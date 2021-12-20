@@ -41,7 +41,6 @@ describe('Conversion Hooks', () => {
         dummyData.conversion1Path
       ),
       {
-        auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }), // user 1 was referred by user 2
         params: {
           affiliateId: dummyData.affiliateId1,
           convertedUserId: dummyData.userId1,

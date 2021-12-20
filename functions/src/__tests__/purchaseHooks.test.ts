@@ -35,17 +35,14 @@ describe('Purchase Hooks', () => {
       test.firestore.makeDocumentSnapshot(
         dummyData.purchase1,
         dummyData.purchase1Path
-      ),
-      {
-        auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }),
-      }
+      )
     );
 
     const purchase = (
       await db.doc(dummyData.purchase1Path).get()
     ).data() as IPurchase;
 
-    expect(purchase.readOnly!.userId).toBe(dummyData.userId1);
+    expect(purchase.userId).toBe(dummyData.userId1);
     expect(purchase.created).toBe(true);
     expect(purchase.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
       firestore.Timestamp.now().seconds - 5

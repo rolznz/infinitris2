@@ -19,8 +19,17 @@ export const onUpdateEntity = functions.firestore
           previousData.readOnly?.lastModifiedTimestamp?.nanoseconds
       ) {
         const currentTime = getCurrentTimestamp();
-        // FIXME: firestore does not support context.auth - pass userId as part of payload
-        await updateUserRateLimit(context.auth?.uid, currentTime);
+
+        const entity = data as IEntity;
+        if (!entity.userId) {
+          throw new Error(
+            'No userId provided when updating ' +
+              context.params.collectionId +
+              '/' +
+              context.params.entityId
+          );
+        }
+        await updateUserRateLimit(entity.userId, currentTime);
 
         const updateReadOnly = objectToDotNotation<IEntity>(
           {

@@ -1,6 +1,12 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function withCoreFieldNames(fieldNames) {
+      return ['created', 'readOnly', 'userId'].concat(fieldNames);
+    }
+    function entityHasExpectedFields(fieldNames) {
+      return request.resource.data.keys().hasOnly(withCoreFieldNames(fieldNames));
+    }
     function isLoggedIn() {
       return request.auth != null;
     }
@@ -8,7 +14,7 @@ service cloud.firestore {
       return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
     function isOwner() {
-    	return request.auth != null && request.auth.uid == resource.data.readOnly.userId;
+    	return request.auth != null && request.auth.uid == resource.data.userId;
     }
     function authMatchesUser(userId) {
       return request.auth != null && request.auth.uid == userId;
@@ -19,6 +25,11 @@ service cloud.firestore {
     }
     function createdFieldValid() {
       return (resource == null && request.resource.data.created == false) || (resource != null && request.resource.data.created == resource.data.created && resource.data.created == true);
+    }
+    function userIdFieldValid() {
+      return
+        authMatchesUser(request.resource.data.userId) &&
+        (resource == null || (resource != null && request.resource.data.userId == resource.data.userId));
     }
     function readOnlyFieldsUntouched() {
       let oldState = resource != null ? resource.data.get('readOnly', {}) : {};
@@ -32,7 +43,7 @@ service cloud.firestore {
     }
 
     function baseRequestValid() {
-      return authMatchesUser(request.resource.data.userId) && createdFieldValid() && readOnlyFieldsUntouched() && !rateLimitHit();
+      return userIdFieldValid() && createdFieldValid() && readOnlyFieldsUntouched() && !rateLimitHit();
     }
 
     function getEntityFromCollection() {
@@ -51,7 +62,7 @@ service cloud.firestore {
         let controls = getProperty('controls', {});
         return
           baseRequestValid() &&
-          request.resource.data.keys().hasOnly(['created', 'readOnly', 'controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
+          entityHasExpectedFields(['controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
           getProperty('hasSeenAllSet', false) is bool &&
           getProperty('hasSeenWelcome', false) is bool &&
           getProperty('preferredInputMethod', '') in ['', 'keyboard', 'touch'] &&
@@ -90,7 +101,7 @@ service cloud.firestore {
       	return
           baseRequestValid() &&
           (!request.resource.data.get('isOfficial', false) || isAdmin()) &&
-          request.resource.data.keys().hasOnly(['created', 'readOnly', 'description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
+          entityHasExpectedFields(['description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
           title is string &&
           (title.size() == 0 || (title.size() < 21 && title.matches('[a-zA-Z0-9 ]+'))) &&
           description is string && description.size() < 280 &&
@@ -123,7 +134,7 @@ service cloud.firestore {
           isValidRewardCriteria(rewardCriteria.get('gold', {}));
       }
       allow create: if isValidChallenge() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.readOnly.coins > 0;
-      allow update: if isValidChallenge() && isOwner() && (!resource.data.get('isPublished', false) || isAdmin());
+      allow update: if isValidChallenge() && (!resource.data.get('isPublished', false) || isAdmin());
       allow delete: if false;
       allow read: if true;
       
@@ -134,7 +145,7 @@ service cloud.firestore {
         return
           isLoggedIn() &&
           baseRequestValid() &&
-          request.resource.data.keys().hasOnly(['created', 'challengeId', 'status', 'medalIndex', 'stats']) &&
+          entityHasExpectedFields(['challengeId', 'status', 'medalIndex', 'stats']) &&
           challenge != null &&
           challenge.data.isPublished &&
           request.resource.data.status in ['success', 'failed'] &&
@@ -157,13 +168,13 @@ service cloud.firestore {
         let entity = getEntityFromCollection();
       	return
           baseRequestValid() &&
+          entityHasExpectedFields(['created', 'value', 'entityCollectionPath', 'entityId']) &&
           ratingId == getUniqueUserEntityId() &&
           isValidCollection() &&
           entity != null &&
           entity.data.isPublished &&
-          entity.data.readOnly.userId != request.auth.uid &&
-          request.resource.data.value is number && request.resource.data.value >= 1 && request.resource.data.value <= 5 &&
-          request.resource.data.keys().hasOnly(['created', 'value', 'entityCollectionPath', 'entityId']);
+          entity.data.userId != request.auth.uid &&
+          request.resource.data.value is number && request.resource.data.value >= 1 && request.resource.data.value <= 5;
       }
       allow create: if isValidRating();
       allow update: if false;
@@ -179,12 +190,12 @@ service cloud.firestore {
         let entity = getEntityFromCollection();
       	return
           baseRequestValid() &&
+          entityHasExpectedFields(['entityCollectionPath', 'entityId']) &&
           purchaseId == getUniqueUserEntityId() &&
           isValidCollection() &&
           entity != null &&
           user != null &&
-          user.data.readOnly.coins >= entity.data.price &&
-          request.resource.data.keys().hasOnly(['created', 'entityCollectionPath', 'entityId']);
+          user.data.readOnly.coins >= entity.data.price;
       }
       allow create: if isValidPurchase();
       allow update: if false;
@@ -201,8 +212,8 @@ service cloud.firestore {
         let user = get(/databases/$(database)/documents/users/$(userId));
         return
           baseRequestValid() &&
-          request.resource.data.keys().hasOnly(['created']) &&
-          affiliate.data.readOnly.userId != userId &&
+          entityHasExpectedFields([]) &&
+          affiliate.data.userId != userId &&
           !('referredByAffiliateId' in user.data.readOnly);
       }
       allow create: if conversionIsValid();
@@ -212,11 +223,11 @@ service cloud.firestore {
       allow read: if true;
       allow create: if
         baseRequestValid() &&
+        entityHasExpectedFields([]) &&
         isLoggedIn() &&
         nicknameId.size() > 1 &&
         nicknameId.size() < 16 &&
-        nicknameId.matches('[a-zA-Z0-9 ]+') &&
-        request.resource.data.keys().hasOnly(['created']);
+        nicknameId.matches('[a-zA-Z0-9 ]+');
       allow update, delete: if false;
     }
     match /characters/{document=**} {

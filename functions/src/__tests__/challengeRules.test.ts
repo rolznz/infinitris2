@@ -132,8 +132,9 @@ describe('Challenges Rules', () => {
       }
     );
 
-    const challengeToUpdate: Pick<IChallenge, 'title'> = {
+    const challengeToUpdate: Pick<IChallenge, 'title' | 'userId'> = {
       title: dummyData.existingUnpublishedChallenge.title + '2',
+      userId: dummyData.userId1,
     };
     await expect(
       db.doc(dummyData.challenge1Path).set(challengeToUpdate, { merge: true })
@@ -227,7 +228,6 @@ describe('Challenges Rules', () => {
         createdTimestamp: dummyData.createdTimestamp,
         lastModifiedTimestamp: dummyData.lastModifiedTimestamp,
         numTimesModified: 0,
-        userId: 'test',
         numRatings: 5,
         rating: 5,
         summedRating: 25,
@@ -252,7 +252,6 @@ describe('Challenges Rules', () => {
         createdTimestamp: dummyData.createdTimestamp,
         lastModifiedTimestamp: dummyData.lastModifiedTimestamp,
         numTimesModified: 0,
-        userId: 'test',
         numRatings: 5,
         rating: 5,
         summedRating: 25,

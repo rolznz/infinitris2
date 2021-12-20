@@ -14,12 +14,11 @@ export const onCreatePurchase = functions.firestore
   .document('purchases/{purchaseId}')
   .onCreate(async (snapshot, context) => {
     try {
-      // FIXME: firestore does not support context.auth - pass userId as part of payload
-      const userId = context.auth?.uid;
+      const purchase = snapshot.data() as IPurchase;
+      const userId = purchase.userId;
       if (!userId) {
         throw new Error('User not logged in');
       }
-      const purchase = snapshot.data() as IPurchase;
 
       const productDocRef = getDb().doc(
         getEntityPath(purchase.entityCollectionPath, purchase.entityId)

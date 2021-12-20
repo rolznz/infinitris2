@@ -20,8 +20,8 @@ export const onCreateConversion = functions.firestore
       const affiliateId: string = context.params.affiliateId;
       const convertedUserId: string = context.params.convertedUserId;
 
-      // FIXME: firestore does not support context.auth - pass userId as part of payload
-      const userId = context.auth?.uid;
+      const conversion = snapshot.data() as IConversion;
+      const userId = conversion.userId;
       if (!userId) {
         throw new Error('User not logged in');
       }
@@ -61,11 +61,11 @@ export const onCreateConversion = functions.firestore
       await convertedUserRef.update(updateConvertedUser);
 
       // create network impact (+1 credit rewarded to affiliate user and anyone who impacted the affiliate user)
-      await updateNetworkImpact(affiliate.readOnly.userId, convertedUserId);
+      await updateNetworkImpact(affiliate.userId, convertedUserId);
 
       // give the affiliate user additional coins based on number of conversions
       /* const affiliateUserRef = getDb().doc(
-        getUserPath(affiliate.readOnly.userId)
+        getUserPath(affiliate.userId)
       );
       const updateAffiliateUser = objectToDotNotation<IUser>(
         {

@@ -14,8 +14,8 @@ export const onCreateNickname = functions.firestore
   .onCreate(async (snapshot, context) => {
     try {
       const nicknameId = context.params.nicknameId;
-      // FIXME: firestore does not support context.auth - pass userId as part of payload
-      const userId = context.auth?.uid;
+      const nickname = snapshot.data() as INickname;
+      const userId = nickname.userId;
       if (!userId) {
         throw new Error('User not logged in');
       }
@@ -23,14 +23,13 @@ export const onCreateNickname = functions.firestore
       // delete any old nicknames attached to the user
       const userOldNicknames = await getDb()
         .collection(nicknamesPath)
-        .where('readOnly.userId', '==', userId)
+        .where('userId', '==', userId)
         .where('created', '==', true)
         .get();
       for (const oldUserNickname of userOldNicknames.docs) {
         await oldUserNickname.ref.delete();
       }
 
-      // const nickname = snapshot.data() as INickname;
       const userDocRef = getDb().doc(getUserPath(userId));
       // const user = (await userDocRef.get()).data() as IUser;
 
@@ -52,7 +51,6 @@ export const onCreateNickname = functions.firestore
         .update({
           readOnly: {
             ...getDefaultEntityReadOnlyProperties(),
-            userId,
           },
           created: true,
         } as Pick<INickname, 'readOnly' | 'created'>);

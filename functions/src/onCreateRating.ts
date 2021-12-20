@@ -13,12 +13,11 @@ export const onCreateRating = functions.firestore
   .document('ratings/{ratingId}')
   .onCreate(async (snapshot, context) => {
     try {
-      // FIXME: firestore does not support context.auth - pass userId as part of payload
-      const userId = context.auth?.uid;
+      const rating = snapshot.data() as IRating;
+      const userId = rating.userId;
       if (!userId) {
         throw new Error('User not logged in');
       }
-      const rating = snapshot.data() as IRating;
       const challengeDocRef = getDb().doc(getChallengePath(rating.entityId));
       const challenge = (await challengeDocRef.get()).data() as IChallenge;
 
@@ -42,7 +41,7 @@ export const onCreateRating = functions.firestore
 
       if (rating.value > 2) {
         // only reward positive ratings
-        updateNetworkImpact(challenge.readOnly!.userId, userId);
+        updateNetworkImpact(challenge.userId, userId);
       }
 
       // apply update using current database instance

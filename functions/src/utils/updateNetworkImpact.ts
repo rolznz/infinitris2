@@ -6,7 +6,7 @@ import {
   networkImpactsPath,
   objectToDotNotation,
 } from 'infinitris2-models';
-import { getDb, increment } from './firebase';
+import { getDb, increment, systemUserId } from './firebase';
 import { getDefaultEntityReadOnlyProperties } from './getDefaultEntityReadOnlyProperties';
 
 /**
@@ -71,6 +71,7 @@ export default async function updateNetworkImpact(
         ...getDefaultEntityReadOnlyProperties(),
       },
       created: true,
+      userId: systemUserId,
     };
 
     await impactRef.set(networkImpact);

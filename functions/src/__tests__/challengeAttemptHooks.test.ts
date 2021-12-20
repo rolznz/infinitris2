@@ -25,10 +25,7 @@ describe('Challenge Attempt Hooks', () => {
       test.firestore.makeDocumentSnapshot(
         dummyData.creatableChallengeAttempt,
         dummyData.challengeAttempt1Path
-      ),
-      {
-        auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }),
-      }
+      )
     );
 
     const challenge = (

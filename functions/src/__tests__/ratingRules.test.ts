@@ -39,9 +39,9 @@ describe('Rating Rules', () => {
   test('should deny rating self-made entities', async () => {
     const ownChallenge: IChallenge = {
       ...dummyData.existingPublishedChallenge,
+      userId: dummyData.userId2,
       readOnly: {
         ...dummyData.existingPublishedChallenge.readOnly!,
-        userId: dummyData.userId2,
       },
     };
 

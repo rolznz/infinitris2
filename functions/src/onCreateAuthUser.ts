@@ -22,8 +22,8 @@ export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
         readOnly: {
           ...getDefaultEntityReadOnlyProperties(),
           numConversions: 0,
-          userId: user.uid,
         },
+        userId: user.uid,
         created: true,
       };
 
@@ -41,6 +41,7 @@ export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
           lastWriteTimestamp: getCurrentTimestamp(),
           purchasedEntityIds: [],
         },
+        userId: user.uid,
         created: true,
       };
       await userRef.set(newUser);

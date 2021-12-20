@@ -27,10 +27,7 @@ test('modified properties are updated when entity is updated without last modifi
         dummyData.existingPublishedChallenge,
         dummyData.challenge1Path
       )
-    ),
-    {
-      auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }),
-    }
+    )
   );
 
   const challenge = (
@@ -75,10 +72,7 @@ test('modified properties are not updated recursively', async () => {
         dummyData.existingPublishedChallenge,
         dummyData.challenge1Path
       )
-    ),
-    {
-      auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }),
-    }
+    )
   );
 
   const challenge = (
@@ -117,10 +111,7 @@ test('rate limit updated when user creates an entity', async () => {
     test.firestore.makeDocumentSnapshot(
       dummyData.creatableChallenge,
       dummyData.challenge1Path
-    ),
-    {
-      auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }),
-    }
+    )
   );
 
   const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
@@ -164,10 +155,7 @@ test('rate limit updated when user updates an entity', async () => {
         dummyData.existingPublishedChallenge,
         dummyData.challenge1Path
       )
-    ),
-    {
-      auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }),
-    }
+    )
   );
 
   const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;

@@ -30,17 +30,14 @@ describe('Rating Hooks', () => {
       test.firestore.makeDocumentSnapshot(
         dummyData.creatableRating,
         dummyData.rating1Path
-      ),
-      {
-        auth: test.auth.makeUserRecord({ uid: dummyData.userId2 }), // user 2 is rating user 1's challenge
-      }
+      )
     );
 
     const rating = (
       await db.doc(dummyData.rating1Path).get()
     ).data() as IRating;
 
-    expect(rating.readOnly!.userId).toBe(dummyData.userId2);
+    expect(rating.userId).toBe(dummyData.userId2);
     expect(rating.created).toBe(true);
     expect(rating.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
       firestore.Timestamp.now().seconds - 5
@@ -76,10 +73,7 @@ describe('Rating Hooks', () => {
     );
 
     await test.wrap(onCreateRating)(
-      test.firestore.makeDocumentSnapshot(ratingRequest, dummyData.rating1Path),
-      {
-        auth: test.auth.makeUserRecord({ uid: dummyData.userId2 }), // user 2 is rating user 1's challenge
-      }
+      test.firestore.makeDocumentSnapshot(ratingRequest, dummyData.rating1Path)
     );
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;

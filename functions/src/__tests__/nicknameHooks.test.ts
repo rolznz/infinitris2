@@ -36,7 +36,6 @@ describe('Nickname Hooks', () => {
         dummyData.nickname1Path
       ),
       {
-        auth: test.auth.makeUserRecord({ uid: dummyData.userId1 }),
         params: {
           nicknameId: dummyData.nicknameId1,
         },
@@ -47,7 +46,7 @@ describe('Nickname Hooks', () => {
       await db.doc(dummyData.nickname1Path).get()
     ).data() as INickname;
 
-    expect(nickname.readOnly!.userId).toBe(dummyData.userId1);
+    expect(nickname.userId).toBe(dummyData.userId1);
     expect(nickname.created).toBe(true);
     expect(nickname.readOnly!.createdTimestamp?.seconds).toBeGreaterThan(
       firestore.Timestamp.now().seconds - 5

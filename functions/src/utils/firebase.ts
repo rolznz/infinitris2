@@ -26,3 +26,5 @@ export function getCurrentTimestamp(): admin.firestore.Timestamp {
 export function increment(n: number): number {
   return admin.firestore.FieldValue.increment(n) as any as number;
 }
+
+export const systemUserId = 'SYSTEM';

@@ -10,10 +10,10 @@ import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityRead
 
 export const onCreateChallenge = functions.firestore
   .document('challenges/{challengeId}')
-  .onCreate(async (snapshot, context) => {
+  .onCreate(async (snapshot) => {
     try {
-      // FIXME: firestore does not support context.auth - pass userId as part of payload
-      const userId = context.auth?.uid;
+      const challenge = snapshot.data() as IChallenge;
+      const userId = challenge.userId;
       if (!userId) {
         throw new Error('User not logged in');
       }

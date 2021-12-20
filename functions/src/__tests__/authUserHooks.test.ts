@@ -39,7 +39,7 @@ describe('Auth User Hooks', () => {
       await db.doc(getAffiliatePath(user.readOnly.affiliateId!)).get()
     ).data() as IAffiliate;
 
-    expect(affiliate.readOnly?.userId).toBe(uid);
+    expect(affiliate.userId).toBe(uid);
     expect(affiliate.readOnly?.numConversions).toBe(0);
     expect(affiliate.readOnly?.createdTimestamp?.seconds).toBeGreaterThan(
       firestore.Timestamp.now().seconds - 5

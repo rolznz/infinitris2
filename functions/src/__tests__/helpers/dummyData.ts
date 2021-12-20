@@ -23,6 +23,7 @@ import {
   Creatable,
   IChallengeAttempt,
   getChallengeAttemptPath,
+  Updatable,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -38,12 +39,13 @@ const userId3 = 'userId3';
 const user1Path = getUserPath(userId1);
 const user2Path = getUserPath(userId2);
 
-const updatableUser: Omit<IUser, 'readOnly' | 'created'> = {
+const updatableUser: Updatable<IUser> = {
   controls: DEFAULT_KEYBOARD_CONTROLS,
   hasSeenAllSet: false,
   hasSeenWelcome: true,
   preferredInputMethod: 'keyboard',
   locale: 'EN',
+  userId: userId1,
 };
 
 const existingUser: IUser = {
@@ -109,8 +111,6 @@ const existingUnpublishedChallenge: IChallenge = {
     createdTimestamp,
     lastModifiedTimestamp,
     numTimesModified: 0,
-
-    userId: userId1,
     numRatings: 0,
     rating: 0,
     summedRating: 0,

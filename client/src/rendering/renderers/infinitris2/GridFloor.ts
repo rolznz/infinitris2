@@ -48,8 +48,8 @@ export class GridFloor {
   }
 
   update(gridBottom: number) {
-    this._floorSprite.y = gridBottom;
-    this._glowSprite.y = gridBottom - this._glowSprite.height;
+    this._floorSprite.y = Math.ceil(gridBottom);
+    this._glowSprite.y = Math.ceil(gridBottom - this._glowSprite.height);
   }
 
   private _createSprite = (url: string) => {

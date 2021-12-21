@@ -35,7 +35,9 @@ export default class Cell implements ICell {
   }
 
   get color(): number {
-    return this._behaviour?.color || 0xffffff;
+    return this._blocks.length
+      ? this._blocks[0].player.color
+      : this._behaviour?.color || 0xffffff;
   }
 
   get isPassable(): boolean {
@@ -44,6 +46,9 @@ export default class Cell implements ICell {
 
   get isEmpty(): boolean {
     return this._isEmpty;
+  }
+  get isEmptyWithNoBlocks(): boolean {
+    return this._isEmpty && !this._blocks.length;
   }
   set isEmpty(isEmpty: boolean) {
     this._isEmpty = isEmpty;

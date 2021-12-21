@@ -52,6 +52,17 @@ export default class Grid implements IGrid {
     this._cells.forEach((row) => row.forEach((cell) => cell.step()));
   }
 
+  getNeighbour(cell: ICell, dx: number, dy: number): ICell | undefined {
+    const nx =
+      (((cell.column + dx) % this.numColumns) + this.numColumns) %
+      this.numColumns;
+    const ny = cell.row + dy;
+    if (ny < 0 || ny > this.numRows - 1) {
+      return undefined;
+    }
+    return this._cells[ny][nx];
+  }
+
   /**
    * Check for and clear full rows.
    *

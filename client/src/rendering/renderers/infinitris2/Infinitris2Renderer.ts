@@ -17,6 +17,7 @@ import InputMethod from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { WorldBackground } from './WorldBackground';
 import { GridFloor } from './GridFloor';
+import { getBorderColor } from '@models/index';
 
 const idealCellSize = 32;
 const minCellCount = 12;
@@ -138,12 +139,12 @@ export default class Infinitris2Renderer
       'grass'
     );
 
-    this._gridFloor = new GridFloor(this._app, this._camera, 'grass');
+    this._gridFloor = new GridFloor(this._app, 'grass');
 
     await new Promise((resolve) => this._app.loader.load(resolve));
 
     this._worldBackground.createImages();
-    this._gridFloor.createImages();
+    this._gridFloor.createImages(this._getFloorHeight());
 
     // TODO: extract from here and minimal renderer
     if (this._preferredInputMethod === 'touch' && this._teachControls) {
@@ -198,7 +199,7 @@ export default class Infinitris2Renderer
           this._gridHeight -
           this._app.renderer.height +
           visibilityY +
-          this._getCellSize() * 2
+          this._getFloorHeight()
         )
       ),
       -visibilityY
@@ -225,7 +226,7 @@ export default class Infinitris2Renderer
       );
       this._gridFloor.update(
         !this._scrollY
-          ? this._grid.graphics.y + this._grid.graphics.height
+          ? this._grid.graphics.y + this._gridHeight
           : this._world.y + this._gridHeight
       );
     }
@@ -284,14 +285,13 @@ export default class Infinitris2Renderer
     };
     this._grid.graphics.cacheAsBitmap = true;
     this._app.stage.addChild(this._grid.graphics);
+    this._gridFloor.addChildren();
 
     this._shadowGradientGraphics = new PIXI.Graphics();
 
     this._world = new PIXI.Container();
     this._world.sortableChildren = true;
     this._app.stage.addChild(this._world);
-
-    this._gridFloor.addChildren();
 
     //this._app.stage.addChild(this._shadowGradientGraphics);
 
@@ -368,7 +368,8 @@ export default class Infinitris2Renderer
    * @inheritdoc
    */
   onBlockMoved(block: IBlock) {
-    this._moveBlock(block);
+    //this._moveBlock(block);
+    this._renderBlock(block); // requires re-render due to borders changing TODO: should not render blocks this way
   }
 
   /**
@@ -382,7 +383,8 @@ export default class Infinitris2Renderer
    * @inheritdoc
    */
   onBlockPlaced(block: IBlock) {
-    this._renderCells(block.cells);
+    this._renderCells(this._grid.grid.reducedCells); //TODO: only render block + neighbour cells
+    //this._renderCells(block.cells);
     this._removeBlock(block);
   }
 
@@ -504,7 +506,13 @@ export default class Infinitris2Renderer
     if (minDimension < idealCellSize * minCellCount * window.devicePixelRatio) {
       return Math.floor(minDimension / minCellCount);
     }
-    return idealCellSize;
+    return Math.floor(idealCellSize);
+  };
+  private _getCellPadding = () => {
+    return this._getCellSize() * 0.05;
+  };
+  private _getFloorHeight = () => {
+    return this._getCellSize() * 2;
   };
 
   private _resize = async () => {
@@ -543,7 +551,8 @@ export default class Infinitris2Renderer
         this._world.x = this._grid.graphics.x = (appWidth - gridWidth) / 2;
       }
       if (!this._scrollY) {
-        this._world.y = this._grid.graphics.y = (appHeight - gridHeight) / 2;
+        this._world.y = this._grid.graphics.y =
+          appHeight - gridHeight - this._getCellSize() * 2;
       }
 
       const gridRows = this._scrollY
@@ -553,7 +562,7 @@ export default class Infinitris2Renderer
         ? Math.ceil(appWidth / cellSize) + 1
         : this._grid.grid.numColumns;
 
-      const cellPadding = cellSize * 0.05;
+      const cellPadding = this._getCellPadding();
       for (let r = 0; r < gridRows; r++) {
         for (let c = 0; c < gridColumns + 1; c++) {
           this._grid.graphics.beginFill(0xffffff, 0.05);
@@ -715,15 +724,85 @@ export default class Infinitris2Renderer
             renderableCell.cell.isEmpty) ||
           renderableCell.cell.type === CellType.Laser ||
           renderableCell.cell.type === CellType.Infection ||
-          renderableCell.cell.type === CellType.Deadly
+          renderableCell.cell.type === CellType.Deadly ||
+          !renderableCell.cell.isEmpty
         ) {
-          graphics.beginFill(color, Math.min(opacity, 1));
-          graphics.drawRect(0, 0, cellSize, cellSize);
-        } else if (!renderableCell.cell.isEmpty) {
           // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
           // e.g. non-empty red key cell
-          graphics.beginFill(renderableCell.cell.color, Math.min(opacity, 1));
+          graphics.beginFill(color, Math.min(opacity, 1));
           graphics.drawRect(0, 0, cellSize, cellSize);
+          if (opacity === 1) {
+            const borderSize = this._getCellPadding() * 2;
+            const borderColor = PIXI.utils.string2hex(
+              getBorderColor(PIXI.utils.hex2string(color))
+            );
+            graphics.beginFill(borderColor);
+            if (
+              this._grid.grid.getNeighbour(renderableCell.cell, 1, 0)
+                ?.isEmptyWithNoBlocks !== false
+            ) {
+              graphics.drawRect(cellSize - borderSize, 0, borderSize, cellSize);
+            }
+            if (
+              this._grid.grid.getNeighbour(renderableCell.cell, -1, 0)
+                ?.isEmptyWithNoBlocks !== false
+            ) {
+              graphics.drawRect(0, 0, borderSize, cellSize);
+            }
+            if (
+              this._grid.grid.getNeighbour(renderableCell.cell, 0, -1)
+                ?.isEmptyWithNoBlocks !== false
+            ) {
+              graphics.drawRect(0, 0, cellSize, borderSize);
+            }
+            if (
+              this._grid.grid.getNeighbour(renderableCell.cell, 0, 1)
+                ?.isEmptyWithNoBlocks !== false
+            ) {
+              graphics.drawRect(0, cellSize - borderSize, cellSize, borderSize);
+            }
+
+            // corners
+            if (
+              this._grid.grid.getNeighbour(renderableCell.cell, -1, -1)
+                ?.isEmptyWithNoBlocks !== false
+            ) {
+              graphics.drawRect(0, 0, borderSize, borderSize);
+            }
+            if (
+              this._grid.grid.getNeighbour(renderableCell.cell, 1, -1)
+                ?.isEmptyWithNoBlocks !== false
+            ) {
+              graphics.drawRect(
+                cellSize - borderSize,
+                0,
+                borderSize,
+                borderSize
+              );
+            }
+            if (
+              this._grid.grid.getNeighbour(renderableCell.cell, -1, 1)
+                ?.isEmptyWithNoBlocks !== false
+            ) {
+              graphics.drawRect(
+                0,
+                cellSize - borderSize,
+                borderSize,
+                borderSize
+              );
+            }
+            if (
+              this._grid.grid.getNeighbour(renderableCell.cell, 1, 1)
+                ?.isEmptyWithNoBlocks !== false
+            ) {
+              graphics.drawRect(
+                cellSize - borderSize,
+                cellSize - borderSize,
+                borderSize,
+                borderSize
+              );
+            }
+          }
         }
 
         if (renderableCell.cell.isEmpty) {
@@ -861,7 +940,7 @@ export default class Infinitris2Renderer
       (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>
         this._renderCopies(
           renderableEntity,
-          opacity, // * 0.5,
+          opacity,
           renderFunction,
           createPixiObject,
           shadowIndex + 1,

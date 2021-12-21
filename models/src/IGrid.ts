@@ -8,4 +8,5 @@ export default interface IGrid extends ICellEventListener {
   numRows: number;
   numColumns: number;
   checkLineClears(rows: number[]): void;
+  getNeighbour(cell: ICell, x: number, y: number): ICell | undefined;
 }

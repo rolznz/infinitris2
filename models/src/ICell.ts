@@ -8,6 +8,7 @@ export default interface ICell {
   type: CellType;
   color: number;
   isEmpty: boolean;
+  isEmptyWithNoBlocks: boolean;
   isPassable: boolean;
   behaviour: ICellBehaviour;
   blocks: IBlock[];

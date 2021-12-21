@@ -22,6 +22,8 @@ import { getBorderColor } from '@models/index';
 const idealCellSize = 32;
 const minCellCount = 12;
 const particleDivisions = 4;
+const numPatternDivisions = 4;
+
 interface IRenderableGrid {
   grid: Grid;
   graphics: PIXI.Graphics;
@@ -44,6 +46,7 @@ interface IRenderableEntity<T extends PIXI.DisplayObject> {
   children: {
     shadowIndex: number;
     pixiObject: T;
+    pattern?: PIXI.Sprite;
   }[];
 }
 
@@ -102,6 +105,7 @@ export default class Infinitris2Renderer
   private _teachControls: boolean;
   private _worldBackground!: WorldBackground;
   private _gridFloor!: GridFloor;
+  private _patternTextures: PIXI.Texture[] = [];
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
@@ -140,8 +144,28 @@ export default class Infinitris2Renderer
     );
 
     this._gridFloor = new GridFloor(this._app, 'grass');
+    const patternImageUrl = `${imagesDirectory}/pattern_13.png`;
+    this._app.loader.add(patternImageUrl);
 
     await new Promise((resolve) => this._app.loader.load(resolve));
+
+    const fullPatternTexture = PIXI.Texture.from(patternImageUrl);
+    const patternDivisionSize = fullPatternTexture.width / numPatternDivisions;
+    for (let x = 0; x < numPatternDivisions; x++) {
+      for (let y = 0; y < numPatternDivisions; y++) {
+        this._patternTextures.push(
+          new PIXI.Texture(
+            fullPatternTexture.baseTexture,
+            new PIXI.Rectangle(
+              x * patternDivisionSize,
+              y * patternDivisionSize,
+              patternDivisionSize,
+              patternDivisionSize
+            )
+          )
+        );
+      }
+    }
 
     this._worldBackground.createImages();
     this._gridFloor.createImages(this._getFloorHeight());
@@ -224,6 +248,7 @@ export default class Infinitris2Renderer
         this._scrollY,
         clampedCameraY
       );
+
       this._gridFloor.update(
         !this._scrollY
           ? this._grid.graphics.y + this._gridHeight
@@ -355,6 +380,7 @@ export default class Infinitris2Renderer
     this._world.addChild(
       ...renderableBlock.cells.map((cell) => cell.container)
     );
+
     this._blocks[block.player.id] = renderableBlock;
     this._renderBlock(block);
   }
@@ -506,7 +532,7 @@ export default class Infinitris2Renderer
     if (minDimension < idealCellSize * minCellCount * window.devicePixelRatio) {
       return Math.floor(minDimension / minCellCount);
     }
-    return Math.floor(idealCellSize);
+    return idealCellSize;
   };
   private _getCellPadding = () => {
     return this._getCellSize() * 0.05;
@@ -565,7 +591,7 @@ export default class Infinitris2Renderer
       const cellPadding = this._getCellPadding();
       for (let r = 0; r < gridRows; r++) {
         for (let c = 0; c < gridColumns + 1; c++) {
-          this._grid.graphics.beginFill(0xffffff, 0.05);
+          this._grid.graphics.beginFill(0xffffff, 0.025);
           this._grid.graphics.drawRect(
             c * cellSize + cellPadding,
             r * cellSize + cellPadding,
@@ -615,9 +641,11 @@ export default class Infinitris2Renderer
   private _renderCell = (cell: ICell) => {
     const cellIndex = cell.row * this._grid.grid.numColumns + cell.column;
     if (!this._cells[cellIndex]) {
+      const cellContainer = new PIXI.Container();
+      this._world.addChild(cellContainer);
       this._cells[cellIndex] = {
         cell,
-        container: this._world.addChild(new PIXI.Container()),
+        container: cellContainer,
         children: [],
       };
     }
@@ -664,7 +692,8 @@ export default class Infinitris2Renderer
         });
         text.anchor.set(0.5, 0);
         return text;
-      }
+      },
+      () => undefined
     );
   }
 
@@ -701,7 +730,8 @@ export default class Infinitris2Renderer
         graphics.beginFill(color);
         graphics.drawRect(0, 0, particleSize, particleSize);
       },
-      () => new PIXI.Graphics()
+      () => new PIXI.Graphics(),
+      () => undefined
     );
   }
 
@@ -714,7 +744,7 @@ export default class Infinitris2Renderer
     this._renderCopies(
       renderableCell,
       opacity,
-      (graphics: PIXI.Graphics) => {
+      (graphics) => {
         graphics.clear();
         const cellSize = this._getCellSize();
         // TODO: extract rendering of different behaviours
@@ -729,8 +759,10 @@ export default class Infinitris2Renderer
         ) {
           // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
           // e.g. non-empty red key cell
+          //graphics.cacheAsBitmap = true;
           graphics.beginFill(color, Math.min(opacity, 1));
           graphics.drawRect(0, 0, cellSize, cellSize);
+          //graphics.
           if (opacity === 1) {
             const borderSize = this._getCellPadding() * 2;
             const borderColor = PIXI.utils.string2hex(
@@ -906,7 +938,26 @@ export default class Infinitris2Renderer
           }
         }
       },
-      () => new PIXI.Graphics()
+      () => new PIXI.Graphics(),
+      () => {
+        if (opacity < 1) {
+          return undefined;
+        }
+        const patternSprite = PIXI.Sprite.from(
+          this._patternTextures[
+            (renderableCell.cell.row % numPatternDivisions) +
+              numPatternDivisions *
+                (renderableCell.cell.column % numPatternDivisions)
+          ]
+        );
+        //patternSprite.visible = false;
+        /*patternSprite.tileScale.set(
+          (this._getCellSize() * 4) / this._patternTexture.width
+        );*/
+        patternSprite.width = this._getCellSize();
+        patternSprite.height = this._getCellSize();
+        return patternSprite;
+      }
     );
   }
 
@@ -915,6 +966,7 @@ export default class Infinitris2Renderer
     opacity: number,
     renderFunction: (pixiObject: T) => void,
     createPixiObject: () => T,
+    createPattern: () => PIXI.Sprite | undefined,
     shadowIndex: number = 0,
     shadowDirection: number = 0
   ) {
@@ -925,10 +977,14 @@ export default class Infinitris2Renderer
     if (!entry) {
       entry = {
         pixiObject: createPixiObject(),
+        pattern: createPattern?.(),
         shadowIndex: shadowIndexWithDirection,
       };
       renderableEntity.children.push(entry);
       renderableEntity.container.addChild(entry.pixiObject);
+      if (entry.pattern) {
+        renderableEntity.container.addChild(entry.pattern);
+      }
     }
 
     const pixiObject = entry.pixiObject;
@@ -943,6 +999,7 @@ export default class Infinitris2Renderer
           opacity,
           renderFunction,
           createPixiObject,
+          createPattern,
           shadowIndex + 1,
           i
         )

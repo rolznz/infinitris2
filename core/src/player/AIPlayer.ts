@@ -4,10 +4,13 @@ import { DumbAIBehaviour } from './ai/DumbAIBehaviour';
 import { IAIBehaviour } from './ai/IAIBehaviour';
 import Player from './Player';
 
-const reflexDelay = 100;
+const reflexDelay = 10;
+const dropReflexDelay = 3;
 
 export default class AIPlayer extends Player {
+  // TODO: these should be reset on next block
   private _nextReflex = 0;
+  private _nextDrop = 0;
   private _behaviour: IAIBehaviour;
   constructor(playerId: number, nickname: string, color: number) {
     super(playerId, nickname, color);
@@ -32,7 +35,11 @@ export default class AIPlayer extends Player {
             nextAction.dr
           );
         } else if (nextAction.drop) {
-          this._block.drop();
+          ++this._nextDrop;
+          if (this._nextDrop > dropReflexDelay) {
+            this._nextDrop = 0;
+            this._block.drop();
+          }
         }
       } else {
         ++this._nextReflex;

@@ -17,4 +17,5 @@ export default interface ICell {
   step(): void;
   replaceWith(cell: ICell): void;
   reset(): void;
+  isConnectedTo(cell: ICell): boolean;
 }

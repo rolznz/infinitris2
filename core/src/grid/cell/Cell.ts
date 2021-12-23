@@ -96,4 +96,9 @@ export default class Cell implements ICell {
     this._blocks.splice(index, 1);
     this._behaviour?.onRemoveBlock?.(block);
   }
+
+  isConnectedTo(cell: ICell) {
+    // TODO: need to store player's ID in the cell after they have placed it
+    return cell && cell.isEmpty === this.isEmpty && cell.color === this.color;
+  }
 }

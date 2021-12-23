@@ -14,7 +14,9 @@ export default interface IBlock {
   get isDropping(): boolean;
   get initialLayout(): Layout;
   get layout(): Layout;
+  get rotation(): number;
   update(gridCells: ICell[][], simulationSettings: SimulationSettings): void;
+  canMove(gridCells: ICell[][], dx: number, dy: number, dr: number): boolean;
   move(
     gridCells: ICell[][],
     dx: number,

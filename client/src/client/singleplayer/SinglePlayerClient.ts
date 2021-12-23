@@ -100,7 +100,7 @@ export default class SinglePlayerClient
       randomBlockPlacement: true,
     };
 
-    this._simulation = new Simulation(new Grid(40, 20), simulationSettings);
+    this._simulation = new Simulation(new Grid(60, 20), simulationSettings);
     this._simulation.addEventListener(this, this._renderer);
     if (options.listener) {
       this._simulation.addEventListener(options.listener);

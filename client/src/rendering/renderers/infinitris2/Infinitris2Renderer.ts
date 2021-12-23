@@ -770,40 +770,46 @@ export default class Infinitris2Renderer
             );
             graphics.beginFill(borderColor);
             if (
-              this._grid.grid.getNeighbour(renderableCell.cell, 1, 0)
-                ?.isEmptyWithNoBlocks !== false
+              !this._grid.grid
+                .getNeighbour(renderableCell.cell, 1, 0)
+                ?.isConnectedTo(renderableCell.cell)
             ) {
               graphics.drawRect(cellSize - borderSize, 0, borderSize, cellSize);
             }
             if (
-              this._grid.grid.getNeighbour(renderableCell.cell, -1, 0)
-                ?.isEmptyWithNoBlocks !== false
+              !this._grid.grid
+                .getNeighbour(renderableCell.cell, -1, 0)
+                ?.isConnectedTo(renderableCell.cell)
             ) {
               graphics.drawRect(0, 0, borderSize, cellSize);
             }
             if (
-              this._grid.grid.getNeighbour(renderableCell.cell, 0, -1)
-                ?.isEmptyWithNoBlocks !== false
+              !this._grid.grid
+                .getNeighbour(renderableCell.cell, 0, -1)
+                ?.isConnectedTo(renderableCell.cell)
             ) {
               graphics.drawRect(0, 0, cellSize, borderSize);
             }
             if (
-              this._grid.grid.getNeighbour(renderableCell.cell, 0, 1)
-                ?.isEmptyWithNoBlocks !== false
+              !this._grid.grid
+                .getNeighbour(renderableCell.cell, 0, 1)
+                ?.isConnectedTo(renderableCell.cell)
             ) {
               graphics.drawRect(0, cellSize - borderSize, cellSize, borderSize);
             }
 
             // corners
             if (
-              this._grid.grid.getNeighbour(renderableCell.cell, -1, -1)
-                ?.isEmptyWithNoBlocks !== false
+              !this._grid.grid
+                .getNeighbour(renderableCell.cell, -1, -1)
+                ?.isConnectedTo(renderableCell.cell)
             ) {
               graphics.drawRect(0, 0, borderSize, borderSize);
             }
             if (
-              this._grid.grid.getNeighbour(renderableCell.cell, 1, -1)
-                ?.isEmptyWithNoBlocks !== false
+              !this._grid.grid
+                .getNeighbour(renderableCell.cell, 1, -1)
+                ?.isConnectedTo(renderableCell.cell)
             ) {
               graphics.drawRect(
                 cellSize - borderSize,
@@ -813,8 +819,9 @@ export default class Infinitris2Renderer
               );
             }
             if (
-              this._grid.grid.getNeighbour(renderableCell.cell, -1, 1)
-                ?.isEmptyWithNoBlocks !== false
+              !this._grid.grid
+                .getNeighbour(renderableCell.cell, -1, 1)
+                ?.isConnectedTo(renderableCell.cell)
             ) {
               graphics.drawRect(
                 0,
@@ -824,8 +831,9 @@ export default class Infinitris2Renderer
               );
             }
             if (
-              this._grid.grid.getNeighbour(renderableCell.cell, 1, 1)
-                ?.isEmptyWithNoBlocks !== false
+              !this._grid.grid
+                .getNeighbour(renderableCell.cell, 1, 1)
+                ?.isConnectedTo(renderableCell.cell)
             ) {
               graphics.drawRect(
                 cellSize - borderSize,

@@ -73,6 +73,10 @@ export default class Block implements IBlock {
   get column(): number {
     return this._column;
   }
+  get rotation(): number {
+    return this._rotation;
+  }
+
   get centreX(): number {
     // TODO: optimize
     let firstFilledColumn = this._layout[0].length;

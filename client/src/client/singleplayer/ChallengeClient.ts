@@ -27,6 +27,7 @@ import {
   IIngameChallengeAttempt,
 } from '@models/IChallengeAttempt';
 import ChallengeRewardCriteria from '@models/ChallengeRewardCriteria';
+import { LaunchOptions } from '@models/IInfinitrisApi';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -38,26 +39,20 @@ export default class ChallengeClient
   private _simulation!: ISimulation;
   private _challenge!: IChallenge;
   private _input!: Input;
-  private _preferredInputMethod: InputMethod;
+  private _preferredInputMethod?: InputMethod;
   private _simulationEventListener?: ISimulationEventListener;
   private _numBlocksPlaced!: number;
   private _numLinesCleared!: number;
   private _blockCreateFailed!: boolean;
   private _blockDied!: boolean;
   private _controls?: ControlSettings;
-  private _playerInfo?: IPlayer;
+  private _player?: IPlayer;
 
-  constructor(
-    challenge: IChallenge,
-    listener?: ISimulationEventListener,
-    preferredInputMethod: InputMethod = 'keyboard',
-    controls?: ControlSettings,
-    playerInfo?: IPlayer
-  ) {
-    this._preferredInputMethod = preferredInputMethod;
-    this._controls = controls;
-    this._playerInfo = playerInfo;
-    this._create(challenge, listener);
+  constructor(challenge: IChallenge, options: LaunchOptions) {
+    this._preferredInputMethod = options.preferredInputMethod;
+    this._controls = options.controls;
+    this._player = options.player;
+    this._create(challenge, options.listener);
   }
 
   /**
@@ -314,8 +309,8 @@ export default class ChallengeClient
     const playerId = 0;
     const player = new ControllablePlayer(
       playerId,
-      this._playerInfo?.nickname,
-      this._playerInfo?.color
+      this._player?.nickname,
+      this._player?.color
     );
     simulation.addPlayer(player);
     simulation.followPlayer(player);

@@ -5,24 +5,27 @@ import ISimulationEventListener from './ISimulationEventListener';
 import { IChallenge } from './IChallenge';
 import IChallengeClient from './IChallengeClient';
 import IPlayer from './IPlayer';
+import { RendererType } from './RendererType';
+
+export type LaunchOptions = {
+  listener?: ISimulationEventListener;
+  socketListener?: IClientSocketEventListener;
+  preferredInputMethod?: InputMethod;
+  controls?: ControlSettings;
+  player?: IPlayer;
+  rendererType?: RendererType;
+  otherPlayers?: IPlayer[]; // AI & network players
+};
 
 export default interface IInfinitrisApi {
   releaseClient(): void;
   getVersion(): string;
-  launchSinglePlayer(controls?: ControlSettings, playerInfo?: IPlayer): void;
+  launchSinglePlayer(options: LaunchOptions): void;
   launchChallenge(
     challenge: IChallenge,
-    listener?: ISimulationEventListener,
-    preferredInputMethod?: InputMethod,
-    controls?: ControlSettings,
-    player?: IPlayer
+    options: LaunchOptions
   ): IChallengeClient;
   restartClient(): void; // TODO: remove
   launchDemo(): void;
-  launchNetworkClient(
-    url: string,
-    listener: IClientSocketEventListener,
-    controls?: ControlSettings,
-    player?: IPlayer
-  ): void;
+  launchNetworkClient(url: string, options: LaunchOptions): void;
 }

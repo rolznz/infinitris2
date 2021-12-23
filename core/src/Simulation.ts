@@ -3,10 +3,11 @@ import Player from './player/Player';
 import Block from './block/Block';
 import ISimulation from '@models/ISimulation';
 import ISimulationEventListener from '@models/ISimulationEventListener';
-import ISimulationSettings from '@models/ISimulationSettings';
+import { SimulationSettings } from '@models/SimulationSettings';
 import IBlock from '@models/IBlock';
 import ICellBehaviour from '@models/ICellBehaviour';
 import ICell from '@models/ICell';
+import IPlayer from '@models/IPlayer';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -14,15 +15,15 @@ import ICell from '@models/ICell';
 export const FRAME_LENGTH: number = 1000 / 60;
 
 export default class Simulation implements ISimulation {
-  private _players: { [playerId: number]: Player };
-  private _followingPlayer?: Player;
+  private _players: { [playerId: number]: IPlayer };
+  private _followingPlayer?: IPlayer;
   private _grid: Grid;
   private _eventListeners: ISimulationEventListener[];
   private _interval?: ReturnType<typeof setTimeout>;
-  private _settings: ISimulationSettings;
+  private _settings: SimulationSettings;
   private _runningTime: number;
 
-  constructor(grid: Grid, settings: ISimulationSettings = {}) {
+  constructor(grid: Grid, settings: SimulationSettings = {}) {
     this._eventListeners = [];
     this._players = {};
     this._runningTime = 0;
@@ -42,15 +43,15 @@ export default class Simulation implements ISimulation {
     return Boolean(this._interval);
   }
 
-  get players(): Player[] {
+  get players(): IPlayer[] {
     return Object.values(this._players);
   }
 
-  get settings(): ISimulationSettings {
+  get settings(): SimulationSettings {
     return this._settings;
   }
 
-  getPlayer(playerId: number): Player {
+  getPlayer(playerId: number): IPlayer {
     return this._players[playerId];
   }
 
@@ -108,7 +109,7 @@ export default class Simulation implements ISimulation {
    *
    * @param player the player to add.
    */
-  addPlayer(player: Player) {
+  addPlayer(player: IPlayer) {
     this._players[player.id] = player;
     player.addEventListener(this);
   }
@@ -212,7 +213,7 @@ export default class Simulation implements ISimulation {
     this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
   };
 
-  private _updatePlayer = (player: Player) => {
+  private _updatePlayer = (player: IPlayer) => {
     player.update(this._grid.cells, this._settings);
   };
 }

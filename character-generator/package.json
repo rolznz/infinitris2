@@ -30,6 +30,7 @@
     "bad-words": "^3.0.4",
     "eslint": "^7.6.0",
     "eslint-plugin-import": "^2.22.0",
+    "infinitris2-models": "^0.1",
     "random": "^3.0.6",
     "seedrandom": "^3.0.5",
     "sharp": "^0.29.1",

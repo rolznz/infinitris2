@@ -1,6 +1,6 @@
 import IBlock from '@models/IBlock';
 import IBlockEventListener from '@models/IBlockEventListener';
-import ISimulationSettings from '@models/ISimulationSettings';
+import { SimulationSettings } from '@models/SimulationSettings';
 import Layout from '@models/Layout';
 import LayoutUtils from './layout/LayoutUtils';
 import ICell from '@models/ICell';
@@ -16,7 +16,8 @@ export default class Block implements IBlock {
   private _column: number;
   private _row: number;
   private _rotation: number;
-  private _layout: number[][];
+  private _initialLayout: Layout;
+  private _layout: Layout;
   private _isDropping: boolean;
   private _fallTimer: number;
   private _lockTimer: number;
@@ -40,6 +41,7 @@ export default class Block implements IBlock {
     this._column = column;
     this._row = row;
     this._rotation = rotation;
+    this._initialLayout = layout;
     this._layout = layout;
     this._isDropping = false;
     this._cancelDrop = false;
@@ -73,12 +75,11 @@ export default class Block implements IBlock {
   }
   get centreX(): number {
     // TODO: optimize
-    const rotatedLayout = LayoutUtils.rotate(this._layout, this._rotation);
-    let firstFilledColumn = rotatedLayout[0].length;
+    let firstFilledColumn = this._layout[0].length;
     let lastFilledColumn = 0;
-    for (let row = 0; row < rotatedLayout.length; row++) {
-      for (let column = 0; column < rotatedLayout[0].length; column++) {
-        if (rotatedLayout[row][column] === 1) {
+    for (let row = 0; row < this._layout.length; row++) {
+      for (let column = 0; column < this._layout[0].length; column++) {
+        if (this._layout[row][column] === 1) {
           firstFilledColumn = Math.min(firstFilledColumn, column);
           lastFilledColumn = Math.max(lastFilledColumn, column);
         }
@@ -88,7 +89,7 @@ export default class Block implements IBlock {
       this._column +
       firstFilledColumn +
       (lastFilledColumn + 1 - firstFilledColumn) * 0.5 -
-      Math.floor(rotatedLayout[0].length / 2) // all block cells are centered horizontally - see _loopCells
+      Math.floor(this._layout[0].length / 2) // all block cells are centered horizontally - see _loopCells
     );
   }
   get cells(): ICell[] {
@@ -109,22 +110,25 @@ export default class Block implements IBlock {
     return this._isAlive;
   }
 
+  get initialLayout(): Layout {
+    return this._initialLayout;
+  }
+  get layout(): Layout {
+    return this._layout;
+  }
+
   /*get wrapIndex(): number {
     return this._wrapIndex;
   }*/
 
   // TODO: rename numColumns
   get width(): number {
-    // TODO: optimize
-    const rotatedLayout = LayoutUtils.rotate(this._layout, this._rotation);
-    return rotatedLayout[0].length;
+    return this._layout[0].length;
   }
 
   // TODO: rename numColumns
   get height(): number {
-    // TODO: optimize
-    const rotatedLayout = LayoutUtils.rotate(this._layout, this._rotation);
-    return rotatedLayout.length;
+    return this._layout.length;
   }
 
   die() {
@@ -304,6 +308,12 @@ export default class Block implements IBlock {
         this._row += dy;
         this._rotation += drClamped;
         this._updateCells(gridCells);
+        if (drClamped !== 0) {
+          this._layout = LayoutUtils.rotate(
+            this._initialLayout,
+            this._rotation
+          );
+        }
         this._resetTimers();
         this._eventListener?.onBlockMoved(this);
         break;
@@ -349,7 +359,7 @@ export default class Block implements IBlock {
    *
    * Timers will be updated, triggering the block to fall or be placed if possible.
    */
-  update(gridCells: ICell[][], simulationSettings: ISimulationSettings) {
+  update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
     if (!this._isAlive) {
       return;
     }
@@ -409,7 +419,7 @@ export default class Block implements IBlock {
     rotation: number,
     cellEvent: LoopCellEvent
   ) {
-    const rotatedLayout = LayoutUtils.rotate(this._layout, rotation);
+    const rotatedLayout = LayoutUtils.rotate(this._initialLayout, rotation);
     const centreColumn = Math.floor(rotatedLayout[0].length / 2);
 
     for (let r = 0; r < rotatedLayout.length; r++) {

@@ -2,6 +2,8 @@ import ControlSettings from './ControlSettings';
 import InputMethod from './InputMethod';
 import IEntity, { IEntityReadOnlyProperties } from './IEntity';
 import Timestamp from './Timestamp';
+import { AppTheme } from './AppTheme';
+import { RendererQuality } from '.';
 
 export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly coins: number;
@@ -20,8 +22,6 @@ export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly writeRate: number;
 }
 
-export type AppTheme = 'light' | 'dark' | 'default';
-
 export default interface IUser extends IEntity {
   readonly readOnly: IUserReadOnlyProperties;
   readonly hasSeenWelcome?: boolean;
@@ -31,4 +31,8 @@ export default interface IUser extends IEntity {
   readonly controls?: ControlSettings;
   readonly appTheme?: AppTheme;
   readonly musicOn?: boolean;
+  readonly sfxOn?: boolean;
+  readonly musicVolume?: number;
+  readonly sfxVolume?: number;
+  readonly rendererQuality?: RendererQuality;
 }

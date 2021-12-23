@@ -12,9 +12,8 @@ import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IPlayer from '@models/IPlayer';
 import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
-
-// TODO: move to models
-type RendererType = 'minimal' | 'infinitris2';
+import { LaunchOptions } from '@models/IInfinitrisApi';
+import { SimulationSettings } from '@models/SimulationSettings';
 
 export default class SinglePlayerClient
   implements IClient, ISimulationEventListener
@@ -24,13 +23,9 @@ export default class SinglePlayerClient
   private _simulation!: Simulation;
   private _input!: Input;
   private _controls?: ControlSettings;
-  constructor(
-    controls?: ControlSettings,
-    playerInfo?: IPlayer,
-    rendererType?: RendererType
-  ) {
-    this._controls = controls;
-    this._create(playerInfo);
+  constructor(options: LaunchOptions) {
+    this._controls = options.controls;
+    this._create(options);
   }
 
   /**
@@ -94,25 +89,39 @@ export default class SinglePlayerClient
     this._input.destroy();
   }
 
-  private async _create(playerInfo?: IPlayer, rendererType?: RendererType) {
+  private async _create(options: LaunchOptions) {
     this._renderer =
-      rendererType === 'minimal'
+      options.rendererType === 'minimal'
         ? new MinimalRenderer()
         : new Infinitris2Renderer();
     await this._renderer.create();
 
-    this._simulation = new Simulation(new Grid(100, 20));
+    const simulationSettings: SimulationSettings = {
+      randomBlockPlacement: true,
+    };
+
+    this._simulation = new Simulation(new Grid(40, 20), simulationSettings);
     this._simulation.addEventListener(this, this._renderer);
+    if (options.listener) {
+      this._simulation.addEventListener(options.listener);
+    }
 
     this._simulation.init();
     const playerId = 0;
     const player = new ControllablePlayer(
       playerId,
-      playerInfo?.nickname,
-      playerInfo?.color
+      options.player?.nickname,
+      options.player?.color
     );
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);
+
+    if (options.otherPlayers) {
+      for (const otherPlayer of options.otherPlayers) {
+        this._simulation.addPlayer(otherPlayer);
+      }
+    }
+
     this._simulation.startInterval();
     this._input = new Input(this._simulation, player, this._controls);
   }

@@ -19,7 +19,7 @@ describe('InfinitrisApi', () => {
     expect(singlePlayerSpy).toHaveBeenCalled();
   });
 
-  it('will launch a network client if query parameter is set', () => {
+  /*it('will launch a network client if query parameter is set', () => {
     const expectedUrl = 'ws://127.0.0.1:9001';
     const client = new InfinitrisApi();
     const networkClientSpy = spyOn(
@@ -30,5 +30,5 @@ describe('InfinitrisApi', () => {
       `http://localhost:8080?url=${encodeURIComponent(expectedUrl)}`
     );
     expect(networkClientSpy).toHaveBeenCalledWith(expectedUrl);
-  });
+  });*/
 });

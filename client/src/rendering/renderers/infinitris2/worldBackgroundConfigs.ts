@@ -1,9 +1,11 @@
+import { RendererQuality } from '@models/RendererQuality';
+
 export type WorldBackgroundLayerConfig = {
   filename: string;
   speedY: number;
   speedX: number;
   offsetY: number;
-  minQuality?: 'medium' | 'high'; // optional layers that will only show when the quality is high enough. Unset = required on all layers
+  minQuality?: RendererQuality; // optional layers that will only show when the quality is high enough. Unset = required on all layers
 };
 
 export type WorldBackgroundConfig = {

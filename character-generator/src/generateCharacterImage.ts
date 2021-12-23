@@ -1,6 +1,5 @@
 import { Random } from 'random';
 import sharp from 'sharp';
-import { colors } from './colors';
 import fs from 'fs';
 import {
   getPath,
@@ -51,6 +50,7 @@ import {
 } from './customizations';
 import { hexToRgb } from './utils/hexToRgb';
 import { rgbToHex } from './utils/rgbToHex';
+import { colors } from 'infinitris2-models';
 
 const pickRandomFilename = (random: Random, filenames: string[]) => {
   while (true) {

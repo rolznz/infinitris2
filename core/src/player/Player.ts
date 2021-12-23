@@ -3,14 +3,14 @@ import Cell from '../grid/cell/Cell';
 import Layout from '@models/Layout';
 import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
 import IBlockEventListener from '@models/IBlockEventListener';
-import ISimulationSettings from '@models/ISimulationSettings';
+import { SimulationSettings } from '@models/SimulationSettings';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import IPlayer from '@models/IPlayer';
 
 export default abstract class Player implements IPlayer, IBlockEventListener {
   private _id: number;
-  private _block?: IBlock;
+  protected _block?: IBlock;
   private _score: number;
   private _lastPlacementColumn: number | undefined;
   private _eventListeners: IBlockEventListener[]; // TODO: add IPlayerEventListener
@@ -75,7 +75,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
    *
    * @param gridCells The cells within the grid.
    */
-  update(gridCells: ICell[][], simulationSettings: ISimulationSettings) {
+  update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
     if (!this._block) {
       const layouts = Object.entries(tetrominoes)
         .filter(
@@ -90,7 +90,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       this._nextLayout = undefined;
       const column =
         this._lastPlacementColumn === undefined
-          ? Math.floor((gridCells[0].length - layout[0].length) / 2)
+          ? simulationSettings.randomBlockPlacement
+            ? Math.floor(Math.random() * gridCells[0].length)
+            : Math.floor((gridCells[0].length - layout[0].length) / 2)
           : this._lastPlacementColumn;
       const newBlock = new Block(
         this,

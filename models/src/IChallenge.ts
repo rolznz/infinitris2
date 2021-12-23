@@ -1,5 +1,5 @@
 import InputAction from './InputAction';
-import ISimulationSettings from './ISimulationSettings';
+import { SimulationSettings } from './SimulationSettings';
 import ChallengeRewardCriteria from './ChallengeRewardCriteria';
 import IEntity, {
   Creatable,
@@ -42,7 +42,7 @@ export interface IChallenge extends IEntity {
     readonly gridEmpty?: boolean;
   };
 
-  readonly simulationSettings?: ISimulationSettings;
+  readonly simulationSettings?: SimulationSettings;
 
   readonly rewardCriteria?: {
     bronze?: ChallengeRewardCriteria;

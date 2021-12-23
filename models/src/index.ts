@@ -8,7 +8,6 @@ import InputAction from './InputAction';
 import InputMethod from './InputMethod';
 import ISimulation from './ISimulation';
 import ISimulationEventListener from './ISimulationEventListener';
-import ISimulationSettings from './ISimulationSettings';
 import Layout from './Layout';
 import IRoom from './IRoom';
 import tetrominoes from './exampleBlockLayouts/Tetrominoes';
@@ -48,6 +47,13 @@ export * from './IProduct';
 export * from './IUser';
 export * from './ICharacter';
 export * from './Donation';
+export * from './RendererQuality';
+export * from './AppTheme';
+export * from './RendererType';
+export * from './colors';
+export * from './util/hexToString';
+export * from './util/stringToHex';
+export * from './SimulationSettings';
 
 export {
   exampleChallenges,
@@ -68,7 +74,6 @@ export {
   IGrid,
   ISimulation,
   ISimulationEventListener,
-  ISimulationSettings,
   InputMethod,
   ChallengeCellType,
   IRoom,

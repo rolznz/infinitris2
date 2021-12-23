@@ -1,6 +1,7 @@
+import Layout from './Layout';
 import ICell from './ICell';
 import IPlayer from './IPlayer';
-import ISimulationSettings from './ISimulationSettings';
+import { SimulationSettings } from './SimulationSettings';
 
 export default interface IBlock {
   player: IPlayer;
@@ -10,8 +11,10 @@ export default interface IBlock {
   row: number;
   column: number;
   centreX: number;
-  isDropping: boolean;
-  update(gridCells: ICell[][], simulationSettings: ISimulationSettings): void;
+  get isDropping(): boolean;
+  get initialLayout(): Layout;
+  get layout(): Layout;
+  update(gridCells: ICell[][], simulationSettings: SimulationSettings): void;
   move(
     gridCells: ICell[][],
     dx: number,

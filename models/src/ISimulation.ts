@@ -14,4 +14,6 @@ export default interface ISimulation
   runningTime: number;
   grid: IGrid;
   get dayProportion(): number;
+  get players(): IPlayer[];
+  isFollowingPlayerId(playerId: number): boolean;
 }

@@ -7,6 +7,10 @@ import { SimulationSettings } from '@models/SimulationSettings';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import IPlayer from '@models/IPlayer';
+import IGrid from '@models/IGrid';
+import ISimulation from '@models/ISimulation';
+import { FRAME_LENGTH } from '@core/Simulation';
+import { checkMistake } from '@core/block/checkMistake';
 
 export default abstract class Player implements IPlayer, IBlockEventListener {
   private _id: number;
@@ -18,8 +22,12 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _nextLayoutRotation?: number;
   private _nickname: string;
   private _color: number;
+  private _simulation: ISimulation;
+  private _nextSpawn: number;
+  private _estimatedSpawnDelay: number;
 
   constructor(
+    simulation: ISimulation,
     id: number,
     nickname: string = 'Guest',
     color: number = 0x391c78
@@ -29,6 +37,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._score = 0;
     this._nickname = nickname;
     this._color = color;
+    this._simulation = simulation;
+    this._nextSpawn = 0;
+    this._estimatedSpawnDelay = 0;
   }
 
   get id(): number {
@@ -48,6 +59,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
   get color(): number {
     return this._color;
+  }
+
+  get estimatedSpawnDelay(): number {
+    return this._estimatedSpawnDelay;
   }
 
   set nextLayout(nextLayout: Layout | undefined) {
@@ -77,6 +92,25 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
    */
   update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
     if (!this._block) {
+      const summedScore = this._simulation.players
+        .map((player) => player.score)
+        .reduce((next, prev) => next + prev);
+
+      const scoreProportion = summedScore > 0 ? this._score / summedScore : 1;
+
+      const adjustScoreProportionExponent = 2;
+      const adjustedScoreProportion =
+        scoreProportion < 0.1
+          ? Math.pow(scoreProportion, adjustScoreProportionExponent)
+          : Math.pow(scoreProportion, 1 / adjustScoreProportionExponent);
+      const delay = (1 - adjustedScoreProportion) * ((7 * 1000) / FRAME_LENGTH); // 7 seconds max
+      this._estimatedSpawnDelay = Math.ceil(
+        (delay - this._nextSpawn) * FRAME_LENGTH
+      );
+      if (++this._nextSpawn < delay) {
+        return;
+      }
+
       const layouts = Object.entries(tetrominoes)
         .filter(
           (entry) =>
@@ -100,11 +134,12 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         0,
         column,
         this._nextLayoutRotation || 0,
-        gridCells,
+        this._simulation,
         this
       );
       if (newBlock.isAlive) {
         this._block = newBlock;
+        this._nextSpawn = 0;
       }
       this._nextLayoutRotation = undefined;
     } else {
@@ -155,8 +190,18 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
     this._removeBlock();
 
-    // TODO: improved score calculation - pass block score as argument
-    this._score += 10;
+    const isMistake = checkMistake(block.cells, this._simulation);
+
+    console.log(`${this._nickname} Mistake detected: `, isMistake);
+    if (isMistake) {
+      this._score = Math.max(0, Math.floor(this._score * 0.5) - 1);
+    } else {
+      this._score += Math.floor(
+        block.cells
+          .map((cell) => cell.row / this._simulation.grid.numRows)
+          .reduce((prev, next) => prev + next)
+      );
+    }
   }
 
   /**

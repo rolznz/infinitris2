@@ -1,4 +1,5 @@
 import ICell from '@models/ICell';
+import ISimulation from '@models/ISimulation';
 import { SimulationSettings } from '@models/SimulationSettings';
 import { DumbAIBehaviour } from './ai/DumbAIBehaviour';
 import { IAIBehaviour } from './ai/IAIBehaviour';
@@ -12,8 +13,13 @@ export default class AIPlayer extends Player {
   private _nextReflex = 0;
   private _nextDrop = 0;
   private _behaviour: IAIBehaviour;
-  constructor(playerId: number, nickname: string, color: number) {
-    super(playerId, nickname, color);
+  constructor(
+    simulation: ISimulation,
+    playerId: number,
+    nickname: string,
+    color: number
+  ) {
+    super(simulation, playerId, nickname, color);
     this._behaviour = new DumbAIBehaviour();
   }
 

@@ -8,12 +8,13 @@ import IBlock from '@models/IBlock';
 import ICellBehaviour from '@models/ICellBehaviour';
 import ICell from '@models/ICell';
 import IPlayer from '@models/IPlayer';
+import IGrid from '@models/IGrid';
 
 /**
  * The length of a single animation frame for the simulation.
  */
 export const FRAME_LENGTH: number = 1000 / 60;
-export const DEFAULT_DAY_LENGTH: number = 500;
+export const DEFAULT_DAY_LENGTH: number = 2000;
 
 export default class Simulation implements ISimulation {
   private _players: { [playerId: number]: IPlayer };
@@ -211,6 +212,13 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
+  onGridCollapsed(grid: IGrid): void {
+    this._eventListeners.forEach((listener) => listener.onGridCollapsed(grid));
+  }
+
+  /**
+   * @inheritdoc
+   */
   onCellBehaviourChanged(cell: ICell, previousBehaviour: ICellBehaviour) {
     this._eventListeners.forEach((listener) =>
       listener.onCellBehaviourChanged(cell, previousBehaviour)
@@ -237,7 +245,9 @@ export default class Simulation implements ISimulation {
   private _goToNextDay() {
     ++this._dayNumber;
     console.log('Day ' + this._dayNumber);
-    this._nextDayLength = this._initialDayLength * this._dayNumber;
+    this._nextDayLength = Math.floor(
+      this._initialDayLength * this._dayNumber * 1.1
+    );
     this._nextDay = this._nextDayLength;
     this._grid.collapse();
   }

@@ -14,7 +14,8 @@ export type LaunchOptions = {
   controls?: ControlSettings;
   player?: IPlayer;
   rendererType?: RendererType;
-  otherPlayers?: IPlayer[]; // AI & network players
+  //otherPlayers?: IPlayer[]; // AI & network players
+  numBots?: number;
 };
 
 export default interface IInfinitrisApi {
@@ -26,6 +27,5 @@ export default interface IInfinitrisApi {
     options: LaunchOptions
   ): IChallengeClient;
   restartClient(): void; // TODO: remove
-  launchDemo(): void;
   launchNetworkClient(url: string, options: LaunchOptions): void;
 }

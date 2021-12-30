@@ -15,6 +15,7 @@ import ControlSettings from '@models/ControlSettings';
 import getUserFriendlyKeyText from '@models/util/getUserFriendlyKeyText';
 import InputMethod from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
+import IGrid from '@models/IGrid';
 
 const minCellSize = 32;
 const particleDivisions = 4;
@@ -450,6 +451,14 @@ export default class MinimalRenderer
    */
   onLineCleared(_row: number) {
     // TODO: remove, should only render individual cells on cell state change
+    this._renderCells(this._grid.grid.reducedCells);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onGridCollapsed(_grid: IGrid) {
+    // TODO: optimize
     this._renderCells(this._grid.grid.reducedCells);
   }
 

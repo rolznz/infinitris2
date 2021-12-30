@@ -10,6 +10,7 @@ export default interface IPlayer {
 
   get block(): IBlock | undefined;
   get score(): number;
+  get estimatedSpawnDelay(): number;
 
   update(cells: ICell[][], settings: SimulationSettings): void;
   addEventListener(eventListener: IBlockEventListener): void;

@@ -1,4 +1,4 @@
-import IBlock from '@models/IBlock';
+import IBlock, { BlockCanMoveOptions } from '@models/IBlock';
 import IBlockEventListener from '@models/IBlockEventListener';
 import { SimulationSettings } from '@models/SimulationSettings';
 import Layout from '@models/Layout';
@@ -6,6 +6,8 @@ import LayoutUtils from './layout/LayoutUtils';
 import ICell from '@models/ICell';
 import IPlayer from '@models/IPlayer';
 import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
+import { checkMistake } from './checkMistake';
+import ISimulation from '@models/ISimulation';
 
 type LoopCellEvent = (cell?: ICell) => void;
 
@@ -26,6 +28,7 @@ export default class Block implements IBlock {
   private _cancelDrop: boolean;
   private _slowdownRows: number[];
   private _gridCells: ICell[][];
+  private _simulation: ISimulation;
 
   constructor(
     player: IPlayer,
@@ -33,7 +36,7 @@ export default class Block implements IBlock {
     row: number,
     column: number,
     rotation: number,
-    gridCells: ICell[][],
+    simulation: ISimulation,
     eventListener?: IBlockEventListener
   ) {
     this._player = player;
@@ -51,10 +54,11 @@ export default class Block implements IBlock {
     this._lockTimer = 0;
     this._slowdownRows = [];
     this._isAlive = true;
-    this._gridCells = gridCells;
+    this._simulation = simulation;
+    this._gridCells = simulation.grid.cells;
     this._resetTimers();
-    if (this.canMove(gridCells, 0, 0, 0)) {
-      this._updateCells(gridCells);
+    if (this.canMove(this._gridCells, 0, 0, 0)) {
+      this._updateCells(this._gridCells);
     } else {
       this._isAlive = false;
       this._eventListener?.onBlockCreateFailed(this);
@@ -181,7 +185,13 @@ export default class Block implements IBlock {
    * @param dy the delta of the x position (row).
    * @param dr the delta of the rotation.
    */
-  canMove(gridCells: ICell[][], dx: number, dy: number, dr: number): boolean {
+  canMove(
+    gridCells: ICell[][],
+    dx: number,
+    dy: number,
+    dr: number,
+    options?: BlockCanMoveOptions
+  ): boolean {
     if (!this._isAlive) {
       return false;
     }
@@ -200,6 +210,10 @@ export default class Block implements IBlock {
           canMove = Boolean(canMove && cell && cell.isPassable);
         }
       );
+
+      if (canMove && options && !options.allowMistakes) {
+        options.isMistake = checkMistake(newCells, this._simulation);
+      }
 
       // if attempting to rotate but the result is a non-rotation movement in any direction (up to 2 cells), return false
       if (dr !== 0) {
@@ -318,7 +332,10 @@ export default class Block implements IBlock {
             this._rotation
           );
         }
-        this._resetTimers();
+        if (dy > 0) {
+          this._resetFallTimer();
+        }
+        this._resetLockTimer();
         this._eventListener?.onBlockMoved(this);
         break;
       }
@@ -404,7 +421,17 @@ export default class Block implements IBlock {
   }
 
   private _resetTimers() {
-    this._fallTimer = this._isDropping ? this._slowdownRows.length * 3 : 90;
+    this._resetFallTimer();
+    this._resetLockTimer();
+  }
+
+  private _resetFallTimer() {
+    this._fallTimer = this._isDropping
+      ? this._slowdownRows.length * 3
+      : Math.max(90 - Math.ceil(this._player.score * 1), 1);
+  }
+
+  private _resetLockTimer() {
     this._lockTimer = this._isDropping ? this._slowdownRows.length * 3 : 45;
   }
 

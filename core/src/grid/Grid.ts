@@ -122,6 +122,7 @@ export default class Grid implements IGrid {
     }
     // TODO: optimize
     this.checkLineClears([...Array(this.numRows)].map((_, i) => i));
+    this._eventListeners.forEach((listener) => listener.onGridCollapsed(this));
   }
 
   /**

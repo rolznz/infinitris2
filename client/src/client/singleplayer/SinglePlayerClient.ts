@@ -14,6 +14,10 @@ import IPlayer from '@models/IPlayer';
 import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
 import { LaunchOptions } from '@models/IInfinitrisApi';
 import { SimulationSettings } from '@models/SimulationSettings';
+import AIPlayer from '@core/player/AIPlayer';
+import { stringToHex } from '@models/util/stringToHex';
+import { colors } from '@models/colors';
+import IGrid from '@models/IGrid';
 
 export default class SinglePlayerClient
   implements IClient, ISimulationEventListener
@@ -27,6 +31,11 @@ export default class SinglePlayerClient
     this._controls = options.controls;
     this._create(options);
   }
+
+  /**
+   * @inheritdoc
+   */
+  onGridCollapsed(grid: IGrid): void {}
 
   /**
    * @inheritdoc
@@ -100,7 +109,7 @@ export default class SinglePlayerClient
       randomBlockPlacement: true,
     };
 
-    this._simulation = new Simulation(new Grid(60, 20), simulationSettings);
+    this._simulation = new Simulation(new Grid(50, 20), simulationSettings);
     this._simulation.addEventListener(this, this._renderer);
     if (options.listener) {
       this._simulation.addEventListener(options.listener);
@@ -109,6 +118,7 @@ export default class SinglePlayerClient
     this._simulation.init();
     const playerId = 0;
     const player = new ControllablePlayer(
+      this._simulation,
       playerId,
       options.player?.nickname,
       options.player?.color
@@ -116,8 +126,21 @@ export default class SinglePlayerClient
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);
 
-    if (options.otherPlayers) {
-      for (const otherPlayer of options.otherPlayers) {
+    if (options.numBots) {
+      const otherPlayers: IPlayer[] = [];
+      for (let i = 0; i < options.numBots; i++) {
+        otherPlayers.push(
+          new AIPlayer(
+            this._simulation,
+            i + 1,
+            'Bot ' + (i + 1),
+            stringToHex(
+              colors[Math.floor(Math.random() * (colors.length - 1))].hex
+            )
+          )
+        );
+      }
+      for (const otherPlayer of otherPlayers) {
         this._simulation.addPlayer(otherPlayer);
       }
     }

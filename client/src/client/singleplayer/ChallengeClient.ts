@@ -28,6 +28,7 @@ import {
 } from '@models/IChallengeAttempt';
 import ChallengeRewardCriteria from '@models/ChallengeRewardCriteria';
 import { LaunchOptions } from '@models/IInfinitrisApi';
+import IGrid from '@models/IGrid';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -108,6 +109,11 @@ export default class ChallengeClient
   onLineCleared(row: number) {
     ++this._numLinesCleared;
   }
+
+  /**
+   * @inheritdoc
+   */
+  onGridCollapsed(grid: IGrid): void {}
 
   /**
    * @inheritdoc
@@ -308,6 +314,7 @@ export default class ChallengeClient
 
     const playerId = 0;
     const player = new ControllablePlayer(
+      simulation,
       playerId,
       this._player?.nickname,
       this._player?.color

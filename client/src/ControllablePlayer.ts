@@ -1,8 +1,13 @@
 import Player from '@core/player/Player';
-import IBlockEventListener from '@models/IBlockEventListener';
+import ISimulation from '@models/ISimulation';
 
 export default class ControllablePlayer extends Player {
-  constructor(playerId: number, nickname?: string, color?: number) {
-    super(playerId, nickname, color);
+  constructor(
+    simulation: ISimulation,
+    playerId: number,
+    nickname?: string,
+    color?: number
+  ) {
+    super(simulation, playerId, nickname, color);
   }
 }

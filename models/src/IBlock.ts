@@ -3,6 +3,11 @@ import ICell from './ICell';
 import IPlayer from './IPlayer';
 import { SimulationSettings } from './SimulationSettings';
 
+export type BlockCanMoveOptions = {
+  allowMistakes: boolean;
+  isMistake?: boolean;
+};
+
 export default interface IBlock {
   player: IPlayer;
   cells: ICell[];
@@ -16,7 +21,13 @@ export default interface IBlock {
   get layout(): Layout;
   get rotation(): number;
   update(gridCells: ICell[][], simulationSettings: SimulationSettings): void;
-  canMove(gridCells: ICell[][], dx: number, dy: number, dr: number): boolean;
+  canMove(
+    gridCells: ICell[][],
+    dx: number,
+    dy: number,
+    dr: number,
+    options?: BlockCanMoveOptions
+  ): boolean;
   move(
     gridCells: ICell[][],
     dx: number,

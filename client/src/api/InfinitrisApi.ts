@@ -1,18 +1,13 @@
 import IInfinitrisApi, { LaunchOptions } from '@models/IInfinitrisApi';
 import IClient from '../../../models/src/IClient';
-import DemoClient from '../client/DemoClient';
 import NetworkClient from '../client/NetworkClient';
 import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
 import ChallengeClient from '@src/client/singleplayer/ChallengeClient';
-import AIPlayer from '@core/player/AIPlayer';
 import InputMethod from '@models/InputMethod';
 import { exampleChallenges } from '@models/exampleChallenges';
 import ControlSettings from '@models/ControlSettings';
-import IPlayer from '@models/IPlayer';
 import { IChallenge } from '@models/IChallenge';
 import ISimulation from '@models/ISimulation';
-import { colors } from '@models/colors';
-import { stringToHex } from '@models/util/stringToHex';
 
 export default class InfinitrisApi implements IInfinitrisApi {
   private _client?: IClient;
@@ -38,27 +33,13 @@ export default class InfinitrisApi implements IInfinitrisApi {
       (params.get('input') as InputMethod) || 'keyboard';
 
     if (params.has('single-player')) {
-      const otherPlayers: IPlayer[] = [];
       const numBots = parseInt(params.get('numBots') || '0');
-      for (let i = 0; i < numBots; i++) {
-        otherPlayers.push(
-          new AIPlayer(
-            i + 1,
-            'Bot ' + (i + 1),
-            stringToHex(
-              colors[Math.floor(Math.random() * (colors.length - 1))].hex
-            )
-          )
-        );
-      }
 
-      this.launchSinglePlayer({ controls, otherPlayers });
+      this.launchSinglePlayer({ controls, numBots });
     } else if (params.has('url')) {
       this.launchNetworkClient(params.get('url') as string, {
         controls,
       });
-    } else if (params.has('demo')) {
-      this.launchDemo();
     } else if (params.has('challengeId')) {
       const challengeId = params.get('challengeId')!;
       const challenge = exampleChallenges[challengeId];
@@ -78,6 +59,7 @@ export default class InfinitrisApi implements IInfinitrisApi {
           onBlockDied() {},
           onBlockPlaced() {},
           onLineCleared() {},
+          onGridCollapsed() {},
           onCellBehaviourChanged() {},
         },
         preferredInputMethod,
@@ -88,14 +70,6 @@ export default class InfinitrisApi implements IInfinitrisApi {
     }
 
     return true;
-  };
-
-  /**
-   * Runs the game in demo mode.
-   */
-  launchDemo = () => {
-    this.releaseClient();
-    this._client = new DemoClient();
   };
 
   /**

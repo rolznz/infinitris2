@@ -17,8 +17,9 @@ import InputMethod from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { WorldBackground } from './WorldBackground';
 import { GridFloor } from './GridFloor';
-import { getBorderColor } from '@models/index';
+import { getBorderColor, IGrid, ISimulation } from '@models/index';
 import { DayIndicator } from './DayIndicator';
+import ControllablePlayer from '@src/ControllablePlayer';
 
 const idealCellSize = 32;
 const minCellCount = 12;
@@ -26,7 +27,7 @@ const particleDivisions = 4;
 const numPatternDivisions = 4;
 
 interface IRenderableGrid {
-  grid: Grid;
+  grid: IGrid;
   graphics: PIXI.Graphics;
 }
 interface IRenderableBlock {
@@ -91,7 +92,7 @@ export default class Infinitris2Renderer
   private _particles!: IParticle[];
   //private _playerScores!: IPlayerScore[];
 
-  private _simulation!: Simulation;
+  private _simulation!: ISimulation;
 
   private _camera: Camera;
   private _gridWidth!: number;
@@ -108,6 +109,8 @@ export default class Infinitris2Renderer
   private _gridFloor!: GridFloor;
   private _patternTextures: PIXI.Texture[] = [];
   private _dayIndicator!: DayIndicator;
+  private _spawnDelayText!: PIXI.Text;
+  private _scoreboardText!: PIXI.Text;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
@@ -217,6 +220,23 @@ export default class Infinitris2Renderer
     const visibilityX = this._getVisiblityX();
     const visibilityY = this._app.renderer.height * 0.125;
 
+    const humanPlayer = this._simulation.players.find(
+      (player) => player instanceof ControllablePlayer
+    );
+    if (
+      humanPlayer &&
+      !humanPlayer.block &&
+      humanPlayer.estimatedSpawnDelay > 500
+    ) {
+      this._spawnDelayText.x = this._app.renderer.width / 2;
+      this._spawnDelayText.y = this._app.renderer.height / 2;
+      this._spawnDelayText.text =
+        'Next Block\n' + Math.ceil(humanPlayer.estimatedSpawnDelay / 1000);
+      this._spawnDelayText.visible = true;
+    } else {
+      this._spawnDelayText.visible = false;
+    }
+
     this._camera.update();
 
     // clamp the camera to fit within the grid
@@ -305,7 +325,7 @@ export default class Infinitris2Renderer
   /**
    * @inheritdoc
    */
-  onSimulationInit(simulation: Simulation) {
+  onSimulationInit(simulation: ISimulation) {
     this._simulation = simulation;
     this._app.stage.removeChildren();
 
@@ -325,6 +345,27 @@ export default class Infinitris2Renderer
     this._app.stage.addChild(this._world);
 
     this._dayIndicator.addChildren();
+
+    this._spawnDelayText = new PIXI.Text('', {
+      font: 'bold italic 120px Arvo',
+      fill: '#ffffff',
+      align: 'center',
+      stroke: '#000000',
+      strokeThickness: 7,
+    });
+    this._spawnDelayText.anchor.set(0.5, 0.5);
+    this._spawnDelayText.visible = false;
+    this._app.stage.addChild(this._spawnDelayText);
+
+    this._scoreboardText = new PIXI.Text('', {
+      font: 'bold italic 40px Arvo',
+      fill: '#ffffff',
+      align: 'center',
+      stroke: '#000000',
+      strokeThickness: 2,
+    });
+    this._scoreboardText.anchor.set(1, 0);
+    this._app.stage.addChild(this._scoreboardText);
 
     //this._app.stage.addChild(this._shadowGradientGraphics);
 
@@ -465,6 +506,17 @@ export default class Infinitris2Renderer
    * @inheritdoc
    */
   onSimulationStep() {
+    const playerScores = this._simulation.players.map((player) => ({
+      nickname: player.nickname,
+      score: player.score,
+    }));
+    playerScores.sort((a, b) => b.score - a.score);
+    this._scoreboardText.text = playerScores
+      .map((score) => score.nickname + ': ' + score.score)
+      .join('\n');
+    this._scoreboardText.x = this._app.renderer.width * 0.99;
+    this._scoreboardText.y = this._app.renderer.height * 0.1;
+
     const followingPlayer = this._simulation.players.find((player) =>
       this._simulation.isFollowingPlayerId(player.id)
     );
@@ -529,6 +581,14 @@ export default class Infinitris2Renderer
    */
   onLineCleared(_row: number) {
     // TODO: remove, should only render individual cells on cell state change
+    this._renderCells(this._grid.grid.reducedCells);
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onGridCollapsed(_grid: IGrid) {
+    // TODO: optimize
     this._renderCells(this._grid.grid.reducedCells);
   }
 

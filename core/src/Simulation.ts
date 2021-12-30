@@ -13,15 +13,20 @@ import IPlayer from '@models/IPlayer';
  * The length of a single animation frame for the simulation.
  */
 export const FRAME_LENGTH: number = 1000 / 60;
+export const DEFAULT_DAY_LENGTH: number = 500;
 
 export default class Simulation implements ISimulation {
   private _players: { [playerId: number]: IPlayer };
   private _followingPlayer?: IPlayer;
   private _grid: Grid;
   private _eventListeners: ISimulationEventListener[];
-  private _interval?: ReturnType<typeof setTimeout>;
+  private _stepInterval?: ReturnType<typeof setTimeout>;
   private _settings: SimulationSettings;
   private _runningTime: number;
+  private _nextDay: number;
+  private _dayNumber: number;
+  private _initialDayLength: number;
+  private _nextDayLength: number;
 
   constructor(grid: Grid, settings: SimulationSettings = {}) {
     this._eventListeners = [];
@@ -33,6 +38,11 @@ export default class Simulation implements ISimulation {
       gravityEnabled: true,
       ...settings,
     };
+    this._dayNumber = 0;
+    this._nextDay = 0;
+    this._nextDayLength = 0;
+    this._initialDayLength = this._settings.dayLength || DEFAULT_DAY_LENGTH;
+    this._goToNextDay();
   }
 
   get grid(): Grid {
@@ -40,7 +50,7 @@ export default class Simulation implements ISimulation {
   }
 
   get isRunning(): boolean {
-    return Boolean(this._interval);
+    return Boolean(this._stepInterval);
   }
 
   get players(): IPlayer[] {
@@ -49,6 +59,10 @@ export default class Simulation implements ISimulation {
 
   get settings(): SimulationSettings {
     return this._settings;
+  }
+
+  get dayProportion(): number {
+    return (this._nextDayLength - this._nextDay) / this._nextDayLength;
   }
 
   getPlayer(playerId: number): IPlayer {
@@ -80,8 +94,8 @@ export default class Simulation implements ISimulation {
    * @param grid The grid to run the simulation on.
    */
   startInterval() {
-    if (!this._interval) {
-      this._interval = setInterval(this.step, FRAME_LENGTH);
+    if (!this._stepInterval) {
+      this._stepInterval = setInterval(this.step, FRAME_LENGTH);
       console.log('Simulation started');
     }
   }
@@ -90,9 +104,9 @@ export default class Simulation implements ISimulation {
    * Stop the simulation running.
    */
   stopInterval() {
-    if (this._interval) {
-      clearInterval(this._interval);
-      this._interval = undefined;
+    if (this._stepInterval) {
+      clearInterval(this._stepInterval);
+      this._stepInterval = undefined;
       console.log('Simulation stopped');
     }
   }
@@ -211,9 +225,20 @@ export default class Simulation implements ISimulation {
     this._grid.step();
     this._runningTime += FRAME_LENGTH;
     this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
+    if (--this._nextDay <= 0) {
+      this._goToNextDay();
+    }
   };
 
   private _updatePlayer = (player: IPlayer) => {
     player.update(this._grid.cells, this._settings);
   };
+
+  private _goToNextDay() {
+    ++this._dayNumber;
+    console.log('Day ' + this._dayNumber);
+    this._nextDayLength = this._initialDayLength * this._dayNumber;
+    this._nextDay = this._nextDayLength;
+    this._grid.collapse();
+  }
 }

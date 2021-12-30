@@ -4,11 +4,12 @@ import ICell from './ICell';
 import { SimulationSettings } from './SimulationSettings';
 
 export default interface IPlayer {
-  nickname: string;
-  color: number;
-  id: number;
+  get nickname(): string;
+  get color(): number;
+  get id(): number;
 
   get block(): IBlock | undefined;
+  get score(): number;
 
   update(cells: ICell[][], settings: SimulationSettings): void;
   addEventListener(eventListener: IBlockEventListener): void;

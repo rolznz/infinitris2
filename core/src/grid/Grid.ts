@@ -102,6 +102,28 @@ export default class Grid implements IGrid {
     }
   }
 
+  collapse() {
+    console.log('Collapse!');
+    for (let r = this.numRows - 1; r > 0; r--) {
+      for (let c = 0; c < this.numColumns; c++) {
+        // TODO: handle non-replacable cells
+        if (!this._cells[r][c].isEmpty) {
+          continue;
+        }
+        for (let y = r - 1; y >= 0; y--) {
+          if (!this._cells[y][c].isEmpty) {
+            console.log(`Collapse ${y},${c} => ${r},${c}`);
+            this._cells[r][c].replaceWith(this._cells[y][c]);
+            this._cells[y][c].reset();
+            break;
+          }
+        }
+      }
+    }
+    // TODO: optimize
+    this.checkLineClears([...Array(this.numRows)].map((_, i) => i));
+  }
+
   /**
    * @inheritdoc
    */

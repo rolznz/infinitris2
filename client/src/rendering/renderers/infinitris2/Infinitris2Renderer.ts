@@ -18,6 +18,7 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import { WorldBackground } from './WorldBackground';
 import { GridFloor } from './GridFloor';
 import { getBorderColor } from '@models/index';
+import { DayIndicator } from './DayIndicator';
 
 const idealCellSize = 32;
 const minCellCount = 12;
@@ -106,6 +107,7 @@ export default class Infinitris2Renderer
   private _worldBackground!: WorldBackground;
   private _gridFloor!: GridFloor;
   private _patternTextures: PIXI.Texture[] = [];
+  private _dayIndicator!: DayIndicator;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
@@ -142,6 +144,8 @@ export default class Infinitris2Renderer
       this._camera,
       'grass'
     );
+
+    this._dayIndicator = new DayIndicator(this._app);
 
     this._gridFloor = new GridFloor(this._app, 'grass');
     const patternImageUrl = `${imagesDirectory}/pattern_13.png`;
@@ -254,6 +258,8 @@ export default class Infinitris2Renderer
           ? this._grid.graphics.y + this._gridHeight
           : this._world.y + this._gridHeight
       );
+
+      this._dayIndicator.update(this._simulation.dayProportion);
     }
     if (this._scrollY) {
       this._grid.graphics.y =
@@ -317,6 +323,8 @@ export default class Infinitris2Renderer
     this._world = new PIXI.Container();
     this._world.sortableChildren = true;
     this._app.stage.addChild(this._world);
+
+    this._dayIndicator.addChildren();
 
     //this._app.stage.addChild(this._shadowGradientGraphics);
 
@@ -662,7 +670,12 @@ export default class Infinitris2Renderer
         cell.color
       );
     } else {
-      renderableCell.children.forEach((child) => child.pixiObject.clear());
+      renderableCell.children.forEach((child) => {
+        child.pixiObject.clear();
+        if (child.pattern) {
+          child.pattern.visible = false;
+        }
+      });
     }
   };
 
@@ -679,17 +692,20 @@ export default class Infinitris2Renderer
       1,
       () => {},
       () => {
-        const text = new PIXI.Text(block.player.nickname, {
-          font: 'bold italic 60px Arvo',
-          fill: PIXI.utils.hex2string(block.player.color),
-          align: 'center',
-          //stroke: '#000000',
-          //strokeThickness: 7,
-          dropShadow: true,
-          dropShadowAngle: Math.PI / 2,
-          dropShadowDistance: 1,
-          dropShadowBlur: 2,
-        });
+        const text = new PIXI.Text(
+          block.player.nickname + ' (' + block.player.score + ')',
+          {
+            font: 'bold italic 60px Arvo',
+            fill: PIXI.utils.hex2string(block.player.color),
+            align: 'center',
+            //stroke: '#000000',
+            //strokeThickness: 7,
+            dropShadow: true,
+            dropShadowAngle: Math.PI / 2,
+            dropShadowDistance: 1,
+            dropShadowBlur: 2,
+          }
+        );
         text.anchor.set(0.5, 0);
         return text;
       },
@@ -744,7 +760,7 @@ export default class Infinitris2Renderer
     this._renderCopies(
       renderableCell,
       opacity,
-      (graphics) => {
+      (graphics, pattern) => {
         graphics.clear();
         const cellSize = this._getCellSize();
         // TODO: extract rendering of different behaviours
@@ -764,6 +780,9 @@ export default class Infinitris2Renderer
           graphics.drawRect(0, 0, cellSize, cellSize);
           //graphics.
           if (opacity === 1) {
+            if (pattern) {
+              pattern.visible = true;
+            }
             const borderSize = this._getCellPadding() * 2;
             const borderColor = PIXI.utils.string2hex(
               getBorderColor(PIXI.utils.hex2string(color))
@@ -972,7 +991,7 @@ export default class Infinitris2Renderer
   private _renderCopies<T extends PIXI.DisplayObject>(
     renderableEntity: IRenderableEntity<T>,
     opacity: number,
-    renderFunction: (pixiObject: T) => void,
+    renderFunction: (pixiObject: T, pattern?: PIXI.Sprite) => void,
     createPixiObject: () => T,
     createPattern: () => PIXI.Sprite | undefined,
     shadowIndex: number = 0,
@@ -997,7 +1016,7 @@ export default class Infinitris2Renderer
 
     const pixiObject = entry.pixiObject;
 
-    renderFunction(pixiObject);
+    renderFunction(pixiObject, entry.pattern);
 
     pixiObject.x = shadowIndexWithDirection * this._gridWidth;
     if (shadowIndex < this._shadowCount) {

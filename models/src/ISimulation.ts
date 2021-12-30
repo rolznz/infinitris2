@@ -13,4 +13,5 @@ export default interface ISimulation
   addPlayer(player: IPlayer): void;
   runningTime: number;
   grid: IGrid;
+  get dayProportion(): number;
 }

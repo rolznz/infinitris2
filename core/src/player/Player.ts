@@ -155,7 +155,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
     this._removeBlock();
 
-    // TODO: improved score calculation
+    // TODO: improved score calculation - pass block score as argument
     this._score += 10;
   }
 

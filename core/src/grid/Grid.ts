@@ -10,6 +10,7 @@ export default class Grid implements IGrid {
   private _cells: ICell[][];
   private _reducedCells: ICell[];
   private _eventListeners: IGridEventListener[];
+  private _cachedNumNonEmptyCells = 0;
 
   constructor(numColumns: number = 20, numRows: number = 20) {
     this._cells = [];
@@ -50,6 +51,9 @@ export default class Grid implements IGrid {
 
   step() {
     this._cells.forEach((row) => row.forEach((cell) => cell.step()));
+    this._cachedNumNonEmptyCells = this._reducedCells.filter(
+      (cell) => !cell.isEmpty
+    ).length;
   }
 
   getNeighbour(cell: ICell, dx: number, dy: number): ICell | undefined {
@@ -132,5 +136,12 @@ export default class Grid implements IGrid {
     this._eventListeners.forEach((listener) =>
       listener.onCellBehaviourChanged(cell, previousBehaviour)
     );
+  }
+
+  isTower(row: number): boolean {
+    const numFilledRows = Math.ceil(
+      this._cachedNumNonEmptyCells / this.numColumns
+    );
+    return row < this.numRows - numFilledRows - 4;
   }
 }

@@ -1,3 +1,4 @@
+import { SimulationSettings } from '.';
 import IBlockEventListener from './IBlockEventListener';
 import ICellEventListener from './ICellEventListener';
 import IGrid from './IGrid';
@@ -15,5 +16,6 @@ export default interface ISimulation
   grid: IGrid;
   get dayProportion(): number;
   get players(): IPlayer[];
+  get settings(): SimulationSettings;
   isFollowingPlayerId(playerId: number): boolean;
 }

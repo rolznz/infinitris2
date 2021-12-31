@@ -107,6 +107,7 @@ export default class SinglePlayerClient
 
     const simulationSettings: SimulationSettings = {
       randomBlockPlacement: true,
+      preventTowers: true,
     };
 
     this._simulation = new Simulation(new Grid(50, 20), simulationSettings);

@@ -57,7 +57,21 @@ export default class Block implements IBlock {
     this._simulation = simulation;
     this._gridCells = simulation.grid.cells;
     this._resetTimers();
-    if (this.canMove(this._gridCells, 0, 0, 0)) {
+
+    let otherBlockInArea = false;
+    this._loopCells(
+      this._gridCells,
+      this._column,
+      this._row,
+      this._rotation,
+      (cell) => {
+        if (cell && cell.blocks.length) {
+          otherBlockInArea = true;
+        }
+      }
+    );
+
+    if (!otherBlockInArea && this.canMove(this._gridCells, 0, 0, 0)) {
       this._updateCells(this._gridCells);
     } else {
       this._isAlive = false;
@@ -73,6 +87,13 @@ export default class Block implements IBlock {
   }
   get row(): number {
     return this._row;
+  }
+  get bottomRow(): number {
+    let bottomRow = 0;
+    for (const cell of this._cells) {
+      bottomRow = Math.max(bottomRow, cell.row);
+    }
+    return bottomRow;
   }
   get column(): number {
     return this._column;
@@ -211,6 +232,9 @@ export default class Block implements IBlock {
         }
       );
 
+      if (options) {
+        options.cells = newCells;
+      }
       if (canMove && options && !options.allowMistakes) {
         options.isMistake = checkMistake(newCells, this._simulation);
       }
@@ -400,7 +424,14 @@ export default class Block implements IBlock {
     }
 
     if (!fell && this.isReadyToLock) {
-      this.place();
+      if (
+        this._simulation.settings.preventTowers &&
+        this._simulation.grid.isTower(this.bottomRow)
+      ) {
+        this.die();
+      } else {
+        this.place();
+      }
     }
   }
 
@@ -428,7 +459,7 @@ export default class Block implements IBlock {
   private _resetFallTimer() {
     this._fallTimer = this._isDropping
       ? this._slowdownRows.length * 3
-      : Math.max(90 - Math.ceil(this._player.score * 1), 1);
+      : Math.max(90 - Math.ceil(this._player.score * 0.25), 1);
   }
 
   private _resetLockTimer() {

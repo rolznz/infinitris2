@@ -1,22 +1,21 @@
-import { wrap } from '@core/utils/wrap';
 import IBlock, { BlockCanMoveOptions } from '@models/IBlock';
 import ICell from '@models/ICell';
 import { AIAction, IAIBehaviour } from './IAIBehaviour';
 
-// dumb AI that isn't too derpy. Sad reality is new players are only about this good and leave lots of gaps, so good for testing :D
 // Inspired by Timur Bakibayev's article https://levelup.gitconnected.com/tetris-ai-in-python-bd194d6326ae
 // Cons:
 // - inefficient algorithm (brute force checks every single rotation and column to find the best)
 // - cannot slip into gaps (no pathfinding)
 // - unaware of walls - the AI may try to get past it and get stuck
 // - unaware of other players' movement
-
+// - unaware of days / grid collapse
 export class DumbAIBehaviour implements IAIBehaviour {
   private _allowMistakes: boolean;
   constructor(allowMistakes: boolean = false) {
     this._allowMistakes = allowMistakes;
   }
 
+  // TODO: pass grid instead of gridCells
   calculateNextAction(block: IBlock, gridCells: ICell[][]): AIAction {
     let bestRotationOffset = 0;
     let bestColumnOffset = 0;

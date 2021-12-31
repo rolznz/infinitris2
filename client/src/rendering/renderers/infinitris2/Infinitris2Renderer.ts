@@ -20,6 +20,7 @@ import { GridFloor } from './GridFloor';
 import { getBorderColor, IGrid, ISimulation } from '@models/index';
 import { DayIndicator } from './DayIndicator';
 import ControllablePlayer from '@src/ControllablePlayer';
+import { Scoreboard } from './Scoreboard';
 
 const idealCellSize = 32;
 const minCellCount = 12;
@@ -110,7 +111,7 @@ export default class Infinitris2Renderer
   private _patternTextures: PIXI.Texture[] = [];
   private _dayIndicator!: DayIndicator;
   private _spawnDelayText!: PIXI.Text;
-  private _scoreboardText!: PIXI.Text;
+  private _scoreboard!: Scoreboard;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
@@ -153,6 +154,8 @@ export default class Infinitris2Renderer
     this._gridFloor = new GridFloor(this._app, 'grass');
     const patternImageUrl = `${imagesDirectory}/pattern_13.png`;
     this._app.loader.add(patternImageUrl);
+
+    this._scoreboard = new Scoreboard(this._app);
 
     await new Promise((resolve) => this._app.loader.load(resolve));
 
@@ -357,15 +360,7 @@ export default class Infinitris2Renderer
     this._spawnDelayText.visible = false;
     this._app.stage.addChild(this._spawnDelayText);
 
-    this._scoreboardText = new PIXI.Text('', {
-      font: 'bold italic 40px Arvo',
-      fill: '#ffffff',
-      align: 'center',
-      stroke: '#000000',
-      strokeThickness: 2,
-    });
-    this._scoreboardText.anchor.set(1, 0);
-    this._app.stage.addChild(this._scoreboardText);
+    this._scoreboard.create(this._app);
 
     //this._app.stage.addChild(this._shadowGradientGraphics);
 
@@ -506,16 +501,7 @@ export default class Infinitris2Renderer
    * @inheritdoc
    */
   onSimulationStep() {
-    const playerScores = this._simulation.players.map((player) => ({
-      nickname: player.nickname,
-      score: player.score,
-    }));
-    playerScores.sort((a, b) => b.score - a.score);
-    this._scoreboardText.text = playerScores
-      .map((score) => score.nickname + ': ' + score.score)
-      .join('\n');
-    this._scoreboardText.x = this._app.renderer.width * 0.99;
-    this._scoreboardText.y = this._app.renderer.height * 0.1;
+    this._scoreboard.update(this._simulation.players);
 
     const followingPlayer = this._simulation.players.find((player) =>
       this._simulation.isFollowingPlayerId(player.id)
@@ -815,7 +801,8 @@ export default class Infinitris2Renderer
     renderableCell: IRenderableCell,
     renderCellType: RenderCellType,
     opacity: number,
-    color: number
+    color: number,
+    isTower?: boolean
   ) {
     this._renderCopies(
       renderableCell,
@@ -837,7 +824,16 @@ export default class Infinitris2Renderer
           // e.g. non-empty red key cell
           //graphics.cacheAsBitmap = true;
           graphics.beginFill(color, Math.min(opacity, 1));
-          graphics.drawRect(0, 0, cellSize, cellSize);
+          if (isTower) {
+            graphics.drawRect(
+              cellSize * 0.1,
+              cellSize * 0.1,
+              cellSize * 0.8,
+              cellSize * 0.8
+            );
+          } else {
+            graphics.drawRect(0, 0, cellSize, cellSize);
+          }
           //graphics.
           if (opacity === 1) {
             if (pattern) {
@@ -1107,9 +1103,7 @@ export default class Infinitris2Renderer
       shadow.children.forEach((child) => child.pixiObject.clear());
     });
 
-    const lowestBlockRow = lowestCells
-      .map((cell) => cell.row)
-      .sort((a, b) => b - a)[0];
+    const lowestBlockRow = block.bottomRow;
 
     let highestPlacementRow = this._grid.grid.numRows - 1;
 
@@ -1124,6 +1118,11 @@ export default class Infinitris2Renderer
         }
       }
     }
+
+    const isTower =
+      this._simulation.settings.preventTowers &&
+      this._simulation.grid.isTower(highestPlacementRow);
+
     // render placement helper shadow - this could be done a lot more efficiently by rendering one line per column,
     // but for now it's easier to reuse the cell rendering code (for shadows)
     let cellIndex = 0;
@@ -1152,8 +1151,9 @@ export default class Infinitris2Renderer
         this._renderCellCopies(
           renderableCell,
           RenderCellType.PlacementHelper,
-          0.33,
-          block.player.color
+          isTower ? 0.66 : 0.33,
+          isTower ? 0xff0000 : block.player.color,
+          isTower
         );
         cellIndex++;
       }

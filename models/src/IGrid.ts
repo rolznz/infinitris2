@@ -2,6 +2,7 @@ import { ICellEventListener } from './index';
 import ICell from './ICell';
 
 export default interface IGrid extends ICellEventListener {
+  isTower(row: number): boolean;
   isEmpty: boolean;
   reducedCells: ICell[];
   cells: ICell[][];

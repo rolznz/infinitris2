@@ -6,20 +6,22 @@ import { SimulationSettings } from './SimulationSettings';
 export type BlockCanMoveOptions = {
   allowMistakes: boolean;
   isMistake?: boolean;
+  cells?: ICell[];
 };
 
 export default interface IBlock {
-  player: IPlayer;
-  cells: ICell[];
-  width: number;
-  height: number;
-  row: number;
-  column: number;
-  centreX: number;
+  get player(): IPlayer;
+  get cells(): ICell[];
+  get width(): number;
+  get height(): number;
+  get row(): number;
+  get column(): number;
+  get centreX(): number;
   get isDropping(): boolean;
   get initialLayout(): Layout;
   get layout(): Layout;
   get rotation(): number;
+  get bottomRow(): number;
   update(gridCells: ICell[][], simulationSettings: SimulationSettings): void;
   canMove(
     gridCells: ICell[][],

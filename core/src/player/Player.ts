@@ -92,17 +92,14 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
    */
   update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
     if (!this._block) {
-      const summedScore = this._simulation.players
-        .map((player) => player.score)
-        .reduce((next, prev) => next + prev);
+      const highestPlayerScore = Math.max(
+        ...this._simulation.players.map((player) => player.score)
+      );
 
-      const scoreProportion = summedScore > 0 ? this._score / summedScore : 1;
+      const scoreProportion =
+        highestPlayerScore > 0 ? this._score / highestPlayerScore : 1;
 
-      const adjustScoreProportionExponent = 2;
-      const adjustedScoreProportion =
-        scoreProportion < 0.1
-          ? Math.pow(scoreProportion, adjustScoreProportionExponent)
-          : Math.pow(scoreProportion, 1 / adjustScoreProportionExponent);
+      const adjustedScoreProportion = Math.pow(scoreProportion, 0.5);
       const delay = (1 - adjustedScoreProportion) * ((7 * 1000) / FRAME_LENGTH); // 7 seconds max
       this._estimatedSpawnDelay = Math.ceil(
         (delay - this._nextSpawn) * FRAME_LENGTH
@@ -187,32 +184,41 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       throw new Error('Block mismatch');
     }
     this._lastPlacementColumn = this._block.column;
-    this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
-    this._removeBlock();
 
     const isMistake = checkMistake(block.cells, this._simulation);
 
     console.log(`${this._nickname} Mistake detected: `, isMistake);
-    if (isMistake) {
-      this._score = Math.max(0, Math.floor(this._score * 0.5) - 1);
-    } else {
-      this._score += Math.floor(
-        block.cells
-          .map((cell) => cell.row / this._simulation.grid.numRows)
-          .reduce((prev, next) => prev + next)
-      );
-    }
+    this._modifyScore(block, isMistake);
+
+    this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
+    this._removeBlock();
   }
 
   /**
    * @inheritdoc
    */
   onBlockDied(block: IBlock) {
+    this._modifyScore(block, true);
     this._eventListeners.forEach((listener) => listener.onBlockDied(block));
     this._removeBlock();
   }
 
   private _removeBlock() {
     this._block = undefined;
+  }
+
+  private _modifyScore(block: IBlock, isMistake: boolean) {
+    if (isMistake) {
+      this._score = Math.max(0, Math.floor(this._score * 0.75) - 1);
+    } else {
+      this._score += Math.floor(
+        Math.pow(
+          block.cells
+            .map((cell) => cell.row / this._simulation.grid.numRows)
+            .reduce((prev, next) => prev + next),
+          2
+        )
+      );
+    }
   }
 }

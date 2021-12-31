@@ -233,6 +233,7 @@ export default class Simulation implements ISimulation {
     this._grid.step();
     this._runningTime += FRAME_LENGTH;
     this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
+    // TODO: consider day speed increasing/decreasing based on number of filled rows (more rows = faster day)
     if (--this._nextDay <= 0) {
       this._goToNextDay();
     }
@@ -246,7 +247,7 @@ export default class Simulation implements ISimulation {
     ++this._dayNumber;
     console.log('Day ' + this._dayNumber);
     this._nextDayLength = Math.floor(
-      this._initialDayLength * this._dayNumber * 1.1
+      this._initialDayLength // * this._dayNumber // * 1.05
     );
     this._nextDay = this._nextDayLength;
     this._grid.collapse();

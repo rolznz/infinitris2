@@ -11,6 +11,7 @@ enum Routes {
   login = '/login',
   comingSoon = '/coming-soon',
   singlePlayer = '/single-player',
+  singlePlayerOptions = '/single-player/options',
   settings = '/settings',
   controlSettings = '/settings/controls',
   challenges = '/challenges',

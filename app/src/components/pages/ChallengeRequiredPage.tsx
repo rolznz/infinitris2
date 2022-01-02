@@ -22,7 +22,7 @@ export default function ChallengeRequiredPage() {
 
     if (hasReceivedInput) {
       const highestPriorityChallenge = incompleteChallenges.sort(
-        (a, b) => (b.priority || 0) - (a.priority || 0)
+        (a, b) => (b.data()!.priority || 0) - (a.data()!.priority || 0)
       )[0];
       history.push(`${Routes.challenges}/${highestPriorityChallenge.id}`);
     }

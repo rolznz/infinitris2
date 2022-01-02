@@ -12,6 +12,7 @@ import React, { useState } from 'react';
 import { FormattedMessage, IntlShape, useIntl } from 'react-intl';
 import StarRatingComponent from 'react-star-rating-component';
 import { toast } from 'react-toastify';
+import { DocumentSnapshot } from 'firebase/firestore';
 
 interface ChallengeRatingDisplayProps {
   isTest: boolean;
@@ -24,7 +25,7 @@ async function addRating(
   ratingPath: string,
   challengeId: string,
   intl: IntlShape,
-  userRating: Document<IRating> | null | undefined
+  userRating: DocumentSnapshot<IRating> | null | undefined
 ) {
   if (userRating?.exists) {
     alert('You have already voted');

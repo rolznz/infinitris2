@@ -30,7 +30,7 @@ function PrimaryContributor({
       <Box mt={4} />
       <FlexBox
         flexDirection="row"
-        gridGap={30}
+        gap={3}
         width={375}
         maxWidth="100%"
         justifyContent="flex-start"
@@ -70,7 +70,7 @@ export function CreditsPage() {
       narrow
     >
       <Box mt={4} />
-      <FlexBox gridGap={100}>
+      <FlexBox gap={10}>
         <PrimaryContributor
           image={coneFace}
           name="Roland B"

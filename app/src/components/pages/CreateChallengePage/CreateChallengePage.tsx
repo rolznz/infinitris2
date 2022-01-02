@@ -452,12 +452,27 @@ export function CreateChallengePage() {
 }*/
 
 import { Page } from '@/components/ui/Page';
+import useAuthStore from '@/state/AuthStore';
+import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import React from 'react';
 import { useIntl } from 'react-intl';
 import { CreateChallengeHeader } from './CreateChallengeHeader';
+import { createNewChallenge } from './createNewChallenge';
 
 export function CreateChallengePage() {
   const intl = useIntl();
+  const userId = useAuthStore((store) => store.user?.uid);
+
+  const challenge = useChallengeEditorStore((store) => store.challenge);
+  const challengeExists = !!challenge;
+  React.useEffect(() => {
+    if (!challengeExists && userId) {
+      useChallengeEditorStore
+        .getState()
+        .setChallenge(createNewChallenge(userId));
+    }
+  }, [challengeExists, userId]);
+
   return (
     <Page
       title={intl.formatMessage({

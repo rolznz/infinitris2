@@ -1,8 +1,8 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { borderRadiuses } from '@/theme/theme';
 import { Button, Typography } from '@mui/material';
-import { ChallengeStatus } from 'infinitris2-models';
-import ChallengeCompletionStats from 'infinitris2-models/dist/src/ChallengeCompletionStats';
+import { IIngameChallengeAttempt } from 'infinitris2-models';
+//import ChallengeCompletionStats from 'infinitris2-models/dist/src/ChallengeCompletionStats';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUser } from '../../../state/UserStore';
@@ -10,7 +10,7 @@ import ChallengeMedalDisplay from './ChallengeMedalDisplay';
 import RateChallenge from './RateChallenge';
 
 export interface ChallengeResultsViewProps {
-  status: ChallengeStatus;
+  //status: ChallengeStatus;
   challengeId: string;
   isTest: boolean;
   onContinue(): void;
@@ -20,7 +20,7 @@ export interface ChallengeResultsViewProps {
 export default function ChallengeResultsView({
   challengeId,
   isTest,
-  status,
+  //status,
   onContinue,
   onRetry,
 }: ChallengeResultsViewProps) {
@@ -32,7 +32,7 @@ export default function ChallengeResultsView({
   const [hasReceivedContinueInput] = useReceivedInput(undefined, true);
   useTrue(hasReceivedContinueInput, onContinue);*/
 
-  const stats = status.stats as ChallengeCompletionStats;
+  //const stats = status.stats as ChallengeCompletionStats;
 
   return (
     <FlexBox flex={1} maxWidth="100%" padding={4}>
@@ -48,14 +48,14 @@ export default function ChallengeResultsView({
             description="Challenge completed heading"
           />
         </Typography>
-        <ChallengeMedalDisplay medalIndex={status.medalIndex} />
+        <ChallengeMedalDisplay medalIndex={/*status.medalIndex*/ 0} />
         {/* TODO: extract to a list of statistics, will this work with react-i18n? */}
         <Typography variant="caption">
           <FormattedMessage
             defaultMessage="Time taken: {timeTakenMs} seconds"
             description="Time taken to complete challenge"
             values={{
-              timeTakenMs: (stats.timeTakenMs / 1000).toFixed(2),
+              timeTakenMs: 0, //(stats.timeTakenMs / 1000).toFixed(2),
             }}
           />
         </Typography>
@@ -64,7 +64,7 @@ export default function ChallengeResultsView({
             defaultMessage="Blocks placed: {blocksPlaced}"
             description="Number of blocks placed in challenge"
             values={{
-              blocksPlaced: stats.blocksPlaced,
+              blocksPlaced: 1, //stats.blocksPlaced,
             }}
           />
         </Typography>
@@ -73,7 +73,7 @@ export default function ChallengeResultsView({
             defaultMessage="Lines cleared: {linesCleared}"
             description="Number of lines cleared in challenge"
             values={{
-              linesCleared: stats.linesCleared,
+              linesCleared: 1, //stats.linesCleared,
             }}
           />
         </Typography>
@@ -82,9 +82,11 @@ export default function ChallengeResultsView({
           <FormattedMessage
             defaultMessage="Attempt: #{attemptCount}"
             description="Number of times the user has attempted this challenge"
-            values={{
-              attemptCount: user.challengeAttempts[challengeId]?.length || 1,
-            }}
+            values={
+              {
+                //attemptCount: user.challengeAttempts[challengeId]?.length || 1,
+              }
+            }
           />
         </Typography>
         <RateChallenge isTest={isTest} challengeId={challengeId} />

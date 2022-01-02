@@ -31,6 +31,4 @@ export const openCoinInfoDialog = () =>
   useDialogStore.getState().open('coinInfo');
 export const openImpactInfoDialog = () =>
   useDialogStore.getState().open('impactInfo');
-export const openGameModePickerDialog = () =>
-  useDialogStore.getState().open('gameModePicker');
 export const closeDialog = () => useDialogStore.getState().close();

@@ -42,7 +42,7 @@ export default function AboutPage() {
         />
       </Typography>
       <Box mt={4} />
-      <FlexBox flexDirection="row" flexWrap="wrap" gridGap={20}>
+      <FlexBox flexDirection="row" flexWrap="wrap" gap={2}>
         <AboutIconButton to={Routes.credits} icon={<CreditsIcon />} />
         <AboutIconButton
           url={'https://github.com/rolznz/infinitris2'}

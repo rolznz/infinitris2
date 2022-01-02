@@ -18,7 +18,7 @@ const Template: Story<ScoreboardCardProps> = (args) => (
   <ScoreboardCard {...args} />
 );
 
-export const _ScoreboardCard = Template.bind({});
+/*export const _ScoreboardCard = Template.bind({});
 _ScoreboardCard.args = {
   entry: {
     coins: 123,
@@ -31,7 +31,7 @@ _ScoreboardCard.args = {
 
 export const _ScoreboardCards = () => {
   return (
-    <FlexBox flexDirection="row" flexWrap="wrap" gridGap="10px">
+    <FlexBox flexDirection="row" flexWrap="wrap" gap="10px">
       {[1, 2, 3, 4, 99, 100, 999, 1000].map((placing) => (
         <ScoreboardCard
           key={placing}
@@ -47,3 +47,4 @@ export const _ScoreboardCards = () => {
     </FlexBox>
   );
 };
+*/

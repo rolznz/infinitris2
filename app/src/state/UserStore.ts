@@ -144,7 +144,7 @@ export function useUserStore<StateSlice>(
     signOut: () => {
       signoutLocalUser();
       signOut(getAuth());
-      useAuthStore.getState().setUser(undefined);
+      useAuthStore.getState().setUser(null);
     },
     setAppTheme: (appTheme: AppTheme) => {
       updateUser({ appTheme });

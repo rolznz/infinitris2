@@ -13,8 +13,16 @@ export function useDonations(active: boolean = true) {
   // FIXME: swr-firestore timestamp where query is broken
   const { data: donations } = useCollection<Donation>(
     active ? 'donations' : null,
-    where('createdTimestamp', '>', Timestamp.fromDate(new Date('1900-01-01'))),
-    orderBy('createdTimestamp', 'desc')
+    {
+      constraints: [
+        where(
+          'createdTimestamp',
+          '>',
+          Timestamp.fromDate(new Date('1900-01-01'))
+        ),
+        orderBy('createdTimestamp', 'desc'),
+      ],
+    }
   );
   const donationsThisMonth = donations
     ?.filter(

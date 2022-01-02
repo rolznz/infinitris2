@@ -28,7 +28,7 @@ export default function useForcedRedirect(
   const { data: challenge } = useDocument<IChallenge>(
     !isTest && challengeId ? getChallengePath(challengeId) : null
   );
-  const currentChallengePriority = challenge?.priority;
+  const currentChallengePriority = challenge ? challenge.data()!.priority : 0;
   const challengeLoaded = challenge?.exists;
 
   let [requiresRedirect, setRequiresRedirect] = React.useState(enabled);
@@ -50,8 +50,9 @@ export default function useForcedRedirect(
       (!onChallengePage ||
         incompleteChallenges.find(
           (incompleteChallenge) =>
-            incompleteChallenge.priority &&
-            incompleteChallenge.priority > (currentChallengePriority || 0)
+            incompleteChallenge.data()!.priority &&
+            incompleteChallenge.data()!.priority! >
+              (currentChallengePriority || 0)
         ))
     ) {
       replaceHistory(Routes.challengeRequired);

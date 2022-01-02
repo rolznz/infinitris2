@@ -53,12 +53,8 @@ export function DialogManager() {
         {prevDialogType === 'login' && (
           <Login onClose={close} onLogin={onLogin} />
         )}
-        {prevDialogType === 'coinInfo' && (
-          <CoinInfoDrawerContent onClose={close} />
-        )}
-        {prevDialogType === 'impactInfo' && (
-          <ImpactInfoDrawerContent onClose={close} />
-        )}
+        {prevDialogType === 'coinInfo' && <CoinInfoDrawerContent />}
+        {prevDialogType === 'impactInfo' && <ImpactInfoDrawerContent />}
         {prevDialogType && (
           <FlexBox mt={2} mb={4}>
             <RingIconButton padding="large" onClick={close}>

@@ -89,7 +89,7 @@ export default function AffiliateProgramPage() {
       )}
       <Box mt={2} />
       {(!userId || affiliateDoc) && (
-        <FlexBox flexDirection="row" flexWrap="wrap" gridGap={10}>
+        <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
           <RingIconButton
             padding="large"
             onClick={() => {
@@ -142,7 +142,7 @@ export default function AffiliateProgramPage() {
             borderRadius={20}
             paddingX={2}
             paddingY={0.5}
-            gridGap={5}
+            gap={0.5}
             flexDirection="row"
             style={{
               backgroundColor: borderColorLight,

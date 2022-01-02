@@ -137,7 +137,7 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
             description="Game Mode Picker Card - Single Player"
           />
         }
-        link={Routes.singlePlayer}
+        link={Routes.singlePlayerOptions}
       />
       <GameModeCard
         link={Routes.market}

@@ -21,7 +21,7 @@ export default function SinglePlayerPage() {
   useEffect(() => {
     if (!requiresRedirect && launchSinglePlayer && !hasLaunched && hasLoaded) {
       setLaunched(true);
-      launchSinglePlayer(controls);
+      launchSinglePlayer({ controls });
       if (musicOn) {
         playGameMusic();
       }

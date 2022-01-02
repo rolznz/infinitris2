@@ -37,7 +37,7 @@ const socketEventListener: IClientSocketEventListener = {
 
 export default function RoomPage() {
   useComingSoonRedirect();
-  const appStore = useAppStore();
+  /*const appStore = useAppStore();
   const client = appStore.clientApi;
   const [connected, setConnected, disconnected, setDisconnected] = useRoomStore(
     (store) => [
@@ -47,7 +47,6 @@ export default function RoomPage() {
       store.setDisconnected,
     ]
   );
-  const setIsDemo = appStore.setIsDemo;
   const { id } = useParams<RoomPageRouteParams>();
 
   const { data: room } = useDocument<IRoom>(id ? getRoomPath(id) : null);
@@ -73,7 +72,6 @@ export default function RoomPage() {
       socketEventListener,
       controls
     );
-    setIsDemo(false);
   }, [
     disconnected,
     retryCount,
@@ -83,7 +81,6 @@ export default function RoomPage() {
     requiresRedirect,
     hasLaunched,
     controls,
-    setIsDemo,
   ]);
 
   useEffect(() => {
@@ -145,5 +142,6 @@ export default function RoomPage() {
         )}
       </Box>
     </Box>
-  );
+  );*/
+  return null;
 }

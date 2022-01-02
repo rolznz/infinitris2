@@ -12,6 +12,7 @@ const localStorageUser = localStorageValue
 export type LocalUser = IUser & { nickname?: string };
 
 const defaultUser: LocalUser = {
+  userId: undefined as unknown as string,
   preferredInputMethod: isMobile() ? 'touch' : 'keyboard',
   hasSeenWelcome: false,
   hasSeenAllSet: false,

@@ -29,7 +29,7 @@ function CharacterStatChip({
       borderRadius={20}
       paddingX={1}
       paddingY={0.5}
-      gridGap={5}
+      gap={0.5}
       flexDirection="row"
       style={{
         backgroundColor: 'borderColor',

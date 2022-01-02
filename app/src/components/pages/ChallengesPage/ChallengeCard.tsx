@@ -1,4 +1,3 @@
-import { Card, Link, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { IChallenge } from 'infinitris2-models';
 import React from 'react';
@@ -6,26 +5,36 @@ import { useUser } from '../../../state/UserStore';
 import Routes from '../../../models/Routes';
 import useIncompleteChallenges from '../../hooks/useIncompleteChallenges';
 import ChallengeGridPreview from './ChallengeGridPreview';
+import Card from '@mui/material/Card';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import { DocumentSnapshot } from 'firebase/firestore';
 
 interface ChallengeCardProps {
-  challenge: IChallenge;
+  challenge: DocumentSnapshot<IChallenge>;
 }
 
 export default function ChallengeCard({ challenge }: ChallengeCardProps) {
   const user = useUser();
-  const translation = challenge?.translations?.[user.locale];
+  //const translation = challenge?.translations?.[user.locale];
   const { incompleteChallenges } = useIncompleteChallenges();
   const isLocked = incompleteChallenges.find(
-    (t) => t.isMandatory && (t.priority || 0) > (challenge.priority || 0)
+    (t) =>
+      t.data()!.isMandatory &&
+      (t.data()!.priority || 0) > (challenge.data()!.priority || 0)
   );
 
   const child = (
     <Card>
       <Typography variant="body1">
-        {translation?.title || challenge.title}
+        {/*translation?.title || */ challenge.data()!.title}
         {isLocked && ' (LOCKED)'}
       </Typography>
-      <ChallengeGridPreview grid={challenge.grid || '0'} />
+      <ChallengeGridPreview
+        grid={challenge.data()!.grid || '0'}
+        width={100}
+        height={100}
+      />
     </Card>
   );
 

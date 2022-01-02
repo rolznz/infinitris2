@@ -47,7 +47,6 @@ export default function ChallengePage() {
   const challenge = isTest ? JSON.parse(json as string) : syncedChallenge;
 
   const addChallengeAttempt = userStore.addChallengeAttempt;
-  const setIsDemo = appStore.setIsDemo;
   const completeChallenge = userStore.completeChallenge;
   const launchChallenge = client?.launchChallenge;
   const restartClient = client?.restartClient; // TODO: move to IClient
@@ -68,7 +67,8 @@ export default function ChallengePage() {
 
   const { preferredInputMethod, controls, hasSeenAllSet, readOnly } =
     userStore.user;
-  const playerInfo: IPlayer = React.useMemo(
+  const player: Partial<IPlayer> = React.useMemo(
+    // FIXME: use a different interface
     () => ({
       color: 0xff0000, // FIXME: use player's color
       nickname: readOnly.nickname || 'New Player',
@@ -102,21 +102,18 @@ export default function ChallengePage() {
           setCheckChallengeStatus(true);
         },
         onBlockMoved() {},
-        onBlockWrapped() {},
         onLineCleared() {},
         onCellBehaviourChanged() {},
       };
 
       setChallengeClient(
-        launchChallenge(
-          challenge,
-          simulationEventListener,
+        launchChallenge(challenge, {
+          listener: simulationEventListener,
           preferredInputMethod,
           controls,
-          playerInfo
-        )
+          player: player as IPlayer, // FIXME: use a different interface
+        })
       );
-      setIsDemo(false);
     }
   }, [
     requiresRedirect,
@@ -124,11 +121,10 @@ export default function ChallengePage() {
     hasLaunched,
     preferredInputMethod,
     launchChallenge,
-    setIsDemo,
     setCheckChallengeStatus,
     setChallengeClient,
     controls,
-    playerInfo,
+    player,
   ]);
 
   useEffect(() => {
@@ -175,7 +171,7 @@ export default function ChallengePage() {
       <ChallengeResultsView
         challengeId={challenge.id}
         isTest={isTest}
-        status={challengeClient.getChallengeAttempt()}
+        //status={challengeClient.getChallengeAttempt()}
         onContinue={() => {
           completeChallenge(challenge.id);
           const remainingChallenges = incompleteChallenges.filter(

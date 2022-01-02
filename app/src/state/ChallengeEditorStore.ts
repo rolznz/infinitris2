@@ -15,10 +15,7 @@ function loadExistingChallenge() {
   );
   let existingChallenge = existingChallengeJson
     ? (JSON.parse(existingChallengeJson) as WithId<IChallenge>)
-    : null;
-  if (!existingChallenge) {
-    existingChallenge = createNewChallenge();
-  }
+    : undefined;
   return existingChallenge;
 }
 

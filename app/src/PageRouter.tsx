@@ -35,6 +35,7 @@ import BackButton from './components/ui/BackButton';
 import useAffiliateLinkRef from './components/hooks/useAffiliateLinkRef';
 import PlayPage from './components/pages/PlayPage/PlayPage';
 import { HomePage } from './components/pages/HomePage/HomePage';
+import { SinglePlayerOptionsPage } from './components/pages/SinglePlayerOptionsPage';
 
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
@@ -151,6 +152,9 @@ function RouterContents() {
         </Route>
         <Route exact path={Routes.lobby}>
           <LobbyPage />
+        </Route>
+        <Route exact path={Routes.singlePlayerOptions}>
+          <SinglePlayerOptionsPage />
         </Route>
         <Route exact path={Routes.singlePlayer}>
           <SinglePlayerPage />

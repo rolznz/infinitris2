@@ -10,8 +10,8 @@ export function ChallengesPage() {
   return (
     <FlexBox flex={1} padding={10} flexWrap="wrap" flexDirection="row">
       {challenges
-        ?.filter((challenge) => challenge.isPublished)
-        .sort((a, b) => (b.priority || 0) - (a.priority || 0))
+        ?.filter((challenge) => challenge.data()!.isPublished)
+        .sort((a, b) => (b.data()!.priority || 0) - (a.data()!.priority || 0))
         .map((challenge) => (
           <FlexBox key={challenge.id} margin={4}>
             <ChallengeCard challenge={challenge} />

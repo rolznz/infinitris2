@@ -75,7 +75,7 @@ export default function MarketPage() {
         top={0}
         left={0}
         padding={2}
-        gridGap={10}
+        gap={1}
         flexDirection="row"
         style={{
           position: 'absolute',

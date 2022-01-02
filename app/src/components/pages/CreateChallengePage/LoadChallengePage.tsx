@@ -1,5 +1,5 @@
 import { Card, Typography } from '@mui/material';
-import { Document, useCollection } from 'swr-firestore';
+import { useCollection } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -12,9 +12,10 @@ import prettyStringify from '../../../utils/prettyStringify';
 import FlexBox from '../../ui/FlexBox';
 import LoadingSpinner from '../../ui/LoadingSpinner';
 import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
+import { DocumentSnapshot, where } from 'firebase/firestore';
 
 interface ChallengesRowProps {
-  challenges: Document<IChallenge>[] | null | undefined;
+  challenges: DocumentSnapshot<IChallenge>[] | null | undefined;
 }
 
 function ChallengesRow({ challenges }: ChallengesRowProps) {
@@ -29,21 +30,16 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
         <FlexBox key={challenge.id} margin={4}>
           <Card
             onClick={() => {
-              const { grid, readOnly, ...challengeInfo } = challenge;
-              // TODO: re-think local storage for the challenge editor - storing the info and grid separately is not ideal
-              localStorage.setItem(
-                localStorageKeys.createChallengeGrid,
-                grid as string
-              );
-              localStorage.setItem(
-                localStorageKeys.createChallengeInfo,
-                prettyStringify(challengeInfo as Omit<IChallenge, 'grid'>)
-              );
+              // FIXME: load challenge
               history.push(Routes.createChallenge);
             }}
           >
-            <Typography>{challenge.title}</Typography>
-            <ChallengeGridPreview grid={challenge.grid || '0'} />
+            <Typography>{challenge.data()!.title}</Typography>
+            <ChallengeGridPreview
+              grid={challenge.data()!.grid || '0'}
+              width={100}
+              height={100}
+            />
           </Card>
         </FlexBox>
       ))}
@@ -55,7 +51,7 @@ export function LoadChallengePage() {
   const userId = useAuthStore().user?.uid;
 
   const { data: userChallenges } = useCollection<IChallenge>(challengesPath, {
-    where: [['userId', '==', userId]],
+    constraints: [where('userId', '==', userId)],
   });
   const { data: challenges } = useCollection<IChallenge>(challengesPath);
 

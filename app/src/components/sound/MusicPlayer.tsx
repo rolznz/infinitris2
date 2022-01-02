@@ -25,7 +25,10 @@ export function soundsLoaded(): boolean {
 export function playGameMusic() {
   if (_menuTheme) {
     _menuTheme.fade(0.5, 0, musicFadeTimeMs);
-    setTimeout(() => _menuTheme.stop(), musicFadeTimeMs);
+    setTimeout(() => {
+      _menuTheme.loop(false);
+      _menuTheme.stop();
+    }, musicFadeTimeMs);
   }
 
   const _gameTheme = new Howl({

@@ -104,6 +104,7 @@ export default function ChallengePage() {
         onBlockMoved() {},
         onLineCleared() {},
         onCellBehaviourChanged() {},
+        onGridCollapsed() {},
       };
 
       setChallengeClient(

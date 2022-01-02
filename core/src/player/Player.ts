@@ -187,7 +187,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
     const isMistake = checkMistake(block.cells, this._simulation);
 
-    console.log(`${this._nickname} Mistake detected: `, isMistake);
+    //console.log(`${this._nickname} Mistake detected: `, isMistake);
     this._modifyScoreFromBlockPlacement(block, isMistake);
 
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));

@@ -93,6 +93,7 @@ export default class SinglePlayerClient
    * @inheritdoc
    */
   destroy() {
+    console.log('Destroying Single Player Client');
     this._simulation.stopInterval();
     this._renderer.destroy();
     this._input.destroy();
@@ -110,7 +111,10 @@ export default class SinglePlayerClient
       preventTowers: true,
     };
 
-    this._simulation = new Simulation(new Grid(50, 20), simulationSettings);
+    this._simulation = new Simulation(
+      new Grid(options.gridNumColumns || 50, options.gridNumRows || 20),
+      simulationSettings
+    );
     this._simulation.addEventListener(this, this._renderer);
     if (options.listener) {
       this._simulation.addEventListener(options.listener);
@@ -137,7 +141,8 @@ export default class SinglePlayerClient
             'Bot ' + (i + 1),
             stringToHex(
               colors[Math.floor(Math.random() * (colors.length - 1))].hex
-            )
+            ),
+            options.botReactionDelay
           )
         );
       }

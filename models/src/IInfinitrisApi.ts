@@ -6,6 +6,7 @@ import { IChallenge } from './IChallenge';
 import IChallengeClient from './IChallengeClient';
 import IPlayer from './IPlayer';
 import { RendererType } from './RendererType';
+import { SimulationSettings } from './SimulationSettings';
 
 export type LaunchOptions = {
   listener?: ISimulationEventListener;
@@ -16,6 +17,10 @@ export type LaunchOptions = {
   rendererType?: RendererType;
   //otherPlayers?: IPlayer[]; // AI & network players
   numBots?: number;
+  botReactionDelay?: number;
+  gridNumRows?: number;
+  gridNumColumns?: number;
+  simulationSettings?: SimulationSettings;
 };
 
 export default interface IInfinitrisApi {

@@ -1,17 +1,22 @@
 import IBlock from './IBlock';
 import CellType from './CellType';
 import ICellBehaviour from './ICellBehaviour';
+import IPlayer from './IPlayer';
 
 export default interface ICell {
-  row: number;
-  column: number;
-  type: CellType;
-  color: number;
-  isEmpty: boolean;
-  isEmptyWithNoBlocks: boolean;
-  isPassable: boolean;
-  behaviour: ICellBehaviour;
-  blocks: IBlock[];
+  get row(): number;
+  get column(): number;
+  get type(): CellType;
+  get color(): number;
+  get isEmpty(): boolean;
+  set isEmpty(empty: boolean);
+  get isEmptyWithNoBlocks(): boolean;
+  get isPassable(): boolean;
+  get behaviour(): ICellBehaviour;
+  set behaviour(behaviour: ICellBehaviour);
+  get blocks(): IBlock[];
+  get player(): IPlayer | undefined;
+  set player(player: IPlayer | undefined);
   addBlock(block: IBlock): void;
   removeBlock(block: IBlock): void;
   step(): void;

@@ -81,6 +81,14 @@ export default class Grid implements IGrid {
       return;
     }
 
+    for (const row of rowsToClear) {
+      for (let c = 0; c < this._cells[row].length; c++) {
+        if (this._cells[row][c].player) {
+          this._cells[row][c].player!.onLineClearCellReward(rowsToClear.length);
+        }
+      }
+    }
+
     console.log('Clearing rows: ', rowsToClear);
     for (let i = 0; i < rowsToClear.length; i++) {
       for (let r = rowsToClear[i] + i; r >= 0; r--) {

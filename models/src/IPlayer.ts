@@ -14,4 +14,5 @@ export default interface IPlayer {
 
   update(cells: ICell[][], settings: SimulationSettings): void;
   addEventListener(eventListener: IBlockEventListener): void;
+  onLineClearCellReward(numRowsCleared: number): void;
 }

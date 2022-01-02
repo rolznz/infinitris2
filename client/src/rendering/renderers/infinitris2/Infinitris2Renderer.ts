@@ -21,6 +21,8 @@ import { getBorderColor, IGrid, ISimulation } from '@models/index';
 import { DayIndicator } from './DayIndicator';
 import ControllablePlayer from '@src/ControllablePlayer';
 import { Scoreboard } from './Scoreboard';
+import { SpawnDelayIndicator } from './SpawnDelayIndicator';
+import { ScoreChangeIndicator } from './ScoreChangeIndicator';
 
 const idealCellSize = 32;
 const minCellCount = 12;
@@ -91,7 +93,6 @@ export default class Infinitris2Renderer
   private _blocks!: { [playerId: number]: IRenderableBlock };
   private _cells!: { [cellId: number]: IRenderableCell };
   private _particles!: IParticle[];
-  //private _playerScores!: IPlayerScore[];
 
   private _simulation!: ISimulation;
 
@@ -110,8 +111,9 @@ export default class Infinitris2Renderer
   private _gridFloor!: GridFloor;
   private _patternTextures: PIXI.Texture[] = [];
   private _dayIndicator!: DayIndicator;
-  private _spawnDelayText!: PIXI.Text;
+  private _spawnDelayIndicator!: SpawnDelayIndicator;
   private _scoreboard!: Scoreboard;
+  private _scoreChangeIndicator!: ScoreChangeIndicator;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
@@ -156,6 +158,8 @@ export default class Infinitris2Renderer
     this._app.loader.add(patternImageUrl);
 
     this._scoreboard = new Scoreboard(this._app);
+    this._spawnDelayIndicator = new SpawnDelayIndicator(this._app);
+    this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
 
     await new Promise((resolve) => this._app.loader.load(resolve));
 
@@ -222,23 +226,6 @@ export default class Infinitris2Renderer
   private _tick = () => {
     const visibilityX = this._getVisiblityX();
     const visibilityY = this._app.renderer.height * 0.125;
-
-    const humanPlayer = this._simulation.players.find(
-      (player) => player instanceof ControllablePlayer
-    );
-    if (
-      humanPlayer &&
-      !humanPlayer.block &&
-      humanPlayer.estimatedSpawnDelay > 500
-    ) {
-      this._spawnDelayText.x = this._app.renderer.width / 2;
-      this._spawnDelayText.y = this._app.renderer.height / 2;
-      this._spawnDelayText.text =
-        'Next Block\n' + Math.ceil(humanPlayer.estimatedSpawnDelay / 1000);
-      this._spawnDelayText.visible = true;
-    } else {
-      this._spawnDelayText.visible = false;
-    }
 
     this._camera.update();
 
@@ -348,36 +335,10 @@ export default class Infinitris2Renderer
     this._app.stage.addChild(this._world);
 
     this._dayIndicator.addChildren();
-
-    this._spawnDelayText = new PIXI.Text('', {
-      font: 'bold italic 120px Arvo',
-      fill: '#ffffff',
-      align: 'center',
-      stroke: '#000000',
-      strokeThickness: 7,
-    });
-    this._spawnDelayText.anchor.set(0.5, 0.5);
-    this._spawnDelayText.visible = false;
-    this._app.stage.addChild(this._spawnDelayText);
-
-    this._scoreboard.create(this._app);
-
-    //this._app.stage.addChild(this._shadowGradientGraphics);
-
+    this._spawnDelayIndicator.create();
+    this._scoreboard.create();
+    this._scoreChangeIndicator.create();
     this._placementHelperShadowCells = [];
-
-    /*this._playerScores = [...Array(10)].map((_, i) => ({
-      playerId: -1,
-      text: new PIXI.Text('', {
-        font: 'bold italic 60px Arvo',
-        fill: '#3e1707',
-        align: 'center',
-        stroke: '#a4410e',
-        strokeThickness: 7,
-      }),
-    }));*/
-
-    //this._app.stage.addChild(...this._playerScores.map((score) => score.text));
 
     if (
       this._virtualKeyboardControls &&
@@ -506,6 +467,8 @@ export default class Infinitris2Renderer
     const followingPlayer = this._simulation.players.find((player) =>
       this._simulation.isFollowingPlayerId(player.id)
     );
+    this._scoreChangeIndicator.update(followingPlayer);
+    this._spawnDelayIndicator.update(followingPlayer);
     if (followingPlayer && followingPlayer.block) {
       // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
       const cellSize = this._getCellSize();
@@ -519,21 +482,6 @@ export default class Infinitris2Renderer
       );
       this._renderBlockPlacementShadow(block);
     }
-    // TODO: only run this once per second
-    /*const scores = this._simulation.players.map((p) => ({
-      id: p.id,
-      name: 'New player',
-      score: p.score,
-    }));
-    scores.sort((a, b) => b.score - a.score);
-    for (let i = 0; i < this._playerScores.length; i++) {
-      if (scores.length > i) {
-        this._playerScores[i].text.text =
-          scores[i].name + ' ' + scores[i].score;
-      } else {
-        this._playerScores[i].text.text = '';
-      }
-    }*/
 
     for (const particle of this._particles) {
       particle.x += particle.vx;
@@ -738,20 +686,17 @@ export default class Infinitris2Renderer
       1,
       () => {},
       () => {
-        const text = new PIXI.Text(
-          block.player.nickname + ' (' + block.player.score + ')',
-          {
-            font: 'bold italic 60px Arvo',
-            fill: PIXI.utils.hex2string(block.player.color),
-            align: 'center',
-            //stroke: '#000000',
-            //strokeThickness: 7,
-            dropShadow: true,
-            dropShadowAngle: Math.PI / 2,
-            dropShadowDistance: 1,
-            dropShadowBlur: 2,
-          }
-        );
+        const text = new PIXI.Text(block.player.nickname, {
+          font: 'bold italic 60px Arvo',
+          fill: PIXI.utils.hex2string(block.player.color),
+          align: 'center',
+          //stroke: '#000000',
+          //strokeThickness: 7,
+          dropShadow: true,
+          dropShadowAngle: Math.PI / 2,
+          dropShadowDistance: 1,
+          dropShadowBlur: 2,
+        });
         text.anchor.set(0.5, 0);
         return text;
       },

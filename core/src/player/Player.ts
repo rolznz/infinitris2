@@ -188,7 +188,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     const isMistake = checkMistake(block.cells, this._simulation);
 
     console.log(`${this._nickname} Mistake detected: `, isMistake);
-    this._modifyScore(block, isMistake);
+    this._modifyScoreFromBlockPlacement(block, isMistake);
 
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
     this._removeBlock();
@@ -198,16 +198,20 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
    * @inheritdoc
    */
   onBlockDied(block: IBlock) {
-    this._modifyScore(block, true);
+    this._modifyScoreFromBlockPlacement(block, true);
     this._eventListeners.forEach((listener) => listener.onBlockDied(block));
     this._removeBlock();
+  }
+
+  onLineClearCellReward(numRowsCleared: number) {
+    this._score += numRowsCleared;
   }
 
   private _removeBlock() {
     this._block = undefined;
   }
 
-  private _modifyScore(block: IBlock, isMistake: boolean) {
+  private _modifyScoreFromBlockPlacement(block: IBlock, isMistake: boolean) {
     if (isMistake) {
       this._score = Math.max(0, Math.floor(this._score * 0.75) - 1);
     } else {
@@ -216,7 +220,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
           block.cells
             .map((cell) => cell.row / this._simulation.grid.numRows)
             .reduce((prev, next) => prev + next),
-          2
+          3
         )
       );
     }

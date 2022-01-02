@@ -6,6 +6,7 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import NormalCellBehaviour from './behaviours/NormalCellBehaviour';
 import IGrid from '@models/IGrid';
 import ICellEventListener from '@models/ICellEventListener';
+import IPlayer from '@models/IPlayer';
 
 export default class Cell implements ICell {
   private _grid: IGrid;
@@ -15,6 +16,7 @@ export default class Cell implements ICell {
   private _isEmpty: boolean;
   private readonly _blocks: IBlock[];
   private readonly _eventListener?: ICellEventListener;
+  private _player: IPlayer | undefined;
   constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
     this._row = row;
@@ -67,6 +69,14 @@ export default class Cell implements ICell {
     return this._blocks;
   }
 
+  get player(): IPlayer | undefined {
+    return this._player;
+  }
+
+  set player(player: IPlayer | undefined) {
+    this._player = player;
+  }
+
   step() {
     this._behaviour?.step?.();
   }
@@ -78,6 +88,7 @@ export default class Cell implements ICell {
   reset(): void {
     this._behaviour = new NormalCellBehaviour();
     this._isEmpty = true;
+    this._player = undefined;
   }
 
   addBlock(block: IBlock) {

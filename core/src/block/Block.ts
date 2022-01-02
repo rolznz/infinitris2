@@ -393,6 +393,7 @@ export default class Block implements IBlock {
   place() {
     this._cells.forEach((cell) => {
       cell.isEmpty = false;
+      cell.player = this._player;
       cell.removeBlock(this);
       cell.behaviour = new NormalCellBehaviour(this._player.color);
     });
@@ -459,7 +460,7 @@ export default class Block implements IBlock {
   private _resetFallTimer() {
     this._fallTimer = this._isDropping
       ? this._slowdownRows.length * 3
-      : Math.max(90 - Math.ceil(this._player.score * 0.25), 1);
+      : Math.max(90 - Math.ceil(Math.pow(this._player.score, 0.55)), 1);
   }
 
   private _resetLockTimer() {

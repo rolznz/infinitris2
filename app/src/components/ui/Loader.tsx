@@ -6,6 +6,7 @@ import {
   Checkbox,
   FormControlLabel,
   LinearProgress,
+  SxProps,
   Typography,
 } from '@mui/material';
 
@@ -13,27 +14,23 @@ import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { playMenuTheme, prepareSoundEffects } from '../sound/MusicPlayer';
+import {
+  playMenuTheme,
+  prepareSoundEffects,
+  setSfxOn,
+} from '../sound/MusicPlayer';
 import FlexBox from './FlexBox';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import useAppStore from '@/state/AppStore';
 import { LanguagePicker } from '../pages/SettingsPage/SettingsPage';
+import { borderColor, borderRadiuses } from '@/theme/theme';
 
-/*const useStyles = makeStyles((theme) => ({
-  startButton: {
-    backgroundColor: '#A4DAF2CC',
-    fontSize: 20,
-    '&:hover': {
-      backgroundColor: '#A4DAF2AA',
-    },
-  },
-  checkbox: {
-    '& span': {
-      margin: '-2px',
-    },
-  },
-}));*/
+// const checkboxStyle: SxProps = {
+//   '& span': {
+//     margin: '-2px',
+//   },
+// };
 
 export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const loaderStore = useLoaderStore();
@@ -64,13 +61,15 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   // only show start button if music is on
   const musicOn =
     userStore.user.musicOn !== undefined ? userStore.user.musicOn : true;
+  const sfxOn =
+    userStore.user.sfxOn !== undefined ? userStore.user.sfxOn : true;
   useEffect(() => {
-    if (musicOn === false && !hasToggledSounds) {
+    if (musicOn === false && sfxOn === false && !hasToggledSounds) {
       // no interaction needed since sound is muted
       setStartClicked();
     }
     setHasToggledSounds(true);
-  }, [setStartClicked, musicOn, hasToggledSounds, setHasToggledSounds]);
+  }, [setStartClicked, musicOn, sfxOn, hasToggledSounds, setHasToggledSounds]);
 
   useEffect(() => {
     const htmlLoader = document.getElementById('html-loader');
@@ -156,15 +155,26 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                 <Button
                   variant="contained"
                   color="primary" // TODO: tertiary
+                  sx={{
+                    backgroundColor: '#A4DAF2CC',
+                    fontSize: 32,
+                    '&:hover': {
+                      backgroundColor: '#A4DAF2AA',
+                    },
+                    lineHeight: 1.5,
+                  }}
                   className={classes.startButton}
                   onClick={() => {
-                    if (musicOn) {
+                    if (musicOn || sfxOn) {
                       loaderStore.reset();
                     }
                     loaderStore.clickStart();
-                    if (musicOn) {
-                      // On mobile, sounds can only be loaded after an interaction
+                    // On mobile, sounds can only be loaded after an interaction
+                    if (sfxOn) {
                       prepareSoundEffects();
+                      setSfxOn(true);
+                    }
+                    if (musicOn) {
                       // TODO: check the route
                       // no need to load the menu theme if not in the menu
                       playMenuTheme();
@@ -176,24 +186,55 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                     description="Loader - Start button text"
                   />
                 </Button>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      color="primary"
-                      checked={musicOn}
-                      onChange={(event) => {
-                        userStore.setMusicOn(event.target.checked);
-                      }}
-                      checkedIcon={<CheckCircleIcon />}
-                      icon={<RadioButtonUncheckedIcon />}
-                      className={classes.checkbox}
-                    />
-                  }
-                  label={intl.formatMessage({
-                    defaultMessage: 'Load Sounds',
-                    description: 'Loader - Load Music Sounds checkbox text',
-                  })}
-                />
+                <FlexBox
+                  flexDirection="row"
+                  mt={2}
+                  sx={{
+                    background: borderColor,
+                    transform: 'scale(0.75)',
+                  }}
+                  borderRadius={borderRadiuses.base}
+                  pl={2.5}
+                  py={0.5}
+                >
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={musicOn}
+                        onChange={(event) => {
+                          userStore.setMusicOn(event.target.checked);
+                        }}
+                        checkedIcon={<CheckCircleIcon />}
+                        icon={<RadioButtonUncheckedIcon />}
+                        className={classes.checkbox}
+                      />
+                    }
+                    label={intl.formatMessage({
+                      defaultMessage: 'Music',
+                      description: 'Loader - Load Music Sounds checkbox text',
+                    })}
+                  />
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        color="primary"
+                        checked={sfxOn}
+                        onChange={(event) => {
+                          userStore.setSfxOn(event.target.checked);
+                          setSfxOn(event.target.checked);
+                        }}
+                        checkedIcon={<CheckCircleIcon />}
+                        icon={<RadioButtonUncheckedIcon />}
+                        className={classes.checkbox}
+                      />
+                    }
+                    label={intl.formatMessage({
+                      defaultMessage: 'SFX',
+                      description: 'Loader - Load Music Sounds checkbox text',
+                    })}
+                  />
+                </FlexBox>
               </FlexBox>
             )}
         </FlexBox>

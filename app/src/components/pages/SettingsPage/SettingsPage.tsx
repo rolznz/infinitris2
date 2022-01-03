@@ -1,21 +1,4 @@
-import React from 'react';
-import {
-  Typography,
-  MenuItem,
-  Select,
-  Grid,
-  Box,
-  Link,
-  Button,
-  Switch,
-  Paper,
-  SwitchProps,
-  ThemeProvider,
-  Theme,
-  StyledEngineProvider,
-  createTheme,
-  SvgIcon,
-} from '@mui/material';
+import { MenuItem, Select, Grid, Link, Button } from '@mui/material';
 
 import FlexBox from '../../ui/FlexBox';
 
@@ -25,8 +8,16 @@ import { useUserStore } from '../../../state/UserStore';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import SettingsRow from './SettingsRow';
-import { InputMethod, AppTheme } from 'infinitris2-models';
-import { setMusicPlaying, soundsLoaded } from '@/components/sound/MusicPlayer';
+import { InputMethod } from 'infinitris2-models';
+import {
+  setMusicPlaying,
+  setSfxOn,
+  musicLoaded,
+  soundsLoaded,
+  prepareSoundEffects,
+  playSound,
+  SoundKey,
+} from '@/components/sound/MusicPlayer';
 import { Page } from '@/components/ui/Page';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import MusicOffIcon from '@mui/icons-material/MusicOff';
@@ -43,7 +34,10 @@ export function LanguagePicker() {
     <Select
       disableUnderline
       value={userStore.user.locale}
-      onChange={(event) => userStore.setLocale(event.target.value as string)}
+      onChange={(event) => {
+        userStore.setLocale(event.target.value as string);
+        playSound(SoundKey.click);
+      }}
     >
       {supportedLocales.map((language) => (
         <MenuItem key={language} value={language}>
@@ -95,6 +89,7 @@ export default function SettingsPage() {
                   userStore.setAppTheme(
                     event.target.checked ? 'dark' : 'light'
                   );
+                  playSound(SoundKey.click);
                   //useLoaderStore.getState().reset();
                   //useLoaderStore.getState().initialize();
                 }}
@@ -119,11 +114,43 @@ export default function SettingsPage() {
                 checkedIcon={<MusicNoteIcon />}
                 onChange={(event) => {
                   const isPlaying = event.target.checked;
-                  if (!soundsLoaded()) {
+                  if (isPlaying && !musicLoaded()) {
                     useLoaderStore.getState().reset();
                   }
                   userStore.setMusicOn(isPlaying);
                   setMusicPlaying(isPlaying);
+                  playSound(SoundKey.click);
+                }}
+              />
+            }
+          />
+          <SettingsRow
+            left={
+              <FormattedMessage
+                defaultMessage="Sound Effects"
+                description="Settings Page Table - Sound Effects"
+              />
+            }
+            right={
+              <IconSwitch
+                checked={
+                  userStore.user.sfxOn !== undefined
+                    ? userStore.user.sfxOn
+                    : true
+                }
+                icon={<MusicOffIcon />}
+                checkedIcon={<MusicNoteIcon />}
+                onChange={(event) => {
+                  const isOn = event.target.checked;
+                  if (isOn && !soundsLoaded()) {
+                    useLoaderStore.getState().reset();
+                    prepareSoundEffects();
+                  }
+                  userStore.setSfxOn(isOn);
+                  setSfxOn(isOn);
+                  if (isOn) {
+                    playSound(SoundKey.click);
+                  }
                 }}
               />
             }
@@ -166,6 +193,7 @@ export default function SettingsPage() {
                   component={RouterLink}
                   underline="none"
                   to={`${Routes.controlSettings}`}
+                  onClick={() => playSound(SoundKey.click)}
                 >
                   <Button variant="contained" color="primary">
                     <FormattedMessage

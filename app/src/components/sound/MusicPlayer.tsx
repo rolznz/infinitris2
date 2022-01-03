@@ -1,5 +1,6 @@
 import { Howl } from 'howler';
 import useLoaderStore from '@/state/LoaderStore';
+import { useUserStore } from '@/state/UserStore';
 
 const rootUrl = process.env.REACT_APP_MUSIC_ROOT_URL;
 const musicFadeTimeMs = 2000;
@@ -7,6 +8,7 @@ const musicFadeTimeMs = 2000;
 let _menuTheme: Howl;
 let _gameTheme: Howl;
 let _sounds: Howl;
+let _sfxOn: boolean = false;
 
 export enum SoundKey {
   silence = 'silence',
@@ -19,8 +21,11 @@ export enum SoundKey {
   rotate2 = 'rotate2',
 }
 
-export function soundsLoaded(): boolean {
+export function musicLoaded(): boolean {
   return !!_menuTheme;
+}
+export function soundsLoaded(): boolean {
+  return !!_sounds;
 }
 
 export function playGameMusic() {
@@ -40,37 +45,45 @@ export async function playMenuTheme() {
 
 export async function prepareSoundEffects() {
   // TODO: have a specific sprite for menu sounds
-  _sounds = new Howl({
-    src: [`${rootUrl}/sounds.mp3`],
-    //pool: 100,
-    html5: true,
-    // generated using the following command:
-    // audiosprite --silence 1 *.wav --export mp3 --output sounds
-    sprite: {
-      [SoundKey.silence]: [0, 500],
-      [SoundKey.click]: [3000, 500],
-      [SoundKey.death]: [6000, 500],
-      [SoundKey.move]: [9000, 500],
-      [SoundKey.notification]: [12000, 500],
-      [SoundKey.place]: [16000, 500],
-      [SoundKey.rotate]: [19000, 500],
-      [SoundKey.rotate2]: [22000, 500],
-    },
-  });
-  _sounds.on('end', (soundId) => {
-    _sounds.stop(soundId);
-  });
-  useLoaderStore.getState().increaseSteps();
-  await _sounds.load();
-  _sounds.once('play', () => {
-    useLoaderStore.getState().increaseStepsCompleted();
-  });
-  // prepare sound sprite
-  _sounds.play(SoundKey.silence);
+  if (!_sounds) {
+    _sounds = new Howl({
+      src: [`${rootUrl}/sounds.mp3`],
+      //pool: 100,
+      html5: true,
+      // generated using the following command:
+      // audiosprite --silence 1 *.wav --export mp3 --output sounds
+      sprite: {
+        [SoundKey.silence]: [0, 500],
+        [SoundKey.click]: [3000, 500],
+        [SoundKey.death]: [6000, 500],
+        [SoundKey.move]: [9000, 500],
+        [SoundKey.notification]: [12000, 500],
+        [SoundKey.place]: [16000, 500],
+        [SoundKey.rotate]: [19000, 500],
+        [SoundKey.rotate2]: [22000, 500],
+      },
+    });
+    _sounds.on('end', (soundId) => {
+      _sounds.stop(soundId);
+    });
+    useLoaderStore.getState().increaseSteps();
+    await _sounds.load();
+    _sounds.once('play', () => {
+      useLoaderStore.getState().increaseStepsCompleted();
+    });
+    // prepare sound sprite
+    _sounds.play(SoundKey.silence);
+  }
 }
 
 export function playSound(key: SoundKey) {
-  _sounds?.play(key);
+  if (_sfxOn) {
+    _sounds?.play(key);
+  }
+}
+
+export function setSfxOn(sfxOn: boolean) {
+  _sfxOn = sfxOn;
 }
 
 export function setMusicPlaying(playing: boolean) {

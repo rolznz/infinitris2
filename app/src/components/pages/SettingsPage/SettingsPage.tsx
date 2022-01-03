@@ -8,7 +8,7 @@ import { useUserStore } from '../../../state/UserStore';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import SettingsRow from './SettingsRow';
-import { InputMethod } from 'infinitris2-models';
+import { InputMethod, RendererQuality, RendererType } from 'infinitris2-models';
 import {
   setMusicPlaying,
   setSfxOn,
@@ -94,6 +94,58 @@ export default function SettingsPage() {
                   //useLoaderStore.getState().initialize();
                 }}
               />
+            }
+          />
+          <SettingsRow
+            left={
+              <FormattedMessage
+                defaultMessage="Graphics Quality"
+                description="Settings Page Table - Graphics Quality left column"
+              />
+            }
+            right={
+              <Select
+                disableUnderline
+                value={userStore.user.rendererQuality || 'high'}
+                onChange={(event) =>
+                  userStore.setRendererQuality(
+                    event.target.value as RendererQuality
+                  )
+                }
+              >
+                {(['low', 'medium', 'high'] as RendererQuality[]).map(
+                  (rendererQuality) => (
+                    <MenuItem key={rendererQuality} value={rendererQuality}>
+                      {rendererQuality.toUpperCase()}
+                    </MenuItem>
+                  )
+                )}
+              </Select>
+            }
+          />
+          <SettingsRow
+            left={
+              <FormattedMessage
+                defaultMessage="Renderer"
+                description="Settings Page Table - Renderer column"
+              />
+            }
+            right={
+              <Select
+                disableUnderline
+                value={userStore.user.rendererType || 'infinitris2'}
+                onChange={(event) =>
+                  userStore.setRendererType(event.target.value as RendererType)
+                }
+              >
+                {(['infinitris2', 'minimal'] as RendererType[]).map(
+                  (rendererQuality) => (
+                    <MenuItem key={rendererQuality} value={rendererQuality}>
+                      {rendererQuality.toUpperCase()}
+                    </MenuItem>
+                  )
+                )}
+              </Select>
             }
           />
           <SettingsRow

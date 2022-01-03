@@ -7,6 +7,8 @@ import {
   InputMethod,
   IUser,
   AppTheme,
+  RendererQuality,
+  RendererType,
 } from 'infinitris2-models';
 import { StateSelector } from 'zustand';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
@@ -44,6 +46,8 @@ type IUserStore = {
   setAppTheme(appTheme: AppTheme): void;
   setMusicOn(musicOn: boolean): void;
   setSfxOn(sfxOn: boolean): void;
+  setRendererQuality(rendererQuality: RendererQuality): void;
+  setRendererType(rendererType: RendererType): void;
 };
 
 export function getUpdatableUserProperties(
@@ -158,6 +162,12 @@ export function useUserStore<StateSlice>(
     },
     setSfxOn: (sfxOn: boolean) => {
       updateUser({ sfxOn });
+    },
+    setRendererQuality: (rendererQuality: RendererQuality) => {
+      updateUser({ rendererQuality });
+    },
+    setRendererType: (rendererType: RendererType) => {
+      updateUser({ rendererType });
     },
   };
 

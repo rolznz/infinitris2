@@ -17,7 +17,12 @@ import InputMethod from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { WorldBackground } from './WorldBackground';
 import { GridFloor } from './GridFloor';
-import { getBorderColor, IGrid, ISimulation } from '@models/index';
+import {
+  getBorderColor,
+  IGrid,
+  ISimulation,
+  RendererQuality,
+} from '@models/index';
 import { DayIndicator } from './DayIndicator';
 import ControllablePlayer from '@src/ControllablePlayer';
 import { Scoreboard } from './Scoreboard';
@@ -114,14 +119,17 @@ export default class Infinitris2Renderer
   private _spawnDelayIndicator!: SpawnDelayIndicator;
   private _scoreboard!: Scoreboard;
   private _scoreChangeIndicator!: ScoreChangeIndicator;
+  private _rendererQuality: RendererQuality | undefined;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
-    teachControls: boolean = false
+    teachControls: boolean = false,
+    rendererQuality?: RendererQuality
   ) {
     this._preferredInputMethod = preferredInputMethod;
     this._teachControls = teachControls;
     this._camera = new Camera();
+    this._rendererQuality = rendererQuality;
   }
 
   set virtualKeyboardControls(
@@ -148,7 +156,8 @@ export default class Infinitris2Renderer
     this._worldBackground = new WorldBackground(
       this._app,
       this._camera,
-      'grass'
+      'grass',
+      this._rendererQuality
     );
 
     this._dayIndicator = new DayIndicator(this._app);

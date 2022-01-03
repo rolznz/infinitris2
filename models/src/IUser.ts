@@ -3,7 +3,8 @@ import InputMethod from './InputMethod';
 import IEntity, { IEntityReadOnlyProperties } from './IEntity';
 import Timestamp from './Timestamp';
 import { AppTheme } from './AppTheme';
-import { RendererQuality } from '.';
+import { RendererQuality } from './RendererQuality';
+import { RendererType } from './RendererType';
 
 export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly coins: number;
@@ -35,4 +36,5 @@ export default interface IUser extends IEntity {
   readonly musicVolume?: number;
   readonly sfxVolume?: number;
   readonly rendererQuality?: RendererQuality;
+  readonly rendererType?: RendererType;
 }

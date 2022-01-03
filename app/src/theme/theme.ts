@@ -263,6 +263,19 @@ export const coreThemeOptions: ThemeOptions = {
         icon: {
           color: colors.white,
         },
+        outlined: {
+          paddingTop: '5px',
+          paddingBottom: '5px',
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          borderRadius: borderRadiuses.base,
+          paddingTop: '2px',
+          paddingBottom: '2px',
+        },
       },
     },
   },

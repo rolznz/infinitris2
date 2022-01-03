@@ -1,4 +1,5 @@
 import useLoaderStore from '@/state/LoaderStore';
+import useLocalUserStore from '@/state/LocalUserStore';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import useAppStore from '../../state/AppStore';
@@ -9,7 +10,7 @@ import { playGameMusic, playMenuTheme } from '../sound/MusicPlayer';
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
-  const controls = useUser().controls;
+  const { controls, rendererQuality, rendererType } = useUser();
   //const requiresRedirect = useForcedRedirect();
   const launchSinglePlayer = client?.launchSinglePlayer;
   const [hasLaunched, setLaunched] = useState(false);
@@ -26,7 +27,10 @@ export default function SinglePlayerPage() {
   useEffect(() => {
     return () => {
       useAppStore.getState().clientApi?.releaseClient();
-      playMenuTheme();
+      // FIXME: need a better way to access isMusicOn - store in music player
+      if (useLocalUserStore.getState().user.musicOn) {
+        playMenuTheme();
+      }
     };
   }, []);
 
@@ -39,6 +43,8 @@ export default function SinglePlayerPage() {
         botReactionDelay,
         gridNumRows,
         gridNumColumns,
+        rendererQuality,
+        rendererType,
       });
       if (musicOn) {
         playGameMusic();
@@ -56,6 +62,8 @@ export default function SinglePlayerPage() {
     client,
     gridNumRows,
     gridNumColumns,
+    rendererQuality,
+    rendererType,
   ]);
 
   return null;

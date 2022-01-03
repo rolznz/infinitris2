@@ -103,7 +103,11 @@ export default class SinglePlayerClient
     this._renderer =
       options.rendererType === 'minimal'
         ? new MinimalRenderer()
-        : new Infinitris2Renderer();
+        : new Infinitris2Renderer(
+            undefined,
+            undefined,
+            options.rendererQuality
+          );
     await this._renderer.create();
 
     const simulationSettings: SimulationSettings = {

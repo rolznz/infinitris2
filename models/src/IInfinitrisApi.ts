@@ -7,6 +7,7 @@ import IChallengeClient from './IChallengeClient';
 import IPlayer from './IPlayer';
 import { RendererType } from './RendererType';
 import { SimulationSettings } from './SimulationSettings';
+import { RendererQuality } from './RendererQuality';
 
 export type LaunchOptions = {
   listener?: ISimulationEventListener;
@@ -21,6 +22,7 @@ export type LaunchOptions = {
   gridNumRows?: number;
   gridNumColumns?: number;
   simulationSettings?: SimulationSettings;
+  rendererQuality?: RendererQuality;
 };
 
 export default interface IInfinitrisApi {

@@ -13,7 +13,7 @@ import React from 'react';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { prepareSounds } from '../sound/MusicPlayer';
+import { playMenuTheme, prepareSoundEffects } from '../sound/MusicPlayer';
 import FlexBox from './FlexBox';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
@@ -164,7 +164,10 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                     loaderStore.clickStart();
                     if (musicOn) {
                       // On mobile, sounds can only be loaded after an interaction
-                      prepareSounds();
+                      prepareSoundEffects();
+                      // TODO: check the route
+                      // no need to load the menu theme if not in the menu
+                      playMenuTheme();
                     }
                   }}
                 >

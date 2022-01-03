@@ -4,7 +4,7 @@ import useSearchParam from 'react-use/lib/useSearchParam';
 import useAppStore from '../../state/AppStore';
 import { useUser, useUserStore } from '../../state/UserStore';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
-import { playGameMusic } from '../sound/MusicPlayer';
+import { playGameMusic, playMenuTheme } from '../sound/MusicPlayer';
 
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
@@ -24,7 +24,10 @@ export default function SinglePlayerPage() {
   const gridNumColumns = parseInt(useSearchParam('gridNumColumns') || '10');
 
   useEffect(() => {
-    useAppStore.getState().clientApi?.releaseClient();
+    return () => {
+      useAppStore.getState().clientApi?.releaseClient();
+      playMenuTheme();
+    };
   }, []);
 
   useEffect(() => {

@@ -5,6 +5,7 @@ const rootUrl = process.env.REACT_APP_MUSIC_ROOT_URL;
 const musicFadeTimeMs = 2000;
 
 let _menuTheme: Howl;
+let _gameTheme: Howl;
 let _sounds: Howl;
 
 export enum SoundKey {
@@ -23,51 +24,21 @@ export function soundsLoaded(): boolean {
 }
 
 export function playGameMusic() {
-  if (_menuTheme) {
-    _menuTheme.fade(0.5, 0, musicFadeTimeMs);
-    setTimeout(() => {
-      _menuTheme.loop(false);
-      _menuTheme.stop();
-    }, musicFadeTimeMs);
-  }
+  fadeOutMusic(_menuTheme);
 
-  const _gameTheme = new Howl({
-    src: [`${rootUrl}/grass_1.mp3`],
-    html5: true,
-    loop: true,
-  });
-
-  useLoaderStore.getState().increaseSteps();
-  _gameTheme.once('play', () => {
-    setTimeout(() => {
-      useLoaderStore.getState().increaseStepsCompleted();
-    }, 500);
-  });
-  _gameTheme.load();
-  _gameTheme.volume(0);
-  _gameTheme.play();
-  _gameTheme.fade(0, 1, musicFadeTimeMs);
+  _gameTheme = playMusic(_gameTheme, `${rootUrl}/grass_1.mp3`, true);
 }
 
-export async function prepareSounds() {
-  // TODO: need to support loading music based on current page
-  // move sfx out to separate file or rename this one
-  _menuTheme = new Howl({
-    src: [`${rootUrl}/menu.mp3`],
-    html5: true,
-    loop: true,
-  });
+export async function playMenuTheme() {
+  fadeOutMusic(_gameTheme);
 
-  useLoaderStore.getState().increaseSteps();
-  _menuTheme.once('play', () => {
-    setTimeout(() => {
-      useLoaderStore.getState().increaseStepsCompleted();
-    }, 500);
-  });
-  await _menuTheme.load();
-  _menuTheme.volume(0.5);
-  _menuTheme.play();
+  // TODO: load based on route - requires a second howl instance to do fade
+  // / = menu.mp3
+  // /market = market.mp3
+  _menuTheme = playMusic(_menuTheme, `${rootUrl}/menu.mp3`, false);
+}
 
+export async function prepareSoundEffects() {
   // TODO: have a specific sprite for menu sounds
   _sounds = new Howl({
     src: [`${rootUrl}/sounds.mp3`],
@@ -104,12 +75,50 @@ export function playSound(key: SoundKey) {
 
 export function setMusicPlaying(playing: boolean) {
   if (playing) {
-    if (_menuTheme) {
-      _menuTheme.play();
-    } else {
-      prepareSounds();
-    }
+    playMenuTheme();
   } else {
     _menuTheme?.stop();
+    _gameTheme?.stop();
   }
+}
+
+function fadeOutMusic(howl: Howl) {
+  if (!howl) {
+    return;
+  }
+  howl.fade(0.5, 0, musicFadeTimeMs);
+  setTimeout(() => {
+    howl.loop(false); // stop repeat - safari/ios issue
+    howl.stop(); // stop the song - fade does not work on safari/ios
+  }, musicFadeTimeMs);
+}
+function playMusic(existingHowl: Howl, url: string, fadeIn: boolean): Howl {
+  if (existingHowl) {
+    existingHowl.unload();
+  }
+  existingHowl = new Howl({
+    src: [url],
+    html5: true,
+    loop: true,
+  });
+
+  useLoaderStore.getState().increaseSteps();
+  existingHowl.once('play', () => {
+    setTimeout(() => {
+      useLoaderStore.getState().increaseStepsCompleted();
+    }, 500);
+  });
+  existingHowl.load();
+  if (fadeIn) {
+    existingHowl.volume(0);
+  } else {
+    existingHowl.volume(0.5);
+  }
+  existingHowl.loop(true);
+  existingHowl.seek(0);
+  existingHowl.play();
+  if (fadeIn) {
+    existingHowl.fade(0, 1, musicFadeTimeMs);
+  }
+  return existingHowl;
 }

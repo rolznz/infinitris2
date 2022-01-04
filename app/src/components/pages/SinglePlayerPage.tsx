@@ -23,6 +23,12 @@ export default function SinglePlayerPage() {
   const botReactionDelay = parseInt(useSearchParam('botReactionDelay') || '30');
   const gridNumRows = parseInt(useSearchParam('gridNumRows') || '20');
   const gridNumColumns = parseInt(useSearchParam('gridNumColumns') || '10');
+  const dayLength = parseInt(useSearchParam('dayLength') || '2000');
+  const spectate = useSearchParam('spectate') === 'true';
+  const mistakeDetection = useSearchParam('mistakeDetection') === 'true';
+  const calculateSpawnDelays =
+    useSearchParam('calculateSpawnDelays') === 'true';
+  const preventTowers = useSearchParam('preventTowers') === 'true';
 
   useEffect(() => {
     return () => {
@@ -45,6 +51,13 @@ export default function SinglePlayerPage() {
         gridNumColumns,
         rendererQuality,
         rendererType,
+        spectate,
+        simulationSettings: {
+          mistakeDetection,
+          calculateSpawnDelays,
+          preventTowers,
+          dayLength,
+        },
       });
       if (musicOn) {
         playGameMusic();
@@ -64,6 +77,11 @@ export default function SinglePlayerPage() {
     gridNumColumns,
     rendererQuality,
     rendererType,
+    spectate,
+    mistakeDetection,
+    calculateSpawnDelays,
+    preventTowers,
+    dayLength,
   ]);
 
   return null;

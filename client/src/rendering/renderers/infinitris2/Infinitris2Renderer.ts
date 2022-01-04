@@ -1123,7 +1123,7 @@ export default class Infinitris2Renderer
     }
 
     const isTower =
-      this._simulation.settings.preventTowers &&
+      this._simulation.settings.preventTowers !== false &&
       this._simulation.grid.isTower(highestPlacementRow);
 
     // render placement helper shadow - this could be done a lot more efficiently by rendering one line per column,

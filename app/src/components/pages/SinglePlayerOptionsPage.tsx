@@ -11,10 +11,12 @@ import InputLabel from '@mui/material/InputLabel';
 import FlexBox from '../ui/FlexBox';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { FormControlLabel, FormGroup, Switch } from '@mui/material';
 
 const schema = yup
   .object({
     numBots: yup.number().integer().lessThan(100).moreThan(-1).required(),
+    dayLength: yup.number().integer().moreThan(-1).required(),
     botReactionDelay: yup
       .number()
       .positive()
@@ -43,6 +45,11 @@ type FormData = {
   botReactionDelay: number;
   gridNumRows: number;
   gridNumColumns: number;
+  dayLength: number;
+  spectate: boolean;
+  mistakeDetection: boolean;
+  calculateSpawnDelays: boolean;
+  preventTowers: boolean;
 };
 
 export function SinglePlayerOptionsPage() {
@@ -58,6 +65,11 @@ export function SinglePlayerOptionsPage() {
       botReactionDelay: 25,
       gridNumRows: 20,
       gridNumColumns: 50,
+      dayLength: 2000,
+      spectate: false,
+      mistakeDetection: true,
+      calculateSpawnDelays: true,
+      preventTowers: true,
     },
     resolver: yupResolver(schema),
   });
@@ -76,61 +88,122 @@ export function SinglePlayerOptionsPage() {
         defaultMessage: 'Single Player Options',
         description: 'Single Player Options page title',
       })}
-      narrow
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <FlexBox>
-          <Controller
-            name="numBots"
-            control={control}
-            render={({ field }) => (
-              <FormControl variant="standard">
-                <InputLabel htmlFor="component-simple">
-                  Number of Bots
-                </InputLabel>
-                <Input {...field} />
-                <p>{errors.numBots?.message}</p>
-              </FormControl>
-            )}
-          />
+          <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
+            <Controller
+              name="numBots"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>Number of Bots</InputLabel>
+                  <Input {...field} />
+                  <p>{errors.numBots?.message}</p>
+                </FormControl>
+              )}
+            />
 
-          <Controller
-            name="botReactionDelay"
-            control={control}
-            render={({ field }) => (
-              <FormControl variant="standard">
-                <InputLabel htmlFor="component-simple">
-                  Bot Reaction Delay
-                </InputLabel>
-                <Input {...field} />
-                <p>{errors.botReactionDelay?.message}</p>
-              </FormControl>
-            )}
-          />
+            <Controller
+              name="botReactionDelay"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>Bot Reaction Delay</InputLabel>
+                  <Input {...field} />
+                  <p>{errors.botReactionDelay?.message}</p>
+                </FormControl>
+              )}
+            />
 
-          <Controller
-            name="gridNumRows"
-            control={control}
-            render={({ field }) => (
-              <FormControl variant="standard">
-                <InputLabel htmlFor="component-simple">Grid Rows</InputLabel>
-                <Input {...field} />
-                <p>{errors.gridNumRows?.message}</p>
-              </FormControl>
-            )}
-          />
-          <Controller
-            name="gridNumColumns"
-            control={control}
-            render={({ field }) => (
-              <FormControl variant="standard">
-                <InputLabel htmlFor="component-simple">Grid Columns</InputLabel>
-                <Input {...field} />
-                <p>{errors.gridNumColumns?.message}</p>
-              </FormControl>
-            )}
-          />
-
+            <Controller
+              name="gridNumRows"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>Grid Rows</InputLabel>
+                  <Input {...field} />
+                  <p>{errors.gridNumRows?.message}</p>
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="gridNumColumns"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>Grid Columns</InputLabel>
+                  <Input {...field} />
+                  <p>{errors.gridNumColumns?.message}</p>
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="dayLength"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>Day Length</InputLabel>
+                  <Input type="number" {...field} />
+                  <p>{errors.dayLength?.message}</p>
+                </FormControl>
+              )}
+            />
+          </FlexBox>
+          <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
+            <Controller
+              name="spectate"
+              control={control}
+              render={({ field }) => (
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Switch {...field} defaultChecked={field.value} />}
+                    label="Spectate"
+                    labelPlacement="start"
+                  />
+                </FormGroup>
+              )}
+            />
+            <Controller
+              name="mistakeDetection"
+              control={control}
+              render={({ field }) => (
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Switch {...field} defaultChecked={field.value} />}
+                    label="Mistake Detection"
+                    labelPlacement="start"
+                  />
+                </FormGroup>
+              )}
+            />
+            <Controller
+              name="calculateSpawnDelays"
+              control={control}
+              render={({ field }) => (
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Switch {...field} defaultChecked={field.value} />}
+                    label="Spawn Delays"
+                    labelPlacement="start"
+                  />
+                </FormGroup>
+              )}
+            />
+            <Controller
+              name="preventTowers"
+              control={control}
+              render={({ field }) => (
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Switch {...field} defaultChecked={field.value} />}
+                    label="Tower Prevention"
+                    labelPlacement="start"
+                  />
+                </FormGroup>
+              )}
+            />
+          </FlexBox>
           <Button
             type="submit"
             color="primary"

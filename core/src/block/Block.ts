@@ -426,7 +426,7 @@ export default class Block implements IBlock {
 
     if (!fell && this.isReadyToLock) {
       if (
-        this._simulation.settings.preventTowers &&
+        this._simulation.settings.preventTowers !== false &&
         this._simulation.grid.isTower(this.bottomRow)
       ) {
         this.die();

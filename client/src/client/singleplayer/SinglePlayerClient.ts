@@ -96,7 +96,7 @@ export default class SinglePlayerClient
     console.log('Destroying Single Player Client');
     this._simulation.stopInterval();
     this._renderer.destroy();
-    this._input.destroy();
+    this._input?.destroy();
   }
 
   private async _create(options: LaunchOptions) {
@@ -110,10 +110,8 @@ export default class SinglePlayerClient
           );
     await this._renderer.create();
 
-    const simulationSettings: SimulationSettings = {
-      randomBlockPlacement: true,
-      preventTowers: true,
-    };
+    const simulationSettings: SimulationSettings =
+      options.simulationSettings || {};
 
     this._simulation = new Simulation(
       new Grid(options.gridNumColumns || 50, options.gridNumRows || 20),

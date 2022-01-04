@@ -99,16 +99,19 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         ...this._simulation.players.map((player) => player.score)
       );
 
-      const scoreProportion =
-        highestPlayerScore > 0 ? this._score / highestPlayerScore : 1;
+      if (this._simulation.settings.calculateSpawnDelays !== false) {
+        const scoreProportion =
+          highestPlayerScore > 0 ? this._score / highestPlayerScore : 1;
 
-      const adjustedScoreProportion = Math.pow(scoreProportion, 0.5);
-      const delay = (1 - adjustedScoreProportion) * ((7 * 1000) / FRAME_LENGTH); // 7 seconds max
-      this._estimatedSpawnDelay = Math.ceil(
-        (delay - this._nextSpawn) * FRAME_LENGTH
-      );
-      if (++this._nextSpawn < delay) {
-        return;
+        const adjustedScoreProportion = Math.pow(scoreProportion, 0.5);
+        const delay =
+          (1 - adjustedScoreProportion) * ((7 * 1000) / FRAME_LENGTH); // 7 seconds max
+        this._estimatedSpawnDelay = Math.ceil(
+          (delay - this._nextSpawn) * FRAME_LENGTH
+        );
+        if (++this._nextSpawn < delay) {
+          return;
+        }
       }
 
       const layouts = Object.entries(tetrominoes)
@@ -127,7 +130,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       this._nextLayout = undefined;
       const column =
         this._lastPlacementColumn === undefined
-          ? simulationSettings.randomBlockPlacement
+          ? simulationSettings.randomBlockPlacement !== false
             ? Math.floor(Math.random() * gridCells[0].length)
             : Math.floor((gridCells[0].length - layout[0].length) / 2)
           : this._lastPlacementColumn;
@@ -219,7 +222,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
 
   private _modifyScoreFromBlockPlacement(block: IBlock, isMistake: boolean) {
-    if (isMistake) {
+    if (isMistake && this._simulation.settings.mistakeDetection !== false) {
       this._score = Math.max(0, Math.floor(this._score * 0.75) - 1);
     } else {
       this._score += Math.floor(

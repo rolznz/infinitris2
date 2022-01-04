@@ -30,7 +30,7 @@ import { SpawnDelayIndicator } from './SpawnDelayIndicator';
 import { ScoreChangeIndicator } from './ScoreChangeIndicator';
 
 const idealCellSize = 32;
-const minCellCount = 12;
+const minCellCount = 23;
 const particleDivisions = 4;
 const numPatternDivisions = 4;
 
@@ -42,6 +42,7 @@ interface IRenderableBlock {
   block: IBlock;
   cells: IRenderableCell[];
   playerNameText: IRenderableEntity<PIXI.Text>;
+  face: IRenderableEntity<PIXI.Sprite>;
 }
 
 enum RenderCellType {
@@ -78,6 +79,11 @@ interface IParticle extends IRenderableEntity<PIXI.Graphics> {
   life: number;
   maxLife: number;
 }
+
+// TODO: retrieve URLs from players
+const patternImageUrl = `${imagesDirectory}/pattern_13.png`;
+const faceUrl = `${imagesDirectory}/face_9.png`;
+//this._app.loader.add(this._getFloorImageFilename());
 
 export default class Infinitris2Renderer
   implements IRenderer, ISimulationEventListener
@@ -163,8 +169,8 @@ export default class Infinitris2Renderer
     this._dayIndicator = new DayIndicator(this._app);
 
     this._gridFloor = new GridFloor(this._app, 'grass');
-    const patternImageUrl = `${imagesDirectory}/pattern_13.png`;
     this._app.loader.add(patternImageUrl);
+    this._app.loader.add(faceUrl);
 
     this._scoreboard = new Scoreboard(this._app);
     this._spawnDelayIndicator = new SpawnDelayIndicator(this._app);
@@ -249,7 +255,7 @@ export default class Infinitris2Renderer
           this._getFloorHeight()
         )
       ),
-      -visibilityY
+      0 //-visibilityY
     );
     if (this._scrollX) {
       this._world.x = this._camera.wrappedX + visibilityX;
@@ -389,8 +395,14 @@ export default class Infinitris2Renderer
         container: new PIXI.Container(),
         children: [],
       },
+      face: {
+        container: new PIXI.Container(),
+        children: [],
+      },
     };
+    renderableBlock.face.container.zIndex = 1;
     this._world.addChild(renderableBlock.playerNameText.container);
+    this._world.addChild(renderableBlock.face.container);
     this._world.addChild(
       ...renderableBlock.cells.map((cell) => cell.container)
     );
@@ -464,6 +476,22 @@ export default class Infinitris2Renderer
       ...renderableBlock.cells.map((cell) => cell.container)
     );
     this._world.removeChild(renderableBlock.playerNameText.container);
+
+    // TODO: this is probably not an efficient way to manage the face alpha
+    // store the faces as an array and process them in the normal loop
+    // also will fix the issue where faces do not move down or get removed after line clear
+    const faceFadeTime = 1000;
+    const fadeSteps = 30;
+    setTimeout(
+      () => this._world.removeChild(renderableBlock.face.container),
+      faceFadeTime
+    );
+    for (let i = 0; i < fadeSteps; i++) {
+      setTimeout(() => {
+        renderableBlock.face.container.alpha -= 1 / fadeSteps;
+      }, ((i + 1) * faceFadeTime) / fadeSteps);
+    }
+
     delete this._blocks[block.player.id];
   }
 
@@ -576,7 +604,7 @@ export default class Infinitris2Renderer
       this._gridHeight = gridHeight;
       this._scrollX = true;
       this._hasShadows = gridWidth < appWidth;
-      this._scrollY = gridHeight > appHeight;
+      this._scrollY = gridHeight + this._getFloorHeight() > appHeight;
 
       this._shadowCount = this._hasShadows
         ? Math.ceil(Math.ceil(appWidth / gridWidth) / 2)
@@ -602,7 +630,7 @@ export default class Infinitris2Renderer
       const cellPadding = this._getCellPadding();
       for (let r = 0; r < gridRows; r++) {
         for (let c = 0; c < gridColumns + 1; c++) {
-          this._grid.graphics.beginFill(0xffffff, 0.025);
+          this._grid.graphics.beginFill(0xffffff, 0.05);
           this._grid.graphics.drawRect(
             c * cellSize + cellPadding,
             r * cellSize + cellPadding,
@@ -711,6 +739,18 @@ export default class Infinitris2Renderer
       },
       () => undefined
     );
+    this._renderCopies(
+      renderableBlock.face,
+      1,
+      () => {},
+      () => {
+        const face = PIXI.Sprite.from(faceUrl);
+        face.scale.set((this._getCellSize() / face.width) * 2);
+        face.anchor.set(0.5, 0.5);
+        return face;
+      },
+      () => undefined
+    );
   }
 
   private _getVisiblityX() {
@@ -734,6 +774,15 @@ export default class Infinitris2Renderer
     const textY = block.row * cellSize - cellSize * 1.2;
     renderableBlock.playerNameText.container.x = textCentreX;
     renderableBlock.playerNameText.container.y = textY;
+
+    const topCells = renderableBlock.cells.filter(
+      (cell) =>
+        !renderableBlock.cells.some((other) => other.cell.row < cell.cell.row)
+    );
+
+    renderableBlock.face.container.x =
+      (topCells[0].cell.column + topCells.length / 2) * cellSize;
+    renderableBlock.face.container.y = (topCells[0].cell.row + 0.5) * cellSize;
   }
 
   private _renderParticle(particle: IParticle, color: number) {

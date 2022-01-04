@@ -23,6 +23,7 @@ export type LaunchOptions = {
   gridNumColumns?: number;
   simulationSettings?: SimulationSettings;
   rendererQuality?: RendererQuality;
+  spectate?: boolean;
 };
 
 export default interface IInfinitrisApi {

@@ -34,8 +34,9 @@ export default class InfinitrisApi implements IInfinitrisApi {
 
     if (params.has('single-player')) {
       const numBots = parseInt(params.get('numBots') || '0');
+      const spectate = params.get('spectate') === 'true';
 
-      this.launchSinglePlayer({ controls, numBots });
+      this.launchSinglePlayer({ controls, numBots, spectate });
     } else if (params.has('url')) {
       this.launchNetworkClient(params.get('url') as string, {
         controls,

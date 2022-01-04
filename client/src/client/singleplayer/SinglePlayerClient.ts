@@ -125,15 +125,20 @@ export default class SinglePlayerClient
     }
 
     this._simulation.init();
-    const playerId = 0;
-    const player = new ControllablePlayer(
-      this._simulation,
-      playerId,
-      options.player?.nickname,
-      options.player?.color
-    );
-    this._simulation.addPlayer(player);
-    this._simulation.followPlayer(player);
+    if (!options.spectate) {
+      const playerId = 0;
+      const player = new ControllablePlayer(
+        this._simulation,
+        playerId,
+        options.player?.nickname,
+        options.player?.color
+      );
+      this._simulation.addPlayer(player);
+      this._simulation.followPlayer(player);
+      this._input = new Input(this._simulation, player, this._controls);
+    } else {
+      // TODO: spectator input (follow bot N or free camera)
+    }
 
     if (options.numBots) {
       for (let i = 0; i < options.numBots; i++) {
@@ -164,6 +169,5 @@ export default class SinglePlayerClient
     }
 
     this._simulation.startInterval();
-    this._input = new Input(this._simulation, player, this._controls);
   }
 }

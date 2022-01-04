@@ -11,6 +11,7 @@ import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import { FRAME_LENGTH } from '@core/Simulation';
 import { checkMistake } from '@core/block/checkMistake';
+import LayoutUtils from '@core/block/layout/LayoutUtils';
 
 export default abstract class Player implements IPlayer, IBlockEventListener {
   private _id: number;
@@ -25,6 +26,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _simulation: ISimulation;
   private _nextSpawn: number;
   private _estimatedSpawnDelay: number;
+  private _isFirstBlock: boolean;
 
   constructor(
     simulation: ISimulation,
@@ -40,6 +42,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._simulation = simulation;
     this._nextSpawn = 0;
     this._estimatedSpawnDelay = 0;
+    this._isFirstBlock = true;
   }
 
   get id(): number {
@@ -111,13 +114,16 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       const layouts = Object.entries(tetrominoes)
         .filter(
           (entry) =>
-            !simulationSettings.allowedBlockLayoutIds ||
-            simulationSettings.allowedBlockLayoutIds.indexOf(entry[0]) >= 0
+            (!simulationSettings.allowedBlockLayoutIds ||
+              simulationSettings.allowedBlockLayoutIds.indexOf(entry[0]) >=
+                0) &&
+            (!this._isFirstBlock || LayoutUtils.isSafeLayout(entry[1]))
         )
         .map((entry) => entry[1]);
 
       const layout =
         this._nextLayout || layouts[Math.floor(Math.random() * layouts.length)];
+
       this._nextLayout = undefined;
       const column =
         this._lastPlacementColumn === undefined
@@ -137,6 +143,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       if (newBlock.isAlive) {
         this._block = newBlock;
         this._nextSpawn = 0;
+        this._isFirstBlock = false;
       }
       this._nextLayoutRotation = undefined;
     } else {

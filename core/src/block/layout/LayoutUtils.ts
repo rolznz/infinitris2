@@ -29,4 +29,13 @@ export default class LayoutUtils {
 
     return prev;
   }
+
+  // returns true if there is a rotation that does not cause gaps
+  // s and z layouts cannot be safely placed as the first block.
+  static isSafeLayout(layout: Layout): boolean {
+    const minimalLayout = layout.filter((row) => row.some((cell) => cell));
+    return !minimalLayout[minimalLayout.length - 1].some(
+      (cell, index) => !cell && minimalLayout[minimalLayout.length - 2][index]
+    );
+  }
 }

@@ -18,15 +18,7 @@
     "outDir": "./dist",
     "declarationMap": true,
     "types": ["node"],
-    "plugins": [
-      {
-        "name": "typescript-tslint-plugin",
-        "alwaysShowRuleFailuresAsWarnings": false,
-        "ignoreDefinitionFiles": true,
-        "configFile": "../tslint.json",
-        "suppressWhileTypeErrorsPresent": false
-      }
-    ]
+    "plugins": []
   },
   "exclude": ["node_modules", "dist"],
   "references": [{ "path": "../models" }]

@@ -8,7 +8,6 @@ import IJoinRoomResponse, {
 import FakeServerSocket from './support/FakeServerSocket';
 import FakeClientSocket from './support/FakeClientSocket';
 
-// tslint:disable-next-line: radix
 Object.values = (obj: any) => Object.keys(obj).map((key) => obj[parseInt(key)]);
 
 describe('Index', () => {

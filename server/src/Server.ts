@@ -65,7 +65,6 @@ export default class Server implements IServerSocketEventListener {
 // entry point
 if (process.argv[process.argv.length - 1] === 'launch') {
   (() => {
-    // tslint:disable-next-line: no-unused-expression
     new Server(new ServerSocket('127.0.0.1', 9001));
   })();
 }

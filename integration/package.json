@@ -5,8 +5,7 @@
   "description": "Integration tests",
   "scripts": {
     "test": "karma start karma.conf.js",
-    "test:watch": "karma start karma.conf.js watch",
-    "tslint": "tslint --project ./tsconfig.json"
+    "test:watch": "karma start karma.conf.js watch"
   },
   "repository": {
     "type": "git",
@@ -40,7 +39,6 @@
     "karma-webpack": "^4.0.2",
     "pixi.js-legacy": "^5.1.2",
     "style-loader": "^1.0.0",
-    "tslint": "^5.19.0",
     "typescript": "^3.5.3",
     "url-search-params-polyfill": "^7.0.0",
     "webpack": "^4.39.2",

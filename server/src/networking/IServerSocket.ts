@@ -14,7 +14,7 @@ export default interface IServerSocket {
    *
    * @param eventListener the listener to add.
    */
-  addEventListener(eventListener: IServerSocketEventListener);
+  addEventListener(eventListener: IServerSocketEventListener): void;
 
   /**
    * Sends a message to one or more clients by their socket ids.
@@ -22,5 +22,5 @@ export default interface IServerSocket {
    * @param message the message to send to the clients.
    * @param socketIds a list of client socket ids.
    */
-  sendMessage(message: ValidServerMessage, ...socketIds: number[]);
+  sendMessage(message: ValidServerMessage, ...socketIds: number[]): void;
 }

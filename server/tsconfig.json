@@ -2,28 +2,20 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
+    "lib": ["ES2017"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "sourceMap": true,
-    "strict": true,
     "allowJs": false,
-    "outDir": "ts-out/",
+    "strict": true,
     "baseUrl": "../",
     "paths": {
       "@core/*": ["core/src/*"],
-      "@models/*": ["models/src/*"],
-      "@src/*": ["server/src/*"]
+      "@src/*": ["server/src/*"],
+      "@models/*": ["models/src/*"]
     },
-    "plugins": [
-      {
-        "name": "typescript-tslint-plugin",
-        "alwaysShowRuleFailuresAsWarnings": false,
-        "ignoreDefinitionFiles": true,
-        "configFile": "../tslint.json",
-        "suppressWhileTypeErrorsPresent": false
-      }
-    ]
+    "plugins": []
   },
-  "exclude": ["node_modules", "ts-out"],
+  "exclude": ["node_modules"],
   "references": [{ "path": "../core" }, { "path": "../models" }]
 }

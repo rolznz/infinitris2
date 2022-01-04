@@ -8,7 +8,8 @@
       "webpack/functions-deploy",
       "character-generator",
       "swr-firestore",
-      "client"
+      "client",
+      "server"
     ]
   },
   "scripts": {

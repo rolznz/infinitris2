@@ -10,7 +10,6 @@ import { ValidServerMessage } from '@src/networking/IServerSocket';
 
 describe('Room', () => {
   it('will add players to the simulation', () => {
-    // tslint:disable-next-line: no-empty
     const sendMessage = (
       message: ValidServerMessage,
       ...socketIds: number[]

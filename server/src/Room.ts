@@ -10,7 +10,10 @@ import IJoinRoomResponse, {
 import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
 import IPlayerDisconnectedEvent from '@core/networking/server/IPlayerDisconnectedEvent';
 import Grid from '@core/grid/Grid';
-import Block from '@core/block/Block';
+import IBlock from '@models/IBlock';
+import ICell from '@models/ICell';
+import ICellBehaviour from '@models/ICellBehaviour';
+import IGrid from '@models/IGrid';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -35,7 +38,12 @@ export default class Room implements ISimulationEventListener {
    * @param playerId the id of the player to add.
    */
   addPlayer(playerId: number) {
-    const player = new NetworkPlayer(playerId, this._simulation);
+    const player = new NetworkPlayer(
+      this._simulation,
+      playerId,
+      undefined,
+      undefined
+    );
     const currentPlayerIds: number[] = this._simulation.getPlayerIds();
     this._simulation.addPlayer(player);
 
@@ -85,42 +93,38 @@ export default class Room implements ISimulationEventListener {
   /**
    * @inheritdoc
    */
-  onSimulationInit(
-    simulation: Simulation // tslint:disable-next-line: no-empty
-  ) {}
+  onSimulationInit(simulation: Simulation) {}
 
   /**
    * @inheritdoc
    */
-  onSimulationStep(
-    simulation: Simulation // tslint:disable-next-line: no-empty
-  ) {}
+  onSimulationStep(simulation: Simulation) {}
 
   /**
    * @inheritdoc
    */
-  onBlockCreated(
-    block: IBlock // tslint:disable-next-line: no-empty
-  ) {}
+  onBlockCreated(block: IBlock) {}
 
   /**
    * @inheritdoc
    */
-  onBlockPlaced(
-    block: IBlock // tslint:disable-next-line: no-empty
-  ) {}
+  onBlockPlaced(block: IBlock) {}
 
   /**
    * @inheritdoc
    */
-  onBlockMoved(
-    block: IBlock // tslint:disable-next-line: no-empty
-  ) {}
+  onBlockMoved(block: IBlock) {}
 
   /**
    * @inheritdoc
    */
-  onLineCleared(
-    row: number // tslint:disable-next-line: no-empty
-  ) {}
+  onLineCleared(row: number) {}
+
+  onBlockCreateFailed(block: IBlock): void {}
+  onBlockDied(block: IBlock): void {}
+  onCellBehaviourChanged(
+    cell: ICell,
+    previousBehaviour: ICellBehaviour
+  ): void {}
+  onGridCollapsed(grid: IGrid): void {}
 }

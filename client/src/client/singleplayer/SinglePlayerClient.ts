@@ -136,22 +136,30 @@ export default class SinglePlayerClient
     this._simulation.followPlayer(player);
 
     if (options.numBots) {
-      const otherPlayers: IPlayer[] = [];
       for (let i = 0; i < options.numBots; i++) {
-        otherPlayers.push(
+        // find a random bot color - unique until there are more players than colors
+        // TODO: move to simulation and notify player of color switch if their color is already in use
+        let freeColors = colors
+          .map((color) => stringToHex(color.hex))
+          .filter(
+            (color) =>
+              this._simulation.players
+                .map((player) => player.color)
+                .indexOf(color) < 0
+          );
+        if (!freeColors.length) {
+          freeColors = colors.map((color) => stringToHex(color.hex));
+        }
+
+        this._simulation.addPlayer(
           new AIPlayer(
             this._simulation,
             i + 1,
             'Bot ' + (i + 1),
-            stringToHex(
-              colors[Math.floor(Math.random() * (colors.length - 1))].hex
-            ),
+            freeColors[Math.floor(Math.random() * (freeColors.length - 1))],
             options.botReactionDelay
           )
         );
-      }
-      for (const otherPlayer of otherPlayers) {
-        this._simulation.addPlayer(otherPlayer);
       }
     }
 

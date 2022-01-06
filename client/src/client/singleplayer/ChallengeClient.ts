@@ -20,7 +20,7 @@ import parseGrid from '@models/util/parseGrid';
 import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
-import IPlayer from '@models/IPlayer';
+import { IPlayer } from '@models/IPlayer';
 import {
   ChallengeStatusCode,
   IChallengeAttempt,

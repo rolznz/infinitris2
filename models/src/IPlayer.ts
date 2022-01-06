@@ -3,7 +3,13 @@ import IBlockEventListener from './IBlockEventListener';
 import ICell from './ICell';
 import { SimulationSettings } from './SimulationSettings';
 
-export default interface IPlayer {
+export type NetworkPlayerInfo = {
+  readonly nickname: string;
+  readonly color: number;
+  readonly id: number;
+};
+
+export interface IPlayer {
   get nickname(): string;
   get color(): number;
   get id(): number;
@@ -15,4 +21,10 @@ export default interface IPlayer {
   update(cells: ICell[][], settings: SimulationSettings): void;
   addEventListener(eventListener: IBlockEventListener): void;
   onLineClearCellReward(numRowsCleared: number): void;
+  createBlock(
+    row: number,
+    column: number,
+    rotation: number,
+    layoutIndex: number
+  ): void;
 }

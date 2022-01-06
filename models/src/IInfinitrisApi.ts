@@ -4,7 +4,7 @@ import InputMethod from './InputMethod';
 import ISimulationEventListener from './ISimulationEventListener';
 import { IChallenge } from './IChallenge';
 import IChallengeClient from './IChallengeClient';
-import IPlayer from './IPlayer';
+import { IPlayer } from './IPlayer';
 import { RendererType } from './RendererType';
 import { SimulationSettings } from './SimulationSettings';
 import { RendererQuality } from './RendererQuality';

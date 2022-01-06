@@ -8,14 +8,14 @@
     "sourceMap": true,
     "allowJs": false,
     "strict": true,
-    "baseUrl": "../",
+    "baseUrl": "./",
     "paths": {
-      "@core/*": ["core/src/*"],
-      "@src/*": ["client/src/*"],
-      "@models/*": ["models/src/*"]
+      "@core/*": ["../core/src/*"],
+      "@models/*": ["../models/src/*"],
+      "@src/*": ["src/*"]
     },
     "plugins": []
   },
-  "exclude": ["node_modules"],
-  "references": [{ "path": "../core" }, { "path": "../models" }]
+  "include": ["**/*", "../core/src/**/*", "../models/src/**/*"],
+  "exclude": ["node_modules", "../models/src/__tests__/*"]
 }

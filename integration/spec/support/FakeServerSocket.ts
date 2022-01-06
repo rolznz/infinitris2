@@ -1,6 +1,4 @@
-import IServerSocket, {
-  ValidServerMessage,
-} from '@server/networking/IServerSocket';
+import IServerSocket, { ServerMessage } from '@server/networking/IServerSocket';
 import IServerSocketEventListener from '@server/networking/IServerSocketEventListener';
 import IClientMessage from '@core/networking/client/IClientMessage';
 import FakeClientSocket from './FakeClientSocket';
@@ -26,7 +24,7 @@ export default class FakeServerSocket implements IServerSocket {
   /**
    * @inheritdoc
    */
-  sendMessage(message: ValidServerMessage, ...socketIds: number[]) {
+  sendMessage(message: ServerMessage, ...socketIds: number[]) {
     this._clientSockets
       .filter((socket) => socketIds.indexOf(socket.id) >= 0)
       .forEach((socket) => socket.onMessage(message));

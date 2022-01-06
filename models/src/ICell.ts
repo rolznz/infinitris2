@@ -1,7 +1,11 @@
 import IBlock from './IBlock';
 import CellType from './CellType';
 import ICellBehaviour from './ICellBehaviour';
-import IPlayer from './IPlayer';
+import { IPlayer } from './IPlayer';
+
+export type NetworkCellInfo = {
+  readonly playerId: number;
+};
 
 export default interface ICell {
   get row(): number;

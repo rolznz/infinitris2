@@ -4,7 +4,8 @@ import NetworkPlayer from '@core/player/NetworkPlayer';
 import IClientMessage from '@core/networking/client/IClientMessage';
 import { SendServerMessageFunction } from './networking/ServerSocket';
 import ServerMessageType from '@core/networking/server/ServerMessageType';
-import IJoinRoomResponse, {
+import {
+  IJoinRoomResponse,
   JoinRoomResponseStatus,
 } from '@core/networking/server/IJoinRoomResponse';
 import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
@@ -14,6 +15,9 @@ import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
+import { ServerMessage } from './networking/IServerSocket';
+import { IBlockCreatedEvent } from '@core/networking/server/IBlockCreatedEvent';
+import { tetrominoes } from '@models/index';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -23,6 +27,7 @@ export default class Room implements ISimulationEventListener {
     this._sendMessage = sendMessage;
     this._simulation = new Simulation(new Grid());
     this._simulation.init();
+    this._simulation.startInterval();
   }
 
   /**
@@ -46,12 +51,26 @@ export default class Room implements ISimulationEventListener {
     );
     const currentPlayerIds: number[] = this._simulation.getPlayerIds();
     this._simulation.addPlayer(player);
+    player.addEventListener(this);
 
     const joinRoomResponse: IJoinRoomResponse = {
       type: ServerMessageType.JOIN_ROOM_RESPONSE,
       data: {
         status: JoinRoomResponseStatus.OK,
         playerId: player.id,
+        grid: {
+          numRows: this._simulation.grid.numRows,
+          numColumns: this._simulation.grid.numColumns,
+          reducedCells: this._simulation.grid.reducedCells.map((cell) => ({
+            playerId: cell.player?.id || -1,
+          })),
+        },
+        blocks: [],
+        players: this._simulation.players.map((player) => ({
+          color: player.color,
+          id: player.id,
+          nickname: player.nickname,
+        })),
       },
     };
 
@@ -72,12 +91,12 @@ export default class Room implements ISimulationEventListener {
    */
   removePlayer(playerId: number) {
     this._simulation.removePlayer(playerId);
-    const playerIds: number[] = this._simulation.getPlayerIds();
+
     const playerDisconnectedMessage: IPlayerDisconnectedEvent = {
       type: ServerMessageType.PLAYER_DISCONNECTED,
       playerId,
     };
-    this._sendMessage(playerDisconnectedMessage, ...playerIds);
+    this._sendMessageToAllPlayers(playerDisconnectedMessage);
   }
 
   /**
@@ -103,7 +122,21 @@ export default class Room implements ISimulationEventListener {
   /**
    * @inheritdoc
    */
-  onBlockCreated(block: IBlock) {}
+  onBlockCreated(block: IBlock) {
+    console.log('Block created: ' + block.player.id);
+    const blockCreatedMessage: IBlockCreatedEvent = {
+      type: ServerMessageType.BLOCK_CREATED,
+      blockInfo: {
+        column: block.column,
+        row: block.row,
+        playerId: block.player.id,
+        isDropping: false,
+        layoutId: Object.values(tetrominoes).indexOf(block.initialLayout),
+        rotation: block.rotation,
+      },
+    };
+    this._sendMessageToAllPlayers(blockCreatedMessage);
+  }
 
   /**
    * @inheritdoc
@@ -127,4 +160,9 @@ export default class Room implements ISimulationEventListener {
     previousBehaviour: ICellBehaviour
   ): void {}
   onGridCollapsed(grid: IGrid): void {}
+
+  private _sendMessageToAllPlayers(message: ServerMessage) {
+    const playerIds: number[] = this._simulation.getPlayerIds();
+    this._sendMessage(message, ...playerIds);
+  }
 }

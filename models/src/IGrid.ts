@@ -1,5 +1,11 @@
 import { ICellEventListener } from './index';
-import ICell from './ICell';
+import ICell, { NetworkCellInfo } from './ICell';
+
+export type NetworkGridInfo = {
+  readonly numRows: number;
+  readonly numColumns: number;
+  readonly reducedCells: NetworkCellInfo[];
+};
 
 export default interface IGrid extends ICellEventListener {
   isTower(row: number): boolean;

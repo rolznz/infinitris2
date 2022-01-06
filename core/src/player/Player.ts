@@ -6,7 +6,7 @@ import IBlockEventListener from '@models/IBlockEventListener';
 import { SimulationSettings } from '@models/SimulationSettings';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
-import IPlayer from '@models/IPlayer';
+import { IPlayer } from '@models/IPlayer';
 import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import { FRAME_LENGTH } from '@core/Simulation';
@@ -94,7 +94,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
    * @param gridCells The cells within the grid.
    */
   update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
-    if (!this._block) {
+    if (!this._block && !this._simulation.isNetworkClient) {
       const highestPlayerScore = Math.max(
         ...this._simulation.players.map((player) => player.score)
       );
@@ -114,7 +114,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         }
       }
 
-      const layouts = Object.entries(tetrominoes)
+      const validLayouts = Object.entries(tetrominoes)
         .filter(
           (entry) =>
             (!simulationSettings.allowedBlockLayoutIds ||
@@ -125,32 +125,49 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         .map((entry) => entry[1]);
 
       const layout =
-        this._nextLayout || layouts[Math.floor(Math.random() * layouts.length)];
+        this._nextLayout ||
+        validLayouts[Math.floor(Math.random() * validLayouts.length)];
 
       this._nextLayout = undefined;
+      this._nextLayoutRotation = undefined;
       const column =
         this._lastPlacementColumn === undefined
           ? simulationSettings.randomBlockPlacement !== false
             ? Math.floor(Math.random() * gridCells[0].length)
             : Math.floor((gridCells[0].length - layout[0].length) / 2)
           : this._lastPlacementColumn;
-      const newBlock = new Block(
-        this,
-        layout,
+
+      this.createBlock(
         0,
         column,
         this._nextLayoutRotation || 0,
-        this._simulation,
-        this
+        Object.values(tetrominoes).indexOf(layout)
       );
-      if (newBlock.isAlive) {
-        this._block = newBlock;
-        this._nextSpawn = 0;
-        this._isFirstBlock = false;
-      }
-      this._nextLayoutRotation = undefined;
     } else {
-      this._block.update(gridCells, simulationSettings);
+      this._block?.update();
+    }
+  }
+
+  createBlock(
+    row: number,
+    column: number,
+    rotation: number,
+    layoutIndex: number
+  ) {
+    const layouts = Object.values(tetrominoes);
+    const newBlock = new Block(
+      this,
+      layouts[layoutIndex],
+      row,
+      column,
+      rotation,
+      this._simulation,
+      this
+    );
+    if (newBlock.isAlive) {
+      this._block = newBlock;
+      this._nextSpawn = 0;
+      this._isFirstBlock = false;
     }
   }
 

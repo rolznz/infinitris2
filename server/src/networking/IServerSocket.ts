@@ -1,12 +1,14 @@
 import IServerSocketEventListener from './IServerSocketEventListener';
-import IJoinRoomResponse from '@core/networking/server/IJoinRoomResponse';
+import { IJoinRoomResponse } from '@core/networking/server/IJoinRoomResponse';
 import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
 import IPlayerDisconnectedEvent from '@core/networking/server/IPlayerDisconnectedEvent';
+import { IBlockCreatedEvent } from '@core/networking/server/IBlockCreatedEvent';
 
-export type ValidServerMessage =
+export type ServerMessage =
   | IJoinRoomResponse
   | IPlayerConnectedEvent
-  | IPlayerDisconnectedEvent;
+  | IPlayerDisconnectedEvent
+  | IBlockCreatedEvent;
 
 export default interface IServerSocket {
   /**
@@ -22,5 +24,5 @@ export default interface IServerSocket {
    * @param message the message to send to the clients.
    * @param socketIds a list of client socket ids.
    */
-  sendMessage(message: ValidServerMessage, ...socketIds: number[]): void;
+  sendMessage(message: ServerMessage, ...socketIds: number[]): void;
 }

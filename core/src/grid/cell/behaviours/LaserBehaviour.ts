@@ -1,5 +1,5 @@
 import Cell from '../Cell';
-import ICellBehaviour from '../../../../../models/src/ICellBehaviour';
+import ICellBehaviour from '@models/ICellBehaviour';
 import CellType from '@models/CellType';
 import ICell from '@models/ICell';
 

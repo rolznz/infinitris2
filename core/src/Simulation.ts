@@ -7,7 +7,7 @@ import { SimulationSettings } from '@models/SimulationSettings';
 import IBlock from '@models/IBlock';
 import ICellBehaviour from '@models/ICellBehaviour';
 import ICell from '@models/ICell';
-import IPlayer from '@models/IPlayer';
+import { IPlayer } from '@models/IPlayer';
 import IGrid from '@models/IGrid';
 
 /**
@@ -28,8 +28,9 @@ export default class Simulation implements ISimulation {
   private _dayNumber: number;
   private _initialDayLength: number;
   private _nextDayLength: number;
+  private _isNetworkClient: boolean;
 
-  constructor(grid: Grid, settings: SimulationSettings = {}) {
+  constructor(grid: Grid, settings: SimulationSettings = {}, isClient = false) {
     this._eventListeners = [];
     this._players = {};
     this._runningTime = 0;
@@ -43,7 +44,12 @@ export default class Simulation implements ISimulation {
     this._nextDay = 0;
     this._nextDayLength = 0;
     this._initialDayLength = this._settings.dayLength || DEFAULT_DAY_LENGTH;
+    this._isNetworkClient = isClient;
     this._goToNextDay();
+  }
+
+  get isNetworkClient(): boolean {
+    return this._isNetworkClient;
   }
 
   get grid(): Grid {

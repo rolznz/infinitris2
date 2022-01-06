@@ -3,12 +3,12 @@ import IClientMessage from '@core/networking/client/IClientMessage';
 import IServerSocketEventListener from './IServerSocketEventListener';
 import { Server as WebSocketServer, Data as WebSocketData } from 'ws';
 import IClientSocket from './IClientSocket';
-import IServerSocket, { ValidServerMessage } from './IServerSocket';
+import IServerSocket, { ServerMessage } from './IServerSocket';
 
 const HEARTBEAT_TIMEOUT = 30000;
 
 export type SendServerMessageFunction = (
-  message: ValidServerMessage,
+  message: ServerMessage,
   ...socketIds: number[]
 ) => void;
 
@@ -39,7 +39,7 @@ export default class ServerSocket implements IServerSocket {
   /**
    * @inheritdoc
    */
-  sendMessage(message: ValidServerMessage, ...socketIds: number[]) {
+  sendMessage(message: ServerMessage, ...socketIds: number[]) {
     socketIds.forEach((socketId) => {
       const socket: ISocketWrapper | null = this._sockets[socketId];
       if (socket) {

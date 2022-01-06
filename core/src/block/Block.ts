@@ -4,7 +4,7 @@ import { SimulationSettings } from '@models/SimulationSettings';
 import Layout from '@models/Layout';
 import LayoutUtils from './layout/LayoutUtils';
 import ICell from '@models/ICell';
-import IPlayer from '@models/IPlayer';
+import { IPlayer } from '@models/IPlayer';
 import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
 import { checkMistake } from './checkMistake';
 import ISimulation from '@models/ISimulation';
@@ -405,7 +405,7 @@ export default class Block implements IBlock {
    *
    * Timers will be updated, triggering the block to fall or be placed if possible.
    */
-  update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
+  update() {
     if (!this._isAlive) {
       return;
     }
@@ -415,13 +415,13 @@ export default class Block implements IBlock {
       this._resetTimers();
     }
 
-    if (simulationSettings.gravityEnabled) {
+    if (this._simulation.settings.gravityEnabled) {
       --this._fallTimer;
     }
 
     let fell = false;
     if (this.isReadyToFall) {
-      fell = this.fall(gridCells);
+      fell = this.fall(this._simulation.grid.cells);
     }
 
     if (!fell && this.isReadyToLock) {

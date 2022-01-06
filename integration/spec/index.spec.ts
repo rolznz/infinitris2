@@ -2,7 +2,8 @@ import Server from '@server/Server';
 import NetworkClient from '@client/client/NetworkClient';
 import ClientMessageType from '@core/networking/client/ClientMessageType';
 import ServerMessageType from '@core/networking/server/ServerMessageType';
-import IJoinRoomResponse, {
+import {
+  IJoinRoomResponse,
   JoinRoomResponseStatus,
 } from '@core/networking/server/IJoinRoomResponse';
 import FakeServerSocket from './support/FakeServerSocket';

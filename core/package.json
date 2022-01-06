@@ -3,12 +3,12 @@
   "private": true,
   "version": "1.0.0",
   "description": "",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "clean": "rm -rf ts-out && find src spec -name \"*.js\" -delete && find src spec -name \"*.js.map\" -delete && find src spec -name \"*.d.ts\" -delete && find src spec -name \"*.d.ts.map\" -delete",
     "test": "ts-node node_modules/jasmine/bin/jasmine --config=spec/support/jasmine.json",
     "coverage": "nyc --cache false -r lcov -r text yarn test",
-    "build": "tsc -b",
-    "watch": "tsc -w -b"
+    "build": "echo \"This project should not be built\""
   },
   "nyc": {
     "extension": [
@@ -29,7 +29,7 @@
     "infinitris2",
     "core"
   ],
-  "author": "rolznz <roland.bewick@gmail.com>",
+  "author": "rolznz",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rolznz/infinitris2/issues"
@@ -41,9 +41,8 @@
     "jasmine": "^3.5.0",
     "module-alias": "^2.2.2",
     "nyc": "^14.1.1",
-    "source-map-support": "^0.5.13",
     "ts-node": "^8.4.1",
-    "typescript": "^3.5.3"
+    "typescript": "^4.1.3"
   },
   "_moduleAliases": {
     "@core": "src",

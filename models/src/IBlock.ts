@@ -1,12 +1,21 @@
 import Layout from './Layout';
 import ICell from './ICell';
-import IPlayer from './IPlayer';
+import { IPlayer } from './IPlayer';
 import { SimulationSettings } from './SimulationSettings';
 
 export type BlockCanMoveOptions = {
   allowMistakes: boolean;
   isMistake?: boolean;
   cells?: ICell[];
+};
+
+export type NetworkBlockInfo = {
+  readonly playerId: number;
+  readonly row: number;
+  readonly column: number;
+  readonly rotation: number;
+  readonly isDropping: boolean;
+  readonly layoutId: number;
 };
 
 export default interface IBlock {
@@ -22,7 +31,7 @@ export default interface IBlock {
   get layout(): Layout;
   get rotation(): number;
   get bottomRow(): number;
-  update(gridCells: ICell[][], simulationSettings: SimulationSettings): void;
+  update(): void;
   canMove(
     gridCells: ICell[][],
     dx: number,

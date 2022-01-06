@@ -1,19 +1,17 @@
 import 'jasmine';
 import 'module-alias/register';
 import Room from '@src/Room';
-import IJoinRoomResponse, {
+import {
+  IJoinRoomResponse,
   JoinRoomResponseStatus,
 } from '@core/networking/server/IJoinRoomResponse';
 import ServerMessageType from '@core/networking/server/ServerMessageType';
 import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
-import { ValidServerMessage } from '@src/networking/IServerSocket';
+import { ServerMessage } from '@src/networking/IServerSocket';
 
 describe('Room', () => {
   it('will add players to the simulation', () => {
-    const sendMessage = (
-      message: ValidServerMessage,
-      ...socketIds: number[]
-    ) => {};
+    const sendMessage = (message: ServerMessage, ...socketIds: number[]) => {};
     const room = new Room(sendMessage);
     const playerId = 1;
     room.addPlayer(playerId);
@@ -21,10 +19,10 @@ describe('Room', () => {
   });
 
   it('will send correct messages when the first player joins', () => {
-    const playerId = 1;
+    /*const playerId = 1;
 
     const joinRoomResponseMessage: IJoinRoomResponse = {
-      data: { playerId, status: JoinRoomResponseStatus.OK },
+      data: { playerId, status: JoinRoomResponseStatus.OK, },
       type: ServerMessageType.JOIN_ROOM_RESPONSE,
     };
 
@@ -34,7 +32,7 @@ describe('Room', () => {
     };
 
     const expectedMessages: Array<{
-      message: ValidServerMessage;
+      message: ServerMessage;
       socketIds: number[];
     }> = [
       { message: joinRoomResponseMessage, socketIds: [playerId] },
@@ -42,17 +40,15 @@ describe('Room', () => {
     ];
 
     const receivedMessages: Array<{
-      message: ValidServerMessage;
+      message: ServerMessage;
       socketIds: number[];
     }> = [];
-    const sendMessage = (
-      message: ValidServerMessage,
-      ...socketIds: number[]
-    ) => {
+    const sendMessage = (message: ServerMessage, ...socketIds: number[]) => {
       receivedMessages.push({ message, socketIds });
     };
     const room = new Room(sendMessage);
     room.addPlayer(playerId);
-    expect(receivedMessages).toEqual(expectedMessages);
+    expect(receivedMessages).toEqual(expectedMessages);*/
+    expect(true).toBe(false);
   });
 });

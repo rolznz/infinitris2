@@ -1,7 +1,7 @@
 {
   "name": "infinitris2-models",
   "private": true,
-  "version": "0.1.236",
+  "version": "0.1.242",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,7 @@
     "infinitris2",
     "app"
   ],
-  "author": "rolznz <roland.bewick@gmail.com>",
+  "author": "rolznz",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/rolznz/infinitris2/issues"

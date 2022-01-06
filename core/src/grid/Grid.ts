@@ -1,10 +1,8 @@
 import Cell from './cell/Cell';
-import IGridEventListener from '../../../models/src/IGridEventListener';
+import IGridEventListener from '@models/IGridEventListener';
 import ICell from '@models/ICell';
 import IGrid from '@models/IGrid';
 import ICellBehaviour from '@models/ICellBehaviour';
-import { CellType } from 'models';
-import NormalCellBehaviour from './cell/behaviours/NormalCellBehaviour';
 
 export default class Grid implements IGrid {
   private _cells: ICell[][];

@@ -1,3 +1,4 @@
+require('dotenv').config();
 import ServerSocket from './networking/ServerSocket';
 import Room from './Room';
 import IServerSocketEventListener from './networking/IServerSocketEventListener';
@@ -48,6 +49,7 @@ export default class Server implements IServerSocketEventListener {
     console.log('Received message from client ' + socket.id + ':', message);
     if (socket.roomId === undefined) {
       if (message.type === ClientMessageType.JOIN_ROOM_REQUEST) {
+        // TODO: handle full/wrong password/room ID
         socket.roomId = 0;
         this._rooms[socket.roomId].addPlayer(socket.id);
         console.log('Client ' + socket.id + ' joined room ' + socket.roomId);
@@ -65,6 +67,10 @@ export default class Server implements IServerSocketEventListener {
 // entry point
 if (process.argv[process.argv.length - 1] === 'launch') {
   (() => {
-    new Server(new ServerSocket('127.0.0.1', 9001));
+    if (!process.env.HOST || !process.env.PORT) {
+      throw new Error('HOST or PORT not specified in .env');
+    }
+    console.log(`Starting server at ${process.env.HOST}:${process.env.PORT}`);
+    new Server(new ServerSocket(process.env.HOST, parseInt(process.env.PORT)));
   })();
 }

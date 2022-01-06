@@ -1,5 +1,5 @@
 import IInfinitrisApi, { LaunchOptions } from '@models/IInfinitrisApi';
-import IClient from '../../../models/src/IClient';
+import IClient from '@models/IClient';
 import NetworkClient from '../client/NetworkClient';
 import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
 import ChallengeClient from '@src/client/singleplayer/ChallengeClient';

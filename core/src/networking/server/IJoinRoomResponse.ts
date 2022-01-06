@@ -1,3 +1,6 @@
+import { NetworkBlockInfo } from '@models/IBlock';
+import { NetworkGridInfo } from '@models/IGrid';
+import { NetworkPlayerInfo } from '@models/IPlayer';
 import IServerMessage from './IServerMessage';
 
 export enum JoinRoomResponseStatus {
@@ -10,6 +13,9 @@ type JoinRoomResponseData =
   | {
       status: JoinRoomResponseStatus.OK;
       playerId: number;
+      grid: NetworkGridInfo;
+      players: NetworkPlayerInfo[];
+      blocks: NetworkBlockInfo[];
     }
   | {
       status:
@@ -17,6 +23,6 @@ type JoinRoomResponseData =
         | JoinRoomResponseStatus.WRONG_PASSWORD;
     };
 
-export default interface IJoinRoomResponse extends IServerMessage {
+export interface IJoinRoomResponse extends IServerMessage {
   data: JoinRoomResponseData;
 }

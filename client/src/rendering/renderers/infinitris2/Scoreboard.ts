@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js-legacy';
-import IPlayer from '@models/IPlayer';
+import { IPlayer } from '@models/IPlayer';
 
 export class Scoreboard {
   private _scoreboardText!: PIXI.Text;

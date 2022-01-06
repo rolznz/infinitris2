@@ -2,7 +2,6 @@ import FlexBox from '@/components/ui/FlexBox';
 import { borderRadiuses } from '@/theme/theme';
 import { Button, Typography } from '@mui/material';
 import { IIngameChallengeAttempt } from 'infinitris2-models';
-//import ChallengeCompletionStats from 'infinitris2-models/dist/src/ChallengeCompletionStats';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { useUser } from '../../../state/UserStore';

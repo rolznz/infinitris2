@@ -6,7 +6,7 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import NormalCellBehaviour from './behaviours/NormalCellBehaviour';
 import IGrid from '@models/IGrid';
 import ICellEventListener from '@models/ICellEventListener';
-import IPlayer from '@models/IPlayer';
+import { IPlayer } from '@models/IPlayer';
 
 export default class Cell implements ICell {
   private _grid: IGrid;

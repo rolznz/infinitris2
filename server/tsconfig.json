@@ -16,6 +16,5 @@
     },
     "plugins": []
   },
-  "exclude": ["node_modules"],
-  "references": [{ "path": "../core" }, { "path": "../models" }]
+  "exclude": ["node_modules"]
 }

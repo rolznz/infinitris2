@@ -28,7 +28,6 @@ import IScoreboardEntry from './IScoreboardEntry';
 import ICellEventListener from './ICellEventListener';
 import IAffiliate from './IAffiliate';
 import IColor from './IColor';
-import IPlayer from './IPlayer';
 import IEntity from './IEntity';
 import ChallengeCompletionStats from './ChallengeCompletionStats';
 
@@ -54,6 +53,7 @@ export * from './colors';
 export * from './util/hexToString';
 export * from './util/stringToHex';
 export * from './SimulationSettings';
+export * from './IPlayer';
 
 export {
   exampleChallenges,
@@ -86,9 +86,10 @@ export {
   INetworkImpact,
   Timestamp,
   IScoreboardEntry,
-  IPlayer,
   ChallengeCompletionStats,
   DEFAULT_KEYBOARD_CONTROLS,
   getUserFriendlyKeyText,
   parseGrid,
 };
+
+export const modelsTest = 123;

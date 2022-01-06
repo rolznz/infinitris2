@@ -1,4 +1,4 @@
-import { InputAction } from 'models';
+import InputAction from '@models/InputAction';
 import { ActionListener } from './Input';
 
 const TIME_THRESHOLD = 300;
@@ -44,10 +44,14 @@ export default class TouchInput {
     this._movementThreshold =
       Math.min(window.innerWidth, window.innerHeight) / NUM_DIVISIONS;
 
-    this._pointerX = this._lastActionX = this._pointerStartX =
-      event.touches[0].clientX;
-    this._pointerY = this._lastActionY = this._pointerStartY =
-      event.touches[0].clientY;
+    this._pointerX =
+      this._lastActionX =
+      this._pointerStartX =
+        event.touches[0].clientX;
+    this._pointerY =
+      this._lastActionY =
+      this._pointerStartY =
+        event.touches[0].clientY;
   };
 
   private _onTouchEnd = () => {

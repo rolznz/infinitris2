@@ -3,7 +3,7 @@ import IBlockEventListener from './IBlockEventListener';
 import ICellEventListener from './ICellEventListener';
 import IGrid from './IGrid';
 import IGridEventListener from './IGridEventListener';
-import IPlayer from './IPlayer';
+import { IPlayer } from './IPlayer';
 
 export default interface ISimulation
   extends IBlockEventListener,
@@ -17,5 +17,6 @@ export default interface ISimulation
   get dayProportion(): number;
   get players(): IPlayer[];
   get settings(): SimulationSettings;
+  get isNetworkClient(): boolean;
   isFollowingPlayerId(playerId: number): boolean;
 }

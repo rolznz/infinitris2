@@ -1,4 +1,4 @@
-import ICellBehaviour from '../../../../../models/src/ICellBehaviour';
+import ICellBehaviour from '@models/ICellBehaviour';
 import ICell from '@models/ICell';
 import CellType from '@models/CellType';
 import KeyBehaviour from './KeyBehaviour';

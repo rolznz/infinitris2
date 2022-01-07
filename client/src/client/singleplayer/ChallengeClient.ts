@@ -94,6 +94,7 @@ export default class ChallengeClient
     this._blockDied = true;
   }
 
+  onBlockDestroyed(block: IBlock): void {}
   /**
    * @inheritdoc
    */

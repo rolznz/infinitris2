@@ -34,6 +34,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     nickname: string = 'Guest',
     color: number = 0xf33821
   ) {
+    console.log('Created player ' + id);
     this._id = id;
     this._eventListeners = [];
     this._score = 0;
@@ -157,6 +158,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     const layouts = Object.values(tetrominoes);
     const newBlock = new Block(
       this,
+      layoutIndex,
       layouts[layoutIndex],
       row,
       column,
@@ -164,11 +166,17 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       this._simulation,
       this
     );
+    console.log('Block created: ', newBlock.isAlive);
     if (newBlock.isAlive) {
       this._block = newBlock;
       this._nextSpawn = 0;
       this._isFirstBlock = false;
     }
+  }
+
+  destroy() {
+    console.log('Destroying player ' + this._id);
+    this._removeBlock();
   }
 
   /**
@@ -230,11 +238,21 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._removeBlock();
   }
 
+  /**
+   * @inheritdoc
+   */
+  onBlockDestroyed(block: IBlock) {
+    this._eventListeners.forEach((listener) =>
+      listener.onBlockDestroyed(block)
+    );
+  }
+
   onLineClearCellReward(numRowsCleared: number) {
     this._score += numRowsCleared;
   }
 
   private _removeBlock() {
+    this._block?.destroy();
     this._block = undefined;
   }
 

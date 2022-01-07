@@ -57,6 +57,7 @@ export default class InfinitrisApi implements IInfinitrisApi {
           onBlockCreateFailed() {},
           onBlockMoved() {},
           //onBlockWrapped() {},
+          onBlockDestroyed() {},
           onBlockDied() {},
           onBlockPlaced() {},
           onLineCleared() {},

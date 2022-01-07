@@ -37,6 +37,13 @@ export default interface IBlockEventListener {
   onBlockDied(block: IBlock): void;
 
   /**
+   * Triggered when a block is removed from the grid (placed, died, or player removed from game)
+   *
+   * @param block The block that was destroyed
+   */
+  onBlockDestroyed(block: IBlock): void;
+
+  /**
    * TODO: remove - wrapping should be seamless
    * Triggered when a block wraps to the other side of the grid
    *

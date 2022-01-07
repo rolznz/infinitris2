@@ -17,7 +17,13 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
 import { ServerMessage } from './networking/IServerSocket';
 import { IBlockCreatedEvent } from '@core/networking/server/IBlockCreatedEvent';
-import { tetrominoes } from '@models/index';
+import {
+  colors,
+  hexToString,
+  NetworkPlayerInfo,
+  stringToHex,
+  tetrominoes,
+} from '@models/index';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -40,24 +46,25 @@ export default class Room implements ISimulationEventListener {
   /**
    * Creates a player and adds it to the room and the room's simulation.
    *
-   * @param playerId the id of the player to add.
+   * @param playerId id of new player
+   * @param playerInfo
    */
-  addPlayer(playerId: number) {
-    const player = new NetworkPlayer(
+  addPlayer(playerId: number /*, playerInfo: NetworkPlayerInfo*/) {
+    const newPlayer = new NetworkPlayer(
       this._simulation,
       playerId,
-      undefined,
-      undefined
+      'Player ' + playerId,
+      stringToHex(colors[Math.floor(Math.random() * colors.length)].hex)
     );
     const currentPlayerIds: number[] = this._simulation.getPlayerIds();
-    this._simulation.addPlayer(player);
-    player.addEventListener(this);
+    this._simulation.addPlayer(newPlayer);
+    newPlayer.addEventListener(this);
 
     const joinRoomResponse: IJoinRoomResponse = {
       type: ServerMessageType.JOIN_ROOM_RESPONSE,
       data: {
         status: JoinRoomResponseStatus.OK,
-        playerId: player.id,
+        playerId: newPlayer.id,
         grid: {
           numRows: this._simulation.grid.numRows,
           numColumns: this._simulation.grid.numColumns,
@@ -65,20 +72,34 @@ export default class Room implements ISimulationEventListener {
             playerId: cell.player?.id || -1,
           })),
         },
-        blocks: [],
-        players: this._simulation.players.map((player) => ({
-          color: player.color,
-          id: player.id,
-          nickname: player.nickname,
+        blocks: this._simulation.players
+          .map((player) => player.block as IBlock)
+          .filter((block) => block)
+          .map((block) => ({
+            playerId: block.player.id,
+            row: block.row,
+            column: block.column,
+            rotation: block.rotation,
+            isDropping: block.isDropping,
+            layoutId: block.layoutId,
+          })),
+        players: this._simulation.players.map((existingPlayer) => ({
+          color: existingPlayer.color,
+          id: existingPlayer.id,
+          nickname: existingPlayer.nickname,
         })),
       },
     };
 
-    this._sendMessage(joinRoomResponse, player.id);
+    this._sendMessage(joinRoomResponse, newPlayer.id);
 
     const newPlayerMessage: IPlayerConnectedEvent = {
       type: ServerMessageType.PLAYER_CONNECTED,
-      playerId: player.id,
+      playerInfo: {
+        id: newPlayer.id,
+        color: newPlayer.color,
+        nickname: newPlayer.nickname,
+      },
     };
 
     this._sendMessage(newPlayerMessage, ...currentPlayerIds);
@@ -131,7 +152,7 @@ export default class Room implements ISimulationEventListener {
         row: block.row,
         playerId: block.player.id,
         isDropping: false,
-        layoutId: Object.values(tetrominoes).indexOf(block.initialLayout),
+        layoutId: block.layoutId,
         rotation: block.rotation,
       },
     };
@@ -155,6 +176,7 @@ export default class Room implements ISimulationEventListener {
 
   onBlockCreateFailed(block: IBlock): void {}
   onBlockDied(block: IBlock): void {}
+  onBlockDestroyed(block: IBlock): void {}
   onCellBehaviourChanged(
     cell: ICell,
     previousBehaviour: ICellBehaviour

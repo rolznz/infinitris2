@@ -27,4 +27,5 @@ export interface IPlayer {
     rotation: number,
     layoutIndex: number
   ): void;
+  destroy(): void;
 }

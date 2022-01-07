@@ -1,7 +1,8 @@
+import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
 import IJoinRoomRequest from '@core/networking/client/IJoinRoomRequest';
 import IClientSocketEventListener from './IClientSocketEventListener';
 
-export type ValidClientMessage = IJoinRoomRequest;
+export type ValidClientMessage = IJoinRoomRequest | IClientBlockMovedEvent;
 
 export default interface IClientSocket {
   /**

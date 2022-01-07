@@ -8,7 +8,7 @@
 
 # Run (Development)
 
-`yarn start`
+`yarn dev`
 
 Open http://localhost:8080
 

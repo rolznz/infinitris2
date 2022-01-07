@@ -27,6 +27,7 @@ export default interface IBlock {
   get column(): number;
   get centreX(): number;
   get isDropping(): boolean;
+  get layoutId(): number;
   get initialLayout(): Layout;
   get layout(): Layout;
   get rotation(): number;
@@ -50,4 +51,5 @@ export default interface IBlock {
   cancelDrop(): void;
   slowDown(row: number): void;
   die(): void;
+  destroy(): void;
 }

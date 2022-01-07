@@ -18,9 +18,19 @@ import IClient from '@models/IClient';
 import Input from '@src/input/Input';
 import { IPlayer } from '@models/IPlayer';
 import { IBlockCreatedEvent } from '@core/networking/server/IBlockCreatedEvent';
+import ISimulationEventListener from '@models/ISimulationEventListener';
+import IBlock from '@models/IBlock';
+import ICell from '@models/ICell';
+import ICellBehaviour from '@models/ICellBehaviour';
+import IGrid from '@models/IGrid';
+import ISimulation from '@models/ISimulation';
+import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
+import NetworkPlayer from '@core/player/NetworkPlayer';
+import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
+import IPlayerDisconnectedEvent from '@core/networking/server/IPlayerDisconnectedEvent';
 
 export default class NetworkClient
-  implements IClient, IClientSocketEventListener
+  implements IClient, IClientSocketEventListener, ISimulationEventListener
 {
   private _socket: IClientSocket;
   // FIXME: restructure to not require definite assignment
@@ -28,6 +38,7 @@ export default class NetworkClient
   private _simulation!: Simulation;
   private _controls?: ControlSettings;
   private _playerInfo?: IPlayer;
+  private _playerId?: number;
   private _input: Input | undefined;
   constructor(
     url: string,
@@ -47,9 +58,10 @@ export default class NetworkClient
   /**
    * @inheritdoc
    */
-  onConnect() {
+  async onConnect() {
     console.log('Connected');
     this._renderer = new Infinitris2Renderer();
+    await this._renderer.create();
     this._socket.sendMessage({ type: ClientMessageType.JOIN_ROOM_REQUEST });
   }
 
@@ -69,7 +81,7 @@ export default class NetworkClient
       const joinResponse = message as IJoinRoomResponse;
       const joinResponseData = joinResponse.data;
       if (joinResponseData.status === JoinRoomResponseStatus.OK) {
-        await this._renderer.create();
+        this._playerId = joinResponseData.playerId;
         this._simulation = new Simulation(
           new Grid(
             joinResponseData.grid.numColumns,
@@ -78,7 +90,7 @@ export default class NetworkClient
           {},
           true
         );
-        this._simulation.addEventListener(this._renderer);
+        this._simulation.addEventListener(this._renderer, this);
         this._simulation.init();
         console.log('Response: ', joinResponseData);
         for (let player of joinResponseData.players) {
@@ -97,9 +109,25 @@ export default class NetworkClient
               this._controls
             );
           } else {
-            // TODO:
-            //this._simulation.addPlayer(new NetworkPlayer(this._simulation, player.id, player.nickname, player.color));
+            this._simulation.addPlayer(
+              new NetworkPlayer(
+                this._simulation,
+                player.id,
+                player.nickname,
+                player.color
+              )
+            );
           }
+        }
+        for (let block of joinResponseData.blocks) {
+          this._simulation
+            .getPlayer(block.playerId)
+            .createBlock(
+              block.row,
+              block.column,
+              block.rotation,
+              block.layoutId
+            );
         }
         this._simulation.startInterval();
       } else {
@@ -113,6 +141,20 @@ export default class NetworkClient
         blockInfo.column,
         blockInfo.rotation,
         blockInfo.layoutId
+      );
+    } else if (message.type === ServerMessageType.PLAYER_CONNECTED) {
+      const playerInfo = (message as IPlayerConnectedEvent).playerInfo;
+      this._simulation.addPlayer(
+        new NetworkPlayer(
+          this._simulation,
+          playerInfo.id,
+          playerInfo.nickname,
+          playerInfo.color
+        )
+      );
+    } else if (message.type === ServerMessageType.PLAYER_DISCONNECTED) {
+      this._simulation.removePlayer(
+        (message as IPlayerDisconnectedEvent).playerId
       );
     }
   }
@@ -139,4 +181,31 @@ export default class NetworkClient
     this._renderer.destroy();
     this._input?.destroy();
   }
+
+  onSimulationInit(simulation: ISimulation): void {}
+  onSimulationStep(simulation: ISimulation): void {}
+  onBlockCreated(block: IBlock): void {}
+  onBlockCreateFailed(block: IBlock): void {}
+  onBlockPlaced(block: IBlock): void {}
+  onBlockMoved(block: IBlock): void {
+    /*if (block.player.id === this._playerId) {
+      const blockMovedEvent: IClientBlockMovedEvent = {
+        type: ClientMessageType.BLOCK_MOVED,
+        data: {
+          column: block.column,
+          row: block.row,
+          rotation: block.rotation,
+        },
+      };
+      this._socket.sendMessage(blockMovedEvent);
+    }*/
+  }
+  onBlockDied(block: IBlock): void {}
+  onBlockDestroyed(block: IBlock): void {}
+  onCellBehaviourChanged(
+    cell: ICell,
+    previousBehaviour: ICellBehaviour
+  ): void {}
+  onLineCleared(row: number): void {}
+  onGridCollapsed(grid: IGrid): void {}
 }

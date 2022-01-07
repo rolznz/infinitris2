@@ -146,8 +146,11 @@ export default class Simulation implements ISimulation {
    * @param playerId the id of the player to remove.
    */
   removePlayer(playerId: number) {
-    // TODO: Also delete their block
-    delete this._players[playerId];
+    const player = this._players[playerId];
+    if (player) {
+      player.destroy();
+      delete this._players[playerId];
+    }
   }
 
   /**
@@ -194,6 +197,15 @@ export default class Simulation implements ISimulation {
    */
   onBlockDied(block: IBlock) {
     this._eventListeners.forEach((listener) => listener.onBlockDied(block));
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onBlockDestroyed(block: IBlock) {
+    this._eventListeners.forEach((listener) =>
+      listener.onBlockDestroyed(block)
+    );
   }
 
   /**

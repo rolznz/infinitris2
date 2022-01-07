@@ -1,5 +1,6 @@
+import { NetworkPlayerInfo } from '@models/IPlayer';
 import IServerMessage from './IServerMessage';
 
 export default interface IPlayerConnectedEvent extends IServerMessage {
-  playerId: number;
+  playerInfo: NetworkPlayerInfo;
 }

@@ -67,6 +67,7 @@ export default class SinglePlayerClient
    * @inheritdoc
    */
   onBlockDied(block: IBlock) {}
+  onBlockDestroyed(block: IBlock): void {}
   /**
    * @inheritdoc
    */

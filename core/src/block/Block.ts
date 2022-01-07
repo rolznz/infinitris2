@@ -29,9 +29,11 @@ export default class Block implements IBlock {
   private _slowdownRows: number[];
   private _gridCells: ICell[][];
   private _simulation: ISimulation;
+  private _layoutId: number;
 
   constructor(
     player: IPlayer,
+    layoutId: number,
     layout: Layout,
     row: number,
     column: number,
@@ -46,6 +48,7 @@ export default class Block implements IBlock {
     this._rotation = rotation;
     this._initialLayout = layout;
     this._layout = layout;
+    this._layoutId = layoutId;
     this._isDropping = false;
     this._cancelDrop = false;
     this._eventListener = eventListener;
@@ -80,6 +83,10 @@ export default class Block implements IBlock {
     if (this._isAlive) {
       this._eventListener?.onBlockCreated(this);
     }
+  }
+
+  get layoutId(): number {
+    return this._layoutId;
   }
 
   get player(): IPlayer {
@@ -162,8 +169,13 @@ export default class Block implements IBlock {
 
   die() {
     this._isAlive = false;
-    this._removeCells();
+    this.destroy();
     this._eventListener?.onBlockDied(this);
+  }
+
+  destroy() {
+    this._removeCells();
+    this._eventListener?.onBlockDestroyed(this);
   }
 
   /**
@@ -391,10 +403,10 @@ export default class Block implements IBlock {
    * The block's opacity will be transferred into the cells it currently occupies.
    */
   place() {
+    console.log('Placing block for player ' + this.player.id);
     this._cells.forEach((cell) => {
       cell.isEmpty = false;
       cell.player = this._player;
-      cell.removeBlock(this);
       cell.behaviour = new NormalCellBehaviour(this._player.color);
     });
     this._eventListener?.onBlockPlaced(this);

@@ -427,7 +427,9 @@ export default class Infinitris2Renderer
   /**
    * @inheritdoc
    */
-  onBlockDied(block: IBlock) {
+  onBlockDied(block: IBlock) {}
+
+  onBlockDestroyed(block: IBlock): void {
     this._removeBlock(block);
   }
 
@@ -437,7 +439,6 @@ export default class Infinitris2Renderer
   onBlockPlaced(block: IBlock) {
     this._renderCells(this._grid.grid.reducedCells); //TODO: only render block + neighbour cells
     //this._renderCells(block.cells);
-    this._removeBlock(block);
   }
 
   /**

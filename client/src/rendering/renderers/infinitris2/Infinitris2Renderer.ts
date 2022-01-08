@@ -500,11 +500,10 @@ export default class Infinitris2Renderer
    * @inheritdoc
    */
   onSimulationStep() {
-    this._scoreboard.update(this._simulation.players);
-
     const followingPlayer = this._simulation.players.find((player) =>
       this._simulation.isFollowingPlayerId(player.id)
     );
+    this._scoreboard.update(this._simulation.players, followingPlayer);
     this._scoreChangeIndicator.update(followingPlayer);
     this._spawnDelayIndicator.update(followingPlayer);
     if (followingPlayer && followingPlayer.block) {

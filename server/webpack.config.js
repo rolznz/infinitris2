@@ -23,7 +23,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.js'],
-    plugins: [new TsConfigPathsPlugin({ baseUrl: '../' })],
+    plugins: [new TsConfigPathsPlugin({ baseUrl: './' })],
   },
   plugins: [
     new webpack.DefinePlugin({

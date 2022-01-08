@@ -1,16 +1,22 @@
 {
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Debug Server",
-            "runtimeExecutable": "npm",
-            "runtimeArgs": [
-                "run-script", "debug",
-            ],
-            "port": 9229,
-            "cwd": "${workspaceFolder}/server",
-        },
-    ]
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Infinitris Server",
+      "runtimeExecutable": "yarn",
+      "runtimeArgs": ["debug"],
+      "port": 9229,
+      "cwd": "${workspaceFolder}/server"
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug Client frontend",
+      "url": "http://localhost:8080/?single-player&numBots=21",
+      "webRoot": "${workspaceFolder}/client",
+      "sourceMaps": true
+    }
+  ]
 }

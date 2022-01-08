@@ -74,8 +74,8 @@ export default class Block implements IBlock {
       }
     );
 
-    if (!otherBlockInArea && this.canMove(this._gridCells, 0, 0, 0)) {
-      this._updateCells(this._gridCells);
+    if (!otherBlockInArea && this.canMove(0, 0, 0)) {
+      this._updateCells();
     } else {
       this._isAlive = false;
       this._eventListener?.onBlockCreateFailed(this);
@@ -204,22 +204,19 @@ export default class Block implements IBlock {
   /**
    * Determines whether the block can move down one row.
    *
-   * @param gridCells the cells of the grid.
    */
-  canFall(gridCells: ICell[][]) {
-    return this.canMove(gridCells, 0, 1, 0);
+  canFall() {
+    return this.canMove(0, 1, 0);
   }
 
   /**
    * Determines whether the block can move to a new position.
    *
-   * @param gridCells the cells of the grid.
    * @param dx the delta of the x position (column).
    * @param dy the delta of the x position (row).
    * @param dr the delta of the rotation.
    */
   canMove(
-    gridCells: ICell[][],
     dx: number,
     dy: number,
     dr: number,
@@ -232,7 +229,7 @@ export default class Block implements IBlock {
     if (!this._isDropping || (dx === 0 && dr === 0)) {
       const newCells: ICell[] = [];
       this._loopCells(
-        gridCells,
+        this._simulation.grid.cells,
         this._column + dx,
         this._row + dy,
         this._rotation + dr,
@@ -253,7 +250,7 @@ export default class Block implements IBlock {
 
       // if attempting to rotate but the result is a non-rotation movement in any direction (up to 2 cells), return false
       if (dr !== 0) {
-        const gridNumColumns = gridCells[0].length;
+        const gridNumColumns = this._simulation.grid.numColumns;
         for (let x = -2; x <= 2; x++) {
           for (let y = -2; y <= 2; y++) {
             if (
@@ -290,18 +287,12 @@ export default class Block implements IBlock {
    *
    * @returns true if the block was moved.
    */
-  move(
-    gridCells: ICell[][],
-    dx: number,
-    dy: number,
-    dr: number,
-    force: boolean = false
-  ): boolean {
-    const maxAttempts = dr !== 0 ? 44 : 1;
+  move(dx: number, dy: number, dr: number, force: boolean = false): boolean {
+    const maxAttempts = !force && dr !== 0 ? 44 : 1;
     let canMove = false;
     for (let i = 0; i < maxAttempts; i++) {
       let drClamped = dr !== 0 ? (((dr + i * dr) % 4) + 4) % 4 : 0;
-      if (dr !== 0) {
+      if (!force && dr !== 0) {
         // order to prioritize downward rotation:
         // cycle 0 iteration 0-3: dx=0, dy=0
         // cycle 1 iteration 4-7: dx=dr, dy=0
@@ -336,10 +327,14 @@ export default class Block implements IBlock {
       // don't allow movement without rotation and 180 degree rotations
       // Note: has additional check in canMove to ensure rotation does not result in a simple movement
       // (e.g. for 180 degree rotation with up/down movement on an I block)
-      if ((drClamped === 0 || (drClamped === 2 && dy === 0)) && dr !== 0) {
+      if (
+        !force &&
+        (drClamped === 0 || (drClamped === 2 && dy === 0)) &&
+        dr !== 0
+      ) {
         continue;
       }
-      canMove = force || this.canMove(gridCells, dx, dy, drClamped);
+      canMove = force || this.canMove(dx, dy, drClamped);
       if (canMove) {
         //const gridNumColumns = gridCells[0].length;
         this._column += dx;
@@ -361,7 +356,7 @@ export default class Block implements IBlock {
 
         this._row += dy;
         this._rotation += drClamped;
-        this._updateCells(gridCells);
+        this._updateCells();
         if (drClamped !== 0) {
           this._layout = LayoutUtils.rotate(
             this._initialLayout,
@@ -388,7 +383,7 @@ export default class Block implements IBlock {
    * @param gridCells
    */
   fall(gridCells: ICell[][]): boolean {
-    const fell = this.move(gridCells, 0, 1, 0);
+    const fell = this.move(0, 1, 0);
     if (!fell) {
       this._lockTimer--;
     } else {
@@ -453,10 +448,10 @@ export default class Block implements IBlock {
     this._cells.length = 0;
   }
 
-  private _updateCells(gridCells: ICell[][]) {
+  private _updateCells() {
     this._removeCells();
     this._loopCells(
-      gridCells,
+      this._simulation.grid.cells,
       this._column,
       this._row,
       this._rotation,

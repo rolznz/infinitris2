@@ -36,12 +36,7 @@ export default class AIPlayer extends Player {
           gridCells
         );
         if (nextAction.dx || nextAction.dy || nextAction.dr) {
-          this._block.move(
-            gridCells,
-            nextAction.dx,
-            nextAction.dy,
-            nextAction.dr
-          );
+          this._block.move(nextAction.dx, nextAction.dy, nextAction.dr);
         } else if (nextAction.drop) {
           ++this._nextDrop;
           if (this._nextDrop > dropReflexDelay) {

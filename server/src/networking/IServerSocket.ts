@@ -3,12 +3,14 @@ import { IJoinRoomResponse } from '@core/networking/server/IJoinRoomResponse';
 import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
 import IPlayerDisconnectedEvent from '@core/networking/server/IPlayerDisconnectedEvent';
 import { IBlockCreatedEvent } from '@core/networking/server/IBlockCreatedEvent';
+import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
 
 export type ServerMessage =
   | IJoinRoomResponse
   | IPlayerConnectedEvent
   | IPlayerDisconnectedEvent
-  | IBlockCreatedEvent;
+  | IBlockCreatedEvent
+  | IServerBlockMovedEvent;
 
 export default interface IServerSocket {
   /**

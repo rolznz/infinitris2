@@ -33,7 +33,7 @@ export class DumbAIBehaviour implements IAIBehaviour {
           allowMistakes: this._allowMistakes,
         };
         for (; dy < gridCells.length; dy++) {
-          if (!block.canMove(gridCells, dx, dy, dr, canMoveOptions)) {
+          if (!block.canMove(dx, dy, dr, canMoveOptions)) {
             hit = true;
             break;
           }

@@ -34,19 +34,12 @@ export default interface IBlock {
   get bottomRow(): number;
   update(): void;
   canMove(
-    gridCells: ICell[][],
     dx: number,
     dy: number,
     dr: number,
     options?: BlockCanMoveOptions
   ): boolean;
-  move(
-    gridCells: ICell[][],
-    dx: number,
-    dy: number,
-    dr: number,
-    force?: boolean
-  ): boolean;
+  move(dx: number, dy: number, dr: number, force?: boolean): boolean;
   drop(): void;
   cancelDrop(): void;
   slowDown(row: number): void;

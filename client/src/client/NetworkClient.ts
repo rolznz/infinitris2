@@ -28,6 +28,7 @@ import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMove
 import NetworkPlayer from '@core/player/NetworkPlayer';
 import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
 import IPlayerDisconnectedEvent from '@core/networking/server/IPlayerDisconnectedEvent';
+import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
 
 export default class NetworkClient
   implements IClient, IClientSocketEventListener, ISimulationEventListener
@@ -133,15 +134,6 @@ export default class NetworkClient
       } else {
         alert('Could not join room: ' + joinResponseData.status);
       }
-    } else if (message.type === ServerMessageType.BLOCK_CREATED) {
-      const blockInfo = (message as IBlockCreatedEvent).blockInfo;
-      const player = this._simulation.getPlayer(blockInfo.playerId);
-      player.createBlock(
-        blockInfo.row,
-        blockInfo.column,
-        blockInfo.rotation,
-        blockInfo.layoutId
-      );
     } else if (message.type === ServerMessageType.PLAYER_CONNECTED) {
       const playerInfo = (message as IPlayerConnectedEvent).playerInfo;
       this._simulation.addPlayer(
@@ -155,6 +147,24 @@ export default class NetworkClient
     } else if (message.type === ServerMessageType.PLAYER_DISCONNECTED) {
       this._simulation.removePlayer(
         (message as IPlayerDisconnectedEvent).playerId
+      );
+    } else if (message.type === ServerMessageType.BLOCK_CREATED) {
+      const blockInfo = (message as IBlockCreatedEvent).blockInfo;
+      const player = this._simulation.getPlayer(blockInfo.playerId);
+      player.createBlock(
+        blockInfo.row,
+        blockInfo.column,
+        blockInfo.rotation,
+        blockInfo.layoutId
+      );
+    } else if (message.type === ServerMessageType.BLOCK_MOVED) {
+      const blockInfo = (message as IServerBlockMovedEvent).data;
+      const block = this._simulation.getPlayer(blockInfo.playerId).block;
+      block?.move(
+        blockInfo.column - block.column,
+        blockInfo.row - block.row,
+        blockInfo.rotation - block.rotation,
+        true
       );
     }
   }
@@ -188,7 +198,7 @@ export default class NetworkClient
   onBlockCreateFailed(block: IBlock): void {}
   onBlockPlaced(block: IBlock): void {}
   onBlockMoved(block: IBlock): void {
-    /*if (block.player.id === this._playerId) {
+    if (block.player.id === this._playerId) {
       const blockMovedEvent: IClientBlockMovedEvent = {
         type: ClientMessageType.BLOCK_MOVED,
         data: {
@@ -198,7 +208,7 @@ export default class NetworkClient
         },
       };
       this._socket.sendMessage(blockMovedEvent);
-    }*/
+    }
   }
   onBlockDied(block: IBlock): void {}
   onBlockDestroyed(block: IBlock): void {}

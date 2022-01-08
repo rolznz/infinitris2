@@ -1,5 +1,5 @@
 import Simulation from '@core/Simulation';
-import ISimulationEventListener from 'models/src/ISimulationEventListener';
+import ISimulationEventListener from '@models/ISimulationEventListener';
 import NetworkPlayer from '@core/player/NetworkPlayer';
 import IClientMessage from '@core/networking/client/IClientMessage';
 import { SendServerMessageFunction } from './networking/ServerSocket';
@@ -24,6 +24,9 @@ import {
   stringToHex,
   tetrominoes,
 } from '@models/index';
+import ClientMessageType from '@core/networking/client/ClientMessageType';
+import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
+import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -127,7 +130,28 @@ export default class Room implements ISimulationEventListener {
    * @param message the message the client sent.
    */
   onClientMessage(playerId: number, message: IClientMessage) {
-    console.log('Room received message from player ' + playerId + ':', message);
+    //console.log('Room received message from player ' + playerId + ':', message);
+    if (message.type === ClientMessageType.BLOCK_MOVED) {
+      const block = this._simulation.getPlayer(playerId)?.block;
+      if (block) {
+        const blockInfo = (message as IClientBlockMovedEvent).data;
+        block.move(
+          blockInfo.column - block.column,
+          blockInfo.row - block.row,
+          blockInfo.rotation - block.rotation,
+          true
+        );
+      } else {
+        console.error('Block not set for player ' + playerId);
+      }
+    } else {
+      console.error(
+        'Unsupported room message received from ' +
+          playerId +
+          ': ' +
+          message.type
+      );
+    }
   }
 
   /**
@@ -167,7 +191,23 @@ export default class Room implements ISimulationEventListener {
   /**
    * @inheritdoc
    */
-  onBlockMoved(block: IBlock) {}
+  onBlockMoved(block: IBlock) {
+    const playerIds = this._simulation
+      .getPlayerIds()
+      .filter((playerId) => playerId != block.player.id);
+    for (const playerId of playerIds) {
+      const blockMovedEvent: IServerBlockMovedEvent = {
+        type: ServerMessageType.BLOCK_MOVED,
+        data: {
+          playerId,
+          column: block.column,
+          row: block.row,
+          rotation: block.rotation,
+        },
+      };
+      this._sendMessage(blockMovedEvent, ...playerIds);
+    }
+  }
 
   /**
    * @inheritdoc

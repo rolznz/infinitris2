@@ -68,7 +68,6 @@ export default class Input {
       case InputAction.MoveRight:
       case InputAction.MoveDown:
         block?.move(
-          this._grid.cells,
           action === InputAction.MoveLeft
             ? -1
             : action === InputAction.MoveRight
@@ -83,12 +82,7 @@ export default class Input {
         break;
       case InputAction.RotateClockwise:
       case InputAction.RotateAnticlockwise:
-        block?.move(
-          this._grid.cells,
-          0,
-          0,
-          action === InputAction.RotateClockwise ? 1 : -1
-        );
+        block?.move(0, 0, action === InputAction.RotateClockwise ? 1 : -1);
     }
 
     this._actionListeners.forEach((listener) => listener(action));

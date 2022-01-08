@@ -332,15 +332,16 @@ export default class MinimalRenderer
   /**
    * @inheritdoc
    */
-  onBlockDied(block: IBlock) {
-    this._removeBlock(block);
-  }
+  onBlockDied(block: IBlock) {}
 
   /**
    * @inheritdoc
    */
   onBlockPlaced(block: IBlock) {
     this._renderCells(block.cells);
+  }
+
+  onBlockDestroyed(block: IBlock): void {
     this._removeBlock(block);
   }
 

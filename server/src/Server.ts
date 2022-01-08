@@ -46,7 +46,10 @@ export default class Server implements IServerSocketEventListener {
    * @inheritdoc
    */
   onClientMessage(socket: IClientSocket, message: IClientMessage) {
-    console.log('Received message from client ' + socket.id + ':', message);
+    /*console.log(
+      'Received message from client ' + socket.id + ':',
+      message + ' room: ' + socket.roomId
+    );*/
     if (socket.roomId === undefined) {
       if (message.type === ClientMessageType.JOIN_ROOM_REQUEST) {
         // TODO: handle full/wrong password/room ID
@@ -58,7 +61,7 @@ export default class Server implements IServerSocketEventListener {
           'Unsupported message received from ' + socket.id + ': ' + message.type
         );
       }
-    } else if (socket.roomId) {
+    } else if (socket.roomId !== undefined) {
       this._rooms[socket.roomId].onClientMessage(socket.id, message);
     }
   }

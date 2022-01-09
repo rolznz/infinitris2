@@ -21,7 +21,7 @@ module.exports = {
     '/dist/**/*', // Ignore built files.
     '/node_modules/**/*', // Ignore built files.
   ],
-  plugins: ['@typescript-eslint', 'import'],
+  plugins: ['import'],
   rules: {
     'quotes': ['error', 'single', 'avoid-escape'],
     'indent': ['error', 2, { 'SwitchCase': 1 }],
@@ -34,10 +34,19 @@ module.exports = {
     'valid-jsdoc': ['off'],
     'require-jsdoc': ['off'],
     'semi': 'off',
-    '@typescript-eslint/semi': ['error'],
+    //'@typescript-eslint/semi': ['error'],
     'no-unused-vars': 0 // done through typescript
   },
   settings: {
+    'import/parsers': {
+      '@typescript-eslint/parser': ['.ts']
+    },
+    'import/resolver': {
+      'typescript': {
+        'alwaysTryTypes': true, // always try to resolve types under `<root>@types` directory
+        'project': './',
+      }
+    },
     jest: {
       version: 'latest'
     }

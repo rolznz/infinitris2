@@ -7,6 +7,7 @@ export type NetworkPlayerInfo = {
   readonly nickname: string;
   readonly color: number;
   readonly id: number;
+  readonly score: number;
 };
 
 export interface IPlayer {
@@ -16,6 +17,7 @@ export interface IPlayer {
 
   get block(): IBlock | undefined;
   get score(): number;
+  set score(score: number);
   get estimatedSpawnDelay(): number;
 
   update(cells: ICell[][], settings: SimulationSettings): void;

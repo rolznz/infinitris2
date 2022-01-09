@@ -3,6 +3,7 @@ import IGridEventListener from '@models/IGridEventListener';
 import ICell from '@models/ICell';
 import IGrid from '@models/IGrid';
 import ICellBehaviour from '@models/ICellBehaviour';
+import { IPlayer } from '@models/IPlayer';
 
 export default class Grid implements IGrid {
   private _cells: ICell[][];
@@ -45,6 +46,14 @@ export default class Grid implements IGrid {
    */
   addEventListener(...eventListeners: IGridEventListener[]) {
     this._eventListeners.push(...eventListeners);
+  }
+
+  removePlayer(player: IPlayer) {
+    for (const cell of this._reducedCells) {
+      if (cell.player === player) {
+        cell.place(undefined);
+      }
+    }
   }
 
   step() {

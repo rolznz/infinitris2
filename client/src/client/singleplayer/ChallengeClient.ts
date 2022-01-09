@@ -69,6 +69,8 @@ export default class ChallengeClient
     }
   }
 
+  onSimulationNextDay(): void {}
+
   /**
    * @inheritdoc
    */

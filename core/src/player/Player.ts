@@ -56,6 +56,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   get score(): number {
     return this._score;
   }
+  set score(score: number) {
+    this._score = score;
+  }
 
   get nickname(): string {
     return this._nickname;

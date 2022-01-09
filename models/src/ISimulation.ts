@@ -5,18 +5,32 @@ import IGrid from './IGrid';
 import IGridEventListener from './IGridEventListener';
 import { IPlayer } from './IPlayer';
 
+export type NetworkSimulationInfo = {
+  nextDay: number;
+  dayNumber: number;
+  dayLength: number;
+  //TODO: simulationSettings
+};
+
 export default interface ISimulation
   extends IBlockEventListener,
     ICellEventListener,
     IGridEventListener {
+  get dayProportion(): number;
+  get players(): IPlayer[];
+  get settings(): SimulationSettings;
+  get isNetworkClient(): boolean;
+  set dayNumber(dayNumber: number);
+  set dayLength(dayLength: number);
+  set nextDay(nextDay: number);
+  get dayNumber(): number;
+  get dayLength(): number;
+  get nextDay(): number;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;
   runningTime: number;
   grid: IGrid;
-  get dayProportion(): number;
-  get players(): IPlayer[];
-  get settings(): SimulationSettings;
-  get isNetworkClient(): boolean;
   isFollowingPlayerId(playerId: number): boolean;
+  goToNextDay(): void;
 }

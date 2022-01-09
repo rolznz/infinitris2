@@ -552,6 +552,8 @@ export default class Infinitris2Renderer
     });*/
   }
 
+  onSimulationNextDay() {}
+
   /**
    * @inheritdoc
    */

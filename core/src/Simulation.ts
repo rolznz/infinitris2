@@ -26,8 +26,7 @@ export default class Simulation implements ISimulation {
   private _runningTime: number;
   private _nextDay: number;
   private _dayNumber: number;
-  private _initialDayLength: number;
-  private _nextDayLength: number;
+  private _dayLength: number;
   private _isNetworkClient: boolean;
 
   constructor(grid: Grid, settings: SimulationSettings = {}, isClient = false) {
@@ -42,10 +41,9 @@ export default class Simulation implements ISimulation {
     };
     this._dayNumber = 0;
     this._nextDay = 0;
-    this._nextDayLength = 0;
-    this._initialDayLength = this._settings.dayLength || DEFAULT_DAY_LENGTH;
+    this._dayLength = this._settings.dayLength || DEFAULT_DAY_LENGTH;
     this._isNetworkClient = isClient;
-    this._goToNextDay();
+    this.goToNextDay();
   }
 
   get isNetworkClient(): boolean {
@@ -69,7 +67,26 @@ export default class Simulation implements ISimulation {
   }
 
   get dayProportion(): number {
-    return (this._nextDayLength - this._nextDay) / this._nextDayLength;
+    return (this._dayLength - this._nextDay) / this._dayLength;
+  }
+
+  get dayNumber() {
+    return this._dayNumber;
+  }
+  get dayLength() {
+    return this._dayLength;
+  }
+  get nextDay() {
+    return this._nextDay;
+  }
+  set dayNumber(dayNumber: number) {
+    this._dayNumber = dayNumber;
+  }
+  set dayLength(dayLength: number) {
+    this._dayLength = dayLength;
+  }
+  set nextDay(nextDay: number) {
+    this._nextDay = nextDay;
   }
 
   getPlayer(playerId: number): IPlayer {
@@ -148,6 +165,7 @@ export default class Simulation implements ISimulation {
   removePlayer(playerId: number) {
     const player = this._players[playerId];
     if (player) {
+      this._grid.removePlayer(player);
       player.destroy();
       delete this._players[playerId];
     }
@@ -241,6 +259,12 @@ export default class Simulation implements ISimulation {
     );
   }
 
+  onSimulationNextDay() {
+    this._eventListeners.forEach((listener) =>
+      listener.onSimulationNextDay(this)
+    );
+  }
+
   /**
    * Execute a single simulation frame
    */
@@ -250,8 +274,11 @@ export default class Simulation implements ISimulation {
     this._runningTime += FRAME_LENGTH;
     this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
     // TODO: consider day speed increasing/decreasing based on number of filled rows (more rows = faster day)
-    if (--this._nextDay <= 0) {
-      this._goToNextDay();
+    if (this._nextDay > 0) {
+      --this._nextDay;
+    }
+    if (!this.isNetworkClient && this._nextDay <= 0) {
+      this.goToNextDay();
     }
   };
 
@@ -259,13 +286,11 @@ export default class Simulation implements ISimulation {
     player.update(this._grid.cells, this._settings);
   };
 
-  private _goToNextDay() {
+  goToNextDay() {
     ++this._dayNumber;
     console.log('Day ' + this._dayNumber);
-    this._nextDayLength = Math.floor(
-      this._initialDayLength // * this._dayNumber // * 1.05
-    );
-    this._nextDay = this._nextDayLength;
+    this._nextDay = this._dayLength;
     this._grid.collapse();
+    this.onSimulationNextDay();
   }
 }

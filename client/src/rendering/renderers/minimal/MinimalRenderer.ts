@@ -464,6 +464,8 @@ export default class MinimalRenderer
     this._renderCells(this._grid.grid.reducedCells);
   }
 
+  onSimulationNextDay(): void {}
+
   /**
    * @inheritdoc
    */

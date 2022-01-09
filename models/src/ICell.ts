@@ -5,6 +5,7 @@ import { IPlayer } from './IPlayer';
 
 export type NetworkCellInfo = {
   readonly playerId?: number;
+  readonly isEmpty: boolean;
 };
 
 export default interface ICell {
@@ -27,5 +28,5 @@ export default interface ICell {
   replaceWith(cell: ICell): void;
   reset(): void;
   isConnectedTo(cell: ICell): boolean;
-  place(player: IPlayer): void;
+  place(player: IPlayer | undefined): void;
 }

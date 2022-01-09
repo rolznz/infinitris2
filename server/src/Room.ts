@@ -30,6 +30,7 @@ import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEve
 import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPlacedEvent';
 import { IServerBlockDiedEvent } from '@core/networking/server/IServerBlockDiedEvent';
 import { IServerBlockDroppedEvent } from '@core/networking/server/IServerBlockDroppedEvent';
+import { IServerNextDayEvent } from '@core/networking/server/IServerNextDayEvent';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -37,7 +38,8 @@ export default class Room implements ISimulationEventListener {
 
   constructor(sendMessage: SendServerMessageFunction) {
     this._sendMessage = sendMessage;
-    this._simulation = new Simulation(new Grid());
+    this._simulation = new Simulation(new Grid(10, 20));
+    this._simulation.addEventListener(this);
     this._simulation.init();
     this._simulation.startInterval();
   }
@@ -71,11 +73,17 @@ export default class Room implements ISimulationEventListener {
       data: {
         status: JoinRoomResponseStatus.OK,
         playerId: newPlayer.id,
+        simulation: {
+          dayNumber: this._simulation.dayNumber,
+          dayLength: this._simulation.dayLength,
+          nextDay: this._simulation.nextDay,
+        },
         grid: {
           numRows: this._simulation.grid.numRows,
           numColumns: this._simulation.grid.numColumns,
           reducedCells: this._simulation.grid.reducedCells.map((cell) => ({
             playerId: cell.player?.id,
+            isEmpty: cell.isEmpty,
           })),
         },
         blocks: this._simulation.players
@@ -93,6 +101,7 @@ export default class Room implements ISimulationEventListener {
           color: existingPlayer.color,
           id: existingPlayer.id,
           nickname: existingPlayer.nickname,
+          score: existingPlayer.score,
         })),
       },
     };
@@ -165,6 +174,13 @@ export default class Room implements ISimulationEventListener {
    * @inheritdoc
    */
   onSimulationStep(simulation: Simulation) {}
+
+  onSimulationNextDay(): void {
+    const nextDayEvent: IServerNextDayEvent = {
+      type: ServerMessageType.NEXT_DAY,
+    };
+    this._sendMessageToAllPlayers(nextDayEvent);
+  }
 
   /**
    * @inheritdoc

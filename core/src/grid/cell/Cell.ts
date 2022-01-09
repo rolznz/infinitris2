@@ -95,9 +95,9 @@ export default class Cell implements ICell {
     this._isEmpty = cell.isEmpty;
   }
   reset(): void {
-    this._behaviour = new NormalCellBehaviour();
     this._isEmpty = true;
     this._player = undefined;
+    this._behaviour = new NormalCellBehaviour();
   }
 
   addBlock(block: IBlock) {

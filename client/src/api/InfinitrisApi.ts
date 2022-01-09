@@ -53,6 +53,7 @@ export default class InfinitrisApi implements IInfinitrisApi {
             simulation.startInterval();
           },
           onSimulationStep() {},
+          onSimulationNextDay() {},
           onBlockCreated() {},
           onBlockCreateFailed() {},
           onBlockMoved() {},

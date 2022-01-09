@@ -91,19 +91,22 @@ export default class NetworkClient
             joinResponseData.grid.numColumns,
             joinResponseData.grid.numRows
           ),
-          {},
+          {}, // TODO: settings
           true
         );
+        this._simulation.dayNumber = joinResponseData.simulation.dayNumber;
+        this._simulation.dayLength = joinResponseData.simulation.dayLength;
+        this._simulation.nextDay = joinResponseData.simulation.nextDay;
         this._simulation.addEventListener(this._renderer, this);
         this._simulation.init();
         console.log('Response: ', joinResponseData);
-        for (let player of joinResponseData.players) {
-          if (player.id === joinResponseData.playerId) {
+        for (let playerInfo of joinResponseData.players) {
+          if (playerInfo.id === joinResponseData.playerId) {
             const humanPlayer = new ControllablePlayer(
               this._simulation,
-              player.id,
-              player.nickname,
-              player.color
+              playerInfo.id,
+              playerInfo.nickname,
+              playerInfo.color
             );
             this._simulation.addPlayer(humanPlayer);
             this._simulation.followPlayer(humanPlayer);
@@ -113,22 +116,26 @@ export default class NetworkClient
               this._controls
             );
           } else {
-            this._simulation.addPlayer(
-              new NetworkPlayer(
-                this._simulation,
-                player.id,
-                player.nickname,
-                player.color
-              )
+            const otherPlayer = new NetworkPlayer(
+              this._simulation,
+              playerInfo.id,
+              playerInfo.nickname,
+              playerInfo.color
             );
+            this._simulation.addPlayer(otherPlayer);
+            otherPlayer.score = playerInfo.score;
           }
         }
         for (let i = 0; i < joinResponseData.grid.reducedCells.length; i++) {
           const row = Math.floor(i / joinResponseData.grid.numColumns);
           const column = i % joinResponseData.grid.numColumns;
-          const cellPlayerId = joinResponseData.grid.reducedCells[i].playerId;
-          if (cellPlayerId !== undefined) {
-            const player = this._simulation.getPlayer(cellPlayerId);
+          const cellInfo = joinResponseData.grid.reducedCells[i];
+          const cellPlayerId = cellInfo.playerId;
+          const player =
+            cellPlayerId !== undefined
+              ? this._simulation.getPlayer(cellPlayerId)
+              : undefined;
+          if (!cellInfo.isEmpty) {
             this._simulation.grid.cells[row][column].place(player);
           }
         }
@@ -193,6 +200,8 @@ export default class NetworkClient
       const playerId = (message as IServerBlockDiedEvent).playerId;
       const block = this._simulation.getPlayer(playerId).block!;
       block.die();
+    } else if (message.type === ServerMessageType.NEXT_DAY) {
+      this._simulation.goToNextDay();
     }
   }
 
@@ -221,6 +230,7 @@ export default class NetworkClient
 
   onSimulationInit(simulation: ISimulation): void {}
   onSimulationStep(simulation: ISimulation): void {}
+  onSimulationNextDay(): void {}
   onBlockCreated(block: IBlock): void {}
   onBlockCreateFailed(block: IBlock): void {}
   onBlockPlaced(block: IBlock): void {}

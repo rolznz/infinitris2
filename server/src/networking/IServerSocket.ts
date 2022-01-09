@@ -5,6 +5,7 @@ import IServerPlayerDisconnectedEvent from '@core/networking/server/IServerPlaye
 import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
 import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
 import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPlacedEvent';
+import { IServerNextDayEvent } from '@core/networking/server/IServerNextDayEvent';
 
 export type ServerMessage =
   | IServerJoinRoomResponse
@@ -12,7 +13,8 @@ export type ServerMessage =
   | IServerPlayerDisconnectedEvent
   | IServerBlockCreatedEvent
   | IServerBlockMovedEvent
-  | IServerBlockPlacedEvent;
+  | IServerBlockPlacedEvent
+  | IServerNextDayEvent;
 
 export default interface IServerSocket {
   /**

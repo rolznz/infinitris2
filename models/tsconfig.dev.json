@@ -1,5 +1,5 @@
 {
-  "include": [".eslintrc.js"],
+  "include": [".eslintrc.js", "src/__tests__"],
   "compilerOptions": {
     "types": ["node", "jest"]
   }

@@ -6,9 +6,9 @@ import ClientMessageType from '@core/networking/client/ClientMessageType';
 import ServerMessageType from '@core/networking/server/ServerMessageType';
 import Grid from '@core/grid/Grid';
 import {
-  IJoinRoomResponse,
+  IServerJoinRoomResponse,
   JoinRoomResponseStatus,
-} from '@core/networking/server/IJoinRoomResponse';
+} from '@core/networking/server/IServerJoinRoomResponse';
 import IClientSocket from '../networking/IClientSocket';
 import ClientSocket from '@src/networking/ClientSocket';
 import ControlSettings from '@models/ControlSettings';
@@ -17,7 +17,7 @@ import ControllablePlayer from '@src/ControllablePlayer';
 import IClient from '@models/IClient';
 import Input from '@src/input/Input';
 import { IPlayer } from '@models/IPlayer';
-import { IBlockCreatedEvent } from '@core/networking/server/IBlockCreatedEvent';
+import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
@@ -26,9 +26,12 @@ import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
 import NetworkPlayer from '@core/player/NetworkPlayer';
-import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
-import IPlayerDisconnectedEvent from '@core/networking/server/IPlayerDisconnectedEvent';
+import IServerPlayerConnectedEvent from '@core/networking/server/IServerPlayerConnectedEvent';
+import IServerPlayerDisconnectedEvent from '@core/networking/server/IServerPlayerDisconnectedEvent';
 import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
+import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPlacedEvent';
+import { IClientBlockDroppedEvent } from '@core/networking/client/IClientBlockDroppedEvent';
+import { IServerBlockDiedEvent } from '@core/networking/server/IServerBlockDiedEvent';
 
 export default class NetworkClient
   implements IClient, IClientSocketEventListener, ISimulationEventListener
@@ -79,7 +82,7 @@ export default class NetworkClient
   async onMessage(message: IServerMessage) {
     console.log('Received message: ', message);
     if (message.type === ServerMessageType.JOIN_ROOM_RESPONSE) {
-      const joinResponse = message as IJoinRoomResponse;
+      const joinResponse = message as IServerJoinRoomResponse;
       const joinResponseData = joinResponse.data;
       if (joinResponseData.status === JoinRoomResponseStatus.OK) {
         this._playerId = joinResponseData.playerId;
@@ -120,6 +123,15 @@ export default class NetworkClient
             );
           }
         }
+        for (let i = 0; i < joinResponseData.grid.reducedCells.length; i++) {
+          const row = Math.floor(i / joinResponseData.grid.numColumns);
+          const column = i % joinResponseData.grid.numColumns;
+          const cellPlayerId = joinResponseData.grid.reducedCells[i].playerId;
+          if (cellPlayerId !== undefined) {
+            const player = this._simulation.getPlayer(cellPlayerId);
+            this._simulation.grid.cells[row][column].place(player);
+          }
+        }
         for (let block of joinResponseData.blocks) {
           this._simulation
             .getPlayer(block.playerId)
@@ -130,12 +142,13 @@ export default class NetworkClient
               block.layoutId
             );
         }
+        this._renderer.rerenderGrid();
         this._simulation.startInterval();
       } else {
         alert('Could not join room: ' + joinResponseData.status);
       }
     } else if (message.type === ServerMessageType.PLAYER_CONNECTED) {
-      const playerInfo = (message as IPlayerConnectedEvent).playerInfo;
+      const playerInfo = (message as IServerPlayerConnectedEvent).playerInfo;
       this._simulation.addPlayer(
         new NetworkPlayer(
           this._simulation,
@@ -146,10 +159,10 @@ export default class NetworkClient
       );
     } else if (message.type === ServerMessageType.PLAYER_DISCONNECTED) {
       this._simulation.removePlayer(
-        (message as IPlayerDisconnectedEvent).playerId
+        (message as IServerPlayerDisconnectedEvent).playerId
       );
     } else if (message.type === ServerMessageType.BLOCK_CREATED) {
-      const blockInfo = (message as IBlockCreatedEvent).blockInfo;
+      const blockInfo = (message as IServerBlockCreatedEvent).blockInfo;
       const player = this._simulation.getPlayer(blockInfo.playerId);
       player.createBlock(
         blockInfo.row,
@@ -158,14 +171,28 @@ export default class NetworkClient
         blockInfo.layoutId
       );
     } else if (message.type === ServerMessageType.BLOCK_MOVED) {
-      const blockInfo = (message as IServerBlockMovedEvent).data;
-      const block = this._simulation.getPlayer(blockInfo.playerId).block;
-      block?.move(
+      const blockInfo = (message as IServerBlockMovedEvent).blockInfo;
+      const block = this._simulation.getPlayer(blockInfo.playerId).block!;
+      block.move(
         blockInfo.column - block.column,
         blockInfo.row - block.row,
         blockInfo.rotation - block.rotation,
         true
       );
+    } else if (message.type === ServerMessageType.BLOCK_PLACED) {
+      const blockInfo = (message as IServerBlockPlacedEvent).blockInfo;
+      const block = this._simulation.getPlayer(blockInfo.playerId).block!;
+      block.move(
+        blockInfo.column - block.column,
+        blockInfo.row - block.row,
+        blockInfo.rotation - block.rotation,
+        true
+      );
+      block.place();
+    } else if (message.type === ServerMessageType.BLOCK_DIED) {
+      const playerId = (message as IServerBlockDiedEvent).playerId;
+      const block = this._simulation.getPlayer(playerId).block!;
+      block.die();
     }
   }
 
@@ -208,6 +235,14 @@ export default class NetworkClient
         },
       };
       this._socket.sendMessage(blockMovedEvent);
+    }
+  }
+  onBlockDropped(block: IBlock): void {
+    if (block.player.id === this._playerId) {
+      const blockDroppedEvent: IClientBlockDroppedEvent = {
+        type: ClientMessageType.BLOCK_DROPPED,
+      };
+      this._socket.sendMessage(blockDroppedEvent);
     }
   }
   onBlockDied(block: IBlock): void {}

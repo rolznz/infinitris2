@@ -429,6 +429,11 @@ export default class Infinitris2Renderer
    */
   onBlockDied(block: IBlock) {}
 
+  /**
+   * @inheritdoc
+   */
+  onBlockDropped(block: IBlock) {}
+
   onBlockDestroyed(block: IBlock): void {
     this._removeBlock(block);
   }
@@ -552,6 +557,10 @@ export default class Infinitris2Renderer
    */
   onLineCleared(_row: number) {
     // TODO: remove, should only render individual cells on cell state change
+    this._renderCells(this._grid.grid.reducedCells);
+  }
+
+  rerenderGrid() {
     this._renderCells(this._grid.grid.reducedCells);
   }
 

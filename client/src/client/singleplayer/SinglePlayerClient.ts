@@ -66,17 +66,13 @@ export default class SinglePlayerClient
   /**
    * @inheritdoc
    */
+  onBlockDropped(block: IBlock) {}
   onBlockDied(block: IBlock) {}
   onBlockDestroyed(block: IBlock): void {}
   /**
    * @inheritdoc
    */
   onLineCleared(row: number) {}
-
-  /**
-   * @inheritdoc
-   */
-  onBlockWrapped(block: IBlock, wrapIndexChange: number) {}
 
   /**
    * @inheritdoc

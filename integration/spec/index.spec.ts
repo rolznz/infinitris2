@@ -3,9 +3,9 @@ import NetworkClient from '@client/client/NetworkClient';
 import ClientMessageType from '@core/networking/client/ClientMessageType';
 import ServerMessageType from '@core/networking/server/ServerMessageType';
 import {
-  IJoinRoomResponse,
+  IServerJoinRoomResponse,
   JoinRoomResponseStatus,
-} from '@core/networking/server/IJoinRoomResponse';
+} from '@core/networking/server/IServerJoinRoomResponse';
 import FakeServerSocket from './support/FakeServerSocket';
 import FakeClientSocket from './support/FakeClientSocket';
 
@@ -48,7 +48,7 @@ describe('Index', () => {
     };
 
     // TODO: Receive other players and grid data
-    const expectedJoinRoomResponse: IJoinRoomResponse = {
+    const expectedJoinRoomResponse: IServerJoinRoomResponse = {
       type: ServerMessageType.JOIN_ROOM_RESPONSE,
       data: {
         status: JoinRoomResponseStatus.OK,

@@ -1,6 +1,6 @@
 import IServerMessage from '@core/networking/server/IServerMessage';
 import IClientSocketEventListener from './IClientSocketEventListener';
-import IClientSocket, { ValidClientMessage } from './IClientSocket';
+import IClientSocket, { ClientMessage } from './IClientSocket';
 
 export default class ClientSocket implements IClientSocket {
   private _socket: WebSocket;
@@ -30,7 +30,7 @@ export default class ClientSocket implements IClientSocket {
   /**
    * @inheritdoc
    */
-  sendMessage(message: ValidClientMessage) {
+  sendMessage(message: ClientMessage) {
     this._socket.send(JSON.stringify(message));
   }
 

@@ -166,7 +166,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       this._simulation,
       this
     );
-    console.log('Block created: ', newBlock.isAlive);
+    console.log('Block created for player ' + this._id, newBlock.isAlive);
     if (newBlock.isAlive) {
       this._block = newBlock;
       this._nextSpawn = 0;
@@ -205,11 +205,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   /**
    * @inheritdoc
    */
-  /*onBlockWrapped(block: IBlock, wrapIndexChange: number) {
-    this._eventListeners.forEach((listener) =>
-      listener.onBlockWrapped(block, wrapIndexChange)
-    );
-  }*/
+  onBlockDropped(block: IBlock) {
+    this._eventListeners.forEach((listener) => listener.onBlockDropped(block));
+  }
 
   /**
    * @inheritdoc

@@ -30,6 +30,13 @@ export default interface IBlockEventListener {
   onBlockMoved(block: IBlock): void;
 
   /**
+   * Triggered when a block drops
+   *
+   * @param block The block that moved
+   */
+  onBlockDropped(block: IBlock): void;
+
+  /**
    * Triggered when a block dies (e.g. killed by laser)
    *
    * @param block The block that died
@@ -42,13 +49,4 @@ export default interface IBlockEventListener {
    * @param block The block that was destroyed
    */
   onBlockDestroyed(block: IBlock): void;
-
-  /**
-   * TODO: remove - wrapping should be seamless
-   * Triggered when a block wraps to the other side of the grid
-   *
-   * @param block The block that moved
-   * @param wrapIndexChange the number of wraps that occurred (most likely -1 or 1)
-   */
-  //onBlockWrapped(block: IBlock, wrapIndexChange: number): void;
 }

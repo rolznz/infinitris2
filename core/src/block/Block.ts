@@ -186,9 +186,13 @@ export default class Block implements IBlock {
    * with the ground.
    */
   drop() {
+    if (this._isDropping) {
+      return;
+    }
     this._isDropping = true;
     this._lockTimer = 0;
     this._fallTimer = 0;
+    this._eventListener?.onBlockDropped(this);
   }
 
   slowDown(row: number) {
@@ -336,24 +340,7 @@ export default class Block implements IBlock {
       }
       canMove = force || this.canMove(dx, dy, drClamped);
       if (canMove) {
-        //const gridNumColumns = gridCells[0].length;
         this._column += dx;
-        /*const oldWrapIndex = this._wrapIndex;
-        while (this._column > gridNumColumns) {
-          this._column -= gridNumColumns;
-          ++this._wrapIndex;
-        }
-        while (this._column < 0) {
-          this._column += gridNumColumns;
-          --this._wrapIndex;
-        }
-        if (oldWrapIndex !== this._wrapIndex) {
-          this._eventListener?.onBlockWrapped(
-            this,
-            this._wrapIndex - oldWrapIndex
-          );
-        }*/
-
         this._row += dy;
         this._rotation += drClamped;
         this._updateCells();
@@ -400,9 +387,7 @@ export default class Block implements IBlock {
   place() {
     console.log('Placing block for player ' + this.player.id);
     this._cells.forEach((cell) => {
-      cell.isEmpty = false;
-      cell.player = this._player;
-      cell.behaviour = new NormalCellBehaviour(this._player.color);
+      cell.place(this._player);
     });
     this._eventListener?.onBlockPlaced(this);
   }
@@ -431,7 +416,7 @@ export default class Block implements IBlock {
       fell = this.fall(this._simulation.grid.cells);
     }
 
-    if (!fell && this.isReadyToLock) {
+    if (!this._simulation.isNetworkClient && !fell && this.isReadyToLock) {
       if (
         this._simulation.settings.preventTowers !== false &&
         this._simulation.grid.isTower(this.bottomRow)

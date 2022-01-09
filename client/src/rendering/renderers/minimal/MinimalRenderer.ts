@@ -337,6 +337,11 @@ export default class MinimalRenderer
   /**
    * @inheritdoc
    */
+  onBlockDropped(block: IBlock) {}
+
+  /**
+   * @inheritdoc
+   */
   onBlockPlaced(block: IBlock) {
     this._renderCells(block.cells);
   }
@@ -452,6 +457,10 @@ export default class MinimalRenderer
    */
   onLineCleared(_row: number) {
     // TODO: remove, should only render individual cells on cell state change
+    this._renderCells(this._grid.grid.reducedCells);
+  }
+
+  rerenderGrid() {
     this._renderCells(this._grid.grid.reducedCells);
   }
 

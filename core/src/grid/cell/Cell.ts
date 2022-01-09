@@ -77,6 +77,15 @@ export default class Cell implements ICell {
     this._player = player;
   }
 
+  /**
+   * @param player if undefined, will fill the cell with a non-player filled cell behaviour
+   */
+  place(player: IPlayer | undefined) {
+    this._isEmpty = false;
+    this._player = player;
+    this._behaviour = new NormalCellBehaviour(player?.color);
+  }
+
   step() {
     this._behaviour?.step?.();
   }

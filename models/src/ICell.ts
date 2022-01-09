@@ -4,7 +4,7 @@ import ICellBehaviour from './ICellBehaviour';
 import { IPlayer } from './IPlayer';
 
 export type NetworkCellInfo = {
-  readonly playerId: number;
+  readonly playerId?: number;
 };
 
 export default interface ICell {
@@ -27,4 +27,5 @@ export default interface ICell {
   replaceWith(cell: ICell): void;
   reset(): void;
   isConnectedTo(cell: ICell): boolean;
+  place(player: IPlayer): void;
 }

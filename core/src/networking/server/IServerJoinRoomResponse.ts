@@ -9,7 +9,7 @@ export enum JoinRoomResponseStatus {
   WRONG_PASSWORD,
 }
 
-type JoinRoomResponseData =
+type ServerJoinRoomResponseData =
   | {
       status: JoinRoomResponseStatus.OK;
       playerId: number;
@@ -23,6 +23,6 @@ type JoinRoomResponseData =
         | JoinRoomResponseStatus.WRONG_PASSWORD;
     };
 
-export interface IJoinRoomResponse extends IServerMessage {
-  data: JoinRoomResponseData;
+export interface IServerJoinRoomResponse extends IServerMessage {
+  data: ServerJoinRoomResponseData;
 }

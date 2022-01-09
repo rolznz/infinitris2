@@ -186,17 +186,15 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
-  /*onBlockWrapped(block: IBlock, wrapIndexChange: number) {
-    this._eventListeners.forEach((listener) =>
-      listener.onBlockWrapped(block, wrapIndexChange)
-    );
-  }*/
+  onBlockDied(block: IBlock) {
+    this._eventListeners.forEach((listener) => listener.onBlockDied(block));
+  }
 
   /**
    * @inheritdoc
    */
-  onBlockDied(block: IBlock) {
-    this._eventListeners.forEach((listener) => listener.onBlockDied(block));
+  onBlockDropped(block: IBlock) {
+    this._eventListeners.forEach((listener) => listener.onBlockDropped(block));
   }
 
   /**

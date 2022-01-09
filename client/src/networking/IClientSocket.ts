@@ -1,8 +1,8 @@
 import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
-import IJoinRoomRequest from '@core/networking/client/IJoinRoomRequest';
+import IClientJoinRoomRequest from '@core/networking/client/IClientJoinRoomRequest';
 import IClientSocketEventListener from './IClientSocketEventListener';
 
-export type ValidClientMessage = IJoinRoomRequest | IClientBlockMovedEvent;
+export type ClientMessage = IClientJoinRoomRequest | IClientBlockMovedEvent;
 
 export default interface IClientSocket {
   /**
@@ -16,7 +16,7 @@ export default interface IClientSocket {
    * Sends a message to the server.
    * @param message the message to send.
    */
-  sendMessage(message: ValidClientMessage): void;
+  sendMessage(message: ClientMessage): void;
 
   /**
    * Closes this socket's connection to the server.

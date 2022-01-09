@@ -1,12 +1,13 @@
 import IClientSocket from '@server/networking/IClientSocket';
 import IClientSocketEventListener from '@client/networking/IClientSocketEventListener';
 import FakeServerSocket from './FakeServerSocket';
-import { ValidClientMessage } from '@client/networking/IClientSocket';
+import { ClientMessage } from '@client/networking/IClientSocket';
 import IServerMessage from '@core/networking/server/IServerMessage';
 import IServerClientSocket from '@server/networking/IClientSocket';
 
 export default class FakeClientSocket
-  implements IClientSocket, IClientSocketEventListener, IServerClientSocket {
+  implements IClientSocket, IClientSocketEventListener, IServerClientSocket
+{
   id: number;
   roomId: number;
 
@@ -27,7 +28,7 @@ export default class FakeClientSocket
   /**
    * @inheritdoc
    */
-  sendMessage(message: ValidClientMessage) {
+  sendMessage(message: ClientMessage) {
     this._serverSocket.receiveMessage(this, message);
   }
 

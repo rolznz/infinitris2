@@ -2,11 +2,11 @@ import 'jasmine';
 import 'module-alias/register';
 import Room from '@src/Room';
 import {
-  IJoinRoomResponse,
+  IServerJoinRoomResponse,
   JoinRoomResponseStatus,
-} from '@core/networking/server/IJoinRoomResponse';
+} from '@core/networking/server/IServerJoinRoomResponse';
 import ServerMessageType from '@core/networking/server/ServerMessageType';
-import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
+import IServerPlayerConnectedEvent from '@core/networking/server/IServerPlayerConnectedEvent';
 import { ServerMessage } from '@src/networking/IServerSocket';
 
 describe('Room', () => {
@@ -21,7 +21,7 @@ describe('Room', () => {
   it('will send correct messages when the first player joins', () => {
     /*const playerId = 1;
 
-    const joinRoomResponseMessage: IJoinRoomResponse = {
+    const joinRoomResponseMessage: IServerJoinRoomResponse = {
       data: { playerId, status: JoinRoomResponseStatus.OK, },
       type: ServerMessageType.JOIN_ROOM_RESPONSE,
     };

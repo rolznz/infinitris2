@@ -5,18 +5,18 @@ import IClientMessage from '@core/networking/client/IClientMessage';
 import { SendServerMessageFunction } from './networking/ServerSocket';
 import ServerMessageType from '@core/networking/server/ServerMessageType';
 import {
-  IJoinRoomResponse,
+  IServerJoinRoomResponse,
   JoinRoomResponseStatus,
-} from '@core/networking/server/IJoinRoomResponse';
-import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
-import IPlayerDisconnectedEvent from '@core/networking/server/IPlayerDisconnectedEvent';
+} from '@core/networking/server/IServerJoinRoomResponse';
+import IServerPlayerConnectedEvent from '@core/networking/server/IServerPlayerConnectedEvent';
+import IServerPlayerDisconnectedEvent from '@core/networking/server/IServerPlayerDisconnectedEvent';
 import Grid from '@core/grid/Grid';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
 import { ServerMessage } from './networking/IServerSocket';
-import { IBlockCreatedEvent } from '@core/networking/server/IBlockCreatedEvent';
+import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
 import {
   colors,
   hexToString,
@@ -27,6 +27,9 @@ import {
 import ClientMessageType from '@core/networking/client/ClientMessageType';
 import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
 import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
+import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPlacedEvent';
+import { IServerBlockDiedEvent } from '@core/networking/server/IServerBlockDiedEvent';
+import { IServerBlockDroppedEvent } from '@core/networking/server/IServerBlockDroppedEvent';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -63,7 +66,7 @@ export default class Room implements ISimulationEventListener {
     this._simulation.addPlayer(newPlayer);
     newPlayer.addEventListener(this);
 
-    const joinRoomResponse: IJoinRoomResponse = {
+    const joinRoomResponse: IServerJoinRoomResponse = {
       type: ServerMessageType.JOIN_ROOM_RESPONSE,
       data: {
         status: JoinRoomResponseStatus.OK,
@@ -72,7 +75,7 @@ export default class Room implements ISimulationEventListener {
           numRows: this._simulation.grid.numRows,
           numColumns: this._simulation.grid.numColumns,
           reducedCells: this._simulation.grid.reducedCells.map((cell) => ({
-            playerId: cell.player?.id || -1,
+            playerId: cell.player?.id,
           })),
         },
         blocks: this._simulation.players
@@ -96,7 +99,7 @@ export default class Room implements ISimulationEventListener {
 
     this._sendMessage(joinRoomResponse, newPlayer.id);
 
-    const newPlayerMessage: IPlayerConnectedEvent = {
+    const newPlayerMessage: IServerPlayerConnectedEvent = {
       type: ServerMessageType.PLAYER_CONNECTED,
       playerInfo: {
         id: newPlayer.id,
@@ -116,7 +119,7 @@ export default class Room implements ISimulationEventListener {
   removePlayer(playerId: number) {
     this._simulation.removePlayer(playerId);
 
-    const playerDisconnectedMessage: IPlayerDisconnectedEvent = {
+    const playerDisconnectedMessage: IServerPlayerDisconnectedEvent = {
       type: ServerMessageType.PLAYER_DISCONNECTED,
       playerId,
     };
@@ -133,17 +136,16 @@ export default class Room implements ISimulationEventListener {
     //console.log('Room received message from player ' + playerId + ':', message);
     if (message.type === ClientMessageType.BLOCK_MOVED) {
       const block = this._simulation.getPlayer(playerId)?.block;
-      if (block) {
-        const blockInfo = (message as IClientBlockMovedEvent).data;
-        block.move(
-          blockInfo.column - block.column,
-          blockInfo.row - block.row,
-          blockInfo.rotation - block.rotation,
-          true
-        );
-      } else {
-        console.error('Block not set for player ' + playerId);
-      }
+      const blockInfo = (message as IClientBlockMovedEvent).data;
+      block?.move(
+        blockInfo.column - block.column,
+        blockInfo.row - block.row,
+        blockInfo.rotation - block.rotation,
+        true
+      );
+    } else if (message.type === ClientMessageType.BLOCK_DROPPED) {
+      const block = this._simulation.getPlayer(playerId)?.block;
+      block?.drop();
     } else {
       console.error(
         'Unsupported room message received from ' +
@@ -169,7 +171,7 @@ export default class Room implements ISimulationEventListener {
    */
   onBlockCreated(block: IBlock) {
     console.log('Block created: ' + block.player.id);
-    const blockCreatedMessage: IBlockCreatedEvent = {
+    const blockCreatedMessage: IServerBlockCreatedEvent = {
       type: ServerMessageType.BLOCK_CREATED,
       blockInfo: {
         column: block.column,
@@ -186,27 +188,41 @@ export default class Room implements ISimulationEventListener {
   /**
    * @inheritdoc
    */
-  onBlockPlaced(block: IBlock) {}
+  onBlockPlaced(block: IBlock) {
+    const blockPlacedEvent: IServerBlockPlacedEvent = {
+      type: ServerMessageType.BLOCK_PLACED,
+      blockInfo: {
+        playerId: block.player.id,
+        column: block.column,
+        row: block.row,
+        rotation: block.rotation,
+      },
+    };
+    this._sendMessageToAllPlayers(blockPlacedEvent);
+  }
 
   /**
    * @inheritdoc
    */
   onBlockMoved(block: IBlock) {
-    const playerIds = this._simulation
-      .getPlayerIds()
-      .filter((playerId) => playerId != block.player.id);
-    for (const playerId of playerIds) {
-      const blockMovedEvent: IServerBlockMovedEvent = {
-        type: ServerMessageType.BLOCK_MOVED,
-        data: {
-          playerId,
-          column: block.column,
-          row: block.row,
-          rotation: block.rotation,
-        },
-      };
-      this._sendMessage(blockMovedEvent, ...playerIds);
-    }
+    const blockMovedEvent: IServerBlockMovedEvent = {
+      type: ServerMessageType.BLOCK_MOVED,
+      blockInfo: {
+        playerId: block.player.id,
+        column: block.column,
+        row: block.row,
+        rotation: block.rotation,
+      },
+    };
+    this._sendMessageToAllPlayersExcept(blockMovedEvent, block.player.id);
+  }
+
+  onBlockDropped(block: IBlock): void {
+    const blockDroppedEvent: IServerBlockDroppedEvent = {
+      type: ServerMessageType.BLOCK_DROPPED,
+      playerId: block.player.id,
+    };
+    this._sendMessageToAllPlayersExcept(blockDroppedEvent, block.player.id);
   }
 
   /**
@@ -215,7 +231,13 @@ export default class Room implements ISimulationEventListener {
   onLineCleared(row: number) {}
 
   onBlockCreateFailed(block: IBlock): void {}
-  onBlockDied(block: IBlock): void {}
+  onBlockDied(block: IBlock): void {
+    const blockDiedEvent: IServerBlockDiedEvent = {
+      type: ServerMessageType.BLOCK_DIED,
+      playerId: block.player.id,
+    };
+    this._sendMessageToAllPlayers(blockDiedEvent);
+  }
   onBlockDestroyed(block: IBlock): void {}
   onCellBehaviourChanged(
     cell: ICell,
@@ -225,6 +247,16 @@ export default class Room implements ISimulationEventListener {
 
   private _sendMessageToAllPlayers(message: ServerMessage) {
     const playerIds: number[] = this._simulation.getPlayerIds();
+    this._sendMessage(message, ...playerIds);
+  }
+
+  private _sendMessageToAllPlayersExcept(
+    message: ServerMessage,
+    playerId: number
+  ) {
+    const playerIds = this._simulation
+      .getPlayerIds()
+      .filter((otherPlayerId) => otherPlayerId != playerId);
     this._sendMessage(message, ...playerIds);
   }
 }

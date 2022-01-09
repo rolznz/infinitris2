@@ -12,6 +12,8 @@ export default interface IRenderer extends ISimulationEventListener {
    */
   destroy(): void;
 
+  rerenderGrid(): void;
+
   /**
    * Helper controls to render on the screen
    */

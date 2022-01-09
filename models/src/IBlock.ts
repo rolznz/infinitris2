@@ -43,6 +43,7 @@ export default interface IBlock {
   drop(): void;
   cancelDrop(): void;
   slowDown(row: number): void;
+  place(): void;
   die(): void;
   destroy(): void;
 }

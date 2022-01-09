@@ -1,16 +1,18 @@
 import IServerSocketEventListener from './IServerSocketEventListener';
-import { IJoinRoomResponse } from '@core/networking/server/IJoinRoomResponse';
-import IPlayerConnectedEvent from '@core/networking/server/IPlayerConnectedEvent';
-import IPlayerDisconnectedEvent from '@core/networking/server/IPlayerDisconnectedEvent';
-import { IBlockCreatedEvent } from '@core/networking/server/IBlockCreatedEvent';
+import { IServerJoinRoomResponse } from '@core/networking/server/IServerJoinRoomResponse';
+import IServerPlayerConnectedEvent from '@core/networking/server/IServerPlayerConnectedEvent';
+import IServerPlayerDisconnectedEvent from '@core/networking/server/IServerPlayerDisconnectedEvent';
+import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
 import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
+import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPlacedEvent';
 
 export type ServerMessage =
-  | IJoinRoomResponse
-  | IPlayerConnectedEvent
-  | IPlayerDisconnectedEvent
-  | IBlockCreatedEvent
-  | IServerBlockMovedEvent;
+  | IServerJoinRoomResponse
+  | IServerPlayerConnectedEvent
+  | IServerPlayerDisconnectedEvent
+  | IServerBlockCreatedEvent
+  | IServerBlockMovedEvent
+  | IServerBlockPlacedEvent;
 
 export default interface IServerSocket {
   /**

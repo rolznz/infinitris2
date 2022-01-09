@@ -87,6 +87,8 @@ export default class ChallengeClient
     ++this._numBlocksPlaced;
   }
 
+  onBlockDropped(block: IBlock) {}
+
   /**
    * @inheritdoc
    */
@@ -100,10 +102,6 @@ export default class ChallengeClient
    */
   onBlockMoved(block: IBlock) {}
 
-  /**
-   * @inheritdoc
-   */
-  onBlockWrapped(block: IBlock, wrapIndexChange: number) {}
   /**
    * @inheritdoc
    */

@@ -24,8 +24,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _nickname: string;
   private _color: number;
   private _simulation: ISimulation;
-  private _nextSpawn: number;
-  private _estimatedSpawnDelay: number;
+  private _nextSpawnTime: number;
   private _isFirstBlock: boolean;
 
   constructor(
@@ -41,9 +40,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._nickname = nickname;
     this._color = color;
     this._simulation = simulation;
-    this._nextSpawn = 0;
-    this._estimatedSpawnDelay = 0;
+    this._nextSpawnTime = 0;
     this._isFirstBlock = true;
+    this._calculateSpawnDelay();
   }
 
   get id(): number {
@@ -69,7 +68,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
 
   get estimatedSpawnDelay(): number {
-    return this._estimatedSpawnDelay;
+    return Math.max(0, this._nextSpawnTime - Date.now());
+  }
+
+  set estimatedSpawnDelay(estimatedSpawnDelay: number) {
+    this._nextSpawnTime = Date.now() + estimatedSpawnDelay;
   }
 
   set nextLayout(nextLayout: Layout | undefined) {
@@ -99,23 +102,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
    */
   update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
     if (!this._block && !this._simulation.isNetworkClient) {
-      const highestPlayerScore = Math.max(
-        ...this._simulation.players.map((player) => player.score)
-      );
-
-      if (this._simulation.settings.calculateSpawnDelays !== false) {
-        const scoreProportion =
-          highestPlayerScore > 0 ? this._score / highestPlayerScore : 1;
-
-        const adjustedScoreProportion = Math.pow(scoreProportion, 0.5);
-        const delay =
-          (1 - adjustedScoreProportion) * ((7 * 1000) / FRAME_LENGTH); // 7 seconds max
-        this._estimatedSpawnDelay = Math.ceil(
-          (delay - this._nextSpawn) * FRAME_LENGTH
-        );
-        if (++this._nextSpawn < delay) {
-          return;
-        }
+      if (
+        this._simulation.isNetworkClient ||
+        Date.now() < this._nextSpawnTime
+      ) {
+        return;
       }
 
       const validLayouts = Object.entries(tetrominoes)
@@ -172,7 +163,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     console.log('Block created for player ' + this._id, newBlock.isAlive);
     if (newBlock.isAlive) {
       this._block = newBlock;
-      this._nextSpawn = 0;
       this._isFirstBlock = false;
     }
   }
@@ -253,8 +243,28 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
 
   private _removeBlock() {
+    this._calculateSpawnDelay();
     this._block?.destroy();
     this._block = undefined;
+  }
+
+  private _calculateSpawnDelay() {
+    if (this._simulation.isNetworkClient) {
+      return;
+    }
+    if (this._simulation.settings.calculateSpawnDelays !== false) {
+      const highestPlayerScore = Math.max(
+        ...this._simulation.players.map((player) => player.score)
+      );
+      const scoreProportion =
+        highestPlayerScore > 0 ? this._score / highestPlayerScore : 1;
+
+      const adjustedScoreProportion = Math.pow(scoreProportion, 0.5);
+      this._nextSpawnTime =
+        Date.now() + Math.floor((1 - adjustedScoreProportion) * (7 * 1000));
+    } else {
+      this._nextSpawnTime = 0;
+    }
   }
 
   private _modifyScoreFromBlockPlacement(block: IBlock, isMistake: boolean) {

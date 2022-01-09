@@ -19,6 +19,7 @@ export interface IPlayer {
   get score(): number;
   set score(score: number);
   get estimatedSpawnDelay(): number;
+  set estimatedSpawnDelay(estimatedSpawnDelay: number);
 
   update(cells: ICell[][], settings: SimulationSettings): void;
   addEventListener(eventListener: IBlockEventListener): void;

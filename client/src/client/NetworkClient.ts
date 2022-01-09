@@ -32,6 +32,7 @@ import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEve
 import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPlacedEvent';
 import { IClientBlockDroppedEvent } from '@core/networking/client/IClientBlockDroppedEvent';
 import { IServerBlockDiedEvent } from '@core/networking/server/IServerBlockDiedEvent';
+import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnEvent';
 
 export default class NetworkClient
   implements IClient, IClientSocketEventListener, ISimulationEventListener
@@ -108,6 +109,8 @@ export default class NetworkClient
               playerInfo.nickname,
               playerInfo.color
             );
+            humanPlayer.estimatedSpawnDelay =
+              joinResponseData.estimatedSpawnDelay;
             this._simulation.addPlayer(humanPlayer);
             this._simulation.followPlayer(humanPlayer);
             this._input = new Input(
@@ -202,6 +205,10 @@ export default class NetworkClient
       block.die();
     } else if (message.type === ServerMessageType.NEXT_DAY) {
       this._simulation.goToNextDay();
+    } else if (message.type === ServerMessageType.NEXT_SPAWN) {
+      this._simulation.getPlayer(this._playerId!).estimatedSpawnDelay = (
+        message as IServerNextSpawnEvent
+      ).time;
     }
   }
 

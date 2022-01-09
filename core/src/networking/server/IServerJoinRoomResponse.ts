@@ -18,6 +18,7 @@ type ServerJoinRoomResponseData =
       players: NetworkPlayerInfo[];
       blocks: NetworkBlockInfo[];
       simulation: NetworkSimulationInfo;
+      estimatedSpawnDelay: number;
     }
   | {
       status:

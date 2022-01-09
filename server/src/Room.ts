@@ -31,6 +31,7 @@ import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPla
 import { IServerBlockDiedEvent } from '@core/networking/server/IServerBlockDiedEvent';
 import { IServerBlockDroppedEvent } from '@core/networking/server/IServerBlockDroppedEvent';
 import { IServerNextDayEvent } from '@core/networking/server/IServerNextDayEvent';
+import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnEvent';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -103,6 +104,7 @@ export default class Room implements ISimulationEventListener {
           nickname: existingPlayer.nickname,
           score: existingPlayer.score,
         })),
+        estimatedSpawnDelay: newPlayer.estimatedSpawnDelay,
       },
     };
 
@@ -254,7 +256,13 @@ export default class Room implements ISimulationEventListener {
     };
     this._sendMessageToAllPlayers(blockDiedEvent);
   }
-  onBlockDestroyed(block: IBlock): void {}
+  onBlockDestroyed(block: IBlock): void {
+    const nextSpawnEvent: IServerNextSpawnEvent = {
+      type: ServerMessageType.NEXT_SPAWN,
+      time: block.player.estimatedSpawnDelay,
+    };
+    this._sendMessage(nextSpawnEvent, block.player.id);
+  }
   onCellBehaviourChanged(
     cell: ICell,
     previousBehaviour: ICellBehaviour

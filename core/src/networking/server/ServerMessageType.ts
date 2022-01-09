@@ -8,6 +8,7 @@ enum ServerMessageType {
   BLOCK_DIED,
   BLOCK_DROPPED,
   NEXT_DAY,
+  NEXT_SPAWN,
 }
 
 export default ServerMessageType;

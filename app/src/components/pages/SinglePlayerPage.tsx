@@ -1,5 +1,9 @@
+import { GameUI } from '@/components/game/GameUI';
+import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
 import useLocalUserStore from '@/state/LocalUserStore';
+import { WorldType } from 'infinitris2-models';
+import { IPlayer } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import useAppStore from '../../state/AppStore';
@@ -24,6 +28,8 @@ export default function SinglePlayerPage() {
   const gridNumRows = parseInt(useSearchParam('gridNumRows') || '20');
   const gridNumColumns = parseInt(useSearchParam('gridNumColumns') || '10');
   const dayLength = parseInt(useSearchParam('dayLength') || '2000');
+  const worldType: WorldType =
+    (useSearchParam('worldType') as WorldType) || 'grass';
   const spectate = useSearchParam('spectate') === 'true';
   const mistakeDetection = useSearchParam('mistakeDetection') === 'true';
   const calculateSpawnDelays =
@@ -44,6 +50,7 @@ export default function SinglePlayerPage() {
     if (!requiresRedirect && launchSinglePlayer && !hasLaunched && hasLoaded) {
       setLaunched(true);
       launchSinglePlayer({
+        worldType,
         controls,
         numBots,
         botReactionDelay,
@@ -57,6 +64,29 @@ export default function SinglePlayerPage() {
           calculateSpawnDelays,
           preventTowers,
           dayLength,
+        },
+        listener: {
+          onSimulationInit() {},
+          onSimulationStep() {},
+          onSimulationNextDay() {},
+
+          onBlockCreated() {},
+          onBlockCreateFailed() {},
+
+          onBlockPlaced() {},
+          onBlockDied() {},
+          onBlockMoved() {},
+          onBlockDropped() {},
+          onBlockDestroyed() {},
+          /*onPlayerCreated(player: IPlayer) {
+            useIngameStore.getState().setPlayer(player);
+          },*/
+          onPlayerCreated() {},
+          onPlayerDestroyed() {},
+          onPlayerToggleChat(player: IPlayer) {},
+          onLineCleared() {},
+          onCellBehaviourChanged() {},
+          onGridCollapsed() {},
         },
       });
       if (musicOn) {
@@ -82,7 +112,8 @@ export default function SinglePlayerPage() {
     calculateSpawnDelays,
     preventTowers,
     dayLength,
+    worldType,
   ]);
 
-  return null;
+  return <GameUI />;
 }

@@ -38,7 +38,7 @@ export class ScoreChangeIndicator {
         this._text.visible = true;
       }
       this._text.x = this._app.renderer.width / 2;
-      this._text.y = this._app.renderer.height * 0.85;
+      this._text.y = this._app.renderer.height * 0.93;
     }
     if (this._text.alpha > 0) {
       this._text.alpha -= 0.01;

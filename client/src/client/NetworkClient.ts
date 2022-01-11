@@ -33,6 +33,7 @@ import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPla
 import { IClientBlockDroppedEvent } from '@core/networking/client/IClientBlockDroppedEvent';
 import { IServerBlockDiedEvent } from '@core/networking/server/IServerBlockDiedEvent';
 import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnEvent';
+import { IPlayerEventListener } from '@models/IPlayerEventListener';
 
 export default class NetworkClient
   implements IClient, IClientSocketEventListener, ISimulationEventListener
@@ -47,15 +48,15 @@ export default class NetworkClient
   private _input: Input | undefined;
   constructor(
     url: string,
-    listener?: IClientSocketEventListener,
+    socketListener?: IClientSocketEventListener,
     controls?: ControlSettings,
     playerInfo?: IPlayer
   ) {
     this._controls = controls;
     this._playerInfo = playerInfo;
     const eventListeners: IClientSocketEventListener[] = [this];
-    if (listener) {
-      eventListeners.push(listener);
+    if (socketListener) {
+      eventListeners.push(socketListener);
     }
     this._socket = new ClientSocket(url, eventListeners);
   }
@@ -264,6 +265,13 @@ export default class NetworkClient
   }
   onBlockDied(block: IBlock): void {}
   onBlockDestroyed(block: IBlock): void {}
+  onPlayerCreated(player: IPlayer): void {}
+  onPlayerDestroyed(player: IPlayer): void {}
+  onPlayerToggleChat(player: IPlayer): void {
+    if (player.id === this._playerId) {
+      alert('TODO send toggle chat message');
+    }
+  }
   onCellBehaviourChanged(
     cell: ICell,
     previousBehaviour: ICellBehaviour

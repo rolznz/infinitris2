@@ -12,6 +12,7 @@ export const DEFAULT_KEYBOARD_CONTROLS: ControlSettings = {
   [InputAction.MoveDown]: 'ArrowDown',
   [InputAction.RotateAnticlockwise]: 'z',
   [InputAction.RotateClockwise]: 'x',
+  [InputAction.Chat]: 'Enter',
 };
 /*start: 'Enter',
   pause: 'p',*/

@@ -12,7 +12,7 @@ import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { IPlayer } from '@models/IPlayer';
 import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
-import { LaunchOptions } from '@models/IInfinitrisApi';
+import { LaunchOptions } from '@models/IClientApi';
 import { SimulationSettings } from '@models/SimulationSettings';
 import AIPlayer from '@core/player/AIPlayer';
 import { stringToHex } from '@models/util/stringToHex';
@@ -71,6 +71,10 @@ export default class SinglePlayerClient
   onBlockDropped(block: IBlock) {}
   onBlockDied(block: IBlock) {}
   onBlockDestroyed(block: IBlock): void {}
+
+  onPlayerCreated(player: IPlayer): void {}
+  onPlayerDestroyed(player: IPlayer): void {}
+  onPlayerToggleChat(player: IPlayer): void {}
   /**
    * @inheritdoc
    */
@@ -105,7 +109,8 @@ export default class SinglePlayerClient
         : new Infinitris2Renderer(
             undefined,
             undefined,
-            options.rendererQuality
+            options.rendererQuality,
+            options.worldType
           );
     await this._renderer.create();
 
@@ -113,7 +118,7 @@ export default class SinglePlayerClient
       options.simulationSettings || {};
 
     this._simulation = new Simulation(
-      new Grid(options.gridNumColumns || 50, options.gridNumRows || 20),
+      new Grid(options.gridNumColumns || 70, options.gridNumRows || 20),
       simulationSettings
     );
     this._simulation.addEventListener(this, this._renderer);
@@ -122,20 +127,18 @@ export default class SinglePlayerClient
     }
 
     this._simulation.init();
-    if (!options.spectate) {
-      const playerId = 0;
-      const player = new ControllablePlayer(
-        this._simulation,
-        playerId,
-        options.player?.nickname,
-        options.player?.color
-      );
-      this._simulation.addPlayer(player);
-      this._simulation.followPlayer(player);
-      this._input = new Input(this._simulation, player, this._controls);
-    } else {
-      // TODO: spectator input (follow bot N or free camera)
-    }
+    // FIXME: player should still be created, just marked as spectator
+    const playerId = 0;
+    const player = new ControllablePlayer(
+      this._simulation,
+      playerId,
+      options.player?.nickname,
+      options.player?.color,
+      options.spectate
+    );
+    this._simulation.addPlayer(player);
+    this._simulation.followPlayer(player);
+    this._input = new Input(this._simulation, player, this._controls);
 
     if (options.numBots) {
       for (let i = 0; i < options.numBots; i++) {

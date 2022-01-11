@@ -14,12 +14,19 @@ export interface IPlayer {
   get nickname(): string;
   get color(): number;
   get id(): number;
+  get isHuman(): boolean;
 
   get block(): IBlock | undefined;
   get score(): number;
   set score(score: number);
   get estimatedSpawnDelay(): number;
   set estimatedSpawnDelay(estimatedSpawnDelay: number);
+
+  set isSpectating(isSpectating: boolean);
+  get isSpectating(): boolean;
+  toggleChat(): void;
+
+  get isChatting(): boolean;
 
   update(cells: ICell[][], settings: SimulationSettings): void;
   addEventListener(eventListener: IBlockEventListener): void;

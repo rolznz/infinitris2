@@ -6,8 +6,13 @@ export default class ControllablePlayer extends Player {
     simulation: ISimulation,
     playerId: number,
     nickname?: string,
-    color?: number
+    color?: number,
+    spectate?: boolean
   ) {
-    super(simulation, playerId, nickname, color);
+    super(simulation, playerId, nickname, color, spectate);
+  }
+
+  get isHuman(): boolean {
+    return true;
   }
 }

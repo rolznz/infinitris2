@@ -12,13 +12,14 @@ import ISimulation from '@models/ISimulation';
 import { FRAME_LENGTH } from '@core/Simulation';
 import { checkMistake } from '@core/block/checkMistake';
 import LayoutUtils from '@core/block/layout/LayoutUtils';
+import { IPlayerEventListener } from '@models/IPlayerEventListener';
 
 export default abstract class Player implements IPlayer, IBlockEventListener {
   private _id: number;
   protected _block?: IBlock;
   private _score: number;
   private _lastPlacementColumn: number | undefined;
-  private _eventListeners: IBlockEventListener[]; // TODO: add IPlayerEventListener
+  private _eventListeners: IPlayerEventListener[]; // TODO: add IPlayerEventListener
   private _nextLayout?: Layout;
   private _nextLayoutRotation?: number;
   private _nickname: string;
@@ -26,14 +27,17 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _simulation: ISimulation;
   private _nextSpawnTime: number;
   private _isFirstBlock: boolean;
+  private _isSpectating: boolean;
+  private _isChatting: boolean;
 
   constructor(
     simulation: ISimulation,
     id: number,
     nickname: string = 'Guest',
-    color: number = 0xf33821
+    color: number = 0xf33821,
+    spectate = false
   ) {
-    console.log('Created player ' + id);
+    console.log('Creating player ' + id);
     this._id = id;
     this._eventListeners = [];
     this._score = 0;
@@ -43,6 +47,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._nextSpawnTime = 0;
     this._isFirstBlock = true;
     this._calculateSpawnDelay();
+    this._isSpectating = spectate;
+    this._isChatting = false;
+    this._eventListeners.forEach((listener) => listener.onPlayerCreated(this));
   }
 
   get id(): number {
@@ -83,10 +90,36 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._nextLayoutRotation = nextLayoutRotation;
   }
 
+  set isSpectating(isSpectating: boolean) {
+    this._isSpectating = isSpectating;
+  }
+  get isSpectating(): boolean {
+    return this._isSpectating;
+  }
+
+  get isChatting(): boolean {
+    return this._isChatting;
+  }
+
+  get isHuman(): boolean {
+    return false;
+  }
+
+  toggleChat() {
+    this._isChatting = !this._isChatting;
+    this.onToggleChat(this);
+  }
+
+  onToggleChat(player: IPlayer) {
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerToggleChat(player)
+    );
+  }
+
   /**
    * Add one or more listeners to listen to events broadcasted by this player.
    */
-  addEventListener(...eventListeners: IBlockEventListener[]) {
+  addEventListener(...eventListeners: IPlayerEventListener[]) {
     this._eventListeners.push(...eventListeners);
   }
 
@@ -101,7 +134,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
    * @param gridCells The cells within the grid.
    */
   update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
-    if (!this._block && !this._simulation.isNetworkClient) {
+    if (
+      !this._block &&
+      !this._simulation.isNetworkClient &&
+      !this._isSpectating
+    ) {
       if (
         this._simulation.isNetworkClient ||
         Date.now() < this._nextSpawnTime
@@ -170,6 +207,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   destroy() {
     console.log('Destroying player ' + this._id);
     this._removeBlock();
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerDestroyed(this)
+    );
   }
 
   /**

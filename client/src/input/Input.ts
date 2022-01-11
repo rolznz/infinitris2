@@ -28,9 +28,9 @@ export default class Input {
     this._simulation = simulation;
     this._grid = simulation.grid;
     this._player = player;
-    this._controls = controls;
+    this._controls = { ...DEFAULT_KEYBOARD_CONTROLS, ...controls }; // ensure newly added controls use default keys
     this._actionListeners = [];
-    this._keyboardInput = new KeyboardInput(this._fireAction, controls);
+    this._keyboardInput = new KeyboardInput(this._fireAction, this._controls);
     this._touchInput = new TouchInput(this._fireAction);
   }
 
@@ -64,6 +64,9 @@ export default class Input {
     }
     const block: IBlock | undefined = this._player.block;
     switch (action) {
+      case InputAction.Chat:
+        this._player.toggleChat();
+        break;
       case InputAction.MoveLeft:
       case InputAction.MoveRight:
       case InputAction.MoveDown:

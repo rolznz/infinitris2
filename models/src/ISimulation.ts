@@ -1,3 +1,4 @@
+import { IPlayerEventListener } from '@models/IPlayerEventListener';
 import { SimulationSettings } from '.';
 import IBlockEventListener from './IBlockEventListener';
 import ICellEventListener from './ICellEventListener';
@@ -9,12 +10,10 @@ export type NetworkSimulationInfo = {
   nextDay: number;
   dayNumber: number;
   dayLength: number;
-  //TODO: simulationSettings
 };
 
 export default interface ISimulation
-  extends IBlockEventListener,
-    ICellEventListener,
+  extends IPlayerEventListener,
     IGridEventListener {
   get dayProportion(): number;
   get players(): IPlayer[];

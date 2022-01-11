@@ -71,7 +71,11 @@
     "baseUrl": "./",
     "paths": {
       "@models/*": ["src/*"]
-    }
+    },
+    "plugins": [
+      { "transform": "typescript-transform-paths" },
+      { "transform": "typescript-transform-paths", "afterDeclarations": true }
+    ]
   },
   "exclude": ["src/__tests__", "dist"]
 }

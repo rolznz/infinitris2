@@ -1,4 +1,5 @@
 import { RendererQuality } from '@models/RendererQuality';
+import { WorldType } from '@models/WorldType';
 
 export type WorldBackgroundLayerConfig = {
   filename: string;
@@ -10,12 +11,12 @@ export type WorldBackgroundLayerConfig = {
 
 export type WorldBackgroundConfig = {
   layers: WorldBackgroundLayerConfig[];
-  worldName: string;
+  worldType: WorldType;
 };
 
 export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
   {
-    worldName: 'grass',
+    worldType: 'grass',
     layers: [
       {
         filename: 'theme_grass_0.png',
@@ -95,6 +96,53 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedX: 0.65,
         offsetY: 1.6,
         minQuality: 'high',
+      },
+    ],
+  },
+  {
+    worldType: 'space',
+    layers: [
+      {
+        filename: 'theme_space_1.png',
+        speedY: 0.15,
+        speedX: 0.15,
+        offsetY: 0,
+      },
+      {
+        filename: 'theme_space_0.png',
+        speedY: 0.1,
+        speedX: 0,
+        offsetY: 0,
+      },
+      {
+        filename: 'theme_space_4.png',
+        speedY: 0.2,
+        speedX: 0.2,
+        offsetY: 0,
+      },
+      {
+        filename: 'theme_space_9.png',
+        speedY: 0.25,
+        speedX: 0.25,
+        offsetY: 0.1,
+      },
+      {
+        filename: 'theme_space_10.png',
+        speedY: 0.3,
+        speedX: 0.3,
+        offsetY: 0.2,
+      },
+      {
+        filename: 'theme_space_11.png',
+        speedY: 0.35,
+        speedX: 0.35,
+        offsetY: 0.5,
+      },
+      {
+        filename: 'theme_space_12.png',
+        speedY: 0.4,
+        speedX: 0.4,
+        offsetY: 0.1,
       },
     ],
   },

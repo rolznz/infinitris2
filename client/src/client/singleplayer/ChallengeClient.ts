@@ -27,7 +27,7 @@ import {
   IIngameChallengeAttempt,
 } from '@models/IChallengeAttempt';
 import ChallengeRewardCriteria from '@models/ChallengeRewardCriteria';
-import { LaunchOptions } from '@models/IInfinitrisApi';
+import { LaunchOptions } from '@models/IClientApi';
 import IGrid from '@models/IGrid';
 
 // TODO: enable support for multiplayer challenges (challenges)
@@ -103,6 +103,10 @@ export default class ChallengeClient
    * @inheritdoc
    */
   onBlockMoved(block: IBlock) {}
+
+  onPlayerCreated(player: IPlayer): void {}
+  onPlayerDestroyed(player: IPlayer): void {}
+  onPlayerToggleChat(player: IPlayer): void {}
 
   /**
    * @inheritdoc

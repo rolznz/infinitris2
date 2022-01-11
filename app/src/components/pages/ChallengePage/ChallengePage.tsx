@@ -81,7 +81,6 @@ export default function ChallengePage() {
 
   useEffect(() => {
     if (challenge && !requiresRedirect && launchChallenge && !hasLaunched) {
-      console.log('passed');
       setLaunched(true);
 
       const simulationEventListener: ISimulationEventListener = {
@@ -89,6 +88,7 @@ export default function ChallengePage() {
           setSimulation(simulation);
         },
         onSimulationStep() {},
+        onSimulationNextDay() {},
 
         onBlockCreated() {},
         onBlockCreateFailed() {
@@ -102,6 +102,11 @@ export default function ChallengePage() {
           setCheckChallengeStatus(true);
         },
         onBlockMoved() {},
+        onBlockDropped() {},
+        onBlockDestroyed() {},
+        onPlayerCreated() {},
+        onPlayerDestroyed() {},
+        onPlayerToggleChat() {},
         onLineCleared() {},
         onCellBehaviourChanged() {},
         onGridCollapsed() {},

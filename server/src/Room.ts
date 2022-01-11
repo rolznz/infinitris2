@@ -17,13 +17,6 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
 import { ServerMessage } from './networking/IServerSocket';
 import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
-import {
-  colors,
-  hexToString,
-  NetworkPlayerInfo,
-  stringToHex,
-  tetrominoes,
-} from '@models/index';
 import ClientMessageType from '@core/networking/client/ClientMessageType';
 import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
 import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
@@ -32,6 +25,9 @@ import { IServerBlockDiedEvent } from '@core/networking/server/IServerBlockDiedE
 import { IServerBlockDroppedEvent } from '@core/networking/server/IServerBlockDroppedEvent';
 import { IServerNextDayEvent } from '@core/networking/server/IServerNextDayEvent';
 import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnEvent';
+import { stringToHex } from '@models/util/stringToHex';
+import { colors } from '@models/colors';
+import { IPlayer } from '@models/';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -268,6 +264,10 @@ export default class Room implements ISimulationEventListener {
     previousBehaviour: ICellBehaviour
   ): void {}
   onGridCollapsed(grid: IGrid): void {}
+
+  onPlayerToggleChat(player: IPlayer): void {
+    console.error('TODO: mark player as chatting/not chatting');
+  }
 
   private _sendMessageToAllPlayers(message: ServerMessage) {
     const playerIds: number[] = this._simulation.getPlayerIds();

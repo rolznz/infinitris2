@@ -1,4 +1,4 @@
-import IInfinitrisApi, { LaunchOptions } from '@models/IInfinitrisApi';
+import IClientApi, { LaunchOptions } from '@models/IClientApi';
 import IClient from '@models/IClient';
 import NetworkClient from '../client/NetworkClient';
 import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
@@ -9,7 +9,7 @@ import ControlSettings from '@models/ControlSettings';
 import { IChallenge } from '@models/IChallenge';
 import ISimulation from '@models/ISimulation';
 
-export default class InfinitrisApi implements IInfinitrisApi {
+export default class ClientApi implements IClientApi {
   private _client?: IClient;
 
   constructor() {
@@ -61,6 +61,9 @@ export default class InfinitrisApi implements IInfinitrisApi {
           onBlockDied() {},
           onBlockDropped() {},
           onBlockPlaced() {},
+          onPlayerCreated() {},
+          onPlayerDestroyed() {},
+          onPlayerToggleChat() {},
           onLineCleared() {},
           onGridCollapsed() {},
           onCellBehaviourChanged() {},

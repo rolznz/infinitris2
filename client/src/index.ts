@@ -1,9 +1,9 @@
 import 'url-search-params-polyfill';
-import InfinitrisApi from './api/InfinitrisApi';
+import ClientApi from './api/ClientApi';
 
 declare global {
   interface Window {
-    infinitris2: InfinitrisApi;
+    infinitris2: ClientApi;
   }
 }
 
@@ -14,4 +14,4 @@ if (module.hot) {
 /**
  * Export entrypoint
  */
-window.infinitris2 = new InfinitrisApi();
+window.infinitris2 = new ClientApi();

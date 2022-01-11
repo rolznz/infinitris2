@@ -11,7 +11,14 @@ import InputLabel from '@mui/material/InputLabel';
 import FlexBox from '../ui/FlexBox';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
-import { FormControlLabel, FormGroup, Switch } from '@mui/material';
+import {
+  FormControlLabel,
+  FormGroup,
+  MenuItem,
+  Select,
+  Switch,
+} from '@mui/material';
+import { WorldType, WorldTypeValues } from 'infinitris2-models';
 
 const schema = yup
   .object({
@@ -50,6 +57,7 @@ type FormData = {
   mistakeDetection: boolean;
   calculateSpawnDelays: boolean;
   preventTowers: boolean;
+  worldType: WorldType;
 };
 
 export function SinglePlayerOptionsPage() {
@@ -70,6 +78,7 @@ export function SinglePlayerOptionsPage() {
       mistakeDetection: true,
       calculateSpawnDelays: true,
       preventTowers: true,
+      worldType: 'grass',
     },
     resolver: yupResolver(schema),
   });
@@ -92,6 +101,22 @@ export function SinglePlayerOptionsPage() {
       <form onSubmit={handleSubmit(onSubmit)}>
         <FlexBox>
           <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
+            <Controller
+              name="worldType"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>World</InputLabel>
+                  <Select {...field}>
+                    {WorldTypeValues.map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
             <Controller
               name="numBots"
               control={control}

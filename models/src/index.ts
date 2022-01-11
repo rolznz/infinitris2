@@ -3,7 +3,7 @@ import IBlockEventListener from './IBlockEventListener';
 import ICell from './ICell';
 import { IClientSocketEventListener } from './IClientSocketEventListener';
 import IGridEventListener from './IGridEventListener';
-import IInfinitrisApi from './IInfinitrisApi';
+import IClientApi from './IClientApi';
 import InputAction from './InputAction';
 import InputMethod from './InputMethod';
 import ISimulation from './ISimulation';
@@ -54,6 +54,8 @@ export * from './util/hexToString';
 export * from './util/stringToHex';
 export * from './SimulationSettings';
 export * from './IPlayer';
+export * from './IPlayerEventListener';
+export * from './WorldType';
 
 export {
   exampleChallenges,
@@ -62,7 +64,7 @@ export {
   InputAction,
   Layout,
   tetrominoes,
-  IInfinitrisApi,
+  IClientApi as IClientApi,
   IClientSocketEventListener,
   ICell,
   ICellBehaviour,

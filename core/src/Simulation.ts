@@ -239,6 +239,33 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
+  onPlayerCreated(player: IPlayer) {
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerCreated(player)
+    );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onPlayerDestroyed(player: IPlayer) {
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerDestroyed(player)
+    );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onPlayerToggleChat(player: IPlayer) {
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerToggleChat(player)
+    );
+  }
+
+  /**
+   * @inheritdoc
+   */
   onLineCleared(row: number) {
     this._eventListeners.forEach((listener) => listener.onLineCleared(row));
   }

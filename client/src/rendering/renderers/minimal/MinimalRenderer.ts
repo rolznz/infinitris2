@@ -16,6 +16,7 @@ import getUserFriendlyKeyText from '@models/util/getUserFriendlyKeyText';
 import InputMethod from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
+import { IPlayer } from '@models/IPlayer';
 
 const minCellSize = 32;
 const particleDivisions = 4;
@@ -349,6 +350,10 @@ export default class MinimalRenderer
   onBlockDestroyed(block: IBlock): void {
     this._removeBlock(block);
   }
+
+  onPlayerCreated(player: IPlayer): void {}
+  onPlayerDestroyed(player: IPlayer): void {}
+  onPlayerToggleChat(player: IPlayer): void {}
 
   /**
    * @inheritdoc

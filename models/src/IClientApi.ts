@@ -8,6 +8,7 @@ import { IPlayer } from './IPlayer';
 import { RendererType } from './RendererType';
 import { SimulationSettings } from './SimulationSettings';
 import { RendererQuality } from './RendererQuality';
+import { WorldType } from '@models/WorldType';
 
 export type LaunchOptions = {
   listener?: ISimulationEventListener;
@@ -24,9 +25,10 @@ export type LaunchOptions = {
   simulationSettings?: SimulationSettings;
   rendererQuality?: RendererQuality;
   spectate?: boolean;
+  worldType?: WorldType;
 };
 
-export default interface IInfinitrisApi {
+export default interface IClientApi {
   releaseClient(): void;
   getVersion(): string;
   launchSinglePlayer(options: LaunchOptions): void;

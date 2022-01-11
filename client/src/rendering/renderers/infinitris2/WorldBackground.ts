@@ -7,6 +7,7 @@ import {
   worldBackgroundConfigs,
 } from './worldBackgroundConfigs';
 import { RendererQuality } from '@models/RendererQuality';
+import { WorldType } from '@models/WorldType';
 
 export class WorldBackground {
   private _layerSprites: (PIXI.TilingSprite | undefined)[] = [];
@@ -18,17 +19,18 @@ export class WorldBackground {
   constructor(
     app: PIXI.Application,
     camera: Camera,
-    worldName: string,
+    worldType: WorldType,
     quality: RendererQuality | undefined
   ) {
     this._app = app;
     this._camera = camera;
+    quality = 'high';
     this._rendererQuality = quality;
     this._worldConfig = worldBackgroundConfigs.find(
-      (config) => config.worldName === worldName
+      (config) => config.worldType === worldType
     )!;
     if (!this._worldConfig) {
-      throw new Error('World config not found: ' + worldName);
+      throw new Error('World config not found: ' + worldType);
     }
     for (const layer of this._worldConfig.layers) {
       if (this._isLayerRequired(layer)) {
@@ -42,7 +44,7 @@ export class WorldBackground {
       layerFilenameParts[layerFilenameParts.length - 2] += '_s';
     }
     return `${imagesDirectory}/worlds/${
-      this._worldConfig.worldName
+      this._worldConfig.worldType
     }/${layerFilenameParts.join('.')}`;
   }
 

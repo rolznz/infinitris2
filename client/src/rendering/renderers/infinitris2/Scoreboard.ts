@@ -60,6 +60,7 @@ export class Scoreboard {
       nickname: player.nickname,
       score: player.score,
       placing: 0,
+      spectating: player.isSpectating,
     }));
     playerScores.sort((a, b) => b.score - a.score);
     for (let i = 0; i < playerScores.length; i++) {
@@ -97,7 +98,8 @@ export class Scoreboard {
           '  ' +
           playerScores[i].score +
           ' ' +
-          playerScores[i].nickname;
+          playerScores[i].nickname +
+          (playerScores[i].spectating ? ' (spectating)' : '');
 
         text.tint =
           playerScores[i].playerId === followingPlayer?.id

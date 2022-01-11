@@ -17,17 +17,17 @@ import InputMethod from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { WorldBackground } from './WorldBackground';
 import { GridFloor } from './GridFloor';
-import {
-  getBorderColor,
-  IGrid,
-  ISimulation,
-  RendererQuality,
-} from '@models/index';
 import { DayIndicator } from './DayIndicator';
 import ControllablePlayer from '@src/ControllablePlayer';
 import { Scoreboard } from './Scoreboard';
 import { SpawnDelayIndicator } from './SpawnDelayIndicator';
 import { ScoreChangeIndicator } from './ScoreChangeIndicator';
+import IGrid from '@models/IGrid';
+import ISimulation from '@models/ISimulation';
+import { IPlayer } from '@models/IPlayer';
+import { RendererQuality } from '@models/RendererQuality';
+import { getBorderColor } from '@models/util/adjustColor';
+import { WorldType } from '@models/WorldType';
 
 const idealCellSize = 32;
 const minCellCount = 23;
@@ -126,16 +126,19 @@ export default class Infinitris2Renderer
   private _scoreboard!: Scoreboard;
   private _scoreChangeIndicator!: ScoreChangeIndicator;
   private _rendererQuality: RendererQuality | undefined;
+  private _worldType: WorldType;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
     teachControls: boolean = false,
-    rendererQuality?: RendererQuality
+    rendererQuality?: RendererQuality,
+    worldType: WorldType = 'grass'
   ) {
     this._preferredInputMethod = preferredInputMethod;
     this._teachControls = teachControls;
     this._camera = new Camera();
     this._rendererQuality = rendererQuality;
+    this._worldType = worldType;
   }
 
   set virtualKeyboardControls(
@@ -162,13 +165,13 @@ export default class Infinitris2Renderer
     this._worldBackground = new WorldBackground(
       this._app,
       this._camera,
-      'grass',
+      this._worldType,
       this._rendererQuality
     );
 
     this._dayIndicator = new DayIndicator(this._app);
 
-    this._gridFloor = new GridFloor(this._app, 'grass');
+    this._gridFloor = new GridFloor(this._app, this._worldType);
     this._app.loader.add(patternImageUrl);
     this._app.loader.add(faceUrl);
 
@@ -445,6 +448,10 @@ export default class Infinitris2Renderer
     this._renderCells(this._grid.grid.reducedCells); //TODO: only render block + neighbour cells
     //this._renderCells(block.cells);
   }
+
+  onPlayerCreated(player: IPlayer): void {}
+  onPlayerDestroyed(player: IPlayer): void {}
+  onPlayerToggleChat(player: IPlayer): void {}
 
   /**
    * @inheritdoc

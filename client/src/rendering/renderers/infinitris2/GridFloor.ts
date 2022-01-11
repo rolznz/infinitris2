@@ -1,11 +1,11 @@
 import * as PIXI from 'pixi.js-legacy';
-import Camera from '@src/rendering/Camera';
 import { imagesDirectory } from '..';
 import {
   WorldBackgroundLayerConfig,
   WorldBackgroundConfig,
   worldBackgroundConfigs,
 } from './worldBackgroundConfigs';
+import { WorldType } from '@models/WorldType';
 
 export class GridFloor {
   private _floorSprite!: PIXI.Sprite;
@@ -13,10 +13,10 @@ export class GridFloor {
   private _app: PIXI.Application;
   private _worldConfig: WorldBackgroundConfig;
 
-  constructor(app: PIXI.Application, worldName: string) {
+  constructor(app: PIXI.Application, worldType: WorldType) {
     this._app = app;
     this._worldConfig = worldBackgroundConfigs.find(
-      (config) => config.worldName === worldName
+      (config) => config.worldType === worldType
     )!;
 
     this._app.loader.add(this._getFloorImageFilename());
@@ -24,11 +24,11 @@ export class GridFloor {
   }
   private _getFloorImageFilename(): string {
     // TODO: copied from world background
-    return `${imagesDirectory}/worlds/${this._worldConfig.worldName}/floor.png`;
+    return `${imagesDirectory}/worlds/${this._worldConfig.worldType}/floor.png`;
   }
   private _getGlowImageFilename(): string {
     // TODO: copied from world background
-    return `${imagesDirectory}/worlds/${this._worldConfig.worldName}/floor_glow.png`;
+    return `${imagesDirectory}/worlds/${this._worldConfig.worldType}/floor_glow.png`;
   }
 
   destroy() {

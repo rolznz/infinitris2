@@ -1,11 +1,11 @@
 import useLoaderStore from '@/state/LoaderStore';
-import { IInfinitrisApi } from 'infinitris2-models';
+import { IClientApi } from 'infinitris2-models';
 import { useEffect } from 'react';
 import useAppStore from '../../state/AppStore';
 
 declare global {
   interface Window {
-    infinitris2: IInfinitrisApi;
+    infinitris2: IClientApi;
   }
 }
 

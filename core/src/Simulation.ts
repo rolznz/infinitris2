@@ -257,9 +257,9 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
-  onPlayerToggleChat(player: IPlayer) {
+  onPlayerToggleChat(player: IPlayer, cancel: boolean) {
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerToggleChat(player)
+      listener.onPlayerToggleChat(player, cancel)
     );
   }
 

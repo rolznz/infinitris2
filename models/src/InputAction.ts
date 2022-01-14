@@ -6,6 +6,7 @@ enum InputAction {
   RotateAnticlockwise = 'RotateAnticlockwise',
   Drop = 'Drop',
   Chat = 'Chat',
+  Esc = 'Esc',
 }
 
 export default InputAction;

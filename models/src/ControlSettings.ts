@@ -13,6 +13,7 @@ export const DEFAULT_KEYBOARD_CONTROLS: ControlSettings = {
   [InputAction.RotateAnticlockwise]: 'z',
   [InputAction.RotateClockwise]: 'x',
   [InputAction.Chat]: 'Enter',
+  [InputAction.Esc]: 'Escape',
 };
 /*start: 'Enter',
   pause: 'p',*/

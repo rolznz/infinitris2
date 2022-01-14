@@ -105,14 +105,19 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     return false;
   }
 
-  toggleChat() {
-    this._isChatting = !this._isChatting;
-    this.onToggleChat(this);
+  cancelChat() {
+    if (this._isChatting) {
+      this.toggleChat(true);
+    }
+  }
+  toggleChat(cancel = false) {
+    this._isChatting = !this._isChatting && !cancel;
+    this.onToggleChat(this, cancel);
   }
 
-  onToggleChat(player: IPlayer) {
+  onToggleChat(player: IPlayer, cancel: boolean) {
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerToggleChat(player)
+      listener.onPlayerToggleChat(player, cancel)
     );
   }
 

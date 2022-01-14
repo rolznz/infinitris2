@@ -83,7 +83,14 @@ export default function SinglePlayerPage() {
           },*/
           onPlayerCreated() {},
           onPlayerDestroyed() {},
-          onPlayerToggleChat(player: IPlayer) {},
+          onPlayerToggleChat(player: IPlayer, cancel: boolean) {
+            if (player.isHuman) {
+              if (!cancel && useIngameStore.getState().isChatOpen) {
+                useIngameStore.getState().setChatMessage('');
+              }
+              useIngameStore.getState().setChatOpen(player.isChatting);
+            }
+          },
           onLineCleared() {},
           onCellBehaviourChanged() {},
           onGridCollapsed() {},

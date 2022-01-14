@@ -16,7 +16,9 @@ export default class KeyboardInput {
   }
 
   private _onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === this._controls[InputAction.Chat]) {
+    if (event.key === this._controls[InputAction.Esc]) {
+      this._fireAction(InputAction.Esc);
+    } else if (event.key === this._controls[InputAction.Chat]) {
       this._fireAction(InputAction.Chat);
     } else if (
       event.key === this._controls[InputAction.MoveLeft] ||

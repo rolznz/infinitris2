@@ -87,6 +87,7 @@ export const coreThemeOptions: ThemeOptions = {
   },
   zIndex: zIndexes as any,
   components: {
+    MuiTextField: {},
     MuiPaper: {
       styleOverrides: {
         root: {

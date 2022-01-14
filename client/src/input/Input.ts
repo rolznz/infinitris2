@@ -64,6 +64,9 @@ export default class Input {
     }
     const block: IBlock | undefined = this._player.block;
     switch (action) {
+      case InputAction.Esc:
+        this._player.cancelChat();
+        break;
       case InputAction.Chat:
         this._player.toggleChat();
         break;

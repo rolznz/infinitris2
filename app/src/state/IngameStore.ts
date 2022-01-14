@@ -1,15 +1,17 @@
-import { IPlayer } from 'infinitris2-models';
 import create from 'zustand';
 
 type IngameStore = {
-  readonly player?: IPlayer;
-  //readonly simulation: ISimulation;
-  setPlayer(player: IPlayer): void;
+  readonly isChatOpen: boolean;
+  setChatOpen(isChatOpen: boolean): void;
+  readonly chatMessage: string;
+  setChatMessage(chatMessage: string): void;
 };
 
 const useIngameStore = create<IngameStore>((set) => ({
-  player: undefined,
-  setPlayer: (player: IPlayer) => set((_) => ({ player })),
+  isChatOpen: false,
+  setChatOpen: (isChatOpen: boolean) => set((_) => ({ isChatOpen })),
+  chatMessage: '',
+  setChatMessage: (chatMessage: string) => set((_) => ({ chatMessage })),
 }));
 
 export default useIngameStore;

@@ -14,7 +14,11 @@
     "start": "node ./dist/bundle.js launch",
     "debug": "node --nolazy --inspect-brk ./dist/bundle.js launch",
     "docs": "typedoc --out docs --readme README.md src",
-    "dev": "webpack --watch & nodemon ./dist/bundle.js launch"
+    "dev": "webpack --watch & nodemon ./dist/bundle.js launch",
+    "docker:build": "docker build --tag infinitris-server .",
+    "docker:run": "docker run --name infinitris-server --publish 9001:9001 infinitris-server",
+    "docker:run-alt-port": "docker run --name infinitris-server --publish 9000:9000 -e PORT=9000 infinitris-server",
+    "deploy:heroku": "heroku container:push web && heroku container:release web"
   },
   "nyc": {
     "extension": [

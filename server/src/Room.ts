@@ -27,7 +27,7 @@ import { IServerNextDayEvent } from '@core/networking/server/IServerNextDayEvent
 import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnEvent';
 import { stringToHex } from '@models/util/stringToHex';
 import { colors } from '@models/colors';
-import { IPlayer } from '@models/';
+import { IPlayer } from '@models/IPlayer';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -38,7 +38,7 @@ export default class Room implements ISimulationEventListener {
     this._simulation = new Simulation(new Grid(10, 20));
     this._simulation.addEventListener(this);
     this._simulation.init();
-    this._simulation.startInterval();
+    //this._simulation.startInterval();
   }
 
   /**
@@ -63,7 +63,6 @@ export default class Room implements ISimulationEventListener {
     );
     const currentPlayerIds: number[] = this._simulation.getPlayerIds();
     this._simulation.addPlayer(newPlayer);
-    newPlayer.addEventListener(this);
 
     const joinRoomResponse: IServerJoinRoomResponse = {
       type: ServerMessageType.JOIN_ROOM_RESPONSE,
@@ -116,6 +115,7 @@ export default class Room implements ISimulationEventListener {
     };
 
     this._sendMessage(newPlayerMessage, ...currentPlayerIds);
+    this._simulation.startInterval();
   }
 
   /**
@@ -131,6 +131,10 @@ export default class Room implements ISimulationEventListener {
       playerId,
     };
     this._sendMessageToAllPlayers(playerDisconnectedMessage);
+    if (!this._simulation.players.length) {
+      this._simulation.grid.reset();
+      this._simulation.stopInterval();
+    }
   }
 
   /**
@@ -265,6 +269,8 @@ export default class Room implements ISimulationEventListener {
   ): void {}
   onGridCollapsed(grid: IGrid): void {}
 
+  onPlayerCreated(player: IPlayer) {}
+  onPlayerDestroyed(player: IPlayer): void {}
   onPlayerToggleChat(player: IPlayer): void {
     console.error('TODO: mark player as chatting/not chatting');
   }

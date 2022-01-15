@@ -12,11 +12,11 @@ import {
   IClientSocketEventListener,
   IRoom,
 } from 'infinitris2-models';
-import useForcedRedirect from '../hooks/useForcedRedirect';
+//import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser } from '../../state/UserStore';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { useDocument } from 'swr-firestore';
-import useComingSoonRedirect from '../hooks/useComingSoonRedirect';
+import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 
 interface RoomPageRouteParams {
   id: string;
@@ -36,8 +36,7 @@ const socketEventListener: IClientSocketEventListener = {
 };
 
 export default function RoomPage() {
-  useComingSoonRedirect();
-  /*const appStore = useAppStore();
+  const appStore = useAppStore();
   const client = appStore.clientApi;
   const [connected, setConnected, disconnected, setDisconnected] = useRoomStore(
     (store) => [
@@ -51,14 +50,16 @@ export default function RoomPage() {
 
   const { data: room } = useDocument<IRoom>(id ? getRoomPath(id) : null);
   const [retryCount, setRetryCount] = useState(0);
-  const roomUrl = room?.url;
-  const requiresRedirect = useForcedRedirect();
+  const roomUrl = room?.data()?.url;
+  //const requiresRedirect = useForcedRedirect();
   const [hasLaunched, setLaunched] = useState(false);
   const controls = useUser().controls;
 
+  useReleaseClientOnExitPage();
+
   useEffect(() => {
     if (
-      requiresRedirect ||
+      //requiresRedirect ||
       disconnected ||
       !client ||
       !roomUrl ||
@@ -67,18 +68,17 @@ export default function RoomPage() {
       return;
     }
     setLaunched(true);
-    client.launchNetworkClient(
-      roomUrl as string,
-      socketEventListener,
-      controls
-    );
+    client.launchNetworkClient(roomUrl as string, {
+      socketListener: socketEventListener,
+      controls,
+    });
   }, [
     disconnected,
     retryCount,
     roomUrl,
     client,
     setConnected,
-    requiresRedirect,
+    //requiresRedirect,
     hasLaunched,
     controls,
   ]);
@@ -96,7 +96,7 @@ export default function RoomPage() {
     ? 'Disconnected'
     : !room
     ? 'Loading Room'
-    : 'Connecting';
+    : 'Connecting to ' + roomUrl;
 
   return (
     <Box
@@ -142,6 +142,5 @@ export default function RoomPage() {
         )}
       </Box>
     </Box>
-  );*/
-  return null;
+  );
 }

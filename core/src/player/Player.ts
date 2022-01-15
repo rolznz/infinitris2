@@ -189,7 +189,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     row: number,
     column: number,
     rotation: number,
-    layoutIndex: number
+    layoutIndex: number,
+    force: boolean = false
   ) {
     const layouts = Object.values(tetrominoes);
     const newBlock = new Block(
@@ -200,7 +201,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       column,
       rotation,
       this._simulation,
-      this
+      this,
+      force
     );
     console.log('Block created for player ' + this._id, newBlock.isAlive);
     if (newBlock.isAlive) {

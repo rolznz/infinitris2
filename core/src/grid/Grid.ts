@@ -121,6 +121,12 @@ export default class Grid implements IGrid {
     }
   }
 
+  reset() {
+    for (let cell of this._reducedCells) {
+      cell.reset();
+    }
+  }
+
   collapse() {
     console.log('Collapse!');
     for (let r = this.numRows - 1; r > 0; r--) {

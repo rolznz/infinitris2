@@ -14,7 +14,6 @@ type LoopCellEvent = (cell?: ICell) => void;
 export default class Block implements IBlock {
   private _player: IPlayer;
   private readonly _cells: ICell[];
-  //private _wrapIndex: number;
   private _column: number;
   private _row: number;
   private _rotation: number;
@@ -39,10 +38,10 @@ export default class Block implements IBlock {
     column: number,
     rotation: number,
     simulation: ISimulation,
-    eventListener?: IBlockEventListener
+    eventListener?: IBlockEventListener,
+    force = false
   ) {
     this._player = player;
-    //this._wrapIndex = 0;
     this._column = column;
     this._row = row;
     this._rotation = rotation;
@@ -62,19 +61,21 @@ export default class Block implements IBlock {
     this._resetTimers();
 
     let otherBlockInArea = false;
-    this._loopCells(
-      this._gridCells,
-      this._column,
-      this._row,
-      this._rotation,
-      (cell) => {
-        if (cell && cell.blocks.length) {
-          otherBlockInArea = true;
+    if (!force) {
+      this._loopCells(
+        this._gridCells,
+        this._column,
+        this._row,
+        this._rotation,
+        (cell) => {
+          if (cell && cell.blocks.length) {
+            otherBlockInArea = true;
+          }
         }
-      }
-    );
+      );
+    }
 
-    if (!otherBlockInArea && this.canMove(0, 0, 0)) {
+    if (force || (!otherBlockInArea && this.canMove(0, 0, 0))) {
       this._updateCells();
     } else {
       this._isAlive = false;
@@ -152,10 +153,6 @@ export default class Block implements IBlock {
   get layout(): Layout {
     return this._layout;
   }
-
-  /*get wrapIndex(): number {
-    return this._wrapIndex;
-  }*/
 
   // TODO: rename numColumns
   get width(): number {

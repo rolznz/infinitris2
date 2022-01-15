@@ -35,7 +35,8 @@ export interface IPlayer {
     row: number,
     column: number,
     rotation: number,
-    layoutIndex: number
+    layoutIndex: number,
+    force: boolean
   ): void;
   destroy(): void;
 }

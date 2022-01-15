@@ -46,6 +46,7 @@ export default class NetworkClient
   private _playerInfo?: IPlayer;
   private _playerId?: number;
   private _input: Input | undefined;
+  private _lastMessageId: number;
   constructor(
     url: string,
     socketListener?: IClientSocketEventListener,
@@ -54,6 +55,7 @@ export default class NetworkClient
   ) {
     this._controls = controls;
     this._playerInfo = playerInfo;
+    this._lastMessageId = -1;
     const eventListeners: IClientSocketEventListener[] = [this];
     if (socketListener) {
       eventListeners.push(socketListener);
@@ -82,6 +84,13 @@ export default class NetworkClient
    * @inheritdoc
    */
   async onMessage(message: IServerMessage) {
+    // TODO: wrap IServerMessage in another interface that has messageId
+    if ((message as any).messageId !== this._lastMessageId + 1) {
+      console.error('Missed one or more server messages');
+      this._socket.disconnect();
+      return;
+    }
+    ++this._lastMessageId;
     console.log('Received message: ', message);
     if (message.type === ServerMessageType.JOIN_ROOM_RESPONSE) {
       const joinResponse = message as IServerJoinRoomResponse;
@@ -150,7 +159,8 @@ export default class NetworkClient
               block.row,
               block.column,
               block.rotation,
-              block.layoutId
+              block.layoutId,
+              true
             );
         }
         this._renderer.rerenderGrid();
@@ -179,7 +189,8 @@ export default class NetworkClient
         blockInfo.row,
         blockInfo.column,
         blockInfo.rotation,
-        blockInfo.layoutId
+        blockInfo.layoutId,
+        true
       );
     } else if (message.type === ServerMessageType.BLOCK_MOVED) {
       const blockInfo = (message as IServerBlockMovedEvent).blockInfo;

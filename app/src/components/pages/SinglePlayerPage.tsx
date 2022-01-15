@@ -1,7 +1,7 @@
 import { GameUI } from '@/components/game/GameUI';
+import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
-import useLocalUserStore from '@/state/LocalUserStore';
 import { WorldType } from 'infinitris2-models';
 import { IPlayer } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
@@ -9,7 +9,7 @@ import useSearchParam from 'react-use/lib/useSearchParam';
 import useAppStore from '../../state/AppStore';
 import { useUser, useUserStore } from '../../state/UserStore';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
-import { playGameMusic, playMenuTheme } from '../sound/MusicPlayer';
+import { playGameMusic } from '../sound/MusicPlayer';
 
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
@@ -36,15 +36,7 @@ export default function SinglePlayerPage() {
     useSearchParam('calculateSpawnDelays') === 'true';
   const preventTowers = useSearchParam('preventTowers') === 'true';
 
-  useEffect(() => {
-    return () => {
-      useAppStore.getState().clientApi?.releaseClient();
-      // FIXME: need a better way to access isMusicOn - store in music player
-      if (useLocalUserStore.getState().user.musicOn) {
-        playMenuTheme();
-      }
-    };
-  }, []);
+  useReleaseClientOnExitPage();
 
   useEffect(() => {
     if (!requiresRedirect && launchSinglePlayer && !hasLaunched && hasLoaded) {

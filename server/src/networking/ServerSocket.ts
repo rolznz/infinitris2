@@ -14,6 +14,7 @@ export type SendServerMessageFunction = (
 
 interface ISocketWrapper extends WebSocket, IClientSocket {
   isAlive: boolean;
+  messageId: number;
 }
 
 export default class ServerSocket implements IServerSocket {
@@ -43,13 +44,17 @@ export default class ServerSocket implements IServerSocket {
     socketIds.forEach((socketId) => {
       const socket: ISocketWrapper | null = this._sockets[socketId];
       if (socket) {
-        socket.send(JSON.stringify(message));
+        socket.send(
+          JSON.stringify({ ...message, messageId: socket.messageId })
+        );
+        ++socket.messageId;
       }
     });
   }
 
   private _onClientConnect = (socket: ISocketWrapper) => {
     socket.id = this._nextSocketId++;
+    socket.messageId = 0;
     this._sockets[socket.id] = socket;
 
     const heartbeat = () => (socket.isAlive = true);

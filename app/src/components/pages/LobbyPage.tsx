@@ -66,7 +66,29 @@
 //   );
 // }
 
+import FlexBox from '@/components/ui/FlexBox';
+import { Page } from '@/components/ui/Page';
+import { IRoom, roomsPath } from 'infinitris2-models';
+import { Link as RouterLink } from 'react-router-dom';
+import { useCollection } from 'swr-firestore';
 import React from 'react';
+import Routes from '@/models/Routes';
+import Link from '@mui/material/Link';
+import { Typography } from '@mui/material';
 export default function LobbyPage() {
-  return <p>TODO</p>;
+  const { data: rooms } = useCollection<IRoom>(roomsPath);
+  return (
+    <Page>
+      {rooms?.map((room) => {
+        const link = `${Routes.rooms}/${room.id}`;
+        return (
+          <Link component={RouterLink} to={link}>
+            <FlexBox>
+              <Typography>{room.data()!.name}</Typography>
+            </FlexBox>
+          </Link>
+        );
+      })}
+    </Page>
+  );
 }

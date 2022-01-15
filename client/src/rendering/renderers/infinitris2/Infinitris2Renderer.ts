@@ -485,6 +485,9 @@ export default class Infinitris2Renderer
 
   private _removeBlock(block: IBlock) {
     var renderableBlock = this._blocks[block.player.id];
+    if (!renderableBlock) {
+      return;
+    }
     this._world.removeChild(
       ...renderableBlock.cells.map((cell) => cell.container)
     );

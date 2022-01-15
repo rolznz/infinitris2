@@ -85,6 +85,7 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
             description="Game Mode Picker Card - Multiplayer"
           />
         }
+        link={Routes.lobby}
       />
       <GameModeCard
         image={

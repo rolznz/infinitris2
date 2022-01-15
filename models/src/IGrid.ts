@@ -18,4 +18,5 @@ export default interface IGrid extends ICellEventListener {
   checkLineClears(rows: number[]): void;
   getNeighbour(cell: ICell, dx: number, dy: number): ICell | undefined;
   removePlayer(player: IPlayer): void;
+  reset(): void;
 }

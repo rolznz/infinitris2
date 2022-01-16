@@ -156,6 +156,7 @@ export default class NetworkClient
           this._simulation
             .getPlayer(block.playerId)
             .createBlock(
+              block.blockId,
               block.row,
               block.column,
               block.rotation,
@@ -186,6 +187,7 @@ export default class NetworkClient
       const blockInfo = (message as IServerBlockCreatedEvent).blockInfo;
       const player = this._simulation.getPlayer(blockInfo.playerId);
       player.createBlock(
+        blockInfo.blockId,
         blockInfo.row,
         blockInfo.column,
         blockInfo.rotation,
@@ -261,6 +263,7 @@ export default class NetworkClient
           column: block.column,
           row: block.row,
           rotation: block.rotation,
+          blockId: block.id,
         },
       };
       this._socket.sendMessage(blockMovedEvent);
@@ -270,6 +273,9 @@ export default class NetworkClient
     if (block.player.id === this._playerId) {
       const blockDroppedEvent: IClientBlockDroppedEvent = {
         type: ClientMessageType.BLOCK_DROPPED,
+        data: {
+          blockId: block.id,
+        },
       };
       this._socket.sendMessage(blockDroppedEvent);
     }

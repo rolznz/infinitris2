@@ -14,6 +14,7 @@ import { checkMistake } from '@core/block/checkMistake';
 import LayoutUtils from '@core/block/layout/LayoutUtils';
 import { IPlayerEventListener } from '@models/IPlayerEventListener';
 
+let uniqueBlockId = 0;
 export default abstract class Player implements IPlayer, IBlockEventListener {
   private _id: number;
   protected _block?: IBlock;
@@ -165,8 +166,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         this._nextLayout ||
         validLayouts[Math.floor(Math.random() * validLayouts.length)];
 
-      this._nextLayout = undefined;
-      this._nextLayoutRotation = undefined;
       const column =
         this._lastPlacementColumn === undefined
           ? simulationSettings.randomBlockPlacement !== false
@@ -175,17 +174,21 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
           : this._lastPlacementColumn;
 
       this.createBlock(
+        ++uniqueBlockId,
         0,
         column,
         this._nextLayoutRotation || 0,
         Object.values(tetrominoes).indexOf(layout)
       );
+      this._nextLayout = undefined;
+      this._nextLayoutRotation = undefined;
     } else {
       this._block?.update();
     }
   }
 
   createBlock(
+    blockId: number,
     row: number,
     column: number,
     rotation: number,
@@ -194,6 +197,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   ) {
     const layouts = Object.values(tetrominoes);
     const newBlock = new Block(
+      blockId,
       this,
       layoutIndex,
       layouts[layoutIndex],
@@ -204,7 +208,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       this,
       force
     );
-    console.log('Block created for player ' + this._id, newBlock.isAlive);
+    console.log(
+      'Block created for player ' + this._id,
+      newBlock.id,
+      newBlock.isAlive
+    );
     if (newBlock.isAlive) {
       this._block = newBlock;
       this._isFirstBlock = false;

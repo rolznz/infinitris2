@@ -18,7 +18,10 @@
     "docker:build": "docker build --tag infinitris-server .",
     "docker:run": "docker run --name infinitris-server --publish 9001:9001 infinitris-server",
     "docker:run-alt-port": "docker run --name infinitris-server --publish 9000:9000 -e PORT=9000 infinitris-server",
-    "deploy:heroku": "heroku container:push web && heroku container:release web"
+    "docker:restart": "docker restart infinitris-server",
+    "docker:stop": "docker stop infinitris-server",
+    "heroku:deploy": "heroku container:push web && heroku container:release web",
+    "heroku:restart": "heroku restart"
   },
   "nyc": {
     "extension": [

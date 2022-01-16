@@ -29,8 +29,10 @@ export default class Block implements IBlock {
   private _gridCells: ICell[][];
   private _simulation: ISimulation;
   private _layoutId: number;
+  private _id: number;
 
   constructor(
+    id: number,
     player: IPlayer,
     layoutId: number,
     layout: Layout,
@@ -41,6 +43,7 @@ export default class Block implements IBlock {
     eventListener?: IBlockEventListener,
     force = false
   ) {
+    this._id = id;
     this._player = player;
     this._column = column;
     this._row = row;
@@ -84,6 +87,10 @@ export default class Block implements IBlock {
     if (this._isAlive) {
       this._eventListener?.onBlockCreated(this);
     }
+  }
+
+  get id(): number {
+    return this._id;
   }
 
   get layoutId(): number {
@@ -292,7 +299,7 @@ export default class Block implements IBlock {
     const maxAttempts = !force && dr !== 0 ? 44 : 1;
     let canMove = false;
     for (let i = 0; i < maxAttempts; i++) {
-      let drClamped = dr !== 0 ? (((dr + i * dr) % 4) + 4) % 4 : 0;
+      let drClamped = force || dr !== 0 ? (((dr + i * dr) % 4) + 4) % 4 : 0;
       if (!force && dr !== 0) {
         // order to prioritize downward rotation:
         // cycle 0 iteration 0-3: dx=0, dy=0
@@ -458,7 +465,7 @@ export default class Block implements IBlock {
 
   private _addCell = (cell?: ICell) => {
     if (!cell) {
-      throw new Error('Cannot add an empty cell to a block');
+      throw new Error('Cannot add an undefined cell to a block');
     }
     this._cells.push(cell);
     cell.addBlock(this);

@@ -30,6 +30,7 @@ const socketEventListener: IClientSocketEventListener = {
     const roomState = useRoomStore.getState();
     roomState.setConnected(false);
     roomState.setDisconnected(true);
+    roomState.setLaunched(false);
     useAppStore.getState().clientApi?.releaseClient();
   },
   onMessage: () => {},
@@ -38,21 +39,27 @@ const socketEventListener: IClientSocketEventListener = {
 export default function RoomPage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
-  const [connected, setConnected, disconnected, setDisconnected] = useRoomStore(
-    (store) => [
-      store.connected,
-      store.setConnected,
-      store.disconnected,
-      store.setDisconnected,
-    ]
-  );
+  const [
+    connected,
+    setConnected,
+    disconnected,
+    setDisconnected,
+    hasLaunched,
+    setLaunched,
+  ] = useRoomStore((store) => [
+    store.connected,
+    store.setConnected,
+    store.disconnected,
+    store.setDisconnected,
+    store.hasLaunched,
+    store.setLaunched,
+  ]);
   const { id } = useParams<RoomPageRouteParams>();
 
   const { data: room } = useDocument<IRoom>(id ? getRoomPath(id) : null);
   const [retryCount, setRetryCount] = useState(0);
   const roomUrl = room?.data()?.url;
   //const requiresRedirect = useForcedRedirect();
-  const [hasLaunched, setLaunched] = useState(false);
   const controls = useUser().controls;
 
   useReleaseClientOnExitPage();
@@ -80,6 +87,7 @@ export default function RoomPage() {
     setConnected,
     //requiresRedirect,
     hasLaunched,
+    setLaunched,
     controls,
   ]);
 

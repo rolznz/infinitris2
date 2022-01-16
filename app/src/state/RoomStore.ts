@@ -5,6 +5,8 @@ type RoomStore = {
   setConnected(connected: boolean): void;
   disconnected: boolean;
   setDisconnected(disconnected: boolean): void;
+  hasLaunched: boolean;
+  setLaunched(hasLaunched: boolean): void;
 };
 
 const useRoomStore = create<RoomStore>((set) => ({
@@ -12,6 +14,8 @@ const useRoomStore = create<RoomStore>((set) => ({
   setConnected: (connected: boolean) => set((_) => ({ connected })),
   disconnected: false,
   setDisconnected: (disconnected: boolean) => set((_) => ({ disconnected })),
+  hasLaunched: false,
+  setLaunched: (hasLaunched: boolean) => set((_) => ({ hasLaunched })),
 }));
 
 export default useRoomStore;

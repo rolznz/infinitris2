@@ -16,6 +16,7 @@ export type NetworkBlockInfo = {
   readonly rotation: number;
   readonly isDropping: boolean;
   readonly layoutId: number;
+  readonly blockId: number;
 };
 
 export default interface IBlock {
@@ -32,6 +33,7 @@ export default interface IBlock {
   get layout(): Layout;
   get rotation(): number;
   get bottomRow(): number;
+  get id(): number;
   update(): void;
   canMove(
     dx: number,

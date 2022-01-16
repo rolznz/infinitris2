@@ -32,6 +32,7 @@ export interface IPlayer {
   addEventListener(eventListener: IBlockEventListener): void;
   onLineClearCellReward(numRowsCleared: number): void;
   createBlock(
+    blockId: number,
     row: number,
     column: number,
     rotation: number,

@@ -28,6 +28,7 @@ import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnE
 import { stringToHex } from '@models/util/stringToHex';
 import { colors } from '@models/colors';
 import { IPlayer } from '@models/IPlayer';
+import { IClientBlockDroppedEvent } from '@core/networking/client/IClientBlockDroppedEvent';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -92,6 +93,7 @@ export default class Room implements ISimulationEventListener {
             rotation: block.rotation,
             isDropping: block.isDropping,
             layoutId: block.layoutId,
+            blockId: block.id,
           })),
         players: this._simulation.players.map((existingPlayer) => ({
           color: existingPlayer.color,
@@ -145,18 +147,24 @@ export default class Room implements ISimulationEventListener {
    */
   onClientMessage(playerId: number, message: IClientMessage) {
     //console.log('Room received message from player ' + playerId + ':', message);
+    //console.log('Received client message', message);
     if (message.type === ClientMessageType.BLOCK_MOVED) {
       const block = this._simulation.getPlayer(playerId)?.block;
       const blockInfo = (message as IClientBlockMovedEvent).data;
-      block?.move(
-        blockInfo.column - block.column,
-        blockInfo.row - block.row,
-        blockInfo.rotation - block.rotation,
-        true
-      );
+      if (block?.id === blockInfo.blockId) {
+        block.move(
+          blockInfo.column - block.column,
+          blockInfo.row - block.row,
+          blockInfo.rotation - block.rotation,
+          true
+        );
+      }
     } else if (message.type === ClientMessageType.BLOCK_DROPPED) {
       const block = this._simulation.getPlayer(playerId)?.block;
-      block?.drop();
+      const blockInfo = (message as IClientBlockDroppedEvent).data;
+      if (block?.id === blockInfo.blockId) {
+        block.drop();
+      }
     } else {
       console.error(
         'Unsupported room message received from ' +
@@ -188,7 +196,7 @@ export default class Room implements ISimulationEventListener {
    * @inheritdoc
    */
   onBlockCreated(block: IBlock) {
-    console.log('Block created: ' + block.player.id);
+    //console.log('Block created: ' + block.player.id);
     const blockCreatedMessage: IServerBlockCreatedEvent = {
       type: ServerMessageType.BLOCK_CREATED,
       blockInfo: {
@@ -198,6 +206,7 @@ export default class Room implements ISimulationEventListener {
         isDropping: false,
         layoutId: block.layoutId,
         rotation: block.rotation,
+        blockId: block.id,
       },
     };
     this._sendMessageToAllPlayers(blockCreatedMessage);

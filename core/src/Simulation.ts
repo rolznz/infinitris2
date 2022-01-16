@@ -117,9 +117,9 @@ export default class Simulation implements ISimulation {
    *
    * @param grid The grid to run the simulation on.
    */
-  startInterval() {
+  startInterval(interval = FRAME_LENGTH) {
     if (!this._stepInterval) {
-      this._stepInterval = setInterval(this.step, FRAME_LENGTH);
+      this._stepInterval = setInterval(this.step, interval);
       console.log('Simulation started');
     }
   }

@@ -256,7 +256,7 @@ export default class NetworkClient
   onBlockCreateFailed(block: IBlock): void {}
   onBlockPlaced(block: IBlock): void {}
   onBlockMoved(block: IBlock): void {
-    if (block.player.id === this._playerId) {
+    if (block.player.id === this._playerId && !block.isDropping) {
       const blockMovedEvent: IClientBlockMovedEvent = {
         type: ClientMessageType.BLOCK_MOVED,
         data: {

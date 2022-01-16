@@ -36,7 +36,7 @@ export default class Room implements ISimulationEventListener {
 
   constructor(sendMessage: SendServerMessageFunction) {
     this._sendMessage = sendMessage;
-    this._simulation = new Simulation(new Grid(10, 20));
+    this._simulation = new Simulation(new Grid(60, 18));
     this._simulation.addEventListener(this);
     this._simulation.init();
     //this._simulation.startInterval();

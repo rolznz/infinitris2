@@ -208,11 +208,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       this,
       force
     );
-    console.log(
+    /*console.log(
       'Block created for player ' + this._id,
       newBlock.id,
       newBlock.isAlive
-    );
+    );*/
     if (newBlock.isAlive) {
       this._block = newBlock;
       this._isFirstBlock = false;

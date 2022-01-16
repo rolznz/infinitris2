@@ -90,6 +90,9 @@ export function setMusicPlaying(playing: boolean) {
   if (playing) {
     playMenuTheme();
   } else {
+    // TODO: stopMusic(howl);
+    _menuTheme?.loop(false);
+    _gameTheme?.loop(false);
     _menuTheme?.stop();
     _gameTheme?.stop();
   }

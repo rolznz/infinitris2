@@ -102,7 +102,7 @@ export class WorldBackground {
     const url = this._getLayerImage(layer);
     const texture = PIXI.Texture.from(url);
     const sprite = new PIXI.TilingSprite(texture);
-    console.log(url, texture.width, texture.height);
+    //console.log(url, texture.width, texture.height);
     sprite.tileScale.set(
       Math.max(
         this._app.renderer.width / texture.width,
@@ -110,7 +110,7 @@ export class WorldBackground {
         //1
       )
     );
-    console.log(sprite.tileScale);
+    //console.log(sprite.tileScale);
     sprite.width = Math.floor(texture.width * sprite.tileScale.x);
     sprite.height = Math.floor(texture.height * sprite.tileScale.x);
 

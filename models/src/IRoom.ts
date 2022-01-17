@@ -8,4 +8,6 @@ export default interface IRoom extends IEntity {
   url: string;
   numPlayers: number;
   maxPlayers: number;
+  serverName: string;
+  serverRegion: string;
 }

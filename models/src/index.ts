@@ -56,6 +56,7 @@ export * from './SimulationSettings';
 export * from './IPlayer';
 export * from './IPlayerEventListener';
 export * from './WorldType';
+export * from './IServer';
 
 export {
   exampleChallenges,

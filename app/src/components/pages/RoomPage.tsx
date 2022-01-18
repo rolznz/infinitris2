@@ -9,8 +9,10 @@ import HomeIcon from '@mui/icons-material/Home';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
   getRoomPath,
+  getServerPath,
   IClientSocketEventListener,
   IRoom,
+  IServer,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser } from '../../state/UserStore';
@@ -57,8 +59,12 @@ export default function RoomPage() {
   const { id } = useParams<RoomPageRouteParams>();
 
   const { data: room } = useDocument<IRoom>(id ? getRoomPath(id) : null);
+  const { data: server } = useDocument<IServer>(
+    room ? getServerPath(room.data()!.serverId) : null
+  );
+
   const [retryCount, setRetryCount] = useState(0);
-  const roomUrl = room?.data()?.url;
+  const serverUrl = server?.data()?.url;
   //const requiresRedirect = useForcedRedirect();
   const controls = useUser().controls;
 
@@ -69,20 +75,20 @@ export default function RoomPage() {
       //requiresRedirect ||
       disconnected ||
       !client ||
-      !roomUrl ||
+      !serverUrl ||
       hasLaunched
     ) {
       return;
     }
     setLaunched(true);
-    client.launchNetworkClient(roomUrl as string, {
+    client.launchNetworkClient(serverUrl as string, {
       socketListener: socketEventListener,
       controls,
     });
   }, [
     disconnected,
     retryCount,
-    roomUrl,
+    serverUrl,
     client,
     setConnected,
     //requiresRedirect,
@@ -104,7 +110,9 @@ export default function RoomPage() {
     ? 'Disconnected'
     : !room
     ? 'Loading Room'
-    : 'Connecting to ' + roomUrl;
+    : !server
+    ? 'Loading Server'
+    : 'Connecting to ' + serverUrl;
 
   return (
     <Box

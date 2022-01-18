@@ -110,6 +110,13 @@ export function CreditsPage() {
           Pixel Buddha
         </a>
       </Typography>
+      <Box mt={10} />
+      <Typography variant="body1">
+        Flags by&nbsp;
+        <a href="https://flagcdn.com" title="Flag CDN">
+          Flag CDN
+        </a>
+      </Typography>
     </Page>
   );
 }

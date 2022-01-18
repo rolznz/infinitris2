@@ -15,6 +15,9 @@ export const getAffiliatePath = (affiliateId: string) =>
 export const scoreboardEntriesPath = 'scoreboardEntries';
 export const roomsPath = 'rooms';
 export const getRoomPath = (roomId: string) => getEntityPath(roomsPath, roomId);
+export const serversPath = 'servers';
+export const getServerPath = (serverId: string) =>
+  getEntityPath(serversPath, serverId);
 export const challengesPath = 'challenges';
 export const getChallengePath = (challengeId: string) =>
   getEntityPath(challengesPath, challengeId);
@@ -74,7 +77,8 @@ export type EntityCollectionPath =
   | typeof adminsPath
   | typeof challengeAttemptsPath
   | typeof charactersPath
-  | typeof purchasesPath;
+  | typeof purchasesPath
+  | typeof serversPath;
 
 export function getEntityPath(
   entityCollectionPath: EntityCollectionPath,

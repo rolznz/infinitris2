@@ -3,7 +3,7 @@ import { Route, Switch, BrowserRouter, useLocation } from 'react-router-dom';
 import AllSetPage from './components/pages/AllSetPage';
 import { CreateChallengePage } from './components/pages/CreateChallengePage/CreateChallengePage';
 import { LoadChallengePage } from './components/pages/CreateChallengePage/LoadChallengePage';
-import LobbyPage from './components/pages/LobbyPage';
+import LobbyPage from './components/pages/LobbyPage/LobbyPage';
 import LoginPage from './components/pages/LoginPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
 import ProfilePage from './components/pages/ProfilePage/ProfilePage';
@@ -151,6 +151,9 @@ function RouterContents() {
           <MarketCharacterPage />
         </Route>
         <Route exact path={Routes.lobby}>
+          <LobbyPage />
+        </Route>
+        <Route exact path={Routes.rooms}>
           <LobbyPage />
         </Route>
         <Route exact path={Routes.singlePlayerOptions}>

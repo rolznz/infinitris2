@@ -53,27 +53,26 @@ export default function AboutPage() {
         />
       </Typography>
       {process.env.REACT_APP_LIGHTNING_DONATION && (
-        <FlexBox
-          width={400}
-          my={4}
-          maxWidth="100%"
-          onClick={() => {
-            copy(process.env.REACT_APP_LIGHTNING_DONATION!);
-            toast(
-              intl.formatMessage({
-                defaultMessage: 'Address copied to clipboard',
-                description:
-                  'Lightning Donation Address copied to clipboard toast message',
-              })
-            );
-          }}
-        >
+        <FlexBox width={400} my={4} maxWidth="100%">
           <QRCode
             value={process.env.REACT_APP_LIGHTNING_DONATION}
             level="L"
             fgColor={colors.white}
             bgColor={theme.palette.text.secondary}
+            onClick={() => {
+              copy(process.env.REACT_APP_LIGHTNING_DONATION!);
+              toast(
+                intl.formatMessage({
+                  defaultMessage: 'Address copied to clipboard',
+                  description:
+                    'Lightning Donation Address copied to clipboard toast message',
+                })
+              );
+            }}
           />
+          <Typography align="center" variant="caption" mt={1}>
+            Payments powered by <Link href="https://lnbits.com/">lnbits</Link>
+          </Typography>
           <Box mt={4} />
 
           <Typography align="center" variant="body1">

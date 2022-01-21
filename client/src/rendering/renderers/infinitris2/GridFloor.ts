@@ -35,15 +35,10 @@ export class GridFloor {
     // TODO: release images
   }
 
-  createImages(floorHeight: number) {
-    this._floorSprite = this._createSprite(
-      this._getFloorImageFilename(),
-      floorHeight
-    );
-    this._glowSprite = this._createSprite(
-      this._getGlowImageFilename(),
-      floorHeight
-    );
+  createImages() {
+    this._floorSprite = this._createSprite(this._getFloorImageFilename());
+    this._glowSprite = this._createSprite(this._getGlowImageFilename());
+    this._glowSprite.tint = 0;
   }
 
   addChildren() {
@@ -56,20 +51,16 @@ export class GridFloor {
     this._glowSprite.y = Math.floor(gridBottom - this._glowSprite.height);
   }
 
-  private _createSprite = (url: string, floorHeight: number) => {
+  resize(floorHeight: number) {
+    [this._floorSprite, this._glowSprite].forEach((sprite) => {
+      sprite.width = this._app.renderer.width;
+      sprite.height = floorHeight;
+    });
+  }
+
+  private _createSprite = (url: string) => {
     const texture = PIXI.Texture.from(url);
     const sprite = new PIXI.Sprite(texture);
-
-    // sprite.tileScale.set(
-    //   Math.max(
-    //     this._app.renderer.width / texture.width,
-    //     this._app.renderer.height / texture.height
-    //     //1
-    //   )
-    // );
-    sprite.width = this._app.renderer.width;
-    // TODO: grid cell height
-    sprite.height = floorHeight; //texture.height; //Math.floor(texture.height * sprite.tileScale.x);
 
     sprite.x = 0;
     sprite.y = 0;

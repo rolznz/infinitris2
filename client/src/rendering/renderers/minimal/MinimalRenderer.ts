@@ -68,7 +68,7 @@ export default class MinimalRenderer
   implements IRenderer, ISimulationEventListener
 {
   // FIXME: restructure to not require definite assignment
-  private _grid!: IRenderableGrid;
+  private _grid!: IRenderableGrid; // TODO: use GridLines();
   private _placementHelperShadowCells!: IRenderableCell[];
   private _virtualKeyboardGraphics?: PIXI.Graphics;
   private _virtualKeyboardCurrentKeyText!: PIXI.Text;
@@ -159,6 +159,7 @@ export default class MinimalRenderer
 
     document.body.appendChild(this._app.view);
 
+    // TODO: remove and use same resize logic as Infinitris2Renderer
     window.addEventListener('resize', this._resize);
     this._resize();
     this._app.ticker.add(this._tick);

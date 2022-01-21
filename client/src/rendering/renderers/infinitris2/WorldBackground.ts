@@ -75,6 +75,18 @@ export class WorldBackground {
       if (!this._layerSprites[i]) {
         continue;
       }
+      const sprite = this._layerSprites[i]!;
+      sprite.tileScale.set(
+        Math.max(
+          this._app.renderer.width / sprite.texture.width,
+          this._app.renderer.height / sprite.texture.height
+          //1
+        )
+      );
+      //console.log(sprite.tileScale);
+      sprite.width = Math.floor(sprite.texture.width * sprite.tileScale.x);
+      sprite.height = Math.floor(sprite.texture.height * sprite.tileScale.x);
+
       if (scrollX) {
         this._layerSprites[i]!.tilePosition.x =
           this._camera.wrappedX * this._worldConfig.layers[i].speedX;
@@ -102,18 +114,6 @@ export class WorldBackground {
     const url = this._getLayerImage(layer);
     const texture = PIXI.Texture.from(url);
     const sprite = new PIXI.TilingSprite(texture);
-    //console.log(url, texture.width, texture.height);
-    sprite.tileScale.set(
-      Math.max(
-        this._app.renderer.width / texture.width,
-        this._app.renderer.height / texture.height
-        //1
-      )
-    );
-    //console.log(sprite.tileScale);
-    sprite.width = Math.floor(texture.width * sprite.tileScale.x);
-    sprite.height = Math.floor(texture.height * sprite.tileScale.x);
-
     sprite.x = 0;
     sprite.y = 0;
     sprite.alpha = 1;

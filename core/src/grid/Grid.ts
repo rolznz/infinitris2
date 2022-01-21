@@ -163,6 +163,7 @@ export default class Grid implements IGrid {
     const numFilledRows = Math.ceil(
       this._cachedNumNonEmptyCells / this.numColumns
     );
-    return row < this.numRows - numFilledRows - 4;
+    // first 4 rows must never be placeable (to ensure blocks can always be placed)
+    return row < Math.max(this.numRows - numFilledRows - 4, 4);
   }
 }

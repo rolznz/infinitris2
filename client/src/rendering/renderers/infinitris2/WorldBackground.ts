@@ -89,7 +89,7 @@ export class WorldBackground {
 
       if (scrollX) {
         this._layerSprites[i]!.tilePosition.x =
-          this._camera.wrappedX * this._worldConfig.layers[i].speedX;
+          this._camera.x * this._worldConfig.layers[i].speedX;
       }
       this._layerSprites[i]!.y = Math.floor(
         Math.max(

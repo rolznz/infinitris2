@@ -8,6 +8,7 @@ import { exampleChallenges } from '@models/exampleChallenges';
 import ControlSettings from '@models/ControlSettings';
 import { IChallenge } from '@models/IChallenge';
 import ISimulation from '@models/ISimulation';
+import { RendererType } from '@models/RendererType';
 
 export default class ClientApi implements IClientApi {
   private _client?: IClient;
@@ -35,8 +36,9 @@ export default class ClientApi implements IClientApi {
     if (params.has('single-player')) {
       const numBots = parseInt(params.get('numBots') || '0');
       const spectate = params.get('spectate') === 'true';
+      const rendererType = params.get('renderer') as RendererType;
 
-      this.launchSinglePlayer({ controls, numBots, spectate });
+      this.launchSinglePlayer({ controls, numBots, spectate, rendererType });
     } else if (params.has('url')) {
       this.launchNetworkClient(params.get('url') as string, {
         controls,

@@ -17,6 +17,7 @@ import InputMethod from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
 import { IPlayer } from '@models/IPlayer';
+import { GridLines } from '@src/rendering/renderers/infinitris2/GridLines';
 
 const minCellSize = 32;
 const particleDivisions = 4;
@@ -68,7 +69,6 @@ export default class MinimalRenderer
   implements IRenderer, ISimulationEventListener
 {
   // FIXME: restructure to not require definite assignment
-  private _grid!: IRenderableGrid; // TODO: use GridLines();
   private _placementHelperShadowCells!: IRenderableCell[];
   private _virtualKeyboardGraphics?: PIXI.Graphics;
   private _virtualKeyboardCurrentKeyText!: PIXI.Text;
@@ -86,7 +86,7 @@ export default class MinimalRenderer
 
   private _simulation!: Simulation;
 
-  private _camera!: Camera;
+  private _camera: Camera;
   private _gridWidth!: number;
   private _gridHeight!: number;
   private _cellSize!: number;
@@ -97,6 +97,9 @@ export default class MinimalRenderer
   private _virtualKeyboardControls?: ControlSettings;
   private _preferredInputMethod: InputMethod;
   private _teachControls: boolean;
+  private _gridLines!: GridLines;
+  private _appWidth: number;
+  private _appHeight: number;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
@@ -104,6 +107,9 @@ export default class MinimalRenderer
   ) {
     this._preferredInputMethod = preferredInputMethod;
     this._teachControls = teachControls;
+    this._appWidth = 0;
+    this._appHeight = 0;
+    this._camera = new Camera();
   }
 
   set virtualKeyboardControls(
@@ -124,6 +130,7 @@ export default class MinimalRenderer
     this._app = new PIXI.Application({
       resizeTo: window,
       antialias: true,
+      backgroundColor: 0x333333,
     });
 
     if (this._preferredInputMethod === 'touch' && this._teachControls) {
@@ -160,12 +167,21 @@ export default class MinimalRenderer
     document.body.appendChild(this._app.view);
 
     // TODO: remove and use same resize logic as Infinitris2Renderer
-    window.addEventListener('resize', this._resize);
-    this._resize();
     this._app.ticker.add(this._tick);
   }
 
   private _tick = () => {
+    if (!this._simulation) {
+      return;
+    }
+    // TODO: move stuff like this into a different layer so it isn't duplicated across renderers
+    if (
+      this._appWidth != this._app.renderer.width ||
+      this._appHeight != this._app.renderer.height
+    ) {
+      this._resize();
+    }
+
     const visibilityX = this._getVisiblityX();
     const visibilityY = this._app.renderer.height * 0.125;
 
@@ -177,26 +193,29 @@ export default class MinimalRenderer
         this._camera.y,
         -(this._gridHeight - this._app.renderer.height + visibilityY)
       ),
-      -visibilityY
+      0
     );
     if (this._scrollX) {
-      this._world.x = this._camera.wrappedX + visibilityX;
+      this._world.x = this._camera.x + visibilityX;
     }
     if (this._scrollY) {
       this._world.y = cameraY + visibilityY;
     }
 
+    this._gridLines.update(
+      this._world.x,
+      this._world.y,
+      this._scrollX,
+      this._scrollY,
+      this._cellSize,
+      visibilityX,
+      visibilityY,
+      cameraY
+    );
     if (this._scrollX) {
-      this._grid.graphics.x =
-        ((this._camera.wrappedX + visibilityX) % this._cellSize) -
-        this._cellSize;
       if (!this._hasShadows) {
         this._wrapObjects();
       }
-    }
-    if (this._scrollY) {
-      this._grid.graphics.y =
-        ((cameraY + visibilityY) % this._cellSize) - this._cellSize;
     }
 
     Object.values(this._cells).forEach((cell) => {
@@ -214,12 +233,13 @@ export default class MinimalRenderer
   }
 
   private _wrapObject(child: PIXI.DisplayObject) {
+    // FIXME: 1 wrap is not sufficient (see Infinitris 2 renderer)
     const visibilityX = this._getVisiblityX();
-    if (child.x + this._cellSize < -this._camera.wrappedX - visibilityX) {
+    if (child.x + this._cellSize < -this._camera.x - visibilityX) {
       child.x += this._gridWidth;
     } else if (
       child.x + this._cellSize >=
-      -this._camera.wrappedX + this._gridWidth - visibilityX
+      -this._camera.x + this._gridWidth - visibilityX
     ) {
       child.x -= this._gridWidth;
     }
@@ -229,7 +249,6 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   destroy() {
-    window.removeEventListener('resize', this._resize);
     if (this._app) {
       this._app.destroy(true);
     }
@@ -242,11 +261,7 @@ export default class MinimalRenderer
     this._simulation = simulation;
     this._app.stage.removeChildren();
 
-    this._grid = {
-      grid: simulation.grid,
-      graphics: new PIXI.Graphics(),
-    };
-    this._app.stage.addChild(this._grid.graphics);
+    this._gridLines = new GridLines(simulation, this._app, this._camera);
 
     this._shadowGradientGraphics = new PIXI.Graphics();
 
@@ -291,8 +306,6 @@ export default class MinimalRenderer
     if (this._preferredInputMethod === 'touch' && this._teachControls) {
       this._app.stage.addChild(...this._virtualGestureSprites);
     }
-
-    this._resize();
   }
 
   /**
@@ -388,6 +401,9 @@ export default class MinimalRenderer
 
   private _removeBlock(block: IBlock) {
     var renderableBlock = this._blocks[block.player.id];
+    if (!renderableBlock) {
+      return;
+    }
     this._world.removeChild(
       ...renderableBlock.cells.map((cell) => cell.container)
     );
@@ -463,11 +479,11 @@ export default class MinimalRenderer
    */
   onLineCleared(_row: number) {
     // TODO: remove, should only render individual cells on cell state change
-    this._renderCells(this._grid.grid.reducedCells);
+    this._renderCells(this._simulation.grid.reducedCells);
   }
 
   rerenderGrid() {
-    this._renderCells(this._grid.grid.reducedCells);
+    this._renderCells(this._simulation.grid.reducedCells);
   }
 
   onSimulationNextDay(): void {}
@@ -477,7 +493,7 @@ export default class MinimalRenderer
    */
   onGridCollapsed(_grid: IGrid) {
     // TODO: optimize
-    this._renderCells(this._grid.grid.reducedCells);
+    this._renderCells(this._simulation.grid.reducedCells);
   }
 
   private _getCellSize = () => {
@@ -490,9 +506,10 @@ export default class MinimalRenderer
   };
 
   private _resize = async () => {
+    this._appWidth = this._app.renderer.width;
+    this._appHeight = this._app.renderer.height;
     this._blocks = {};
     this._cells = {};
-    this._camera = new Camera();
     this._camera.reset();
 
     this._particles = [];
@@ -505,68 +522,57 @@ export default class MinimalRenderer
     this._renderVirtualKeyboard();
     this._renderVirtualGestures();
 
-    if (this._grid) {
-      this._grid.graphics.clear();
+    const gridWidth = this._simulation.grid.numColumns * cellSize;
+    this._gridWidth = gridWidth;
+    const gridHeight = this._simulation.grid.numRows * cellSize;
+    this._gridHeight = gridHeight;
+    this._scrollX = true;
+    this._hasShadows = gridWidth < appWidth;
+    this._scrollY = gridHeight > appHeight;
 
-      const gridWidth = this._grid.grid.numColumns * cellSize;
-      this._gridWidth = gridWidth;
-      const gridHeight = this._grid.grid.numRows * cellSize;
-      this._gridHeight = gridHeight;
-      this._scrollX = true;
-      this._hasShadows = gridWidth < appWidth;
-      this._scrollY = gridHeight > appHeight;
+    const cellPadding = cellSize * 0.1;
 
-      this._shadowCount = this._hasShadows
-        ? Math.ceil(Math.ceil(appWidth / gridWidth) / 2)
-        : 0;
+    this._gridLines.render(
+      gridWidth,
+      gridHeight,
+      cellSize,
+      cellPadding,
+      this._scrollX,
+      this._scrollY
+    );
 
-      this._camera.gridWidth = gridWidth;
+    this._shadowCount = this._hasShadows
+      ? Math.ceil(Math.ceil(appWidth / gridWidth) / 2)
+      : 0;
 
-      if (!this._scrollX) {
+    this._camera.gridWidth = gridWidth;
+
+    /*if (!this._scrollX) {
         this._world.x = this._grid.graphics.x = (appWidth - gridWidth) / 2;
-      }
-      if (!this._scrollY) {
-        this._world.y = this._grid.graphics.y = (appHeight - gridHeight) / 2;
-      }
+      }*/
+    if (!this._scrollY) {
+      this._world.y = (appHeight - gridHeight) / 2;
+    }
 
-      const gridRows = this._scrollY
-        ? Math.ceil(appHeight / cellSize) + 2
-        : this._grid.grid.numRows;
-      const gridColumns = this._scrollX
-        ? Math.ceil(appWidth / cellSize) + 1
-        : this._grid.grid.numColumns;
+    this._renderCells(this._simulation.grid.reducedCells);
 
-      this._grid.graphics.lineStyle(1, 0xaaaaaa, 0.5);
-      for (let r = 0; r < gridRows + 1; r++) {
-        this._grid.graphics.moveTo(0, r * cellSize);
-        this._grid.graphics.lineTo(gridColumns * cellSize, r * cellSize);
-      }
+    for (const block of Object.values(this._blocks)) {
+      this._renderBlock(block.block);
+    }
 
-      for (let c = 0; c < gridColumns + 1; c++) {
-        this._grid.graphics.moveTo(c * cellSize, 0);
-        this._grid.graphics.lineTo(c * cellSize, gridHeight);
-      }
-
-      this._renderCells(this._grid.grid.reducedCells);
-
-      for (const block of Object.values(this._blocks)) {
-        this._renderBlock(block.block);
-      }
-
-      this._shadowGradientGraphics?.clear();
-      if (this._shadowGradientGraphics && this._hasShadows) {
-        // thanks to https://gist.github.com/gre/1650294
-        const easeInOutQuad = (t: number) =>
-          t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-        for (let x = 0; x < appWidth; x++) {
-          this._shadowGradientGraphics.lineStyle(
-            1,
-            0x00000,
-            easeInOutQuad(Math.abs(appWidth * 0.5 - x) / (appWidth * 0.5))
-          );
-          this._shadowGradientGraphics.moveTo(x, 0);
-          this._shadowGradientGraphics.lineTo(x, appHeight);
-        }
+    this._shadowGradientGraphics?.clear();
+    if (this._shadowGradientGraphics && this._hasShadows) {
+      // thanks to https://gist.github.com/gre/1650294
+      const easeInOutQuad = (t: number) =>
+        t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      for (let x = 0; x < appWidth; x++) {
+        this._shadowGradientGraphics.lineStyle(
+          1,
+          0x00000,
+          easeInOutQuad(Math.abs(appWidth * 0.5 - x) / (appWidth * 0.5))
+        );
+        this._shadowGradientGraphics.moveTo(x, 0);
+        this._shadowGradientGraphics.lineTo(x, appHeight);
       }
     }
   };
@@ -576,7 +582,7 @@ export default class MinimalRenderer
   }
 
   private _renderCell = (cell: ICell) => {
-    const cellIndex = cell.row * this._grid.grid.numColumns + cell.column;
+    const cellIndex = cell.row * this._simulation.grid.numColumns + cell.column;
     if (!this._cells[cellIndex]) {
       this._cells[cellIndex] = {
         cell,
@@ -588,6 +594,7 @@ export default class MinimalRenderer
 
     if (!cell.isEmpty || cell.behaviour.type !== CellType.Normal) {
       const cellSize = this._getClampedCellSize();
+      // FIXME: need to wrap here (see Infinitris 2 renderer)
       renderableCell.container.x = renderableCell.cell.column * cellSize;
       renderableCell.container.y = renderableCell.cell.row * cellSize;
       this._renderCellCopies(
@@ -856,11 +863,11 @@ export default class MinimalRenderer
       .map((cell) => cell.row)
       .sort((a, b) => b - a)[0];
 
-    let highestPlacementRow = this._grid.grid.numRows - 1;
+    let highestPlacementRow = this._simulation.grid.numRows - 1;
 
     for (const cell of lowestCells) {
       for (let y = cell.row; y < highestPlacementRow; y++) {
-        if (!this._grid.grid.cells[y + 1][cell.column].isPassable) {
+        if (!this._simulation.grid.cells[y + 1][cell.column].isPassable) {
           highestPlacementRow = Math.min(
             y + (lowestBlockRow - cell.row),
             highestPlacementRow

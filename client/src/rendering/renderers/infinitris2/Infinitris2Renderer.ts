@@ -32,6 +32,7 @@ import { GridLines } from '@src/rendering/renderers/infinitris2/GridLines';
 
 const idealCellSize = 32;
 const minCellCount = 23;
+const maxCellCount = 32;
 const particleDivisions = 4;
 const numPatternDivisions = 4;
 
@@ -244,6 +245,7 @@ export default class Infinitris2Renderer
     if (!this._simulation) {
       return;
     }
+    // TODO: move stuff like this into a different layer so it isn't duplicated across renderers
     if (
       this._appWidth != this._app.renderer.width ||
       this._appHeight != this._app.renderer.height
@@ -270,7 +272,7 @@ export default class Infinitris2Renderer
       0
     );
     if (this._scrollX) {
-      this._world.x = this._camera.wrappedX + visibilityX;
+      this._world.x = this._camera.x + visibilityX;
     }
     if (this._scrollY) {
       this._world.y = clampedCameraY + visibilityY;
@@ -322,15 +324,23 @@ export default class Infinitris2Renderer
   }
 
   private _wrapObject(child: PIXI.DisplayObject) {
+    child.x = this._getWrappedX(child.x);
+  }
+
+  // TODO: move to camera
+  private _getWrappedX(x: number): number {
+    // FIXME: this must be super inefficient
     const visibilityX = this._getVisiblityX();
-    if (child.x + this._cellSize < -this._camera.wrappedX - visibilityX) {
-      child.x += this._gridWidth;
-    } else if (
-      child.x + this._cellSize >=
-      -this._camera.wrappedX + this._gridWidth - visibilityX
-    ) {
-      child.x -= this._gridWidth;
+    while (x + this._cellSize < -this._camera.x - visibilityX) {
+      x += this._gridWidth;
     }
+    while (
+      x + this._cellSize >=
+      -this._camera.x + this._gridWidth - visibilityX
+    ) {
+      x -= this._gridWidth;
+    }
+    return x;
   }
 
   /**
@@ -529,19 +539,6 @@ export default class Infinitris2Renderer
     this._scoreboard.update(this._simulation.players, followingPlayer);
     this._scoreChangeIndicator.update(followingPlayer);
     this._spawnDelayIndicator.update(followingPlayer);
-    if (followingPlayer && followingPlayer.block) {
-      // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
-      const cellSize = this._getCellSize();
-      const block = followingPlayer.block;
-      const blockX = block.column * cellSize;
-      const y = block.row * cellSize;
-      this._camera.follow(
-        blockX + block.width * cellSize * 0.5,
-        y,
-        block.player.id
-      );
-      this._renderBlockPlacementShadow(block);
-    }
 
     for (const particle of this._particles) {
       particle.x += particle.vx;
@@ -597,7 +594,7 @@ export default class Infinitris2Renderer
     if (minDimension < idealCellSize * minCellCount * window.devicePixelRatio) {
       return Math.floor(minDimension / minCellCount);
     }
-    return idealCellSize;
+    return Math.max(idealCellSize, Math.ceil(minDimension / maxCellCount));
   };
   private _getCellPadding = () => {
     return this._getCellSize() * 0.05;
@@ -607,9 +604,6 @@ export default class Infinitris2Renderer
   };
 
   private _resize = async () => {
-    if (!this._simulation) {
-      return;
-    }
     this._camera.reset();
 
     this._particles = [];
@@ -634,7 +628,6 @@ export default class Infinitris2Renderer
     this._hasShadows = gridWidth < this._appWidth;
     this._scrollY = gridHeight + this._getFloorHeight() > this._appHeight;
 
-    console.log('new grid size', gridWidth, gridHeight);
     this._gridLines.render(
       gridWidth,
       gridHeight,
@@ -711,7 +704,9 @@ export default class Infinitris2Renderer
 
     if (!cell.isEmpty || cell.behaviour.type !== CellType.Normal) {
       const cellSize = this._getCellSize();
-      renderableCell.container.x = renderableCell.cell.column * cellSize;
+      renderableCell.container.x = this._getWrappedX(
+        renderableCell.cell.column * cellSize
+      );
       renderableCell.container.y = renderableCell.cell.row * cellSize;
       this._renderCellCopies(
         renderableCell,
@@ -770,6 +765,22 @@ export default class Infinitris2Renderer
       },
       () => undefined
     );
+
+    const followingPlayer = this._simulation.players.find((player) =>
+      this._simulation.isFollowingPlayerId(player.id)
+    );
+    if (followingPlayer && block.player.id === followingPlayer.id) {
+      // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
+      const cellSize = this._getCellSize();
+      const blockX = block.column * cellSize;
+      const y = block.row * cellSize;
+      this._camera.follow(
+        blockX + block.width * cellSize * 0.5,
+        y,
+        block.player.id
+      );
+      this._renderBlockPlacementShadow(block);
+    }
   }
 
   private _getVisiblityX() {

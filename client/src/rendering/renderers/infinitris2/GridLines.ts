@@ -105,8 +105,7 @@ export class GridLines {
     clampedCameraY: number
   ) {
     if (scrollX) {
-      this._graphics.x =
-        ((this._camera.wrappedX + visibilityX) % cellSize) - cellSize;
+      this._graphics.x = ((this._camera.x + visibilityX) % cellSize) - cellSize;
     } else {
       throw new Error('Unsupported !scrollX');
     }

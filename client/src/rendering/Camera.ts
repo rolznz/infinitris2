@@ -14,7 +14,7 @@ export default class Camera {
     this.reset();
   }
 
-  get wrappedX(): number {
+  get x(): number {
     //const wrappedX =
     //  ((this._x % this._gridWidth) - this._gridWidth) % this._gridWidth;
 
@@ -51,6 +51,8 @@ export default class Camera {
   update() {
     this._vx *= 1 - cameraDrag;
     this._vy *= 1 - cameraDrag;
+
+    //console.log('Cx', Math.floor(this._x));
 
     /*let ax = this._dx - this._x;
     if (ax > this._gridWidth / 2) {

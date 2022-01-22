@@ -652,6 +652,9 @@ export default class Infinitris2Renderer
       this._renderBlock(block.block);
     }
 
+    if (this._shadowGradientGraphics) {
+      this._shadowGradientGraphics.cacheAsBitmap = false;
+    }
     this._shadowGradientGraphics?.clear();
     if (this._shadowGradientGraphics && this._hasShadows) {
       // thanks to https://gist.github.com/gre/1650294
@@ -664,7 +667,8 @@ export default class Infinitris2Renderer
           1 -
             easeInOutQuad(
               Math.abs(this._appWidth * 0.5 - x) / (this._appWidth * 0.5)
-            )
+            ) *
+              (this._shadowCount > 1 ? 1 : 0.5) // TODO: better algorithm for transparency based on grid width / screen width
         );
         this._shadowGradientGraphics.moveTo(x, 0);
         this._shadowGradientGraphics.lineTo(x, this._appHeight);
@@ -677,6 +681,7 @@ export default class Infinitris2Renderer
         1
       );
       this._world.mask = PIXI.Sprite.from(texture);
+      this._shadowGradientGraphics.cacheAsBitmap = true;
     }
   };
 
@@ -767,10 +772,10 @@ export default class Infinitris2Renderer
     if (followingPlayer && block.player.id === followingPlayer.id) {
       // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
       const cellSize = this._getCellSize();
-      const blockX = block.column * cellSize;
+      const blockX = block.centreX * cellSize;
       const y = block.row * cellSize;
       this._camera.follow(
-        blockX + block.width * cellSize * 0.5,
+        blockX, // + block.width * cellSize * 0.5,
         y,
         block.player.id
       );

@@ -290,9 +290,7 @@ export default class Infinitris2Renderer
     );
 
     if (this._scrollX) {
-      if (!this._hasShadows) {
-        this._wrapObjects();
-      }
+      this._wrapObjects();
 
       this._worldBackground.update(
         this._scrollX,
@@ -327,18 +325,16 @@ export default class Infinitris2Renderer
     child.x = this._getWrappedX(child.x);
   }
 
-  // TODO: move to camera
+  // TODO: move this function to camera
   private _getWrappedX(x: number): number {
-    // FIXME: this must be super inefficient
-    const visibilityX = this._getVisiblityX();
+    // TODO: replace while loops with single operation
+    const wrapSize = this._gridWidth;
+    const visibilityX = Math.min(this._getVisiblityX(), this._gridWidth);
     while (x + this._cellSize < -this._camera.x - visibilityX) {
-      x += this._gridWidth;
+      x += wrapSize;
     }
-    while (
-      x + this._cellSize >=
-      -this._camera.x + this._gridWidth - visibilityX
-    ) {
-      x -= this._gridWidth;
+    while (x + this._cellSize >= -this._camera.x + wrapSize - visibilityX) {
+      x -= wrapSize;
     }
     return x;
   }
@@ -638,7 +634,7 @@ export default class Infinitris2Renderer
     );
 
     this._shadowCount = this._hasShadows
-      ? Math.ceil(Math.ceil(this._appWidth / gridWidth) / 2)
+      ? Math.ceil(this._appWidth / gridWidth / 2)
       : 0;
 
     this._camera.gridWidth = gridWidth;
@@ -648,7 +644,6 @@ export default class Infinitris2Renderer
     }*/
     if (!this._scrollY) {
       this._world.y = this._appHeight - gridHeight - this._getFloorHeight();
-      console.log('Updated world y to ' + this._world.y);
     }
 
     this._renderCells(this._simulation.grid.reducedCells);
@@ -1100,10 +1095,15 @@ export default class Infinitris2Renderer
     }
 
     const pixiObject = entry.pixiObject;
+    const pattern = entry.pattern;
 
-    renderFunction(pixiObject, entry.pattern);
+    renderFunction(pixiObject, pattern);
 
-    pixiObject.x = shadowIndexWithDirection * this._gridWidth;
+    const shadowX = shadowIndexWithDirection * this._gridWidth;
+    pixiObject.x = shadowX;
+    if (pattern) {
+      pattern.x = shadowX;
+    }
     if (shadowIndex < this._shadowCount) {
       (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>
         this._renderCopies(

@@ -121,10 +121,14 @@ export class WorldBackground {
   };
 
   private _isLayerRequired(layer: WorldBackgroundLayerConfig) {
-    return (
+    // TODO: review if this is needed
+    // game looks a lot worse without all layers visible,
+    // might be better just to drop the asset quality
+    return true;
+    /*(
       !layer.minQuality ||
       this._rendererQuality === 'high' ||
       (this._rendererQuality === 'medium' && layer.minQuality === 'medium')
-    );
+    )*/
   }
 }

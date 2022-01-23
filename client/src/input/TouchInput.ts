@@ -15,6 +15,7 @@ export default class TouchInput {
   private _lastActionY: number;
   private _movementThreshold: number;
   private _hasMoved: boolean;
+  private _hasMovedHorizontally: boolean;
 
   constructor(fireAction: ActionListener) {
     this._fireAction = fireAction;
@@ -27,6 +28,7 @@ export default class TouchInput {
     this._movementThreshold = 0;
     this._pointerStartTime = 0;
     this._hasMoved = false;
+    this._hasMovedHorizontally = false;
     document.addEventListener('touchstart', this._onTouchStart);
     document.addEventListener('touchend', this._onTouchEnd);
     document.addEventListener('touchmove', this._onTouchMove);
@@ -40,6 +42,7 @@ export default class TouchInput {
 
   private _onTouchStart = (event: TouchEvent) => {
     this._hasMoved = false;
+    this._hasMovedHorizontally = false;
     this._pointerStartTime = Date.now();
     this._movementThreshold =
       Math.min(window.innerWidth, window.innerHeight) / NUM_DIVISIONS;
@@ -54,9 +57,9 @@ export default class TouchInput {
         event.touches[0].clientY;
   };
 
-  private _onTouchEnd = () => {
+  private _onTouchEnd = (event: TouchEvent) => {
     const touchTime = Date.now() - this._pointerStartTime;
-    if (touchTime > TIME_THRESHOLD || this._hasMoved) {
+    if (touchTime > TIME_THRESHOLD || this._hasMovedHorizontally) {
       return;
     }
 
@@ -73,7 +76,7 @@ export default class TouchInput {
       } else {
         this._fireAction(InputAction.RotateClockwise);
       }
-    } else if (totalPointerChangeY < -this._movementThreshold) {
+    } else if (Math.abs(totalPointerChangeY) > this._movementThreshold) {
       this._fireAction(InputAction.Drop);
     }
   };
@@ -92,11 +95,13 @@ export default class TouchInput {
           this._lastActionX += this._movementThreshold;
           this._lastActionY = this._pointerY;
           this._hasMoved = true;
+          this._hasMovedHorizontally = true;
           this._fireAction(InputAction.MoveRight);
         } else if (pointerChangeX < -this._movementThreshold) {
           this._lastActionX -= this._movementThreshold;
           this._lastActionY = this._pointerY;
           this._hasMoved = true;
+          this._hasMovedHorizontally = true;
           this._fireAction(InputAction.MoveLeft);
         }
       } else {

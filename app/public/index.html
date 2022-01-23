@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" onselectstart="return false;">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
@@ -50,7 +50,9 @@
         /*in-app: height: 100%;*/
         min-height: 100%;
         margin: 0;
-        user-select: none;
+        user-select: none; /* disable ingame select */
+        -webkit-touch-callout: none; /* disable ingame select */
+        -webkit-user-select: none; /* disable ingame select */
         display: flex;
         width: 100%;
         display: flex;

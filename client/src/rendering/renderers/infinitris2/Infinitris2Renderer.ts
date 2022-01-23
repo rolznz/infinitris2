@@ -127,6 +127,7 @@ export default class Infinitris2Renderer
   private _worldType: WorldType;
   private _appWidth: number;
   private _appHeight: number;
+  private _oldOverflowStyle: string;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
@@ -141,6 +142,8 @@ export default class Infinitris2Renderer
     this._worldType = worldType;
     this._appWidth = 0;
     this._appHeight = 0;
+    this._oldOverflowStyle = document.body.style.overflow;
+    document.body.style.overflow = 'none';
   }
 
   set virtualKeyboardControls(
@@ -160,8 +163,12 @@ export default class Infinitris2Renderer
   async create() {
     console.log('Infinitris 2 Renderer');
     this._app = new PIXI.Application({
-      resizeTo: window,
+      //resizeTo: window,
       antialias: true,
+      // TODO: potentially enable resolution drop for lowest renderer quality
+      // before doing this, other things should probably be considered, such as optimizing grid/block/cell renderering, asset sizes, optional layers, etc.
+      // also, review the simulation speed, maybe the renderer can skip frames.
+      //resolution: 0.5, //rendererQuality === 'low' ? undefined : resolution
     });
 
     this._worldBackground = new WorldBackground(
@@ -245,6 +252,16 @@ export default class Infinitris2Renderer
     if (!this._simulation) {
       return;
     }
+
+    if (
+      this._app.renderer.width != window.innerWidth ||
+      this._app.renderer.height !== window.innerHeight
+    ) {
+      this._app.renderer.resize(window.innerWidth, window.innerHeight);
+      this._app.renderer.view.style.width = window.innerWidth + 'px';
+      this._app.renderer.view.style.height = window.innerHeight + 'px';
+    }
+
     // TODO: move stuff like this into a different layer so it isn't duplicated across renderers
     if (
       this._appWidth != this._app.renderer.width ||
@@ -346,6 +363,7 @@ export default class Infinitris2Renderer
     if (this._app) {
       this._app.destroy(true);
     }
+    document.body.style.overflow = this._oldOverflowStyle;
   }
 
   /**

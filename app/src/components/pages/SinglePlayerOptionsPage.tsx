@@ -230,6 +230,7 @@ export function SinglePlayerOptionsPage() {
             />
           </FlexBox>
           <Button
+            autoFocus
             type="submit"
             color="primary"
             variant="contained"

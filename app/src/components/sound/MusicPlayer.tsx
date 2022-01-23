@@ -1,6 +1,7 @@
 import { Howl } from 'howler';
 import useLoaderStore from '@/state/LoaderStore';
 import { useUserStore } from '@/state/UserStore';
+import isMobile from '@/utils/isMobile';
 
 const rootUrl = process.env.REACT_APP_MUSIC_ROOT_URL;
 const musicFadeTimeMs = 2000;
@@ -18,7 +19,8 @@ export enum SoundKey {
   notification = 'notification',
   place = 'place',
   rotate = 'rotate',
-  rotate2 = 'rotate2',
+  drop = 'drop',
+  spawn = 'spawn',
 }
 
 export function musicLoaded(): boolean {
@@ -49,7 +51,7 @@ export async function prepareSoundEffects() {
     _sounds = new Howl({
       src: [`${rootUrl}/sounds.mp3`],
       //pool: 100,
-      html5: true,
+      html5: isMobile(), // TODO: see if this can be disabled for mobile
       // generated using the following command:
       // audiosprite --silence 1 *.wav --export mp3 --output sounds
       sprite: {
@@ -60,7 +62,8 @@ export async function prepareSoundEffects() {
         [SoundKey.notification]: [12000, 500],
         [SoundKey.place]: [16000, 500],
         [SoundKey.rotate]: [19000, 500],
-        [SoundKey.rotate2]: [22000, 500],
+        [SoundKey.drop]: [22000, 500],
+        [SoundKey.spawn]: [12000, 500],
       },
     });
     _sounds.on('end', (soundId) => {

@@ -246,8 +246,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   /**
    * @inheritdoc
    */
-  onBlockMoved(block: IBlock) {
-    this._eventListeners.forEach((listener) => listener.onBlockMoved(block));
+  onBlockMoved(block: IBlock, dx: number, dy: number, dr: number) {
+    this._eventListeners.forEach((listener) =>
+      listener.onBlockMoved(block, dx, dy, dr)
+    );
   }
 
   /**

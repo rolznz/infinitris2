@@ -47,7 +47,8 @@ function OutsideGameElement(props: React.PropsWithChildren<{}>) {
             location.pathname.length > Routes.challenges.length + 1
           ) // match /challenges or /challenges/ but not /challenges/<challengeId>
         ) &&
-          !location.pathname.startsWith(Routes.singlePlayer) &&
+          !location.pathname.startsWith(Routes.singlePlayer + '/') &&
+          !location.pathname.startsWith(Routes.singlePlayer + '?') &&
           !location.pathname.startsWith(Routes.rooms) ? (
           <>{props.children}</>
         ) : null;

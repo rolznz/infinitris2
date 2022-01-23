@@ -154,6 +154,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
               <FlexBox position="absolute" top="100px">
                 <Button
                   variant="contained"
+                  autoFocus
                   color="primary" // TODO: tertiary
                   sx={{
                     backgroundColor: '#A4DAF2CC',

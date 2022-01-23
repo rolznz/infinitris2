@@ -358,7 +358,7 @@ export default class Block implements IBlock {
           this._resetFallTimer();
         }
         this._resetLockTimer();
-        this._eventListener?.onBlockMoved(this);
+        this._eventListener?.onBlockMoved(this, dx, dy, dr);
         break;
       }
     }

@@ -26,8 +26,11 @@ export default interface IBlockEventListener {
    * Triggered when a block moves or rotates
    *
    * @param block The block that moved
+   * @param dx x/column change
+   * @param dy y/row change
+   * @param dr rotation change (1 point = 90 degrees)
    */
-  onBlockMoved(block: IBlock): void;
+  onBlockMoved(block: IBlock, dx: number, dy: number, dr: number): void;
 
   /**
    * Triggered when a block drops

@@ -19,7 +19,10 @@ import { GameModePicker } from '@/components/ui/GameModePicker/GameModePicker';
 const _HomePage = () => {
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width >= windowSize.height;
-  const isLoaded = useLoaderStore((loaderStore) => loaderStore.hasFinished);
+  const [isLoaded, delayButtonVisibility] = useLoaderStore((store) => [
+    store.hasFinished,
+    store.delayButtonVisibility,
+  ]);
 
   return (
     <>
@@ -36,13 +39,18 @@ const _HomePage = () => {
               width: 'auto',
               height: '100%',
               opacity: isLoaded ? 1 : 0,
-              transition: `opacity 2s ${firstTimeAnimationDelaySeconds}s`,
+              transition: delayButtonVisibility
+                ? `opacity 2s ${firstTimeAnimationDelaySeconds}s`
+                : undefined,
             }}
           />
         </Box>
         <Box mt={4} />
         <FlexBox>
-          <PlayButton isLoaded={isLoaded} />
+          <PlayButton
+            isLoaded={isLoaded}
+            delayButtonVisibility={delayButtonVisibility}
+          />
         </FlexBox>
         <Box mt={8} />
       </FlexBox>

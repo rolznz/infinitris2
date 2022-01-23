@@ -37,7 +37,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const userStore = useUserStore();
   const hasFinished = loaderStore.hasFinished;
   const initializeLoaderStore = loaderStore.initialize;
-  const setStartClicked = loaderStore.clickStart;
+  const clickStart = loaderStore.clickStart;
   const intl = useIntl();
   const [hasToggledSounds, setHasToggledSounds] = useState(false);
 
@@ -66,10 +66,10 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   useEffect(() => {
     if (musicOn === false && sfxOn === false && !hasToggledSounds) {
       // no interaction needed since sound is muted
-      setStartClicked();
+      clickStart(false);
     }
     setHasToggledSounds(true);
-  }, [setStartClicked, musicOn, sfxOn, hasToggledSounds, setHasToggledSounds]);
+  }, [clickStart, musicOn, sfxOn, hasToggledSounds, setHasToggledSounds]);
 
   useEffect(() => {
     const htmlLoader = document.getElementById('html-loader');
@@ -168,7 +168,8 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                     if (musicOn || sfxOn) {
                       loaderStore.reset();
                     }
-                    loaderStore.clickStart();
+                    // TODO: also check if user is logged in
+                    clickStart(musicOn);
                     // On mobile, sounds can only be loaded after an interaction
                     if (sfxOn) {
                       prepareSoundEffects();

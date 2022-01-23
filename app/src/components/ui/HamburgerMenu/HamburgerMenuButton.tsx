@@ -14,26 +14,27 @@ import { firstTimeAnimationDelaySeconds } from '@/components/pages/HomePage/home
 export default function HamburgerMenuButton() {
   const [isOpen, setIsOpen] = useState(false);
   const wasOpen = usePrevious(isOpen);
+  const [isLoading, delayButtonVisibility] = useLoaderStore((store) => [
+    !store.hasFinished,
+    store.delayButtonVisibility,
+  ]);
   const [hasAnimated, setHasAnimated] = useState(
-    window.location.pathname !== '/'
+    window.location.pathname !== '/' || !delayButtonVisibility
   );
   useEffect(() => {
     if (isOpen || wasOpen) {
       playSound(SoundKey.click);
     }
   }, [isOpen, wasOpen]);
-  const classes = { button: '' }; //useStyles();
-
-  const isLoading = useLoaderStore((store) => !store.hasFinished);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (!isLoading && delayButtonVisibility) {
       setTimeout(
         () => setHasAnimated(true),
         firstTimeAnimationDelaySeconds * 1.1 * 1000
       );
     }
-  }, [isLoading, setHasAnimated]);
+  }, [isLoading, delayButtonVisibility, setHasAnimated]);
 
   if (isLoading) {
     return null;

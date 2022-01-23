@@ -5,7 +5,6 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import { keyframes } from '@mui/system';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
-import Routes from '@/models/Routes';
 import { gameModePickerId } from '@/components/ui/GameModePicker/GameModePicker';
 
 const playButtonAnimation = keyframes`
@@ -20,7 +19,7 @@ const playButtonAnimation = keyframes`
   }
 `;
 
-type PlayButtonProps = { isLoaded: boolean };
+type PlayButtonProps = { isLoaded: boolean; delayButtonVisibility: boolean };
 
 function scrollGameModePickerIntoView() {
   const gameModePicker = document.getElementById(gameModePickerId);
@@ -35,12 +34,14 @@ function scrollGameModePickerIntoView() {
   });
 }
 
-function _PlayButton({ isLoaded }: PlayButtonProps) {
+function _PlayButton({ isLoaded, delayButtonVisibility }: PlayButtonProps) {
   return (
     <IconButton
       sx={{
         opacity: isLoaded ? 1 : 0,
-        transition: `opacity 2s ${firstTimeAnimationDelaySeconds}s`,
+        transition: delayButtonVisibility
+          ? `opacity 2s ${firstTimeAnimationDelaySeconds}s`
+          : undefined,
         backgroundColor: '#57bb50',
         borderColor: '#ffffff44',
         borderWidth: 6,

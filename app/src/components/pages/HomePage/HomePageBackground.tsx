@@ -41,7 +41,10 @@ const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
   const isShortScreen = useMediaQuery(
     `(max-height:${isLandscape ? 400 : 600}px)`
   );
-  const isLoaded = useLoaderStore((loaderStore) => loaderStore.hasFinished);
+  const [isLoaded, delayButtonVisibility] = useLoaderStore((store) => [
+    store.hasFinished,
+    store.delayButtonVisibility,
+  ]);
 
   return (
     <FlexBox
@@ -155,7 +158,9 @@ const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
           opacity: isLoaded ? 0.5 : 0,
           width: '100%',
           height: '100%',
-          transition: `opacity ${homePageBackgroundTransitionSeconds}s ${firstTimeAnimationDelaySeconds}s`,
+          transition: `opacity ${homePageBackgroundTransitionSeconds}s ${
+            delayButtonVisibility ? firstTimeAnimationDelaySeconds : 0
+          }s`,
         }}
         role="presentation"
       />

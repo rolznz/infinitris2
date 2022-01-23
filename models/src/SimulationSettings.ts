@@ -1,3 +1,5 @@
+import { GameModeType } from '@models/GameModeType';
+
 export type SimulationSettings = {
   readonly gravityEnabled?: boolean;
   readonly allowedBlockLayoutIds?: string[];
@@ -6,4 +8,5 @@ export type SimulationSettings = {
   readonly preventTowers?: boolean;
   readonly mistakeDetection?: boolean;
   readonly calculateSpawnDelays?: boolean;
+  readonly gameModeType?: GameModeType;
 };

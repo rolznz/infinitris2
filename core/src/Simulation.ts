@@ -9,6 +9,9 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import ICell from '@models/ICell';
 import { IPlayer } from '@models/IPlayer';
 import IGrid from '@models/IGrid';
+import { IGameMode } from '@models/IGameMode';
+import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
+import { InfinityGameMode } from '@core/gameModes/InfinityGameMode';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -28,6 +31,7 @@ export default class Simulation implements ISimulation {
   private _dayNumber: number;
   private _dayLength: number;
   private _isNetworkClient: boolean;
+  private _gameMode: IGameMode;
 
   constructor(grid: Grid, settings: SimulationSettings = {}, isClient = false) {
     this._eventListeners = [];
@@ -44,6 +48,11 @@ export default class Simulation implements ISimulation {
     this._dayLength = this._settings.dayLength || DEFAULT_DAY_LENGTH;
     this._isNetworkClient = isClient;
     this.goToNextDay();
+    this._gameMode =
+      this._settings.gameModeType === 'conquest'
+        ? new ConquestGameMode(this)
+        : new InfinityGameMode(this);
+    //this.addEventListener(this._gameMode);
   }
 
   get isNetworkClient(): boolean {
@@ -87,6 +96,10 @@ export default class Simulation implements ISimulation {
   }
   set nextDay(nextDay: number) {
     this._nextDay = nextDay;
+  }
+
+  get gameMode(): IGameMode {
+    return this._gameMode;
   }
 
   getPlayer(playerId: number): IPlayer {
@@ -300,6 +313,7 @@ export default class Simulation implements ISimulation {
   step = () => {
     Object.values(this._players).forEach(this._updatePlayer);
     this._grid.step();
+    this._gameMode.step();
     this._runningTime += FRAME_LENGTH;
     this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
     // TODO: consider day speed increasing/decreasing based on number of filled rows (more rows = faster day)

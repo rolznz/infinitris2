@@ -18,7 +18,7 @@ export default class AIPlayer extends Player {
     playerId: number,
     nickname: string,
     color: number,
-    reflexDelay: number = 10
+    reflexDelay: number = 25
   ) {
     super(simulation, playerId, nickname, color);
     this._behaviour = new DumbAIBehaviour();

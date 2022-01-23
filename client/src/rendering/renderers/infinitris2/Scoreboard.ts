@@ -61,6 +61,7 @@ export class Scoreboard {
       score: player.score,
       placing: 0,
       spectating: player.isSpectating,
+      color: player.color,
     }));
     playerScores.sort((a, b) => b.score - a.score);
     for (let i = 0; i < playerScores.length; i++) {
@@ -101,12 +102,14 @@ export class Scoreboard {
           playerScores[i].nickname +
           (playerScores[i].spectating ? ' (spectating)' : '');
 
-        text.tint =
-          playerScores[i].playerId === followingPlayer?.id
-            ? 0xffccff
-            : 0xffffff;
+        text.tint = playerScores[i].color;
         text.x = padding;
         text.y = padding + i * text.height;
+        if (playerScores[i].playerId === followingPlayer?.id) {
+          (text.style as PIXI.TextStyle).fontWeight = '900';
+        } else {
+          (text.style as PIXI.TextStyle).fontWeight = '300';
+        }
         widestText = Math.max(widestText, text.width);
         textHeight += text.height;
       } else {
@@ -127,7 +130,7 @@ export class Scoreboard {
       align: 'left',
       stroke: '#000000',
       strokeThickness: 2,
-    });
+    } as Partial<PIXI.TextStyle>);
     text.anchor.set(0, 0);
     text.scale.set(0.8);
     text.visible = false;

@@ -29,6 +29,10 @@ import { RendererQuality } from '@models/RendererQuality';
 import { getBorderColor } from '@models/util/adjustColor';
 import { WorldType } from '@models/WorldType';
 import { GridLines } from '@src/rendering/renderers/infinitris2/GridLines';
+import {
+  ConquestGameMode,
+  IColumnCapture,
+} from '@core/gameModes/ConquestGameMode';
 
 const idealCellSize = 32;
 const minCellCount = 23;
@@ -64,10 +68,10 @@ interface IRenderableCell extends IRenderableEntity<PIXI.Graphics> {
   // a cell will be rendered 1 time on wrapped grids, N times for shadow wrapping (grid width < screen width)
 }
 
-/*interface IPlayerScore {
-  playerId: number;
-  text: PIXI.Text;
-}*/
+// FIXME: move to own file
+interface IRenderableColumnCapture extends IRenderableEntity<PIXI.Graphics> {
+  column: number;
+}
 
 interface IParticle extends IRenderableEntity<PIXI.Graphics> {
   x: number;
@@ -101,6 +105,8 @@ export default class Infinitris2Renderer
   // FIXME: blocks should have their own ids!
   private _blocks!: { [playerId: number]: IRenderableBlock };
   private _cells!: { [cellId: number]: IRenderableCell };
+  private _columnCaptures!: { [cellId: number]: IRenderableColumnCapture };
+
   private _particles!: IParticle[];
 
   private _simulation!: ISimulation;
@@ -373,6 +379,7 @@ export default class Infinitris2Renderer
     this._simulation = simulation;
     this._blocks = {};
     this._cells = {};
+    this._columnCaptures = {};
     this._app.stage.removeChildren();
 
     this._worldBackground.addChildren();
@@ -568,6 +575,12 @@ export default class Infinitris2Renderer
     }
     this._particles = this._particles.filter((particle) => particle.life > 0);
 
+    if (this._simulation.settings.gameModeType === 'conquest') {
+      this._renderColumnCaptures(
+        (this._simulation.gameMode as ConquestGameMode).columnCaptures
+      );
+    }
+
     // TODO: animation for where block died
     /*Object.values(this._blocks).forEach((block) => {
       if (!block.block.isAlive) {
@@ -702,6 +715,55 @@ export default class Infinitris2Renderer
       this._shadowGradientGraphics.cacheAsBitmap = true;
     }
   };
+
+  private _renderColumnCaptures(columnCaptures: IColumnCapture[]) {
+    for (let i = 0; i < columnCaptures.length; i++) {
+      if (!this._columnCaptures[i]) {
+        const captureContainer = new PIXI.Container();
+        this._world.addChild(captureContainer);
+        this._columnCaptures[i] = {
+          column: i,
+          container: captureContainer,
+          children: [],
+        };
+      }
+      const renderableColumnCapture = this._columnCaptures[i];
+
+      renderableColumnCapture.container.x = this._getWrappedX(
+        i * this._cellSize
+      );
+      renderableColumnCapture.container.y = this._gridHeight;
+
+      this._renderCopies(
+        renderableColumnCapture,
+        1,
+        (graphics) => {
+          graphics.clear();
+          if (columnCaptures[i].player) {
+            graphics.beginFill(columnCaptures[i].player!.color);
+
+            if (columnCaptures[i].value < 1) {
+              graphics.drawRect(
+                this._cellSize * 0.2,
+                this._cellSize * 0.4,
+                this._cellSize * 0.6 * columnCaptures[i].value,
+                this._cellSize * 0.1
+              );
+            } else {
+              graphics.drawRect(
+                this._cellSize * 0.3,
+                this._cellSize * 0.3,
+                this._cellSize * 0.4,
+                this._cellSize * 0.4
+              );
+            }
+          }
+        },
+        () => new PIXI.Graphics(),
+        () => undefined
+      );
+    }
+  }
 
   private _renderCells(cells: ICell[]) {
     cells.forEach((cell) => this._renderCell(cell));

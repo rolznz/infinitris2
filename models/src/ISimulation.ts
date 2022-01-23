@@ -1,3 +1,4 @@
+import { IGameMode } from '@models/IGameMode';
 import { IPlayerEventListener } from '@models/IPlayerEventListener';
 import { SimulationSettings } from '.';
 import IBlockEventListener from './IBlockEventListener';
@@ -25,6 +26,7 @@ export default interface ISimulation
   get dayNumber(): number;
   get dayLength(): number;
   get nextDay(): number;
+  get gameMode(): IGameMode;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;
@@ -32,4 +34,5 @@ export default interface ISimulation
   grid: IGrid;
   isFollowingPlayerId(playerId: number): boolean;
   goToNextDay(): void;
+  getPlayer(playerId: number): IPlayer;
 }

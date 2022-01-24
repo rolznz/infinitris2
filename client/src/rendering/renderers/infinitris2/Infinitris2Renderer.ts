@@ -769,6 +769,13 @@ export default class Infinitris2Renderer
                 this._cellSize * 0.6 * columnCaptures[i].value,
                 this._cellSize * 0.1
               );
+              graphics.beginFill(columnCaptures[i].player!.color, 0.3);
+              graphics.drawRect(
+                this._cellSize * 0.2,
+                this._cellSize * 0.4,
+                this._cellSize * 0.6,
+                this._cellSize * 0.1
+              );
             } else {
               graphics.drawRect(
                 this._cellSize * 0.3,

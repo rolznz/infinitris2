@@ -3,7 +3,8 @@ import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import Camera from '@src/rendering/Camera';
 
-type GridLineType = 'inverted' | 'classic';
+// TODO: move to models
+type GridLineType = 'none' | 'inverted' | 'classic';
 
 export class GridLines {
   private _grid: IGrid;
@@ -18,17 +19,19 @@ export class GridLines {
     simulation: ISimulation,
     app: PIXI.Application,
     camera: Camera,
-    lineType: GridLineType = 'inverted'
+    lineType: GridLineType = 'none'
   ) {
     this._app = app;
     this._grid = simulation.grid;
-    this._graphics = new PIXI.Graphics();
     this._lineType = lineType;
-
-    app.stage.addChild(this._graphics);
+    this._graphics = new PIXI.Graphics();
     this._camera = camera;
     this._width = 0;
     this._height = 0;
+    if (this._lineType === 'none') {
+      return;
+    }
+    app.stage.addChild(this._graphics);
   }
 
   get y() {
@@ -50,11 +53,13 @@ export class GridLines {
     scrollX: boolean,
     scrollY: boolean
   ) {
-    this._graphics.cacheAsBitmap = false;
-    this._graphics.clear();
-
     this._width = gridWidth;
     this._height = gridHeight;
+    if (this._lineType === 'none') {
+      return;
+    }
+    this._graphics.cacheAsBitmap = false;
+    this._graphics.clear();
 
     const gridRows = scrollY
       ? Math.ceil(this._app.renderer.height / cellSize) + 2
@@ -63,8 +68,8 @@ export class GridLines {
       ? Math.ceil(this._app.renderer.width / cellSize) + 2
       : this._grid.numColumns;
 
-    const gridColor = 0x000000;
-    const gridAlpha = 0.05; //0.0125;
+    const gridColor = 0xffffff;
+    const gridAlpha = 0.0125;
 
     if (this._lineType === 'inverted') {
       for (let r = 0; r < gridRows; r++) {

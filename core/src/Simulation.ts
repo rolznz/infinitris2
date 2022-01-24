@@ -52,7 +52,7 @@ export default class Simulation implements ISimulation {
       this._settings.gameModeType === 'conquest'
         ? new ConquestGameMode(this)
         : new InfinityGameMode(this);
-    //this.addEventListener(this._gameMode);
+    this.addEventListener(this._gameMode);
   }
 
   get isNetworkClient(): boolean {
@@ -162,7 +162,6 @@ export default class Simulation implements ISimulation {
    */
   addPlayer(player: IPlayer) {
     this._players[player.id] = player;
-    player.addEventListener(this);
   }
 
   // TODO: move to renderer

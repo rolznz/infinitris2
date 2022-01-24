@@ -93,6 +93,7 @@ export default class Cell implements ICell {
   replaceWith(cell: ICell) {
     this._behaviour = cell.behaviour.clone(this);
     this._isEmpty = cell.isEmpty;
+    this._player = cell.player;
   }
   reset(): void {
     this._isEmpty = true;

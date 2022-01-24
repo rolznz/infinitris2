@@ -105,7 +105,10 @@ export default class Infinitris2Renderer
   // FIXME: blocks should have their own ids!
   private _blocks!: { [playerId: number]: IRenderableBlock };
   private _cells!: { [cellId: number]: IRenderableCell };
+
+  // TODO: move to seperate file
   private _columnCaptures!: { [cellId: number]: IRenderableColumnCapture };
+  private _lastGameModeStep: number;
 
   private _particles!: IParticle[];
 
@@ -149,6 +152,7 @@ export default class Infinitris2Renderer
     this._appWidth = 0;
     this._appHeight = 0;
     this._oldOverflowStyle = document.body.style.overflow;
+    this._lastGameModeStep = 0;
     document.body.style.overflow = 'none';
   }
 
@@ -575,10 +579,26 @@ export default class Infinitris2Renderer
     }
     this._particles = this._particles.filter((particle) => particle.life > 0);
 
-    if (this._simulation.settings.gameModeType === 'conquest') {
-      this._renderColumnCaptures(
-        (this._simulation.gameMode as ConquestGameMode).columnCaptures
-      );
+    if (
+      this._simulation.settings.gameModeType === 'conquest' &&
+      ++this._lastGameModeStep > 100
+    ) {
+      this._lastGameModeStep = 0;
+      const conquestGameMode = this._simulation.gameMode as ConquestGameMode;
+      // TODO: add health bars to players instead of overriding the text
+      Object.values(this._blocks).forEach((renderableBlock) => {
+        renderableBlock.playerNameText.children.forEach((child) => {
+          child.pixiObject.text =
+            renderableBlock.block.player.nickname +
+            ' ' +
+            (conquestGameMode.playerHealths[renderableBlock.block.player.id] ||
+              0) *
+              100 +
+            '%';
+        });
+      });
+      //this._blocks[block.player.id]
+      this._renderColumnCaptures(conquestGameMode.columnCaptures);
     }
 
     // TODO: animation for where block died

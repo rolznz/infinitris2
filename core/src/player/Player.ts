@@ -41,6 +41,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     console.log('Creating player ' + id);
     this._id = id;
     this._eventListeners = [];
+    this.addEventListener(simulation);
     this._score = 0;
     this._nickname = nickname;
     this._color = color;

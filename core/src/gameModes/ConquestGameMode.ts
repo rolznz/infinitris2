@@ -1,4 +1,8 @@
+import IBlock from '@models/IBlock';
+import ICell from '@models/ICell';
+import ICellBehaviour from '@models/ICellBehaviour';
 import { IGameMode } from '@models/IGameMode';
+import IGrid from '@models/IGrid';
 import { IPlayer } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
 
@@ -8,10 +12,13 @@ export interface IColumnCapture {
   value: number;
 }
 
+type PlayerHealthMap = { [playerId: number]: number };
+
 export class ConquestGameMode implements IGameMode {
   private _columnCaptures: IColumnCapture[];
   private _simulation: ISimulation;
   private _lastCalculation: number;
+  private _playerHealths: PlayerHealthMap;
   constructor(simulation: ISimulation) {
     this._simulation = simulation;
     this._columnCaptures = [...new Array(simulation.grid.numColumns)].map(
@@ -20,13 +27,16 @@ export class ConquestGameMode implements IGameMode {
       })
     );
     this._lastCalculation = 0;
+    this._playerHealths = {};
   }
 
   get columnCaptures(): IColumnCapture[] {
     return this._columnCaptures;
   }
 
-  // TODO: handle on player exit
+  get playerHealths(): PlayerHealthMap {
+    return this._playerHealths;
+  }
 
   step(): void {
     // TODO: find a simple way to sync rather than having to send all column data each frame
@@ -36,9 +46,12 @@ export class ConquestGameMode implements IGameMode {
     }
     this._lastCalculation = 0;
 
-    const summedPlayerScores = this._simulation.players
-      .map((player) => player.score)
-      .reduce((a, b) => a + b);
+    const summedPlayerScores = Math.max(
+      this._simulation.players
+        .map((player) => player.score)
+        .reduce((a, b) => a + b),
+      1
+    );
 
     const playerColumnCaptureCounts: { [playerId: number]: number } = {};
     for (let c = 0; c < this._simulation.grid.numColumns; c++) {
@@ -50,7 +63,7 @@ export class ConquestGameMode implements IGameMode {
           // give higher capture value for player with high score
           playerCaptureValues[cell.player.id] =
             (playerCaptureValues[cell.player.id] || 0) +
-            1 * (1 + (cell.player.score / summedPlayerScores) * 3);
+            1 * (cell.player.score / summedPlayerScores);
         }
       }
       const highestPlayerEntry = Object.entries(playerCaptureValues)
@@ -92,5 +105,55 @@ export class ConquestGameMode implements IGameMode {
         }
       }
     }
+    for (const player of this._simulation.players) {
+      if ((playerColumnCaptureCounts[player.id] || 0) < 1) {
+        this._playerHealths[player.id] = Math.max(
+          this._playerHealths[player.id] - 0.01,
+          0
+        );
+        if (this._playerHealths[player.id] === 0) {
+          if (!this._simulation.isNetworkClient) {
+            // TODO: need a separate variable for out of the current game
+            player.isSpectating = true;
+            //player.knockedOut = true;
+          }
+        }
+      } else {
+        this._playerHealths[player.id] = Math.min(
+          this._playerHealths[player.id] + 0.01,
+          1
+        );
+      }
+    }
   }
+
+  onSimulationInit(simulation: ISimulation): void {}
+  onSimulationStep(simulation: ISimulation): void {}
+  onSimulationNextDay(simulation: ISimulation): void {}
+  onPlayerCreated(player: IPlayer): void {
+    this._playerHealths[player.id] = 1;
+    console.log('set player health for ' + player.nickname);
+  }
+  onPlayerDestroyed(player: IPlayer): void {
+    for (let c = 0; c < this._columnCaptures.length; c++) {
+      if (this._columnCaptures[c].player === player) {
+        this._columnCaptures[c].player = undefined;
+        this._columnCaptures[c].value = 0;
+      }
+    }
+  }
+  onPlayerToggleChat(player: IPlayer, wasCancelled: boolean): void {}
+  onBlockCreated(block: IBlock): void {}
+  onBlockCreateFailed(block: IBlock): void {}
+  onBlockPlaced(block: IBlock): void {}
+  onBlockMoved(block: IBlock, dx: number, dy: number, dr: number): void {}
+  onBlockDropped(block: IBlock): void {}
+  onBlockDied(block: IBlock): void {}
+  onBlockDestroyed(block: IBlock): void {}
+  onLineCleared(row: number): void {}
+  onGridCollapsed(grid: IGrid): void {}
+  onCellBehaviourChanged(
+    cell: ICell,
+    previousBehaviour: ICellBehaviour
+  ): void {}
 }

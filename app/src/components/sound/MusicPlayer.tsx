@@ -1,7 +1,8 @@
+// TODO: howler sucks and is buggy af, remove it and just use web audio API
+// sound effects laggy and unplayable on ios, random repeats and loops.
+// currently only being used for music, but even the fades don't work on ios...
 import { Howl } from 'howler';
 import useLoaderStore from '@/state/LoaderStore';
-import { useUserStore } from '@/state/UserStore';
-import isMobile from '@/utils/isMobile';
 
 const rootUrl = process.env.REACT_APP_MUSIC_ROOT_URL;
 const musicFadeTimeMs = 2000;
@@ -11,17 +12,17 @@ let _gameTheme: Howl;
 let _sounds: Howl;
 let _sfxOn: boolean = false;
 
-export enum SoundKey {
-  silence = 'silence',
-  click = 'click',
-  death = 'death',
-  move = 'move',
-  notification = 'notification',
-  place = 'place',
-  rotate = 'rotate',
-  drop = 'drop',
-  spawn = 'spawn',
-}
+export const SoundKey = {
+  silence: [0, 500],
+  click: [3000, 500],
+  death: [6000, 500],
+  move: [9000, 500],
+  notification: [12000, 500],
+  place: [16000, 500],
+  rotate: [19000, 500],
+  drop: [22000, 500],
+  spawn: [12000, 500],
+};
 
 export function musicLoaded(): boolean {
   return !!_menuTheme;
@@ -45,43 +46,35 @@ export async function playMenuTheme() {
   _menuTheme = playMusic(_menuTheme, `${rootUrl}/menu.mp3`, false);
 }
 
+let _sfxContext: AudioContext;
+let _sfxAudioBuffer: AudioBuffer;
+
 export async function prepareSoundEffects() {
-  // TODO: have a specific sprite for menu sounds
-  if (!_sounds) {
-    _sounds = new Howl({
-      src: [`${rootUrl}/sounds.mp3`],
-      //pool: 100,
-      html5: isMobile(), // TODO: see if this can be disabled for mobile
-      // generated using the following command:
-      // audiosprite --silence 1 *.wav --export mp3 --output sounds
-      sprite: {
-        [SoundKey.silence]: [0, 500],
-        [SoundKey.click]: [3000, 500],
-        [SoundKey.death]: [6000, 500],
-        [SoundKey.move]: [9000, 500],
-        [SoundKey.notification]: [12000, 500],
-        [SoundKey.place]: [16000, 500],
-        [SoundKey.rotate]: [19000, 500],
-        [SoundKey.drop]: [22000, 500],
-        [SoundKey.spawn]: [12000, 500],
-      },
-    });
-    _sounds.on('end', (soundId) => {
-      _sounds.stop(soundId);
-    });
-    useLoaderStore.getState().increaseSteps();
-    await _sounds.load();
-    _sounds.once('play', () => {
-      useLoaderStore.getState().increaseStepsCompleted();
-    });
-    // prepare sound sprite
-    _sounds.play(SoundKey.silence);
+  if (!_sfxContext) {
+    _sfxContext = new AudioContext();
+
+    try {
+      _sfxAudioBuffer = await fetch(`${rootUrl}/sounds.mp3`)
+        .then((res) => {
+          return res.arrayBuffer();
+        })
+        .then((ArrayBuffer) => _sfxContext.decodeAudioData(ArrayBuffer));
+
+      playSound(SoundKey.silence);
+    } catch (error) {
+      alert(
+        'Error: ' + JSON.stringify(error, Object.getOwnPropertyNames(error))
+      );
+    }
   }
 }
 
-export function playSound(key: SoundKey) {
+export function playSound([startMs, offsetMs]: number[]) {
   if (_sfxOn) {
-    _sounds?.play(key);
+    const source = _sfxContext.createBufferSource();
+    source.buffer = _sfxAudioBuffer;
+    source.connect(_sfxContext.destination);
+    source.start(undefined, startMs / 1000, offsetMs / 1000);
   }
 }
 

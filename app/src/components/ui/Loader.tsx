@@ -25,6 +25,7 @@ import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import useAppStore from '@/state/AppStore';
 import { LanguagePicker } from '../pages/SettingsPage/SettingsPage';
 import { borderColor, borderRadiuses } from '@/theme/theme';
+import isMobile from '@/utils/isMobile';
 
 // const checkboxStyle: SxProps = {
 //   '& span': {
@@ -237,6 +238,15 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                     })}
                   />
                 </FlexBox>
+
+                {sfxOn && isMobile() && (
+                  <Typography variant="caption" mt={1}>
+                    <FormattedMessage
+                      defaultMessage="Silent mode must be off to enable sfx"
+                      description="Loader - ringer switch warning"
+                    />
+                  </Typography>
+                )}
               </FlexBox>
             )}
         </FlexBox>

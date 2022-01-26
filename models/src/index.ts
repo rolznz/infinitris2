@@ -5,7 +5,6 @@ import { IClientSocketEventListener } from './IClientSocketEventListener';
 import IGridEventListener from './IGridEventListener';
 import IClientApi from './IClientApi';
 import InputAction from './InputAction';
-import InputMethod from './InputMethod';
 import ISimulation from './ISimulation';
 import ISimulationEventListener from './ISimulationEventListener';
 import Layout from './Layout';
@@ -59,6 +58,7 @@ export * from './WorldType';
 export * from './IServer';
 export * from './GameModeType';
 export * from './IGameMode';
+export * from './InputMethod';
 
 export {
   exampleChallenges,
@@ -79,7 +79,6 @@ export {
   IGrid,
   ISimulation,
   ISimulationEventListener,
-  InputMethod,
   ChallengeCellType,
   IRoom,
   IUser,

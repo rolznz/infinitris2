@@ -26,9 +26,7 @@ export default class SinglePlayerClient
   private _renderer!: IRenderer;
   private _simulation!: Simulation;
   private _input!: Input;
-  private _controls?: ControlSettings;
   constructor(options: LaunchOptions) {
-    this._controls = options.controls;
     this._create(options);
   }
 
@@ -138,7 +136,12 @@ export default class SinglePlayerClient
     );
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);
-    this._input = new Input(this._simulation, player, this._controls);
+    this._input = new Input(
+      this._simulation,
+      player,
+      options.controls_keyboard,
+      options.controls_gamepad
+    );
 
     if (options.numBots) {
       for (let i = 0; i < options.numBots; i++) {

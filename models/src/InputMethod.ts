@@ -1,2 +1,2 @@
-type InputMethod = 'keyboard' | 'touch';
-export default InputMethod;
+export type AdjustableInputMethod = 'keyboard' | 'gamepad';
+export type InputMethod = 'touch' | AdjustableInputMethod;

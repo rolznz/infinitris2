@@ -1,5 +1,5 @@
 import ControlSettings from './ControlSettings';
-import InputMethod from './InputMethod';
+import { InputMethod } from './InputMethod';
 import IEntity, { IEntityReadOnlyProperties } from './IEntity';
 import Timestamp from './Timestamp';
 import { AppTheme } from './AppTheme';
@@ -23,13 +23,17 @@ export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly writeRate: number;
 }
 
-export default interface IUser extends IEntity {
+export interface WithControls {
+  readonly controls_keyboard?: ControlSettings;
+  readonly controls_gamepad?: ControlSettings;
+}
+
+export default interface IUser extends IEntity, WithControls {
   readonly readOnly: IUserReadOnlyProperties;
   readonly hasSeenWelcome?: boolean;
   readonly hasSeenAllSet?: boolean;
   readonly locale?: string;
   readonly preferredInputMethod?: InputMethod;
-  readonly controls?: ControlSettings;
   readonly appTheme?: AppTheme;
   readonly musicOn?: boolean;
   readonly sfxOn?: boolean;

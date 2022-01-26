@@ -1,33 +1,112 @@
-import React, { useEffect } from 'react';
-import { Typography, Grid, Box, Button } from '@mui/material';
-
+import React, { useEffect, useState } from 'react';
 import FlexBox from '../../ui/FlexBox';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useUserStore } from '../../../state/UserStore';
 import SettingsRow from './SettingsRow';
-import { getUserFriendlyKeyText, InputAction } from 'infinitris2-models';
-import { useState } from 'react';
+import {
+  AdjustableInputMethod,
+  getUserFriendlyKeyText,
+  InputAction,
+} from 'infinitris2-models';
 import useKeyPress from 'react-use/lib/useKeyPress';
 import { Page } from '@/components/ui/Page';
+import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
+import Box from '@mui/material/Box';
+import useSearchParam from 'react-use/lib/useSearchParam';
+import { Typography } from '@mui/material';
+
+let initialJoypadAxesValues: number[] = [];
 
 export default function ControlSettingsPage() {
   const intl = useIntl();
   const userStore = useUserStore();
+  const adjustableInputType = useSearchParam('type') as AdjustableInputMethod;
   const { user, resetControls, updateControl } = userStore;
   const [editingInputAction, setEditingInputAction] = useState<
     InputAction | undefined
   >(undefined);
-  const [isDown, lastKeyPressedEvent] = useKeyPress(
-    (event: KeyboardEvent) => true
-  );
+  const [isDown, lastKeyPressedEvent] = useKeyPress(() => true);
+  const [gamepadConnected, setGamepadConnected] = React.useState(false);
+
+  React.useEffect(() => {
+    if (adjustableInputType === 'gamepad') {
+      const onConnected = () => {
+        setGamepadConnected(true);
+      };
+      const onDisconnected = () => {
+        setGamepadConnected(false);
+      };
+      window.addEventListener('gamepadconnected', onConnected);
+      window.addEventListener('gamepaddisconnected', onDisconnected);
+      return () => {
+        window.removeEventListener('gamepadconnected', onConnected);
+        window.removeEventListener('gamepaddisconnected', onDisconnected);
+      };
+    }
+  }, [adjustableInputType]);
+
+  React.useEffect(() => {
+    if (editingInputAction && adjustableInputType === 'gamepad') {
+      const timeout = setInterval(() => {
+        const gamepads = navigator.getGamepads?.() || [];
+        const gamepad = gamepads?.[0];
+        if (!gamepad) {
+          return;
+        }
+        for (let i = 0; i < gamepad.buttons.length; i++) {
+          if (gamepad.buttons[i].pressed) {
+            setEditingInputAction(undefined);
+            updateControl(
+              adjustableInputType,
+              editingInputAction,
+              `button_${i}`
+            );
+          }
+        }
+        if (
+          !initialJoypadAxesValues ||
+          initialJoypadAxesValues.length !== gamepad.axes.length
+        ) {
+          initialJoypadAxesValues = gamepad.axes.slice();
+        }
+        for (let i = 0; i < gamepad.axes.length; i++) {
+          if (gamepad.axes[i] !== initialJoypadAxesValues[i]) {
+            setEditingInputAction(undefined);
+            updateControl(
+              adjustableInputType,
+              editingInputAction,
+              `axis_${i}_${gamepad.axes[i]}`
+            );
+          }
+        }
+      }, 100);
+
+      return () => {
+        clearInterval(timeout);
+      };
+    }
+  }, [adjustableInputType, editingInputAction, updateControl]);
 
   useEffect(() => {
     if (editingInputAction && isDown && lastKeyPressedEvent) {
       setEditingInputAction(undefined);
-      updateControl(editingInputAction, lastKeyPressedEvent?.key);
+      if (adjustableInputType === 'keyboard') {
+        updateControl(
+          adjustableInputType,
+          editingInputAction,
+          lastKeyPressedEvent?.key
+        );
+      }
     }
-  }, [isDown, editingInputAction, lastKeyPressedEvent, updateControl]);
+  }, [
+    adjustableInputType,
+    isDown,
+    editingInputAction,
+    lastKeyPressedEvent,
+    updateControl,
+  ]);
 
   function getInputActionMessage(inputAction: InputAction) {
     // TODO: is there a way to reduce duplication here?
@@ -75,6 +154,20 @@ export default function ControlSettingsPage() {
             description="RotateAnticlockwise action text"
           />
         );
+      case InputAction.Chat:
+        return (
+          <FormattedMessage
+            defaultMessage="Chat"
+            description="Chat action text"
+          />
+        );
+      case InputAction.Esc:
+        return (
+          <FormattedMessage
+            defaultMessage="Esc"
+            description="Esc action text"
+          />
+        );
       default:
         throw new Error('unknown input action: ' + inputAction);
     }
@@ -95,7 +188,37 @@ export default function ControlSettingsPage() {
         />
       ) : (
         <FlexBox width={300} maxWidth="100%">
-          <Grid container spacing={2} alignItems="center" justifyContent="center">
+          {adjustableInputType === 'gamepad' && (
+            <>
+              <Typography pb={2}>
+                <FormattedMessage
+                  defaultMessage="Gamepad {connected}"
+                  description="Gamepad connected status"
+                  values={{
+                    connected: gamepadConnected ? (
+                      <span style={{ color: '#00ff00' }}>CONNECTED</span>
+                    ) : (
+                      <span style={{ color: '#ff0000' }}>DISCONNECTED</span>
+                    ),
+                  }}
+                />
+              </Typography>
+              {!gamepadConnected && (
+                <Typography pb={2} textAlign="center">
+                  <FormattedMessage
+                    defaultMessage="Try disconnecting and reconnecting your bluetooth gamepad."
+                    description="Gamepad disconnected help"
+                  />
+                </Typography>
+              )}
+            </>
+          )}
+          <Grid
+            container
+            spacing={2}
+            alignItems="center"
+            justifyContent="center"
+          >
             {(Object.values(InputAction) as InputAction[]).map(
               (inputAction) => {
                 return (
@@ -109,7 +232,9 @@ export default function ControlSettingsPage() {
                         onClick={() => setEditingInputAction(inputAction)}
                       >
                         {getUserFriendlyKeyText(
-                          user.controls?.[inputAction] || 'Unset'
+                          user[`controls_${adjustableInputType}`]?.[
+                            inputAction
+                          ] || 'Unset'
                         )}
                       </Button>
                     }
@@ -120,20 +245,22 @@ export default function ControlSettingsPage() {
           </Grid>
           <Box mb={10} />
           <FlexBox flex={1} justifyContent="flex-end" mb={4}>
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() =>
-                window.confirm(
-                  'Are you sure you wish to reset your controls?'
-                ) && resetControls()
-              }
-            >
-              <FormattedMessage
-                defaultMessage="Reset Controls"
-                description="Reset Controls button text"
-              />
-            </Button>
+            {adjustableInputType === 'keyboard' && (
+              <Button
+                variant="contained"
+                color="secondary"
+                onClick={() =>
+                  window.confirm(
+                    'Are you sure you wish to reset your controls?'
+                  ) && resetControls(adjustableInputType)
+                }
+              >
+                <FormattedMessage
+                  defaultMessage="Reset Controls"
+                  description="Reset Controls button text"
+                />
+              </Button>
+            )}
           </FlexBox>
         </FlexBox>
       )}

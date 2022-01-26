@@ -14,7 +14,9 @@ import { playGameMusic, playSound, SoundKey } from '../sound/MusicPlayer';
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
-  const { controls, rendererQuality, rendererType } = useUser();
+  const { controls_keyboard, controls_gamepad, rendererQuality, rendererType } =
+    useUser();
+
   //const requiresRedirect = useForcedRedirect();
   const launchSinglePlayer = client?.launchSinglePlayer;
   const [hasLaunched, setLaunched] = useState(false);
@@ -43,7 +45,8 @@ export default function SinglePlayerPage() {
       setLaunched(true);
       launchSinglePlayer({
         worldType,
-        controls,
+        controls_keyboard,
+        controls_gamepad,
         numBots,
         botReactionDelay,
         gridNumRows,
@@ -122,7 +125,8 @@ export default function SinglePlayerPage() {
     launchSinglePlayer,
     requiresRedirect,
     hasLaunched,
-    controls,
+    controls_keyboard,
+    controls_gamepad,
     musicOn,
     hasLoaded,
     numBots,

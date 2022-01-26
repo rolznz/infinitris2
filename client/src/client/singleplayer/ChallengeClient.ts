@@ -8,7 +8,7 @@ import CellType from '@models/CellType';
 import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
 import IChallengeClient from '@models/IChallengeClient';
-import InputMethod from '@models/InputMethod';
+import { InputMethod } from '@models/InputMethod';
 import { IChallenge } from '@models/IChallenge';
 import ISimulation from '@models/ISimulation';
 import Simulation from '@core/Simulation';
@@ -51,7 +51,7 @@ export default class ChallengeClient
 
   constructor(challenge: IChallenge, options: LaunchOptions) {
     this._preferredInputMethod = options.preferredInputMethod;
-    this._controls = options.controls;
+    this._controls = options.controls_keyboard;
     this._player = options.player;
     this._create(challenge, options.listener);
   }

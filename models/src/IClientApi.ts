@@ -1,6 +1,6 @@
 import ControlSettings from './ControlSettings';
 import { IClientSocketEventListener } from './IClientSocketEventListener';
-import InputMethod from './InputMethod';
+import { InputMethod } from './InputMethod';
 import ISimulationEventListener from './ISimulationEventListener';
 import { IChallenge } from './IChallenge';
 import IChallengeClient from './IChallengeClient';
@@ -9,12 +9,12 @@ import { RendererType } from './RendererType';
 import { SimulationSettings } from './SimulationSettings';
 import { RendererQuality } from './RendererQuality';
 import { WorldType } from '@models/WorldType';
+import { WithControls } from '@models/IUser';
 
-export type LaunchOptions = {
+export type LaunchOptions = WithControls & {
   listener?: ISimulationEventListener;
   socketListener?: IClientSocketEventListener;
   preferredInputMethod?: InputMethod;
-  controls?: ControlSettings;
   player?: IPlayer;
   rendererType?: RendererType;
   //otherPlayers?: IPlayer[]; // AI & network players

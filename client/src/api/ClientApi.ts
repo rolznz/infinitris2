@@ -3,7 +3,7 @@ import IClient from '@models/IClient';
 import NetworkClient from '../client/NetworkClient';
 import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
 import ChallengeClient from '@src/client/singleplayer/ChallengeClient';
-import InputMethod from '@models/InputMethod';
+import { InputMethod } from '@models/InputMethod';
 import { exampleChallenges } from '@models/exampleChallenges';
 import ControlSettings from '@models/ControlSettings';
 import { IChallenge } from '@models/IChallenge';
@@ -45,7 +45,7 @@ export default class ClientApi implements IClientApi {
       };
 
       this.launchSinglePlayer({
-        controls,
+        controls_keyboard: controls,
         numBots,
         spectate,
         rendererType,
@@ -53,7 +53,7 @@ export default class ClientApi implements IClientApi {
       });
     } else if (params.has('url')) {
       this.launchNetworkClient(params.get('url') as string, {
-        controls,
+        controls_keyboard: controls,
       });
     } else if (params.has('challengeId')) {
       const challengeId = params.get('challengeId')!;
@@ -83,7 +83,7 @@ export default class ClientApi implements IClientApi {
           onCellBehaviourChanged() {},
         },
         preferredInputMethod,
-        controls,
+        controls_keyboard: controls,
       });
     } else {
       return false;
@@ -123,7 +123,7 @@ export default class ClientApi implements IClientApi {
     this._client = new NetworkClient(
       url,
       options.socketListener,
-      options.controls,
+      options.controls_keyboard,
       options.player
     );
   };

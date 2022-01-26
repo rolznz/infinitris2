@@ -5,6 +5,7 @@ import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
 import KeyboardInput from './KeyboardInput';
 import TouchInput from './TouchInput';
+import GamepadInput from '@src/input/GamepadInput';
 import ControlSettings, {
   DEFAULT_KEYBOARD_CONTROLS,
 } from '@models/ControlSettings';
@@ -19,19 +20,24 @@ export default class Input {
   private _actionListeners: ActionListener[];
   private _keyboardInput: KeyboardInput;
   private _touchInput: TouchInput;
+  private _gamepadInput?: GamepadInput;
 
   constructor(
     simulation: Simulation,
     player: ControllablePlayer,
-    controls: ControlSettings = DEFAULT_KEYBOARD_CONTROLS
+    keyboardControls: ControlSettings = DEFAULT_KEYBOARD_CONTROLS,
+    gamepadControls?: ControlSettings
   ) {
     this._simulation = simulation;
     this._grid = simulation.grid;
     this._player = player;
-    this._controls = { ...DEFAULT_KEYBOARD_CONTROLS, ...controls }; // ensure newly added controls use default keys
+    this._controls = { ...DEFAULT_KEYBOARD_CONTROLS, ...keyboardControls }; // ensure newly added controls use default keys
     this._actionListeners = [];
     this._keyboardInput = new KeyboardInput(this._fireAction, this._controls);
     this._touchInput = new TouchInput(this._fireAction);
+    if (gamepadControls) {
+      this._gamepadInput = new GamepadInput(this._fireAction, gamepadControls);
+    }
   }
 
   get controls(): ControlSettings {
@@ -48,6 +54,7 @@ export default class Input {
   destroy() {
     this._keyboardInput.destroy();
     this._touchInput.destroy();
+    this._gamepadInput?.destroy();
   }
 
   private _isActionAllowed(action: InputAction) {

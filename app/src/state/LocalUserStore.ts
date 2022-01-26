@@ -20,7 +20,7 @@ const defaultUser: LocalUser = {
   //challengeAttempts: {},
   locale: defaultLocale,
   //completedChallengeIds: [],
-  controls: DEFAULT_KEYBOARD_CONTROLS,
+  controls_keyboard: DEFAULT_KEYBOARD_CONTROLS,
   //coins: 0,
   //networkImpact: 0,
   //color: defaultColor,

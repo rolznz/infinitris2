@@ -13,7 +13,7 @@ import { imagesDirectory } from '..';
 import LockBehaviour from '@core/grid/cell/behaviours/LockBehaviour';
 import ControlSettings from '@models/ControlSettings';
 import getUserFriendlyKeyText from '@models/util/getUserFriendlyKeyText';
-import InputMethod from '@models/InputMethod';
+import { InputMethod } from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { WorldBackground } from './WorldBackground';
 import { GridFloor } from './GridFloor';

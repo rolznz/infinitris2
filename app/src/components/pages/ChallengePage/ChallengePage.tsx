@@ -65,7 +65,7 @@ export default function ChallengePage() {
 
   const [checkChallengeStatus, setCheckChallengeStatus] = useState(false);
 
-  const { preferredInputMethod, controls, hasSeenAllSet, readOnly } =
+  const { preferredInputMethod, controls_keyboard, hasSeenAllSet, readOnly } =
     userStore.user;
   const player: Partial<IPlayer> = React.useMemo(
     // FIXME: use a different interface
@@ -116,7 +116,7 @@ export default function ChallengePage() {
         launchChallenge(challenge, {
           listener: simulationEventListener,
           preferredInputMethod,
-          controls,
+          controls_keyboard,
           player: player as IPlayer, // FIXME: use a different interface
         })
       );
@@ -129,7 +129,7 @@ export default function ChallengePage() {
     launchChallenge,
     setCheckChallengeStatus,
     setChallengeClient,
-    controls,
+    controls_keyboard,
     player,
   ]);
 

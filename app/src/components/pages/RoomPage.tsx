@@ -66,7 +66,7 @@ export default function RoomPage() {
   const [retryCount, setRetryCount] = useState(0);
   const serverUrl = server?.data()?.url;
   //const requiresRedirect = useForcedRedirect();
-  const controls = useUser().controls;
+  const controls_keyboard = useUser().controls_keyboard;
 
   useReleaseClientOnExitPage();
 
@@ -83,7 +83,7 @@ export default function RoomPage() {
     setLaunched(true);
     client.launchNetworkClient(serverUrl as string, {
       socketListener: socketEventListener,
-      controls,
+      controls_keyboard,
     });
   }, [
     disconnected,
@@ -94,7 +94,7 @@ export default function RoomPage() {
     //requiresRedirect,
     hasLaunched,
     setLaunched,
-    controls,
+    controls_keyboard,
   ]);
 
   useEffect(() => {

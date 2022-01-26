@@ -26,6 +26,7 @@ import useDarkMode from '@/components/hooks/useDarkMode';
 import { IconSwitch } from '@/components/ui/IconSwitch';
 import { ReactComponent as LightModeIcon } from '@/icons/lightmode.svg';
 import { ReactComponent as DarkModeIcon } from '@/icons/darkmode.svg';
+import React from 'react';
 
 export function LanguagePicker() {
   const userStore = useUserStore();
@@ -224,7 +225,7 @@ export default function SettingsPage() {
                   )
                 }
               >
-                {['keyboard', 'touch'].map((inputMethod) => (
+                {['keyboard', 'touch', 'gamepad'].map((inputMethod) => (
                   <MenuItem key={inputMethod} value={inputMethod}>
                     {inputMethod.toUpperCase()}
                   </MenuItem>
@@ -232,7 +233,8 @@ export default function SettingsPage() {
               </Select>
             }
           />
-          {userStore.user.preferredInputMethod === 'keyboard' && (
+          {(userStore.user.preferredInputMethod === 'keyboard' ||
+            userStore.user.preferredInputMethod === 'gamepad') && (
             <SettingsRow
               left={
                 <FormattedMessage
@@ -244,7 +246,7 @@ export default function SettingsPage() {
                 <Link
                   component={RouterLink}
                   underline="none"
-                  to={`${Routes.controlSettings}`}
+                  to={`${Routes.controlSettings}?type=${userStore.user.preferredInputMethod}`}
                   onClick={() => playSound(SoundKey.click)}
                 >
                   <Button variant="contained" color="primary">

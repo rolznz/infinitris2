@@ -5,10 +5,12 @@ import {
   IChallengeAttempt,
   InputAction,
   InputMethod,
+  AdjustableInputMethod,
   IUser,
   AppTheme,
   RendererQuality,
   RendererType,
+  ControlSettings,
 } from 'infinitris2-models';
 import { StateSelector } from 'zustand';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
@@ -38,8 +40,12 @@ type IUserStore = {
   setPreferredInputMethod(preferredInputMethod: InputMethod | undefined): void;
   addChallengeAttempt(challengeId: string, attempt: IChallengeAttempt): void;
   completeChallenge(challengeId: string): void;
-  updateControl(inputAction: InputAction, control: string): void;
-  resetControls(): void;
+  updateControl(
+    inputMethod: AdjustableInputMethod,
+    inputAction: InputAction,
+    control: string
+  ): void;
+  resetControls(inputMethod: AdjustableInputMethod): void;
   clearProgress(): void;
   signOut(): void;
   resyncLocalStorage(userData: IUser): void;
@@ -57,7 +63,8 @@ export function getUpdatableUserProperties(
     //nickname: user.nickname,
     //challengeAttempts: user.challengeAttempts,
     //completedChallengeIds: user.completedChallengeIds,
-    controls: user.controls,
+    controls_keyboard: user.controls_keyboard,
+    controls_gamepad: user.controls_gamepad,
     hasSeenAllSet: user.hasSeenAllSet,
     hasSeenWelcome: user.hasSeenWelcome,
     preferredInputMethod: user.preferredInputMethod,
@@ -138,13 +145,20 @@ export function useUserStore<StateSlice>(
         completedChallengeIds: Array.from(uniqueIds),
       });*/
     },
-    updateControl: (inputAction: InputAction, control: string) => {
+    updateControl: (
+      inputMethod: AdjustableInputMethod,
+      inputAction: InputAction,
+      control: string
+    ) => {
       updateUser({
-        controls: { ...(user.controls! || {}), [inputAction]: control },
+        [`controls_${inputMethod}`]: {
+          ...((user[`controls_${inputMethod}`] as ControlSettings) || {}),
+          [inputAction]: control,
+        },
       });
     },
-    resetControls: () => {
-      updateUser({ controls: DEFAULT_KEYBOARD_CONTROLS });
+    resetControls: (inputMethod: AdjustableInputMethod) => {
+      updateUser({ [`controls_${inputMethod}`]: DEFAULT_KEYBOARD_CONTROLS });
     },
     clearProgress: () => {
       //updateUser({ completedChallengeIds: [], challengeAttempts: {} });

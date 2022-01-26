@@ -2,7 +2,7 @@ import IRenderer from '../../IRenderer';
 import * as PIXI from 'pixi.js-legacy';
 import Grid from '@core/grid/Grid';
 import ISimulationEventListener from '@models/ISimulationEventListener';
-import Simulation from '@core/Simulation';
+import Simulation, { FRAME_LENGTH } from '@core/Simulation';
 import Camera from '@src/rendering/Camera';
 import CellType from '@models/CellType';
 import LaserBehaviour from '@core/grid/cell/behaviours/LaserBehaviour';
@@ -185,7 +185,7 @@ export default class MinimalRenderer
     const visibilityX = this._getVisiblityX();
     const visibilityY = this._app.renderer.height * 0.125;
 
-    this._camera.update();
+    this._camera.update(this._app.ticker.deltaMS / FRAME_LENGTH);
 
     // clamp the camera to fit within the grid
     const cameraY = Math.min(
@@ -544,8 +544,6 @@ export default class MinimalRenderer
     this._shadowCount = this._hasShadows
       ? Math.ceil(Math.ceil(appWidth / gridWidth) / 2)
       : 0;
-
-    this._camera.gridWidth = gridWidth;
 
     /*if (!this._scrollX) {
         this._world.x = this._grid.graphics.x = (appWidth - gridWidth) / 2;

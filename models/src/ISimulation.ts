@@ -27,6 +27,7 @@ export default interface ISimulation
   get dayLength(): number;
   get nextDay(): number;
   get gameMode(): IGameMode;
+  get fps(): number;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;
@@ -35,4 +36,5 @@ export default interface ISimulation
   isFollowingPlayerId(playerId: number): boolean;
   goToNextDay(): void;
   getPlayer(playerId: number): IPlayer;
+  step(): void;
 }

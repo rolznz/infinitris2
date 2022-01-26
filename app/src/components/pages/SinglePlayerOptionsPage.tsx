@@ -71,7 +71,7 @@ export function SinglePlayerOptionsPage() {
     defaultValues: {
       numBots: 4,
       botReactionDelay: 25,
-      gridNumRows: 20,
+      gridNumRows: 18,
       gridNumColumns: 50,
       dayLength: 2000,
       spectate: false,

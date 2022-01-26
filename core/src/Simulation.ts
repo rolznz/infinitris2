@@ -12,11 +12,17 @@ import IGrid from '@models/IGrid';
 import { IGameMode } from '@models/IGameMode';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { InfinityGameMode } from '@core/gameModes/InfinityGameMode';
+import { FpsCounter } from '@core/FpsCounter';
 
 /**
  * The length of a single animation frame for the simulation.
  */
 export const FRAME_LENGTH: number = 1000 / 60;
+/**
+ * Multiple frames can be executed in one go in order
+ * to attempt to run at 60fps
+ */
+const MAX_CATCHUP_FRAMES = 5;
 export const DEFAULT_DAY_LENGTH: number = 2000;
 
 export default class Simulation implements ISimulation {
@@ -32,6 +38,8 @@ export default class Simulation implements ISimulation {
   private _dayLength: number;
   private _isNetworkClient: boolean;
   private _gameMode: IGameMode;
+  private _fpsCounter: FpsCounter;
+  private _lastStepTime = 0;
 
   constructor(grid: Grid, settings: SimulationSettings = {}, isClient = false) {
     this._eventListeners = [];
@@ -53,6 +61,11 @@ export default class Simulation implements ISimulation {
         ? new ConquestGameMode(this)
         : new InfinityGameMode(this);
     this.addEventListener(this._gameMode);
+    this._fpsCounter = new FpsCounter();
+  }
+
+  get fps(): number {
+    return this._fpsCounter.fps;
   }
 
   get isNetworkClient(): boolean {
@@ -130,9 +143,11 @@ export default class Simulation implements ISimulation {
    *
    * @param grid The grid to run the simulation on.
    */
-  startInterval(interval = FRAME_LENGTH) {
+  startInterval() {
     if (!this._stepInterval) {
-      this._stepInterval = setInterval(this.step, interval);
+      this._lastStepTime = Date.now();
+      // interval set at 1ms and handled in onInterval (iOS low battery forces <= 30fps)
+      this._stepInterval = setInterval(this._onInterval, 1);
       console.log('Simulation started');
     }
   }
@@ -306,10 +321,25 @@ export default class Simulation implements ISimulation {
     );
   }
 
+  private _onInterval = () => {
+    // TODO: rather than looping and executing multiple times to hit 60fps, it would be better to process
+    // based on the delta since the last frame (like the renderer/camera is doing)
+    const time = Date.now();
+    const maxLagTime = time - FRAME_LENGTH * MAX_CATCHUP_FRAMES;
+    if (this._lastStepTime < maxLagTime) {
+      this._lastStepTime = maxLagTime;
+    }
+    while (this._lastStepTime < time) {
+      this.step();
+    }
+  };
+
   /**
    * Execute a single simulation frame
    */
-  step = () => {
+  public step() {
+    this._lastStepTime += FRAME_LENGTH;
+    this._fpsCounter.step();
     Object.values(this._players).forEach(this._updatePlayer);
     this._grid.step();
     this._gameMode.step();
@@ -322,7 +352,7 @@ export default class Simulation implements ISimulation {
     if (!this.isNetworkClient && this._nextDay <= 0) {
       this.goToNextDay();
     }
-  };
+  }
 
   private _updatePlayer = (player: IPlayer) => {
     player.update(this._grid.cells, this._settings);

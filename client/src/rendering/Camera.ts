@@ -9,23 +9,15 @@ export default class Camera {
   private _dx!: number;
   private _dy!: number;
   private _followingId?: number;
-  private _gridWidth!: number;
   constructor() {
     this.reset();
   }
 
   get x(): number {
-    //const wrappedX =
-    //  ((this._x % this._gridWidth) - this._gridWidth) % this._gridWidth;
-
-    return this._x; //wrappedX;
+    return this._x;
   }
   get y(): number {
     return this._y;
-  }
-
-  set gridWidth(gridWidth: number) {
-    this._gridWidth = gridWidth;
   }
 
   reset() {
@@ -48,27 +40,15 @@ export default class Camera {
     }
   }
 
-  update() {
-    this._vx *= 1 - cameraDrag;
-    this._vy *= 1 - cameraDrag;
-
-    //console.log('Cx', Math.floor(this._x));
-
-    /*let ax = this._dx - this._x;
-    if (ax > this._gridWidth / 2) {
-      ax -= this._gridWidth;
-    } else if (ax < -this._gridWidth / 2) {
-      ax += this._gridWidth;
-    }*/
+  update(delta: number) {
+    this._vx *= 1 - Math.min(cameraDrag * delta, 1);
+    this._vy *= 1 - Math.min(cameraDrag * delta, 1);
 
     const ax = this._dx - this._x;
-    //console.log('ax: ' + ax);
 
-    this._vx += ax * cameraSpeed;
-    this._vy += (this._dy - this._y) * cameraSpeed;
-    this._x += this._vx;
-    /*(((this._x + this._vx) % this.gridWidth) + this.gridWidth) %
-      this.gridWidth;*/
-    this._y += this._vy;
+    this._vx += ax * cameraSpeed * delta;
+    this._vy += (this._dy - this._y) * cameraSpeed * delta;
+    this._x += this._vx * delta;
+    this._y += this._vy * delta;
   }
 }

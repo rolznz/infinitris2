@@ -118,7 +118,7 @@ export default class SinglePlayerClient
       options.simulationSettings || {};
 
     this._simulation = new Simulation(
-      new Grid(options.gridNumColumns || 20, options.gridNumRows || 20),
+      new Grid(options.gridNumColumns, options.gridNumRows),
       simulationSettings
     );
     this._simulation.addEventListener(this, this._renderer);

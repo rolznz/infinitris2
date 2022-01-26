@@ -35,7 +35,7 @@ import {
 } from '@core/gameModes/ConquestGameMode';
 
 const idealCellSize = 32;
-const minCellCount = 23;
+const minCellCount = 21;
 const maxCellCount = 32;
 const particleDivisions = 4;
 const numPatternDivisions = 4;
@@ -97,6 +97,7 @@ export default class Infinitris2Renderer
   private _virtualKeyboardCurrentKeyText!: PIXI.Text;
   private _virtualGestureSprites?: PIXI.Sprite[];
 
+  private _fpsText!: PIXI.Text;
   private _app!: PIXI.Application;
   private _world!: PIXI.Container;
 
@@ -137,6 +138,7 @@ export default class Infinitris2Renderer
   private _appWidth: number;
   private _appHeight: number;
   private _oldOverflowStyle: string;
+  private _displayFrameRate = false;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
@@ -263,6 +265,19 @@ export default class Infinitris2Renderer
       return;
     }
 
+    if (this._displayFrameRate) {
+      this._fpsText.x = this._app.renderer.width / 2;
+      this._fpsText.y = 10;
+      this._fpsText.anchor.set(0.5, 0);
+      this._fpsText.text =
+        Math.ceil(this._app.ticker.FPS) +
+        ' rFPS\n' +
+        this._simulation.fps +
+        ' sFPS';
+    } else {
+      this._fpsText.visible = false;
+    }
+
     if (
       this._app.renderer.width != window.innerWidth ||
       this._app.renderer.height !== window.innerHeight
@@ -283,7 +298,7 @@ export default class Infinitris2Renderer
     const visibilityX = this._getVisiblityX();
     const visibilityY = this._app.renderer.height * 0.125;
 
-    this._camera.update();
+    this._camera.update(this._app.ticker.deltaMS / 16.66);
 
     // clamp the camera to fit within the grid
     const clampedCameraY = Math.min(
@@ -381,6 +396,7 @@ export default class Infinitris2Renderer
    */
   onSimulationInit(simulation: ISimulation) {
     this._simulation = simulation;
+    this._particles = [];
     this._blocks = {};
     this._cells = {};
     this._columnCaptures = {};
@@ -402,6 +418,15 @@ export default class Infinitris2Renderer
     this._scoreboard.create();
     this._scoreChangeIndicator.create();
     this._placementHelperShadowCells = [];
+
+    this._fpsText = new PIXI.Text('', {
+      font: 'bold italic 60px Arvo',
+      fill: '#444444',
+      align: 'center',
+      stroke: '#000000',
+      strokeThickness: 7,
+    });
+    this._app.stage.addChild(this._fpsText);
 
     if (
       this._virtualKeyboardControls &&
@@ -653,8 +678,6 @@ export default class Infinitris2Renderer
   private _resize = async () => {
     this._camera.reset();
 
-    this._particles = [];
-
     this._appWidth = this._app.renderer.width;
     this._appHeight = this._app.renderer.height;
     const cellSize = this._getCellSize();
@@ -687,8 +710,6 @@ export default class Infinitris2Renderer
     this._shadowCount = this._hasShadows
       ? Math.ceil(this._appWidth / gridWidth / 2)
       : 0;
-
-    this._camera.gridWidth = gridWidth;
 
     /*if (!this._scrollX) {
       this._world.x = this._graphics.x = (appWidth - gridWidth) / 2;

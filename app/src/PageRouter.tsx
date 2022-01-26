@@ -25,7 +25,6 @@ import { ComingSoonPage } from './components/pages/ComingSoonPage';
 import { HomePageBackground } from './components/pages/HomePage/HomePageBackground';
 import HamburgerMenuButton from './components/ui/HamburgerMenu/HamburgerMenuButton';
 import { TermsOfServicePage } from './components/pages/TermsOfServicePage';
-import { zIndexes } from './theme/theme';
 import { DialogManager } from './components/ui/drawers/DialogManager';
 import AboutPage from './components/pages/AboutPage/AboutPage';
 import DonatePage from './components/pages/AboutPage/DonatePage';
@@ -47,8 +46,8 @@ function OutsideGameElement(props: React.PropsWithChildren<{}>) {
             location.pathname.length > Routes.challenges.length + 1
           ) // match /challenges or /challenges/ but not /challenges/<challengeId>
         ) &&
-          !location.pathname.startsWith(Routes.singlePlayer + '/') &&
-          !location.pathname.startsWith(Routes.singlePlayer + '?') &&
+          (!location.pathname.startsWith(Routes.singlePlayer) ||
+            location.pathname.indexOf(Routes.singlePlayerOptions) >= 0) &&
           !location.pathname.startsWith(Routes.rooms) ? (
           <>{props.children}</>
         ) : null;

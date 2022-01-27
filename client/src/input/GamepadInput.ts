@@ -4,22 +4,32 @@ import { ActionListener } from './Input';
 
 // TODO: make these customisable
 const repeatDelay = 500; //ms
-const repeatRate = 50;
+const repeatRate = 40;
+
+type ButtonPressState = {
+  lastAction: number;
+  hasRepeated: boolean;
+  isPressing: boolean;
+};
 
 export default class GamepadInput {
   private _controls: ControlSettings;
+  private _controlEntries: [InputAction, string][];
   private _fireAction: ActionListener;
-  private _lastAction: number;
-  private _hasRepeated: boolean;
-  private _isPressing: boolean;
+  private _pressStates: ButtonPressState[];
 
   constructor(fireAction: ActionListener, controls: ControlSettings) {
     this._controls = controls;
+    this._controlEntries = Object.entries(
+      controls
+    ) as typeof this._controlEntries;
     this._fireAction = fireAction;
-    this._lastAction = 0;
-    this._hasRepeated = false;
-    this._isPressing = false;
+    this._pressStates = [];
     requestAnimationFrame(this._onAnimationFrame);
+  }
+
+  get controls(): ControlSettings {
+    return this._controls;
   }
   destroy() {}
 
@@ -30,9 +40,17 @@ export default class GamepadInput {
     if (!gamepad) {
       return;
     }
-    let didPress = false;
-    for (let controlEntry of Object.entries(this._controls)) {
-      const controlValue = controlEntry[1];
+    for (let i = 0; i < this._controlEntries.length; i++) {
+      if (i >= this._pressStates.length) {
+        this._pressStates.push({
+          hasRepeated: false,
+          isPressing: false,
+          lastAction: 0,
+        });
+      }
+      const pressState = this._pressStates[i];
+      const controlAction = this._controlEntries[i][0];
+      const controlValue = this._controlEntries[i][1];
       // control format = button_{index} | axis_{index}_{approxValue}
       if (
         (controlValue.startsWith('button_') &&
@@ -43,26 +61,24 @@ export default class GamepadInput {
               parseFloat(controlValue.split('_')[2])
           ) < 0.1)
       ) {
-        didPress = true;
         let fireAction = true;
-        let delay = this._hasRepeated ? repeatRate : repeatDelay;
+        let delay = pressState.hasRepeated ? repeatRate : repeatDelay;
         const time = Date.now();
-        if (!this._isPressing) {
-          this._isPressing = true;
-          this._hasRepeated = false;
-        } else if (time - this._lastAction > delay) {
-          this._hasRepeated = true;
+        if (!pressState.isPressing) {
+          pressState.isPressing = true;
+          pressState.hasRepeated = false;
+        } else if (time - pressState.lastAction > delay) {
+          pressState.hasRepeated = true;
         } else {
           fireAction = false;
         }
         if (fireAction) {
-          this._fireAction(controlEntry[0] as InputAction);
-          this._lastAction = time;
+          this._fireAction(controlAction);
+          pressState.lastAction = time;
         }
+      } else {
+        pressState.isPressing = false;
       }
-    }
-    if (!didPress) {
-      this._isPressing = false;
     }
   };
 }

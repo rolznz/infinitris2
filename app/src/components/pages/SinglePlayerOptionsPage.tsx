@@ -18,7 +18,12 @@ import {
   Select,
   Switch,
 } from '@mui/material';
-import { WorldType, WorldTypeValues } from 'infinitris2-models';
+import {
+  GameModeType,
+  GameModeTypeValues,
+  WorldType,
+  WorldTypeValues,
+} from 'infinitris2-models';
 
 const schema = yup
   .object({
@@ -58,6 +63,7 @@ type FormData = {
   calculateSpawnDelays: boolean;
   preventTowers: boolean;
   worldType: WorldType;
+  gameModeType: GameModeType;
 };
 
 export function SinglePlayerOptionsPage() {
@@ -79,6 +85,7 @@ export function SinglePlayerOptionsPage() {
       calculateSpawnDelays: true,
       preventTowers: true,
       worldType: 'grass',
+      gameModeType: 'infinity',
     },
     resolver: yupResolver(schema),
   });
@@ -99,8 +106,24 @@ export function SinglePlayerOptionsPage() {
       })}
     >
       <form onSubmit={handleSubmit(onSubmit)}>
-        <FlexBox>
+        <FlexBox gap={2}>
           <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
+            <Controller
+              name="gameModeType"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>Game Mode</InputLabel>
+                  <Select {...field}>
+                    {GameModeTypeValues.map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
             <Controller
               name="worldType"
               control={control}
@@ -117,6 +140,8 @@ export function SinglePlayerOptionsPage() {
                 </FormControl>
               )}
             />
+          </FlexBox>
+          <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
             <Controller
               name="numBots"
               control={control}

@@ -2,7 +2,7 @@ import { GameUI } from '@/components/game/GameUI';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
-import { IBlock, WorldType } from 'infinitris2-models';
+import { GameModeType, IBlock, WorldType } from 'infinitris2-models';
 import { IPlayer } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
@@ -30,6 +30,8 @@ export default function SinglePlayerPage() {
   const gridNumRows = parseInt(useSearchParam('gridNumRows') || '20');
   const gridNumColumns = parseInt(useSearchParam('gridNumColumns') || '10');
   const dayLength = parseInt(useSearchParam('dayLength') || '2000');
+  const gameModeType: GameModeType =
+    (useSearchParam('gameModeType') as GameModeType) || 'infinity';
   const worldType: WorldType =
     (useSearchParam('worldType') as WorldType) || 'grass';
   const spectate = useSearchParam('spectate') === 'true';
@@ -59,6 +61,7 @@ export default function SinglePlayerPage() {
           calculateSpawnDelays,
           preventTowers,
           dayLength,
+          gameModeType,
         },
         // TODO: support multiple listeners, extract SFX listener
         listener: {
@@ -142,6 +145,7 @@ export default function SinglePlayerPage() {
     preventTowers,
     dayLength,
     worldType,
+    gameModeType,
   ]);
 
   return <GameUI />;

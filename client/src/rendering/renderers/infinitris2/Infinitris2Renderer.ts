@@ -73,6 +73,10 @@ interface IRenderableColumnCapture extends IRenderableEntity<PIXI.Graphics> {
   column: number;
 }
 
+interface IRenderablePlayerHealthBar extends IRenderableEntity<PIXI.Graphics> {
+  playerId: number;
+}
+
 interface IParticle extends IRenderableEntity<PIXI.Graphics> {
   x: number;
   y: number;
@@ -109,6 +113,9 @@ export default class Infinitris2Renderer
 
   // TODO: move to seperate file
   private _columnCaptures!: { [cellId: number]: IRenderableColumnCapture };
+  private _playerHealthBars!: {
+    [playerId: number]: IRenderablePlayerHealthBar;
+  };
   private _lastGameModeStep: number;
 
   private _particles!: IParticle[];
@@ -400,6 +407,7 @@ export default class Infinitris2Renderer
     this._blocks = {};
     this._cells = {};
     this._columnCaptures = {};
+    this._playerHealthBars = {};
     this._app.stage.removeChildren();
 
     this._worldBackground.addChildren();
@@ -518,7 +526,12 @@ export default class Infinitris2Renderer
   }
 
   onPlayerCreated(player: IPlayer): void {}
-  onPlayerDestroyed(player: IPlayer): void {}
+  onPlayerDestroyed(player: IPlayer): void {
+    if (this._playerHealthBars[player.id]) {
+      this._world.removeChild(this._playerHealthBars[player.id].container);
+      delete this._playerHealthBars[player.id];
+    }
+  }
   onPlayerToggleChat(player: IPlayer): void {}
 
   /**
@@ -604,26 +617,29 @@ export default class Infinitris2Renderer
     }
     this._particles = this._particles.filter((particle) => particle.life > 0);
 
-    if (
-      this._simulation.settings.gameModeType === 'conquest' &&
-      ++this._lastGameModeStep > 100
-    ) {
-      this._lastGameModeStep = 0;
+    if (this._simulation.settings.gameModeType === 'conquest') {
       const conquestGameMode = this._simulation.gameMode as ConquestGameMode;
-      // TODO: add health bars to players instead of overriding the text
-      Object.values(this._blocks).forEach((renderableBlock) => {
-        renderableBlock.playerNameText.children.forEach((child) => {
-          child.pixiObject.text =
-            renderableBlock.block.player.nickname +
-            ' ' +
-            (conquestGameMode.playerHealths[renderableBlock.block.player.id] ||
-              0) *
-              100 +
-            '%';
-        });
-      });
-      //this._blocks[block.player.id]
-      this._renderColumnCaptures(conquestGameMode.columnCaptures);
+      if (++this._lastGameModeStep > 100) {
+        this._lastGameModeStep = 0;
+        this._renderColumnCaptures(conquestGameMode.columnCaptures);
+        this._renderPlayerHealthBars(conquestGameMode.playerHealths);
+      }
+      for (let player of this._simulation.players) {
+        const renderablePlayerHealth = this._playerHealthBars[player.id];
+        if (renderablePlayerHealth) {
+          if (player.block) {
+            renderablePlayerHealth.container.visible = true;
+            renderablePlayerHealth.container.x = this._getWrappedX(
+              player.block.centreX * this._cellSize -
+                renderablePlayerHealth.children[0].pixiObject.width * 0.5
+            );
+            renderablePlayerHealth.container.y =
+              (player.block.row - 0.5) * this._cellSize;
+          } else {
+            renderablePlayerHealth.container.visible = false;
+          }
+        }
+      }
     }
 
     // TODO: animation for where block died
@@ -806,6 +822,41 @@ export default class Infinitris2Renderer
               );
             }
           }
+        },
+        () => new PIXI.Graphics(),
+        () => undefined
+      );
+    }
+  }
+
+  private _renderPlayerHealthBars(playerHealths: {
+    [playerId: number]: number;
+  }) {
+    //
+    for (let player of this._simulation.players) {
+      if (!this._playerHealthBars[player.id]) {
+        const healthbarContainer = new PIXI.Container();
+        this._world.addChild(healthbarContainer);
+        this._playerHealthBars[player.id] = {
+          playerId: player.id,
+          container: healthbarContainer,
+          children: [],
+        };
+      }
+      const renderablePlayerHealth = this._playerHealthBars[player.id];
+      const healthWidth = this._cellSize * 2;
+
+      const health = playerHealths[player.id] || 1;
+
+      this._renderCopies(
+        renderablePlayerHealth,
+        1,
+        (graphics) => {
+          graphics.clear();
+          graphics.beginFill(0x000000, 0.1);
+          graphics.drawRect(0, 0, healthWidth, healthWidth * 0.2);
+          graphics.beginFill(PIXI.utils.rgb2hex([1 - health, health, 0]));
+          graphics.drawRect(0, 0, healthWidth * health, healthWidth * 0.2);
         },
         () => new PIXI.Graphics(),
         () => undefined

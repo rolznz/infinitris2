@@ -15,6 +15,7 @@ export interface IPlayer {
   get color(): number;
   get id(): number;
   get isHuman(): boolean;
+  get isNetworked(): boolean;
 
   get block(): IBlock | undefined;
   get score(): number;

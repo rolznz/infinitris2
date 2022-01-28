@@ -1,8 +1,6 @@
 import { IGameMode } from '@models/IGameMode';
 import { IPlayerEventListener } from '@models/IPlayerEventListener';
 import { SimulationSettings } from '.';
-import IBlockEventListener from './IBlockEventListener';
-import ICellEventListener from './ICellEventListener';
 import IGrid from './IGrid';
 import IGridEventListener from './IGridEventListener';
 import { IPlayer } from './IPlayer';
@@ -11,6 +9,7 @@ export type NetworkSimulationInfo = {
   nextDay: number;
   dayNumber: number;
   dayLength: number;
+  settings: SimulationSettings;
 };
 
 export default interface ISimulation

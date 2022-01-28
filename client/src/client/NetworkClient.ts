@@ -1,15 +1,10 @@
 import Simulation from '@core/Simulation';
 import IRenderer from '../rendering/IRenderer';
-import IServerMessage from '@core/networking/server/IServerMessage';
-import IClientSocketEventListener from '../networking/IClientSocketEventListener';
-import ClientMessageType from '@core/networking/client/ClientMessageType';
-import ServerMessageType from '@core/networking/server/ServerMessageType';
 import Grid from '@core/grid/Grid';
 import {
   IServerJoinRoomResponse,
   JoinRoomResponseStatus,
 } from '@core/networking/server/IServerJoinRoomResponse';
-import IClientSocket from '../networking/IClientSocket';
 import ClientSocket from '@src/networking/ClientSocket';
 import ControlSettings from '@models/ControlSettings';
 import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
@@ -33,7 +28,14 @@ import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPla
 import { IClientBlockDroppedEvent } from '@core/networking/client/IClientBlockDroppedEvent';
 import { IServerBlockDiedEvent } from '@core/networking/server/IServerBlockDiedEvent';
 import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnEvent';
-import { IPlayerEventListener } from '@models/IPlayerEventListener';
+import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
+import { IClientSocket } from '@models/networking/client/IClientSocket';
+import { IServerMessage } from '@models/networking/server/IServerMessage';
+import { ClientMessageType } from '@models/networking/client/ClientMessageType';
+import { ServerMessageType } from '@models/networking/server/ServerMessageType';
+import { LaunchOptions } from '@models/IClientApi';
+import IClientJoinRoomRequest from '@core/networking/client/IClientJoinRoomRequest';
+import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/IServerPlayerToggleSpectatingEvent';
 
 export default class NetworkClient
   implements IClient, IClientSocketEventListener, ISimulationEventListener
@@ -42,23 +44,16 @@ export default class NetworkClient
   // FIXME: restructure to not require definite assignment
   private _renderer!: IRenderer;
   private _simulation!: Simulation;
-  private _controls?: ControlSettings;
-  private _playerInfo?: IPlayer;
+  private _launchOptions: LaunchOptions;
   private _playerId?: number;
   private _input: Input | undefined;
   private _lastMessageId: number;
-  constructor(
-    url: string,
-    socketListener?: IClientSocketEventListener,
-    controls?: ControlSettings,
-    playerInfo?: IPlayer
-  ) {
-    this._controls = controls;
-    this._playerInfo = playerInfo;
+  constructor(url: string, options: LaunchOptions) {
+    this._launchOptions = options;
     this._lastMessageId = -1;
     const eventListeners: IClientSocketEventListener[] = [this];
-    if (socketListener) {
-      eventListeners.push(socketListener);
+    if (options.socketListener) {
+      eventListeners.push(options.socketListener);
     }
     this._socket = new ClientSocket(url, eventListeners);
   }
@@ -70,7 +65,11 @@ export default class NetworkClient
     console.log('Connected');
     this._renderer = new Infinitris2Renderer();
     await this._renderer.create();
-    this._socket.sendMessage({ type: ClientMessageType.JOIN_ROOM_REQUEST });
+    const joinRoomRequest: IClientJoinRoomRequest = {
+      type: ClientMessageType.JOIN_ROOM_REQUEST,
+      roomId: this._launchOptions.roomId || 0,
+    };
+    this._socket.sendMessage(joinRoomRequest);
   }
 
   /**
@@ -102,15 +101,17 @@ export default class NetworkClient
             joinResponseData.grid.numColumns,
             joinResponseData.grid.numRows
           ),
-          {}, // TODO: settings
+          joinResponseData.simulation.settings,
           true
         );
         this._simulation.dayNumber = joinResponseData.simulation.dayNumber;
         this._simulation.dayLength = joinResponseData.simulation.dayLength;
         this._simulation.nextDay = joinResponseData.simulation.nextDay;
         this._simulation.addEventListener(this._renderer, this);
+        if (this._launchOptions?.listener) {
+          this._simulation.addEventListener(this._launchOptions.listener);
+        }
         this._simulation.init();
-        console.log('Response: ', joinResponseData);
         for (let playerInfo of joinResponseData.players) {
           if (playerInfo.id === joinResponseData.playerId) {
             const humanPlayer = new ControllablePlayer(
@@ -126,7 +127,8 @@ export default class NetworkClient
             this._input = new Input(
               this._simulation,
               humanPlayer,
-              this._controls
+              this._launchOptions?.controls_keyboard,
+              this._launchOptions?.controls_gamepad
             );
           } else {
             const otherPlayer = new NetworkPlayer(
@@ -223,6 +225,12 @@ export default class NetworkClient
       this._simulation.getPlayer(this._playerId!).estimatedSpawnDelay = (
         message as IServerNextSpawnEvent
       ).time;
+    } else if (message.type === ServerMessageType.PLAYER_TOGGLE_SPECTATING) {
+      const playerToggleSpectatingMessage =
+        message as IServerPlayerToggleSpectatingEvent;
+      this._simulation.getPlayer(
+        playerToggleSpectatingMessage.playerId
+      ).isSpectating = playerToggleSpectatingMessage.isSpectating;
     }
   }
 
@@ -284,11 +292,8 @@ export default class NetworkClient
   onBlockDestroyed(block: IBlock): void {}
   onPlayerCreated(player: IPlayer): void {}
   onPlayerDestroyed(player: IPlayer): void {}
-  onPlayerToggleChat(player: IPlayer): void {
-    if (player.id === this._playerId) {
-      alert('TODO send toggle chat message');
-    }
-  }
+  onPlayerToggleChat(player: IPlayer): void {}
+  onPlayerToggleSpectating() {}
   onCellBehaviourChanged(
     cell: ICell,
     previousBehaviour: ICellBehaviour

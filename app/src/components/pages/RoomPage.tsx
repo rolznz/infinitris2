@@ -8,34 +8,63 @@ import SignalCellularConnectedNoInternet0BarIcon from '@mui/icons-material/Signa
 import HomeIcon from '@mui/icons-material/Home';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
+  ClientMessageType,
   getRoomPath,
   getServerPath,
+  hexToString,
+  IBlock,
+  IClientChatMessage,
+  IClientSocket,
   IClientSocketEventListener,
+  IPlayer,
   IRoom,
   IServer,
+  IServerChatMessage,
+  ISimulation,
+  ServerMessageType,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser } from '../../state/UserStore';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { useDocument } from 'swr-firestore';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
+import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import useIngameStore from '@/state/IngameStore';
+import { GameUI } from '@/components/game/GameUI';
+import { IServerMessage } from 'infinitris2-models/dist/networking/server/IServerMessage';
 
 interface RoomPageRouteParams {
   id: string;
 }
 
 const socketEventListener: IClientSocketEventListener = {
-  onConnect: () => {
+  onConnect: (socket: IClientSocket) => {
     useRoomStore.getState().setConnected(true);
+    useRoomStore.getState().setSocket(socket);
   },
   onDisconnect: () => {
     const roomState = useRoomStore.getState();
     roomState.setConnected(false);
     roomState.setDisconnected(true);
     roomState.setLaunched(false);
+    useIngameStore.getState().setSimulation(undefined);
     useAppStore.getState().clientApi?.releaseClient();
   },
-  onMessage: () => {},
+  onMessage: (message: IServerMessage) => {
+    const simulation = useIngameStore.getState().simulation;
+    if (message.type === ServerMessageType.CHAT) {
+      const chatMessage = message as IServerChatMessage;
+      const player = simulation?.getPlayer(chatMessage.playerId);
+      if (player) {
+        useIngameStore.getState().addToMessageLog({
+          createdTime: Date.now(),
+          message: chatMessage.message,
+          nickname: player.nickname,
+          color: hexToString(player.color),
+        });
+      }
+    }
+  },
 };
 
 export default function RoomPage() {
@@ -67,6 +96,7 @@ export default function RoomPage() {
   const serverUrl = server?.data()?.url;
   //const requiresRedirect = useForcedRedirect();
   const controls_keyboard = useUser().controls_keyboard;
+  const controls_gamepad = useUser().controls_gamepad;
 
   useReleaseClientOnExitPage();
 
@@ -84,6 +114,74 @@ export default function RoomPage() {
     client.launchNetworkClient(serverUrl as string, {
       socketListener: socketEventListener,
       controls_keyboard,
+      controls_gamepad,
+      roomId: room?.data()!.roomId,
+      listener: {
+        onSimulationInit(simulation: ISimulation) {
+          useIngameStore.getState().setSimulation(simulation);
+        },
+        onSimulationStep() {},
+        onSimulationNextDay() {},
+
+        onBlockCreated(block: IBlock) {
+          if (block.player.isHuman) {
+            playSound(SoundKey.spawn);
+          }
+        },
+        onBlockCreateFailed() {},
+
+        onBlockPlaced(block: IBlock) {
+          if (block.player.isHuman) {
+            playSound(SoundKey.place);
+          }
+        },
+        onBlockDied(block: IBlock) {
+          if (block.player.isHuman) {
+            playSound(SoundKey.death);
+          }
+        },
+        onBlockMoved(block: IBlock, dx: number, dy: number, dr: number) {
+          if (block.player.isHuman && !block.isDropping) {
+            if (dr !== 0) {
+              console.log('Move: ', dx, dy, dr);
+              playSound(SoundKey.rotate);
+            } else if (dx !== 0 || dy !== 0) {
+              playSound(SoundKey.move);
+            }
+          }
+        },
+        onBlockDropped(block: IBlock) {
+          if (block.player.isHuman) {
+            playSound(SoundKey.drop);
+          }
+        },
+        onBlockDestroyed() {},
+        /*onPlayerCreated(player: IPlayer) {
+          useIngameStore.getState().setPlayer(player);
+        },*/
+        onPlayerCreated() {},
+        onPlayerDestroyed() {},
+        onPlayerToggleSpectating() {},
+        onPlayerToggleChat(player: IPlayer, cancel: boolean) {
+          if (player.isHuman) {
+            if (!cancel && useIngameStore.getState().isChatOpen) {
+              const message = useIngameStore.getState().chatMessage?.trim();
+              if (message?.length) {
+                const chatMessage: IClientChatMessage = {
+                  message,
+                  type: ClientMessageType.CHAT,
+                };
+                useRoomStore.getState().socket!.sendMessage(chatMessage);
+              }
+              useIngameStore.getState().setChatMessage('');
+            }
+            useIngameStore.getState().setChatOpen(player.isChatting);
+          }
+        },
+        onLineCleared() {},
+        onCellBehaviourChanged() {},
+        onGridCollapsed() {},
+      },
     });
   }, [
     disconnected,
@@ -95,6 +193,7 @@ export default function RoomPage() {
     hasLaunched,
     setLaunched,
     controls_keyboard,
+    controls_gamepad,
   ]);
 
   useEffect(() => {
@@ -103,7 +202,7 @@ export default function RoomPage() {
   }, [setConnected, setDisconnected]);
 
   if (connected) {
-    return null;
+    return <GameUI />;
   }
 
   const status = disconnected

@@ -1,4 +1,4 @@
-import IClientMessage from '@core/networking/client/IClientMessage';
+import { IClientMessage } from '@models/networking/client/IClientMessage';
 import IClientSocket from './IClientSocket';
 
 export default interface IServerSocketEventListener {

@@ -6,11 +6,16 @@ import React from 'react';
 import { useIntl } from 'react-intl';
 
 export function IngameChat() {
-  const [chatMessage, setChatMessage] = useIngameStore((store) => [
+  console.log('Render ingame chat');
+  const [isChatOpen, chatMessage, setChatMessage] = useIngameStore((store) => [
+    store.isChatOpen,
     store.chatMessage,
     store.setChatMessage,
   ]);
   const intl = useIntl();
+  if (!isChatOpen) {
+    return null;
+  }
   return (
     <FlexBox
       position="absolute"

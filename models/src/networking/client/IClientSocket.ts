@@ -1,10 +1,7 @@
-import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
-import IClientJoinRoomRequest from '@core/networking/client/IClientJoinRoomRequest';
-import IClientSocketEventListener from './IClientSocketEventListener';
+import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
+import { IClientMessage } from '@models/networking/client/IClientMessage';
 
-export type ClientMessage = IClientJoinRoomRequest | IClientBlockMovedEvent;
-
-export default interface IClientSocket {
+export interface IClientSocket {
   /**
    * Adds a new listener which will receive events when the client connects, disconnects and receives messages.
    *
@@ -16,7 +13,7 @@ export default interface IClientSocket {
    * Sends a message to the server.
    * @param message the message to send.
    */
-  sendMessage(message: ClientMessage): void;
+  sendMessage(message: IClientMessage): void;
 
   /**
    * Closes this socket's connection to the server.

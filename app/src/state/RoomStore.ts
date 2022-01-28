@@ -1,3 +1,4 @@
+import { IClientSocket } from 'infinitris2-models';
 import create from 'zustand';
 
 type RoomStore = {
@@ -7,9 +8,13 @@ type RoomStore = {
   setDisconnected(disconnected: boolean): void;
   hasLaunched: boolean;
   setLaunched(hasLaunched: boolean): void;
+  socket?: IClientSocket;
+  setSocket(socket: IClientSocket): void;
 };
 
 const useRoomStore = create<RoomStore>((set) => ({
+  socket: undefined,
+  setSocket: (socket: IClientSocket) => set((_) => ({ socket })),
   connected: false,
   setConnected: (connected: boolean) => set((_) => ({ connected })),
   disconnected: false,

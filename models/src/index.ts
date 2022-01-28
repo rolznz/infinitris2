@@ -1,7 +1,6 @@
 import IBlock from './IBlock';
 import IBlockEventListener from './IBlockEventListener';
 import ICell from './ICell';
-import { IClientSocketEventListener } from './IClientSocketEventListener';
 import IGridEventListener from './IGridEventListener';
 import IClientApi from './IClientApi';
 import InputAction from './InputAction';
@@ -59,6 +58,13 @@ export * from './IServer';
 export * from './GameModeType';
 export * from './IGameMode';
 export * from './InputMethod';
+export * from './networking/client/IClientSocket';
+export * from './networking/client/IClientSocketEventListener';
+export * from './networking/client/IClientMessage';
+export * from './networking/client/IClientChatMessage';
+export * from './networking/client/ClientMessageType';
+export * from './networking/server/ServerMessageType';
+export * from './networking/server/IServerChatMessage';
 
 export {
   exampleChallenges,
@@ -68,7 +74,6 @@ export {
   Layout,
   tetrominoes,
   IClientApi as IClientApi,
-  IClientSocketEventListener,
   ICell,
   ICellBehaviour,
   ICellEventListener,

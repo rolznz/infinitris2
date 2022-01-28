@@ -1,4 +1,4 @@
-enum ServerMessageType {
+export enum ServerMessageType {
   JOIN_ROOM_RESPONSE,
   PLAYER_CONNECTED,
   PLAYER_DISCONNECTED,
@@ -9,6 +9,6 @@ enum ServerMessageType {
   BLOCK_DROPPED,
   NEXT_DAY,
   NEXT_SPAWN,
+  CHAT,
+  PLAYER_TOGGLE_SPECTATING,
 }
-
-export default ServerMessageType;

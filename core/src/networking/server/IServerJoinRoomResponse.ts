@@ -2,7 +2,7 @@ import { NetworkBlockInfo } from '@models/IBlock';
 import { NetworkGridInfo } from '@models/IGrid';
 import { NetworkPlayerInfo } from '@models/IPlayer';
 import { NetworkSimulationInfo } from '@models/ISimulation';
-import IServerMessage from './IServerMessage';
+import { IServerMessage } from '@models/networking/server/IServerMessage';
 
 export enum JoinRoomResponseStatus {
   OK,

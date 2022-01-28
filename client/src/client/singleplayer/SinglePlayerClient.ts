@@ -73,6 +73,7 @@ export default class SinglePlayerClient
   onPlayerCreated(player: IPlayer): void {}
   onPlayerDestroyed(player: IPlayer): void {}
   onPlayerToggleChat(player: IPlayer): void {}
+  onPlayerToggleSpectating() {}
   /**
    * @inheritdoc
    */

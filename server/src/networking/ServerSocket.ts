@@ -1,9 +1,9 @@
 import * as WebSocket from 'ws';
-import IClientMessage from '@core/networking/client/IClientMessage';
 import IServerSocketEventListener from './IServerSocketEventListener';
 import { Server as WebSocketServer, Data as WebSocketData } from 'ws';
 import IClientSocket from './IClientSocket';
 import IServerSocket, { ServerMessage } from './IServerSocket';
+import { IClientMessage } from '@models/networking/client/IClientMessage';
 
 const HEARTBEAT_TIMEOUT = 30000;
 

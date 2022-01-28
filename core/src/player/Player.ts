@@ -94,6 +94,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
   set isSpectating(isSpectating: boolean) {
     this._isSpectating = isSpectating;
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerToggleSpectating(this)
+    );
   }
   get isSpectating(): boolean {
     return this._isSpectating;
@@ -104,6 +107,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
 
   get isHuman(): boolean {
+    return false;
+  }
+  get isNetworked(): boolean {
     return false;
   }
 

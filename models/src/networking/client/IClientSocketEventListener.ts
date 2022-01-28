@@ -1,10 +1,11 @@
-import IServerMessage from '@core/networking/server/IServerMessage';
+import { IClientSocket } from '@models/networking/client/IClientSocket';
+import { IServerMessage } from '@models/networking/server/IServerMessage';
 
-export default interface IClientSocketEventListener {
+export interface IClientSocketEventListener {
   /**
    * Triggered when the client first connects to the server.
    */
-  onConnect(): void;
+  onConnect(socket: IClientSocket): void;
 
   /**
    * Triggered when the client is disconnected from the server.

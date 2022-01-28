@@ -533,6 +533,7 @@ export default class Infinitris2Renderer
     }
   }
   onPlayerToggleChat(player: IPlayer): void {}
+  onPlayerToggleSpectating() {}
 
   /**
    * @inheritdoc
@@ -634,7 +635,7 @@ export default class Infinitris2Renderer
                 renderablePlayerHealth.children[0].pixiObject.width * 0.5
             );
             renderablePlayerHealth.container.y =
-              (player.block.row - 0.5) * this._cellSize;
+              (player.block.row - 1) * this._cellSize;
           } else {
             renderablePlayerHealth.container.visible = false;
           }
@@ -927,7 +928,7 @@ export default class Infinitris2Renderer
           dropShadowDistance: 1,
           dropShadowBlur: 2,
         });
-        text.anchor.set(0.5, 0);
+        text.anchor.set(0.5, 1);
         return text;
       },
       () => undefined
@@ -980,7 +981,7 @@ export default class Infinitris2Renderer
     });
 
     const textCentreX = block.centreX * cellSize;
-    const textY = block.row * cellSize - cellSize * 1.2;
+    const textY = block.row * cellSize - cellSize * 1;
     renderableBlock.playerNameText.container.x = textCentreX;
     renderableBlock.playerNameText.container.y = textY;
 

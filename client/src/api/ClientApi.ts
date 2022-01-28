@@ -78,6 +78,7 @@ export default class ClientApi implements IClientApi {
           onPlayerCreated() {},
           onPlayerDestroyed() {},
           onPlayerToggleChat() {},
+          onPlayerToggleSpectating() {},
           onLineCleared() {},
           onGridCollapsed() {},
           onCellBehaviourChanged() {},
@@ -120,12 +121,7 @@ export default class ClientApi implements IClientApi {
    */
   launchNetworkClient = (url: string, options: LaunchOptions) => {
     this.releaseClient();
-    this._client = new NetworkClient(
-      url,
-      options.socketListener,
-      options.controls_keyboard,
-      options.player
-    );
+    this._client = new NetworkClient(url, options);
   };
 
   /**

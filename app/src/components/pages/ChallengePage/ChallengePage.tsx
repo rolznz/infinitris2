@@ -107,6 +107,7 @@ export default function ChallengePage() {
         onPlayerCreated() {},
         onPlayerDestroyed() {},
         onPlayerToggleChat() {},
+        onPlayerToggleSpectating() {},
         onLineCleared() {},
         onCellBehaviourChanged() {},
         onGridCollapsed() {},

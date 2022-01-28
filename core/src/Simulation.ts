@@ -115,6 +115,16 @@ export default class Simulation implements ISimulation {
     return this._gameMode;
   }
 
+  getFreePlayerId(startFromId: number = 0): number {
+    while (true) {
+      if (!this.players.some((player) => player.id === startFromId)) {
+        break;
+      }
+      ++startFromId;
+    }
+    return startFromId;
+  }
+
   getPlayer(playerId: number): IPlayer {
     return this._players[playerId];
   }
@@ -289,6 +299,15 @@ export default class Simulation implements ISimulation {
   onPlayerToggleChat(player: IPlayer, cancel: boolean) {
     this._eventListeners.forEach((listener) =>
       listener.onPlayerToggleChat(player, cancel)
+    );
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onPlayerToggleSpectating(player: IPlayer) {
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerToggleSpectating(player)
     );
   }
 

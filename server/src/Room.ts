@@ -1,9 +1,7 @@
 import Simulation from '@core/Simulation';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import NetworkPlayer from '@core/player/NetworkPlayer';
-import IClientMessage from '@core/networking/client/IClientMessage';
 import { SendServerMessageFunction } from './networking/ServerSocket';
-import ServerMessageType from '@core/networking/server/ServerMessageType';
 import {
   IServerJoinRoomResponse,
   JoinRoomResponseStatus,
@@ -17,7 +15,6 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
 import { ServerMessage } from './networking/IServerSocket';
 import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
-import ClientMessageType from '@core/networking/client/ClientMessageType';
 import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
 import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
 import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPlacedEvent';
@@ -29,14 +26,27 @@ import { stringToHex } from '@models/util/stringToHex';
 import { colors } from '@models/colors';
 import { IPlayer } from '@models/IPlayer';
 import { IClientBlockDroppedEvent } from '@core/networking/client/IClientBlockDroppedEvent';
+import { IClientMessage } from '@models/networking/client/IClientMessage';
+import { ServerMessageType } from '@models/networking/server/ServerMessageType';
+import { ClientMessageType } from '@models/networking/client/ClientMessageType';
+import { IClientChatMessage } from '@models/networking/client/IClientChatMessage';
+import { IServerChatMessage } from '@models/networking/server/IServerChatMessage';
+import { GameModeType } from '@models/GameModeType';
+import AIPlayer from '@core/player/AIPlayer';
+import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/IServerPlayerToggleSpectatingEvent';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
   private _simulation: Simulation;
 
-  constructor(sendMessage: SendServerMessageFunction) {
+  constructor(
+    sendMessage: SendServerMessageFunction,
+    gameModeType: GameModeType
+  ) {
     this._sendMessage = sendMessage;
-    this._simulation = new Simulation(new Grid(60, 18));
+    this._simulation = new Simulation(new Grid(20, 18), {
+      gameModeType,
+    });
     this._simulation.addEventListener(this);
     this._simulation.init();
     //this._simulation.startInterval();
@@ -56,11 +66,19 @@ export default class Room implements ISimulationEventListener {
    * @param playerInfo
    */
   addPlayer(playerId: number /*, playerInfo: NetworkPlayerInfo*/) {
+    let freeColor = 0;
+    let colorIndex = 0;
+    do {
+      freeColor = stringToHex(colors[colorIndex++].hex);
+    } while (
+      colorIndex < colors.length &&
+      this._simulation.players.some((player) => player.color === freeColor)
+    );
     const newPlayer = new NetworkPlayer(
       this._simulation,
       playerId,
       'Player ' + playerId,
-      stringToHex(colors[Math.floor(Math.random() * colors.length)].hex)
+      freeColor
     );
     const currentPlayerIds: number[] = this._simulation.getPlayerIds();
     this._simulation.addPlayer(newPlayer);
@@ -74,6 +92,7 @@ export default class Room implements ISimulationEventListener {
           dayNumber: this._simulation.dayNumber,
           dayLength: this._simulation.dayLength,
           nextDay: this._simulation.nextDay,
+          settings: this._simulation.settings,
         },
         grid: {
           numRows: this._simulation.grid.numRows,
@@ -133,7 +152,12 @@ export default class Room implements ISimulationEventListener {
       playerId,
     };
     this._sendMessageToAllPlayers(playerDisconnectedMessage);
-    if (!this._simulation.players.length) {
+    if (!this._simulation.players.filter((p) => p.isNetworked).length) {
+      for (const player of this._simulation.players) {
+        if (!player.isNetworked) {
+          this._simulation.removePlayer(player.id);
+        }
+      }
       this._simulation.grid.reset();
       this._simulation.stopInterval();
     }
@@ -164,6 +188,61 @@ export default class Room implements ISimulationEventListener {
       const blockInfo = (message as IClientBlockDroppedEvent).data;
       if (block?.id === blockInfo.blockId) {
         block.drop();
+      }
+    } else if (message.type === ClientMessageType.CHAT) {
+      const clientMessage = message as IClientChatMessage;
+      if (
+        this._simulation.getPlayer(playerId) &&
+        clientMessage.message.length
+      ) {
+        if (!clientMessage.message.startsWith('/')) {
+          const serverChatMessage: IServerChatMessage = {
+            type: ServerMessageType.CHAT,
+            message: clientMessage.message,
+            playerId: playerId,
+          };
+          this._sendMessageToAllPlayers(serverChatMessage);
+        } else {
+          if (clientMessage.message.startsWith('/addbot')) {
+            // find a random bot color - unique until there are more players than colors
+            // TODO: move to simulation and notify player of color switch if their color is already in use
+            let freeColors = colors
+              .map((color) => stringToHex(color.hex))
+              .filter(
+                (color) =>
+                  this._simulation.players
+                    .map((player) => player.color)
+                    .indexOf(color) < 0
+              );
+            if (!freeColors.length) {
+              freeColors = colors.map((color) => stringToHex(color.hex));
+            }
+
+            // FIXME: socket ids should not have to match player IDs
+            const botId = this._simulation.getFreePlayerId(100000);
+            const bot = new AIPlayer(
+              this._simulation,
+              botId,
+              'Bot ' + botId,
+              freeColors[Math.floor(Math.random() * (freeColors.length - 1))],
+              parseInt(clientMessage.message.split(' ')[1] || '30')
+            );
+            this._simulation.addPlayer(bot);
+
+            // FIXME: send on onPlayerCreated event
+            const newPlayerMessage: IServerPlayerConnectedEvent = {
+              type: ServerMessageType.PLAYER_CONNECTED,
+              playerInfo: {
+                id: bot.id,
+                color: bot.color,
+                nickname: bot.nickname,
+              },
+            };
+
+            this._sendMessageToAllPlayers(newPlayerMessage);
+          } else if (clientMessage.message.startsWith('/kick')) {
+          }
+        }
       }
     } else {
       console.error(
@@ -282,6 +361,14 @@ export default class Room implements ISimulationEventListener {
   onPlayerDestroyed(player: IPlayer): void {}
   onPlayerToggleChat(player: IPlayer): void {
     console.error('TODO: mark player as chatting/not chatting');
+  }
+  onPlayerToggleSpectating(player: IPlayer) {
+    const playerToggleSpectatingMessage: IServerPlayerToggleSpectatingEvent = {
+      type: ServerMessageType.PLAYER_TOGGLE_SPECTATING,
+      playerId: player.id,
+      isSpectating: player.isSpectating,
+    };
+    this._sendMessageToAllPlayers(playerToggleSpectatingMessage);
   }
 
   private _sendMessageToAllPlayers(message: ServerMessage) {

@@ -1,9 +1,9 @@
 import { IngameChat } from '@/components/game/IngameChat';
+import { MessageLog } from '@/components/game/MessageLog';
 import FlexBox from '@/components/ui/FlexBox';
-import useIngameStore from '@/state/IngameStore';
 
 export function GameUI() {
-  const ingameStore = useIngameStore();
+  console.log('Render Game UI');
   return (
     <FlexBox
       position="absolute"
@@ -13,7 +13,8 @@ export function GameUI() {
       height="100%"
       zIndex={1}
     >
-      {ingameStore.isChatOpen && <IngameChat />}
+      <IngameChat />
+      <MessageLog />
     </FlexBox>
   );
 }

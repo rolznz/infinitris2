@@ -41,7 +41,9 @@ export class ConquestGameMode implements IGameMode {
   step(): void {
     // TODO: find a simple way to sync rather than having to send all column data each frame
     // can client scores be slightly off and still function correctly? (this could get out of sync if events are based on score)
-    if (this._simulation.isNetworkClient || ++this._lastCalculation < 100) {
+    if (
+      /*this._simulation.isNetworkClient || */ ++this._lastCalculation < 100
+    ) {
       return;
     }
     this._lastCalculation = 0;
@@ -143,6 +145,7 @@ export class ConquestGameMode implements IGameMode {
     }
   }
   onPlayerToggleChat(player: IPlayer, wasCancelled: boolean): void {}
+  onPlayerToggleSpectating(player: IPlayer): void {}
   onBlockCreated(block: IBlock): void {}
   onBlockCreateFailed(block: IBlock): void {}
   onBlockPlaced(block: IBlock): void {}

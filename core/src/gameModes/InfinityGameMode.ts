@@ -15,6 +15,7 @@ export class InfinityGameMode implements IGameMode {
   onPlayerCreated(player: IPlayer): void {}
   onPlayerDestroyed(player: IPlayer): void {}
   onPlayerToggleChat(player: IPlayer, wasCancelled: boolean): void {}
+  onPlayerToggleSpectating(player: IPlayer): void {}
   onBlockCreated(block: IBlock): void {}
   onBlockCreateFailed(block: IBlock): void {}
   onBlockPlaced(block: IBlock): void {}

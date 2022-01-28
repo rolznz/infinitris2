@@ -1,5 +1,3 @@
-import ControlSettings from './ControlSettings';
-import { IClientSocketEventListener } from './IClientSocketEventListener';
 import { InputMethod } from './InputMethod';
 import ISimulationEventListener from './ISimulationEventListener';
 import { IChallenge } from './IChallenge';
@@ -10,6 +8,7 @@ import { SimulationSettings } from './SimulationSettings';
 import { RendererQuality } from './RendererQuality';
 import { WorldType } from '@models/WorldType';
 import { WithControls } from '@models/IUser';
+import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
 
 export type LaunchOptions = WithControls & {
   listener?: ISimulationEventListener;
@@ -26,6 +25,7 @@ export type LaunchOptions = WithControls & {
   rendererQuality?: RendererQuality;
   spectate?: boolean;
   worldType?: WorldType;
+  roomId?: number;
 };
 
 export default interface IClientApi {

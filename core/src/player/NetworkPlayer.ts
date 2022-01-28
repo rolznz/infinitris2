@@ -11,4 +11,8 @@ export default class NetworkPlayer extends Player {
   ) {
     super(simulation, playerId, nickname, color);
   }
+
+  get isNetworked() {
+    return true;
+  }
 }

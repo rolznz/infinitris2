@@ -1,6 +1,7 @@
-import IServerMessage from '@core/networking/server/IServerMessage';
-import IClientSocketEventListener from './IClientSocketEventListener';
-import IClientSocket, { ClientMessage } from './IClientSocket';
+import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
+import { IClientSocket } from '@models/networking/client/IClientSocket';
+import { IClientMessage } from '@models/networking/client/IClientMessage';
+import { IServerMessage } from '@models/networking/server/IServerMessage';
 
 export default class ClientSocket implements IClientSocket {
   private _socket: WebSocket;
@@ -30,12 +31,12 @@ export default class ClientSocket implements IClientSocket {
   /**
    * @inheritdoc
    */
-  sendMessage(message: ClientMessage) {
+  sendMessage(message: IClientMessage) {
     this._socket.send(JSON.stringify(message));
   }
 
   private _onConnect = () => {
-    this._eventListeners.forEach((listener) => listener.onConnect());
+    this._eventListeners.forEach((listener) => listener.onConnect(this));
   };
 
   private _onDisconnect = () => {

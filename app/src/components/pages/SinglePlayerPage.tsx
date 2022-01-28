@@ -2,7 +2,12 @@ import { GameUI } from '@/components/game/GameUI';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
-import { GameModeType, IBlock, WorldType } from 'infinitris2-models';
+import {
+  GameModeType,
+  hexToString,
+  IBlock,
+  WorldType,
+} from 'infinitris2-models';
 import { IPlayer } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
@@ -107,9 +112,20 @@ export default function SinglePlayerPage() {
           },*/
           onPlayerCreated() {},
           onPlayerDestroyed() {},
+          onPlayerToggleSpectating() {},
           onPlayerToggleChat(player: IPlayer, cancel: boolean) {
             if (player.isHuman) {
               if (!cancel && useIngameStore.getState().isChatOpen) {
+                const message = useIngameStore.getState().chatMessage?.trim();
+                if (message?.length) {
+                  useIngameStore.getState().addToMessageLog({
+                    createdTime: Date.now(),
+                    message,
+                    nickname: player.nickname,
+                    color: hexToString(player.color),
+                  });
+                }
+
                 useIngameStore.getState().setChatMessage('');
               }
               useIngameStore.getState().setChatOpen(player.isChatting);

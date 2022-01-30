@@ -21,7 +21,7 @@ import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
 import NetworkPlayer from '@core/player/NetworkPlayer';
-import IServerPlayerConnectedEvent from '@core/networking/server/IServerPlayerConnectedEvent';
+import IServerPlayerCreatedEvent from '@core/networking/server/IServerPlayerCreatedEvent';
 import IServerPlayerDisconnectedEvent from '@core/networking/server/IServerPlayerDisconnectedEvent';
 import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
 import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPlacedEvent';
@@ -104,6 +104,9 @@ export default class NetworkClient
           joinResponseData.simulation.settings,
           true
         );
+        this._simulation.gameMode.loadState(
+          joinResponseData.simulation.gameModeState
+        );
         this._simulation.dayNumber = joinResponseData.simulation.dayNumber;
         this._simulation.dayLength = joinResponseData.simulation.dayLength;
         this._simulation.nextDay = joinResponseData.simulation.nextDay;
@@ -118,7 +121,8 @@ export default class NetworkClient
               this._simulation,
               playerInfo.id,
               playerInfo.nickname,
-              playerInfo.color
+              playerInfo.color,
+              playerInfo.isSpectating
             );
             humanPlayer.estimatedSpawnDelay =
               joinResponseData.estimatedSpawnDelay;
@@ -135,7 +139,8 @@ export default class NetworkClient
               this._simulation,
               playerInfo.id,
               playerInfo.nickname,
-              playerInfo.color
+              playerInfo.color,
+              playerInfo.isSpectating
             );
             this._simulation.addPlayer(otherPlayer);
             otherPlayer.score = playerInfo.score;
@@ -171,66 +176,70 @@ export default class NetworkClient
       } else {
         alert('Could not join room: ' + joinResponseData.status);
       }
-    } else if (message.type === ServerMessageType.PLAYER_CONNECTED) {
-      const playerInfo = (message as IServerPlayerConnectedEvent).playerInfo;
-      this._simulation.addPlayer(
-        new NetworkPlayer(
+    } else if (this._simulation) {
+      if (message.type === ServerMessageType.PLAYER_CREATED) {
+        const playerInfo = (message as IServerPlayerCreatedEvent).playerInfo;
+        const newNetworkPlayer = new NetworkPlayer(
           this._simulation,
           playerInfo.id,
           playerInfo.nickname,
-          playerInfo.color
-        )
-      );
-    } else if (message.type === ServerMessageType.PLAYER_DISCONNECTED) {
-      this._simulation.removePlayer(
-        (message as IServerPlayerDisconnectedEvent).playerId
-      );
-    } else if (message.type === ServerMessageType.BLOCK_CREATED) {
-      const blockInfo = (message as IServerBlockCreatedEvent).blockInfo;
-      const player = this._simulation.getPlayer(blockInfo.playerId);
-      player.createBlock(
-        blockInfo.blockId,
-        blockInfo.row,
-        blockInfo.column,
-        blockInfo.rotation,
-        blockInfo.layoutId,
-        true
-      );
-    } else if (message.type === ServerMessageType.BLOCK_MOVED) {
-      const blockInfo = (message as IServerBlockMovedEvent).blockInfo;
-      const block = this._simulation.getPlayer(blockInfo.playerId).block!;
-      block.move(
-        blockInfo.column - block.column,
-        blockInfo.row - block.row,
-        blockInfo.rotation - block.rotation,
-        true
-      );
-    } else if (message.type === ServerMessageType.BLOCK_PLACED) {
-      const blockInfo = (message as IServerBlockPlacedEvent).blockInfo;
-      const block = this._simulation.getPlayer(blockInfo.playerId).block!;
-      block.move(
-        blockInfo.column - block.column,
-        blockInfo.row - block.row,
-        blockInfo.rotation - block.rotation,
-        true
-      );
-      block.place();
-    } else if (message.type === ServerMessageType.BLOCK_DIED) {
-      const playerId = (message as IServerBlockDiedEvent).playerId;
-      const block = this._simulation.getPlayer(playerId).block!;
-      block.die();
-    } else if (message.type === ServerMessageType.NEXT_DAY) {
-      this._simulation.goToNextDay();
-    } else if (message.type === ServerMessageType.NEXT_SPAWN) {
-      this._simulation.getPlayer(this._playerId!).estimatedSpawnDelay = (
-        message as IServerNextSpawnEvent
-      ).time;
-    } else if (message.type === ServerMessageType.PLAYER_TOGGLE_SPECTATING) {
-      const playerToggleSpectatingMessage =
-        message as IServerPlayerToggleSpectatingEvent;
-      this._simulation.getPlayer(
-        playerToggleSpectatingMessage.playerId
-      ).isSpectating = playerToggleSpectatingMessage.isSpectating;
+          playerInfo.color,
+          playerInfo.isSpectating
+        );
+        this._simulation.addPlayer(newNetworkPlayer);
+      } else if (message.type === ServerMessageType.PLAYER_DISCONNECTED) {
+        this._simulation.removePlayer(
+          (message as IServerPlayerDisconnectedEvent).playerId
+        );
+      } else if (message.type === ServerMessageType.BLOCK_CREATED) {
+        const blockInfo = (message as IServerBlockCreatedEvent).blockInfo;
+        const player = this._simulation.getPlayer(blockInfo.playerId);
+        player.createBlock(
+          blockInfo.blockId,
+          blockInfo.row,
+          blockInfo.column,
+          blockInfo.rotation,
+          blockInfo.layoutId,
+          true
+        );
+      } else if (message.type === ServerMessageType.BLOCK_MOVED) {
+        const blockInfo = (message as IServerBlockMovedEvent).blockInfo;
+        const block = this._simulation.getPlayer(blockInfo.playerId).block!;
+        block.move(
+          blockInfo.column - block.column,
+          blockInfo.row - block.row,
+          blockInfo.rotation - block.rotation,
+          true
+        );
+      } else if (message.type === ServerMessageType.BLOCK_PLACED) {
+        const blockInfo = (message as IServerBlockPlacedEvent).blockInfo;
+        const block = this._simulation.getPlayer(blockInfo.playerId).block!;
+        block.move(
+          blockInfo.column - block.column,
+          blockInfo.row - block.row,
+          blockInfo.rotation - block.rotation,
+          true
+        );
+        block.place();
+      } else if (message.type === ServerMessageType.BLOCK_DIED) {
+        const playerId = (message as IServerBlockDiedEvent).playerId;
+        const block = this._simulation.getPlayer(playerId).block!;
+        block.die();
+      } else if (message.type === ServerMessageType.NEXT_DAY) {
+        this._simulation.goToNextDay();
+      } else if (message.type === ServerMessageType.NEXT_ROUND) {
+        this._simulation.startNextRound();
+      } else if (message.type === ServerMessageType.NEXT_SPAWN) {
+        this._simulation.getPlayer(this._playerId!).estimatedSpawnDelay = (
+          message as IServerNextSpawnEvent
+        ).time;
+      } else if (message.type === ServerMessageType.PLAYER_TOGGLE_SPECTATING) {
+        const playerToggleSpectatingMessage =
+          message as IServerPlayerToggleSpectatingEvent;
+        this._simulation.getPlayer(
+          playerToggleSpectatingMessage.playerId
+        ).isSpectating = playerToggleSpectatingMessage.isSpectating;
+      }
     }
   }
 
@@ -260,6 +269,7 @@ export default class NetworkClient
   onSimulationInit(simulation: ISimulation): void {}
   onSimulationStep(simulation: ISimulation): void {}
   onSimulationNextDay(): void {}
+  onSimulationNextRound(): void {}
   onBlockCreated(block: IBlock): void {}
   onBlockCreateFailed(block: IBlock): void {}
   onBlockPlaced(block: IBlock): void {}
@@ -300,4 +310,5 @@ export default class NetworkClient
   ): void {}
   onLineCleared(row: number): void {}
   onGridCollapsed(grid: IGrid): void {}
+  onGridReset(grid: IGrid): void {}
 }

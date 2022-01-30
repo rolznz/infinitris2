@@ -18,4 +18,6 @@ export default interface ISimulationEventListener
   onSimulationStep(simulation: ISimulation): void;
 
   onSimulationNextDay(simulation: ISimulation): void;
+
+  onSimulationNextRound(simulation: ISimulation): void;
 }

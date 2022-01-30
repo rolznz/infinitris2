@@ -79,6 +79,10 @@ export abstract class BaseRenderer implements IRenderer {
     return this._cellSize;
   }
 
+  get gridWidth(): number {
+    return this._gridWidth;
+  }
+
   get gridHeight(): number {
     return this._gridHeight;
   }
@@ -92,6 +96,7 @@ export abstract class BaseRenderer implements IRenderer {
   }
   abstract onSimulationStep(simulation: ISimulation): void;
   abstract onSimulationNextDay(simulation: ISimulation): void;
+  abstract onSimulationNextRound(simulation: ISimulation): void;
   abstract onPlayerCreated(player: IPlayer): void;
   abstract onPlayerDestroyed(player: IPlayer): void;
   abstract onPlayerToggleChat(player: IPlayer, wasCancelled: boolean): void;
@@ -110,6 +115,7 @@ export abstract class BaseRenderer implements IRenderer {
   abstract onBlockDestroyed(block: IBlock): void;
   abstract onLineCleared(row: number): void;
   abstract onGridCollapsed(grid: IGrid): void;
+  abstract onGridReset(grid: IGrid): void;
   abstract onCellBehaviourChanged(
     cell: ICell,
     previousBehaviour: ICellBehaviour
@@ -165,11 +171,18 @@ export abstract class BaseRenderer implements IRenderer {
     // TODO: replace while loops with single operation
     const wrapSize = this._gridWidth;
     const minVisibilityX = Math.min(this._visibilityX, this._gridWidth);
+    let maxIterations = 1000;
     while (x + this._cellSize < -this._camera.x - minVisibilityX) {
       x += wrapSize;
+      if (--maxIterations < 0) {
+        throw new Error('FIXME remove while loop in getWrappedX (+)');
+      }
     }
-    while (x + this._cellSize >= -this._camera.x + wrapSize - minVisibilityX) {
+    while (x + this._cellSize > -this._camera.x + wrapSize - minVisibilityX) {
       x -= wrapSize;
+      if (--maxIterations < 0) {
+        throw new Error('FIXME remove while loop in getWrappedX (-)');
+      }
     }
     return x;
   }

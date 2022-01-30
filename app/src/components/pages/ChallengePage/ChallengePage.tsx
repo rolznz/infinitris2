@@ -89,6 +89,7 @@ export default function ChallengePage() {
         },
         onSimulationStep() {},
         onSimulationNextDay() {},
+        onSimulationNextRound() {},
 
         onBlockCreated() {},
         onBlockCreateFailed() {
@@ -111,6 +112,7 @@ export default function ChallengePage() {
         onLineCleared() {},
         onCellBehaviourChanged() {},
         onGridCollapsed() {},
+        onGridReset() {},
       };
 
       setChallengeClient(

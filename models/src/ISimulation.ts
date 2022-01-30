@@ -10,6 +10,7 @@ export type NetworkSimulationInfo = {
   dayNumber: number;
   dayLength: number;
   settings: SimulationSettings;
+  gameModeState: unknown;
 };
 
 export default interface ISimulation
@@ -25,9 +26,10 @@ export default interface ISimulation
   get dayNumber(): number;
   get dayLength(): number;
   get nextDay(): number;
-  get gameMode(): IGameMode;
+  get gameMode(): IGameMode<unknown>;
   get fps(): number;
   get followingPlayer(): IPlayer | undefined;
+  get shouldNewPlayerSpectate(): boolean;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;
@@ -37,4 +39,5 @@ export default interface ISimulation
   goToNextDay(): void;
   getPlayer(playerId: number): IPlayer;
   step(): void;
+  startNextRound(): void;
 }

@@ -11,7 +11,7 @@ export default class Grid implements IGrid {
   private _eventListeners: IGridEventListener[];
   private _cachedNumNonEmptyCells = 0;
 
-  constructor(numColumns: number = 50, numRows: number = 18) {
+  constructor(numColumns: number = 10, numRows: number = 18) {
     this._cells = [];
     this._eventListeners = [];
     for (let r = 0; r < numRows; r++) {
@@ -125,6 +125,7 @@ export default class Grid implements IGrid {
     for (let cell of this._reducedCells) {
       cell.reset();
     }
+    this._eventListeners.forEach((listener) => listener.onGridReset(this));
   }
 
   collapse() {

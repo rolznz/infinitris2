@@ -38,6 +38,12 @@ export class ConquestRenderer implements IGameModeRenderer {
     }
     const conquestGameMode = this._renderer.simulation
       .gameMode as ConquestGameMode;
+
+    if (conquestGameMode.isWaitingForNextRound) {
+      this._lastGameModeStep = 0;
+      return;
+    }
+
     if (++this._lastGameModeStep > 100) {
       this._lastGameModeStep = 0;
       this._renderColumnCaptures(conquestGameMode.columnCaptures);
@@ -94,6 +100,9 @@ export class ConquestRenderer implements IGameModeRenderer {
   }
 
   private _renderColumnCaptures(columnCaptures: IColumnCapture[]) {
+    if (!this._renderer.simulation) {
+      return;
+    }
     for (let i = 0; i < columnCaptures.length; i++) {
       if (!this._columnCaptures[i]) {
         const captureContainer = new PIXI.Container();
@@ -114,10 +123,16 @@ export class ConquestRenderer implements IGameModeRenderer {
       this._renderer._renderCopies(
         renderableColumnCapture,
         1,
-        (graphics) => {
+        (graphics, shadowIndexWithDirection) => {
+          const shadowX = shadowIndexWithDirection * this._renderer.gridWidth;
+          graphics.x = shadowX;
+
           graphics.clear();
-          if (columnCaptures[i].player) {
-            graphics.beginFill(columnCaptures[i].player!.color);
+          const player = columnCaptures[i].playerId
+            ? this._renderer.simulation!.getPlayer(columnCaptures[i].playerId!)
+            : undefined;
+          if (player) {
+            graphics.beginFill(player.color);
 
             if (columnCaptures[i].value < 1) {
               graphics.drawRect(
@@ -126,7 +141,7 @@ export class ConquestRenderer implements IGameModeRenderer {
                 this._renderer.cellSize * 0.6 * columnCaptures[i].value,
                 this._renderer.cellSize * 0.1
               );
-              graphics.beginFill(columnCaptures[i].player!.color, 0.3);
+              graphics.beginFill(player.color, 0.3);
               graphics.drawRect(
                 this._renderer.cellSize * 0.2,
                 this._renderer.cellSize * 0.4,
@@ -178,7 +193,9 @@ export class ConquestRenderer implements IGameModeRenderer {
       this._renderer._renderCopies(
         renderablePlayerHealth,
         1,
-        (graphics) => {
+        (graphics, shadowIndexWithDirection) => {
+          const shadowX = shadowIndexWithDirection * this._renderer.gridWidth;
+          graphics.x = shadowX;
           graphics.clear();
           graphics.beginFill(0x000000, 0.1);
           graphics.drawRect(0, 0, healthWidth, healthWidth * 0.2);

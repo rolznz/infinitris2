@@ -73,6 +73,7 @@ export default function SinglePlayerPage() {
           onSimulationInit() {},
           onSimulationStep() {},
           onSimulationNextDay() {},
+          onSimulationNextRound() {},
 
           onBlockCreated(block: IBlock) {
             if (block.player.isHuman) {
@@ -134,6 +135,7 @@ export default function SinglePlayerPage() {
           onLineCleared() {},
           onCellBehaviourChanged() {},
           onGridCollapsed() {},
+          onGridReset() {},
         },
       });
       if (musicOn) {

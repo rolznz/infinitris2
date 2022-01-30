@@ -36,7 +36,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     id: number,
     nickname: string = 'Guest',
     color: number = 0xf33821,
-    spectate = false
+    isSpectating = false
   ) {
     console.log('Creating player ' + id);
     this._id = id;
@@ -49,7 +49,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._nextSpawnTime = 0;
     this._isFirstBlock = true;
     this._calculateSpawnDelay();
-    this._isSpectating = spectate;
+    this._isSpectating = isSpectating;
     this._isChatting = false;
     this._eventListeners.forEach((listener) => listener.onPlayerCreated(this));
   }
@@ -94,6 +94,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
   set isSpectating(isSpectating: boolean) {
     this._isSpectating = isSpectating;
+    if (this._isSpectating) {
+      this._removeBlock();
+    }
     this._eventListeners.forEach((listener) =>
       listener.onPlayerToggleSpectating(this)
     );

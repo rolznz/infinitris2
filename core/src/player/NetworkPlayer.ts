@@ -7,9 +7,10 @@ export default class NetworkPlayer extends Player {
     simulation: ISimulation,
     playerId: number,
     nickname: string | undefined,
-    color: number | undefined
+    color: number | undefined,
+    isSpectating: boolean
   ) {
-    super(simulation, playerId, nickname, color);
+    super(simulation, playerId, nickname, color, isSpectating);
   }
 
   get isNetworked() {

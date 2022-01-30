@@ -37,7 +37,7 @@ export default class Simulation implements ISimulation {
   private _dayNumber: number;
   private _dayLength: number;
   private _isNetworkClient: boolean;
-  private _gameMode: IGameMode;
+  private _gameMode: IGameMode<unknown>;
   private _fpsCounter: FpsCounter;
   private _lastStepTime = 0;
 
@@ -111,12 +111,16 @@ export default class Simulation implements ISimulation {
     this._nextDay = nextDay;
   }
 
-  get gameMode(): IGameMode {
+  get gameMode(): IGameMode<unknown> {
     return this._gameMode;
   }
 
   get followingPlayer(): IPlayer | undefined {
     return this.players.find((player) => this.isFollowingPlayerId(player.id));
+  }
+
+  get shouldNewPlayerSpectate(): boolean {
+    return this._settings.gameModeType === 'conquest';
   }
 
   getFreePlayerId(startFromId: number = 0): number {
@@ -217,6 +221,12 @@ export default class Simulation implements ISimulation {
    */
   getPlayerIds(): number[] {
     return Object.values(this._players).map((player) => player.id);
+  }
+
+  startNextRound(): void {
+    this._eventListeners.forEach((listener) =>
+      listener.onSimulationNextRound(this)
+    );
   }
 
   /**
@@ -327,6 +337,13 @@ export default class Simulation implements ISimulation {
    */
   onGridCollapsed(grid: IGrid): void {
     this._eventListeners.forEach((listener) => listener.onGridCollapsed(grid));
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onGridReset(grid: IGrid): void {
+    this._eventListeners.forEach((listener) => listener.onGridReset(grid));
   }
 
   /**

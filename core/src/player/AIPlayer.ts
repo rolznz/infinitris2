@@ -18,11 +18,12 @@ export default class AIPlayer extends Player {
     playerId: number,
     nickname: string,
     color: number,
-    reflexDelay: number = 25
+    reflexDelay?: number,
+    isSpectating?: boolean
   ) {
-    super(simulation, playerId, nickname, color);
-    this._behaviour = new DumbAIBehaviour();
-    this._reactionDelay = reflexDelay;
+    super(simulation, playerId, nickname, color, isSpectating);
+    this._behaviour = new DumbAIBehaviour(simulation);
+    this._reactionDelay = reflexDelay || 5 + Math.floor(Math.random() * 40);
   }
 
   update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
@@ -31,10 +32,7 @@ export default class AIPlayer extends Player {
     if (this._block && !this._block.isDropping) {
       if (this._nextReaction >= this._reactionDelay) {
         this._nextReaction = 0;
-        const nextAction = this._behaviour.calculateNextAction(
-          this._block,
-          gridCells
-        );
+        const nextAction = this._behaviour.calculateNextAction(this._block);
         if (nextAction.dx || nextAction.dy || nextAction.dr) {
           this._block.move(nextAction.dx, nextAction.dy, nextAction.dr);
         } else if (nextAction.drop) {

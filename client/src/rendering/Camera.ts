@@ -44,9 +44,7 @@ export default class Camera {
     this._vx *= 1 - Math.min(cameraDrag * delta, 1);
     this._vy *= 1 - Math.min(cameraDrag * delta, 1);
 
-    const ax = this._dx - this._x;
-
-    this._vx += ax * cameraSpeed * delta;
+    this._vx += (this._dx - this._x) * cameraSpeed * delta;
     this._vy += (this._dy - this._y) * cameraSpeed * delta;
     this._x += this._vx * delta;
     this._y += this._vy * delta;

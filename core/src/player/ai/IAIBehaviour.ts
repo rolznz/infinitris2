@@ -1,5 +1,4 @@
 import IBlock from '@models/IBlock';
-import ICell from '@models/ICell';
 
 export type AIAction = {
   dx: number;
@@ -9,5 +8,5 @@ export type AIAction = {
 };
 
 export interface IAIBehaviour {
-  calculateNextAction(block: IBlock, gridCells: ICell[][]): AIAction;
+  calculateNextAction(block: IBlock): AIAction;
 }

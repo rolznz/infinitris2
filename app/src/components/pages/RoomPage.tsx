@@ -122,6 +122,7 @@ export default function RoomPage() {
         },
         onSimulationStep() {},
         onSimulationNextDay() {},
+        onSimulationNextRound() {},
 
         onBlockCreated(block: IBlock) {
           if (block.player.isHuman) {
@@ -181,6 +182,7 @@ export default function RoomPage() {
         onLineCleared() {},
         onCellBehaviourChanged() {},
         onGridCollapsed() {},
+        onGridReset() {},
       },
     });
   }, [

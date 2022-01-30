@@ -35,6 +35,8 @@ export default class SinglePlayerClient
    */
   onGridCollapsed(grid: IGrid): void {}
 
+  onGridReset(grid: IGrid): void {}
+
   /**
    * @inheritdoc
    */
@@ -45,6 +47,7 @@ export default class SinglePlayerClient
   onSimulationStep(simulation: Simulation) {}
 
   onSimulationNextDay(): void {}
+  onSimulationNextRound(): void {}
 
   /**
    * @inheritdoc
@@ -133,7 +136,7 @@ export default class SinglePlayerClient
       playerId,
       options.player?.nickname,
       options.player?.color,
-      options.spectate
+      options.spectate || this._simulation.shouldNewPlayerSpectate
     );
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);
@@ -166,7 +169,8 @@ export default class SinglePlayerClient
             i + 1,
             'Bot ' + (i + 1),
             freeColors[Math.floor(Math.random() * (freeColors.length - 1))],
-            options.botReactionDelay
+            options.botReactionDelay,
+            this._simulation.shouldNewPlayerSpectate
           )
         );
       }

@@ -66,6 +66,8 @@ export * from './networking/client/ClientMessageType';
 export * from './networking/server/ServerMessageType';
 export * from './networking/server/IServerChatMessage';
 
+export const NETWORK_VERSION = 1;
+
 export {
   exampleChallenges,
   IEntity,

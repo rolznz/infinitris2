@@ -1,6 +1,6 @@
 export enum ServerMessageType {
   JOIN_ROOM_RESPONSE,
-  PLAYER_CONNECTED,
+  PLAYER_CREATED,
   PLAYER_DISCONNECTED,
   BLOCK_CREATED,
   BLOCK_MOVED,
@@ -11,4 +11,5 @@ export enum ServerMessageType {
   NEXT_SPAWN,
   CHAT,
   PLAYER_TOGGLE_SPECTATING,
+  NEXT_ROUND,
 }

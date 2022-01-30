@@ -395,11 +395,22 @@ export default class MinimalRenderer extends BaseRenderer {
   }
 
   onSimulationNextDay(): void {}
+  onSimulationNextRound(): void {}
 
   /**
    * @inheritdoc
    */
   onGridCollapsed(_grid: IGrid) {
+    if (!this._simulation) {
+      return;
+    }
+    // TODO: optimize
+    this._renderCells(this._simulation.grid.reducedCells);
+  }
+  /**
+   * @inheritdoc
+   */
+  onGridReset(_grid: IGrid) {
     if (!this._simulation) {
       return;
     }

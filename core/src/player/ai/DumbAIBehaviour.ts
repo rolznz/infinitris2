@@ -1,5 +1,7 @@
+import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import IBlock, { BlockCanMoveOptions } from '@models/IBlock';
 import ICell from '@models/ICell';
+import ISimulation from '@models/ISimulation';
 import { AIAction, IAIBehaviour } from './IAIBehaviour';
 
 // Inspired by Timur Bakibayev's article https://levelup.gitconnected.com/tetris-ai-in-python-bd194d6326ae
@@ -10,16 +12,19 @@ import { AIAction, IAIBehaviour } from './IAIBehaviour';
 // - unaware of other players' movement
 // - unaware of days / grid collapse
 export class DumbAIBehaviour implements IAIBehaviour {
+  private _simulation: ISimulation;
   private _allowMistakes: boolean;
-  constructor(allowMistakes: boolean = false) {
+  constructor(simulation: ISimulation, allowMistakes: boolean = false) {
+    this._simulation = simulation;
     this._allowMistakes = allowMistakes;
   }
 
   // TODO: pass grid instead of gridCells
-  calculateNextAction(block: IBlock, gridCells: ICell[][]): AIAction {
+  calculateNextAction(block: IBlock): AIAction {
     let bestRotationOffset = 0;
     let bestColumnOffset = 0;
     let bestScore = 0;
+    const gridCells = this._simulation.grid.cells;
     const maxAttempts = Math.min(17, gridCells[0].length); //current column + 8 on each side (or grid width if smaller)
 
     for (let i = 0; i < maxAttempts; i++) {
@@ -32,14 +37,24 @@ export class DumbAIBehaviour implements IAIBehaviour {
         const canMoveOptions: BlockCanMoveOptions = {
           allowMistakes: this._allowMistakes,
         };
+
         for (; dy < gridCells.length; dy++) {
           if (!block.canMove(dx, dy, dr, canMoveOptions)) {
             hit = true;
             break;
           }
         }
-        if (dy > bestScore && !canMoveOptions.isMistake) {
-          bestScore = dy;
+        let bottomRow = 0;
+        for (const cell of canMoveOptions.cells || []) {
+          bottomRow = Math.max(bottomRow, cell.row);
+        }
+        const score = this._calculateScore(block, dx, dy, dr, canMoveOptions);
+        if (
+          score > bestScore &&
+          !canMoveOptions.isMistake &&
+          !this._simulation.grid.isTower(bottomRow)
+        ) {
+          bestScore = score;
           bestColumnOffset = dx;
           bestRotationOffset = dr;
         }
@@ -70,5 +85,28 @@ export class DumbAIBehaviour implements IAIBehaviour {
       dr: 0,
       drop: true,
     };
+  }
+  private _calculateScore(
+    block: IBlock,
+    dx: number,
+    dy: number,
+    dr: number,
+    canMoveOptions: BlockCanMoveOptions
+  ): number {
+    if (this._simulation.settings.gameModeType === 'conquest') {
+      const gameMode = this._simulation.gameMode as ConquestGameMode;
+
+      if (canMoveOptions.cells) {
+        if (
+          !canMoveOptions.cells.some(
+            (cell) =>
+              gameMode.columnCaptures[cell.column].playerId !== block.player.id
+          )
+        ) {
+          dy -= 4; // focus on attacking other player's cells instead
+        }
+      }
+    }
+    return dy;
   }
 }

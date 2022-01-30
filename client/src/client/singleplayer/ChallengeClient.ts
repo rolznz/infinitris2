@@ -70,6 +70,7 @@ export default class ChallengeClient
   }
 
   onSimulationNextDay(): void {}
+  onSimulationNextRound(): void {}
 
   /**
    * @inheritdoc
@@ -120,6 +121,8 @@ export default class ChallengeClient
    * @inheritdoc
    */
   onGridCollapsed(grid: IGrid): void {}
+
+  onGridReset(grid: IGrid): void {}
 
   /**
    * @inheritdoc
@@ -323,7 +326,8 @@ export default class ChallengeClient
       simulation,
       playerId,
       this._player?.nickname,
-      this._player?.color
+      this._player?.color,
+      this._simulation.shouldNewPlayerSpectate
     );
     simulation.addPlayer(player);
     simulation.followPlayer(player);

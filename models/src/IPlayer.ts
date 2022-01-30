@@ -8,6 +8,7 @@ export type NetworkPlayerInfo = {
   readonly color: number;
   readonly id: number;
   readonly score: number;
+  readonly isSpectating: boolean;
 };
 
 export interface IPlayer {

@@ -405,6 +405,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
   onBlockDestroyed(block: IBlock): void {
     this._removeBlock(block);
+    if (block.player === this._simulation?.followingPlayer) {
+      this._placementHelperShadowCells.forEach((shadow) => {
+        shadow.children.forEach((child) => child.renderableObject.clear());
+      });
+    }
   }
 
   /**
@@ -493,7 +498,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     const followingPlayer = this._simulation.followingPlayer;
     this._scoreboard.update(this._simulation.players, followingPlayer);
     this._scoreChangeIndicator.update(followingPlayer);
-    this._spawnDelayIndicator.update(followingPlayer);
+    this._spawnDelayIndicator.update(this._simulation, followingPlayer);
 
     for (const particle of this._particles) {
       particle.x += particle.vx;
@@ -525,6 +530,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   onSimulationNextDay() {}
+  onSimulationNextRound() {}
 
   /**
    * @inheritdoc
@@ -548,6 +554,14 @@ export default class Infinitris2Renderer extends BaseRenderer {
    * @inheritdoc
    */
   onGridCollapsed(_grid: IGrid) {
+    if (!this._simulation) {
+      return;
+    }
+    // TODO: optimize
+    this._renderCells(this._simulation.grid.reducedCells);
+  }
+
+  onGridReset(grid: IGrid): void {
     if (!this._simulation) {
       return;
     }
@@ -662,7 +676,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._renderCopies(
       renderableBlock.playerNameText,
       1,
-      () => {},
+      (text, shadowIndexWithDirection) => {
+        const shadowX = shadowIndexWithDirection * this._gridWidth;
+        text.x = shadowX;
+      },
       () => {
         const text = new PIXI.Text(block.player.nickname, {
           font: 'bold italic 60px Arvo',
@@ -683,7 +700,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._renderCopies(
       renderableBlock.face,
       1,
-      () => {},
+      (face, shadowIndexWithDirection) => {
+        const shadowX = shadowIndexWithDirection * this._gridWidth;
+        face.x = shadowX;
+      },
       () => {
         const faceSprite = PIXI.Sprite.from(faceUrl);
         faceSprite.scale.set((this._cellSize / faceSprite.width) * 2);

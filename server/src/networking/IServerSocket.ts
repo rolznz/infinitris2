@@ -1,6 +1,6 @@
 import IServerSocketEventListener from './IServerSocketEventListener';
 import { IServerJoinRoomResponse } from '@core/networking/server/IServerJoinRoomResponse';
-import IServerPlayerConnectedEvent from '@core/networking/server/IServerPlayerConnectedEvent';
+import IServerPlayerCreatedEvent from '@core/networking/server/IServerPlayerCreatedEvent';
 import IServerPlayerDisconnectedEvent from '@core/networking/server/IServerPlayerDisconnectedEvent';
 import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
 import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
@@ -9,7 +9,7 @@ import { IServerNextDayEvent } from '@core/networking/server/IServerNextDayEvent
 
 export type ServerMessage =
   | IServerJoinRoomResponse
-  | IServerPlayerConnectedEvent
+  | IServerPlayerCreatedEvent
   | IServerPlayerDisconnectedEvent
   | IServerBlockCreatedEvent
   | IServerBlockMovedEvent

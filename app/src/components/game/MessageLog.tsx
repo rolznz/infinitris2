@@ -29,6 +29,7 @@ export function MessageLog() {
       gap={1}
       height="70vh"
       width="100vw"
+      flexDirection="column-reverse"
       px={1}
       sx={{
         overflowY: 'auto',

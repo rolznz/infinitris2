@@ -95,7 +95,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   set isSpectating(isSpectating: boolean) {
     this._isSpectating = isSpectating;
     if (this._isSpectating) {
-      this._removeBlock();
+      this.removeBlock();
+    } else {
+      this._isFirstBlock = true;
     }
     this._eventListeners.forEach((listener) =>
       listener.onPlayerToggleSpectating(this)
@@ -231,7 +233,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
   destroy() {
     console.log('Destroying player ' + this._id);
-    this._removeBlock();
+    this.removeBlock();
     this._eventListeners.forEach((listener) =>
       listener.onPlayerDestroyed(this)
     );
@@ -284,7 +286,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._modifyScoreFromBlockPlacement(block, isMistake);
 
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
-    this._removeBlock();
+    this.removeBlock();
   }
 
   /**
@@ -293,7 +295,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   onBlockDied(block: IBlock) {
     this._modifyScoreFromBlockPlacement(block, true);
     this._eventListeners.forEach((listener) => listener.onBlockDied(block));
-    this._removeBlock();
+    this.removeBlock();
   }
 
   /**
@@ -309,7 +311,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._score += numRowsCleared;
   }
 
-  private _removeBlock() {
+  removeBlock() {
     this._calculateSpawnDelay();
     this._block?.destroy();
     this._block = undefined;

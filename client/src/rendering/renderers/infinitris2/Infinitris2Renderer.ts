@@ -530,7 +530,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   onSimulationNextDay() {}
-  onSimulationNextRound() {}
+  onSimulationNextRound() {
+    this._gameModeRenderer?.restart();
+  }
 
   /**
    * @inheritdoc

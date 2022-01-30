@@ -42,4 +42,5 @@ export interface IPlayer {
     force: boolean
   ): void;
   destroy(): void;
+  removeBlock(): void;
 }

@@ -74,6 +74,10 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       (player) => !player.isSpectating
     );
 
+    if (!activePlayers.length) {
+      this._isWaitingForNextRound = true;
+    }
+
     if (this._isWaitingForNextRound) {
       for (const player of activePlayers) {
         if (player !== this._lastWinner && !this._simulation.isNetworkClient) {
@@ -229,6 +233,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     this._lastCalculation = 0;
     this._playerHealths = {};
     for (const player of this._simulation.players) {
+      player.removeBlock();
       player.isSpectating = false;
       this._playerHealths[player.id] = 1;
       player.score = 0;

@@ -11,6 +11,8 @@ import ISimulation from '@models/ISimulation';
 import { RendererType } from '@models/RendererType';
 import { GameModeType } from '@models/GameModeType';
 import { SimulationSettings } from '@models/SimulationSettings';
+import { IClientChatMessage } from '@models/networking/client/IClientChatMessage';
+import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 
 export default class ClientApi implements IClientApi {
   private _client?: IClient;
@@ -54,6 +56,20 @@ export default class ClientApi implements IClientApi {
     } else if (params.has('url')) {
       this.launchNetworkClient(params.get('url') as string, {
         controls_keyboard: controls,
+        roomId: parseInt(params.get('roomId') || '0'),
+        socketListener: {
+          onConnect: (socket) => {
+            (window as any).chat = (message: string) => {
+              const chatMessage: IClientChatMessage = {
+                message,
+                type: ClientMessageType.CHAT,
+              };
+              socket.sendMessage(chatMessage);
+            };
+          },
+          onDisconnect: () => {},
+          onMessage: () => {},
+        },
       });
     } else if (params.has('challengeId')) {
       const challengeId = params.get('challengeId')!;

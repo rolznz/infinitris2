@@ -32,17 +32,14 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._renderer = renderer;
   }
 
+  restart() {}
+
   onSimulationStep() {
     if (!this._renderer.simulation) {
       return;
     }
     const conquestGameMode = this._renderer.simulation
       .gameMode as ConquestGameMode;
-
-    if (conquestGameMode.isWaitingForNextRound) {
-      this._lastGameModeStep = 0;
-      return;
-    }
 
     if (++this._lastGameModeStep > 100) {
       this._lastGameModeStep = 0;

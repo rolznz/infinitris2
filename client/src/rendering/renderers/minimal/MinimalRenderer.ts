@@ -18,6 +18,9 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
 import { IPlayer } from '@models/IPlayer';
 import { GridLines } from '@src/rendering/renderers/infinitris2/GridLines';
+import { BaseRenderer } from '@src/rendering/BaseRenderer';
+import ISimulation from '@models/ISimulation';
+import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 
 const minCellSize = 32;
 const particleDivisions = 4;
@@ -35,15 +38,6 @@ enum RenderCellType {
   Block,
   Cell,
   PlacementHelper,
-}
-
-interface IRenderableEntity<T extends PIXI.DisplayObject> {
-  // stores all the graphics objects - main render + all shadows
-  container: PIXI.Container;
-  children: {
-    shadowIndex: number;
-    pixiObject: T;
-  }[];
 }
 
 interface IRenderableCell extends IRenderableEntity<PIXI.Graphics> {
@@ -65,16 +59,12 @@ interface IParticle extends IRenderableEntity<PIXI.Graphics> {
   maxLife: number;
 }
 
-export default class MinimalRenderer
-  implements IRenderer, ISimulationEventListener
-{
+export default class MinimalRenderer extends BaseRenderer {
   // FIXME: restructure to not require definite assignment
   private _placementHelperShadowCells!: IRenderableCell[];
   private _virtualKeyboardGraphics?: PIXI.Graphics;
   private _virtualKeyboardCurrentKeyText!: PIXI.Text;
   private _virtualGestureSprites?: PIXI.Sprite[];
-  private _app!: PIXI.Application;
-  private _world!: PIXI.Container;
 
   private _shadowGradientGraphics?: PIXI.Graphics;
 
@@ -84,32 +74,18 @@ export default class MinimalRenderer
   private _particles!: IParticle[];
   //private _playerScores!: IPlayerScore[];
 
-  private _simulation!: Simulation;
-
-  private _camera: Camera;
-  private _gridWidth!: number;
-  private _gridHeight!: number;
-  private _cellSize!: number;
-  private _scrollY!: boolean;
-  private _scrollX!: boolean;
-  private _hasShadows!: boolean;
-  private _shadowCount!: number;
   private _virtualKeyboardControls?: ControlSettings;
   private _preferredInputMethod: InputMethod;
   private _teachControls: boolean;
   private _gridLines!: GridLines;
-  private _appWidth: number;
-  private _appHeight: number;
 
   constructor(
     preferredInputMethod: InputMethod = 'keyboard',
     teachControls: boolean = false
   ) {
+    super(0x333333);
     this._preferredInputMethod = preferredInputMethod;
     this._teachControls = teachControls;
-    this._appWidth = 0;
-    this._appHeight = 0;
-    this._camera = new Camera();
   }
 
   set virtualKeyboardControls(
@@ -127,12 +103,6 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   async create() {
-    this._app = new PIXI.Application({
-      resizeTo: window,
-      antialias: true,
-      backgroundColor: 0x333333,
-    });
-
     if (this._preferredInputMethod === 'touch' && this._teachControls) {
       const gesturesDirectory = `${imagesDirectory}/gestures`;
       const swipeLeftUrl = `${gesturesDirectory}/swipe-left.png`;
@@ -174,47 +144,22 @@ export default class MinimalRenderer
     if (!this._simulation) {
       return;
     }
-    // TODO: move stuff like this into a different layer so it isn't duplicated across renderers
-    if (
-      this._appWidth != this._app.renderer.width ||
-      this._appHeight != this._app.renderer.height
-    ) {
-      this._resize();
-    }
 
-    const visibilityX = this._getVisiblityX();
-    const visibilityY = this._app.renderer.height * 0.125;
-
-    this._camera.update(this._app.ticker.deltaMS / FRAME_LENGTH);
-
-    // clamp the camera to fit within the grid
-    const cameraY = Math.min(
-      Math.max(
-        this._camera.y,
-        -(this._gridHeight - this._app.renderer.height + visibilityY)
-      ),
-      0
-    );
-    if (this._scrollX) {
-      this._world.x = this._camera.x + visibilityX;
-    }
-    if (this._scrollY) {
-      this._world.y = cameraY + visibilityY;
-    }
+    super.tick();
 
     this._gridLines.update(
       this._world.x,
       this._world.y,
-      this._scrollX,
-      this._scrollY,
+      this._hasScrollX,
+      this._hasScrollY,
       this._cellSize,
-      visibilityX,
-      visibilityY,
-      cameraY
+      this._visibilityX,
+      this._visibilityY,
+      this._clampedCameraY
     );
-    if (this._scrollX) {
+    if (this._hasScrollX) {
       if (!this._hasShadows) {
-        this._wrapObjects();
+        this.wrapObjects();
       }
     }
 
@@ -225,25 +170,6 @@ export default class MinimalRenderer
       cell.container.alpha = cell.cell.isEmpty ? cell.cell.behaviour.alpha : 1;
     });
   };
-
-  private _wrapObjects() {
-    this._world.children.forEach((child) => {
-      this._wrapObject(child);
-    });
-  }
-
-  private _wrapObject(child: PIXI.DisplayObject) {
-    // FIXME: 1 wrap is not sufficient (see Infinitris 2 renderer)
-    const visibilityX = this._getVisiblityX();
-    if (child.x + this._cellSize < -this._camera.x - visibilityX) {
-      child.x += this._gridWidth;
-    } else if (
-      child.x + this._cellSize >=
-      -this._camera.x + this._gridWidth - visibilityX
-    ) {
-      child.x -= this._gridWidth;
-    }
-  }
 
   /**
    * @inheritdoc
@@ -257,33 +183,22 @@ export default class MinimalRenderer
   /**
    * @inheritdoc
    */
-  onSimulationInit(simulation: Simulation) {
-    this._simulation = simulation;
+  onSimulationInit(simulation: ISimulation) {
+    super.onSimulationInit(simulation);
+    this._blocks = {};
+    this._cells = {};
+    this._particles = [];
     this._app.stage.removeChildren();
 
     this._gridLines = new GridLines(simulation, this._app, this._camera);
 
     this._shadowGradientGraphics = new PIXI.Graphics();
 
-    this._world = new PIXI.Container();
-    this._world.sortableChildren = true;
+    this._world.removeChildren();
     this._app.stage.addChild(this._world);
     this._app.stage.addChild(this._shadowGradientGraphics);
 
     this._placementHelperShadowCells = [];
-
-    /*this._playerScores = [...Array(10)].map((_, i) => ({
-      playerId: -1,
-      text: new PIXI.Text('', {
-        font: 'bold italic 60px Arvo',
-        fill: '#3e1707',
-        align: 'center',
-        stroke: '#a4410e',
-        strokeThickness: 7,
-      }),
-    }));*/
-
-    //this._app.stage.addChild(...this._playerScores.map((score) => score.text));
 
     if (
       this._virtualKeyboardControls &&
@@ -416,12 +331,13 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   onSimulationStep() {
-    const followingPlayer = this._simulation.players.find((player) =>
-      this._simulation.isFollowingPlayerId(player.id)
-    );
+    if (!this._simulation) {
+      return;
+    }
+    const followingPlayer = this._simulation.followingPlayer;
     if (followingPlayer && followingPlayer.block) {
       // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
-      const cellSize = this._getClampedCellSize();
+      const cellSize = this._cellSize;
       const block = followingPlayer.block;
       const blockX = block.column * cellSize;
       const y = block.row * cellSize;
@@ -432,21 +348,6 @@ export default class MinimalRenderer
       );
       this._renderBlockPlacementShadow(block);
     }
-    // TODO: only run this once per second
-    /*const scores = this._simulation.players.map((p) => ({
-      id: p.id,
-      name: 'New player',
-      score: p.score,
-    }));
-    scores.sort((a, b) => b.score - a.score);
-    for (let i = 0; i < this._playerScores.length; i++) {
-      if (scores.length > i) {
-        this._playerScores[i].text.text =
-          scores[i].name + ' ' + scores[i].score;
-      } else {
-        this._playerScores[i].text.text = '';
-      }
-    }*/
 
     for (const particle of this._particles) {
       particle.x += particle.vx;
@@ -479,11 +380,17 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   onLineCleared(_row: number) {
+    if (!this._simulation) {
+      return;
+    }
     // TODO: remove, should only render individual cells on cell state change
     this._renderCells(this._simulation.grid.reducedCells);
   }
 
   rerenderGrid() {
+    if (!this._simulation) {
+      return;
+    }
     this._renderCells(this._simulation.grid.reducedCells);
   }
 
@@ -493,65 +400,30 @@ export default class MinimalRenderer
    * @inheritdoc
    */
   onGridCollapsed(_grid: IGrid) {
+    if (!this._simulation) {
+      return;
+    }
     // TODO: optimize
     this._renderCells(this._simulation.grid.reducedCells);
   }
 
-  private _getCellSize = () => {
-    const height = this._app.renderer.height;
-    return Math.ceil((minCellSize * height) / 768);
-  };
-
-  private _getClampedCellSize = () => {
-    return Math.max(this._getCellSize(), minCellSize);
-  };
-
-  private _resize = async () => {
-    this._appWidth = this._app.renderer.width;
-    this._appHeight = this._app.renderer.height;
-    this._blocks = {};
-    this._cells = {};
-    this._camera.reset();
-
-    this._particles = [];
-
-    const appWidth = this._app.renderer.width;
-    const appHeight = this._app.renderer.height;
-    const cellSize = this._getClampedCellSize();
-    this._cellSize = cellSize;
+  protected _resize = async () => {
+    if (!this._simulation) {
+      return;
+    }
+    super._resize();
 
     this._renderVirtualKeyboard();
     this._renderVirtualGestures();
 
-    const gridWidth = this._simulation.grid.numColumns * cellSize;
-    this._gridWidth = gridWidth;
-    const gridHeight = this._simulation.grid.numRows * cellSize;
-    this._gridHeight = gridHeight;
-    this._scrollX = true;
-    this._hasShadows = gridWidth < appWidth;
-    this._scrollY = gridHeight > appHeight;
-
-    const cellPadding = cellSize * 0.1;
-
     this._gridLines.render(
-      gridWidth,
-      gridHeight,
-      cellSize,
-      cellPadding,
-      this._scrollX,
-      this._scrollY
+      this._gridWidth,
+      this._gridHeight,
+      this._cellSize,
+      this._cellPadding,
+      this._hasScrollX,
+      this._hasScrollY
     );
-
-    this._shadowCount = this._hasShadows
-      ? Math.ceil(Math.ceil(appWidth / gridWidth) / 2)
-      : 0;
-
-    /*if (!this._scrollX) {
-        this._world.x = this._grid.graphics.x = (appWidth - gridWidth) / 2;
-      }*/
-    if (!this._scrollY) {
-      this._world.y = (appHeight - gridHeight) / 2;
-    }
 
     this._renderCells(this._simulation.grid.reducedCells);
 
@@ -564,14 +436,16 @@ export default class MinimalRenderer
       // thanks to https://gist.github.com/gre/1650294
       const easeInOutQuad = (t: number) =>
         t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-      for (let x = 0; x < appWidth; x++) {
+      for (let x = 0; x < this._appWidth; x++) {
         this._shadowGradientGraphics.lineStyle(
           1,
           0x00000,
-          easeInOutQuad(Math.abs(appWidth * 0.5 - x) / (appWidth * 0.5))
+          easeInOutQuad(
+            Math.abs(this._appWidth * 0.5 - x) / (this._appWidth * 0.5)
+          )
         );
         this._shadowGradientGraphics.moveTo(x, 0);
-        this._shadowGradientGraphics.lineTo(x, appHeight);
+        this._shadowGradientGraphics.lineTo(x, this._appHeight);
       }
     }
   };
@@ -581,6 +455,9 @@ export default class MinimalRenderer
   }
 
   private _renderCell = (cell: ICell) => {
+    if (!this._simulation) {
+      return;
+    }
     const cellIndex = cell.row * this._simulation.grid.numColumns + cell.column;
     if (!this._cells[cellIndex]) {
       this._cells[cellIndex] = {
@@ -592,9 +469,11 @@ export default class MinimalRenderer
     const renderableCell: IRenderableCell = this._cells[cellIndex];
 
     if (!cell.isEmpty || cell.behaviour.type !== CellType.Normal) {
-      const cellSize = this._getClampedCellSize();
+      const cellSize = this._cellSize;
       // FIXME: need to wrap here (see Infinitris 2 renderer)
-      renderableCell.container.x = renderableCell.cell.column * cellSize;
+      renderableCell.container.x = this.getWrappedX(
+        renderableCell.cell.column * cellSize
+      );
       renderableCell.container.y = renderableCell.cell.row * cellSize;
       this._renderCellCopies(
         renderableCell,
@@ -603,7 +482,9 @@ export default class MinimalRenderer
         cell.color
       );
     } else {
-      renderableCell.children.forEach((child) => child.pixiObject.clear());
+      renderableCell.children.forEach((child) =>
+        child.renderableObject.clear()
+      );
     }
   };
 
@@ -628,17 +509,14 @@ export default class MinimalRenderer
           strokeThickness: 7,
         });
         text.anchor.set(0.5, 0);
+        renderableBlock.playerNameText.container.addChild(text);
         return text;
       }
     );
   }
 
-  private _getVisiblityX() {
-    return this._app.renderer.width * 0.5;
-  }
-
   private _moveBlock(block: IBlock) {
-    const cellSize = this._getClampedCellSize();
+    const cellSize = this._cellSize;
     const renderableBlock: IRenderableBlock = this._blocks[block.player.id];
 
     for (let i = 0; i < block.cells.length; i++) {
@@ -657,7 +535,7 @@ export default class MinimalRenderer
   }
 
   private _renderParticle(particle: IParticle, color: number) {
-    const particleSize = this._getCellSize() / particleDivisions;
+    const particleSize = this._cellSize / particleDivisions;
     this._renderCopies(
       particle,
       1,
@@ -666,7 +544,11 @@ export default class MinimalRenderer
         graphics.beginFill(color);
         graphics.drawRect(0, 0, particleSize, particleSize);
       },
-      () => new PIXI.Graphics()
+      () => {
+        const graphics = new PIXI.Graphics();
+        particle.container.addChild(graphics);
+        return graphics;
+      }
     );
   }
 
@@ -681,7 +563,7 @@ export default class MinimalRenderer
       opacity,
       (graphics: PIXI.Graphics) => {
         graphics.clear();
-        const cellSize = this._getClampedCellSize();
+        const cellSize = this._cellSize;
         // TODO: extract rendering of different behaviours
         if (
           renderCellType !== RenderCellType.Cell ||
@@ -801,52 +683,19 @@ export default class MinimalRenderer
           }
         }
       },
-      () => new PIXI.Graphics()
+      () => {
+        const graphics = new PIXI.Graphics();
+        renderableCell.container.addChild(graphics);
+        return graphics;
+      }
     );
-  }
-
-  private _renderCopies<T extends PIXI.DisplayObject>(
-    renderableEntity: IRenderableEntity<T>,
-    opacity: number,
-    renderFunction: (pixiObject: T) => void,
-    createPixiObject: () => T,
-    shadowIndex: number = 0,
-    shadowDirection: number = 0
-  ) {
-    const shadowIndexWithDirection = shadowIndex * shadowDirection;
-    let entry = renderableEntity.children.find(
-      (child) => child.shadowIndex === shadowIndexWithDirection
-    );
-    if (!entry) {
-      entry = {
-        pixiObject: createPixiObject(),
-        shadowIndex: shadowIndexWithDirection,
-      };
-      renderableEntity.children.push(entry);
-      renderableEntity.container.addChild(entry.pixiObject);
-    }
-
-    const pixiObject = entry.pixiObject;
-
-    renderFunction(pixiObject);
-
-    pixiObject.x = shadowIndexWithDirection * this._gridWidth;
-    if (shadowIndex < this._shadowCount) {
-      (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>
-        this._renderCopies(
-          renderableEntity,
-          opacity, // * 0.5,
-          renderFunction,
-          createPixiObject,
-          shadowIndex + 1,
-          i
-        )
-      );
-    }
   }
 
   private _renderBlockPlacementShadow(block: IBlock) {
-    const cellSize = this._getClampedCellSize();
+    if (!this._simulation) {
+      return;
+    }
+    const cellSize = this._cellSize;
     const lowestCells = block.cells.filter(
       (cell) =>
         !block.cells.find(
@@ -855,7 +704,7 @@ export default class MinimalRenderer
     );
 
     this._placementHelperShadowCells.forEach((shadow) => {
-      shadow.children.forEach((child) => child.pixiObject.clear());
+      shadow.children.forEach((child) => child.renderableObject.clear());
     });
 
     const lowestBlockRow = lowestCells

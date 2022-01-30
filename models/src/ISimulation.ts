@@ -27,6 +27,7 @@ export default interface ISimulation
   get nextDay(): number;
   get gameMode(): IGameMode;
   get fps(): number;
+  get followingPlayer(): IPlayer | undefined;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;

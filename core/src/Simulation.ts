@@ -115,6 +115,10 @@ export default class Simulation implements ISimulation {
     return this._gameMode;
   }
 
+  get followingPlayer(): IPlayer | undefined {
+    return this.players.find((player) => this.isFollowingPlayerId(player.id));
+  }
+
   getFreePlayerId(startFromId: number = 0): number {
     while (true) {
       if (!this.players.some((player) => player.id === startFromId)) {

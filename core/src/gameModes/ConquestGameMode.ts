@@ -99,12 +99,10 @@ export class ConquestGameMode implements IGameMode {
           if (this._columnCaptures[c].player !== highestPlayer) {
             this._columnCaptures[c].player = highestPlayer;
           }
-          if (this._columnCaptures[c].value === 1) {
-            playerColumnCaptureCounts[highestPlayer.id] =
-              (playerColumnCaptureCounts[highestPlayer.id] || 0) + 1;
-            highestPlayer.score += 1;
-          }
         }
+        playerColumnCaptureCounts[highestPlayer.id] =
+          (playerColumnCaptureCounts[highestPlayer.id] || 0) + 1;
+        highestPlayer.score += 1;
       }
     }
     for (const player of this._simulation.players) {

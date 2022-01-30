@@ -58,6 +58,13 @@ export default class Input {
   }
 
   private _isActionAllowed(action: InputAction) {
+    if (
+      this._player.isChatting &&
+      action !== InputAction.Esc &&
+      action !== InputAction.Chat
+    ) {
+      return false;
+    }
     const block: IBlock | undefined = this._player.block;
     if (block && block.isDropping) {
       return false;

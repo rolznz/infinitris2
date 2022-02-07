@@ -14,6 +14,7 @@ export default class TouchInput {
   private _lastActionX: number;
   private _lastActionY: number;
   private _movementThreshold: number;
+  private _rotateThreshold: number;
   private _hasMoved: boolean;
   private _hasMovedHorizontally: boolean;
 
@@ -26,6 +27,7 @@ export default class TouchInput {
     this._lastActionX = 0;
     this._lastActionY = 0;
     this._movementThreshold = 0;
+    this._rotateThreshold = 0;
     this._pointerStartTime = 0;
     this._hasMoved = false;
     this._hasMovedHorizontally = false;
@@ -46,6 +48,7 @@ export default class TouchInput {
     this._pointerStartTime = Date.now();
     this._movementThreshold =
       Math.min(window.innerWidth, window.innerHeight) / NUM_DIVISIONS;
+    this._rotateThreshold = Math.max(this._movementThreshold * 0.5, 1);
 
     this._pointerX =
       this._lastActionX =
@@ -70,7 +73,7 @@ export default class TouchInput {
         totalPointerChangeY * totalPointerChangeY
     );
 
-    if (pointerChangeDistance < this._movementThreshold) {
+    if (pointerChangeDistance < this._rotateThreshold) {
       if (this._pointerX < document.body.clientWidth * 0.5) {
         this._fireAction(InputAction.RotateAnticlockwise);
       } else {

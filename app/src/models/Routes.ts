@@ -25,6 +25,7 @@ enum Routes {
   affiliateProgram = '/affiliate-program',
   about = '/about',
   play = '/play',
+  pwa = '/pwa',
 }
 
 export default Routes;

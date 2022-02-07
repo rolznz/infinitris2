@@ -13,3 +13,6 @@ export default function isMobile() {
     return navigator.userAgent.match(toMatchItem);
   });
 }
+
+export const requiresPwa = () =>
+  isMobile() && !window.matchMedia('(display-mode: standalone)').matches;

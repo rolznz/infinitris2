@@ -32,6 +32,7 @@ import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
 import useIngameStore from '@/state/IngameStore';
 import { GameUI } from '@/components/game/GameUI';
 import { IServerMessage } from 'infinitris2-models/dist/networking/server/IServerMessage';
+import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 
 interface RoomPageRouteParams {
   id: string;
@@ -94,6 +95,7 @@ export default function RoomPage() {
 
   const [retryCount, setRetryCount] = useState(0);
   const serverUrl = server?.data()?.url;
+  usePwaRedirect();
   //const requiresRedirect = useForcedRedirect();
   const controls_keyboard = useUser().controls_keyboard;
   const controls_gamepad = useUser().controls_gamepad;

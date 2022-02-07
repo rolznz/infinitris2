@@ -1,4 +1,5 @@
 import { GameUI } from '@/components/game/GameUI';
+import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
@@ -22,6 +23,7 @@ export default function SinglePlayerPage() {
   const { controls_keyboard, controls_gamepad, rendererQuality, rendererType } =
     useUser();
 
+  usePwaRedirect();
   //const requiresRedirect = useForcedRedirect();
   const launchSinglePlayer = client?.launchSinglePlayer;
   const [hasLaunched, setLaunched] = useState(false);

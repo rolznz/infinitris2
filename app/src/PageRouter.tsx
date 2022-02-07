@@ -33,6 +33,7 @@ import MarketCharacterPage from './components/pages/MarketPage/MarketCharacterPa
 import BackButton from './components/ui/BackButton';
 import useAffiliateLinkRef from './components/hooks/useAffiliateLinkRef';
 import PlayPage from './components/pages/PlayPage/PlayPage';
+import { PwaPage } from './components/pages/PwaPage';
 import { HomePage } from './components/pages/HomePage/HomePage';
 import { SinglePlayerOptionsPage } from './components/pages/SinglePlayerOptionsPage';
 
@@ -176,6 +177,9 @@ function RouterContents() {
         </Route>
         <Route exact path={`${Routes.rooms}/:id`}>
           <RoomPage />
+        </Route>
+        <Route exact path={Routes.pwa}>
+          <PwaPage />
         </Route>
         <Route>
           <NotFoundPage />

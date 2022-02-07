@@ -19,6 +19,7 @@ import { useUserStore } from '../../../state/UserStore';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useDocument } from 'swr-firestore';
 import { IPlayer } from 'infinitris2-models';
+import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -38,6 +39,7 @@ export default function ChallengePage() {
   const isTest = isTestChallenge(challengeId);
   console.log('isTest', isTest);
 
+  usePwaRedirect();
   const requiresRedirect = useForcedRedirect(true, challengeId, !isTest);
   const { incompleteChallenges } = useIncompleteChallenges();
 

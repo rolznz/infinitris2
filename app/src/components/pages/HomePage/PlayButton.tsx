@@ -6,6 +6,10 @@ import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { keyframes } from '@mui/system';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
 import { gameModePickerId } from '@/components/ui/GameModePicker/GameModePicker';
+import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import isMobile, { requiresPwa } from '@/utils/isMobile';
+import { useHistory } from 'react-router-dom';
+import Routes from '@/models/Routes';
 
 const playButtonAnimation = keyframes`
   0% {
@@ -32,9 +36,11 @@ function scrollGameModePickerIntoView() {
     block: 'nearest',
     inline: 'start',
   });
+  playSound(SoundKey.click);
 }
 
 function _PlayButton({ isLoaded, delayButtonVisibility }: PlayButtonProps) {
+  const history = useHistory();
   return (
     <IconButton
       sx={{
@@ -57,7 +63,11 @@ function _PlayButton({ isLoaded, delayButtonVisibility }: PlayButtonProps) {
         transform: 'scale(1.0)',
       }}
       size="large"
-      onClick={scrollGameModePickerIntoView}
+      onClick={() =>
+        requiresPwa()
+          ? history.push(Routes.pwa)
+          : scrollGameModePickerIntoView()
+      }
     >
       <PlayArrowIcon sx={{ width: 48, height: 48 }} />
     </IconButton>

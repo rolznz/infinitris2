@@ -50,6 +50,8 @@
   "scripts": {
     "start": "REACT_APP_VERSION=$(git rev-list HEAD --count) react-app-rewired start",
     "build": "REACT_APP_VERSION=$(git rev-list HEAD --count) react-app-rewired build",
+    "build-local": "REACT_APP_VERSION=$(git rev-list HEAD --count) dotenv -e .env.local react-app-rewired build",
+    "serve": "cd build && python3 -m http.server 3000",
     "deploy": "(cd .. && yarn firebase:deploy:hosting)",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject",
@@ -113,6 +115,7 @@
     "@types/react-star-rating-component": "^1.4.0",
     "@types/react-swipeable-views": "^0.13.1",
     "@types/smoothscroll-polyfill": "^0.3.1",
-    "@types/uuid": "^8.3.0"
+    "@types/uuid": "^8.3.0",
+    "dotenv-cli": "^5.0.0"
   }
 }

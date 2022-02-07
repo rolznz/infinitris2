@@ -16,8 +16,9 @@ import { useEffect } from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
   playMenuTheme,
-  prepareSoundEffects,
+  playSound,
   setSfxOn,
+  SoundKey,
 } from '../sound/MusicPlayer';
 import FlexBox from './FlexBox';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -174,8 +175,8 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                     clickStart(musicOn);
                     // On mobile, sounds can only be loaded after an interaction
                     if (sfxOn) {
-                      prepareSoundEffects();
                       setSfxOn(true);
+                      playSound(SoundKey.silence);
                     }
                     if (musicOn) {
                       // TODO: check the route
@@ -242,7 +243,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                 {sfxOn && isMobile() && (
                   <Typography variant="caption" mt={1}>
                     <FormattedMessage
-                      defaultMessage="Silent mode must be off to enable sfx"
+                      defaultMessage="Silent mode must be off to enable sounds"
                       description="Loader - ringer switch warning"
                     />
                   </Typography>

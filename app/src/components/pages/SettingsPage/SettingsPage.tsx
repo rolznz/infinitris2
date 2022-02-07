@@ -13,8 +13,6 @@ import {
   setMusicPlaying,
   setSfxOn,
   musicLoaded,
-  soundsLoaded,
-  prepareSoundEffects,
   playSound,
   SoundKey,
 } from '@/components/sound/MusicPlayer';
@@ -195,10 +193,9 @@ export default function SettingsPage() {
                 checkedIcon={<MusicNoteIcon />}
                 onChange={(event) => {
                   const isOn = event.target.checked;
-                  if (isOn && !soundsLoaded()) {
-                    useLoaderStore.getState().reset();
-                    prepareSoundEffects();
-                  }
+                  // if (isOn && !soundsLoaded()) {
+                  //   prepareSoundEffects();
+                  // }
                   userStore.setSfxOn(isOn);
                   setSfxOn(isOn);
                   if (isOn) {

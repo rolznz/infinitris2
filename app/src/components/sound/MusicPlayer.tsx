@@ -49,8 +49,9 @@ export async function playMenuTheme() {
 let _sfxContext: AudioContext;
 let _sfxAudioBuffer: AudioBuffer;
 
-export async function prepareSoundEffects() {
+async function prepareSoundEffects() {
   if (!_sfxContext) {
+    useLoaderStore.getState().increaseSteps();
     _sfxContext = new AudioContext();
 
     try {
@@ -59,15 +60,16 @@ export async function prepareSoundEffects() {
           return res.arrayBuffer();
         })
         .then((ArrayBuffer) => _sfxContext.decodeAudioData(ArrayBuffer));
-
-      playSound(SoundKey.silence);
     } catch (error) {
       alert(
         'Error: ' + JSON.stringify(error, Object.getOwnPropertyNames(error))
       );
     }
+    useLoaderStore.getState().increaseStepsCompleted();
   }
 }
+
+prepareSoundEffects();
 
 export function playSound([startMs, offsetMs]: number[]) {
   if (_sfxOn) {

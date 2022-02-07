@@ -138,6 +138,9 @@ export default class ChallengeClient
   }
 
   private _destroyTempObjects() {
+    if (!this._simulation) {
+      return;
+    }
     this._simulation.stopInterval();
     // TODO: shouldn't have to destroy the input each time
     this._input?.destroy();

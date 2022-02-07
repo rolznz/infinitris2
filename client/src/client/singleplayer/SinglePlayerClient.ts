@@ -98,6 +98,9 @@ export default class SinglePlayerClient
    * @inheritdoc
    */
   destroy() {
+    if (!this._simulation) {
+      return;
+    }
     console.log('Destroying Single Player Client');
     this._simulation.stopInterval();
     this._renderer.destroy();

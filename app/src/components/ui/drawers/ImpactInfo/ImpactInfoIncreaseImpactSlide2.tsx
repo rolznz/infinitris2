@@ -7,7 +7,7 @@ import { InfoSlide } from '../InfoSlide';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import { closeDialog } from '@/state/DialogStore';
-import friendImage from './assets/friend.svg';
+import challengeMakerImage from './assets/challengemaker_illustration_150ppi.png';
 
 export function ImpactInfoIncreaseImpactSlide2() {
   return (
@@ -31,7 +31,11 @@ export function ImpactInfoIncreaseImpactSlide2() {
               description="Impact info slide 2 - increase impact by creating challenges"
             />
           </Typography>
-          <img src={friendImage} style={{ height: '90px' }} alt="friend" />
+          <img
+            src={challengeMakerImage}
+            style={{ height: '90px', marginBottom: '10px' }}
+            alt="challenge maker"
+          />
           <Box flex={1} />
           <Link
             component={RouterLink}

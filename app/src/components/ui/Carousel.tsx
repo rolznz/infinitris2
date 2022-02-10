@@ -67,8 +67,8 @@ export function Carousel({
             width: '100%',
             height: '100%',
             zIndex: 1,
-            boxShadow: (theme) =>
-              `inset 12px 0 15px 0px ${theme.palette.background.paper}, inset -12px 0 15px 0px ${theme.palette.background.paper}`,
+            // boxShadow: (theme) =>
+            //   `inset 12px 0 15px 0px ${theme.palette.background.paper}, inset -12px 0 15px 0px ${theme.palette.background.paper}`,
             pointerEvents: 'none',
           }}
         />

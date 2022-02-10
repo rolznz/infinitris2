@@ -7,7 +7,7 @@ import { InfoSlide } from '../InfoSlide';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import { closeDialog } from '@/state/DialogStore';
-import friendImage from './assets/friend.svg';
+import friendImage from './assets/friends_illustration_150ppi.png';
 
 export function ImpactInfoIncreaseImpactSlide3() {
   return (
@@ -32,13 +32,15 @@ export function ImpactInfoIncreaseImpactSlide3() {
             />
           </Typography>
           <FlexBox flexDirection="row">
-            <img src={friendImage} style={{ height: '70px' }} alt="friend" />
             <img
               src={friendImage}
-              style={{ height: '140px', margin: '0px -40px' }}
+              style={{
+                height: '120px',
+                marginTop: '10px',
+                marginBottom: '10px',
+              }}
               alt="friend"
             />
-            <img src={friendImage} style={{ height: '90px' }} alt="friend" />
           </FlexBox>
           <Box flex={1} />
           <Link

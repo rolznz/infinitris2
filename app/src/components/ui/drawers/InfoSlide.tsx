@@ -13,13 +13,13 @@ export function InfoSlide({ title, titleAppend, content }: InfoSlideProps) {
   return (
     <FlexBox
       style={{
-        backgroundColor: borderColorLight,
         boxShadow: boxShadows.small,
       }}
       p={4}
       borderRadius={borderRadiuses.base}
       height="100%"
       justifyContent="flex-start"
+      bgcolor="background.paper"
     >
       <FlexBox flexDirection="row" justifyContent="flex-start" width="100%">
         <Typography

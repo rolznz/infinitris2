@@ -33,7 +33,7 @@ import MarketCharacterPage from './components/pages/MarketPage/MarketCharacterPa
 import BackButton from './components/ui/BackButton';
 import useAffiliateLinkRef from './components/hooks/useAffiliateLinkRef';
 import PlayPage from './components/pages/PlayPage/PlayPage';
-import { PwaPage } from './components/pages/PwaPage';
+import { PwaPage } from './components/pages/PwaPage/PwaPage';
 import { HomePage } from './components/pages/HomePage/HomePage';
 import { SinglePlayerOptionsPage } from './components/pages/SinglePlayerOptionsPage';
 

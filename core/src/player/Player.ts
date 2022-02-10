@@ -95,6 +95,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   set isSpectating(isSpectating: boolean) {
     this._isSpectating = isSpectating;
     if (this._isSpectating) {
+      this._score = 0;
       this.removeBlock();
     } else {
       this._isFirstBlock = true;

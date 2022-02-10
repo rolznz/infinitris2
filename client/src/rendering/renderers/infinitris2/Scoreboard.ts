@@ -93,12 +93,14 @@ export class Scoreboard {
       if (i < playerScores.length) {
         text.visible = true;
         text.text =
-          (playerScores[i].placing - 1 < placingCharacters.length
-            ? placingCharacters[playerScores[i].placing - 1]
-            : playerScores[i].placing) +
-          '  ' +
-          playerScores[i].score +
-          ' ' +
+          (playerScores[i].spectating
+            ? ''
+            : (playerScores[i].placing - 1 < placingCharacters.length
+                ? placingCharacters[playerScores[i].placing - 1]
+                : playerScores[i].placing) +
+              '  ' +
+              playerScores[i].score +
+              ' ') +
           playerScores[i].nickname +
           (playerScores[i].spectating ? ' (spectating)' : '');
 

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" onselectstart="return false;">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
@@ -136,6 +136,7 @@
       <img
         id="html-loader-image"
         src="%PUBLIC_URL%/images/loader/logo.png"
+        alt="logo"
         onload="document.getElementById('html-loader-image').style.opacity = 1; document.getElementById('html-loader-spinner').style.opacity = 1; for(var i = 0; i < 100; i++){var star = document.createElement('div'); star.className = 'html-loader-star'; var l = Math.floor(Math.random() * 100); var t = Math.floor(Math.random() * 100); star.style.top = t * 2 +'%'; star.style.left = l +'%'; star.style.opacity = (Math.sqrt((l-50)*(l-50) + (t-50)*(t-50))/100) * 2 + Math.random() * 0.25; star.style.animation = 'html-loader-star-animation ' + (Math.random() * 20 + 30) + 's linear infinite'; document.getElementById('html-loader').appendChild(star)}"
       />
       <div id="html-loader-spinner"></div>

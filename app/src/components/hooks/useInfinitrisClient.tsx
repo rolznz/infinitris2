@@ -13,25 +13,29 @@ const useInfinitrisClient = () => {
   useEffect(() => {
     (async () => {
       useLoaderStore.getState().increaseSteps();
-      const clientManifest = await (
-        await fetch(`${process.env.PUBLIC_URL}/client/manifest.json`, {
-          headers: {
-            pragma: 'no-cache',
-            'cache-control': 'no-cache',
-          },
-        })
-      ).json();
-      const clientScript = document.createElement('script');
-      clientScript.onload = async () => {
-        console.log('Loaded Infinitris Client');
-        useLoaderStore.getState().increaseStepsCompleted();
-        useAppStore.setState({
-          clientApi: window.infinitris2,
-        });
-      };
-      clientScript.src = clientManifest['main.js'];
-      clientScript.async = true;
-      document.body.appendChild(clientScript);
+      try {
+        const clientManifest = await (
+          await fetch(`${process.env.PUBLIC_URL}/client/manifest.json`, {
+            headers: {
+              pragma: 'no-cache',
+              'cache-control': 'no-cache',
+            },
+          })
+        ).json();
+        const clientScript = document.createElement('script');
+        clientScript.onload = async () => {
+          console.log('Loaded Infinitris Client');
+          useLoaderStore.getState().increaseStepsCompleted();
+          useAppStore.setState({
+            clientApi: window.infinitris2,
+          });
+        };
+        clientScript.src = clientManifest['main.js'];
+        clientScript.async = true;
+        document.body.appendChild(clientScript);
+      } catch (error) {
+        console.error('Failed to load infinitris client', error);
+      }
     })();
   }, []);
 };

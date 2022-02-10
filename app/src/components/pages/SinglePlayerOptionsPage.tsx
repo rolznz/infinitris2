@@ -18,12 +18,11 @@ import {
   Select,
   Switch,
 } from '@mui/material';
-import {
-  GameModeType,
-  GameModeTypeValues,
-  WorldType,
-  WorldTypeValues,
-} from 'infinitris2-models';
+import { GameModeTypeValues, WorldTypeValues } from 'infinitris2-models';
+import useSinglePlayerOptionsStore, {
+  SinglePlayerOptionsFormData,
+  getSinglePlayerOptionsDefaultValues,
+} from '@/state/SinglePlayerOptionsStore';
 
 const schema = yup
   .object({
@@ -52,45 +51,31 @@ const schema = yup
   })
   .required();
 
-type FormData = {
-  numBots: number;
-  botReactionDelay: number;
-  gridNumRows: number;
-  gridNumColumns: number;
-  dayLength: number;
-  spectate: boolean;
-  mistakeDetection: boolean;
-  calculateSpawnDelays: boolean;
-  preventTowers: boolean;
-  worldType: WorldType;
-  gameModeType: GameModeType;
-};
-
 export function SinglePlayerOptionsPage() {
   const intl = useIntl();
   const history = useHistory();
+  const [formData, setFormData, resetFormData] = useSinglePlayerOptionsStore(
+    (store) => [store.formData, store.setFormData, store.reset]
+  );
   const {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
-    defaultValues: {
-      numBots: 4,
-      botReactionDelay: 25,
-      gridNumRows: 18,
-      gridNumColumns: 50,
-      dayLength: 2000,
-      spectate: false,
-      mistakeDetection: true,
-      calculateSpawnDelays: true,
-      preventTowers: true,
-      worldType: 'grass',
-      gameModeType: 'infinity',
-    },
+    reset,
+  } = useForm<SinglePlayerOptionsFormData>({
+    defaultValues: formData,
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = (data: FormData) => {
+  function executeResetForm() {
+    // reset the store
+    resetFormData();
+    // reset the form
+    reset(getSinglePlayerOptionsDefaultValues());
+  }
+
+  const onSubmit = (data: SinglePlayerOptionsFormData) => {
+    setFormData(data);
     const searchParams = new URLSearchParams();
     Object.entries(data).forEach((entry) => {
       searchParams.append(entry[0], entry[1].toString());
@@ -264,6 +249,17 @@ export function SinglePlayerOptionsPage() {
             <FormattedMessage
               defaultMessage="Play"
               description="Single Player Options page - play button"
+            />
+          </Button>
+          <Button
+            color="secondary"
+            variant="contained"
+            sx={{ mt: 2 }}
+            onClick={executeResetForm}
+          >
+            <FormattedMessage
+              defaultMessage="Reset"
+              description="Single Player Options page - reset form button"
             />
           </Button>
         </FlexBox>

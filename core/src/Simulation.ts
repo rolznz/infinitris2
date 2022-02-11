@@ -323,6 +323,9 @@ export default class Simulation implements ISimulation {
    * @inheritdoc
    */
   onPlayerToggleSpectating(player: IPlayer) {
+    if (player.isSpectating) {
+      this._grid.removePlayer(player);
+    }
     this._eventListeners.forEach((listener) =>
       listener.onPlayerToggleSpectating(player)
     );

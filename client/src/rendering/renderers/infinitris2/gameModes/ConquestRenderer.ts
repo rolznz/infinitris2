@@ -90,6 +90,7 @@ export class ConquestRenderer implements IGameModeRenderer {
       if (
         conquestGameMode.columnCaptures[i].attackerId !== undefined &&
         conquestGameMode.columnCaptures[i].value < 1 &&
+        conquestGameMode.columnCaptures[i].value > 0 &&
         Math.random() < 0.05
       ) {
         const attacker = this._renderer.simulation!.getPlayer(

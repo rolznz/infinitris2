@@ -212,15 +212,24 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   onSimulationNextDay(simulation: ISimulation): void {}
   onPlayerCreated(player: IPlayer): void {}
   onPlayerDestroyed(player: IPlayer): void {
+    this._removePlayer(player);
+  }
+  private _removePlayer(player: IPlayer) {
     for (let c = 0; c < this._columnCaptures.length; c++) {
       if (this._columnCaptures[c].playerId === player.id) {
+        this._columnCaptures[c].attackerId = undefined;
         this._columnCaptures[c].playerId = undefined;
         this._columnCaptures[c].value = 0;
       }
     }
   }
   onPlayerToggleChat(player: IPlayer, wasCancelled: boolean): void {}
-  onPlayerToggleSpectating(player: IPlayer): void {}
+  onPlayerToggleSpectating(player: IPlayer): void {
+    if (player.isSpectating) {
+      this._removePlayer(player);
+    }
+  }
+
   onBlockCreated(block: IBlock): void {}
   onBlockCreateFailed(block: IBlock): void {}
   onBlockPlaced(block: IBlock): void {}

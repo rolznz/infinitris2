@@ -23,6 +23,7 @@ import useSinglePlayerOptionsStore, {
   SinglePlayerOptionsFormData,
   getSinglePlayerOptionsDefaultValues,
 } from '@/state/SinglePlayerOptionsStore';
+import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
 
 const schema = yup
   .object({
@@ -75,6 +76,7 @@ export function SinglePlayerOptionsPage() {
   }
 
   const onSubmit = (data: SinglePlayerOptionsFormData) => {
+    playSound(SoundKey.click);
     setFormData(data);
     const searchParams = new URLSearchParams();
     Object.entries(data).forEach((entry) => {

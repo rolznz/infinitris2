@@ -1,4 +1,4 @@
-import IRenderer from '../../IRenderer';
+import IRenderer, { ParticleType } from '../../IRenderer';
 import * as PIXI from 'pixi.js-legacy';
 import Grid from '@core/grid/Grid';
 import ISimulationEventListener from '@models/ISimulationEventListener';
@@ -314,6 +314,8 @@ export default class MinimalRenderer extends BaseRenderer {
       }
     }
   }
+
+  emitParticle(x: number, y: number, color: number, type: ParticleType) {}
 
   private _removeBlock(block: IBlock) {
     var renderableBlock = this._blocks[block.player.id];

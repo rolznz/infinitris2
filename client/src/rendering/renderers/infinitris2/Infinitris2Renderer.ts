@@ -1,4 +1,4 @@
-import IRenderer from '../../IRenderer';
+import IRenderer, { ParticleType } from '../../IRenderer';
 import * as PIXI from 'pixi.js-legacy';
 import Grid from '@core/grid/Grid';
 import ISimulationEventListener from '@models/ISimulationEventListener';
@@ -69,6 +69,9 @@ interface IParticle extends IRenderableEntity<PIXI.Graphics> {
   vy: number;
   life: number;
   maxLife: number;
+  type: ParticleType;
+  goalX?: number;
+  goalY?: number;
 }
 
 // TODO: retrieve URLs from players
@@ -443,21 +446,35 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _explodeCell(cell: ICell, color?: number) {
     for (let x = 0; x < particleDivisions; x++) {
       for (let y = 0; y < particleDivisions; y++) {
-        const particle: IParticle = {
-          x: cell.column + x / particleDivisions,
-          y: cell.row + y / particleDivisions,
-          vx: (Math.random() - 0.5) * 0.1,
-          vy: -(Math.random() + 0.5) * 0.2,
-          container: new PIXI.Container(),
-          children: [],
-          maxLife: 100,
-          life: 100,
-        };
-        this._world.addChild(particle.container);
-        this._particles.push(particle);
-        this._renderParticle(particle, color || cell.color);
+        this.emitParticle(
+          cell.column + x / particleDivisions,
+          cell.row + y / particleDivisions,
+          color || cell.color,
+          'capture'
+        );
       }
     }
+  }
+
+  emitParticle(x: number, y: number, color: number, type: ParticleType) {
+    const life = type === 'classic' ? 100 : 50;
+    const particle: IParticle = {
+      x: x + (type === 'capture' ? (Math.random() - 0.5) * 6 : 0),
+      y: y + (type === 'capture' ? (Math.random() - 0.5) * 6 : 0),
+      vx: type === 'classic' ? (Math.random() - 0.5) * 0.1 : 0,
+      vy: type === 'classic' ? -(Math.random() + 0.5) * 0.2 : 0,
+      container: new PIXI.Container(),
+      children: [],
+      maxLife: life,
+      life,
+      type,
+      goalX: x,
+      goalY: y,
+    };
+    particle.container.alpha = 0;
+    this._world.addChild(particle.container);
+    this._particles.push(particle);
+    this._renderParticle(particle, color);
   }
 
   private _removeBlock(block: IBlock) {
@@ -500,14 +517,21 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._scoreChangeIndicator.update(followingPlayer);
     this._spawnDelayIndicator.update(this._simulation, followingPlayer);
 
+    //console.log('Rendering', this._particles.length, 'particles');
     for (const particle of this._particles) {
+      if (particle.type === 'classic') {
+        particle.vx *= 0.99;
+        particle.vy += 0.01;
+        particle.container.alpha = particle.life / particle.maxLife;
+      } else {
+        particle.vx = (particle.goalX! - particle.x) * 0.1;
+        particle.vy = (particle.goalY! - particle.y) * 0.1;
+        particle.container.alpha = 1 - particle.life / particle.maxLife;
+      }
       particle.x += particle.vx;
       particle.y += particle.vy;
-      particle.vx *= 0.99;
-      particle.vy += 0.01;
-      particle.container.x = particle.x * this._cellSize;
+      particle.container.x = this.getWrappedX(particle.x * this._cellSize);
       particle.container.y = particle.y * this._cellSize;
-      particle.container.alpha = particle.life / particle.maxLife;
       if (--particle.life <= 0) {
         this._world.removeChild(particle.container);
       }
@@ -759,14 +783,16 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   private _renderParticle(particle: IParticle, color: number) {
-    const particleSize = this._cellSize / particleDivisions;
+    const particleSize = this._cellSize * 0.1;
     this._renderCopies(
       particle,
       1,
-      (graphics) => {
+      (graphics, shadowIndexWithDirection) => {
+        const shadowX = shadowIndexWithDirection * this._gridWidth;
+        graphics.x = shadowX;
         graphics.clear();
         graphics.beginFill(color);
-        graphics.drawRect(0, 0, particleSize, particleSize);
+        graphics.drawCircle(0, 0, particleSize);
       },
       () => {
         const graphics = new PIXI.Graphics();

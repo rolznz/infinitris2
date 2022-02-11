@@ -7,7 +7,7 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import Camera from '@src/rendering/Camera';
-import IRenderer from '@src/rendering/IRenderer';
+import IRenderer, { ParticleType } from '@src/rendering/IRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 
 const idealCellSize = 32;
@@ -119,6 +119,13 @@ export abstract class BaseRenderer implements IRenderer {
   abstract onCellBehaviourChanged(
     cell: ICell,
     previousBehaviour: ICellBehaviour
+  ): void;
+
+  abstract emitParticle(
+    x: number,
+    y: number,
+    color: number,
+    type: ParticleType
   ): void;
 
   _renderCopies<T>(

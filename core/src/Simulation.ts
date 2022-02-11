@@ -194,6 +194,9 @@ export default class Simulation implements ISimulation {
    * @param player the player to add.
    */
   addPlayer(player: IPlayer) {
+    if (this._players[player.id]) {
+      throw new Error('Player already exists: ' + player.id);
+    }
     this._players[player.id] = player;
   }
 

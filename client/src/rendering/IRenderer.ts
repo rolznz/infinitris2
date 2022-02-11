@@ -3,6 +3,8 @@ import ControlSettings from '@models/ControlSettings';
 import ISimulation from '@models/ISimulation';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 
+export type ParticleType = 'classic' | 'capture';
+
 export default interface IRenderer extends ISimulationEventListener {
   /**
    * Creates the renderer.
@@ -15,6 +17,8 @@ export default interface IRenderer extends ISimulationEventListener {
   destroy(): void;
 
   rerenderGrid(): void;
+
+  emitParticle(x: number, y: number, color: number, type: ParticleType): void;
 
   /**
    * Helper controls to render on the screen

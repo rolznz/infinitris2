@@ -5,6 +5,7 @@ import Routes from '@/models/Routes';
 import { Link as RouterLink } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import FlexBox from '../FlexBox';
+import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
 
 type GameModeCardProps = {
   image: string;
@@ -37,8 +38,12 @@ export function GameModeCard({
     }),
     [isLandscape]
   );
+  function onClick() {
+    playSound(SoundKey.click);
+  }
+
   return (
-    <RouterLink to={link} style={linkStyle}>
+    <RouterLink to={link} style={linkStyle} onClick={onClick}>
       <img src={image} alt="" style={imageStyle} />
       <FlexBox
         position="absolute"

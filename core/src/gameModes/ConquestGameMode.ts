@@ -6,10 +6,12 @@ import IGrid from '@models/IGrid';
 import { IPlayer } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
 
+const NEXT_ROUND_DELAY_MS = 100;
 export interface IColumnCapture {
   //column:
   playerId?: number;
   value: number;
+  attackerId?: number;
 }
 
 type PlayerHealthMap = { [playerId: number]: number };
@@ -141,6 +143,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
           Object.values(playerCaptureValues).reduce((a, b) => a + b);
         // multiply by number of captured cells
         const changeMultiplier = 0.02 * highestPlayerEntry.value;
+        this._columnCaptures[c].attackerId = highestPlayer.id;
         if (
           this._columnCaptures[c].playerId !== highestPlayer.id &&
           this._columnCaptures[c].value > 0
@@ -161,6 +164,15 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         playerColumnCaptureCounts[highestPlayer.id] =
           (playerColumnCaptureCounts[highestPlayer.id] || 0) + 1;
         highestPlayer.score += 1;
+      } else {
+        this._columnCaptures[c].attackerId = undefined;
+        this._columnCaptures[c].value = Math.max(
+          this._columnCaptures[c].value - 0.01,
+          0
+        );
+        if (this._columnCaptures[c].value === 0) {
+          this._columnCaptures[c].playerId = undefined;
+        }
       }
     }
 
@@ -237,6 +249,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       player.isSpectating = false;
       this._playerHealths[player.id] = 1;
       player.score = 0;
+      player.estimatedSpawnDelay = 0;
     }
     this._isWaitingForNextRound = false;
     this._simulation.grid.reset();
@@ -245,7 +258,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
 
   private _waitForNextRound() {
     this._isWaitingForNextRound = true;
-    this._nextRoundTime = Date.now() + 10000;
+    this._nextRoundTime = Date.now() + NEXT_ROUND_DELAY_MS;
   }
 
   getCurrentState(): ConquestGameModeState {

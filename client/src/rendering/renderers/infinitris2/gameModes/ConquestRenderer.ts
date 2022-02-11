@@ -32,7 +32,20 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._renderer = renderer;
   }
 
-  restart() {}
+  restart() {
+    this.rerender();
+  }
+
+  rerender() {
+    if (!this._renderer.simulation) {
+      return;
+    }
+    const conquestGameMode = this._renderer.simulation
+      .gameMode as ConquestGameMode;
+
+    this._renderColumnCaptures(conquestGameMode.columnCaptures);
+    this._renderPlayerHealthBars(conquestGameMode.playerHealths);
+  }
 
   onSimulationStep() {
     if (!this._renderer.simulation) {
@@ -43,8 +56,7 @@ export class ConquestRenderer implements IGameModeRenderer {
 
     if (++this._lastGameModeStep > 100) {
       this._lastGameModeStep = 0;
-      this._renderColumnCaptures(conquestGameMode.columnCaptures);
-      this._renderPlayerHealthBars(conquestGameMode.playerHealths);
+      this.rerender();
     }
     for (let player of this._renderer.simulation.players) {
       const renderablePlayerHealth = this._playerHealthBars[player.id];
@@ -72,19 +84,44 @@ export class ConquestRenderer implements IGameModeRenderer {
       renderableColumnCapture.container.x = this._renderer.getWrappedX(
         i * this._renderer.cellSize
       );
-      let lowestFreeCellY = 0;
-      for (
-        ;
-        lowestFreeCellY < this._renderer.simulation.grid.numRows;
-        lowestFreeCellY++
-      ) {
-        if (!this._renderer.simulation.grid.cells[lowestFreeCellY][i].isEmpty) {
-          break;
-        }
-      }
       renderableColumnCapture.container.y =
-        (lowestFreeCellY - 1) * this._renderer.cellSize;
+        (this._getLowestFreeCellY(i) - 1) * this._renderer.cellSize;
+
+      if (
+        conquestGameMode.columnCaptures[i].attackerId !== undefined &&
+        conquestGameMode.columnCaptures[i].value < 1 &&
+        Math.random() < 0.05
+      ) {
+        const attacker = this._renderer.simulation!.getPlayer(
+          conquestGameMode.columnCaptures[i].attackerId!
+        );
+        this._renderer.emitParticle(
+          (renderableColumnCapture.container.x +
+            this._renderer.cellSize * 0.5) /
+            this._renderer.cellSize,
+          (renderableColumnCapture.container.y +
+            this._renderer.cellSize * 0.5) /
+            this._renderer.cellSize,
+          attacker.color,
+          'capture'
+        );
+      }
     }
+  }
+  private _getLowestFreeCellY(column: number) {
+    let lowestFreeCellY = 0;
+    for (
+      ;
+      lowestFreeCellY < this._renderer.simulation!.grid.numRows;
+      lowestFreeCellY++
+    ) {
+      if (
+        !this._renderer.simulation!.grid.cells[lowestFreeCellY][column].isEmpty
+      ) {
+        break;
+      }
+    }
+    return lowestFreeCellY;
   }
 
   onPlayerDestroyed(player: IPlayer) {
@@ -115,7 +152,8 @@ export class ConquestRenderer implements IGameModeRenderer {
       renderableColumnCapture.container.x = this._renderer.getWrappedX(
         i * this._renderer.cellSize
       );
-      renderableColumnCapture.container.y = this._renderer.gridHeight;
+      renderableColumnCapture.container.y =
+        (this._getLowestFreeCellY(i) - 1) * this._renderer.cellSize;
 
       this._renderer._renderCopies(
         renderableColumnCapture,
@@ -125,35 +163,51 @@ export class ConquestRenderer implements IGameModeRenderer {
           graphics.x = shadowX;
 
           graphics.clear();
-          const player = columnCaptures[i].playerId
-            ? this._renderer.simulation!.getPlayer(columnCaptures[i].playerId!)
-            : undefined;
+          const player =
+            columnCaptures[i].playerId !== undefined
+              ? this._renderer.simulation!.getPlayer(
+                  columnCaptures[i].playerId!
+                )
+              : undefined;
           if (player) {
-            graphics.beginFill(player.color);
-
             if (columnCaptures[i].value < 1) {
-              graphics.drawRect(
-                this._renderer.cellSize * 0.2,
-                this._renderer.cellSize * 0.4,
-                this._renderer.cellSize * 0.6 * columnCaptures[i].value,
-                this._renderer.cellSize * 0.1
-              );
-              graphics.beginFill(player.color, 0.3);
-              graphics.drawRect(
-                this._renderer.cellSize * 0.2,
-                this._renderer.cellSize * 0.4,
-                this._renderer.cellSize * 0.6,
-                this._renderer.cellSize * 0.1
-              );
-            } else {
-              graphics.drawRect(
-                this._renderer.cellSize * 0.3,
-                this._renderer.cellSize * 0.3,
-                this._renderer.cellSize * 0.4,
-                this._renderer.cellSize * 0.4
+              graphics.beginFill(player.color);
+              graphics.drawCircle(
+                this._renderer.cellSize * 0.5,
+                this._renderer.cellSize * 0.5,
+                this._renderer.cellSize * 0.2
               );
             }
+
+            graphics.beginFill(player.color, columnCaptures[i].value);
+            graphics.drawCircle(
+              this._renderer.cellSize * 0.5,
+              this._renderer.cellSize * 0.5,
+              this._renderer.cellSize * 0.3
+            );
+          } else {
+            graphics.beginFill(0, 0.1);
+            graphics.drawCircle(
+              this._renderer.cellSize * 0.5,
+              this._renderer.cellSize * 0.5,
+              this._renderer.cellSize * 0.1
+            );
           }
+          /*if (
+            columnCaptures[i].attackerId !== undefined &&
+            columnCaptures[i].attackerId != columnCaptures[i].playerId
+          ) {
+            const attacker = this._renderer.simulation!.getPlayer(
+              columnCaptures[i].attackerId!
+            );
+            graphics.endFill();
+            graphics.lineStyle(1, attacker.color);
+            graphics.drawCircle(
+              this._renderer.cellSize * 0.5,
+              this._renderer.cellSize * 0.5,
+              this._renderer.cellSize * 0.3
+            );
+          }*/
         },
         () => {
           const graphics = new PIXI.Graphics();

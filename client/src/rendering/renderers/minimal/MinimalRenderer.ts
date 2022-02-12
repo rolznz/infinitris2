@@ -21,6 +21,7 @@ import { GridLines } from '@src/rendering/renderers/infinitris2/GridLines';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import ISimulation from '@models/ISimulation';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
+import { ClientApiConfig } from '@models/IClientApi';
 
 const minCellSize = 32;
 const particleDivisions = 4;
@@ -80,10 +81,11 @@ export default class MinimalRenderer extends BaseRenderer {
   private _gridLines!: GridLines;
 
   constructor(
+    clientApiConfig: ClientApiConfig,
     preferredInputMethod: InputMethod = 'keyboard',
     teachControls: boolean = false
   ) {
-    super(0x333333);
+    super(clientApiConfig, 0x333333);
     this._preferredInputMethod = preferredInputMethod;
     this._teachControls = teachControls;
   }

@@ -6,6 +6,8 @@ import { SimulationSettings } from './SimulationSettings';
 export type NetworkPlayerInfo = {
   readonly nickname: string;
   readonly color: number;
+  readonly characterId: string;
+  readonly patternFilename: string;
   readonly id: number;
   readonly score: number;
   readonly isSpectating: boolean;
@@ -14,6 +16,8 @@ export type NetworkPlayerInfo = {
 export interface IPlayer {
   get nickname(): string;
   get color(): number;
+  get patternFilename(): string | undefined;
+  get characterId(): string | undefined;
   get id(): number;
   get isHuman(): boolean;
   get isNetworked(): boolean;

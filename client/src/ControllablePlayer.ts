@@ -7,9 +7,19 @@ export default class ControllablePlayer extends Player {
     playerId: number,
     nickname?: string,
     color?: number,
-    spectate?: boolean
+    spectate?: boolean,
+    patternFilename?: string,
+    characterId?: string
   ) {
-    super(simulation, playerId, nickname, color, spectate);
+    super(
+      simulation,
+      playerId,
+      nickname,
+      color,
+      spectate,
+      patternFilename,
+      characterId
+    );
   }
 
   get isHuman(): boolean {

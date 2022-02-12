@@ -103,6 +103,13 @@ export default class Block implements IBlock {
   get row(): number {
     return this._row;
   }
+  get topRow(): number {
+    let topRow = 9999;
+    for (const cell of this._cells) {
+      topRow = Math.min(topRow, cell.row);
+    }
+    return topRow;
+  }
   get bottomRow(): number {
     let bottomRow = 0;
     for (const cell of this._cells) {

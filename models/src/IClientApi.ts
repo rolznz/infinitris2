@@ -2,19 +2,20 @@ import { InputMethod } from './InputMethod';
 import ISimulationEventListener from './ISimulationEventListener';
 import { IChallenge } from './IChallenge';
 import IChallengeClient from './IChallengeClient';
-import { IPlayer } from './IPlayer';
+import { NetworkPlayerInfo } from './IPlayer';
 import { RendererType } from './RendererType';
 import { SimulationSettings } from './SimulationSettings';
 import { RendererQuality } from './RendererQuality';
 import { WorldType } from '@models/WorldType';
 import { WithControls } from '@models/IUser';
 import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
+import { type } from 'os';
 
 export type LaunchOptions = WithControls & {
   listener?: ISimulationEventListener;
   socketListener?: IClientSocketEventListener;
   preferredInputMethod?: InputMethod;
-  player?: IPlayer;
+  player?: Partial<NetworkPlayerInfo>;
   rendererType?: RendererType;
   //otherPlayers?: IPlayer[]; // AI & network players
   numBots?: number;
@@ -28,7 +29,12 @@ export type LaunchOptions = WithControls & {
   roomId?: number;
 };
 
+export type ClientApiConfig = {
+  imagesRootUrl: string;
+};
+
 export default interface IClientApi {
+  setConfig(config: ClientApiConfig): void;
   releaseClient(): void;
   getVersion(): string;
   launchSinglePlayer(options: LaunchOptions): void;

@@ -33,6 +33,7 @@ import { ConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes
 import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GameModeRenderer';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
+import { ClientApiConfig } from '@models/IClientApi';
 
 const particleDivisions = 4;
 const numPatternDivisions = 4;
@@ -75,8 +76,7 @@ interface IParticle extends IRenderableEntity<PIXI.Graphics> {
 }
 
 // TODO: retrieve URLs from players
-const patternImageUrl = `${imagesDirectory}/pattern_13.png`;
-const faceUrl = `${imagesDirectory}/face_9.png`;
+//const faceUrl = `${imagesDirectory}/face_9.png`;
 //this._app.loader.add(this._getFloorImageFilename());
 
 export default class Infinitris2Renderer extends BaseRenderer {
@@ -101,7 +101,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _teachControls: boolean;
   private _worldBackground!: WorldBackground;
   private _gridFloor!: GridFloor;
-  private _patternTextures: PIXI.Texture[] = [];
+  private _patternTextures: { [filename: string]: PIXI.Texture[] } = {};
   private _dayIndicator!: DayIndicator;
   private _spawnDelayIndicator!: SpawnDelayIndicator;
   private _scoreboard!: Scoreboard;
@@ -114,12 +114,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _gameModeRenderer: IGameModeRenderer | undefined;
 
   constructor(
+    clientApiConfig: ClientApiConfig,
     preferredInputMethod: InputMethod = 'keyboard',
     teachControls: boolean = false,
     rendererQuality?: RendererQuality,
     worldType: WorldType = 'grass'
   ) {
-    super();
+    super(clientApiConfig);
     this._preferredInputMethod = preferredInputMethod;
     this._teachControls = teachControls;
     this._rendererQuality = rendererQuality;
@@ -157,32 +158,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._dayIndicator = new DayIndicator(this._app);
 
     this._gridFloor = new GridFloor(this._app, this._worldType);
-    this._app.loader.add(patternImageUrl);
-    this._app.loader.add(faceUrl);
+    //this._app.loader.add(faceUrl);
 
     this._scoreboard = new Scoreboard(this._app);
     this._spawnDelayIndicator = new SpawnDelayIndicator(this._app);
     this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
 
     await new Promise((resolve) => this._app.loader.load(resolve));
-
-    const fullPatternTexture = PIXI.Texture.from(patternImageUrl);
-    const patternDivisionSize = fullPatternTexture.width / numPatternDivisions;
-    for (let x = 0; x < numPatternDivisions; x++) {
-      for (let y = 0; y < numPatternDivisions; y++) {
-        this._patternTextures.push(
-          new PIXI.Texture(
-            fullPatternTexture.baseTexture,
-            new PIXI.Rectangle(
-              x * patternDivisionSize,
-              y * patternDivisionSize,
-              patternDivisionSize,
-              patternDivisionSize
-            )
-          )
-        );
-      }
-    }
 
     this._worldBackground.createImages();
     this._gridFloor.createImages();
@@ -356,6 +338,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
    * @inheritdoc
    */
   onBlockCreated(block: IBlock) {
+    this._createBlock(block);
+  }
+  private _createBlock(block: IBlock) {
     const renderableBlock: IRenderableBlock = {
       cells: block.cells.map((cell) => ({
         cell,
@@ -426,7 +411,45 @@ export default class Infinitris2Renderer extends BaseRenderer {
     //this._renderCells(block.cells);
   }
 
-  onPlayerCreated(player: IPlayer): void {}
+  onPlayerCreated(player: IPlayer): void {
+    if (player.characterId) {
+      this._app.loader.add(this._getFaceUrl(player.characterId), () => {
+        if (player.block) {
+          this._renderBlock(player.block);
+        }
+      });
+    }
+    if (player.patternFilename) {
+      const patternImageUrl = this._getPatternUrl(player.patternFilename);
+      this._app.loader.add(patternImageUrl, () => {
+        const fullPatternTexture = PIXI.Texture.from(patternImageUrl);
+        const patternDivisionSize =
+          fullPatternTexture.width / numPatternDivisions;
+        this._patternTextures[player.patternFilename!] = [];
+        for (let x = 0; x < numPatternDivisions; x++) {
+          for (let y = 0; y < numPatternDivisions; y++) {
+            this._patternTextures[player.patternFilename!].push(
+              new PIXI.Texture(
+                fullPatternTexture.baseTexture,
+                new PIXI.Rectangle(
+                  x * patternDivisionSize,
+                  y * patternDivisionSize,
+                  patternDivisionSize,
+                  patternDivisionSize
+                )
+              )
+            );
+          }
+        }
+
+        if (player.block) {
+          // recreate the block to apply the new pattern (FIXME: should just be able to replace the texture)
+          //this._removeBlock(player.block);
+          //this._createBlock(player.block);
+        }
+      });
+    }
+  }
   onPlayerDestroyed(player: IPlayer): void {
     this._gameModeRenderer?.onPlayerDestroyed(player);
   }
@@ -680,7 +703,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
         renderableCell.cell.column * this._cellSize
       );
       renderableCell.container.y = renderableCell.cell.row * this._cellSize;
-      this._renderCellCopies(renderableCell, RenderCellType.Cell, cell.color);
+      this._renderCellCopies(
+        renderableCell,
+        RenderCellType.Cell,
+        cell.color,
+        cell.player?.patternFilename
+      );
     } else {
       renderableCell.children.forEach((child) => {
         child.renderableObject.graphics.clear();
@@ -693,10 +721,18 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
   private _renderBlock(block: IBlock) {
     const renderableBlock: IRenderableBlock = this._blocks[block.player.id];
+    if (!renderableBlock) {
+      return;
+    }
     this._moveBlock(block);
 
     renderableBlock.cells.forEach((cell) => {
-      this._renderCellCopies(cell, RenderCellType.Block, block.player.color);
+      this._renderCellCopies(
+        cell,
+        RenderCellType.Block,
+        block.player.color,
+        block.player.patternFilename
+      );
     });
 
     this._renderCopies(
@@ -723,21 +759,28 @@ export default class Infinitris2Renderer extends BaseRenderer {
         return text;
       }
     );
-    this._renderCopies(
-      renderableBlock.face,
-      1,
-      (face, shadowIndexWithDirection) => {
-        const shadowX = shadowIndexWithDirection * this._gridWidth;
-        face.x = shadowX;
-      },
-      () => {
-        const faceSprite = PIXI.Sprite.from(faceUrl);
-        faceSprite.scale.set((this._cellSize / faceSprite.width) * 2);
-        faceSprite.anchor.set(0.5, 0.5);
-        renderableBlock.face.container.addChild(faceSprite);
-        return faceSprite;
-      }
-    );
+    if (
+      block.player.characterId &&
+      this._app.loader.resources[this._getFaceUrl(block.player.characterId)]
+        ?.isComplete
+    )
+      this._renderCopies(
+        renderableBlock.face,
+        1,
+        (face, shadowIndexWithDirection) => {
+          const shadowX = shadowIndexWithDirection * this._gridWidth;
+          face.x = shadowX;
+        },
+        () => {
+          const faceSprite = PIXI.Sprite.from(
+            this._getFaceUrl(block.player.characterId!)
+          );
+          faceSprite.scale.set((this._cellSize / faceSprite.width) * 2);
+          faceSprite.anchor.set(0.5, 0.5);
+          renderableBlock.face.container.addChild(faceSprite);
+          return faceSprite;
+        }
+      );
 
     const followingPlayer = this._simulation?.followingPlayer;
     if (followingPlayer && block.player.id === followingPlayer.id) {
@@ -768,7 +811,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     });
 
     const textCentreX = block.centreX * cellSize;
-    const textY = block.row * cellSize - cellSize * 1;
+    const textY = block.topRow * cellSize - cellSize * 1;
     renderableBlock.playerNameText.container.x = textCentreX;
     renderableBlock.playerNameText.container.y = textY;
 
@@ -805,7 +848,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _renderCellCopies(
     renderableCell: IRenderableCell,
     renderCellType: RenderCellType,
-    color: number
+    color: number,
+    patternFilename: string | undefined
   ) {
     if (!this._simulation) {
       return;
@@ -1021,13 +1065,16 @@ export default class Infinitris2Renderer extends BaseRenderer {
       () => {
         const graphics = new PIXI.Graphics();
         // FIXME: non-player cells shouldn't have patterns
-        const patternSprite = PIXI.Sprite.from(
-          this._patternTextures[
-            (renderableCell.cell.row % numPatternDivisions) +
-              numPatternDivisions *
-                (renderableCell.cell.column % numPatternDivisions)
-          ]
-        );
+        let patternSprite: PIXI.Sprite | undefined;
+        if (patternFilename && this._patternTextures[patternFilename]) {
+          patternSprite = PIXI.Sprite.from(
+            this._patternTextures[patternFilename][
+              (renderableCell.cell.row % numPatternDivisions) +
+                numPatternDivisions *
+                  (renderableCell.cell.column % numPatternDivisions)
+            ]
+          );
+        }
         renderableCell.container.addChild(graphics);
         if (patternSprite) {
           renderableCell.container.addChild(patternSprite);
@@ -1201,5 +1248,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
           ? 1
           : 0;
     });*/
+  }
+  private _getFaceUrl(characterId: string): string {
+    return `${this._clientApiConfig.imagesRootUrl}/faces/${characterId}.png`;
+  }
+  private _getPatternUrl(patternFilename: string): string {
+    return `${this._clientApiConfig.imagesRootUrl}/patterns/${patternFilename}`;
   }
 }

@@ -3,15 +3,20 @@ import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
+import { LocalUser } from '@/state/LocalUserStore';
 import {
   GameModeType,
+  getCharacterPath,
   hexToString,
   IBlock,
+  ICharacter,
+  stringToHex,
   WorldType,
 } from 'infinitris2-models';
 import { IPlayer } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
+import { useDocument } from 'swr-firestore';
 import useAppStore from '../../state/AppStore';
 import { useUser, useUserStore } from '../../state/UserStore';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
@@ -30,7 +35,7 @@ export default function SinglePlayerPage() {
   const userStore = useUserStore();
   const musicOn =
     userStore.user.musicOn !== undefined ? userStore.user.musicOn : true;
-  const hasLoaded = useLoaderStore((store) => store.hasFinished);
+
   const requiresRedirect = false;
   const numBots = parseInt(useSearchParam('numBots') || '0');
   const botReactionDelay = parseInt(useSearchParam('botReactionDelay') || '30');
@@ -47,12 +52,30 @@ export default function SinglePlayerPage() {
     useSearchParam('calculateSpawnDelays') === 'true';
   const preventTowers = useSearchParam('preventTowers') === 'true';
 
+  const user = useUser();
+  const nickname = (user as LocalUser).nickname;
+  const characterId = '319'; //'487';
+  const { data: character } = useDocument<ICharacter>(
+    getCharacterPath(characterId)
+  );
+
+  const hasLoaded = useLoaderStore((store) => store.hasFinished) && !!character;
+
   useReleaseClientOnExitPage();
 
   useEffect(() => {
     if (!requiresRedirect && launchSinglePlayer && !hasLaunched && hasLoaded) {
       setLaunched(true);
       launchSinglePlayer({
+        player: {
+          nickname,
+          color:
+            character.data()?.color !== undefined
+              ? stringToHex(character?.data()?.color!)
+              : undefined,
+          patternFilename: character.data()?.patternFilename,
+          characterId,
+        },
         worldType,
         controls_keyboard,
         controls_gamepad,
@@ -166,6 +189,8 @@ export default function SinglePlayerPage() {
     dayLength,
     worldType,
     gameModeType,
+    character,
+    nickname,
   ]);
 
   return <GameUI />;

@@ -302,6 +302,7 @@ export async function generateCharacterImage(
   const habitatFilename = `${habitatsDirectory}/${index}.svg`;
   const thumbnailFilename = `${charactersDirectory}/${index}_thumbnail.png`;
   const faceFilename = `${facesDirectory}/${index}.png`;
+  const faceThumbnailFilename = `${facesDirectory}/${index}_thumbnail.png`;
 
   const characterImages: sharp.OverlayOptions[] = [
     {
@@ -371,6 +372,7 @@ export async function generateCharacterImage(
 
   // generate thumbnails
   await sharp(blockFilename).resize(thumbnailSize).toFile(thumbnailFilename);
+  await sharp(faceFilename).resize(thumbnailSize).toFile(faceThumbnailFilename);
   // embedded base64 for faster character previews
   const thumbnail = (
     await sharp(blockFilename)

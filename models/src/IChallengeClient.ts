@@ -1,6 +1,5 @@
-import IClient from './IClient';
 import { IIngameChallengeAttempt } from './IChallengeAttempt';
 
-export default interface IChallengeClient extends IClient {
+export default interface IChallengeClient {
   getChallengeAttempt(): IIngameChallengeAttempt;
 }

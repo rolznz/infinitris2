@@ -33,6 +33,7 @@ export default interface IBlock {
   get layout(): Layout;
   get rotation(): number;
   get bottomRow(): number;
+  get topRow(): number;
   get id(): number;
   update(): void;
   canMove(

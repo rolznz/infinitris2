@@ -27,12 +27,14 @@ import {
   IIngameChallengeAttempt,
 } from '@models/IChallengeAttempt';
 import ChallengeRewardCriteria from '@models/ChallengeRewardCriteria';
-import { LaunchOptions } from '@models/IClientApi';
+import { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
 import IGrid from '@models/IGrid';
+import { BaseClient } from '@src/client/BaseClient';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
 export default class ChallengeClient
+  extends BaseClient
   implements IChallengeClient, ISimulationEventListener
 {
   // FIXME: restructure to not require definite assignment
@@ -47,13 +49,17 @@ export default class ChallengeClient
   private _blockCreateFailed!: boolean;
   private _blockDied!: boolean;
   private _controls?: ControlSettings;
-  private _player?: IPlayer;
 
-  constructor(challenge: IChallenge, options: LaunchOptions) {
+  constructor(
+    clientApiConfig: ClientApiConfig,
+    challenge: IChallenge,
+    options: LaunchOptions
+  ) {
+    super(clientApiConfig, options);
     this._preferredInputMethod = options.preferredInputMethod;
     this._controls = options.controls_keyboard;
-    this._player = options.player;
-    this._create(challenge, options.listener);
+    this._simulationEventListener = this._launchOptions.listener;
+    this._create(challenge);
   }
 
   /**
@@ -274,16 +280,13 @@ export default class ChallengeClient
     };
   }
 
-  private async _create(
-    challenge: IChallenge,
-    listener?: ISimulationEventListener
-  ) {
+  private async _create(challenge: IChallenge) {
     this._challenge = challenge;
     this._renderer = new MinimalRenderer(
+      this._clientApiConfig,
       this._preferredInputMethod,
       true // TODO: check if there is 1+ key instruction cell
     );
-    this._simulationEventListener = listener;
     await this._renderer.create();
 
     this._createTempObjects();
@@ -328,8 +331,8 @@ export default class ChallengeClient
     const player = new ControllablePlayer(
       simulation,
       playerId,
-      this._player?.nickname,
-      this._player?.color,
+      this._launchOptions.player?.nickname,
+      this._launchOptions.player?.color,
       this._simulation.shouldNewPlayerSpectate
     );
     simulation.addPlayer(player);

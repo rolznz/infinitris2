@@ -1,4 +1,4 @@
-import IClientApi, { LaunchOptions } from '@models/IClientApi';
+import IClientApi, { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
 import IClient from '@models/IClient';
 import NetworkClient from '../client/NetworkClient';
 import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
@@ -16,10 +16,18 @@ import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 
 export default class ClientApi implements IClientApi {
   private _client?: IClient;
+  private _config: ClientApiConfig;
 
   constructor() {
     console.log('Infinitris Client');
     console.log(`Build ${__VERSION__}`);
+    this._config = {
+      imagesRootUrl: '/',
+    };
+  }
+
+  setConfig(config: ClientApiConfig) {
+    this._config = config;
   }
 
   /**
@@ -116,7 +124,7 @@ export default class ClientApi implements IClientApi {
    */
   launchSinglePlayer = (options: LaunchOptions) => {
     this.releaseClient();
-    this._client = new SinglePlayerClient(options);
+    this._client = new SinglePlayerClient(this._config, options);
   };
 
   /**
@@ -124,7 +132,11 @@ export default class ClientApi implements IClientApi {
    */
   launchChallenge = (challenge: IChallenge, options: LaunchOptions) => {
     this.releaseClient();
-    const challengeClient = new ChallengeClient(challenge, options);
+    const challengeClient = new ChallengeClient(
+      this._config,
+      challenge,
+      options
+    );
     this._client = challengeClient;
     return challengeClient;
   };
@@ -139,7 +151,7 @@ export default class ClientApi implements IClientApi {
    */
   launchNetworkClient = (url: string, options: LaunchOptions) => {
     this.releaseClient();
-    this._client = new NetworkClient(url, options);
+    this._client = new NetworkClient(this._config, url, options);
   };
 
   /**

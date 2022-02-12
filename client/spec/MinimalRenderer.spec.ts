@@ -6,14 +6,14 @@ describe('MinimalRenderer', () => {
   it('attaches and removes itself from the DOM', async () => {
     document.body.innerHTML = '';
     expect(document.body.querySelector('canvas')).not.toBeTruthy();
-    const minimalRenderer = new MinimalRenderer();
+    const minimalRenderer = new MinimalRenderer({ imagesRootUrl: '/' });
     await minimalRenderer.create();
     expect(document.body.querySelector('canvas')).toBeTruthy();
     minimalRenderer.destroy();
     expect(document.body.querySelector('canvas')).not.toBeTruthy();
   });
   it('receives simulation init event', async () => {
-    const minimalRenderer = new MinimalRenderer();
+    const minimalRenderer = new MinimalRenderer({ imagesRootUrl: '/' });
     await minimalRenderer.create();
     const onSimulationInitSpy = spyOn(minimalRenderer, 'onSimulationInit');
     const simulation = new Simulation(new Grid());

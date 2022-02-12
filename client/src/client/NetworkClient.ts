@@ -33,23 +33,28 @@ import { IClientSocket } from '@models/networking/client/IClientSocket';
 import { IServerMessage } from '@models/networking/server/IServerMessage';
 import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 import { ServerMessageType } from '@models/networking/server/ServerMessageType';
-import { LaunchOptions } from '@models/IClientApi';
+import { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
 import IClientJoinRoomRequest from '@core/networking/client/IClientJoinRoomRequest';
 import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/IServerPlayerToggleSpectatingEvent';
+import { BaseClient } from '@src/client/BaseClient';
 
 export default class NetworkClient
-  implements IClient, IClientSocketEventListener, ISimulationEventListener
+  extends BaseClient
+  implements IClientSocketEventListener, ISimulationEventListener
 {
   private _socket: IClientSocket;
   // FIXME: restructure to not require definite assignment
   private _renderer!: IRenderer;
   private _simulation!: Simulation;
-  private _launchOptions: LaunchOptions;
   private _playerId?: number;
   private _input: Input | undefined;
   private _lastMessageId: number;
-  constructor(url: string, options: LaunchOptions) {
-    this._launchOptions = options;
+  constructor(
+    clientApiConfig: ClientApiConfig,
+    url: string,
+    options: LaunchOptions
+  ) {
+    super(clientApiConfig, options);
     this._lastMessageId = -1;
     const eventListeners: IClientSocketEventListener[] = [this];
     if (options.socketListener) {
@@ -63,7 +68,7 @@ export default class NetworkClient
    */
   async onConnect() {
     console.log('Connected');
-    this._renderer = new Infinitris2Renderer();
+    this._renderer = new Infinitris2Renderer(this._clientApiConfig);
     await this._renderer.create();
     const joinRoomRequest: IClientJoinRoomRequest = {
       type: ClientMessageType.JOIN_ROOM_REQUEST,

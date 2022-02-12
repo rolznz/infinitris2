@@ -9,6 +9,7 @@ import ISimulation from '@models/ISimulation';
 import Camera from '@src/rendering/Camera';
 import IRenderer, { ParticleType } from '@src/rendering/IRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
+import { ClientApiConfig } from '@models/IClientApi';
 
 const idealCellSize = 32;
 const minVerticalCellCount = 21;
@@ -34,8 +35,10 @@ export abstract class BaseRenderer implements IRenderer {
   protected _hasScrollX: boolean;
   protected _floorHeight: number;
   protected _clampedCameraY: number;
+  protected _clientApiConfig: ClientApiConfig;
 
-  constructor(backgroundColor?: number) {
+  constructor(clientApiConfig: ClientApiConfig, backgroundColor?: number) {
+    this._clientApiConfig = clientApiConfig;
     this._camera = new Camera();
     this._gridWidth = 0;
     this._gridHeight = 0;

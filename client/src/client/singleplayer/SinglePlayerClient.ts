@@ -12,21 +12,25 @@ import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { IPlayer } from '@models/IPlayer';
 import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
-import { LaunchOptions } from '@models/IClientApi';
+import { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
 import { SimulationSettings } from '@models/SimulationSettings';
 import AIPlayer from '@core/player/AIPlayer';
 import { stringToHex } from '@models/util/stringToHex';
 import { colors } from '@models/colors';
 import IGrid from '@models/IGrid';
+import { BaseClient } from '@src/client/BaseClient';
 
 export default class SinglePlayerClient
-  implements IClient, ISimulationEventListener
+  extends BaseClient
+  implements ISimulationEventListener
 {
   // FIXME: restructure to not require definite assignment
   private _renderer!: IRenderer;
   private _simulation!: Simulation;
   private _input!: Input;
-  constructor(options: LaunchOptions) {
+
+  constructor(clientApiConfig: ClientApiConfig, options: LaunchOptions) {
+    super(clientApiConfig, options);
     this._create(options);
   }
 
@@ -110,8 +114,9 @@ export default class SinglePlayerClient
   private async _create(options: LaunchOptions) {
     this._renderer =
       options.rendererType === 'minimal'
-        ? new MinimalRenderer()
+        ? new MinimalRenderer(this._clientApiConfig)
         : new Infinitris2Renderer(
+            this._clientApiConfig,
             undefined,
             undefined,
             options.rendererQuality,
@@ -139,7 +144,9 @@ export default class SinglePlayerClient
       playerId,
       options.player?.nickname,
       options.player?.color,
-      options.spectate || this._simulation.shouldNewPlayerSpectate
+      options.spectate || this._simulation.shouldNewPlayerSpectate,
+      options.player?.patternFilename,
+      options.player?.characterId
     );
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);

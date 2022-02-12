@@ -25,6 +25,9 @@ const useInfinitrisClient = () => {
         const clientScript = document.createElement('script');
         clientScript.onload = async () => {
           console.log('Loaded Infinitris Client');
+          window.infinitris2.setConfig({
+            imagesRootUrl: process.env.REACT_APP_IMAGES_ROOT_URL!,
+          });
           useLoaderStore.getState().increaseStepsCompleted();
           useAppStore.setState({
             clientApi: window.infinitris2,

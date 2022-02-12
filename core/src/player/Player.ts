@@ -25,6 +25,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _nextLayoutRotation?: number;
   private _nickname: string;
   private _color: number;
+  private _patternFilename?: string;
+  private _characterId?: string;
   private _simulation: ISimulation;
   private _nextSpawnTime: number;
   private _isFirstBlock: boolean;
@@ -36,21 +38,33 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     id: number,
     nickname: string = 'Guest',
     color: number = 0xf33821,
-    isSpectating = false
+    isSpectating = false,
+    patternFilename?: string,
+    characterId?: string
   ) {
-    console.log('Creating player ' + id);
+    console.log(
+      'Creating player ' + id,
+      'character',
+      characterId,
+      'color',
+      color,
+      'pattern',
+      patternFilename
+    );
     this._id = id;
     this._eventListeners = [];
-    this.addEventListener(simulation);
     this._score = 0;
     this._nickname = nickname;
     this._color = color;
     this._simulation = simulation;
     this._nextSpawnTime = 0;
     this._isFirstBlock = true;
-    this._calculateSpawnDelay();
     this._isSpectating = isSpectating;
     this._isChatting = false;
+    this._patternFilename = patternFilename;
+    this._characterId = characterId;
+    this.addEventListener(simulation);
+    this._calculateSpawnDelay();
     this._eventListeners.forEach((listener) => listener.onPlayerCreated(this));
   }
 
@@ -66,6 +80,14 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
   set score(score: number) {
     this._score = score;
+  }
+
+  get patternFilename(): string | undefined {
+    return this._patternFilename;
+  }
+
+  get characterId(): string | undefined {
+    return this._characterId;
   }
 
   get nickname(): string {

@@ -5,6 +5,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const { buildNumber } = require('../core/webpack.config');
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   target: 'web',
@@ -52,5 +53,6 @@ module.exports = {
     new webpack.DefinePlugin({
       __VERSION__: JSON.stringify(buildNumber),
     }),
+    new Dotenv(),
   ],
 };

@@ -22,7 +22,7 @@ export default class ClientApi implements IClientApi {
     console.log('Infinitris Client');
     console.log(`Build ${__VERSION__}`);
     this._config = {
-      imagesRootUrl: '/',
+      imagesRootUrl: process.env.IMAGES_ROOT_URL || '/',
     };
   }
 
@@ -60,6 +60,10 @@ export default class ClientApi implements IClientApi {
         spectate,
         rendererType,
         simulationSettings,
+        player: {
+          characterId: '487',
+          patternFilename: 'pattern_5.png',
+        },
       });
     } else if (params.has('url')) {
       this.launchNetworkClient(params.get('url') as string, {

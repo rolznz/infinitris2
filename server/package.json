@@ -58,7 +58,6 @@
     "@types/jasmine": "^3.4.0",
     "@types/node": "^12.7.8",
     "@types/ws": "^6.0.3",
-    "dotenv": "^10.0.0",
     "jasmine": "^3.5.0",
     "module-alias": "^2.2.1",
     "nodemon": "^2.0.15",
@@ -73,6 +72,7 @@
     "webpack-dev-server": "^3.8.1"
   },
   "dependencies": {
+    "dotenv": "^10.0.0",
     "ws": "^7.1.2"
   },
   "optionalDependencies": {

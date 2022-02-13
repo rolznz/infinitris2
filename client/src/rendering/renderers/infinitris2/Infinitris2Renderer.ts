@@ -378,7 +378,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
    */
   onBlockMoved(block: IBlock) {
     //this._moveBlock(block);
-    this._renderBlock(block); // requires re-render due to borders changing TODO: should not render blocks this way
+    // TODO: consider whether there is a better way to render blocks
+    this._renderBlock(block); // requires re-render due to borders changing + pattern changing rotation
   }
 
   /**
@@ -413,41 +414,40 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
   onPlayerCreated(player: IPlayer): void {
     if (player.characterId) {
-      this._app.loader.add(this._getFaceUrl(player.characterId), () => {
-        if (player.block) {
-          this._renderBlock(player.block);
-        }
-      });
+      const faceUrl = this._getFaceUrl(player.characterId);
+      if (!this._app.loader.resources[faceUrl]) {
+        this._app.loader.add(faceUrl, () => {
+          if (player.block) {
+            //this._renderBlock(player.block);
+          }
+        });
+      }
     }
     if (player.patternFilename) {
       const patternImageUrl = this._getPatternUrl(player.patternFilename);
-      this._app.loader.add(patternImageUrl, () => {
-        const fullPatternTexture = PIXI.Texture.from(patternImageUrl);
-        const patternDivisionSize =
-          fullPatternTexture.width / numPatternDivisions;
-        this._patternTextures[player.patternFilename!] = [];
-        for (let x = 0; x < numPatternDivisions; x++) {
-          for (let y = 0; y < numPatternDivisions; y++) {
-            this._patternTextures[player.patternFilename!].push(
-              new PIXI.Texture(
-                fullPatternTexture.baseTexture,
-                new PIXI.Rectangle(
-                  x * patternDivisionSize,
-                  y * patternDivisionSize,
-                  patternDivisionSize,
-                  patternDivisionSize
+      if (!this._app.loader.resources[patternImageUrl]) {
+        this._app.loader.add(patternImageUrl, () => {
+          const fullPatternTexture = PIXI.Texture.from(patternImageUrl);
+          const patternDivisionSize =
+            fullPatternTexture.width / numPatternDivisions;
+          this._patternTextures[player.patternFilename!] = [];
+          for (let x = 0; x < numPatternDivisions; x++) {
+            for (let y = 0; y < numPatternDivisions; y++) {
+              this._patternTextures[player.patternFilename!].push(
+                new PIXI.Texture(
+                  fullPatternTexture.baseTexture,
+                  new PIXI.Rectangle(
+                    x * patternDivisionSize,
+                    y * patternDivisionSize,
+                    patternDivisionSize,
+                    patternDivisionSize
+                  )
                 )
-              )
-            );
+              );
+            }
           }
-        }
-
-        if (player.block) {
-          // recreate the block to apply the new pattern (FIXME: should just be able to replace the texture)
-          //this._removeBlock(player.block);
-          //this._createBlock(player.block);
-        }
-      });
+        });
+      }
     }
   }
   onPlayerDestroyed(player: IPlayer): void {
@@ -857,10 +857,38 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._renderCopies(
       renderableCell,
       1,
-      ({ graphics, patternSprite }, shadowIndexWithDirection) => {
+      ({ graphics, patternSprite }, shadowIndexWithDirection, child) => {
         if (!this._simulation) {
           return;
         }
+
+        if (patternFilename && this._patternTextures[patternFilename]) {
+          const patternTexture =
+            this._patternTextures[patternFilename][
+              (renderableCell.cell.row % numPatternDivisions) +
+                numPatternDivisions *
+                  (renderableCell.cell.column % numPatternDivisions)
+            ];
+
+          if (!patternSprite || patternSprite.texture !== patternTexture) {
+            if (patternSprite) {
+              renderableCell.container.removeChild(patternSprite);
+              console.log('Replace texture');
+            }
+
+            patternSprite = PIXI.Sprite.from(patternTexture);
+            renderableCell.container.addChild(patternSprite);
+            child.renderableObject.patternSprite = patternSprite;
+          }
+          patternSprite.visible = true;
+          patternSprite.width = this._cellSize;
+          patternSprite.height = this._cellSize;
+        } else {
+          if (patternSprite) {
+            patternSprite.visible = false;
+          }
+        }
+
         const shadowX = shadowIndexWithDirection * this._gridWidth;
         graphics.x = shadowX;
         if (patternSprite) {
@@ -886,11 +914,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
           graphics.drawRect(0, 0, cellSize, cellSize);
           //graphics.
-          if (patternSprite) {
-            patternSprite.visible = true;
-            patternSprite.width = this._cellSize;
-            patternSprite.height = this._cellSize;
-          }
           const borderSize = this._cellPadding * 2;
           const borderColor = PIXI.utils.string2hex(
             getBorderColor(PIXI.utils.hex2string(color))
@@ -1064,21 +1087,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
       },
       () => {
         const graphics = new PIXI.Graphics();
-        // FIXME: non-player cells shouldn't have patterns
-        let patternSprite: PIXI.Sprite | undefined;
-        if (patternFilename && this._patternTextures[patternFilename]) {
-          patternSprite = PIXI.Sprite.from(
-            this._patternTextures[patternFilename][
-              (renderableCell.cell.row % numPatternDivisions) +
-                numPatternDivisions *
-                  (renderableCell.cell.column % numPatternDivisions)
-            ]
-          );
-        }
+
+        // pattern sprite needs to be regenerated each time the block rotates (need to pick a new texture)
+        let patternSprite = undefined;
+
         renderableCell.container.addChild(graphics);
-        if (patternSprite) {
-          renderableCell.container.addChild(patternSprite);
-        }
+
         return { graphics, patternSprite };
       }
     );

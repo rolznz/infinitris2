@@ -8,10 +8,13 @@ import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import Camera from '@src/rendering/Camera';
 import IRenderer, { ParticleType } from '@src/rendering/IRenderer';
-import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
+import {
+  IRenderableEntity,
+  IRenderableEntityChild,
+} from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
 
-const idealCellSize = 32;
+const idealCellSize = 38;
 const minVerticalCellCount = 21;
 const minHorizontalCellCount = 10; // TODO
 const maxCellCount = 32;
@@ -134,7 +137,11 @@ export abstract class BaseRenderer implements IRenderer {
   _renderCopies<T>(
     renderableEntity: IRenderableEntity<T>,
     opacity: number,
-    renderFunction: (pixiObject: T, shadowIndexWithDirection: number) => void,
+    renderFunction: (
+      pixiObject: T,
+      shadowIndexWithDirection: number,
+      child: IRenderableEntityChild<T>
+    ) => void,
     createObject: () => T,
     shadowIndex: number = 0,
     shadowDirection: number = 0
@@ -151,7 +158,7 @@ export abstract class BaseRenderer implements IRenderer {
       renderableEntity.children.push(entry);
     }
 
-    renderFunction(entry.renderableObject, shadowIndexWithDirection);
+    renderFunction(entry.renderableObject, shadowIndexWithDirection, entry);
 
     if (shadowIndex < this._shadowCount) {
       (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>

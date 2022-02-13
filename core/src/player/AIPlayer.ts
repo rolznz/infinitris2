@@ -19,9 +19,19 @@ export default class AIPlayer extends Player {
     nickname: string,
     color: number,
     reflexDelay?: number,
-    isSpectating?: boolean
+    isSpectating?: boolean,
+    patternFilename?: string,
+    characterId?: string
   ) {
-    super(simulation, playerId, nickname, color, isSpectating);
+    super(
+      simulation,
+      playerId,
+      nickname,
+      color,
+      isSpectating,
+      patternFilename,
+      characterId
+    );
     this._behaviour = new DumbAIBehaviour(simulation);
     this._reactionDelay = reflexDelay || 5 + Math.floor(Math.random() * 40);
   }

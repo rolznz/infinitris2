@@ -180,7 +180,9 @@ export default class SinglePlayerClient
             'Bot ' + (i + 1),
             freeColors[Math.floor(Math.random() * (freeColors.length - 1))],
             options.botReactionDelay,
-            this._simulation.shouldNewPlayerSpectate
+            this._simulation.shouldNewPlayerSpectate,
+            'pattern_' + Math.floor(Math.random() * 24) + '.png',
+            '' + Math.floor(Math.random() * 768)
           )
         );
       }

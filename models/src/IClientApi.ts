@@ -9,7 +9,6 @@ import { RendererQuality } from './RendererQuality';
 import { WorldType } from '@models/WorldType';
 import { WithControls } from '@models/IUser';
 import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
-import { type } from 'os';
 
 export type LaunchOptions = WithControls & {
   listener?: ISimulationEventListener;
@@ -20,6 +19,7 @@ export type LaunchOptions = WithControls & {
   //otherPlayers?: IPlayer[]; // AI & network players
   numBots?: number;
   botReactionDelay?: number;
+  botRandomReactionDelay?: number;
   gridNumRows?: number;
   gridNumColumns?: number;
   simulationSettings?: SimulationSettings;

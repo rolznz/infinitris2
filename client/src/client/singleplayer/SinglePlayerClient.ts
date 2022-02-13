@@ -179,7 +179,10 @@ export default class SinglePlayerClient
             i + 1,
             'Bot ' + (i + 1),
             freeColors[Math.floor(Math.random() * (freeColors.length - 1))],
-            options.botReactionDelay,
+            (options.botReactionDelay || 20) +
+              Math.floor(
+                Math.random() * (options.botRandomReactionDelay || 20)
+              ),
             this._simulation.shouldNewPlayerSpectate,
             'pattern_' + Math.floor(Math.random() * 24) + '.png',
             '' + Math.floor(Math.random() * 768)

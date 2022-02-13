@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js-legacy';
 import { IPlayer } from '@models/IPlayer';
+import ISimulation from '@models/ISimulation';
+import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 
 const placingCharacters = [
   '\u2460',
@@ -48,7 +50,11 @@ export class Scoreboard {
     );
   }
 
-  update(players: IPlayer[], followingPlayer: IPlayer | undefined) {
+  update(
+    players: IPlayer[],
+    followingPlayer: IPlayer | undefined,
+    simulation: ISimulation
+  ) {
     const now = Date.now();
     if (now - this._lastUpdate < 1000) {
       return;
@@ -60,8 +66,22 @@ export class Scoreboard {
       nickname: player.nickname,
       score: player.score,
       placing: 0,
-      spectating: player.isSpectating,
+      isSpectating: player.isSpectating,
       color: player.color,
+      numCaptures:
+        simulation.settings.gameModeType === 'conquest'
+          ? (simulation.gameMode as ConquestGameMode).columnCaptures.filter(
+              (c) => c.playerId === player.id
+            ).length
+          : 0,
+      health:
+        simulation.settings.gameModeType === 'conquest'
+          ? Math.floor(
+              ((simulation.gameMode as ConquestGameMode).playerHealths[
+                player.id
+              ] || 0) * 100
+            )
+          : 0,
     }));
     playerScores.sort((a, b) => b.score - a.score);
     for (let i = 0; i < playerScores.length; i++) {
@@ -93,7 +113,7 @@ export class Scoreboard {
       if (i < playerScores.length) {
         text.visible = true;
         text.text =
-          (playerScores[i].spectating
+          (playerScores[i].isSpectating
             ? ''
             : (playerScores[i].placing - 1 < placingCharacters.length
                 ? placingCharacters[playerScores[i].placing - 1]
@@ -102,7 +122,11 @@ export class Scoreboard {
               playerScores[i].score +
               ' ') +
           playerScores[i].nickname +
-          (playerScores[i].spectating ? ' (spectating)' : '');
+          (playerScores[i].isSpectating ? ' (spectating)' : '') +
+          (!playerScores[i].isSpectating &&
+          simulation.settings.gameModeType === 'conquest'
+            ? ` (${playerScores[i].numCaptures} ⦿ ${playerScores[i].health} ♥)`
+            : '');
 
         text.tint = playerScores[i].color;
         text.x = padding;

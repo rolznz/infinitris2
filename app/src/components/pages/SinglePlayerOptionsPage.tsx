@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import { Page } from '../ui/Page';
@@ -18,7 +18,11 @@ import {
   Select,
   Switch,
 } from '@mui/material';
-import { GameModeTypeValues, WorldTypeValues } from 'infinitris2-models';
+import {
+  GameModeTypeValues,
+  RoundLengthValues,
+  WorldTypeValues,
+} from 'infinitris2-models';
 import useSinglePlayerOptionsStore, {
   SinglePlayerOptionsFormData,
   getSinglePlayerOptionsDefaultValues,
@@ -34,6 +38,12 @@ const schema = yup
       .positive()
       .integer()
       .lessThan(1000)
+      .required(),
+    botRandomReactionDelay: yup
+      .number()
+      .integer()
+      .lessThan(1000)
+      .moreThan(-1)
       .required(),
     gridNumRows: yup
       .number()
@@ -62,6 +72,7 @@ export function SinglePlayerOptionsPage() {
     control,
     handleSubmit,
     formState: { errors },
+    watch,
     reset,
   } = useForm<SinglePlayerOptionsFormData>({
     defaultValues: formData,
@@ -84,6 +95,8 @@ export function SinglePlayerOptionsPage() {
     });
     history.push(Routes.singlePlayer + '?' + searchParams);
   };
+
+  const watchedGameModeType = watch('gameModeType');
 
   return (
     <Page
@@ -127,6 +140,24 @@ export function SinglePlayerOptionsPage() {
                 </FormControl>
               )}
             />
+            {watchedGameModeType !== 'infinity' && (
+              <Controller
+                name="roundLength"
+                control={control}
+                render={({ field }) => (
+                  <FormControl variant="standard">
+                    <InputLabel>Round Length</InputLabel>
+                    <Select {...field}>
+                      {RoundLengthValues.map((type) => (
+                        <MenuItem key={type} value={type}>
+                          {type}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+              />
+            )}
           </FlexBox>
           <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
             <Controller
@@ -149,6 +180,18 @@ export function SinglePlayerOptionsPage() {
                   <InputLabel>Bot Reaction Delay</InputLabel>
                   <Input {...field} />
                   <p>{errors.botReactionDelay?.message}</p>
+                </FormControl>
+              )}
+            />
+
+            <Controller
+              name="botRandomReactionDelay"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>Bot Random Reaction Delay</InputLabel>
+                  <Input {...field} />
+                  <p>{errors.botRandomReactionDelay?.message}</p>
                 </FormControl>
               )}
             />

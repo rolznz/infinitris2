@@ -58,6 +58,7 @@ export * from './IServer';
 export * from './GameModeType';
 export * from './IGameMode';
 export * from './InputMethod';
+export * from './RoundLength';
 export * from './networking/client/IClientSocket';
 export * from './networking/client/IClientSocketEventListener';
 export * from './networking/client/IClientMessage';

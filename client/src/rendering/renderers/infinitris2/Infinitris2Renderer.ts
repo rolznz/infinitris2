@@ -536,7 +536,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     const followingPlayer = this._simulation.followingPlayer;
-    this._scoreboard.update(this._simulation.players, followingPlayer);
+    this._scoreboard.update(
+      this._simulation.players,
+      followingPlayer,
+      this._simulation
+    );
     this._scoreChangeIndicator.update(followingPlayer);
     this._spawnDelayIndicator.update(this._simulation, followingPlayer);
 

@@ -12,8 +12,9 @@ import {
   ICharacter,
   stringToHex,
   WorldType,
+  IPlayer,
+  RoundLength,
 } from 'infinitris2-models';
-import { IPlayer } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useDocument } from 'swr-firestore';
@@ -39,6 +40,9 @@ export default function SinglePlayerPage() {
   const requiresRedirect = false;
   const numBots = parseInt(useSearchParam('numBots') || '0');
   const botReactionDelay = parseInt(useSearchParam('botReactionDelay') || '30');
+  const botRandomReactionDelay = parseInt(
+    useSearchParam('botRandomReactionDelay') || '30'
+  );
   const gridNumRows = parseInt(useSearchParam('gridNumRows') || '20');
   const gridNumColumns = parseInt(useSearchParam('gridNumColumns') || '10');
   const dayLength = parseInt(useSearchParam('dayLength') || '2000');
@@ -46,6 +50,8 @@ export default function SinglePlayerPage() {
     (useSearchParam('gameModeType') as GameModeType) || 'infinity';
   const worldType: WorldType =
     (useSearchParam('worldType') as WorldType) || 'grass';
+  const roundLength: RoundLength =
+    (useSearchParam('roundLength') as RoundLength) || 'medium';
   const spectate = useSearchParam('spectate') === 'true';
   const mistakeDetection = useSearchParam('mistakeDetection') === 'true';
   const calculateSpawnDelays =
@@ -81,6 +87,7 @@ export default function SinglePlayerPage() {
         controls_gamepad,
         numBots,
         botReactionDelay,
+        botRandomReactionDelay,
         gridNumRows,
         gridNumColumns,
         rendererQuality,
@@ -92,6 +99,7 @@ export default function SinglePlayerPage() {
           preventTowers,
           dayLength,
           gameModeType,
+          roundLength,
         },
         // TODO: support multiple listeners, extract SFX listener
         listener: {
@@ -177,6 +185,7 @@ export default function SinglePlayerPage() {
     hasLoaded,
     numBots,
     botReactionDelay,
+    botRandomReactionDelay,
     client,
     gridNumRows,
     gridNumColumns,
@@ -191,6 +200,7 @@ export default function SinglePlayerPage() {
     gameModeType,
     character,
     nickname,
+    roundLength,
   ]);
 
   return <GameUI />;

@@ -1,4 +1,5 @@
 import { GameModeType } from '@models/GameModeType';
+import { RoundLength } from '@models/RoundLength';
 
 export type SimulationSettings = {
   readonly gravityEnabled?: boolean;
@@ -9,4 +10,7 @@ export type SimulationSettings = {
   readonly mistakeDetection?: boolean;
   readonly calculateSpawnDelays?: boolean;
   readonly gameModeType?: GameModeType;
+  readonly maxSpawnDelaySeconds?: number;
+  readonly spawnDelayScoreGraceAmount?: number;
+  readonly roundLength?: RoundLength;
 };

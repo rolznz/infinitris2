@@ -1,9 +1,10 @@
-import { GameModeType, WorldType } from 'infinitris2-models';
+import { GameModeType, RoundLength, WorldType } from 'infinitris2-models';
 import create from 'zustand';
 
 export type SinglePlayerOptionsFormData = {
   numBots: number;
   botReactionDelay: number;
+  botRandomReactionDelay: number;
   gridNumRows: number;
   gridNumColumns: number;
   dayLength: number;
@@ -13,12 +14,14 @@ export type SinglePlayerOptionsFormData = {
   preventTowers: boolean;
   worldType: WorldType;
   gameModeType: GameModeType;
+  roundLength: RoundLength;
 };
 
 export const getSinglePlayerOptionsDefaultValues =
   (): SinglePlayerOptionsFormData => ({
     numBots: 4,
-    botReactionDelay: 25,
+    botReactionDelay: 15,
+    botRandomReactionDelay: 25,
     gridNumRows: 18,
     gridNumColumns: 50,
     dayLength: 2000,
@@ -28,6 +31,7 @@ export const getSinglePlayerOptionsDefaultValues =
     preventTowers: true,
     worldType: 'grass',
     gameModeType: 'infinity',
+    roundLength: 'medium',
   });
 
 type SinglePlayerOptionsStore = {

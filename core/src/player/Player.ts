@@ -348,12 +348,26 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       const highestPlayerScore = Math.max(
         ...this._simulation.players.map((player) => player.score)
       );
-      const scoreProportion =
-        highestPlayerScore > 0 ? this._score / highestPlayerScore : 1;
 
-      const adjustedScoreProportion = Math.pow(scoreProportion, 0.5);
+      // apply a grace period to the score, to stop players who make a mistake at the start of the game from being unfairly penalized
+      const scoreGraceAmount =
+        this._simulation.settings.spawnDelayScoreGraceAmount ?? 250;
+      const getScoreWithGrace = (score: number) =>
+        Math.max(score - scoreGraceAmount, 0);
+
+      const highestPlayerScoreWithGrace = getScoreWithGrace(highestPlayerScore);
+      const scoreProportionWithGrace =
+        highestPlayerScoreWithGrace > 0
+          ? getScoreWithGrace(this._score) / highestPlayerScoreWithGrace
+          : 1;
+
+      const multipliedScoreProportion = Math.pow(scoreProportionWithGrace, 0.5);
       this._nextSpawnTime =
-        Date.now() + Math.floor((1 - adjustedScoreProportion) * (7 * 1000));
+        Date.now() +
+        Math.floor(
+          (1 - multipliedScoreProportion) *
+            ((this._simulation.settings.maxSpawnDelaySeconds ?? 5) * 1000)
+        );
     } else {
       this._nextSpawnTime = 0;
     }

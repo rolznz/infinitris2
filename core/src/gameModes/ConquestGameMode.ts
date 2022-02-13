@@ -108,12 +108,12 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       return;
     }
 
-    const summedPlayerScores = Math.max(
+    /*const summedPlayerScores = Math.max(
       activePlayers.length > 1
         ? activePlayers.map((player) => player.score).reduce((a, b) => a + b)
         : 0,
       1
-    );
+    );*/
 
     const playerColumnCaptureCounts: { [playerId: number]: number } = {};
     for (let c = 0; c < this._simulation.grid.numColumns; c++) {
@@ -124,14 +124,14 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
           // TODO: consider lower cells having more weighting
           // give higher capture value for player with high score
           playerCaptureValues[cell.player.id] =
-            (playerCaptureValues[cell.player.id] || 0) +
-            1 * (cell.player.score / summedPlayerScores);
+            (playerCaptureValues[cell.player.id] || 0) + 1; // * (cell.player.score / summedPlayerScores);
         }
       }
       const highestPlayerEntry = Object.entries(playerCaptureValues)
         .map((e) => ({ playerId: e[0], value: e[1] }))
         .find(
-          (entry, _, array) => !array.some((other) => other.value > entry.value)
+          (entry, i, array) =>
+            !array.some((other, i2) => i !== i2 && other.value >= entry.value)
         );
 
       if (highestPlayerEntry) {
@@ -167,7 +167,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       } else {
         this._columnCaptures[c].attackerId = undefined;
         this._columnCaptures[c].value = Math.max(
-          this._columnCaptures[c].value - 0.01,
+          this._columnCaptures[c].value - 0.05,
           0
         );
         if (this._columnCaptures[c].value === 0) {
@@ -176,33 +176,41 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       }
     }
 
-    const averagePlayerCaptureCount =
-      activePlayers.length > 1
-        ? activePlayers
-            .map((player) => playerColumnCaptureCounts[player.id] || 0)
-            .reduce((score1, score2) => score1 + score2) / activePlayers.length
-        : 0;
+    if (
+      activePlayers.some((player) => playerColumnCaptureCounts[player.id] > 0)
+    ) {
+      const lowestPlayerCaptureCount = activePlayers
+        .map((player) => playerColumnCaptureCounts[player.id] || 0)
+        .find((count, _, array) => !array.find((other) => other < count))!;
+      const healthChangeSpeed =
+        this._simulation.settings.roundLength === 'short'
+          ? 0.2
+          : this._simulation.settings.roundLength === 'long'
+          ? 0.01
+          : 0.05;
 
-    for (const player of activePlayers) {
-      if (
-        (playerColumnCaptureCounts[player.id] || 0) < averagePlayerCaptureCount
-      ) {
-        this._playerHealths[player.id] = Math.max(
-          this._playerHealths[player.id] - 0.05,
-          0
-        );
-        if (this._playerHealths[player.id] === 0) {
-          if (!this._simulation.isNetworkClient) {
-            // TODO: need a separate variable for out of the current game
-            player.isSpectating = true;
-            //player.knockedOut = true;
+      for (const player of activePlayers) {
+        if (
+          (playerColumnCaptureCounts[player.id] || 0) ===
+          lowestPlayerCaptureCount
+        ) {
+          this._playerHealths[player.id] = Math.max(
+            this._playerHealths[player.id] - healthChangeSpeed,
+            0
+          );
+          if (this._playerHealths[player.id] === 0) {
+            if (!this._simulation.isNetworkClient) {
+              // TODO: need a separate variable for out of the current game
+              player.isSpectating = true;
+              //player.knockedOut = true;
+            }
           }
+        } else {
+          this._playerHealths[player.id] = Math.min(
+            this._playerHealths[player.id] + healthChangeSpeed,
+            1
+          );
         }
-      } else {
-        this._playerHealths[player.id] = Math.min(
-          this._playerHealths[player.id] + 0.05,
-          1
-        );
       }
     }
   }

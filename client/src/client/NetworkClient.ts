@@ -73,6 +73,7 @@ export default class NetworkClient
     const joinRoomRequest: IClientJoinRoomRequest = {
       type: ClientMessageType.JOIN_ROOM_REQUEST,
       roomId: this._launchOptions.roomId || 0,
+      player: this._launchOptions.player,
     };
     this._socket.sendMessage(joinRoomRequest);
   }
@@ -127,7 +128,9 @@ export default class NetworkClient
               playerInfo.id,
               playerInfo.nickname,
               playerInfo.color,
-              playerInfo.isSpectating
+              playerInfo.isSpectating,
+              playerInfo.patternFilename,
+              playerInfo.characterId
             );
             humanPlayer.estimatedSpawnDelay =
               joinResponseData.estimatedSpawnDelay;
@@ -145,7 +148,9 @@ export default class NetworkClient
               playerInfo.id,
               playerInfo.nickname,
               playerInfo.color,
-              playerInfo.isSpectating
+              playerInfo.isSpectating,
+              playerInfo.patternFilename,
+              playerInfo.characterId
             );
             this._simulation.addPlayer(otherPlayer);
             otherPlayer.score = playerInfo.score;
@@ -189,7 +194,9 @@ export default class NetworkClient
           playerInfo.id,
           playerInfo.nickname,
           playerInfo.color,
-          playerInfo.isSpectating
+          playerInfo.isSpectating,
+          playerInfo.patternFilename,
+          playerInfo.characterId
         );
         this._simulation.addPlayer(newNetworkPlayer);
       } else if (message.type === ServerMessageType.PLAYER_DISCONNECTED) {

@@ -9,10 +9,12 @@ import HomeIcon from '@mui/icons-material/Home';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
   ClientMessageType,
+  getCharacterPath,
   getRoomPath,
   getServerPath,
   hexToString,
   IBlock,
+  ICharacter,
   IClientChatMessage,
   IClientSocket,
   IClientSocketEventListener,
@@ -22,6 +24,7 @@ import {
   IServerChatMessage,
   ISimulation,
   ServerMessageType,
+  stringToHex,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser } from '../../state/UserStore';
@@ -33,6 +36,8 @@ import useIngameStore from '@/state/IngameStore';
 import { GameUI } from '@/components/game/GameUI';
 import { IServerMessage } from 'infinitris2-models/dist/networking/server/IServerMessage';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
+import { LocalUser } from '@/state/LocalUserStore';
+import useLoaderStore from '@/state/LoaderStore';
 
 interface RoomPageRouteParams {
   id: string;
@@ -96,15 +101,26 @@ export default function RoomPage() {
   const [retryCount, setRetryCount] = useState(0);
   const serverUrl = server?.data()?.url;
   usePwaRedirect();
+  const user = useUser();
   //const requiresRedirect = useForcedRedirect();
-  const controls_keyboard = useUser().controls_keyboard;
-  const controls_gamepad = useUser().controls_gamepad;
+  const controls_keyboard = user.controls_keyboard;
+  const controls_gamepad = user.controls_gamepad;
+
+  const nickname = (user as LocalUser).nickname;
+  const characterId = (user as LocalUser).characterId;
+  const { data: character } = useDocument<ICharacter>(
+    getCharacterPath(characterId)
+  );
+
+  const hasLoaded =
+    useLoaderStore((store) => store.hasFinished) && !!character && !!room;
 
   useReleaseClientOnExitPage();
 
   useEffect(() => {
     if (
       //requiresRedirect ||
+      !hasLoaded ||
       disconnected ||
       !client ||
       !serverUrl ||
@@ -117,7 +133,16 @@ export default function RoomPage() {
       socketListener: socketEventListener,
       controls_keyboard,
       controls_gamepad,
-      roomId: room?.data()!.roomId,
+      player: {
+        color:
+          character.data()?.color !== undefined
+            ? stringToHex(character?.data()?.color!)
+            : undefined,
+        patternFilename: character.data()?.patternFilename,
+        characterId,
+        nickname,
+      },
+      roomId: room.data()!.roomId,
       listener: {
         onSimulationInit(simulation: ISimulation) {
           useIngameStore.getState().setSimulation(simulation);
@@ -146,7 +171,6 @@ export default function RoomPage() {
         onBlockMoved(block: IBlock, dx: number, dy: number, dr: number) {
           if (block.player.isHuman && !block.isDropping) {
             if (dr !== 0) {
-              console.log('Move: ', dx, dy, dr);
               playSound(SoundKey.rotate);
             } else if (dx !== 0 || dy !== 0) {
               playSound(SoundKey.move);
@@ -198,6 +222,11 @@ export default function RoomPage() {
     setLaunched,
     controls_keyboard,
     controls_gamepad,
+    hasLoaded,
+    characterId,
+    nickname,
+    character,
+    room,
   ]);
 
   useEffect(() => {

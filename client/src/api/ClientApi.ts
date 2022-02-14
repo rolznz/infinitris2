@@ -13,6 +13,8 @@ import { GameModeType } from '@models/GameModeType';
 import { SimulationSettings } from '@models/SimulationSettings';
 import { IClientChatMessage } from '@models/networking/client/IClientChatMessage';
 import { ClientMessageType } from '@models/networking/client/ClientMessageType';
+import { colors } from '@models/colors';
+import { stringToHex } from '@models/util/stringToHex';
 
 export default class ClientApi implements IClientApi {
   private _client?: IClient;
@@ -71,6 +73,12 @@ export default class ClientApi implements IClientApi {
       this.launchNetworkClient(params.get('url') as string, {
         controls_keyboard: controls,
         roomId: parseInt(params.get('roomId') || '0'),
+        player: {
+          characterId: '487',
+          patternFilename: 'pattern_5.png',
+          nickname: 'Me',
+          color: stringToHex(colors[5].hex),
+        },
         socketListener: {
           onConnect: (socket) => {
             (window as any).chat = (message: string) => {

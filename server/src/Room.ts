@@ -24,7 +24,7 @@ import { IServerNextDayEvent } from '@core/networking/server/IServerNextDayEvent
 import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnEvent';
 import { stringToHex } from '@models/util/stringToHex';
 import { colors } from '@models/colors';
-import { IPlayer } from '@models/IPlayer';
+import { IPlayer, NetworkPlayerInfo } from '@models/IPlayer';
 import { IClientBlockDroppedEvent } from '@core/networking/client/IClientBlockDroppedEvent';
 import { IClientMessage } from '@models/networking/client/IClientMessage';
 import { ServerMessageType } from '@models/networking/server/ServerMessageType';
@@ -65,23 +65,43 @@ export default class Room implements ISimulationEventListener {
    * @param playerId id of new player
    * @param playerInfo
    */
-  addPlayer(playerId: number /*, playerInfo: NetworkPlayerInfo*/) {
+  addPlayer(playerId: number, playerInfo?: Partial<NetworkPlayerInfo>) {
     let freeColor = 0;
     let colorIndex = 0;
-    do {
-      freeColor = stringToHex(colors[colorIndex++].hex);
-    } while (
-      colorIndex < colors.length &&
-      this._simulation.players.some((player) => player.color === freeColor)
-    );
-    const playerNickname = 'Player ' + playerId;
+    if (
+      !playerInfo?.color ||
+      this._simulation.players.some(
+        (player) => player.color === playerInfo.color
+      )
+    ) {
+      do {
+        freeColor = stringToHex(colors[colorIndex++].hex);
+      } while (
+        colorIndex < colors.length &&
+        this._simulation.players.some((player) => player.color === freeColor)
+      );
+    } else {
+      freeColor = playerInfo.color;
+    }
+    const originalPlayerNickname = playerInfo?.nickname || 'Player ' + playerId;
+    let playerNickname = originalPlayerNickname;
+    let freeNickNameIndex = 0;
+    while (
+      this._simulation.players.some(
+        (player) => player.nickname === playerNickname
+      )
+    ) {
+      playerNickname = `${originalPlayerNickname} (${++freeNickNameIndex})`;
+    }
 
     const newPlayer = new NetworkPlayer(
       this._simulation,
       playerId,
       playerNickname,
       freeColor,
-      this._simulation.shouldNewPlayerSpectate
+      this._simulation.shouldNewPlayerSpectate,
+      playerInfo?.patternFilename,
+      playerInfo?.characterId || '0'
     );
 
     this._simulation.addPlayer(newPlayer);
@@ -124,6 +144,8 @@ export default class Room implements ISimulationEventListener {
           nickname: existingPlayer.nickname,
           score: existingPlayer.score,
           isSpectating: existingPlayer.isSpectating,
+          characterId: existingPlayer.characterId,
+          patternFilename: existingPlayer.patternFilename,
         })),
         estimatedSpawnDelay: newPlayer.estimatedSpawnDelay,
       },
@@ -141,21 +163,6 @@ export default class Room implements ISimulationEventListener {
    */
   removePlayer(playerId: number) {
     this._simulation.removePlayer(playerId);
-
-    const playerDisconnectedMessage: IServerPlayerDisconnectedEvent = {
-      type: ServerMessageType.PLAYER_DISCONNECTED,
-      playerId,
-    };
-    this._sendMessageToAllPlayers(playerDisconnectedMessage);
-    if (!this._simulation.players.filter((p) => p.isNetworked).length) {
-      for (const player of this._simulation.players) {
-        if (!player.isNetworked) {
-          this._simulation.removePlayer(player.id);
-        }
-      }
-      this._simulation.grid.reset();
-      this._simulation.stopInterval();
-    }
   }
 
   /**
@@ -228,7 +235,14 @@ export default class Room implements ISimulationEventListener {
               this._simulation.shouldNewPlayerSpectate
             );
             this._simulation.addPlayer(bot);
-          } else if (clientMessage.message.startsWith('/kick')) {
+          } else if (clientMessage.message.startsWith('/kickbots')) {
+            for (const player of this._simulation.players) {
+              if (!player.isNetworked) {
+                this._simulation.removePlayer(player.id);
+              }
+            }
+          } else if (clientMessage.message.startsWith('/nextround')) {
+            this._simulation.startNextRound();
           }
         }
       }
@@ -366,7 +380,22 @@ export default class Room implements ISimulationEventListener {
 
     this._sendMessageToAllPlayersExcept(newPlayerMessage, player.id);
   }
-  onPlayerDestroyed(player: IPlayer): void {}
+  onPlayerDestroyed(player: IPlayer): void {
+    const playerDisconnectedMessage: IServerPlayerDisconnectedEvent = {
+      type: ServerMessageType.PLAYER_DISCONNECTED,
+      playerId: player.id,
+    };
+    this._sendMessageToAllPlayers(playerDisconnectedMessage);
+    if (!this._simulation.players.filter((p) => p.isNetworked).length) {
+      for (const player of this._simulation.players) {
+        if (!player.isNetworked) {
+          this._simulation.removePlayer(player.id);
+        }
+      }
+      this._simulation.grid.reset();
+      this._simulation.stopInterval();
+    }
+  }
   onPlayerToggleChat(player: IPlayer): void {
     console.error('TODO: mark player as chatting/not chatting');
   }

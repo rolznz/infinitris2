@@ -6,8 +6,8 @@ import { SimulationSettings } from './SimulationSettings';
 export type NetworkPlayerInfo = {
   readonly nickname: string;
   readonly color: number;
-  readonly characterId: string;
-  readonly patternFilename: string;
+  readonly characterId?: string;
+  readonly patternFilename?: string;
   readonly id: number;
   readonly score: number;
   readonly isSpectating: boolean;

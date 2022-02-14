@@ -59,7 +59,10 @@ export default class Server implements IServerSocketEventListener {
           // TODO: handle and validate full/wrong password/room ID
           const joinRoomRequest = message as IClientJoinRoomRequest;
           socket.roomId = joinRoomRequest.roomId || 0;
-          this._rooms[socket.roomId].addPlayer(socket.id);
+          this._rooms[socket.roomId].addPlayer(
+            socket.id,
+            joinRoomRequest.player
+          );
           console.log('Client ' + socket.id + ' joined room ' + socket.roomId);
         } else {
           console.error(

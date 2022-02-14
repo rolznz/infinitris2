@@ -76,7 +76,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       (player) => !player.isSpectating
     );
 
-    if (!activePlayers.length) {
+    if (activePlayers.length < 2) {
       this._isWaitingForNextRound = true;
     }
 
@@ -181,7 +181,10 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     ) {
       const lowestPlayerCaptureCount = activePlayers
         .map((player) => playerColumnCaptureCounts[player.id] || 0)
-        .find((count, _, array) => !array.find((other) => other < count))!;
+        .find(
+          (count, _, array) =>
+            array.find((other) => other < count) === undefined
+        )!;
       const healthChangeSpeed =
         this._simulation.settings.roundLength === 'short'
           ? 0.2

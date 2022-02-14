@@ -47,6 +47,7 @@ export default class ClientApi implements IClientApi {
 
     if (params.has('single-player')) {
       const numBots = parseInt(params.get('numBots') || '0');
+      const botReactionDelay = parseInt(params.get('botReactionDelay') || '20');
       const spectate = params.get('spectate') === 'true';
       const rendererType = params.get('renderer') as RendererType;
       const gameModeType = params.get('gameMode') as GameModeType;
@@ -57,6 +58,7 @@ export default class ClientApi implements IClientApi {
       this.launchSinglePlayer({
         controls_keyboard: controls,
         numBots,
+        botReactionDelay,
         spectate,
         rendererType,
         simulationSettings,

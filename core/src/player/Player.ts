@@ -1,4 +1,4 @@
-import Block from '../block/Block';
+import Block, { MAX_SCORE } from '../block/Block';
 import Cell from '../grid/cell/Cell';
 import Layout from '@models/Layout';
 import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
@@ -355,19 +355,13 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       const getScoreWithGrace = (score: number) =>
         Math.max(score - scoreGraceAmount, 0);
 
-      const highestPlayerScoreWithGrace = getScoreWithGrace(highestPlayerScore);
-      const scoreProportionWithGrace =
-        highestPlayerScoreWithGrace > 0
-          ? getScoreWithGrace(this._score) / highestPlayerScoreWithGrace
-          : 1;
-
-      const multipliedScoreProportion = Math.pow(scoreProportionWithGrace, 0.5);
+      const scoreDiffWithGrace =
+        getScoreWithGrace(highestPlayerScore) - getScoreWithGrace(this._score);
       this._nextSpawnTime =
         Date.now() +
-        Math.floor(
-          (1 - multipliedScoreProportion) *
-            ((this._simulation.settings.maxSpawnDelaySeconds ?? 5) * 1000)
-        );
+        (scoreDiffWithGrace *
+          ((this._simulation.settings.maxSpawnDelaySeconds ?? 5) * 1000)) /
+          MAX_SCORE;
     } else {
       this._nextSpawnTime = 0;
     }

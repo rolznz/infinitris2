@@ -11,6 +11,10 @@ import ISimulation from '@models/ISimulation';
 
 type LoopCellEvent = (cell?: ICell) => void;
 
+const INITIAL_FALL_SPEED = 90;
+const FALL_SPEED_SCORE_EXP = 0.55;
+export const MAX_SCORE = Math.pow(INITIAL_FALL_SPEED, 1 / FALL_SPEED_SCORE_EXP);
+
 export default class Block implements IBlock {
   private _player: IPlayer;
   private readonly _cells: ICell[];
@@ -463,7 +467,16 @@ export default class Block implements IBlock {
   private _resetFallTimer() {
     this._fallTimer = this._isDropping
       ? this._slowdownRows.length * 3
-      : Math.max(90 - Math.ceil(Math.pow(this._player.score, 0.55)), 1);
+      : Math.max(
+          INITIAL_FALL_SPEED -
+            Math.ceil(
+              Math.pow(
+                Math.min(this._player.score, MAX_SCORE),
+                FALL_SPEED_SCORE_EXP
+              )
+            ),
+          1
+        );
   }
 
   private _resetLockTimer() {

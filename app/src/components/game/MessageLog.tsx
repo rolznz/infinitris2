@@ -22,7 +22,7 @@ export function MessageLog() {
   return (
     <FlexBox
       position="absolute"
-      top="70px"
+      bottom="70px"
       left="0px"
       alignItems="flex-start"
       justifyContent="flex-start"
@@ -39,6 +39,7 @@ export function MessageLog() {
         .filter(
           (entry) => isChatOpen || Date.now() - entry.createdTime < messageLife
         )
+        .reverse()
         .map((entry) => (
           <FlexBox
             key={entry.createdTime}

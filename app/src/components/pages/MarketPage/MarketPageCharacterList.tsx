@@ -1,5 +1,6 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { useMediaQuery } from '@mui/material';
+import { LocalUser } from '@/state/LocalUserStore';
+import { useUser } from '@/state/UserStore';
 import {
   QueryDocumentSnapshot,
   orderBy,
@@ -47,13 +48,23 @@ export function MarketPageCharacterList({
     cachedCharacters[filter][cachedCharacters[filter].length - 1];
   const size = window.innerWidth / (columns * (columns > 3 ? 1.2 : 1.1));
 
+  const user = useUser();
+  const characterId = (user as LocalUser).characterId;
+  const myIds = React.useMemo(() => [characterId], [characterId]);
+
   // TODO: useCollection purchases for my-blocks
   const { data: characters } = useCollection<ICharacter>(
     loadMore ? charactersPath : null,
     {
       constraints: [
         ...(filter === 'my-blocks'
-          ? [where('id', 'in', [0])] // TODO: my ids
+          ? [
+              where(
+                'id',
+                'in',
+                myIds.map((id) => parseInt(id))
+              ),
+            ] // TODO: my ids FIXME: character ID should be a string everywhere
           : [
               ...(filter === 'available-free'
                 ? [where('price', '<', 50)]
@@ -71,13 +82,14 @@ export function MarketPageCharacterList({
     if (characters?.length) {
       cachedCharacters[filter] = cachedCharacters[filter].concat(
         characters.filter(
-          (character) => filter === 'my-blocks' || character.id !== '0' // TODO: my ids
+          (character) =>
+            filter === 'my-blocks' || myIds.indexOf(character.id) < 0
         )
       );
       console.log('Loaded', cachedCharacters[filter].length, 'characters');
       setLoadMore(false);
     }
-  }, [characters, filter]);
+  }, [characters, filter, myIds]);
 
   const onCharacterInView = React.useCallback(
     (index) => {

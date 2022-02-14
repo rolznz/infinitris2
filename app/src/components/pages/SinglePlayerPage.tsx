@@ -60,7 +60,7 @@ export default function SinglePlayerPage() {
 
   const user = useUser();
   const nickname = (user as LocalUser).nickname;
-  const characterId = '319'; //'487';
+  const characterId = (user as LocalUser).characterId;
   const { data: character } = useDocument<ICharacter>(
     getCharacterPath(characterId)
   );
@@ -201,6 +201,7 @@ export default function SinglePlayerPage() {
     character,
     nickname,
     roundLength,
+    characterId,
   ]);
 
   return <GameUI />;

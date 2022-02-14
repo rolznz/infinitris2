@@ -34,6 +34,7 @@ export function useUser(): (IUser | LocalUser) & { id?: string } {
 type IUserStore = {
   readonly user: IUser;
   setNickname(nickname: string): void;
+  setCharacterId(characterId: string): void;
   setLocale(locale: string): void;
   markHasSeenWelcome(): void;
   markHasSeenAllSet(): void;
@@ -113,6 +114,12 @@ export function useUserStore<StateSlice>(
         nickname,
       });*/
       updateLocalUser({ nickname });
+    },
+    setCharacterId: (characterId: string) => {
+      /*updateUser({
+        nickname,
+      });*/
+      updateLocalUser({ characterId });
     },
     setLocale: (locale: string) => {
       updateUser({ locale });

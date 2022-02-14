@@ -9,7 +9,7 @@ const localStorageUser = localStorageValue
   ? (JSON.parse(localStorageValue) as IUser)
   : undefined;
 
-export type LocalUser = IUser & { nickname?: string };
+export type LocalUser = IUser & { nickname?: string; characterId: string };
 
 const defaultUser: LocalUser = {
   userId: undefined as unknown as string,
@@ -21,6 +21,7 @@ const defaultUser: LocalUser = {
   locale: defaultLocale,
   //completedChallengeIds: [],
   controls_keyboard: DEFAULT_KEYBOARD_CONTROLS,
+  characterId: '0',
   //coins: 0,
   //networkImpact: 0,
   //color: defaultColor,

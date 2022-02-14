@@ -4,18 +4,22 @@ import { useDocument } from 'swr-firestore';
 import { Page } from '../../ui/Page';
 import { useParams } from 'react-router-dom';
 import { LargeCharacterTile } from './CharacterPageTile';
-import { useUser } from '@/state/UserStore';
+import { useUser, useUserStore } from '@/state/UserStore';
 import FlexBox from '@/components/ui/FlexBox';
-import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
-import { SvgIcon, Typography } from '@mui/material';
-import { colors, zIndexes } from '@/theme/theme';
+import { Button } from '@mui/material';
+import { zIndexes } from '@/theme/theme';
 import { Carousel } from '@/components/ui/Carousel';
 import { BlockPreview } from './BlockPreview';
+import { FormattedMessage, useIntl } from 'react-intl';
+import { LocalUser } from '@/state/LocalUserStore';
+import { toast } from 'react-toastify';
 
 export default function MarketPage() {
   const { id } = useParams<{ id: string }>();
   const { data: character } = useDocument<ICharacter>(getCharacterPath(id));
+  const intl = useIntl();
   const user = useUser();
+  const userStore = useUserStore();
 
   const pages: React.ReactNode[] = character
     ? [
@@ -70,6 +74,28 @@ export default function MarketPage() {
       }
     >
       <FlexBox zIndex={zIndexes.above}>
+        {(user as LocalUser).characterId !== id && (
+          <Button
+            autoFocus
+            color="primary"
+            variant="contained"
+            sx={{ mb: 2 }}
+            onClick={() => {
+              userStore.setCharacterId(id);
+              toast(
+                intl.formatMessage({
+                  defaultMessage: 'Character Purchased',
+                  description: 'Character Purchased toast message',
+                })
+              );
+            }}
+          >
+            <FormattedMessage
+              defaultMessage="Buy"
+              description="Character page - buy button"
+            />
+          </Button>
+        )}
         {character && <Carousel slides={pages} />}
         {/*<FlexBox
         top={0}

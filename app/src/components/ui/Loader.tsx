@@ -17,6 +17,7 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import {
   playMenuTheme,
   playSound,
+  setMusicOn,
   setSfxOn,
   SoundKey,
 } from '../sound/MusicPlayer';
@@ -176,13 +177,12 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                     // On mobile, sounds can only be loaded after an interaction
                     if (sfxOn) {
                       setSfxOn(true);
-                      playSound(SoundKey.silence);
                     }
                     if (musicOn) {
-                      // TODO: check the route
-                      // no need to load the menu theme if not in the menu
-                      playMenuTheme();
+                      setMusicOn(true);
                     }
+                    playSound(SoundKey.silence);
+                    playMenuTheme();
                   }}
                 >
                   <FormattedMessage

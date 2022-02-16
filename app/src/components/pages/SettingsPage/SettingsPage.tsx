@@ -12,14 +12,13 @@ import { InputMethod, RendererQuality, RendererType } from 'infinitris2-models';
 import {
   setMusicPlaying,
   setSfxOn,
-  musicLoaded,
   playSound,
   SoundKey,
+  setMusicOn,
 } from '@/components/sound/MusicPlayer';
 import { Page } from '@/components/ui/Page';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import MusicOffIcon from '@mui/icons-material/MusicOff';
-import useLoaderStore from '@/state/LoaderStore';
 import useDarkMode from '@/components/hooks/useDarkMode';
 import { IconSwitch } from '@/components/ui/IconSwitch';
 import { ReactComponent as LightModeIcon } from '@/icons/lightmode.svg';
@@ -165,10 +164,11 @@ export default function SettingsPage() {
                 checkedIcon={<MusicNoteIcon />}
                 onChange={(event) => {
                   const isPlaying = event.target.checked;
-                  if (isPlaying && !musicLoaded()) {
-                    useLoaderStore.getState().reset();
-                  }
+                  // if (isPlaying && !musicLoaded()) {
+                  //   useLoaderStore.getState().reset();
+                  // }
                   userStore.setMusicOn(isPlaying);
+                  setMusicOn(isPlaying);
                   setMusicPlaying(isPlaying);
                   playSound(SoundKey.click);
                 }}
@@ -198,9 +198,7 @@ export default function SettingsPage() {
                   // }
                   userStore.setSfxOn(isOn);
                   setSfxOn(isOn);
-                  if (isOn) {
-                    playSound(SoundKey.click);
-                  }
+                  playSound(SoundKey.click);
                 }}
               />
             }

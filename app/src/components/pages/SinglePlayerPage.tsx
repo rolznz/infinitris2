@@ -171,9 +171,7 @@ export default function SinglePlayerPage() {
           onGridReset() {},
         },
       });
-      if (musicOn) {
-        playGameMusic();
-      }
+      playGameMusic();
     }
   }, [
     launchSinglePlayer,

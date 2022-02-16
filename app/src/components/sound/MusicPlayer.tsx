@@ -6,11 +6,13 @@ import useLoaderStore from '@/state/LoaderStore';
 
 const rootUrl = process.env.REACT_APP_MUSIC_ROOT_URL;
 const musicFadeTimeMs = 2000;
+const MUTE = true;
 
-let _menuTheme: Howl;
-let _gameTheme: Howl;
+let _menuTheme: Howl | undefined;
+let _gameTheme: Howl | undefined;
 let _sounds: Howl;
 let _sfxOn: boolean = false;
+let _musicOn: boolean = false;
 
 export const SoundKey = {
   silence: [0, 500],
@@ -81,7 +83,11 @@ export function playSound([startMs, offsetMs]: number[]) {
 }
 
 export function setSfxOn(sfxOn: boolean) {
-  _sfxOn = sfxOn;
+  _sfxOn = !MUTE && sfxOn;
+}
+
+export function setMusicOn(musicOn: boolean) {
+  _musicOn = !MUTE && musicOn;
 }
 
 export function setMusicPlaying(playing: boolean) {
@@ -96,7 +102,7 @@ export function setMusicPlaying(playing: boolean) {
   }
 }
 
-function fadeOutMusic(howl: Howl) {
+function fadeOutMusic(howl: Howl | undefined) {
   if (!howl) {
     return;
   }
@@ -106,7 +112,14 @@ function fadeOutMusic(howl: Howl) {
     howl.stop(); // stop the song - fade does not work on safari/ios
   }, musicFadeTimeMs);
 }
-function playMusic(existingHowl: Howl, url: string, fadeIn: boolean): Howl {
+function playMusic(
+  existingHowl: Howl | undefined,
+  url: string,
+  fadeIn: boolean
+): Howl | undefined {
+  if (!_musicOn) {
+    return undefined;
+  }
   if (existingHowl) {
     existingHowl.unload();
   }

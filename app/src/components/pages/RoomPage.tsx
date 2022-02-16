@@ -25,6 +25,7 @@ import {
   ISimulation,
   ServerMessageType,
   stringToHex,
+  IServerMessage,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser } from '../../state/UserStore';
@@ -34,7 +35,6 @@ import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientO
 import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
 import useIngameStore from '@/state/IngameStore';
 import { GameUI } from '@/components/game/GameUI';
-import { IServerMessage } from 'infinitris2-models/dist/networking/server/IServerMessage';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { LocalUser } from '@/state/LocalUserStore';
 import useLoaderStore from '@/state/LoaderStore';
@@ -133,6 +133,7 @@ export default function RoomPage() {
       socketListener: socketEventListener,
       controls_keyboard,
       controls_gamepad,
+      worldType: room.data()!.worldType,
       player: {
         color:
           character.data()?.color !== undefined

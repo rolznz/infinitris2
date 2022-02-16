@@ -15,6 +15,7 @@ import { IClientChatMessage } from '@models/networking/client/IClientChatMessage
 import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 import { colors } from '@models/colors';
 import { stringToHex } from '@models/util/stringToHex';
+import { WorldType } from '@models/WorldType';
 
 export default class ClientApi implements IClientApi {
   private _client?: IClient;
@@ -51,6 +52,7 @@ export default class ClientApi implements IClientApi {
       const numBots = parseInt(params.get('numBots') || '0');
       const botReactionDelay = parseInt(params.get('botReactionDelay') || '20');
       const spectate = params.get('spectate') === 'true';
+      const worldType = (params.get('world') as WorldType) ?? undefined;
       const rendererType = params.get('renderer') as RendererType;
       const gameModeType = params.get('gameMode') as GameModeType;
       const simulationSettings: SimulationSettings = {
@@ -64,6 +66,7 @@ export default class ClientApi implements IClientApi {
         spectate,
         rendererType,
         simulationSettings,
+        worldType,
         player: {
           characterId: '487',
           patternFilename: 'pattern_5.png',

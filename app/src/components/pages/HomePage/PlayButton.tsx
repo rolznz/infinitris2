@@ -1,13 +1,13 @@
 import React from 'react';
-import { IconButton } from '@mui/material';
+import { IconButton, SvgIcon } from '@mui/material';
 
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { ReactComponent as PlayArrowIcon } from '@/icons/play2.svg';
 
 import { keyframes } from '@mui/system';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
 import { gameModePickerId } from '@/components/ui/GameModePicker/GameModePicker';
 import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
-import isMobile, { requiresPwa } from '@/utils/isMobile';
+import { requiresPwa } from '@/utils/isMobile';
 import { useHistory } from 'react-router-dom';
 import Routes from '@/models/Routes';
 
@@ -69,7 +69,9 @@ function _PlayButton({ isLoaded, delayButtonVisibility }: PlayButtonProps) {
           : scrollGameModePickerIntoView()
       }
     >
-      <PlayArrowIcon sx={{ width: 48, height: 48 }} />
+      <SvgIcon sx={{ width: 32, height: 32, m: 1, marginLeft: 1.5 }}>
+        <PlayArrowIcon style={{ color: 'white' }} />
+      </SvgIcon>
     </IconButton>
   );
 }

@@ -68,7 +68,13 @@ export default class NetworkClient
    */
   async onConnect() {
     console.log('Connected');
-    this._renderer = new Infinitris2Renderer(this._clientApiConfig);
+    this._renderer = new Infinitris2Renderer(
+      this._clientApiConfig,
+      undefined,
+      undefined,
+      undefined,
+      this._launchOptions.worldType
+    );
     await this._renderer.create();
     const joinRoomRequest: IClientJoinRoomRequest = {
       type: ClientMessageType.JOIN_ROOM_REQUEST,

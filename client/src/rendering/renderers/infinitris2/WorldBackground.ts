@@ -19,7 +19,7 @@ export class WorldBackground {
   constructor(
     app: PIXI.Application,
     camera: Camera,
-    worldType: WorldType,
+    worldType: WorldType = 'grass',
     quality: RendererQuality | undefined
   ) {
     this._app = app;
@@ -40,9 +40,10 @@ export class WorldBackground {
   }
   private _getLayerImage(layer: WorldBackgroundLayerConfig): string {
     const layerFilenameParts = layer.filename.split('.');
-    if (this._rendererQuality === 'low') {
+    // TODO: low and high quality versions
+    /*if (this._rendererQuality === 'low') {
       layerFilenameParts[layerFilenameParts.length - 2] += '_s';
-    }
+    }*/
     return `${imagesDirectory}/worlds/${
       this._worldConfig.worldType
     }/${layerFilenameParts.join('.')}`;
@@ -89,12 +90,32 @@ export class WorldBackground {
 
       if (scrollX) {
         this._layerSprites[i]!.tilePosition.x =
-          this._camera.x * this._worldConfig.layers[i].speedX;
+          this._camera.x * this._worldConfig.layers[i].speedX +
+          (this._worldConfig.layers[i].offsetX || 0) *
+            this._layerSprites[i]!.width;
       }
+
+      const portraitOffsetMultiplierY =
+        1 /
+        Math.max(
+          (this._app.renderer.height * 0.8) / this._app.renderer.width,
+          1
+        );
+      const portraitOffsetY =
+        this._worldConfig.layers[i].offsetY > 0
+          ? (Math.max(this._app.renderer.height / this._app.renderer.width, 1) -
+              1) *
+            this._app.renderer.height *
+            0.25
+          : 0;
+
       this._layerSprites[i]!.y = Math.floor(
         Math.max(
           (scrollY ? clampedCameraY : 0) * this._worldConfig.layers[i].speedY +
-            this._app.renderer.height * this._worldConfig.layers[i].offsetY,
+            this._app.renderer.height *
+              this._worldConfig.layers[i].offsetY *
+              portraitOffsetMultiplierY +
+            portraitOffsetY,
           //this._app.renderer.height -
           //this._app.renderer.height * this._layerSprites[i].tileScale.y
           this._app.renderer.height - this._layerSprites[i]!.height

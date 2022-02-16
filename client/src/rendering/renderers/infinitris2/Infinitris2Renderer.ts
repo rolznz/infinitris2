@@ -922,6 +922,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           const borderColor = PIXI.utils.string2hex(
             getBorderColor(PIXI.utils.hex2string(color))
           );
+          graphics.lineStyle(2, 0, 0.5);
           graphics.beginFill(borderColor);
           if (
             !this._simulation.grid

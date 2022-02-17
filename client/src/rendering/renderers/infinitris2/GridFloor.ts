@@ -53,8 +53,8 @@ export class GridFloor {
   }
 
   update(gridBottom: number) {
-    this._gridFloorGraphics.y = Math.floor(gridBottom);
-    this._glowSprite.y = Math.floor(gridBottom - this._glowSprite.height);
+    this._gridFloorGraphics.y = Math.floor(gridBottom) + 1;
+    this._glowSprite.y = Math.floor(gridBottom - this._glowSprite.height) + 1;
   }
 
   resize(floorHeight: number) {

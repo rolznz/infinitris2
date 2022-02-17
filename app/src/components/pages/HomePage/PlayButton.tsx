@@ -69,7 +69,7 @@ function _PlayButton({ isLoaded, delayButtonVisibility }: PlayButtonProps) {
           : scrollGameModePickerIntoView()
       }
     >
-      <SvgIcon sx={{ width: 32, height: 32, m: 1, marginLeft: 1.5 }}>
+      <SvgIcon sx={{ width: 26, height: 26, ml: 1.25, mr: 0.75, my: 1 }}>
         <PlayArrowIcon style={{ color: 'white' }} />
       </SvgIcon>
     </IconButton>

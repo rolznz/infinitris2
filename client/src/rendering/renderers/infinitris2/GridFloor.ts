@@ -8,7 +8,7 @@ import {
 import { WorldType } from '@models/WorldType';
 
 export class GridFloor {
-  private _floorSprite!: PIXI.Sprite;
+  private _gridFloorGraphics: PIXI.Graphics;
   private _glowSprite!: PIXI.Sprite;
   private _app: PIXI.Application;
   private _worldConfig: WorldBackgroundConfig;
@@ -19,12 +19,8 @@ export class GridFloor {
       (config) => config.worldType === worldType
     )!;
 
-    this._app.loader.add(this._getFloorImageFilename());
     this._app.loader.add(this._getGlowImageFilename());
-  }
-  private _getFloorImageFilename(): string {
-    // TODO: copied from world background
-    return `${imagesDirectory}/worlds/${this._worldConfig.worldType}/floor.png`;
+    this._gridFloorGraphics = new PIXI.Graphics();
   }
   private _getGlowImageFilename(): string {
     // TODO: copied from world background
@@ -36,23 +32,33 @@ export class GridFloor {
   }
 
   createImages() {
-    this._floorSprite = this._createSprite(this._getFloorImageFilename());
     this._glowSprite = this._createSprite(this._getGlowImageFilename());
     this._glowSprite.tint = 0;
+
+    const floorGraphicsHeight = 267;
+    const colorRgb = PIXI.utils.hex2rgb(this._worldConfig.floorColor);
+    for (let y = 0; y < floorGraphicsHeight; y++) {
+      this._gridFloorGraphics.beginFill(
+        PIXI.utils.rgb2hex(
+          colorRgb.map((c) => c * Math.pow(1 - y / floorGraphicsHeight, 1.5))
+        )
+      );
+      this._gridFloorGraphics.drawRect(0, y, 1, 1);
+    }
   }
 
   addChildren() {
-    this._app.stage.addChild(this._floorSprite);
+    this._app.stage.addChild(this._gridFloorGraphics);
     this._app.stage.addChild(this._glowSprite);
   }
 
   update(gridBottom: number) {
-    this._floorSprite.y = Math.floor(gridBottom);
+    this._gridFloorGraphics.y = Math.floor(gridBottom);
     this._glowSprite.y = Math.floor(gridBottom - this._glowSprite.height);
   }
 
   resize(floorHeight: number) {
-    [this._floorSprite, this._glowSprite].forEach((sprite) => {
+    [this._gridFloorGraphics, this._glowSprite].forEach((sprite) => {
       sprite.width = this._app.renderer.width;
       sprite.height = floorHeight;
     });

@@ -13,11 +13,13 @@ export type WorldBackgroundLayerConfig = {
 export type WorldBackgroundConfig = {
   layers: WorldBackgroundLayerConfig[];
   worldType: WorldType;
+  floorColor: number;
 };
 
 export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
   {
     worldType: 'grass',
+    floorColor: 0x2066a7,
     layers: [
       {
         filename: 'theme_grass_0.png',
@@ -77,6 +79,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
   },
   {
     worldType: 'space',
+    floorColor: 0x5c6294,
     layers: [
       {
         filename: 'theme_space_1.png',
@@ -124,6 +127,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
   },
   {
     worldType: 'desert',
+    floorColor: 0xffce8e,
     layers: [
       {
         filename: 'theme_desert_0.png',
@@ -132,18 +136,20 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         offsetY: 0,
       },
       {
+        filename: 'theme_desert_2.png',
+        speedY: 0.1,
+        speedX: 0.1,
+        offsetY: -0.25,
+        offsetX: -0.025,
+        minQuality: 'high',
+      },
+      {
         filename: 'theme_desert_1.png',
         speedY: 0.15,
         speedX: 0.15,
         offsetY: 0,
       },
-      {
-        filename: 'theme_desert_2.png',
-        speedY: 0.2,
-        speedX: 0.2,
-        offsetY: 0,
-        minQuality: 'high',
-      },
+
       {
         filename: 'theme_desert_3.png',
         speedY: 0.25,

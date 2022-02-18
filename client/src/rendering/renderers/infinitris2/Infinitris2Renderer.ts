@@ -45,6 +45,7 @@ interface IBlockContainer {
 
   block: IRenderableEntity<{
     container: PIXI.Container;
+    faceSprite: PIXI.Sprite | undefined;
     cells: {
       graphics: PIXI.Graphics;
       patternSprite: PIXI.Sprite | undefined;
@@ -52,7 +53,6 @@ interface IBlockContainer {
   }>;
 
   playerNameText: IRenderableEntity<PIXI.Text>;
-  face: IRenderableEntity<PIXI.Sprite>;
 }
 
 enum RenderCellType {
@@ -257,7 +257,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
             })() * rotateRate;
         });
 
-        for (const child of blockContainer.face.container.children) {
+        /*for (const child of blockContainer.face.container.children) {
           child.rotation =
             blockContainer.block.children[0].renderableObject.container.rotation;
         }
@@ -271,7 +271,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           blockContainer.block.container.y +
           blockContainer.block.children[0].renderableObject.cells[0].graphics
             .y +
-          this.cellSize * 0.5; //(topCells[0].cell.row + 0.5) * cellSize;
+          this.cellSize * 0.5; //(topCells[0].cell.row + 0.5) * cellSize;*/
         const textCentreX = blockContainer.block.container.x; //block.centreX * cellSize;
         const textY =
           blockContainer.block.container.y -
@@ -429,19 +429,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
         container: new PIXI.Container(),
         children: [],
       },
-      face: {
-        container: new PIXI.Container(),
-        children: [],
-      },
       block: {
         container: new PIXI.Container(),
         children: [],
       },
     };
 
-    blockContainer.face.container.zIndex = 1;
     this._world.addChild(blockContainer.playerNameText.container);
-    this._world.addChild(blockContainer.face.container);
     this._world.addChild(blockContainer.block.container);
 
     this._blocks[block.player.id] = blockContainer;
@@ -605,13 +599,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!blockContainer) {
       return;
     }
-    this._world.removeChild(blockContainer.block.container);
     this._world.removeChild(blockContainer.playerNameText.container);
 
+    this._world.removeChild(blockContainer.block.container);
     // TODO: this is probably not an efficient way to manage the face alpha
     // store the faces as an array and process them in the normal loop
     // also will fix the issue where faces do not move down or get removed after line clear
-    const faceFadeTime = 1000;
+    /*const faceFadeTime = 1000;
     const fadeSteps = 30;
     setTimeout(
       () => this._world.removeChild(blockContainer.face.container),
@@ -621,7 +615,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       setTimeout(() => {
         blockContainer.face.container.alpha -= 1 / fadeSteps;
       }, ((i + 1) * faceFadeTime) / fadeSteps);
-    }
+    }*/
 
     delete this._blocks[block.player.id];
   }
@@ -815,6 +809,23 @@ export default class Infinitris2Renderer extends BaseRenderer {
       (pixiObject, shadowIndexWithDirection, child) => {
         let i = 0;
 
+        if (
+          block.player.characterId &&
+          this._app.loader.resources[this._getFaceUrl(block.player.characterId)]
+            ?.isComplete
+        ) {
+          pixiObject.faceSprite = PIXI.Sprite.from(
+            this._getFaceUrl(block.player.characterId!)
+          );
+          pixiObject.faceSprite.scale.set(
+            (this._cellSize / pixiObject.faceSprite.width) * 2
+          );
+          pixiObject.faceSprite.anchor.set(0.5, 0.5);
+          pixiObject.faceSprite.zIndex = 1;
+
+          child.renderableObject.container.addChild(pixiObject.faceSprite);
+        }
+
         for (let r = 0; r < block.initialLayout.length; r++) {
           for (let c = 0; c < block.initialLayout.length; c++) {
             const connections: { row: number; column: number }[] = [];
@@ -845,6 +856,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
               pixiObject.cells[i].graphics.y =
                 (r - block.initialLayout.length / 2) * this._cellSize;
 
+              if (i === 0 && pixiObject.faceSprite) {
+                pixiObject.faceSprite.x =
+                  pixiObject.cells[i].graphics.x + this._cellSize * 0.5;
+                pixiObject.faceSprite.y =
+                  pixiObject.cells[i].graphics.y + this._cellSize * 0.5;
+              }
+
               if (pixiObject.cells[i].patternSprite) {
                 pixiObject.cells[i].patternSprite!.x =
                   pixiObject.cells[i].graphics.x;
@@ -864,6 +882,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         blockContainer.block.container.addChild(container);
         return {
           container,
+          faceSprite: undefined,
           cells: block.cells.map((_) => {
             const renderableObject = {
               graphics: new PIXI.Graphics(),
@@ -911,28 +930,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
         return text;
       }
     );
-    if (
-      block.player.characterId &&
-      this._app.loader.resources[this._getFaceUrl(block.player.characterId)]
-        ?.isComplete
-    )
-      this._renderCopies(
-        blockContainer.face,
-        1,
-        (face, shadowIndexWithDirection) => {
-          const shadowX = shadowIndexWithDirection * this._gridWidth;
-          face.x = shadowX;
-        },
-        () => {
-          const faceSprite = PIXI.Sprite.from(
-            this._getFaceUrl(block.player.characterId!)
-          );
-          faceSprite.scale.set((this._cellSize / faceSprite.width) * 2);
-          faceSprite.anchor.set(0.5, 0.5);
-          blockContainer.face.container.addChild(faceSprite);
-          return faceSprite;
-        }
-      );
   }
 
   private _moveBlock(block: IBlock) {

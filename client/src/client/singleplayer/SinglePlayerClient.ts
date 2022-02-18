@@ -91,6 +91,7 @@ export default class SinglePlayerClient
    */
   onCellBehaviourChanged(_cell: ICell, _previousBehaviour: ICellBehaviour) {}
 
+  onCellIsEmptyChanged() {}
   /**
    * @inheritdoc
    */

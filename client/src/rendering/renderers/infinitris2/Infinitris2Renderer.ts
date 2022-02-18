@@ -34,13 +34,23 @@ import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameMode
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
+import Cell from '@core/grid/cell/Cell';
+import { wrap } from '@core/utils/wrap';
 
 const particleDivisions = 4;
 const numPatternDivisions = 4;
 
-interface IRenderableBlock {
-  block: IBlock;
-  cells: IRenderableCell[];
+interface IBlockContainer {
+  originalBlock: IBlock;
+
+  block: IRenderableEntity<{
+    container: PIXI.Container;
+    cells: {
+      graphics: PIXI.Graphics;
+      patternSprite: PIXI.Sprite | undefined;
+    }[];
+  }>;
+
   playerNameText: IRenderableEntity<PIXI.Text>;
   face: IRenderableEntity<PIXI.Sprite>;
 }
@@ -92,7 +102,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _shadowGradientGraphics?: PIXI.Graphics;
 
   // FIXME: blocks should have their own ids!
-  private _blocks!: { [playerId: number]: IRenderableBlock };
+  private _blocks!: { [playerId: number]: IBlockContainer };
   private _cells!: { [cellId: number]: IRenderableCell };
 
   private _particles!: IParticle[];
@@ -212,6 +222,78 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
 
     super.tick();
+
+    for (const player of this._simulation.players) {
+      const blockContainer = this._blocks[player.id];
+      if (blockContainer) {
+        const moveRate = player.block?.isDropping ? 1 : 0.25;
+        const rotateRate = 0.25;
+        const block = blockContainer.originalBlock;
+        // let firstColumn = block.cells.find(
+        //   (cell) => !block.cells.some((other) => other.column < cell.column)
+        // )!.column;
+
+        /*blockContainer.container.x +=
+          (block.column * this._cellSize - blockContainer.container.x) *
+          moveRate;*/
+        blockContainer.block.container.x =
+          (block.column + (block.layout.length % 2) * 0.5) * this._cellSize;
+        blockContainer.block.container.y +=
+          ((block.row + block.layout[0].length / 2) * this._cellSize -
+            blockContainer.block.container.y) *
+          moveRate;
+        blockContainer.block.children.forEach((child) => {
+          child.renderableObject.container.rotation +=
+            (() => {
+              let diff = wrap(
+                block.rotation * Math.PI * 0.5 -
+                  child.renderableObject.container.rotation,
+                Math.PI * 2
+              );
+              if (diff > Math.PI) {
+                diff -= Math.PI * 2;
+              }
+              return diff;
+            })() * rotateRate;
+        });
+
+        for (const child of blockContainer.face.container.children) {
+          child.rotation =
+            blockContainer.block.children[0].renderableObject.container.rotation;
+        }
+        blockContainer.face.container.x =
+          blockContainer.block.container.x +
+          blockContainer.block.children[0].renderableObject.cells[0].graphics
+            .x +
+          this.cellSize * 0.5;
+        //(topCells[0].cell.column + topCells.length / 2) * cellSize;
+        blockContainer.face.container.y =
+          blockContainer.block.container.y +
+          blockContainer.block.children[0].renderableObject.cells[0].graphics
+            .y +
+          this.cellSize * 0.5; //(topCells[0].cell.row + 0.5) * cellSize;
+        const textCentreX = blockContainer.block.container.x; //block.centreX * cellSize;
+        const textY =
+          blockContainer.block.container.y -
+          (block.layout[0].length / 2) * this._cellSize; //block.topRow * cellSize - cellSize * 1;
+        blockContainer.playerNameText.container.x = textCentreX;
+        blockContainer.playerNameText.container.y = textY;
+
+        const followingPlayer = this._simulation?.followingPlayer;
+        if (followingPlayer && block.player.id === followingPlayer.id) {
+          // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
+          const cellSize = this._cellSize;
+          const blockX = block.centreX * cellSize;
+          const y = block.row * cellSize;
+          this._camera.follow(
+            blockX, // + block.width * cellSize * 0.5,
+            y,
+            block.player.id
+          );
+          this._renderBlockPlacementShadow(block);
+        }
+      }
+    }
 
     if (this._displayFrameRate) {
       this._fpsText.x = this._app.renderer.width / 2;
@@ -341,13 +423,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._createBlock(block);
   }
   private _createBlock(block: IBlock) {
-    const renderableBlock: IRenderableBlock = {
-      cells: block.cells.map((cell) => ({
-        cell,
-        container: new PIXI.Container(),
-        children: [],
-      })),
-      block,
+    const blockContainer: IBlockContainer = {
+      originalBlock: block,
       playerNameText: {
         container: new PIXI.Container(),
         children: [],
@@ -356,15 +433,18 @@ export default class Infinitris2Renderer extends BaseRenderer {
         container: new PIXI.Container(),
         children: [],
       },
+      block: {
+        container: new PIXI.Container(),
+        children: [],
+      },
     };
-    renderableBlock.face.container.zIndex = 1;
-    this._world.addChild(renderableBlock.playerNameText.container);
-    this._world.addChild(renderableBlock.face.container);
-    this._world.addChild(
-      ...renderableBlock.cells.map((cell) => cell.container)
-    );
 
-    this._blocks[block.player.id] = renderableBlock;
+    blockContainer.face.container.zIndex = 1;
+    this._world.addChild(blockContainer.playerNameText.container);
+    this._world.addChild(blockContainer.face.container);
+    this._world.addChild(blockContainer.block.container);
+
+    this._blocks[block.player.id] = blockContainer;
     this._renderBlock(block);
   }
 
@@ -377,9 +457,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
    * @inheritdoc
    */
   onBlockMoved(block: IBlock) {
-    //this._moveBlock(block);
-    // TODO: consider whether there is a better way to render blocks
-    this._renderBlock(block); // requires re-render due to borders changing + pattern changing rotation
+    this._moveBlock(block);
   }
 
   /**
@@ -408,8 +486,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
-    this._renderCells(this._simulation.grid.reducedCells); //TODO: only render block + neighbour cells
-    //this._renderCells(block.cells);
+    if (block.player === this._simulation.followingPlayer) {
+      //this._camera.bump(0, 20); // TODO: minor camera shake
+    }
   }
 
   onPlayerCreated(player: IPlayer): void {
@@ -418,7 +497,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       if (!this._app.loader.resources[faceUrl]) {
         this._app.loader.add(faceUrl, () => {
           if (player.block) {
-            //this._renderBlock(player.block);
+            this._renderBlock(player.block);
           }
         });
       }
@@ -446,6 +525,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
               );
             }
           }
+          if (player.block) {
+            this._renderBlock(player.block);
+          }
         });
       }
     }
@@ -463,7 +545,25 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (previousBehaviour.type == CellType.Wafer) {
       this._explodeCell(cell, previousBehaviour.color);
     }
-    this._renderCell(cell);
+    this._renderCellAndNeighbours(cell);
+  }
+
+  onCellIsEmptyChanged(cell: ICell) {
+    //this._renderCellAndNeighbours(cell);
+  }
+
+  private _renderCellAndNeighbours(cell: ICell) {
+    for (let r = -1; r <= 1; r++) {
+      for (let c = -1; c <= 1; c++) {
+        const neighbour =
+          this._simulation!.grid.cells[cell.row + r]?.[
+            wrap(cell.column + c, this._simulation!.grid.numColumns)
+          ];
+        if (neighbour) {
+          this._renderCell(neighbour);
+        }
+      }
+    }
   }
 
   private _explodeCell(cell: ICell, color?: number) {
@@ -501,14 +601,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   private _removeBlock(block: IBlock) {
-    var renderableBlock = this._blocks[block.player.id];
-    if (!renderableBlock) {
+    var blockContainer = this._blocks[block.player.id];
+    if (!blockContainer) {
       return;
     }
-    this._world.removeChild(
-      ...renderableBlock.cells.map((cell) => cell.container)
-    );
-    this._world.removeChild(renderableBlock.playerNameText.container);
+    this._world.removeChild(blockContainer.block.container);
+    this._world.removeChild(blockContainer.playerNameText.container);
 
     // TODO: this is probably not an efficient way to manage the face alpha
     // store the faces as an array and process them in the normal loop
@@ -516,12 +614,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
     const faceFadeTime = 1000;
     const fadeSteps = 30;
     setTimeout(
-      () => this._world.removeChild(renderableBlock.face.container),
+      () => this._world.removeChild(blockContainer.face.container),
       faceFadeTime
     );
     for (let i = 0; i < fadeSteps; i++) {
       setTimeout(() => {
-        renderableBlock.face.container.alpha -= 1 / fadeSteps;
+        blockContainer.face.container.alpha -= 1 / fadeSteps;
       }, ((i + 1) * faceFadeTime) / fadeSteps);
     }
 
@@ -588,13 +686,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   /**
    * @inheritdoc
    */
-  onLineCleared(_row: number) {
-    if (!this._simulation) {
-      return;
-    }
-    // TODO: remove, should only render individual cells on cell state change
-    this._renderCells(this._simulation.grid.reducedCells);
-  }
+  onLineCleared(_row: number) {}
 
   rerenderGrid() {
     if (!this._simulation) {
@@ -606,21 +698,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
   /**
    * @inheritdoc
    */
-  onGridCollapsed(_grid: IGrid) {
-    if (!this._simulation) {
-      return;
-    }
-    // TODO: optimize
-    this._renderCells(this._simulation.grid.reducedCells);
-  }
+  onGridCollapsed(_grid: IGrid) {}
 
-  onGridReset(grid: IGrid): void {
-    if (!this._simulation) {
-      return;
-    }
-    // TODO: optimize
-    this._renderCells(this._simulation.grid.reducedCells);
-  }
+  onGridReset(_grid: IGrid): void {}
 
   // TODO: move to base renderer
   protected _resize = async () => {
@@ -643,10 +723,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._hasScrollY
     );
 
-    this._renderCells(this._simulation.grid.reducedCells);
+    this.rerenderGrid();
 
     for (const block of Object.values(this._blocks)) {
-      this._renderBlock(block.block);
+      this._renderBlock(block.originalBlock);
     }
 
     if (this._shadowGradientGraphics) {
@@ -715,7 +795,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       );
     } else {
       renderableCell.children.forEach((child) => {
-        child.renderableObject.graphics.clear();
+        child.renderableObject.graphics?.clear();
         if (child.renderableObject.patternSprite) {
           child.renderableObject.patternSprite.visible = false;
         }
@@ -724,23 +804,91 @@ export default class Infinitris2Renderer extends BaseRenderer {
   };
 
   private _renderBlock(block: IBlock) {
-    const renderableBlock: IRenderableBlock = this._blocks[block.player.id];
-    if (!renderableBlock) {
+    const blockContainer: IBlockContainer = this._blocks[block.player.id];
+    if (!blockContainer) {
       return;
     }
-    this._moveBlock(block);
 
-    renderableBlock.cells.forEach((cell) => {
+    this._renderCopies(
+      blockContainer.block,
+      1,
+      (pixiObject, shadowIndexWithDirection, child) => {
+        let i = 0;
+
+        for (let r = 0; r < block.initialLayout.length; r++) {
+          for (let c = 0; c < block.initialLayout.length; c++) {
+            const connections: { row: number; column: number }[] = [];
+            for (let dy = -1; dy <= 1; dy++) {
+              for (let dx = -1; dx <= 1; dx++) {
+                if (dy !== 0 || dx !== 0) {
+                  if (block.initialLayout[r + dy]?.[c + dx]) {
+                    connections.push({ column: c + dx, row: r + dy });
+                  }
+                }
+              }
+            }
+
+            if (block.initialLayout[r][c]) {
+              this._renderCellInternal(
+                pixiObject.cells[i],
+                pixiObject.container,
+                r,
+                c,
+                false,
+                block.player.color,
+                block.player.patternFilename,
+                connections
+              );
+
+              pixiObject.cells[i].graphics.x =
+                (c - block.initialLayout.length / 2) * this._cellSize;
+              pixiObject.cells[i].graphics.y =
+                (r - block.initialLayout.length / 2) * this._cellSize;
+
+              if (pixiObject.cells[i].patternSprite) {
+                pixiObject.cells[i].patternSprite!.x =
+                  pixiObject.cells[i].graphics.x;
+                pixiObject.cells[i].patternSprite!.y =
+                  pixiObject.cells[i].graphics.y;
+              }
+
+              const shadowX = shadowIndexWithDirection * this._gridWidth;
+              pixiObject.container.x = shadowX;
+              ++i;
+            }
+          }
+        }
+      },
+      () => {
+        const container = new PIXI.Container();
+        blockContainer.block.container.addChild(container);
+        return {
+          container,
+          cells: block.cells.map((_) => {
+            const renderableObject = {
+              graphics: new PIXI.Graphics(),
+              patternSprite: undefined,
+            };
+            container.addChild(renderableObject.graphics);
+            return renderableObject;
+          }),
+        };
+      }
+    );
+
+    /*blockContainer.cells.forEach((cell) => {
       this._renderCellCopies(
         cell,
         RenderCellType.Block,
         block.player.color,
         block.player.patternFilename
       );
-    });
+    });*/
+
+    this._moveBlock(block);
 
     this._renderCopies(
-      renderableBlock.playerNameText,
+      blockContainer.playerNameText,
       1,
       (text, shadowIndexWithDirection) => {
         const shadowX = shadowIndexWithDirection * this._gridWidth;
@@ -759,7 +907,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           dropShadowBlur: 2,
         });
         text.anchor.set(0.5, 1);
-        renderableBlock.playerNameText.container.addChild(text);
+        blockContainer.playerNameText.container.addChild(text);
         return text;
       }
     );
@@ -769,7 +917,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         ?.isComplete
     )
       this._renderCopies(
-        renderableBlock.face,
+        blockContainer.face,
         1,
         (face, shadowIndexWithDirection) => {
           const shadowX = shadowIndexWithDirection * this._gridWidth;
@@ -781,52 +929,44 @@ export default class Infinitris2Renderer extends BaseRenderer {
           );
           faceSprite.scale.set((this._cellSize / faceSprite.width) * 2);
           faceSprite.anchor.set(0.5, 0.5);
-          renderableBlock.face.container.addChild(faceSprite);
+          blockContainer.face.container.addChild(faceSprite);
           return faceSprite;
         }
       );
-
-    const followingPlayer = this._simulation?.followingPlayer;
-    if (followingPlayer && block.player.id === followingPlayer.id) {
-      // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
-      const cellSize = this._cellSize;
-      const blockX = block.centreX * cellSize;
-      const y = block.row * cellSize;
-      this._camera.follow(
-        blockX, // + block.width * cellSize * 0.5,
-        y,
-        block.player.id
-      );
-      this._renderBlockPlacementShadow(block);
-    }
   }
 
   private _moveBlock(block: IBlock) {
     const cellSize = this._cellSize;
-    const renderableBlock: IRenderableBlock = this._blocks[block.player.id];
+    const blockContainer: IBlockContainer = this._blocks[block.player.id];
 
-    for (let i = 0; i < block.cells.length; i++) {
-      renderableBlock.cells[i].cell = block.cells[i];
+    /*let firstColumn = block.layout.length;
+    let lastColumn = 0;
+    for (let r = 0; r < block.layout.length; r++) {
+      for (let c = 0; c < block.layout[0].length; c++) {
+        if (block.layout[r][c]) {
+          firstColumn = Math.min(firstColumn, c);
+          lastColumn = Math.max(lastColumn, c);
+        }
+      }
     }
 
-    renderableBlock.cells.forEach((cell) => {
-      cell.container.x = cell.cell.column * cellSize;
-      cell.container.y = cell.cell.row * cellSize;
+    blockContainer.cells.forEach((cell) => {
+      cell.container.x =
+        (cell.cell.column - Math.floor(block.width * 0.5)) * cellSize;
+      cell.container.y =
+        (cell.cell.row - Math.floor(block.layout.length * 0.5)) * cellSize;
     });
 
     const textCentreX = block.centreX * cellSize;
     const textY = block.topRow * cellSize - cellSize * 1;
-    renderableBlock.playerNameText.container.x = textCentreX;
-    renderableBlock.playerNameText.container.y = textY;
+    blockContainer.playerNameText.container.x = textCentreX;
+    blockContainer.playerNameText.container.y = textY;
 
-    const topCells = renderableBlock.cells.filter(
+    const topCells = blockContainer.cells.filter(
       (cell) =>
-        !renderableBlock.cells.some((other) => other.cell.row < cell.cell.row)
+        !blockContainer.cells.some((other) => other.cell.row < cell.cell.row)
     );
-
-    renderableBlock.face.container.x =
-      (topCells[0].cell.column + topCells.length / 2) * cellSize;
-    renderableBlock.face.container.y = (topCells[0].cell.row + 0.5) * cellSize;
+*/
   }
 
   private _renderParticle(particle: IParticle, color: number) {
@@ -861,246 +1001,157 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._renderCopies(
       renderableCell,
       1,
-      ({ graphics, patternSprite }, shadowIndexWithDirection, child) => {
+      (_, shadowIndexWithDirection, child) => {
         if (!this._simulation) {
           return;
         }
 
-        if (patternFilename && this._patternTextures[patternFilename]) {
-          const patternTexture =
-            this._patternTextures[patternFilename][
-              (renderableCell.cell.row % numPatternDivisions) +
-                numPatternDivisions *
-                  (renderableCell.cell.column % numPatternDivisions)
-            ];
-
-          if (!patternSprite || patternSprite.texture !== patternTexture) {
-            if (patternSprite) {
-              renderableCell.container.removeChild(patternSprite);
-              console.log('Replace texture');
+        const connections: { row: number; column: number }[] = [];
+        for (let r = -1; r <= 1; r++) {
+          for (let c = -1; c <= 1; c++) {
+            if (r !== 0 || c !== 0) {
+              const neighbour = this._simulation.grid.getNeighbour(
+                renderableCell.cell,
+                c,
+                r
+              );
+              if (neighbour?.isConnectedTo(renderableCell.cell)) {
+                connections.push({
+                  column: neighbour.column,
+                  row: neighbour.row,
+                });
+              }
             }
-
-            patternSprite = PIXI.Sprite.from(patternTexture);
-            renderableCell.container.addChild(patternSprite);
-            child.renderableObject.patternSprite = patternSprite;
-          }
-          patternSprite.visible = true;
-          patternSprite.width = this._cellSize;
-          patternSprite.height = this._cellSize;
-        } else {
-          if (patternSprite) {
-            patternSprite.visible = false;
           }
         }
+
+        this._renderCellInternal(
+          child.renderableObject,
+          renderableCell.container,
+          renderableCell.cell.row,
+          renderableCell.cell.column,
+          renderableCell.cell.isEmpty,
+          color,
+          patternFilename,
+          connections
+        );
 
         const shadowX = shadowIndexWithDirection * this._gridWidth;
-        graphics.x = shadowX;
-        if (patternSprite) {
-          patternSprite.x = shadowX;
-        }
 
-        graphics.clear();
-        const cellSize = this._cellSize;
-        // TODO: extract rendering of different behaviours
-        if (
-          renderCellType !== RenderCellType.Cell ||
-          (renderableCell.cell.type === CellType.FinishChallenge &&
-            renderableCell.cell.isEmpty) ||
-          renderableCell.cell.type === CellType.Laser ||
-          renderableCell.cell.type === CellType.Infection ||
-          renderableCell.cell.type === CellType.Deadly ||
-          !renderableCell.cell.isEmpty
-        ) {
-          // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
-          // e.g. non-empty red key cell
-          //graphics.cacheAsBitmap = true;
-          graphics.beginFill(color);
-
-          graphics.drawRect(0, 0, cellSize, cellSize);
-          //graphics.
-          const borderSize = this._cellPadding * 2;
-          const borderColor = PIXI.utils.string2hex(
-            getBorderColor(PIXI.utils.hex2string(color))
-          );
-          graphics.lineStyle(2, 0, 0.5);
-          graphics.beginFill(borderColor);
-          if (
-            !this._simulation.grid
-              .getNeighbour(renderableCell.cell, 1, 0)
-              ?.isConnectedTo(renderableCell.cell)
-          ) {
-            graphics.drawRect(cellSize - borderSize, 0, borderSize, cellSize);
-          }
-          if (
-            !this._simulation.grid
-              .getNeighbour(renderableCell.cell, -1, 0)
-              ?.isConnectedTo(renderableCell.cell)
-          ) {
-            graphics.drawRect(0, 0, borderSize, cellSize);
-          }
-          if (
-            !this._simulation.grid
-              .getNeighbour(renderableCell.cell, 0, -1)
-              ?.isConnectedTo(renderableCell.cell)
-          ) {
-            graphics.drawRect(0, 0, cellSize, borderSize);
-          }
-          if (
-            !this._simulation.grid
-              .getNeighbour(renderableCell.cell, 0, 1)
-              ?.isConnectedTo(renderableCell.cell)
-          ) {
-            graphics.drawRect(0, cellSize - borderSize, cellSize, borderSize);
-          }
-
-          // corners
-          if (
-            !this._simulation.grid
-              .getNeighbour(renderableCell.cell, -1, -1)
-              ?.isConnectedTo(renderableCell.cell)
-          ) {
-            graphics.drawRect(0, 0, borderSize, borderSize);
-          }
-          if (
-            !this._simulation.grid
-              .getNeighbour(renderableCell.cell, 1, -1)
-              ?.isConnectedTo(renderableCell.cell)
-          ) {
-            graphics.drawRect(cellSize - borderSize, 0, borderSize, borderSize);
-          }
-          if (
-            !this._simulation.grid
-              .getNeighbour(renderableCell.cell, -1, 1)
-              ?.isConnectedTo(renderableCell.cell)
-          ) {
-            graphics.drawRect(0, cellSize - borderSize, borderSize, borderSize);
-          }
-          if (
-            !this._simulation.grid
-              .getNeighbour(renderableCell.cell, 1, 1)
-              ?.isConnectedTo(renderableCell.cell)
-          ) {
-            graphics.drawRect(
-              cellSize - borderSize,
-              cellSize - borderSize,
-              borderSize,
-              borderSize
-            );
-          }
-        }
-
-        if (renderableCell.cell.isEmpty) {
-          switch (renderableCell.cell.type) {
-            case CellType.Wafer:
-              graphics.beginFill(color);
-
-              graphics.drawRect(
-                0,
-                (cellSize * 1.5) / 8,
-                cellSize,
-                (cellSize * 0.5) / 8
-              );
-
-              graphics.drawRect(
-                0,
-                (cellSize * 4) / 8,
-                cellSize,
-                (cellSize * 0.5) / 8
-              );
-
-              graphics.drawRect(
-                0,
-                (cellSize * 6) / 8,
-                cellSize,
-                (cellSize * 0.5) / 8
-              );
-
-              break;
-            case CellType.Key:
-              graphics.beginFill(color);
-
-              // bit
-              graphics.drawRect(
-                (cellSize * 4.5) / 8,
-                (cellSize * 1.5) / 8,
-                (cellSize * 1) / 8,
-                (cellSize * 0.5) / 8
-              );
-
-              graphics.drawRect(
-                (cellSize * 4.5) / 8,
-                (cellSize * 2.5) / 8,
-                (cellSize * 1) / 8,
-                (cellSize * 0.5) / 8
-              );
-
-              // shank
-              graphics.drawRect(
-                (cellSize * 3.5) / 8,
-                (cellSize * 1) / 8,
-                (cellSize * 1) / 8,
-                (cellSize * 4) / 8
-              );
-
-              // bow
-              graphics.drawRect(
-                (cellSize * 2.5) / 8,
-                (cellSize * 5) / 8,
-                (cellSize * 3) / 8,
-                (cellSize * 2) / 8
-              );
-              break;
-            case CellType.Lock:
-              // background
-              graphics.beginFill(color, 0.5);
-              graphics.drawRect(0, 0, cellSize, cellSize);
-
-              graphics.beginFill(color);
-              // shackle - top
-              graphics.drawRect(
-                (cellSize * 2) / 8,
-                cellSize / 8,
-                (cellSize * 4) / 8,
-                cellSize / 8
-              );
-
-              // shackle - sides
-              graphics.drawRect(
-                (cellSize * 2) / 8,
-                cellSize / 8,
-                (cellSize * 1) / 8,
-                (cellSize * 3) / 8
-              );
-
-              graphics.drawRect(
-                (cellSize * 5) / 8,
-                cellSize / 8,
-                (cellSize * 1) / 8,
-                (cellSize * 3) / 8
-              );
-
-              // body
-              graphics.drawRect(
-                (cellSize * 1) / 8,
-                cellSize * (4 / 8),
-                (cellSize * 6) / 8,
-                (cellSize * 3) / 8
-              );
-              break;
-          }
+        child.renderableObject.graphics.x = shadowX;
+        if (child.renderableObject.patternSprite) {
+          child.renderableObject.patternSprite.x = shadowX;
         }
       },
       () => {
         const graphics = new PIXI.Graphics();
-
-        // pattern sprite needs to be regenerated each time the block rotates (need to pick a new texture)
-        let patternSprite = undefined;
-
         renderableCell.container.addChild(graphics);
-
-        return { graphics, patternSprite };
+        return { graphics, patternSprite: undefined };
       }
     );
+  }
+
+  private _renderCellInternal(
+    renderableObject: {
+      graphics: PIXI.Graphics;
+      patternSprite: PIXI.Sprite | undefined;
+    },
+    container: PIXI.Container,
+    row: number,
+    column: number,
+    isEmpty: boolean,
+    color: number,
+    patternFilename: string | undefined,
+    connections: { row: number; column: number }[]
+  ) {
+    const { graphics } = renderableObject;
+    let { patternSprite } = renderableObject;
+    graphics.clear();
+    if (isEmpty) {
+      if (patternSprite) {
+        patternSprite.visible = false;
+      }
+      return;
+    }
+    if (patternFilename && this._patternTextures[patternFilename]) {
+      const patternTexture =
+        this._patternTextures[patternFilename][
+          (row % numPatternDivisions) +
+            numPatternDivisions * (column % numPatternDivisions)
+        ];
+
+      if (!patternSprite || patternSprite.texture !== patternTexture) {
+        if (patternSprite) {
+          container.removeChild(patternSprite);
+        }
+
+        patternSprite = PIXI.Sprite.from(patternTexture);
+        container.addChild(patternSprite);
+        renderableObject.patternSprite = patternSprite;
+      }
+      patternSprite.visible = true;
+      patternSprite.width = this._cellSize;
+      patternSprite.height = this._cellSize;
+    } else {
+      if (patternSprite) {
+        patternSprite.visible = false;
+      }
+    }
+
+    const cellSize = this._cellSize;
+    // TODO: extract rendering of different behaviours
+    // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
+    // e.g. non-empty red key cell
+    //graphics.cacheAsBitmap = true;
+    graphics.beginFill(color);
+
+    graphics.drawRect(0, 0, cellSize, cellSize);
+
+    const hasConnection = (dx: number, dy: number) => {
+      return connections.some(
+        (c) =>
+          c.column === wrap(column + dx, this._simulation!.grid.numColumns) &&
+          c.row === row + dy
+      );
+    };
+    //graphics.
+    const borderSize = this._cellPadding * 2;
+    const borderColor = PIXI.utils.string2hex(
+      getBorderColor(PIXI.utils.hex2string(color))
+    );
+    graphics.lineStyle(2, 0, 0.5);
+    graphics.beginFill(borderColor);
+    if (!hasConnection(1, 0)) {
+      graphics.drawRect(cellSize - borderSize, 0, borderSize, cellSize);
+    }
+    if (!hasConnection(-1, 0)) {
+      graphics.drawRect(0, 0, borderSize, cellSize);
+    }
+    if (!hasConnection(0, -1)) {
+      graphics.drawRect(0, 0, cellSize, borderSize);
+    }
+    if (!hasConnection(0, 1)) {
+      graphics.drawRect(0, cellSize - borderSize, cellSize, borderSize);
+    }
+
+    // corners
+    if (!hasConnection(-1, -1)) {
+      graphics.drawRect(0, 0, borderSize, borderSize);
+    }
+    if (!hasConnection(1, -1)) {
+      graphics.drawRect(cellSize - borderSize, 0, borderSize, borderSize);
+    }
+    if (!hasConnection(-1, 1)) {
+      graphics.drawRect(0, cellSize - borderSize, borderSize, borderSize);
+    }
+    if (!hasConnection(1, 1)) {
+      graphics.drawRect(
+        cellSize - borderSize,
+        cellSize - borderSize,
+        borderSize,
+        borderSize
+      );
+    }
   }
 
   private _renderBlockPlacementShadow(block: IBlock) {

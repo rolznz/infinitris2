@@ -20,7 +20,13 @@ export default class Camera {
     return this._y;
   }
 
+  bump(x: number, y: number) {
+    this._vx += x;
+    this._vy += y;
+  }
+
   reset() {
+    console.log('Camera reset');
     this._followingId = undefined;
     this._x = 0;
     this._y = 0;

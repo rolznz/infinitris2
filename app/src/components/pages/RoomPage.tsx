@@ -208,6 +208,7 @@ export default function RoomPage() {
         },
         onLineCleared() {},
         onCellBehaviourChanged() {},
+        onCellIsEmptyChanged() {},
         onGridCollapsed() {},
         onGridReset() {},
       },

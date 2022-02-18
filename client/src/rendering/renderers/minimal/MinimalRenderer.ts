@@ -296,6 +296,9 @@ export default class MinimalRenderer extends BaseRenderer {
     }
     this._renderCell(cell);
   }
+  onCellIsEmptyChanged(cell: ICell): void {
+    this._renderCell(cell);
+  }
 
   private _explodeCell(cell: ICell, color?: number) {
     for (let x = 0; x < particleDivisions; x++) {
@@ -343,13 +346,9 @@ export default class MinimalRenderer extends BaseRenderer {
       // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
       const cellSize = this._cellSize;
       const block = followingPlayer.block;
-      const blockX = block.column * cellSize;
       const y = block.row * cellSize;
-      this._camera.follow(
-        blockX + block.width * cellSize * 0.5,
-        y,
-        block.player.id
-      );
+      const blockX = block.centreX * cellSize;
+      this._camera.follow(blockX, y, block.player.id);
       this._renderBlockPlacementShadow(block);
     }
 

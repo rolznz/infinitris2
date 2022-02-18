@@ -126,6 +126,7 @@ export abstract class BaseRenderer implements IRenderer {
     cell: ICell,
     previousBehaviour: ICellBehaviour
   ): void;
+  abstract onCellIsEmptyChanged(cell: ICell): void;
 
   abstract emitParticle(
     x: number,

@@ -134,7 +134,7 @@ export default class ChallengeClient
    * @inheritdoc
    */
   onCellBehaviourChanged(_cell: ICell, _previousBehaviour: ICellBehaviour) {}
-
+  onCellIsEmptyChanged() {}
   /**
    * @inheritdoc
    */

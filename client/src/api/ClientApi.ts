@@ -124,6 +124,7 @@ export default class ClientApi implements IClientApi {
           onLineCleared() {},
           onGridCollapsed() {},
           onCellBehaviourChanged() {},
+          onCellIsEmptyChanged() {},
           onGridReset() {},
         },
         preferredInputMethod,

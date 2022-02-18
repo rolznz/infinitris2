@@ -174,7 +174,17 @@ export default class Block implements IBlock {
 
   // TODO: rename numColumns
   get width(): number {
-    return this._layout[0].length;
+    let maxWidth = 0;
+    for (let r = 0; r < this._layout.length; r++) {
+      let rowWidth = 0;
+      for (let c = 0; c < this._layout[0].length; c++) {
+        if (this._layout[r][c]) {
+          ++rowWidth;
+        }
+      }
+      maxWidth = Math.max(maxWidth, rowWidth);
+    }
+    return maxWidth;
   }
 
   // TODO: rename numColumns
@@ -268,7 +278,7 @@ export default class Block implements IBlock {
       }
 
       // if attempting to rotate but the result is a non-rotation movement in any direction (up to 2 cells), return false
-      if (dr !== 0) {
+      /*if (dr !== 0) {
         const gridNumColumns = this._simulation.grid.numColumns;
         for (let x = -2; x <= 2; x++) {
           for (let y = -2; y <= 2; y++) {
@@ -288,7 +298,7 @@ export default class Block implements IBlock {
             }
           }
         }
-      }
+      }*/
     } else {
       canMove = false;
     }
@@ -384,7 +394,7 @@ export default class Block implements IBlock {
    *
    * @param gridCells
    */
-  fall(gridCells: ICell[][]): boolean {
+  fall(): boolean {
     const fell = this.move(0, 1, 0);
     if (!fell) {
       this._lockTimer--;
@@ -428,7 +438,7 @@ export default class Block implements IBlock {
 
     let fell = false;
     if (this.isReadyToFall) {
-      fell = this.fall(this._simulation.grid.cells);
+      fell = this.fall();
     }
 
     if (!this._simulation.isNetworkClient && !fell && this.isReadyToLock) {
@@ -499,10 +509,10 @@ export default class Block implements IBlock {
     cellEvent: LoopCellEvent
   ) {
     const rotatedLayout = LayoutUtils.rotate(this._initialLayout, rotation);
-    const centreColumn = Math.floor(rotatedLayout[0].length / 2);
+    const centreColumn = Math.floor(rotatedLayout.length / 2);
 
     for (let r = 0; r < rotatedLayout.length; r++) {
-      for (let c = 0; c < rotatedLayout[0].length; c++) {
+      for (let c = 0; c < rotatedLayout.length; c++) {
         if (!this._isAlive) {
           break;
         }

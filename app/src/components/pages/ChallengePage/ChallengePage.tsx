@@ -113,6 +113,7 @@ export default function ChallengePage() {
         onPlayerToggleSpectating() {},
         onLineCleared() {},
         onCellBehaviourChanged() {},
+        onCellIsEmptyChanged() {},
         onGridCollapsed() {},
         onGridReset() {},
       };

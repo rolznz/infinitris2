@@ -33,6 +33,8 @@ export class InfinityGameMode implements IGameMode<InfinityGameModeState> {
     previousBehaviour: ICellBehaviour
   ): void {}
 
+  onCellIsEmptyChanged(cell: ICell): void {}
+
   getCurrentState(): InfinityGameModeState {
     return {};
   }

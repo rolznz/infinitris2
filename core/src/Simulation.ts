@@ -360,6 +360,14 @@ export default class Simulation implements ISimulation {
       listener.onCellBehaviourChanged(cell, previousBehaviour)
     );
   }
+  /**
+   * @inheritdoc
+   */
+  onCellIsEmptyChanged(cell: ICell) {
+    this._eventListeners.forEach((listener) =>
+      listener.onCellIsEmptyChanged(cell)
+    );
+  }
 
   onSimulationNextDay() {
     this._eventListeners.forEach((listener) =>

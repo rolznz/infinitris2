@@ -326,6 +326,7 @@ export default class NetworkClient
     cell: ICell,
     previousBehaviour: ICellBehaviour
   ): void {}
+  onCellIsEmptyChanged() {}
   onLineCleared(row: number): void {}
   onGridCollapsed(grid: IGrid): void {}
   onGridReset(grid: IGrid): void {}

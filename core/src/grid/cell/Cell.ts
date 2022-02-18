@@ -53,7 +53,10 @@ export default class Cell implements ICell {
     return this._isEmpty && !this._blocks.length;
   }
   set isEmpty(isEmpty: boolean) {
-    this._isEmpty = isEmpty;
+    if (isEmpty !== this._isEmpty) {
+      this._isEmpty = isEmpty;
+      this._eventListener?.onCellIsEmptyChanged(this);
+    }
   }
 
   get behaviour(): ICellBehaviour {
@@ -81,9 +84,9 @@ export default class Cell implements ICell {
    * @param player if undefined, will fill the cell with a non-player filled cell behaviour
    */
   place(player: IPlayer | undefined) {
-    this._isEmpty = false;
+    this.isEmpty = false;
     this._player = player;
-    this._behaviour = new NormalCellBehaviour(player?.color);
+    this.behaviour = new NormalCellBehaviour(player?.color);
   }
 
   step() {
@@ -91,14 +94,14 @@ export default class Cell implements ICell {
   }
 
   replaceWith(cell: ICell) {
-    this._behaviour = cell.behaviour.clone(this);
-    this._isEmpty = cell.isEmpty;
+    this.behaviour = cell.behaviour.clone(this);
+    this.isEmpty = cell.isEmpty;
     this._player = cell.player;
   }
   reset(): void {
-    this._isEmpty = true;
+    this.isEmpty = true;
     this._player = undefined;
-    this._behaviour = new NormalCellBehaviour();
+    this.behaviour = new NormalCellBehaviour();
   }
 
   addBlock(block: IBlock) {

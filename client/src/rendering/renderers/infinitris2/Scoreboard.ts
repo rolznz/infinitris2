@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js-legacy';
 import { IPlayer } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
+import { fontFamily } from '@models/ui';
 
 const placingCharacters = [
   '\u2460',
@@ -112,21 +113,19 @@ export class Scoreboard {
       const text = this._scoreboardTextLines[i];
       if (i < playerScores.length) {
         text.visible = true;
-        text.text =
-          (playerScores[i].isSpectating
-            ? ''
-            : (playerScores[i].placing - 1 < placingCharacters.length
-                ? placingCharacters[playerScores[i].placing - 1]
-                : playerScores[i].placing) +
-              '  ' +
-              playerScores[i].score +
-              ' ') +
-          playerScores[i].nickname +
-          (playerScores[i].isSpectating ? ' (spectating)' : '') +
-          (!playerScores[i].isSpectating &&
-          simulation.settings.gameModeType === 'conquest'
-            ? ` (${playerScores[i].numCaptures} ⦿ ${playerScores[i].health} ♥)`
-            : '');
+        text.text = playerScores[i].isSpectating
+          ? ''
+          : (playerScores[i].placing - 1 < placingCharacters.length
+              ? placingCharacters[playerScores[i].placing - 1]
+              : playerScores[i].placing) +
+            '  ' +
+            playerScores[i].nickname +
+            (playerScores[i].isSpectating ? ' (spectating)' : '') +
+            (!playerScores[i].isSpectating &&
+            simulation.settings.gameModeType === 'conquest'
+              ? ` (${playerScores[i].numCaptures} ⦿ ${playerScores[i].health} ♥)`
+              : '') +
+            (playerScores[i].isSpectating ? '' : '  ' + playerScores[i].score);
 
         text.tint = playerScores[i].color;
         text.x = padding;
@@ -151,11 +150,11 @@ export class Scoreboard {
 
   _createText(i: number): PIXI.Text {
     const text = new PIXI.Text('', {
-      font: 'bold italic 24px Arvo',
       fill: '#ffffff',
       align: 'left',
       stroke: '#000000',
       strokeThickness: 2,
+      fontFamily,
     } as Partial<PIXI.TextStyle>);
     text.anchor.set(0, 0);
     text.scale.set(0.8);

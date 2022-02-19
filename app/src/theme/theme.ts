@@ -1,6 +1,7 @@
 import { ThemeOptions } from '@mui/material/styles';
 import { SkeletonClassKey } from '@mui/material/Skeleton';
 import '@mui/lab/themeAugmentation';
+import { fontFamily } from 'infinitris2-models';
 declare module '@mui/material/styles/overrides' {
   interface ComponentNameToClassKey {
     MuiSkeleton: SkeletonClassKey;
@@ -54,7 +55,7 @@ export const borderRadiuses = {
 
 export const coreThemeOptions: ThemeOptions = {
   typography: {
-    fontFamily: ['Comfortaa'].join(','),
+    fontFamily: [fontFamily].join(','),
 
     h1: {
       fontSize: 36,

@@ -35,6 +35,8 @@ import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
 import { wrap } from '@core/utils/wrap';
+import { fontFamily } from '@models/ui';
+import { NextDayWarning } from '@src/rendering/renderers/infinitris2/NextDayWarning';
 
 const particleDivisions = 4;
 const numPatternDivisions = 4;
@@ -115,6 +117,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _spawnDelayIndicator!: SpawnDelayIndicator;
   private _scoreboard!: Scoreboard;
   private _scoreChangeIndicator!: ScoreChangeIndicator;
+  private _nextDayWarning!: NextDayWarning;
   private _rendererQuality: RendererQuality | undefined;
   private _worldType: WorldType;
 
@@ -172,6 +175,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._scoreboard = new Scoreboard(this._app);
     this._spawnDelayIndicator = new SpawnDelayIndicator(this._app);
     this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
+    this._nextDayWarning = new NextDayWarning(this._app);
 
     await new Promise((resolve) => this._app.loader.load(resolve));
 
@@ -384,6 +388,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._spawnDelayIndicator.create();
     this._scoreboard.create();
     this._scoreChangeIndicator.create();
+    this._nextDayWarning.create();
     this._placementHelperShadowCells = [];
 
     if (simulation.settings.gameModeType === 'conquest') {
@@ -647,6 +652,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._simulation
     );
     this._scoreChangeIndicator.update(followingPlayer);
+    this._nextDayWarning.update(this._simulation.secondsUntilNextDay);
     this._spawnDelayIndicator.update(this._simulation, followingPlayer);
 
     //console.log('Rendering', this._particles.length, 'particles');
@@ -937,7 +943,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           align: 'center',
           //stroke: '#000000',
           //strokeThickness: 7,
-          fontFamily: 'Comfortaa',
+          fontFamily,
           fontSize: 26,
           dropShadow: true,
           dropShadowAngle: Math.PI / 2,

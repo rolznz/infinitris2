@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js-legacy';
 import { IPlayer } from '@models/IPlayer';
+import { fontFamily } from '@models/ui';
 
 export class ScoreChangeIndicator {
   private _text!: PIXI.Text;
@@ -12,11 +13,16 @@ export class ScoreChangeIndicator {
 
   create() {
     this._text = new PIXI.Text('', {
-      font: 'bold italic 24px Arvo',
       fill: '#ffffff',
       align: 'center',
       stroke: '#000000',
       strokeThickness: 2,
+      fontFamily,
+      fontSize: 36,
+      dropShadow: true,
+      dropShadowAngle: Math.PI / 2,
+      dropShadowDistance: 1,
+      dropShadowBlur: 2,
     });
     this._text.anchor.set(0.5, 0);
     this._text.visible = false;
@@ -38,7 +44,7 @@ export class ScoreChangeIndicator {
         this._text.visible = true;
       }
       this._text.x = this._app.renderer.width / 2;
-      this._text.y = this._app.renderer.height * 0.93;
+      this._text.y = this._app.renderer.height * 0.8;
     }
     if (this._text.alpha > 0) {
       this._text.alpha -= 0.01;

@@ -67,6 +67,7 @@ export * from './networking/client/ClientMessageType';
 export * from './networking/server/ServerMessageType';
 export * from './networking/server/IServerMessage';
 export * from './networking/server/IServerChatMessage';
+export * from './ui';
 
 export const NETWORK_VERSION = 1;
 

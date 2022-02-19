@@ -6,7 +6,7 @@ import useLoaderStore from '@/state/LoaderStore';
 
 const rootUrl = process.env.REACT_APP_MUSIC_ROOT_URL;
 const musicFadeTimeMs = 2000;
-const MUTE = true;
+const MUTE = false;
 
 let _menuTheme: Howl | undefined;
 let _gameTheme: Howl | undefined;

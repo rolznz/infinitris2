@@ -11,7 +11,7 @@ export default class Grid implements IGrid {
   private _eventListeners: IGridEventListener[];
   private _cachedNumNonEmptyCells = 0;
 
-  constructor(numColumns: number = 10, numRows: number = 18) {
+  constructor(numColumns: number = 60, numRows: number = 18) {
     this._cells = [];
     this._eventListeners = [];
     for (let r = 0; r < numRows; r++) {

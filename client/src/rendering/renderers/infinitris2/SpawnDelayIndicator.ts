@@ -2,6 +2,7 @@ import * as PIXI from 'pixi.js-legacy';
 import { IPlayer } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
+import { fontFamily } from '@models/ui';
 
 export class SpawnDelayIndicator {
   private _spawnDelayText!: PIXI.Text;
@@ -12,11 +13,12 @@ export class SpawnDelayIndicator {
 
   create() {
     this._spawnDelayText = new PIXI.Text('', {
-      font: 'bold italic 24px Arvo',
       fill: '#ffffff',
       align: 'center',
       stroke: '#000000',
       strokeThickness: 2,
+      fontFamily,
+      fontSize: 32,
     });
     this._spawnDelayText.anchor.set(0.5, 0.5);
     this._spawnDelayText.visible = false;

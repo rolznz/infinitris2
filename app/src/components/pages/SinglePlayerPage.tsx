@@ -45,7 +45,9 @@ export default function SinglePlayerPage() {
   );
   const gridNumRows = parseInt(useSearchParam('gridNumRows') || '20');
   const gridNumColumns = parseInt(useSearchParam('gridNumColumns') || '10');
-  const dayLength = parseInt(useSearchParam('dayLength') || '2000');
+  const dayLengthSeconds = parseInt(
+    useSearchParam('dayLengthSeconds') || '2000'
+  );
   const gameModeType: GameModeType =
     (useSearchParam('gameModeType') as GameModeType) || 'infinity';
   const worldType: WorldType =
@@ -97,7 +99,7 @@ export default function SinglePlayerPage() {
           mistakeDetection,
           calculateSpawnDelays,
           preventTowers,
-          dayLength,
+          dayLengthSeconds,
           gameModeType,
           roundLength,
         },
@@ -194,7 +196,7 @@ export default function SinglePlayerPage() {
     mistakeDetection,
     calculateSpawnDelays,
     preventTowers,
-    dayLength,
+    dayLengthSeconds,
     worldType,
     gameModeType,
     character,

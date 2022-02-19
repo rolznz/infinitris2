@@ -6,9 +6,9 @@ import IGridEventListener from './IGridEventListener';
 import { IPlayer } from './IPlayer';
 
 export type NetworkSimulationInfo = {
-  nextDay: number;
+  secondsUntilNextDay: number;
   dayNumber: number;
-  dayLength: number;
+  dayLengthSeconds: number;
   settings: SimulationSettings;
   gameModeState: unknown;
 };
@@ -17,15 +17,16 @@ export default interface ISimulation
   extends IPlayerEventListener,
     IGridEventListener {
   get dayProportion(): number;
+  get secondsUntilNextDay(): number;
   get players(): IPlayer[];
   get settings(): SimulationSettings;
   get isNetworkClient(): boolean;
   set dayNumber(dayNumber: number);
-  set dayLength(dayLength: number);
-  set nextDay(nextDay: number);
+  set dayLengthSeconds(dayLengthSeconds: number);
+  set nextDayTime(nextDayTime: number);
   get dayNumber(): number;
-  get dayLength(): number;
-  get nextDay(): number;
+  get dayLengthSeconds(): number;
+  get nextDayTime(): number;
   get gameMode(): IGameMode<unknown>;
   get fps(): number;
   get followingPlayer(): IPlayer | undefined;

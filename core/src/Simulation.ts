@@ -23,7 +23,7 @@ export const FRAME_LENGTH: number = 1000 / 60;
  * to attempt to run at 60fps
  */
 const MAX_CATCHUP_FRAMES = 5;
-export const DEFAULT_DAY_LENGTH: number = 2000;
+export const DEFAULT_DAY_LENGTH_SECONDS: number = 20;
 
 export default class Simulation implements ISimulation {
   private _players: { [playerId: number]: IPlayer };
@@ -33,9 +33,9 @@ export default class Simulation implements ISimulation {
   private _stepInterval?: ReturnType<typeof setTimeout>;
   private _settings: SimulationSettings;
   private _runningTime: number;
-  private _nextDay: number;
+  private _nextDayTime: number;
+  private _dayLengthSeconds: number;
   private _dayNumber: number;
-  private _dayLength: number;
   private _isNetworkClient: boolean;
   private _gameMode: IGameMode<unknown>;
   private _fpsCounter: FpsCounter;
@@ -52,8 +52,9 @@ export default class Simulation implements ISimulation {
       ...settings,
     };
     this._dayNumber = 0;
-    this._nextDay = 0;
-    this._dayLength = this._settings.dayLength || DEFAULT_DAY_LENGTH;
+    this._nextDayTime = 0;
+    this._dayLengthSeconds =
+      this._settings.dayLengthSeconds || DEFAULT_DAY_LENGTH_SECONDS;
     this._isNetworkClient = isClient;
     this.goToNextDay();
     this._gameMode =
@@ -88,27 +89,28 @@ export default class Simulation implements ISimulation {
     return this._settings;
   }
 
+  get secondsUntilNextDay() {
+    return Math.max(this._nextDayTime - Date.now(), 0) / 1000;
+  }
+
   get dayProportion(): number {
-    return (this._dayLength - this._nextDay) / this._dayLength;
+    return 1 - this.secondsUntilNextDay / this._dayLengthSeconds;
   }
 
   get dayNumber() {
     return this._dayNumber;
   }
-  get dayLength() {
-    return this._dayLength;
-  }
-  get nextDay() {
-    return this._nextDay;
+  get dayLengthSeconds() {
+    return this._dayLengthSeconds;
   }
   set dayNumber(dayNumber: number) {
     this._dayNumber = dayNumber;
   }
-  set dayLength(dayLength: number) {
-    this._dayLength = dayLength;
+  set dayLengthSeconds(dayLengthSeconds: number) {
+    this._dayLengthSeconds = dayLengthSeconds;
   }
-  set nextDay(nextDay: number) {
-    this._nextDay = nextDay;
+  set nextDayTime(nextDayTime: number) {
+    this._nextDayTime = nextDayTime;
   }
 
   get gameMode(): IGameMode<unknown> {
@@ -399,11 +401,8 @@ export default class Simulation implements ISimulation {
     this._gameMode.step();
     this._runningTime += FRAME_LENGTH;
     this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
-    // TODO: consider day speed increasing/decreasing based on number of filled rows (more rows = faster day)
-    if (this._nextDay > 0) {
-      --this._nextDay;
-    }
-    if (!this.isNetworkClient && this._nextDay <= 0) {
+
+    if (!this.isNetworkClient && this.secondsUntilNextDay <= 0) {
       this.goToNextDay();
     }
   }
@@ -415,7 +414,7 @@ export default class Simulation implements ISimulation {
   goToNextDay() {
     ++this._dayNumber;
     console.log('Day ' + this._dayNumber);
-    this._nextDay = this._dayLength;
+    this._nextDayTime = Date.now() + this._dayLengthSeconds * 1000;
     this._grid.collapse();
     this.onSimulationNextDay();
   }

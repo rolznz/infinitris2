@@ -32,7 +32,7 @@ import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
 const schema = yup
   .object({
     numBots: yup.number().integer().lessThan(100).moreThan(-1).required(),
-    dayLength: yup.number().integer().moreThan(-1).required(),
+    dayLengthSeconds: yup.number().integer().moreThan(-1).required(),
     botReactionDelay: yup
       .number()
       .positive()
@@ -219,13 +219,13 @@ export function SinglePlayerOptionsPage() {
               )}
             />
             <Controller
-              name="dayLength"
+              name="dayLengthSeconds"
               control={control}
               render={({ field }) => (
                 <FormControl variant="standard">
                   <InputLabel>Day Length</InputLabel>
                   <Input type="number" {...field} />
-                  <p>{errors.dayLength?.message}</p>
+                  <p>{errors.dayLengthSeconds?.message}</p>
                 </FormControl>
               )}
             />

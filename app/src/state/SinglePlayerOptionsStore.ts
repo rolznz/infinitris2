@@ -7,7 +7,7 @@ export type SinglePlayerOptionsFormData = {
   botRandomReactionDelay: number;
   gridNumRows: number;
   gridNumColumns: number;
-  dayLength: number;
+  dayLengthSeconds: number;
   spectate: boolean;
   mistakeDetection: boolean;
   calculateSpawnDelays: boolean;
@@ -24,7 +24,7 @@ export const getSinglePlayerOptionsDefaultValues =
     botRandomReactionDelay: 25,
     gridNumRows: 18,
     gridNumColumns: 50,
-    dayLength: 2000,
+    dayLengthSeconds: 20,
     spectate: false,
     mistakeDetection: true,
     calculateSpawnDelays: true,

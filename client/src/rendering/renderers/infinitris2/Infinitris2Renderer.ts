@@ -34,7 +34,6 @@ import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameMode
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
-import Cell from '@core/grid/cell/Cell';
 import { wrap } from '@core/utils/wrap';
 
 const particleDivisions = 4;
@@ -255,6 +254,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
               }
               return diff;
             })() * rotateRate;
+          if (child.renderableObject.faceSprite) {
+            child.renderableObject.faceSprite.rotation =
+              -child.renderableObject.container.rotation;
+          }
         });
 
         /*for (const child of blockContainer.face.container.children) {
@@ -334,7 +337,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
           : this._world.y + this._gridHeight
       );
 
-      this._dayIndicator.update(this._simulation.dayProportion);
+      this._dayIndicator.update(
+        this._simulation.dayProportion,
+        this._simulation.secondsUntilNextDay
+      );
     }
 
     Object.values(this._cells).forEach((cell) => {
@@ -543,7 +549,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   onCellIsEmptyChanged(cell: ICell) {
-    //this._renderCellAndNeighbours(cell);
+    this._renderCellAndNeighbours(cell);
   }
 
   private _renderCellAndNeighbours(cell: ICell) {
@@ -601,21 +607,28 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
     this._world.removeChild(blockContainer.playerNameText.container);
 
-    this._world.removeChild(blockContainer.block.container);
+    // remove everything except the face
+    blockContainer.block.children.forEach((child) => {
+      child.renderableObject.container.removeChild(
+        ...child.renderableObject.container.children.filter(
+          (c) => c !== child.renderableObject.faceSprite
+        )
+      );
+    });
     // TODO: this is probably not an efficient way to manage the face alpha
     // store the faces as an array and process them in the normal loop
     // also will fix the issue where faces do not move down or get removed after line clear
-    /*const faceFadeTime = 1000;
+    const faceFadeTime = 1000;
     const fadeSteps = 30;
     setTimeout(
-      () => this._world.removeChild(blockContainer.face.container),
+      () => this._world.removeChild(blockContainer.block.container),
       faceFadeTime
     );
     for (let i = 0; i < fadeSteps; i++) {
       setTimeout(() => {
-        blockContainer.face.container.alpha -= 1 / fadeSteps;
+        blockContainer.block.container.alpha -= 1 / fadeSteps;
       }, ((i + 1) * faceFadeTime) / fadeSteps);
-    }*/
+    }
 
     delete this._blocks[block.player.id];
   }
@@ -807,9 +820,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
       blockContainer.block,
       1,
       (pixiObject, shadowIndexWithDirection, child) => {
-        let i = 0;
-
         if (
+          !pixiObject.faceSprite &&
           block.player.characterId &&
           this._app.loader.resources[this._getFaceUrl(block.player.characterId)]
             ?.isComplete
@@ -817,15 +829,18 @@ export default class Infinitris2Renderer extends BaseRenderer {
           pixiObject.faceSprite = PIXI.Sprite.from(
             this._getFaceUrl(block.player.characterId!)
           );
-          pixiObject.faceSprite.scale.set(
-            (this._cellSize / pixiObject.faceSprite.width) * 2
-          );
           pixiObject.faceSprite.anchor.set(0.5, 0.5);
           pixiObject.faceSprite.zIndex = 1;
-
           child.renderableObject.container.addChild(pixiObject.faceSprite);
         }
 
+        if (pixiObject.faceSprite) {
+          pixiObject.faceSprite.scale.set(
+            (this._cellSize / pixiObject.faceSprite.texture.width) * 2
+          );
+        }
+
+        let i = 0;
         for (let r = 0; r < block.initialLayout.length; r++) {
           for (let c = 0; c < block.initialLayout.length; c++) {
             const connections: { row: number; column: number }[] = [];
@@ -857,10 +872,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
                 (r - block.initialLayout.length / 2) * this._cellSize;
 
               if (i === 0 && pixiObject.faceSprite) {
+                const isSquare = block.initialLayout.length === 2;
                 pixiObject.faceSprite.x =
-                  pixiObject.cells[i].graphics.x + this._cellSize * 0.5;
+                  pixiObject.cells[i].graphics.x +
+                  this._cellSize * (isSquare ? 1 : 0.5);
                 pixiObject.faceSprite.y =
-                  pixiObject.cells[i].graphics.y + this._cellSize * 0.5;
+                  pixiObject.cells[i].graphics.y +
+                  this._cellSize * (isSquare ? 1 : 0.5);
               }
 
               if (pixiObject.cells[i].patternSprite) {
@@ -915,11 +933,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
       },
       () => {
         const text = new PIXI.Text(block.player.nickname, {
-          font: 'bold italic 60px Arvo',
           fill: PIXI.utils.hex2string(block.player.color),
           align: 'center',
           //stroke: '#000000',
           //strokeThickness: 7,
+          fontFamily: 'Comfortaa',
+          fontSize: 26,
           dropShadow: true,
           dropShadowAngle: Math.PI / 2,
           dropShadowDistance: 1,

@@ -113,8 +113,8 @@ export default class Room implements ISimulationEventListener {
         playerId: newPlayer.id,
         simulation: {
           dayNumber: this._simulation.dayNumber,
-          dayLength: this._simulation.dayLength,
-          nextDay: this._simulation.nextDay,
+          dayLengthSeconds: this._simulation.dayLengthSeconds,
+          secondsUntilNextDay: this._simulation.secondsUntilNextDay,
           settings: this._simulation.settings,
           gameModeState: this._simulation.gameMode.getCurrentState(),
         },

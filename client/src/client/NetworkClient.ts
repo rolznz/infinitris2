@@ -120,8 +120,10 @@ export default class NetworkClient
           joinResponseData.simulation.gameModeState
         );
         this._simulation.dayNumber = joinResponseData.simulation.dayNumber;
-        this._simulation.dayLength = joinResponseData.simulation.dayLength;
-        this._simulation.nextDay = joinResponseData.simulation.nextDay;
+        this._simulation.dayLengthSeconds =
+          joinResponseData.simulation.dayLengthSeconds;
+        this._simulation.nextDayTime =
+          Date.now() + joinResponseData.simulation.secondsUntilNextDay * 1000;
         this._simulation.addEventListener(this._renderer, this);
         if (this._launchOptions?.listener) {
           this._simulation.addEventListener(this._launchOptions.listener);

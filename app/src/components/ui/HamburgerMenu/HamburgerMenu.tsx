@@ -152,46 +152,47 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
         <Box px={4} pt={4}>
           <Divider />
         </Box>
-        <FlexBox justifyContent="flex-start" flexDirection="row" pt={2} pl={1}>
+        <FlexBox flexDirection="row" pt={2} pl={1}>
           <img
             src={logoImage}
             alt="Logo"
             style={{
-              width: '130px',
+              width: '140px',
             }}
           />
-          <FlexBox>
-            <Link underline="none" href="https://github.com/rolznz/infinitris2">
-              <Typography
-                style={{
-                  textTransform: 'uppercase',
-                  color: colors.white,
-                  fontSize: '10px',
-                }}
-              >
-                <FormattedMessage
-                  defaultMessage="build {clientVersion}"
-                  description="Hamburger menu - App build"
-                  values={{
-                    clientVersion: `${process.env.REACT_APP_VERSION}`,
-                  }}
-                />
-              </Typography>
-            </Link>
-            <Link
-              underline="none"
-              href="https://github.com/rolznz/infinitris2/issues"
+        </FlexBox>
+        <FlexBox flexDirection="row" gap={1}>
+          <Link underline="none" href="https://github.com/rolznz/infinitris2">
+            <Typography
+              style={{
+                textTransform: 'uppercase',
+                color: colors.white,
+                fontSize: '10px',
+              }}
             >
-              <Typography
-                style={{
-                  textTransform: 'uppercase',
-                  fontSize: '10px',
+              <FormattedMessage
+                defaultMessage="build {clientVersion}"
+                description="Hamburger menu - App build"
+                values={{
+                  clientVersion: `${process.env.REACT_APP_VERSION}`,
                 }}
-              >
-                Report Bug
-              </Typography>
-            </Link>
-          </FlexBox>
+              />
+            </Typography>
+          </Link>
+          <>•</>
+          <Link
+            underline="none"
+            href="https://github.com/rolznz/infinitris2/issues"
+          >
+            <Typography
+              style={{
+                textTransform: 'uppercase',
+                fontSize: '10px',
+              }}
+            >
+              Report Bug
+            </Typography>
+          </Link>
         </FlexBox>
         <Link component={RouterLink} underline="none" to={Routes.donate}>
           <FlexBox

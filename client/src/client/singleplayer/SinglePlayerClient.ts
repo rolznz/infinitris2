@@ -185,8 +185,8 @@ export default class SinglePlayerClient
                 Math.random() * (options.botRandomReactionDelay || 20)
               ),
             this._simulation.shouldNewPlayerSpectate,
-            'pattern_' + Math.floor(Math.random() * 24) + '.png',
-            '' + Math.floor(Math.random() * 768)
+            'pattern_' + Math.floor(Math.random() * 12) + '.png', // TODO: pass characters from app
+            '' + Math.floor(Math.random() * 100) // TODO: pass characters from app
           )
         );
       }

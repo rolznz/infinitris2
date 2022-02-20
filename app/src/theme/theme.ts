@@ -210,7 +210,7 @@ export const coreThemeOptions: ThemeOptions = {
     MuiDivider: {
       styleOverrides: {
         root: {
-          background: `${colors.white} !important`,
+          background: `${borderColor} !important`,
           height: 2,
         },
       },

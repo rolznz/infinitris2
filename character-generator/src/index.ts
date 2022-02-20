@@ -11,6 +11,7 @@ import {
   patternSize,
   charactersDirectory,
   habitatsDirectory,
+  files,
 } from './constants';
 import { generateCharacterImage } from './generateCharacterImage';
 import { generateCharacterNames } from './generateCharacterNames';
@@ -25,6 +26,23 @@ clearDirectory(charactersDirectory);
 clearDirectory(definitionsDirectory);
 clearDirectory(patternsDirectory);
 clearDirectory(habitatsDirectory);
+
+console.log('checking assets');
+const invalidSvgs = [];
+for (const filename of files) {
+  console.log('Checking ' + filename);
+  if (
+    filename.toLowerCase().endsWith('.svg') &&
+    fs.readFileSync(getPath(filename)).indexOf('<image') >= 0
+  ) {
+    invalidSvgs.push(filename);
+  }
+}
+if (invalidSvgs.length > 0) {
+  throw new Error(
+    'Error: svg assets should not contain images: ' + invalidSvgs.join(', ')
+  );
+}
 
 console.log('Generating names');
 const names = generateCharacterNames(random);

@@ -1,6 +1,6 @@
 import fs from 'fs';
 import sharp from 'sharp';
-import { colors } from './colors';
+import { colors } from 'infinitris2-models';
 
 export const assetsDirectory = 'assets';
 export const outputDirectory = 'out';

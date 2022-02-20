@@ -34,7 +34,7 @@ export const narrowSwipeableViewsStyles: SwipeableViewsStyles = lodashMerge(
   coreSwipeableViewsStyles,
   {
     root: {
-      padding: '0px 50px',
+      padding: '0px 40px',
       maxWidth: '400px',
     },
   }

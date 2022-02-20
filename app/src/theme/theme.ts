@@ -259,15 +259,35 @@ export const coreThemeOptions: ThemeOptions = {
         },
       },
     },
+    MuiMenu: {
+      styleOverrides: {
+        list: {
+          paddingBottom: 0,
+        },
+      },
+    },
+    MuiPopover: {
+      styleOverrides: {
+        paper: {
+          border: `1px solid ${borderColor}`,
+          borderRadius: borderRadiuses.base,
+        },
+      },
+    },
     MuiSelect: {
       styleOverrides: {
-        //root: {},
         icon: {
           color: colors.white,
         },
         outlined: {
           paddingTop: '5px',
           paddingBottom: '5px',
+
+          /*root: {
+          border: `1px solid ${borderColor}`,
+          borderRadius: borderRadiuses.base,
+          paddingBottom: 0,
+        },*/
         },
       },
     },

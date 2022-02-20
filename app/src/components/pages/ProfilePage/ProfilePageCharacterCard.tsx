@@ -18,6 +18,7 @@ export function ProfilePageCharacterCard() {
   const intl = useIntl();
   const user = useUser();
   const userStore = useUserStore();
+  const characterId = (user as LocalUser).characterId;
   return (
     <FlexBox
       style={{
@@ -29,7 +30,11 @@ export function ProfilePageCharacterCard() {
       py={5}
       position="relative"
     >
-      <FlexBox position="absolute" top={0} right={0}>
+      <FlexBox
+        position="absolute"
+        top={borderRadiuses.base / 2}
+        right={borderRadiuses.base / 2}
+      >
         <Link component={RouterLink} underline="none" to={Routes.market}>
           <FilledIcon
             style={{
@@ -72,7 +77,7 @@ export function ProfilePageCharacterCard() {
           }}
         />
         <FlexBox mt={-2} position="relative">
-          <CharacterImage characterId="0" width={400} />
+          <CharacterImage characterId={characterId} width={400} />
           <PlacingStar
             placing={undefined}
             offset={isSmallScreen ? 60 : 90}

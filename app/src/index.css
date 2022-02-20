@@ -25,7 +25,12 @@ body > canvas {
 
 .MuiDrawer-paperAnchorBottom {
   max-height: 100% !important;
-  background: none !important;
+  /*background: none !important;*/
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border: none !important;
+  outline: none !important;
 }
 
 .react-swipeable-view-container [aria-hidden='true'] {

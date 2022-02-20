@@ -1,5 +1,5 @@
 import { appName } from '@/utils/constants';
-import { Typography } from '@mui/material';
+import { Link, Typography } from '@mui/material';
 import React from 'react';
 import FlexBox from '../ui/FlexBox';
 import { Page } from '../ui/Page';
@@ -49,9 +49,9 @@ export function PrivacyPolicyPage() {
 
       <Typography variant="body1">
         {appName} is 100% open source. You may review the{' '}
-        <a href="https://github.com/rolznz/infinitris2">source code</a> for
-        further information. If you have any issues, please open a ticket our
-        github (link in about page).
+        <Link href="https://github.com/rolznz/infinitris2">source code</Link>{' '}
+        for further information. If you have any issues, please open a ticket
+        our github (link in about page).
       </Typography>
 
       <Typography variant="body1">

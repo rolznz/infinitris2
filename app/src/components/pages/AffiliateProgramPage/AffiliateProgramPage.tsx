@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, SvgIcon, Typography } from '@mui/material';
+import { Box, Button, Link, SvgIcon, Typography } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -17,7 +17,6 @@ import FlexBox from '../../ui/FlexBox';
 import MailIcon from '@mui/icons-material/Mail';
 import { ReactComponent as FacebookIcon } from '@/icons/facebook2.svg';
 
-import { EmailShareButton, FacebookShareButton } from 'react-share';
 import { RingIconButton } from '../../ui/RingIconButton';
 import { borderColorLight, boxShadows } from '@/theme/theme';
 import { CharacterImage } from '../Characters/CharacterImage';
@@ -25,16 +24,9 @@ import { AffiliatePageCharacter } from './AffiliatePageCharacter';
 
 import friendImage from './assets/friend.svg';
 
-/*const useStyles = makeStyles((theme) => ({
-  shareButton: {
-    display: 'flex',
-  },
-}));*/
-
 const characterSize = 185;
 
 export default function AffiliateProgramPage() {
-  const classes = { shareButton: '' }; //useStyles();
   const intl = useIntl();
   const [, copy] = useCopyToClipboard();
 
@@ -61,37 +53,21 @@ export default function AffiliateProgramPage() {
       })}
       narrow
     >
-      <Typography align="center" variant="body1">
-        {userId ? (
+      {userId && (
+        <Typography align="center" variant="body1">
           <FormattedMessage
             defaultMessage="Share {appName} with your friends to earn coins when they sign up!"
             description="Affiliate Program page title - invite your friends logged in description"
             values={{ appName }}
           />
-        ) : (
-          <FormattedMessage
-            defaultMessage="You're not logged in. You can still share {appName} with your friends, but you won't receive any rewards."
-            description="Affiliate Program page title - invite your friends logged out description"
-            values={{ appName }}
-          />
-        )}
-      </Typography>
-      {!userId && (
-        <>
-          <Box mt={2} />
-          <Button color="primary" variant="contained" onClick={openLoginDialog}>
-            <FormattedMessage
-              defaultMessage="Log in"
-              description="Affiliate Program Page - login button"
-            />
-          </Button>
-        </>
+        </Typography>
       )}
       <Box mt={2} />
       {(!userId || affiliateDoc) && (
         <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
-          <RingIconButton
-            padding="large"
+          <Button
+            sx={{ p: 2, gap: 1 }}
+            variant="contained"
             onClick={() => {
               //console.log(affiliateLink);
               copy(affiliateLink);
@@ -104,37 +80,37 @@ export default function AffiliateProgramPage() {
               );
             }}
           >
-            <FileCopyIcon color="primary" fontSize="large" />
-          </RingIconButton>
-          <RingIconButton padding="large">
-            <EmailShareButton
-              className={classes.shareButton}
-              url={affiliateLink}
-              subject={intl.formatMessage(
-                {
-                  defaultMessage: 'Join me on {appName}',
-                  description: 'email share button subject',
-                },
-                { appName }
-              )}
-            >
-              <MailIcon color="primary" fontSize="large" />
-            </EmailShareButton>
-          </RingIconButton>
-          <RingIconButton padding="large">
-            <FacebookShareButton url={affiliateLink}>
-              <SvgIcon
-                color="primary"
-                fontSize="large"
-                className={classes.shareButton}
-              >
-                <FacebookIcon />
-              </SvgIcon>
-            </FacebookShareButton>
-          </RingIconButton>
+            <FileCopyIcon color="primary" />
+            <Typography align="center" variant="body1">
+              <FormattedMessage
+                defaultMessage="Copy to clipboard"
+                description="Affiliate Program page - copy affiliate link button"
+              />
+            </Typography>
+          </Button>
         </FlexBox>
       )}
-      <Box mt={2} />
+
+      {!userId ? (
+        <Typography textAlign="center" mt={4} variant="caption">
+          <FormattedMessage
+            defaultMessage="{login} to earn impact points and coins when your friends sign up."
+            description="Affiliate Program page title - invite your friends logged out description"
+            values={{
+              login: (
+                <Link onClick={openLoginDialog}>
+                  <FormattedMessage
+                    defaultMessage="Log in"
+                    description="Affiliate Program Page - login button"
+                  />
+                </Link>
+              ),
+            }}
+          />
+        </Typography>
+      ) : (
+        <Box mt={2} />
+      )}
 
       {affiliateDoc && (
         <>

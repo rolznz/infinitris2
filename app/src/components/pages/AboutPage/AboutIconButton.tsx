@@ -16,7 +16,7 @@ export function AboutIconButton({ to, url, icon }: AboutIconProps) {
         {children}
       </Link>
     ) : (
-      <a href={url}>{children}</a>
+      <Link href={url}>{children}</Link>
     );
   }
 

@@ -1,4 +1,4 @@
-import { Box, SvgIcon, Typography } from '@mui/material';
+import { Box, Link, SvgIcon, Typography } from '@mui/material';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import FlexBox from '../../ui/FlexBox';
@@ -46,13 +46,13 @@ function PrimaryContributor({
         <FlexBox alignItems="flex-start">
           <Typography variant="h4">{name}</Typography>
           <Box mt={2} />
-          <a href={url}>
+          <Link href={url}>
             <RingIconButton>
               <SvgIcon color="primary">
                 <GlobeIcon />
               </SvgIcon>
             </RingIconButton>
-          </a>
+          </Link>
         </FlexBox>
       </FlexBox>
     </FlexBox>
@@ -96,26 +96,27 @@ export function CreditsPage() {
       <Typography variant="body1" align="center">
         AL Kong, Rob Hayes, Zorg, Sven Obermaier, Natalia Golovacheva, Jono
         Burch, Charles Liu, Nick van der Vis, Seth Reid, Eugene van Staden,
-        Linda Pettigrew, Niamh Fitzgerald, Tim Bewick, Michał Marcinkowski,
-        Saintpoida, Jonathan Derrough
+        Linda Pettigrew, Mitchel Roy, Niamh Fitzgerald, Tim Bewick, Michał
+        Marcinkowski, Saintpoida, Jonathan Derrough, Andy Brennenstuhl, Bruno
+        Finger, Aaike Van Roekeghem, Tae Kasidit
       </Typography>
 
       <Box mt={10} />
       <Typography variant="body1">
         Gestures by Jeff Portaro from&nbsp;
-        <a
+        <Link
           href="https://www.flaticon.com/authors/pixel-buddha"
           title="Pixel Buddha"
         >
           Pixel Buddha
-        </a>
+        </Link>
       </Typography>
       <Box mt={10} />
       <Typography variant="body1">
         Flags by&nbsp;
-        <a href="https://flagcdn.com" title="Flag CDN">
+        <Link href="https://flagcdn.com" title="Flag CDN">
           Flag CDN
-        </a>
+        </Link>
       </Typography>
     </Page>
   );

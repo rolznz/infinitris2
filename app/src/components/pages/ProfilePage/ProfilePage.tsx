@@ -30,6 +30,7 @@ export default function ProfilePage() {
         description: 'Profile title',
       })}
       useGradient
+      narrow
     >
       {!userId && (
         <Button color="primary" variant="contained" onClick={openLoginDialog}>

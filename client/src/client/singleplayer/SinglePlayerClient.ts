@@ -1,13 +1,10 @@
 import Simulation from '@core/Simulation';
-import IRenderer from '@src/rendering/IRenderer';
 import MinimalRenderer from '@src/rendering/renderers/minimal/MinimalRenderer';
 import ControllablePlayer from '@src/ControllablePlayer';
 import Grid from '@core/grid/Grid';
 import Input from '@src/input/Input';
-import IClient from '@models/IClient';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import IBlock from '@models/IBlock';
-import ControlSettings from '@models/ControlSettings';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { IPlayer } from '@models/IPlayer';
@@ -19,13 +16,14 @@ import { stringToHex } from '@models/util/stringToHex';
 import { colors } from '@models/colors';
 import IGrid from '@models/IGrid';
 import { BaseClient } from '@src/client/BaseClient';
+import { BaseRenderer } from '@src/rendering/BaseRenderer';
 
 export default class SinglePlayerClient
   extends BaseClient
   implements ISimulationEventListener
 {
   // FIXME: restructure to not require definite assignment
-  private _renderer!: IRenderer;
+  private _renderer!: BaseRenderer;
   private _simulation!: Simulation;
   private _input!: Input;
 
@@ -153,6 +151,7 @@ export default class SinglePlayerClient
     this._simulation.followPlayer(player);
     this._input = new Input(
       this._simulation,
+      this._renderer,
       player,
       options.controls_keyboard,
       options.controls_gamepad

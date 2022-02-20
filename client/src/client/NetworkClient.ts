@@ -37,6 +37,7 @@ import { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
 import IClientJoinRoomRequest from '@core/networking/client/IClientJoinRoomRequest';
 import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/IServerPlayerToggleSpectatingEvent';
 import { BaseClient } from '@src/client/BaseClient';
+import { BaseRenderer } from '@src/rendering/BaseRenderer';
 
 export default class NetworkClient
   extends BaseClient
@@ -44,7 +45,7 @@ export default class NetworkClient
 {
   private _socket: IClientSocket;
   // FIXME: restructure to not require definite assignment
-  private _renderer!: IRenderer;
+  private _renderer!: BaseRenderer;
   private _simulation!: Simulation;
   private _playerId?: number;
   private _input: Input | undefined;
@@ -146,6 +147,7 @@ export default class NetworkClient
             this._simulation.followPlayer(humanPlayer);
             this._input = new Input(
               this._simulation,
+              this._renderer,
               humanPlayer,
               this._launchOptions?.controls_keyboard,
               this._launchOptions?.controls_gamepad

@@ -491,9 +491,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
-    if (block.player === this._simulation.followingPlayer) {
-      //this._camera.bump(0, 20); // TODO: minor camera shake
-    }
+    //if (block.player === this._simulation.followingPlayer) {
+    //this._camera.bump(0, 1000); // TODO: minor camera shake
+    //}
   }
 
   onPlayerCreated(player: IPlayer): void {

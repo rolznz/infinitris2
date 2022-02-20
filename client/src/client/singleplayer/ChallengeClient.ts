@@ -30,6 +30,7 @@ import ChallengeRewardCriteria from '@models/ChallengeRewardCriteria';
 import { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
 import IGrid from '@models/IGrid';
 import { BaseClient } from '@src/client/BaseClient';
+import { BaseRenderer } from '@src/rendering/BaseRenderer';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -38,7 +39,7 @@ export default class ChallengeClient
   implements IChallengeClient, ISimulationEventListener
 {
   // FIXME: restructure to not require definite assignment
-  private _renderer!: IRenderer;
+  private _renderer!: BaseRenderer;
   private _simulation!: ISimulation;
   private _challenge!: IChallenge;
   private _input!: Input;
@@ -343,8 +344,8 @@ export default class ChallengeClient
     }
     //player.nextLayoutRotation = this._challenge.layoutRotation;
 
-    this._input = new Input(simulation, player, this._controls);
-    this._renderer.virtualKeyboardControls = this._input.controls;
+    this._input = new Input(simulation, this._renderer, player, this._controls);
+    //this._renderer.virtualKeyboardControls = this._input.controls;
 
     simulation.init();
     simulation.step();

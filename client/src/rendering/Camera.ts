@@ -21,8 +21,8 @@ export default class Camera {
   }
 
   bump(x: number, y: number) {
-    this._vx += x;
-    this._vy += y;
+    this._dx += x;
+    this._dy += y;
   }
 
   reset() {

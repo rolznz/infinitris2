@@ -9,6 +9,7 @@ import GamepadInput from '@src/input/GamepadInput';
 import ControlSettings, {
   DEFAULT_KEYBOARD_CONTROLS,
 } from '@models/ControlSettings';
+import { BaseRenderer } from '@src/rendering/BaseRenderer';
 
 export type ActionListener = (action: InputAction) => void;
 
@@ -24,6 +25,7 @@ export default class Input {
 
   constructor(
     simulation: Simulation,
+    renderer: BaseRenderer,
     player: ControllablePlayer,
     keyboardControls: ControlSettings = DEFAULT_KEYBOARD_CONTROLS,
     gamepadControls?: ControlSettings
@@ -32,7 +34,7 @@ export default class Input {
     this._grid = simulation.grid;
     this._player = player;
     this._controls = { ...DEFAULT_KEYBOARD_CONTROLS, ...keyboardControls }; // ensure newly added controls use default keys
-    this._actionListeners = [];
+    this._actionListeners = [renderer.onInputAction];
     this._keyboardInput = new KeyboardInput(this._fireAction, this._controls);
     this._touchInput = new TouchInput(this._fireAction);
     if (gamepadControls) {

@@ -13,6 +13,7 @@ import {
   IRenderableEntityChild,
 } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
+import InputAction from '@models/InputAction';
 
 const idealCellSize = 38;
 const minVerticalCellCount = 21;
@@ -245,6 +246,23 @@ export abstract class BaseRenderer implements IRenderer {
       this._world.y = this._clampedCameraY + this._visibilityY;
     }
   }
+
+  onInputAction = (action: InputAction) => {
+    if (
+      !this._simulation?.followingPlayer ||
+      this._simulation?.followingPlayer.isSpectating
+    ) {
+      const speed = 100;
+      this._camera.bump(
+        action == InputAction.MoveLeft
+          ? speed
+          : action === InputAction.MoveRight
+          ? -speed
+          : 0,
+        0
+      );
+    }
+  };
 
   protected _resize() {
     if (!this._simulation) {

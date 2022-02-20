@@ -1,7 +1,5 @@
 import { appName } from '@/utils/constants';
 import { Link, Typography } from '@mui/material';
-import React from 'react';
-import FlexBox from '../ui/FlexBox';
 import { Page } from '../ui/Page';
 
 export function PrivacyPolicyPage() {

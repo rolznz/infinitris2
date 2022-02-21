@@ -136,6 +136,14 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         offsetY: 0,
       },
       {
+        filename: 'theme_desert_1b.png',
+        speedY: 0.05,
+        speedX: 0.05,
+        offsetY: 0,
+        offsetX: 0,
+        minQuality: 'high',
+      },
+      {
         filename: 'theme_desert_2.png',
         speedY: 0.1,
         speedX: 0.1,

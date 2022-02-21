@@ -36,7 +36,6 @@ import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
 import { wrap } from '@core/utils/wrap';
 import { fontFamily } from '@models/ui';
-import { NextDayWarning } from '@src/rendering/renderers/infinitris2/NextDayWarning';
 
 const particleDivisions = 4;
 const numPatternDivisions = 4;
@@ -117,7 +116,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _spawnDelayIndicator!: SpawnDelayIndicator;
   private _scoreboard!: Scoreboard;
   private _scoreChangeIndicator!: ScoreChangeIndicator;
-  private _nextDayWarning!: NextDayWarning;
   private _rendererQuality: RendererQuality | undefined;
   private _worldType: WorldType;
 
@@ -175,7 +173,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._scoreboard = new Scoreboard(this._app);
     this._spawnDelayIndicator = new SpawnDelayIndicator(this._app);
     this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
-    this._nextDayWarning = new NextDayWarning(this._app);
 
     await new Promise((resolve) => this._app.loader.load(resolve));
 
@@ -351,7 +348,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
       if (cell.cell.behaviour.requiresRerender) {
         this._renderCell(cell.cell);
       }
-      cell.container.alpha = cell.cell.isEmpty ? cell.cell.behaviour.alpha : 1;
+      cell.container.alpha = cell.cell.isEmpty
+        ? cell.cell.behaviour.alpha
+        : cell.cell.isClearing
+        ? 0.5
+        : 1;
     });
   };
 
@@ -388,7 +389,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._spawnDelayIndicator.create();
     this._scoreboard.create();
     this._scoreChangeIndicator.create();
-    this._nextDayWarning.create();
     this._placementHelperShadowCells = [];
 
     if (simulation.settings.gameModeType === 'conquest') {
@@ -556,6 +556,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   onCellIsEmptyChanged(cell: ICell) {
     this._renderCellAndNeighbours(cell);
   }
+  onCellIsClearingChanged(cell: ICell) {}
 
   private _renderCellAndNeighbours(cell: ICell) {
     for (let r = -1; r <= 1; r++) {
@@ -652,7 +653,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._simulation
     );
     this._scoreChangeIndicator.update(followingPlayer);
-    this._nextDayWarning.update(this._simulation.secondsUntilNextDay);
     this._spawnDelayIndicator.update(this._simulation, followingPlayer);
 
     //console.log('Rendering', this._particles.length, 'particles');
@@ -783,7 +783,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
-    const cellIndex = cell.row * this._simulation.grid.numColumns + cell.column;
+    const cellIndex = cell.index;
     if (!this._cells[cellIndex]) {
       const cellContainer = new PIXI.Container();
       this._world.addChild(cellContainer);
@@ -1093,7 +1093,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
       if (patternSprite) {
         patternSprite.visible = false;
       }
-      return;
+      if (isEmpty) {
+        return;
+      }
     }
     if (patternFilename && this._patternTextures[patternFilename]) {
       const patternTexture =

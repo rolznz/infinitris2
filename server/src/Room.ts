@@ -365,6 +365,7 @@ export default class Room implements ISimulationEventListener {
     previousBehaviour: ICellBehaviour
   ): void {}
   onCellIsEmptyChanged(cell: ICell): void {}
+  onCellIsClearingChanged(cell: ICell): void {}
   onGridCollapsed(grid: IGrid): void {}
   onGridReset(grid: IGrid): void {}
 

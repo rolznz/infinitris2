@@ -4,4 +4,5 @@ import ICellBehaviour from './ICellBehaviour';
 export default interface ICellEventListener {
   onCellBehaviourChanged(cell: ICell, previousBehaviour: ICellBehaviour): void;
   onCellIsEmptyChanged(cell: ICell): void;
+  onCellIsClearingChanged(cell: ICell): void;
 }

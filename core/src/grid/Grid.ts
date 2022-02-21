@@ -11,7 +11,7 @@ export default class Grid implements IGrid {
   private _eventListeners: IGridEventListener[];
   private _cachedNumNonEmptyCells = 0;
 
-  constructor(numColumns: number = 60, numRows: number = 18) {
+  constructor(numColumns: number = 4, numRows: number = 18) {
     this._cells = [];
     this._eventListeners = [];
     for (let r = 0; r < numRows; r++) {
@@ -75,11 +75,30 @@ export default class Grid implements IGrid {
   }
 
   /**
-   * Check for and clear full rows.
+   * Check for full rows.
    *
    * @param rows a list of rows affected by a change (e.g. block placement).
    */
-  checkLineClears(rows: number[]) {
+  markLineClears(rows: number[]) {
+    const rowsToClear = rows.filter(
+      (row) => this._cells[row].findIndex((cell) => cell.isEmpty) < 0
+    );
+
+    for (const row of rowsToClear) {
+      for (let c = 0; c < this._cells[row].length; c++) {
+        if (this._cells[row][c].player) {
+          this._cells[row][c].isClearing = true;
+        }
+      }
+    }
+  }
+
+  /**
+   * Clear full rows.
+   *
+   * @param rows a list of rows affected by a change (e.g. block placement).
+   */
+  executeLineClears(rows: number[]) {
     const rowsToClear = rows
       .filter((row) => this._cells[row].findIndex((cell) => cell.isEmpty) < 0)
       .sort((a, b) => b - a); // clear lowest row first
@@ -128,8 +147,7 @@ export default class Grid implements IGrid {
     this._eventListeners.forEach((listener) => listener.onGridReset(this));
   }
 
-  collapse() {
-    console.log('Collapse!');
+  markCollapse() {
     for (let r = this.numRows - 1; r > 0; r--) {
       for (let c = 0; c < this.numColumns; c++) {
         // TODO: handle non-replacable cells
@@ -138,7 +156,24 @@ export default class Grid implements IGrid {
         }
         for (let y = r - 1; y >= 0; y--) {
           if (!this._cells[y][c].isEmpty) {
-            console.log(`Collapse ${y},${c} => ${r},${c}`);
+            this._cells[y][c].isClearing = true;
+          }
+        }
+      }
+    }
+  }
+
+  executeCollapse() {
+    //console.log('Collapse!');
+    for (let r = this.numRows - 1; r > 0; r--) {
+      for (let c = 0; c < this.numColumns; c++) {
+        // TODO: handle non-replacable cells
+        if (!this._cells[r][c].isEmpty) {
+          continue;
+        }
+        for (let y = r - 1; y >= 0; y--) {
+          if (!this._cells[y][c].isEmpty) {
+            //console.log(`Collapse ${y},${c} => ${r},${c}`);
             this._cells[r][c].replaceWith(this._cells[y][c]);
             this._cells[y][c].reset();
             break;
@@ -147,7 +182,6 @@ export default class Grid implements IGrid {
       }
     }
     // TODO: optimize
-    this.checkLineClears([...Array(this.numRows)].map((_, i) => i));
     this._eventListeners.forEach((listener) => listener.onGridCollapsed(this));
   }
 
@@ -166,6 +200,14 @@ export default class Grid implements IGrid {
   onCellIsEmptyChanged(cell: ICell) {
     this._eventListeners.forEach((listener) =>
       listener.onCellIsEmptyChanged(cell)
+    );
+  }
+  /**
+   * @inheritdoc
+   */
+  onCellIsClearingChanged(cell: ICell) {
+    this._eventListeners.forEach((listener) =>
+      listener.onCellIsClearingChanged(cell)
     );
   }
 

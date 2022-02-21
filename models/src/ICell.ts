@@ -22,6 +22,9 @@ export default interface ICell {
   get blocks(): IBlock[];
   get player(): IPlayer | undefined;
   set player(player: IPlayer | undefined);
+  get isClearing(): boolean;
+  set isClearing(isClearing: boolean);
+  get index(): number;
   addBlock(block: IBlock): void;
   removeBlock(block: IBlock): void;
   step(): void;

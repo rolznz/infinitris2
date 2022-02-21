@@ -23,7 +23,7 @@ export const FRAME_LENGTH: number = 1000 / 60;
  * to attempt to run at 60fps
  */
 const MAX_CATCHUP_FRAMES = 5;
-export const DEFAULT_DAY_LENGTH_SECONDS: number = 20;
+export const DEFAULT_DAY_LENGTH_SECONDS: number = 10;
 
 export default class Simulation implements ISimulation {
   private _players: { [playerId: number]: IPlayer };
@@ -287,11 +287,12 @@ export default class Simulation implements ISimulation {
    */
   onBlockPlaced(block: IBlock) {
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
-    this._grid.checkLineClears(
-      block.cells
-        .map((cell) => cell.row)
-        .filter((row, i, rows) => rows.indexOf(row) === i)
-    );
+
+    const rowsToClear = block.cells
+      .map((cell) => cell.row)
+      .filter((row, i, rows) => rows.indexOf(row) === i);
+
+    this.markLineClears(rowsToClear);
   }
 
   /**
@@ -370,6 +371,14 @@ export default class Simulation implements ISimulation {
       listener.onCellIsEmptyChanged(cell)
     );
   }
+  /**
+   * @inheritdoc
+   */
+  onCellIsClearingChanged(cell: ICell) {
+    this._eventListeners.forEach((listener) =>
+      listener.onCellIsClearingChanged(cell)
+    );
+  }
 
   onSimulationNextDay() {
     this._eventListeners.forEach((listener) =>
@@ -415,7 +424,31 @@ export default class Simulation implements ISimulation {
     ++this._dayNumber;
     console.log('Day ' + this._dayNumber);
     this._nextDayTime = Date.now() + this._dayLengthSeconds * 1000;
-    this._grid.collapse();
+    this._grid.markCollapse();
+    setTimeout(() => {
+      if (!this._isNetworkClient) {
+        this.executeCollapse();
+      }
+    }, 1000);
+
     this.onSimulationNextDay();
+  }
+
+  executeCollapse() {
+    this._grid.executeCollapse();
+    const rowsToClear = [...Array(this._grid.numRows)].map((_, i) => i);
+    this.markLineClears(rowsToClear);
+  }
+
+  markLineClears(rowsToClear: number[]) {
+    this._grid.markLineClears(rowsToClear);
+    if (!this._isNetworkClient) {
+      setTimeout(() => {
+        this.executeLineClears(rowsToClear);
+      }, 1000);
+    }
+  }
+  executeLineClears(rowsToClear: number[]) {
+    this._grid.executeLineClears(rowsToClear);
   }
 }

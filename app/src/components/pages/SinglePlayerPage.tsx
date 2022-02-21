@@ -170,6 +170,7 @@ export default function SinglePlayerPage() {
           onLineCleared() {},
           onCellBehaviourChanged() {},
           onCellIsEmptyChanged() {},
+          onCellIsClearingChanged() {},
           onGridCollapsed() {},
           onGridReset() {},
         },

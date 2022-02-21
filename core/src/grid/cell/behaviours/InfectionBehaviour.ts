@@ -23,7 +23,7 @@ export default class InfectionBehaviour implements ICellBehaviour {
     if (this._life === 0) {
       this._cell.isEmpty = false;
       this._cell.behaviour = new NormalCellBehaviour(0x9944ee);
-      this._grid.checkLineClears([this._cell.row]);
+      this._grid.executeLineClears([this._cell.row]);
       return;
     }
     this._life--;
@@ -35,11 +35,12 @@ export default class InfectionBehaviour implements ICellBehaviour {
           if (row === 0 && column === 0) {
             continue;
           }
-          const cell = this._grid.cells[this._cell.row + row][
-            (((this._cell.column + column) % this._grid.numColumns) +
-              this._grid.numColumns) %
-              this._grid.numColumns
-          ];
+          const cell =
+            this._grid.cells[this._cell.row + row][
+              (((this._cell.column + column) % this._grid.numColumns) +
+                this._grid.numColumns) %
+                this._grid.numColumns
+            ];
           if (cell && cell.isPassable && cell.behaviour.isReplaceable) {
             cell.behaviour = new InfectionBehaviour(cell, this._grid);
           }

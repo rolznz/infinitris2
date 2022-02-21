@@ -169,7 +169,11 @@ export default class MinimalRenderer extends BaseRenderer {
       if (cell.cell.behaviour.requiresRerender) {
         this._renderCell(cell.cell);
       }
-      cell.container.alpha = cell.cell.isEmpty ? cell.cell.behaviour.alpha : 1;
+      cell.container.alpha = cell.cell.isEmpty
+        ? cell.cell.behaviour.alpha
+        : cell.cell.isClearing
+        ? 0.5
+        : 1;
     });
   };
 
@@ -297,6 +301,9 @@ export default class MinimalRenderer extends BaseRenderer {
     this._renderCell(cell);
   }
   onCellIsEmptyChanged(cell: ICell): void {
+    this._renderCell(cell);
+  }
+  onCellIsClearingChanged(cell: ICell): void {
     this._renderCell(cell);
   }
 

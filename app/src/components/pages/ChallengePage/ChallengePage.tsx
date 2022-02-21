@@ -114,6 +114,7 @@ export default function ChallengePage() {
         onLineCleared() {},
         onCellBehaviourChanged() {},
         onCellIsEmptyChanged() {},
+        onCellIsClearingChanged() {},
         onGridCollapsed() {},
         onGridReset() {},
       };

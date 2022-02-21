@@ -256,6 +256,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     previousBehaviour: ICellBehaviour
   ): void {}
   onCellIsEmptyChanged(cell: ICell): void {}
+  onCellIsClearingChanged(cell: ICell): void {}
 
   onSimulationNextRound() {
     this._columnCaptures = [...new Array(this._simulation.grid.numColumns)].map(

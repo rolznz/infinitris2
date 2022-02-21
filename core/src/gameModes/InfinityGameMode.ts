@@ -34,6 +34,7 @@ export class InfinityGameMode implements IGameMode<InfinityGameModeState> {
   ): void {}
 
   onCellIsEmptyChanged(cell: ICell): void {}
+  onCellIsClearingChanged(cell: ICell): void {}
 
   getCurrentState(): InfinityGameModeState {
     return {};

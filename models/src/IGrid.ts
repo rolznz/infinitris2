@@ -15,7 +15,10 @@ export default interface IGrid extends ICellEventListener {
   cells: ICell[][];
   numRows: number;
   numColumns: number;
-  checkLineClears(rows: number[]): void;
+  markCollapse(): void;
+  executeCollapse(): void;
+  markLineClears(rows: number[]): void;
+  executeLineClears(rows: number[]): void;
   getNeighbour(cell: ICell, dx: number, dy: number): ICell | undefined;
   removePlayer(player: IPlayer): void;
   reset(): void;

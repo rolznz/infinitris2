@@ -17,6 +17,7 @@ export default class Cell implements ICell {
   private readonly _blocks: IBlock[];
   private readonly _eventListener?: ICellEventListener;
   private _player: IPlayer | undefined;
+  private _isClearing: boolean;
   constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
     this._row = row;
@@ -25,6 +26,7 @@ export default class Cell implements ICell {
     this._isEmpty = true;
     this._blocks = [];
     this._eventListener = grid;
+    this._isClearing = false;
   }
   get row(): number {
     return this._row;
@@ -80,6 +82,20 @@ export default class Cell implements ICell {
     this._player = player;
   }
 
+  get isClearing(): boolean {
+    return this._isClearing;
+  }
+  set isClearing(isClearing: boolean) {
+    if (isClearing != this._isClearing) {
+      this._isClearing = isClearing;
+      this._eventListener?.onCellIsClearingChanged(this);
+    }
+  }
+
+  get index(): number {
+    return this._row * this._grid.numColumns + this._column;
+  }
+
   /**
    * @param player if undefined, will fill the cell with a non-player filled cell behaviour
    */
@@ -97,11 +113,13 @@ export default class Cell implements ICell {
     this.behaviour = cell.behaviour.clone(this);
     this.isEmpty = cell.isEmpty;
     this._player = cell.player;
+    this.isClearing = false;
   }
   reset(): void {
     this.isEmpty = true;
     this._player = undefined;
     this.behaviour = new NormalCellBehaviour();
+    this.isClearing = false;
   }
 
   addBlock(block: IBlock) {

@@ -17,26 +17,34 @@ import { generateCharacterImage } from './generateCharacterImage';
 import { generateCharacterNames } from './generateCharacterNames';
 import fs from 'fs';
 import sharp from 'sharp';
+import { getPrice } from './customizations';
 const seedrandom = require('seedrandom');
 
-random.use(seedrandom('gen-1'));
-clearDirectory(outputDirectory);
-clearDirectory(facesDirectory);
-clearDirectory(charactersDirectory);
-clearDirectory(definitionsDirectory);
-clearDirectory(patternsDirectory);
-clearDirectory(habitatsDirectory);
+if (process.env.CHARACTER_ID === undefined) {
+  clearDirectory(outputDirectory);
+  clearDirectory(facesDirectory);
+  clearDirectory(charactersDirectory);
+  clearDirectory(definitionsDirectory);
+  clearDirectory(patternsDirectory);
+  clearDirectory(habitatsDirectory);
+}
 
 console.log('checking assets');
 const invalidSvgs = [];
 for (const filename of files) {
   console.log('Checking ' + filename);
-  if (
-    filename.toLowerCase().endsWith('.svg') &&
-    fs.readFileSync(getPath(filename)).indexOf('<image') >= 0
-  ) {
+  if (fs.readFileSync(getPath(filename)).indexOf('<image') >= 0) {
     invalidSvgs.push(filename);
   }
+  // check a price exists
+  if (
+    filename.startsWith('pattern') ||
+    filename.startsWith('ears') ||
+    filename.startsWith('eyes') ||
+    filename.startsWith('headgear') ||
+    filename.startsWith('mouth')
+  )
+    getPrice(filename);
 }
 if (invalidSvgs.length > 0) {
   throw new Error(
@@ -68,6 +76,14 @@ if (names.length < numCombinations) {
 
 async function generateCharacters() {
   for (let i = 0; i < numCombinations; i++) {
+    if (
+      process.env.CHARACTER_ID !== undefined &&
+      i.toString() !== process.env.CHARACTER_ID
+    ) {
+      continue;
+    }
+
+    random.use(seedrandom('gen-1-' + i));
     const name = names[i];
     const createCharacterResult = await generateCharacterImage(random, i);
 

@@ -10,7 +10,9 @@ export const facesDirectory = 'out/faces';
 export const definitionsDirectory = 'out/definitions';
 export const patternsDirectory = 'out/patterns';
 
-export const files = fs.readdirSync(assetsDirectory);
+export const files = fs
+  .readdirSync(assetsDirectory)
+  .filter((file) => file.toLowerCase().endsWith('.svg'));
 export const getPath = (filename: string) => `${assetsDirectory}/${filename}`;
 
 export const patternFilenames = files.filter((file) =>
@@ -37,9 +39,9 @@ export const sharpOptions: sharp.SharpOptions = {
 export const blockMask = sharp(getPath(maskFilename), sharpOptions);
 
 export const headgearStartY = 0.15;
-export const noHeadgearStartY = 0.25;
-export const eyesRangeY = 0.1;
-export const paddingY = 0.21;
+export const noHeadgearStartY = 0.3;
+export const eyesRangeY = 0.2;
+export const paddingY = 0.1;
 export const earsStartY = 0.3;
 export const earsRangeY = 0.3;
 export const availableY = 1 - paddingY * 2;

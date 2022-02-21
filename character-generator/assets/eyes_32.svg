@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="48.678px" height="36.635px" viewBox="0 0 48.678 36.635" enable-background="new 0 0 48.678 36.635" xml:space="preserve">
+<path fill="#D2D5DB" stroke="#507DBF" stroke-width="0.25" stroke-miterlimit="10" d="M19.671,4.114c0,0-0.761,21.387,0,28.369
+	c0.559,5.128,8.439,6.174,8.439-1.72c0-6.662,0-26.648,0-26.648s0-3.989-4.389-3.989C19.772,0.125,19.671,4.114,19.671,4.114z"/>
+<ellipse transform="matrix(0.9962 -0.0867 0.0867 0.9962 -0.9683 3.5067)" fill="#E6E8EE" stroke="#252D6A" stroke-width="0.25" stroke-miterlimit="10" cx="39.879" cy="12.899" rx="8.073" ry="7.845"/>
+<g>
+	
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="-566.922" y1="355.8505" x2="-549.4937" y2="355.8505" gradientTransform="matrix(0.9962 -0.0867 0.0867 0.9962 565.4797 -384.4115)">
+		<stop  offset="0.0155" style="stop-color:#151E4D"/>
+		<stop  offset="1" style="stop-color:#000000"/>
+	</linearGradient>
+	<path fill="url(#SVGID_1_)" d="M40.108,22.349c4.369-0.098,7.928-3.25,8.57-7.307l-17.46,0.393
+		C32.042,19.459,35.74,22.447,40.108,22.349z"/>
+</g>
+<ellipse fill="#E6E8EE" stroke="#252D6A" stroke-width="0.25" stroke-miterlimit="10" cx="8.706" cy="12.071" rx="8.03" ry="7.803"/>
+<ellipse fill="#121212" cx="8.687" cy="10.526" rx="2.292" ry="2.227"/>
+<ellipse transform="matrix(0.9962 -0.0867 0.0867 0.9962 -0.7343 3.3858)" fill="#121212" cx="38.604" cy="10.145" rx="2.304" ry="2.239"/>
+<g>
+	<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="-2.489489e-06" y1="17.3946" x2="17.3354" y2="17.3946">
+		<stop  offset="0.0155" style="stop-color:#151E4D"/>
+		<stop  offset="1" style="stop-color:#000000"/>
+	</linearGradient>
+	<path fill="url(#SVGID_2_)" d="M8.213,21.194c4.337,0.279,8.136-2.537,9.122-6.502L0,13.576C0.47,17.634,3.876,20.915,8.213,21.194
+		z"/>
+</g>
+</svg>

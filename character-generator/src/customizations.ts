@@ -68,7 +68,7 @@ const customizations: { [filename: string]: Customization } = {
   'eyes_27.svg': { tier: 3, rarity: 1 },
   'eyes_28.svg': { tier: 0 },
   'eyes_29.svg': { tier: 0, pushY: 0.02 },
-  'eyes_30.svg': { tier: 0 },
+  'eyes_30.svg': { tier: 0, pushY: 0.03 },
   'eyes_31.svg': { tier: 0 },
   'eyes_32.svg': { tier: 3, pushY: 0.02 },
   'headgear_10.svg': {

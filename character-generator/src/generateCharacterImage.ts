@@ -47,6 +47,7 @@ import {
   hasMouth,
   hasHeadgear,
   getRarity,
+  useHeadgearOffset,
 } from './customizations';
 import { hexToRgb } from './utils/hexToRgb';
 import { rgbToHex } from './utils/rgbToHex';
@@ -180,7 +181,9 @@ export async function generateCharacterImage(
   if (earsFilename) {
     price += getPrice(earsFilename);
   }
-  const eyes = await loadImage(getPath(eyesFilename));
+  const eyes = await loadImage(
+    colorizeSvg2(getPath(eyesFilename), color.hex, borderColor)
+  );
   const headgearFilename =
     index > 0 && hasHeadgear(eyesFilename) && random.next() < headgearChance
       ? pickRandomFilename(random, headgearFilenames)
@@ -195,13 +198,15 @@ export async function generateCharacterImage(
   const mouthFilename =
     index === 0
       ? mouthFilenames[0]
-      : pickRandomFilename(random, mouthFilenames);
-  const mouth = hasMouth(eyesFilename)
+      : hasMouth(eyesFilename)
+      ? pickRandomFilename(random, mouthFilenames)
+      : undefined;
+  const mouth = mouthFilename
     ? await loadImage(getPath(mouthFilename), (image) =>
         randomFlop(random, image)
       )
     : null;
-  if (mouth) {
+  if (mouthFilename) {
     price += getPrice(mouthFilename);
   }
 
@@ -218,11 +223,12 @@ export async function generateCharacterImage(
     image.resize(maskDimensions.width, maskDimensions.height)
   );
 
-  const mouthRandomX = mouth
-    ? mouth.metadata.width! *
-      (random.next() - 0.5) *
-      (getRandomX(mouthFilename) ?? mouthRandomXMultiplier)
-    : 0;
+  const mouthRandomX =
+    mouth && mouthFilename
+      ? mouth.metadata.width! *
+        (random.next() - 0.5) *
+        (getRandomX(mouthFilename) ?? mouthRandomXMultiplier)
+      : 0;
   const headgearRandomX = headgear
     ? (outputSize - headgear!.metadata.width!) *
       (random.next() - 0.5) *
@@ -245,13 +251,15 @@ export async function generateCharacterImage(
       (getOffsetX(headgearFilename!) ?? 0) * outputSize
     : 0;
 
-  const eyesStartY = headgear
-    ? headgearY +
-      headgear.metadata.height! +
-      (getPushY(headgearFilename!) ?? 0) * outputSize
-    : noHeadgearStartY * outputSize;
+  const eyesStartY =
+    headgear && useHeadgearOffset(eyesFilename)
+      ? headgearY +
+        headgear.metadata.height! +
+        (getPushY(headgearFilename!) ?? 0) * outputSize
+      : noHeadgearStartY * outputSize;
 
   const eyesAvailableRandomY =
+    (getRandomY(eyesFilename!) ?? 1) *
     eyesRangeY *
     Math.max(
       availableY * outputSize -
@@ -273,7 +281,7 @@ export async function generateCharacterImage(
 
   const mouthRandomY =
     Math.max(
-      (availableY - paddingY * 2) * outputSize -
+      (availableY - paddingY) * outputSize -
         eyesY -
         eyes.metadata.height! -
         (mouth?.metadata.height || 0) -
@@ -281,13 +289,14 @@ export async function generateCharacterImage(
       0
     ) * random.next();
 
-  const mouthY = mouth
-    ? eyesY +
-      eyes.metadata.height! +
-      mouthRandomY +
-      (getPushY(eyesFilename) ?? 0) * outputSize +
-      (getOffsetY(mouthFilename) ?? 0) * outputSize
-    : 0;
+  const mouthY =
+    mouth && mouthFilename
+      ? eyesY +
+        eyes.metadata.height! +
+        mouthRandomY +
+        (getPushY(eyesFilename) ?? 0) * outputSize +
+        (getOffsetY(mouthFilename) ?? 0) * outputSize
+      : 0;
 
   const patternComposite = await blockMask
     .composite([
@@ -297,6 +306,17 @@ export async function generateCharacterImage(
       },
     ])
     .toBuffer();
+
+  if (process.env.DEBUG) {
+    console.log(
+      'Generating ' +
+        index +
+        '.png: ' +
+        [eyesFilename, earsFilename, mouthFilename, headgearFilename]
+          .filter((filename) => filename)
+          .join(',')
+    );
+  }
 
   const blockFilename = `${charactersDirectory}/${index}.png`;
   const habitatFilename = `${habitatsDirectory}/${index}.svg`;

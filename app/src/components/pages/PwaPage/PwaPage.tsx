@@ -2,13 +2,18 @@ import { Typography } from '@mui/material';
 import { Page } from '../../ui/Page';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { appName } from '@/utils/constants';
-import homescreenImage from './assets/pwa2.png';
-import iosShareImage from './assets/ios_share.jpg';
-import iosAddToHomescreenImage from './assets/ios_add_to_homescreen.jpg';
+import homescreenImageLight from './assets/app_homescreen_light.png';
+import iosShareImageLight from './assets/app_share_light.png';
+import iosAddToHomescreenImageLight from './assets/app_add_light.png';
+import homescreenImageDark from './assets/app_homescreen_dark.png';
+import iosShareImageDark from './assets/app_share_dark.png';
+import iosAddToHomescreenImageDark from './assets/app_add_dark.png';
 import { isAndroid, isIos } from '@/utils/isMobile';
+import useDarkMode from '@/components/hooks/useDarkMode';
 
 export function PwaPage() {
   const intl = useIntl();
+  const isDarkMode = useDarkMode();
   return (
     <Page
       title={intl.formatMessage({
@@ -17,7 +22,11 @@ export function PwaPage() {
       })}
       style={{ height: '100%', justifyContent: 'center' }}
     >
-      <img src={homescreenImage} alt="friend" width="100%" />
+      <img
+        src={isDarkMode ? homescreenImageDark : homescreenImageLight}
+        alt="friend"
+        width="100%"
+      />
 
       <Typography mt={4} mb={4}>
         {isIos() ? (
@@ -28,7 +37,7 @@ export function PwaPage() {
               appName,
               iosShareImage: (
                 <img
-                  src={iosShareImage}
+                  src={isDarkMode ? iosShareImageDark : iosShareImageLight}
                   alt="friend"
                   width="100%"
                   style={{ marginTop: '10px', marginBottom: '10px' }}
@@ -36,7 +45,11 @@ export function PwaPage() {
               ),
               iosHomescreenImage: (
                 <img
-                  src={iosAddToHomescreenImage}
+                  src={
+                    isDarkMode
+                      ? iosAddToHomescreenImageDark
+                      : iosAddToHomescreenImageLight
+                  }
                   alt="friend"
                   width="100%"
                   style={{ marginTop: '10px', marginBottom: '10px' }}

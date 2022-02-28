@@ -158,18 +158,18 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         offsetY: 0,
       },
 
-      {
+      /*{
         filename: 'theme_desert_3.png',
         speedY: 0.25,
         speedX: 0.25,
         offsetY: 0.4,
         minQuality: 'high',
-      },
+      },*/
       {
         filename: 'theme_desert_4.png',
         speedY: 0.3,
         speedX: 0.3,
-        offsetY: 0.25,
+        offsetY: 0.15,
         minQuality: 'medium',
       },
       {
@@ -189,7 +189,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         filename: 'theme_desert_7.png',
         speedY: 0.45,
         speedX: 0.45,
-        offsetY: 0.2,
+        offsetY: 0.15,
         offsetX: 0.3,
         minQuality: 'high',
       },

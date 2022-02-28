@@ -18,10 +18,15 @@ const patternFilenames = readdirSync(patternsDir).filter((filename) =>
 const characterFilenames = readdirSync(definitionsDirectory).filter(
   (filename) => filename.endsWith('.json')
 );
-
-for (const filename of patternFilenames) {
-  uploadFile(`${patternsDir}/${filename}`, `patterns/${filename}`);
-}
+console.log('Uploading patterns');
+(async () => {
+  for (const filename of patternFilenames) {
+    await uploadFile(`${patternsDir}/${filename}`, `patterns/${filename}`);
+    process.stdout.write('.');
+  }
+})();
+console.log('Uploading ' + characterFilenames.length + ' characters');
+let index = 0;
 (async () => {
   for (const filename of characterFilenames) {
     const promises: Promise<any>[] = [];
@@ -59,5 +64,8 @@ for (const filename of patternFilenames) {
     );
     await Promise.all(promises);
     process.stdout.write('.');
+    if (++index % 100 === 0) {
+      console.log(index + ' / ' + characterFilenames.length);
+    }
   }
 })();

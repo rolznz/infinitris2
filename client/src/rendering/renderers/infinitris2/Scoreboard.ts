@@ -113,19 +113,19 @@ export class Scoreboard {
       const text = this._scoreboardTextLines[i];
       if (i < playerScores.length) {
         text.visible = true;
-        text.text = playerScores[i].isSpectating
-          ? ''
-          : (playerScores[i].placing - 1 < placingCharacters.length
-              ? placingCharacters[playerScores[i].placing - 1]
-              : playerScores[i].placing) +
-            '  ' +
-            playerScores[i].nickname +
-            (playerScores[i].isSpectating ? ' (spectating)' : '') +
-            (!playerScores[i].isSpectating &&
-            simulation.settings.gameModeType === 'conquest'
-              ? ` (${playerScores[i].numCaptures} ⦿ ${playerScores[i].health} ♥)`
-              : '') +
-            (playerScores[i].isSpectating ? '' : '  ' + playerScores[i].score);
+        text.text =
+          (playerScores[i].isSpectating
+            ? ''
+            : (playerScores[i].placing - 1 < placingCharacters.length
+                ? placingCharacters[playerScores[i].placing - 1]
+                : playerScores[i].placing) + '  ') +
+          playerScores[i].nickname +
+          (playerScores[i].isSpectating ? ' (spectating)' : '') +
+          (!playerScores[i].isSpectating &&
+          simulation.settings.gameModeType === 'conquest'
+            ? ` (${playerScores[i].numCaptures} ⦿)`
+            : '') +
+          (playerScores[i].isSpectating ? '' : '  ' + playerScores[i].score);
 
         text.tint = playerScores[i].color;
         text.x = padding;

@@ -288,11 +288,11 @@ export default class Simulation implements ISimulation {
   onBlockPlaced(block: IBlock) {
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
 
-    const rowsToClear = block.cells
+    const rowsToCheck = block.cells
       .map((cell) => cell.row)
       .filter((row, i, rows) => rows.indexOf(row) === i);
 
-    this.markLineClears(rowsToClear);
+    this.checkLineClears(rowsToCheck);
   }
 
   /**
@@ -437,15 +437,20 @@ export default class Simulation implements ISimulation {
   executeCollapse() {
     this._grid.executeCollapse();
     const rowsToClear = [...Array(this._grid.numRows)].map((_, i) => i);
-    this.markLineClears(rowsToClear);
+    this.checkLineClears(rowsToClear);
   }
 
-  markLineClears(rowsToClear: number[]) {
+  checkLineClears(rowsToCheck: number[]) {
+    const filledRows = rowsToCheck.filter(
+      (row) => this._cells[row].findIndex((cell) => cell.isEmpty) < 0
+    );
+
+    // FIXME: this has to be networked
     this._grid.markLineClears(rowsToClear);
     if (!this._isNetworkClient) {
-      setTimeout(() => {
-        this.executeLineClears(rowsToClear);
-      }, 1000);
+      this._nextLineClear = Date.now() + 1000;
+      this._rowsToClear = [...this._rowsToClear, filledRows];
+      //
     }
   }
   executeLineClears(rowsToClear: number[]) {

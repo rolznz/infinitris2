@@ -75,15 +75,10 @@ export default class Grid implements IGrid {
   }
 
   /**
-   * Check for full rows.
    *
-   * @param rows a list of rows affected by a change (e.g. block placement).
+   * @param rows the list of rows that will be cleared.
    */
-  markLineClears(rows: number[]) {
-    const rowsToClear = rows.filter(
-      (row) => this._cells[row].findIndex((cell) => cell.isEmpty) < 0
-    );
-
+  markLineClears(rowsToClear: number[]) {
     for (const row of rowsToClear) {
       for (let c = 0; c < this._cells[row].length; c++) {
         if (this._cells[row][c].player) {

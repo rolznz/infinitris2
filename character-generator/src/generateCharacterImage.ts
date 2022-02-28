@@ -48,6 +48,7 @@ import {
   hasHeadgear,
   getRarity,
   useHeadgearOffset,
+  getEarsY,
 } from './customizations';
 import { hexToRgb } from './utils/hexToRgb';
 import { rgbToHex } from './utils/rgbToHex';
@@ -274,9 +275,11 @@ export async function generateCharacterImage(
     eyesStartY + eyesRandomY + (getOffsetY(eyesFilename) ?? 0) * outputSize;
 
   const earsY = ears
-    ? earsStartY * outputSize +
-      random.next() *
-        Math.max(0, earsRangeY * outputSize - ears.metadata.height!)
+    ? getEarsY(eyesFilename) !== undefined
+      ? eyesY + getEarsY(eyesFilename)! * outputSize
+      : earsStartY * outputSize +
+        random.next() *
+          Math.max(0, earsRangeY * outputSize - ears.metadata.height!)
     : 0;
 
   const mouthRandomY =

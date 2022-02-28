@@ -17,6 +17,7 @@ type Customization = {
   hasMouth?: boolean;
   hasHeadgear?: boolean;
   useHeadgearOffset?: boolean;
+  earsY?: number;
 };
 
 const customizations: { [filename: string]: Customization } = {
@@ -40,7 +41,7 @@ const customizations: { [filename: string]: Customization } = {
     randomX: 0.1,
     hasHeadgear: false,
   },
-  'eyes_16.svg': { tier: 5, rarity: 1 },
+  'eyes_16.svg': { tier: 5, rarity: 1, earsY: 0.05 },
   'eyes_17.svg': { tier: 4 },
   'eyes_18.svg': { tier: 2 },
   'eyes_19.svg': { tier: 4 },
@@ -51,7 +52,7 @@ const customizations: { [filename: string]: Customization } = {
   'eyes_23.svg': { tier: 3 },
   'eyes_24.svg': { tier: 3, rarity: 1, pushY: 0, y: -0.05 },
   'eyes_3.svg': { tier: 0 },
-  'eyes_4.svg': { tier: 4 },
+  'eyes_4.svg': { tier: 4, earsY: 0.07 },
   'eyes_5.svg': { tier: 1, rarity: 1, y: -0.06, pushY: -0.1 },
   'eyes_6.svg': {
     tier: 1,
@@ -65,7 +66,7 @@ const customizations: { [filename: string]: Customization } = {
   'eyes_8.svg': { tier: 1, hasMouth: false },
   'eyes_9.svg': { tier: 1, pushY: 0.06 },
   'eyes_25.svg': { tier: 3, rarity: 1 },
-  'eyes_27.svg': { tier: 3, rarity: 1 },
+  'eyes_27.svg': { tier: 3, rarity: 1, earsY: 0.02 },
   'eyes_28.svg': { tier: 0 },
   'eyes_29.svg': { tier: 0, pushY: 0.02 },
   'eyes_30.svg': { tier: 0, pushY: 0.03 },
@@ -220,6 +221,9 @@ export function hasHeadgear(filename: string): boolean {
 }
 export function useHeadgearOffset(filename: string): boolean {
   return customizations[filename]?.useHeadgearOffset ?? true;
+}
+export function getEarsY(filename: string): number | undefined {
+  return customizations[filename]?.earsY;
 }
 
 export function getPrice(filename: string): number {

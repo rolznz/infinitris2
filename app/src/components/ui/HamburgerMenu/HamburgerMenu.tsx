@@ -32,7 +32,7 @@ import logoImage from './assets/logo.png';
 import useAuthStore from '@/state/AuthStore';
 import { useUserStore } from '@/state/UserStore';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';
-import { colors, zIndexes } from '@/theme/theme';
+import { borderRadiuses, boxShadows, colors, zIndexes } from '@/theme/theme';
 import { openLoginDialog } from '@/state/DialogStore';
 
 type HamburgerMenuProps = {
@@ -201,28 +201,35 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
             width="100%"
             boxSizing="border-box"
             style={{
-              opacity: donations ? 0.3 : 0,
+              opacity: donations ? 1 : 0,
               transition: 'opacity 1s 1s',
             }}
             position="relative"
+            justifyContent="flex-start"
+            alignItems="flex-start"
           >
             <FlexBox
-              justifyContent="flex-start"
+              height="100%"
               flexDirection="row"
               position="absolute"
               style={{ zIndex: zIndexes.above }}
+              pl={1}
             >
-              <SvgIcon color="secondary" fontSize="small">
+              <SvgIcon sx={{ color: colors.white, fontSize: '12px' }}>
                 <FavoriteIcon />
               </SvgIcon>
-              <Typography align="center" variant="caption" color="primary">
+              {/* <Typography align="center" variant="caption" color="primary">
                 {(monthDonationSum * 100) / donationTarget}%
-              </Typography>
+              </Typography> */}
             </FlexBox>
 
             <LinearProgress
               value={Math.min(monthDonationSum / donationTarget, 1) * 100}
-              style={{ height: '19px', width: '100%' }}
+              style={{
+                height: '19px',
+                width: '100%',
+                opacity: 0.3,
+              }}
               color="primary"
               variant="determinate"
             />

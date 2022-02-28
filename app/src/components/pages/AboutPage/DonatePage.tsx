@@ -1,17 +1,18 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { Page } from '@/components/ui/Page';
 import { appName } from '@/utils/constants';
-import { Typography, Box, Link, LinearProgress } from '@mui/material';
+import { Typography, Box, Link, LinearProgress, SvgIcon } from '@mui/material';
 
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import QRCode from 'react-qr-code';
 import { useTheme } from '@mui/material/styles';
-import { colors } from '@/theme/theme';
+import { colors, zIndexes } from '@/theme/theme';
 import { toast } from 'react-toastify';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import { Timestamp } from 'infinitris2-models';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 
 export default function AboutPage() {
   const [, copy] = useCopyToClipboard();
@@ -85,12 +86,32 @@ export default function AboutPage() {
               }}
             />
           </Typography>
-          <LinearProgress
-            value={Math.min(monthDonationSum / donationTarget, 1) * 100}
-            style={{ height: '19px', width: '200px' }}
-            color="primary"
-            variant="determinate"
-          />
+          <FlexBox alignItems="flex-start" position="relative">
+            <FlexBox
+              height="100%"
+              flexDirection="row"
+              position="absolute"
+              style={{ zIndex: zIndexes.above }}
+              pl={1}
+            >
+              <SvgIcon sx={{ color: colors.white, fontSize: '12px' }}>
+                <FavoriteIcon />
+              </SvgIcon>
+              {/* <Typography align="center" variant="caption" color="primary">
+                {(monthDonationSum * 100) / donationTarget}%
+              </Typography> */}
+            </FlexBox>
+            <LinearProgress
+              value={Math.min(monthDonationSum / donationTarget, 1) * 100}
+              style={{
+                height: '19px',
+                width: '200px',
+                opacity: 0.3,
+              }}
+              color="primary"
+              variant="determinate"
+            />
+          </FlexBox>
         </FlexBox>
       )}
       {donations && (

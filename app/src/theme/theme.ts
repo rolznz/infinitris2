@@ -225,6 +225,10 @@ export const coreThemeOptions: ThemeOptions = {
         barColorPrimary: {
           backgroundColor: colors.white,
         },
+        root: {
+          borderRadius: borderRadiuses.base,
+          boxShadow: boxShadows.small,
+        },
       },
     },
     MuiIconButton: {

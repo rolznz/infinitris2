@@ -29,6 +29,6 @@ export const colors: { tier: number; hex: string }[] = [
   { hex: '#660266', tier: 3 },
   { hex: '#C03680', tier: 3 },
   { hex: '#DE9BE2', tier: 2 },
-  { hex: '#FFFFFF', tier: 5 },
+  { hex: '#EFEFED', tier: 5 },
   { hex: '#1B1C1C', tier: 5 },
 ];

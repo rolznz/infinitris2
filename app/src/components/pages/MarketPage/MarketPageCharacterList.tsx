@@ -20,14 +20,16 @@ const cachedCharacters: Record<
   QueryDocumentSnapshot<ICharacter>[]
 > = {
   'available-all': [],
-  'available-free': [],
+  'available-affordable': [],
   'available-premium': [],
+  'available-featured': [],
   'my-blocks': [],
 };
 
 export type MarketPageCharacterListFilter =
+  | 'available-featured'
   | 'available-all'
-  | 'available-free'
+  | 'available-affordable'
   | 'available-premium'
   | 'my-blocks';
 
@@ -66,8 +68,10 @@ export function MarketPageCharacterList({
               ),
             ] // TODO: my ids FIXME: character ID should be a string everywhere
           : [
-              ...(filter === 'available-free'
-                ? [where('price', '<', 50)]
+              ...(filter === 'available-affordable'
+                ? [where('price', '<', 50), orderBy('price')]
+                : filter === 'available-featured'
+                ? [where('isFeatured', '==', true), orderBy('price')]
                 : filter === 'available-premium'
                 ? [where('price', '>', 400)]
                 : [orderBy('price')]),
@@ -108,6 +112,7 @@ export function MarketPageCharacterList({
       flexDirection="row"
       flexWrap="wrap"
       justifyContent="flex-start"
+      alignItems="flex-start"
       mt={0}
       minHeight={filter === 'my-blocks' ? characterBlockHeight : '100vh'}
     >

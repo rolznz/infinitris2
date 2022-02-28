@@ -30,9 +30,7 @@ export default function MarketPage() {
 
   return (
     <Page
-      title={
-        character ? `#${character?.id} ${character?.data()?.name}` : undefined
-      }
+      title={character ? `${character?.data()?.name}` : undefined}
       whiteTitle
       background={
         <FlexBox zIndex={zIndexes.below}>

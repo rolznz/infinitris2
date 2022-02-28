@@ -18,6 +18,7 @@ import { generateCharacterNames } from './generateCharacterNames';
 import fs from 'fs';
 import sharp from 'sharp';
 import { getPrice } from './customizations';
+import { featuredCharacterIds } from './featuredCharacterIds';
 const seedrandom = require('seedrandom');
 
 if (process.env.CHARACTER_ID === undefined) {
@@ -96,6 +97,7 @@ async function generateCharacters() {
     const character = {
       id: i,
       name,
+      isFeatured: featuredCharacterIds.indexOf(i) >= 0,
       ...createCharacterResult,
     };
     fs.writeFileSync(

@@ -23,7 +23,7 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import FlexBox from '@/components/ui/FlexBox';
 
 // TODO: use zustand
-let lastSelectedTab: MarketPageCharacterListFilter = 'available-all';
+let lastSelectedTab: MarketPageCharacterListFilter = 'available-featured';
 
 function _MarketPage() {
   const intl = useIntl();
@@ -102,19 +102,20 @@ function _MarketPage() {
                   }}
                   aria-label="lab API tabs example"
                 >
-                  <Tab label="All" value="available-all" />
-                  <Tab
-                    label="Cheap"
-                    value="available-free" /* TODO: Change back to Free */
-                  />
+                  <Tab label="Featured" value="available-featured" />
+                  <Tab label="Affordable" value="available-affordable" />
                   <Tab label="Premium" value="available-premium" />
+                  <Tab label="All" value="available-all" />
                 </TabList>
               </Box>
+              <TabPanel value="available-featured">
+                <MarketPageCharacterList filter="available-featured" />
+              </TabPanel>
               <TabPanel value="available-all">
                 <MarketPageCharacterList filter="available-all" />
               </TabPanel>
-              <TabPanel value="available-free">
-                <MarketPageCharacterList filter="available-free" />
+              <TabPanel value="available-affordable">
+                <MarketPageCharacterList filter="available-affordable" />
               </TabPanel>
               <TabPanel value="available-premium">
                 <MarketPageCharacterList filter="available-premium" />

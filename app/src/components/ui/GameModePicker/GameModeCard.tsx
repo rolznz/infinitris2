@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
-import { borderRadiuses, boxShadows } from '@/theme/theme';
+import { borderRadiuses, boxShadows, colors } from '@/theme/theme';
 import Routes from '@/models/Routes';
 import { Link as RouterLink } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
@@ -55,6 +55,7 @@ export function GameModeCard({
         <Typography
           variant={isLandscape ? 'h4' : 'h5'}
           lineHeight={isLandscape ? undefined : 1}
+          color={colors.white}
         >
           {title}
         </Typography>

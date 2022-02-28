@@ -3,75 +3,58 @@ import { Random } from 'random';
 const BadWordFilter = require('bad-words');
 const badWordFilter = new BadWordFilter();
 
-const sounds = ['#ee', 'a', 'o', 'i', '#oo', 'u'];
-const letters = [
+const vowels = ['a', '!e', 'i', 'o', 'u'];
+const consonants = [
   'b',
   'd',
-  'p',
   'f',
-  'z',
-  'h#',
-  't',
   'g',
-  'j#',
-  '#rg',
-  '#nk',
-  '#rp',
-  'th',
-  'w',
-  'r',
-  'c#',
-  'y',
+  'h!',
+  'j!',
   'k',
   'l',
-  'm',
-  'n',
-  'q#',
+  'm!',
+  'n!',
+  'p',
+  'r',
   's',
-  'v',
-  '#x',
+  't',
+  'v!',
+  'w',
+  'y',
+  'z',
 ];
 
-export function generateCharacterNames(random: Random) {
-  let names: string[] = [];
-  for (let i = 0; i < 1000; i++) {
-    let numParts = 2 + random.int(0, 3);
-    let isLetter = random.next() > 0.2;
-    for (let j = 0; j < numParts; j++) {
-      const source = isLetter ? letters : sounds;
-      let next = source[random.int(0, source.length - 1)];
-      if (next.endsWith('#')) {
-        next = next.substring(0, next.length - 1);
-        if (j === numParts - 1) {
-          numParts++;
-        }
-      }
-      if (next.startsWith('#')) {
-        if (!names[i]) {
-          j--;
-          continue;
-        } else {
-          next = next.substring(1);
-        }
-      }
+const parts = ([] as string[]).concat(
+  ...consonants.map((c) => vowels.map((v) => c + v))
+);
 
-      names[i] = (names[i] || '') + next;
-      isLetter = !isLetter;
-
-      if (j === numParts - 1 && names[i].length < 3) {
-        numParts++;
-      }
-    }
+export function generateCharacterNames(
+  random: Random,
+  numCombinations: number
+) {
+  const getPart = (index: number) => {
+    let part = '';
+    do {
+      part = parts[random.integer(0, parts.length - 1)];
+    } while (
+      (index === 0 && part[0] === '!') ||
+      (index === 1 && part[1] === '!')
+    );
+    return part.replace(/!/g, '');
+  };
+  const names: string[] = [];
+  for (let i = 0; i < numCombinations; i++) {
+    let name = '';
+    // filter out bad words and duplicates
+    do {
+      name = getPart(0) + getPart(1);
+    } while (
+      (badWordFilter.clean(name) as string).indexOf('*') >= 0 ||
+      names.indexOf(name) >= 0
+    );
+    names.push(name);
   }
-
-  // filter out bad words and duplicates
-  names = [
-    ...new Set(
-      names
-        .map((name) => badWordFilter.clean(name) as string)
-        .filter((name) => name.indexOf('*') < 0)
-    ),
-  ];
 
   return names;
 }

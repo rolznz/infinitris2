@@ -53,7 +53,11 @@ if (invalidSvgs.length > 0) {
 }
 
 console.log('Generating names');
-const names = generateCharacterNames(random);
+const names = generateCharacterNames(random, numCombinations);
+if (process.env.LOG_NAMES === 'true') {
+  console.log(names.join(' '));
+  process.exit(0);
+}
 
 if (names.length < numCombinations) {
   throw new Error('Not enough names generated');

@@ -54,9 +54,16 @@ import { hexToRgb } from './utils/hexToRgb';
 import { rgbToHex } from './utils/rgbToHex';
 import { colors } from 'infinitris2-models';
 
-const pickRandomFilename = (random: Random, filenames: string[]) => {
+const pickRandomFilename = (
+  random: Random,
+  filenames: string[],
+  onlyFree: boolean
+) => {
   while (true) {
     const filename = filenames[random.int(0, filenames.length - 1)];
+    if (onlyFree && getPrice(filename) > 0) {
+      continue;
+    }
     const rarity = getRarity(filename);
 
     // minimum chance is 20%
@@ -165,14 +172,19 @@ export async function generateCharacterImage(
 
   let price = 0;
   price += getPriceFromTier(color.tier);
+  const isEmptyPattern = Math.floor(index / colors.length) === 0;
+  const patternFilename = patternFilenames[Math.floor(index / colors.length)];
+  price += getPrice(patternFilename);
 
   const maskDimensions = await blockMask.metadata();
   const earsFilename =
     index !== 0 && random.next() < earsChance
-      ? pickRandomFilename(random, earsFilenames)
+      ? pickRandomFilename(random, earsFilenames, isEmptyPattern)
       : null;
   const eyesFilename =
-    index === 0 ? eyesFilenames[0] : pickRandomFilename(random, eyesFilenames);
+    index === 0
+      ? eyesFilenames[0]
+      : pickRandomFilename(random, eyesFilenames, isEmptyPattern);
   price += getPrice(eyesFilename);
   const ears = earsFilename
     ? await loadImage(
@@ -187,7 +199,7 @@ export async function generateCharacterImage(
   );
   const headgearFilename =
     index > 0 && hasHeadgear(eyesFilename) && random.next() < headgearChance
-      ? pickRandomFilename(random, headgearFilenames)
+      ? pickRandomFilename(random, headgearFilenames, isEmptyPattern)
       : null;
   price += headgearFilename ? getPrice(headgearFilename) : 0;
   const headgear = headgearFilename
@@ -200,7 +212,7 @@ export async function generateCharacterImage(
     index === 0
       ? mouthFilenames[0]
       : hasMouth(eyesFilename)
-      ? pickRandomFilename(random, mouthFilenames)
+      ? pickRandomFilename(random, mouthFilenames, isEmptyPattern)
       : undefined;
   const mouth = mouthFilename
     ? await loadImage(getPath(mouthFilename), (image) =>
@@ -210,9 +222,6 @@ export async function generateCharacterImage(
   if (mouthFilename) {
     price += getPrice(mouthFilename);
   }
-
-  const patternFilename = patternFilenames[Math.floor(index / colors.length)];
-  price += getPrice(patternFilename);
 
   const border = await loadImage(
     colorizeSvg(getPath(borderFilename), borderColor)

@@ -20,7 +20,7 @@ const cachedCharacters: Record<
   QueryDocumentSnapshot<ICharacter>[]
 > = {
   'available-all': [],
-  'available-affordable': [],
+  'available-free': [],
   'available-premium': [],
   'available-featured': [],
   'my-blocks': [],
@@ -29,7 +29,7 @@ const cachedCharacters: Record<
 export type MarketPageCharacterListFilter =
   | 'available-featured'
   | 'available-all'
-  | 'available-affordable'
+  | 'available-free'
   | 'available-premium'
   | 'my-blocks';
 
@@ -68,8 +68,8 @@ export function MarketPageCharacterList({
               ),
             ] // TODO: my ids FIXME: character ID should be a string everywhere
           : [
-              ...(filter === 'available-affordable'
-                ? [where('price', '<', 50), orderBy('price')]
+              ...(filter === 'available-free'
+                ? [where('price', '==', 0)]
                 : filter === 'available-featured'
                 ? [where('isFeatured', '==', true), orderBy('price')]
                 : filter === 'available-premium'

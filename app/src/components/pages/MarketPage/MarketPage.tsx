@@ -103,7 +103,7 @@ function _MarketPage() {
                   aria-label="lab API tabs example"
                 >
                   <Tab label="Featured" value="available-featured" />
-                  <Tab label="Affordable" value="available-affordable" />
+                  <Tab label="Free" value="available-free" />
                   <Tab label="Premium" value="available-premium" />
                   <Tab label="All" value="available-all" />
                 </TabList>
@@ -114,8 +114,8 @@ function _MarketPage() {
               <TabPanel value="available-all">
                 <MarketPageCharacterList filter="available-all" />
               </TabPanel>
-              <TabPanel value="available-affordable">
-                <MarketPageCharacterList filter="available-affordable" />
+              <TabPanel value="available-free">
+                <MarketPageCharacterList filter="available-free" />
               </TabPanel>
               <TabPanel value="available-premium">
                 <MarketPageCharacterList filter="available-premium" />

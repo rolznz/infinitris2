@@ -102,7 +102,6 @@ export abstract class BaseRenderer implements IRenderer {
     this._world.removeChildren();
   }
   abstract onSimulationStep(simulation: ISimulation): void;
-  abstract onSimulationNextDay(simulation: ISimulation): void;
   abstract onSimulationNextRound(simulation: ISimulation): void;
   abstract onPlayerCreated(player: IPlayer): void;
   abstract onPlayerDestroyed(player: IPlayer): void;

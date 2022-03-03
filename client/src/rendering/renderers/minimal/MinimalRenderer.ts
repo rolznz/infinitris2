@@ -397,7 +397,6 @@ export default class MinimalRenderer extends BaseRenderer {
     this._renderCells(this._simulation.grid.reducedCells);
   }
 
-  onSimulationNextDay(): void {}
   onSimulationNextRound(): void {}
 
   /**

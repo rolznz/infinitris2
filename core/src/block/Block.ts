@@ -443,8 +443,10 @@ export default class Block implements IBlock {
 
     if (!this._simulation.isNetworkClient && !fell && this.isReadyToLock) {
       if (
-        this._simulation.settings.preventTowers !== false &&
-        this._simulation.grid.isTower(this.bottomRow)
+        (this._simulation.settings.preventTowers !== false &&
+          this._simulation.grid.isTower(this.bottomRow)) ||
+        (this._simulation.settings.mistakeDetection !== false &&
+          checkMistake(this._cells, this._simulation))
       ) {
         this.die();
       } else {

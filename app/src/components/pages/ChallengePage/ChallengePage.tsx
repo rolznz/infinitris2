@@ -90,7 +90,6 @@ export default function ChallengePage() {
           setSimulation(simulation);
         },
         onSimulationStep() {},
-        onSimulationNextDay() {},
         onSimulationNextRound() {},
 
         onBlockCreated() {},

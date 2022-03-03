@@ -107,7 +107,6 @@ export default function SinglePlayerPage() {
         listener: {
           onSimulationInit() {},
           onSimulationStep() {},
-          onSimulationNextDay() {},
           onSimulationNextRound() {},
 
           onBlockCreated(block: IBlock) {

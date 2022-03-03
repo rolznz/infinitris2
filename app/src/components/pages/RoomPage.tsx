@@ -149,7 +149,6 @@ export default function RoomPage() {
           useIngameStore.getState().setSimulation(simulation);
         },
         onSimulationStep() {},
-        onSimulationNextDay() {},
         onSimulationNextRound() {},
 
         onBlockCreated(block: IBlock) {

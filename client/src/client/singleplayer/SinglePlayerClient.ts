@@ -48,7 +48,6 @@ export default class SinglePlayerClient
    */
   onSimulationStep(simulation: Simulation) {}
 
-  onSimulationNextDay(): void {}
   onSimulationNextRound(): void {}
 
   /**

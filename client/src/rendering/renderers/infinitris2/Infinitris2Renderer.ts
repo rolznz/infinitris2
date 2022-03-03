@@ -17,7 +17,6 @@ import { InputMethod } from '@models/InputMethod';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { WorldBackground } from './WorldBackground';
 import { GridFloor } from './GridFloor';
-import { DayIndicator } from './DayIndicator';
 import ControllablePlayer from '@src/ControllablePlayer';
 import { Scoreboard } from './Scoreboard';
 import { SpawnDelayIndicator } from './SpawnDelayIndicator';
@@ -36,7 +35,6 @@ import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
 import { wrap } from '@core/utils/wrap';
 import { fontFamily } from '@models/ui';
-import { NextDayWarning } from '@src/rendering/renderers/infinitris2/NextDayWarning';
 
 const particleDivisions = 4;
 const numPatternDivisions = 4;
@@ -113,11 +111,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _worldBackground!: WorldBackground;
   private _gridFloor!: GridFloor;
   private _patternTextures: { [filename: string]: PIXI.Texture[] } = {};
-  private _dayIndicator!: DayIndicator;
   private _spawnDelayIndicator!: SpawnDelayIndicator;
   private _scoreboard!: Scoreboard;
   private _scoreChangeIndicator!: ScoreChangeIndicator;
-  private _nextDayWarning!: NextDayWarning;
   private _rendererQuality: RendererQuality | undefined;
   private _worldType: WorldType;
 
@@ -167,15 +163,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._rendererQuality
     );
 
-    this._dayIndicator = new DayIndicator(this._app);
-
     this._gridFloor = new GridFloor(this._app, this._worldType);
     //this._app.loader.add(faceUrl);
 
     this._scoreboard = new Scoreboard(this._app);
     this._spawnDelayIndicator = new SpawnDelayIndicator(this._app);
     this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
-    this._nextDayWarning = new NextDayWarning(this._app);
 
     await new Promise((resolve) => this._app.loader.load(resolve));
 
@@ -340,11 +333,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
           ? this._gridLines.y + this._gridHeight
           : this._world.y + this._gridHeight
       );
-
-      this._dayIndicator.update(
-        this._simulation.dayProportion,
-        this._simulation.secondsUntilNextDay
-      );
     }
 
     Object.values(this._cells).forEach((cell) => {
@@ -384,11 +372,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this._app.stage.addChild(this._world);
 
-    this._dayIndicator.addChildren();
     this._spawnDelayIndicator.create();
     this._scoreboard.create();
     this._scoreChangeIndicator.create();
-    this._nextDayWarning.create();
     this._placementHelperShadowCells = [];
 
     if (simulation.settings.gameModeType === 'conquest') {
@@ -652,7 +638,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._simulation
     );
     this._scoreChangeIndicator.update(followingPlayer);
-    this._nextDayWarning.update(this._simulation.secondsUntilNextDay);
     this._spawnDelayIndicator.update(this._simulation, followingPlayer);
 
     //console.log('Rendering', this._particles.length, 'particles');
@@ -691,7 +676,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     });*/
   }
 
-  onSimulationNextDay() {}
   onSimulationNextRound() {
     this._gameModeRenderer?.restart();
   }
@@ -1207,10 +1191,20 @@ export default class Infinitris2Renderer extends BaseRenderer {
         }
       }
     }
+    const isMistake =
+      this._simulation.settings.mistakeDetection !== false &&
+      lowestCells.some((cell) => {
+        const cellDistanceFromLowestRow = lowestBlockRow - cell.row;
+        return this._simulation!.grid.cells[
+          highestPlacementRow - cellDistanceFromLowestRow + 1
+        ]?.[cell.column].isPassable;
+      });
 
     const isTower =
       this._simulation.settings.preventTowers !== false &&
       this._simulation.grid.isTower(highestPlacementRow);
+
+    const displayInvalidPlacement = isMistake || isTower;
 
     // render placement helper shadow - this could be done a lot more efficiently by rendering one line per column,
     // but for now it's easier to reuse the cell rendering code (for shadows)
@@ -1244,8 +1238,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
           isTower ? 0xff0000 : block.player.color,
           isTower
         );*/
-        const opacity = isTower ? 0.66 : 0.33;
-        const color = isTower ? 0xff0000 : block.player.color;
+        const opacity = displayInvalidPlacement ? 0.66 : 0.33;
+        const color = displayInvalidPlacement ? 0xff0000 : block.player.color;
         this._renderCopies(
           renderableCell,
           opacity,
@@ -1260,7 +1254,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
             const cellSize = this._cellSize;
             // TODO: extract rendering of different behaviours
             graphics.beginFill(color, Math.min(opacity, 1));
-            if (isTower) {
+            if (displayInvalidPlacement) {
               graphics.drawRect(
                 cellSize * 0.1,
                 cellSize * 0.1,

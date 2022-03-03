@@ -220,7 +220,6 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
 
   onSimulationInit(simulation: ISimulation): void {}
   onSimulationStep(simulation: ISimulation): void {}
-  onSimulationNextDay(simulation: ISimulation): void {}
   onPlayerCreated(player: IPlayer): void {}
   onPlayerDestroyed(player: IPlayer): void {
     this._removePlayer(player);
@@ -274,7 +273,6 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     }
     this._isWaitingForNextRound = false;
     this._simulation.grid.reset();
-    this._simulation.goToNextDay();
   }
 
   private _waitForNextRound() {

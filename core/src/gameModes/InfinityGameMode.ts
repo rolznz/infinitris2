@@ -12,7 +12,6 @@ export class InfinityGameMode implements IGameMode<InfinityGameModeState> {
   step(): void {}
   onSimulationInit(simulation: ISimulation): void {}
   onSimulationStep(simulation: ISimulation): void {}
-  onSimulationNextDay(simulation: ISimulation): void {}
   onSimulationNextRound(simulation: ISimulation): void {}
   onPlayerCreated(player: IPlayer): void {}
   onPlayerDestroyed(player: IPlayer): void {}

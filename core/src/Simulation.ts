@@ -23,8 +23,6 @@ export const FRAME_LENGTH: number = 1000 / 60;
  * to attempt to run at 60fps
  */
 const MAX_CATCHUP_FRAMES = 5;
-export const DEFAULT_DAY_LENGTH_SECONDS: number = 20;
-
 export default class Simulation implements ISimulation {
   private _players: { [playerId: number]: IPlayer };
   private _followingPlayer?: IPlayer;
@@ -33,9 +31,6 @@ export default class Simulation implements ISimulation {
   private _stepInterval?: ReturnType<typeof setTimeout>;
   private _settings: SimulationSettings;
   private _runningTime: number;
-  private _nextDayTime: number;
-  private _dayLengthSeconds: number;
-  private _dayNumber: number;
   private _isNetworkClient: boolean;
   private _gameMode: IGameMode<unknown>;
   private _fpsCounter: FpsCounter;
@@ -51,12 +46,7 @@ export default class Simulation implements ISimulation {
       gravityEnabled: true,
       ...settings,
     };
-    this._dayNumber = 0;
-    this._nextDayTime = 0;
-    this._dayLengthSeconds =
-      this._settings.dayLengthSeconds || DEFAULT_DAY_LENGTH_SECONDS;
     this._isNetworkClient = isClient;
-    this.goToNextDay();
     this._gameMode =
       this._settings.gameModeType === 'conquest'
         ? new ConquestGameMode(this)
@@ -87,30 +77,6 @@ export default class Simulation implements ISimulation {
 
   get settings(): SimulationSettings {
     return this._settings;
-  }
-
-  get secondsUntilNextDay() {
-    return Math.max(this._nextDayTime - Date.now(), 0) / 1000;
-  }
-
-  get dayProportion(): number {
-    return 1 - this.secondsUntilNextDay / this._dayLengthSeconds;
-  }
-
-  get dayNumber() {
-    return this._dayNumber;
-  }
-  get dayLengthSeconds() {
-    return this._dayLengthSeconds;
-  }
-  set dayNumber(dayNumber: number) {
-    this._dayNumber = dayNumber;
-  }
-  set dayLengthSeconds(dayLengthSeconds: number) {
-    this._dayLengthSeconds = dayLengthSeconds;
-  }
-  set nextDayTime(nextDayTime: number) {
-    this._nextDayTime = nextDayTime;
   }
 
   get gameMode(): IGameMode<unknown> {
@@ -371,12 +337,6 @@ export default class Simulation implements ISimulation {
     );
   }
 
-  onSimulationNextDay() {
-    this._eventListeners.forEach((listener) =>
-      listener.onSimulationNextDay(this)
-    );
-  }
-
   private _onInterval = () => {
     // TODO: rather than looping and executing multiple times to hit 60fps, it would be better to process
     // based on the delta since the last frame (like the renderer/camera is doing)
@@ -401,21 +361,9 @@ export default class Simulation implements ISimulation {
     this._gameMode.step();
     this._runningTime += FRAME_LENGTH;
     this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
-
-    if (!this.isNetworkClient && this.secondsUntilNextDay <= 0) {
-      this.goToNextDay();
-    }
   }
 
   private _updatePlayer = (player: IPlayer) => {
     player.update(this._grid.cells, this._settings);
   };
-
-  goToNextDay() {
-    ++this._dayNumber;
-    console.log('Day ' + this._dayNumber);
-    this._nextDayTime = Date.now() + this._dayLengthSeconds * 1000;
-    this._grid.collapse();
-    this.onSimulationNextDay();
-  }
 }

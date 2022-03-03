@@ -120,11 +120,6 @@ export default class NetworkClient
         this._simulation.gameMode.loadState(
           joinResponseData.simulation.gameModeState
         );
-        this._simulation.dayNumber = joinResponseData.simulation.dayNumber;
-        this._simulation.dayLengthSeconds =
-          joinResponseData.simulation.dayLengthSeconds;
-        this._simulation.nextDayTime =
-          Date.now() + joinResponseData.simulation.secondsUntilNextDay * 1000;
         this._simulation.addEventListener(this._renderer, this);
         if (this._launchOptions?.listener) {
           this._simulation.addEventListener(this._launchOptions.listener);
@@ -247,8 +242,6 @@ export default class NetworkClient
         const playerId = (message as IServerBlockDiedEvent).playerId;
         const block = this._simulation.getPlayer(playerId).block!;
         block.die();
-      } else if (message.type === ServerMessageType.NEXT_DAY) {
-        this._simulation.goToNextDay();
       } else if (message.type === ServerMessageType.NEXT_ROUND) {
         this._simulation.startNextRound();
       } else if (message.type === ServerMessageType.NEXT_SPAWN) {
@@ -290,7 +283,6 @@ export default class NetworkClient
 
   onSimulationInit(simulation: ISimulation): void {}
   onSimulationStep(simulation: ISimulation): void {}
-  onSimulationNextDay(): void {}
   onSimulationNextRound(): void {}
   onBlockCreated(block: IBlock): void {}
   onBlockCreateFailed(block: IBlock): void {}

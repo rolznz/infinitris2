@@ -76,7 +76,6 @@ export default class ChallengeClient
     }
   }
 
-  onSimulationNextDay(): void {}
   onSimulationNextRound(): void {}
 
   /**

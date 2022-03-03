@@ -193,7 +193,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
             (!simulationSettings.allowedBlockLayoutIds ||
               simulationSettings.allowedBlockLayoutIds.indexOf(entry[0]) >=
                 0) &&
-            (!this._isFirstBlock || LayoutUtils.isSafeLayout(entry[1]))
+            /*!this._isFirstBlock || */ LayoutUtils.isSafeLayout(entry[1])
         )
         .map((entry) => entry[1]);
 
@@ -301,7 +301,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     if (this._block !== block) {
       throw new Error('Block mismatch');
     }
-    this._lastPlacementColumn = this._block.column;
 
     const isMistake = checkMistake(block.cells, this._simulation);
 
@@ -325,6 +324,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
    * @inheritdoc
    */
   onBlockDestroyed(block: IBlock) {
+    this._lastPlacementColumn = block.column;
     this._eventListeners.forEach((listener) =>
       listener.onBlockDestroyed(block)
     );

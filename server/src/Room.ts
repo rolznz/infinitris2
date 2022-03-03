@@ -20,7 +20,6 @@ import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEve
 import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPlacedEvent';
 import { IServerBlockDiedEvent } from '@core/networking/server/IServerBlockDiedEvent';
 import { IServerBlockDroppedEvent } from '@core/networking/server/IServerBlockDroppedEvent';
-import { IServerNextDayEvent } from '@core/networking/server/IServerNextDayEvent';
 import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnEvent';
 import { stringToHex } from '@models/util/stringToHex';
 import { colors } from '@models/colors';
@@ -34,6 +33,8 @@ import { IServerChatMessage } from '@models/networking/server/IServerChatMessage
 import { GameModeType } from '@models/GameModeType';
 import AIPlayer from '@core/player/AIPlayer';
 import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/IServerPlayerToggleSpectatingEvent';
+import { IServerMessage } from '@models/networking/server/IServerMessage';
+import { IServerNextRoundEvent } from '@core/networking/server/IServerNextRoundEvent';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -112,9 +113,6 @@ export default class Room implements ISimulationEventListener {
         status: JoinRoomResponseStatus.OK,
         playerId: newPlayer.id,
         simulation: {
-          dayNumber: this._simulation.dayNumber,
-          dayLengthSeconds: this._simulation.dayLengthSeconds,
-          secondsUntilNextDay: this._simulation.secondsUntilNextDay,
           settings: this._simulation.settings,
           gameModeState: this._simulation.gameMode.getCurrentState(),
         },
@@ -266,15 +264,8 @@ export default class Room implements ISimulationEventListener {
    */
   onSimulationStep(simulation: Simulation) {}
 
-  onSimulationNextDay(): void {
-    const nextDayEvent: IServerNextDayEvent = {
-      type: ServerMessageType.NEXT_DAY,
-    };
-    this._sendMessageToAllPlayers(nextDayEvent);
-  }
-
   onSimulationNextRound(): void {
-    const nextRoundEvent: IServerNextDayEvent = {
+    const nextRoundEvent: IServerNextRoundEvent = {
       type: ServerMessageType.NEXT_ROUND,
     };
     this._sendMessageToAllPlayers(nextRoundEvent);

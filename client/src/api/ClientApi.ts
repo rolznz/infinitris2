@@ -108,7 +108,6 @@ export default class ClientApi implements IClientApi {
             simulation.startInterval();
           },
           onSimulationStep() {},
-          onSimulationNextDay() {},
           onSimulationNextRound() {},
           onBlockCreated() {},
           onBlockCreateFailed() {},

@@ -7,7 +7,6 @@ export enum ServerMessageType {
   BLOCK_PLACED,
   BLOCK_DIED,
   BLOCK_DROPPED,
-  NEXT_DAY,
   NEXT_SPAWN,
   CHAT,
   PLAYER_TOGGLE_SPECTATING,

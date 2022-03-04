@@ -1,3 +1,4 @@
+import { TrackNumber, TrackNumberValues } from '@/components/sound/MusicPlayer';
 import { GameModeType, RoundLength, WorldType } from 'infinitris2-models';
 import create from 'zustand';
 
@@ -15,6 +16,7 @@ export type SinglePlayerOptionsFormData = {
   worldType: WorldType;
   gameModeType: GameModeType;
   roundLength: RoundLength;
+  trackNumber: TrackNumber;
 };
 
 export const getSinglePlayerOptionsDefaultValues =
@@ -32,6 +34,8 @@ export const getSinglePlayerOptionsDefaultValues =
     worldType: 'grass',
     gameModeType: 'infinity',
     roundLength: 'medium',
+    trackNumber:
+      TrackNumberValues[Math.floor(Math.random() * TrackNumberValues.length)],
   });
 
 type SinglePlayerOptionsStore = {

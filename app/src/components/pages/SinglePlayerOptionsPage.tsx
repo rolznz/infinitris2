@@ -27,7 +27,11 @@ import useSinglePlayerOptionsStore, {
   SinglePlayerOptionsFormData,
   getSinglePlayerOptionsDefaultValues,
 } from '@/state/SinglePlayerOptionsStore';
-import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import {
+  playSound,
+  SoundKey,
+  TrackNumberValues,
+} from '@/components/sound/MusicPlayer';
 
 const schema = yup
   .object({
@@ -132,6 +136,22 @@ export function SinglePlayerOptionsPage() {
                   <InputLabel>World</InputLabel>
                   <Select {...field}>
                     {WorldTypeValues.map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="trackNumber"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>Music Track</InputLabel>
+                  <Select {...field}>
+                    {TrackNumberValues.map((type) => (
                       <MenuItem key={type} value={type}>
                         {type}
                       </MenuItem>

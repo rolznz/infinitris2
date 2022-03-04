@@ -21,7 +21,12 @@ import { useDocument } from 'swr-firestore';
 import useAppStore from '../../state/AppStore';
 import { useUser, useUserStore } from '../../state/UserStore';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
-import { playGameMusic, playSound, SoundKey } from '../sound/MusicPlayer';
+import {
+  playGameMusic,
+  playSound,
+  SoundKey,
+  TrackNumber,
+} from '../sound/MusicPlayer';
 
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
@@ -59,6 +64,7 @@ export default function SinglePlayerPage() {
   const calculateSpawnDelays =
     useSearchParam('calculateSpawnDelays') === 'true';
   const preventTowers = useSearchParam('preventTowers') === 'true';
+  const trackNumber = useSearchParam('trackNumber') as TrackNumber;
 
   const user = useUser();
   const nickname = (user as LocalUser).nickname;
@@ -173,7 +179,7 @@ export default function SinglePlayerPage() {
           onGridReset() {},
         },
       });
-      playGameMusic();
+      playGameMusic(worldType, trackNumber);
     }
   }, [
     launchSinglePlayer,
@@ -202,6 +208,7 @@ export default function SinglePlayerPage() {
     nickname,
     roundLength,
     characterId,
+    trackNumber,
   ]);
 
   return <GameUI />;

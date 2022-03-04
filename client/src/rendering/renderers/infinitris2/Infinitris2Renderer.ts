@@ -1039,7 +1039,16 @@ export default class Infinitris2Renderer extends BaseRenderer {
         graphics.x = shadowX;
         graphics.clear();
         graphics.beginFill(color);
-        graphics.drawCircle(0, 0, particleSize);
+        if (particle.type === 'capture') {
+          graphics.drawCircle(0, 0, particleSize);
+        } else {
+          graphics.drawRect(
+            -particleSize,
+            -particleSize,
+            particleSize * 2,
+            particleSize * 2
+          );
+        }
       },
       () => {
         const graphics = new PIXI.Graphics();

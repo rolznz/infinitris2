@@ -3,6 +3,7 @@
 // currently only being used for music, but even the fades don't work on ios...
 import { Howl } from 'howler';
 import useLoaderStore from '@/state/LoaderStore';
+import { WorldType } from 'infinitris2-models';
 
 const rootUrl = process.env.REACT_APP_MUSIC_ROOT_URL;
 const musicFadeTimeMs = 2000;
@@ -26,6 +27,9 @@ export const SoundKey = {
   spawn: [12000, 500],
 };
 
+export const TrackNumberValues = ['1', '2', '3', '4', '5', 'bonus'] as const;
+export type TrackNumber = typeof TrackNumberValues[number];
+
 export function musicLoaded(): boolean {
   return !!_menuTheme;
 }
@@ -33,10 +37,20 @@ export function soundsLoaded(): boolean {
   return !!_sounds;
 }
 
-export function playGameMusic() {
+export function playGameMusic(
+  worldType: WorldType = 'grass',
+  trackNumber: TrackNumber = '1'
+) {
   fadeOutMusic(_menuTheme);
 
-  _gameTheme = playMusic(_gameTheme, `${rootUrl}/grass_1.mp3`, true);
+  // TODO: add tracks for space and desert
+  _gameTheme = playMusic(
+    _gameTheme,
+    `${rootUrl}/${
+      worldType === 'grass' ? worldType : 'volcano'
+    }_${trackNumber}.mp3`,
+    true
+  );
 }
 
 export async function playMenuTheme() {

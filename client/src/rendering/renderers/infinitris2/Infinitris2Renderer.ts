@@ -36,6 +36,7 @@ import { ClientApiConfig } from '@models/IClientApi';
 import { wrap } from '@core/utils/wrap';
 import { fontFamily } from '@models/ui';
 import { TowerIndicator } from '@src/rendering/renderers/infinitris2/TowerIndicator';
+import { LineClearingIndicator } from '@src/rendering/renderers/infinitris2/LineClearingIndicator';
 
 const particleDivisions = 4;
 const numPatternDivisions = 4;
@@ -83,6 +84,7 @@ interface IParticle extends IRenderableEntity<PIXI.Graphics> {
   type: ParticleType;
   goalX?: number;
   goalY?: number;
+  isSolid?: boolean;
 }
 
 // TODO: retrieve URLs from players
@@ -117,6 +119,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _scoreChangeIndicator!: ScoreChangeIndicator;
   private _rendererQuality: RendererQuality | undefined;
   private _towerIndicator!: TowerIndicator;
+  private _lineClearingIndicator!: LineClearingIndicator;
   private _worldType: WorldType;
 
   private _oldOverflowStyle: string;
@@ -167,6 +170,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this._gridFloor = new GridFloor(this._app, this._worldType);
     this._towerIndicator = new TowerIndicator(this._app);
+    this._lineClearingIndicator = new LineClearingIndicator(this._app);
     //this._app.loader.add(faceUrl);
 
     this._scoreboard = new Scoreboard(this._app);
@@ -589,18 +593,30 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
   }
 
-  emitParticle(x: number, y: number, color: number, type: ParticleType) {
+  emitParticle(
+    x: number,
+    y: number,
+    color: number,
+    type: ParticleType,
+    isSolid = true
+  ) {
     const life = 50; //type === 'classic' ? 100 : 50;
     const particle: IParticle = {
       x: x + (type === 'capture' ? (Math.random() - 0.5) * 6 : 0),
       y: y + (type === 'capture' ? (Math.random() - 0.5) * 6 : 0),
       vx: type === 'classic' ? (Math.random() - 0.5) * 0.1 : 0,
-      vy: type === 'classic' ? -(Math.random() + 0.5) * 0.05 : 0,
+      vy:
+        type === 'classic'
+          ? isSolid
+            ? -(Math.random() + 0.5) * 0.05
+            : -(Math.random() + 0.5) * 0.1
+          : 0,
       container: new PIXI.Container(),
       children: [],
       maxLife: life,
       life,
       type,
+      isSolid,
       goalX: x,
       goalY: y,
     };
@@ -665,31 +681,33 @@ export default class Infinitris2Renderer extends BaseRenderer {
         particle.vx *= 0.99;
         particle.vy += 0.01;
         particle.container.alpha = particle.life / particle.maxLife;
-        if (
-          (particle.vy > 0 &&
-            particle.y + particle.vy > this._simulation.grid.numRows) ||
-          this._simulation.grid.cells[Math.floor(particle.y + particle.vy)]?.[
-            wrap(
-              Math.floor(particle.x + particle.vx),
-              this._simulation.grid.numColumns
-            )
-          ]?.isPassable === false
-        ) {
-          particle.vy *= -0.3;
-          particle.vx *= 0.9;
-        }
-        if (
-          this._simulation.grid.cells[Math.floor(particle.y + particle.vy)]?.[
-            wrap(
-              Math.floor(particle.x + particle.vx),
-              this._simulation.grid.numColumns
-            )
-          ]?.isPassable === false &&
-          this._simulation.grid.cells[Math.floor(particle.y + particle.vy)]?.[
-            wrap(Math.floor(particle.x), this._simulation.grid.numColumns)
-          ]?.isPassable
-        ) {
-          particle.vx *= -0.7;
+        if (particle.isSolid) {
+          if (
+            (particle.vy > 0 &&
+              particle.y + particle.vy > this._simulation.grid.numRows) ||
+            this._simulation.grid.cells[Math.floor(particle.y + particle.vy)]?.[
+              wrap(
+                Math.floor(particle.x + particle.vx),
+                this._simulation.grid.numColumns
+              )
+            ]?.isPassable === false
+          ) {
+            particle.vy *= -0.3;
+            particle.vx *= 0.9;
+          }
+          if (
+            this._simulation.grid.cells[Math.floor(particle.y + particle.vy)]?.[
+              wrap(
+                Math.floor(particle.x + particle.vx),
+                this._simulation.grid.numColumns
+              )
+            ]?.isPassable === false &&
+            this._simulation.grid.cells[Math.floor(particle.y + particle.vy)]?.[
+              wrap(Math.floor(particle.x), this._simulation.grid.numColumns)
+            ]?.isPassable
+          ) {
+            particle.vx *= -0.7;
+          }
         }
       } else {
         particle.vx = (particle.goalX! - particle.x) * 0.1;
@@ -725,10 +743,36 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._gameModeRenderer?.restart();
   }
 
+  onLineClearing(row: number) {
+    this._lineClearingIndicator.setLineClearing(row, true);
+  }
+  onClearLines(rows: number[]) {
+    if (!this._simulation) {
+      return;
+    }
+    const numSegments = 2;
+    for (const row of rows) {
+      this._lineClearingIndicator.setLineClearing(row, false);
+      for (const cell of this._simulation.grid.cells[row]) {
+        for (let x = 0; x < numSegments; x++) {
+          for (let y = 0; y < numSegments; y++) {
+            this.emitParticle(
+              cell.column + x / numSegments,
+              cell.row + y / numSegments,
+              cell.color,
+              'classic',
+              false
+            );
+          }
+        }
+      }
+    }
+  }
+
   /**
    * @inheritdoc
    */
-  onLineCleared(_row: number) {}
+  onLineClear(row: number) {}
 
   rerenderGrid() {
     if (!this._simulation) {
@@ -774,7 +818,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
       ++towerRow;
     }
-    this._towerIndicator.render(this._gridWidth, towerRow * this._cellSize);
+    this._towerIndicator.render(towerRow * this._cellSize);
+    this._lineClearingIndicator.render(
+      this.simulation!.grid.numRows,
+      this._cellSize,
+      this._worldBackground.config.floorColor,
+      0
+    );
 
     for (const block of Object.values(this._blocks)) {
       this._renderBlock(block.originalBlock);
@@ -1042,6 +1092,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         if (particle.type === 'capture') {
           graphics.drawCircle(0, 0, particleSize);
         } else {
+          graphics.lineStyle(this._cellPadding, 0);
           graphics.drawRect(
             -particleSize,
             -particleSize,
@@ -1268,7 +1319,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._simulation.grid.isTower(highestPlacementRow);
 
     const displayInvalidPlacement = isMistake || isTower;
-    this._towerIndicator.update(isTower);
+    this._towerIndicator.update(this._gridLines.y, isTower);
+    this._lineClearingIndicator.update(this._gridLines.y, this._cellSize);
 
     // render placement helper shadow - this could be done a lot more efficiently by rendering one line per column,
     // but for now it's easier to reuse the cell rendering code (for shadows)

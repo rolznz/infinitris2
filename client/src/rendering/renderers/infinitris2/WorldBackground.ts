@@ -49,6 +49,10 @@ export class WorldBackground {
     }/${layerFilenameParts.join('.')}`;
   }
 
+  get config(): WorldBackgroundConfig {
+    return this._worldConfig;
+  }
+
   destroy() {
     // TODO: release images
   }

@@ -81,7 +81,9 @@ export default class SinglePlayerClient
   /**
    * @inheritdoc
    */
-  onLineCleared(row: number) {}
+  onLineClear(row: number) {}
+  onLineClearing() {}
+  onClearLines() {}
 
   /**
    * @inheritdoc

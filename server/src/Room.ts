@@ -35,6 +35,7 @@ import AIPlayer from '@core/player/AIPlayer';
 import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/IServerPlayerToggleSpectatingEvent';
 import { IServerMessage } from '@models/networking/server/IServerMessage';
 import { IServerNextRoundEvent } from '@core/networking/server/IServerNextRoundEvent';
+import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -45,7 +46,7 @@ export default class Room implements ISimulationEventListener {
     gameModeType: GameModeType
   ) {
     this._sendMessage = sendMessage;
-    this._simulation = new Simulation(new Grid(50, 18), {
+    this._simulation = new Simulation(new Grid(10, 18), {
       gameModeType,
     });
     this._simulation.addEventListener(this);
@@ -334,7 +335,16 @@ export default class Room implements ISimulationEventListener {
   /**
    * @inheritdoc
    */
-  onLineCleared(row: number) {}
+  onLineClear(row: number) {}
+
+  onLineClearing() {}
+  onClearLines(rows: number[]): void {
+    const clearLinesEvent: IServerClearLinesEvent = {
+      type: ServerMessageType.CLEAR_LINES,
+      rows,
+    };
+    this._sendMessageToAllPlayers(clearLinesEvent);
+  }
 
   onBlockCreateFailed(block: IBlock): void {}
   onBlockDied(block: IBlock): void {

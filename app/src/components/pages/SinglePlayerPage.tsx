@@ -172,7 +172,9 @@ export default function SinglePlayerPage() {
               useIngameStore.getState().setChatOpen(player.isChatting);
             }
           },
-          onLineCleared() {},
+          onLineClear() {},
+          onLineClearing() {},
+          onClearLines() {},
           onCellBehaviourChanged() {},
           onCellIsEmptyChanged() {},
           onGridCollapsed() {},

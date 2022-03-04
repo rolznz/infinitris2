@@ -3,9 +3,19 @@ import ICellEventListener from './ICellEventListener';
 
 export default interface IGridEventListener extends ICellEventListener {
   /**
+   * Triggered when one or more grid lines are being cleared
+   */
+  onClearLines(row: number[]): void;
+
+  /**
+   * Triggered when a filled line on the grid is waiting to be cleared
+   */
+  onLineClearing(row: number): void;
+
+  /**
    * Triggered when a filled line on the grid is cleared
    */
-  onLineCleared(row: number): void;
+  onLineClear(row: number): void;
 
   /**
    * Triggered when grid collapses cells to the lowest possible non-empty positions

@@ -24,7 +24,9 @@ export class InfinityGameMode implements IGameMode<InfinityGameModeState> {
   onBlockDropped(block: IBlock): void {}
   onBlockDied(block: IBlock): void {}
   onBlockDestroyed(block: IBlock): void {}
-  onLineCleared(row: number): void {}
+  onLineClear(row: number): void {}
+  onLineClearing() {}
+  onClearLines(): void {}
   onGridCollapsed(grid: IGrid): void {}
   onGridReset(grid: IGrid): void {}
   onCellBehaviourChanged(

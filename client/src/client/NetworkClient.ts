@@ -38,6 +38,7 @@ import IClientJoinRoomRequest from '@core/networking/client/IClientJoinRoomReque
 import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/IServerPlayerToggleSpectatingEvent';
 import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
+import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
 
 export default class NetworkClient
   extends BaseClient
@@ -254,6 +255,9 @@ export default class NetworkClient
         this._simulation.getPlayer(
           playerToggleSpectatingMessage.playerId
         ).isSpectating = playerToggleSpectatingMessage.isSpectating;
+      } else if (message.type === ServerMessageType.CLEAR_LINES) {
+        const clearLinesMessage = message as IServerClearLinesEvent;
+        this._simulation.grid.clearLines(clearLinesMessage.rows);
       }
     }
   }
@@ -323,7 +327,9 @@ export default class NetworkClient
     previousBehaviour: ICellBehaviour
   ): void {}
   onCellIsEmptyChanged() {}
-  onLineCleared(row: number): void {}
+  onLineClear(row: number): void {}
+  onLineClearing() {}
+  onClearLines() {}
   onGridCollapsed(grid: IGrid): void {}
   onGridReset(grid: IGrid): void {}
 }

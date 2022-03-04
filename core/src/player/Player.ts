@@ -193,7 +193,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
             (!simulationSettings.allowedBlockLayoutIds ||
               simulationSettings.allowedBlockLayoutIds.indexOf(entry[0]) >=
                 0) &&
-            /*!this._isFirstBlock || */ LayoutUtils.isSafeLayout(entry[1])
+            (!this._isFirstBlock || LayoutUtils.isSafeLayout(entry[1]))
         )
         .map((entry) => entry[1]);
 

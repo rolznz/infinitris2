@@ -119,9 +119,12 @@ export default class ChallengeClient
   /**
    * @inheritdoc
    */
-  onLineCleared(row: number) {
+  onLineClear(row: number) {
     ++this._numLinesCleared;
   }
+
+  onLineClearing() {}
+  onClearLines() {}
 
   /**
    * @inheritdoc

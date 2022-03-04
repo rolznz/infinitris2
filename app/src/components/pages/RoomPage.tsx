@@ -205,7 +205,9 @@ export default function RoomPage() {
             useIngameStore.getState().setChatOpen(player.isChatting);
           }
         },
-        onLineCleared() {},
+        onLineClear() {},
+        onClearLines() {},
+        onLineClearing() {},
         onCellBehaviourChanged() {},
         onCellIsEmptyChanged() {},
         onGridCollapsed() {},

@@ -119,7 +119,9 @@ export abstract class BaseRenderer implements IRenderer {
   abstract onBlockDropped(block: IBlock): void;
   abstract onBlockDied(block: IBlock): void;
   abstract onBlockDestroyed(block: IBlock): void;
-  abstract onLineCleared(row: number): void;
+  abstract onLineClear(row: number): void;
+  abstract onLineClearing(row: number): void;
+  abstract onClearLines(rows: number[]): void;
   abstract onGridCollapsed(grid: IGrid): void;
   abstract onGridReset(grid: IGrid): void;
   abstract onCellBehaviourChanged(

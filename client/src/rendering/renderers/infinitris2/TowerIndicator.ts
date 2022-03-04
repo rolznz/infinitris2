@@ -13,16 +13,17 @@ export class TowerIndicator {
     this._graphics.alpha = 0;
   }
 
-  update(isTower: boolean) {
+  update(gridY: number, isTower: boolean) {
+    this._graphics.y = gridY;
     this._graphics.alpha = Math.max(
       Math.min(1, this._graphics.alpha + (isTower ? 1 : -1) * 0.025),
       0
     );
   }
 
-  render(gridWidth: number, towerHeight: number) {
+  render(towerHeight: number) {
     this._graphics.clear();
     this._graphics.beginFill(0xff0000, 0.2);
-    this._graphics.drawRect(0, 0, gridWidth, towerHeight);
+    this._graphics.drawRect(0, 0, this._app.renderer.width, towerHeight);
   }
 }

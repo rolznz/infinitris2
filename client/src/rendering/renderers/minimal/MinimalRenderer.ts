@@ -379,10 +379,13 @@ export default class MinimalRenderer extends BaseRenderer {
     });*/
   }
 
+  onClearLines() {}
+  onLineClearing() {}
+
   /**
    * @inheritdoc
    */
-  onLineCleared(_row: number) {
+  onLineClear(_row: number) {
     if (!this._simulation) {
       return;
     }

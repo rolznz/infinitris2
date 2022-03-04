@@ -11,4 +11,5 @@ export enum ServerMessageType {
   CHAT,
   PLAYER_TOGGLE_SPECTATING,
   NEXT_ROUND,
+  CLEAR_LINES,
 }

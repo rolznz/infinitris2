@@ -302,8 +302,21 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
-  onLineCleared(row: number) {
-    this._eventListeners.forEach((listener) => listener.onLineCleared(row));
+  onClearLines(rows: number[]) {
+    this._eventListeners.forEach((listener) => listener.onClearLines(rows));
+  }
+  /**
+   * @inheritdoc
+   */
+  onLineClearing(row: number) {
+    this._eventListeners.forEach((listener) => listener.onLineClearing(row));
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onLineClear(row: number) {
+    this._eventListeners.forEach((listener) => listener.onLineClear(row));
   }
 
   /**
@@ -357,7 +370,7 @@ export default class Simulation implements ISimulation {
     this._lastStepTime += FRAME_LENGTH;
     this._fpsCounter.step();
     Object.values(this._players).forEach(this._updatePlayer);
-    this._grid.step();
+    this._grid.step(this._isNetworkClient);
     this._gameMode.step();
     this._runningTime += FRAME_LENGTH;
     this._eventListeners.forEach((listener) => listener.onSimulationStep(this));

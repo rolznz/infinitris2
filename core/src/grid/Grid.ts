@@ -10,6 +10,8 @@ export default class Grid implements IGrid {
   private _reducedCells: ICell[];
   private _eventListeners: IGridEventListener[];
   private _cachedNumNonEmptyCells = 0;
+  private _nextLinesToClear: number[];
+  private _nextLineClearTime: number;
 
   constructor(numColumns: number = 60, numRows: number = 18) {
     this._cells = [];
@@ -22,6 +24,8 @@ export default class Grid implements IGrid {
       this._cells.push(row);
     }
     this._reducedCells = ([] as ICell[]).concat(...this._cells);
+    this._nextLineClearTime = 0;
+    this._nextLinesToClear = [];
   }
 
   get cells(): ICell[][] {
@@ -56,11 +60,19 @@ export default class Grid implements IGrid {
     }
   }
 
-  step() {
+  step(isNetworkClient: boolean) {
     this._cells.forEach((row) => row.forEach((cell) => cell.step()));
     this._cachedNumNonEmptyCells = this._reducedCells.filter(
       (cell) => !cell.isEmpty
     ).length;
+
+    if (
+      !isNetworkClient &&
+      this._nextLinesToClear.length &&
+      Date.now() > this._nextLineClearTime
+    ) {
+      this.clearLines(this._nextLinesToClear);
+    }
   }
 
   getNeighbour(cell: ICell, dx: number, dy: number): ICell | undefined {
@@ -80,14 +92,32 @@ export default class Grid implements IGrid {
    * @param rows a list of rows affected by a change (e.g. block placement).
    */
   checkLineClears(rows: number[]) {
-    const rowsToClear = rows
-      .filter((row) => this._cells[row].findIndex((cell) => cell.isEmpty) < 0)
-      .sort((a, b) => b - a); // clear lowest row first
-
+    const rowsToClear = rows.filter(
+      (row) =>
+        row >= 0 &&
+        row < this._cells.length &&
+        this._cells[row].findIndex((cell) => cell.isEmpty) < 0
+    );
     if (!rowsToClear.length) {
       return;
     }
+    for (let i = 0; i < rowsToClear.length; i++) {
+      this._eventListeners.forEach((eventListener) =>
+        eventListener.onLineClearing(rowsToClear[i])
+      );
+    }
 
+    this._nextLinesToClear = [...this._nextLinesToClear, ...rowsToClear]
+      .filter((row, i, rows) => rows.indexOf(row) === i) // get unique rows
+      .sort((a, b) => b - a); // clear lowest row first
+    this._nextLineClearTime = Date.now() + 1000;
+  }
+
+  clearLines(rowsToClear: number[]) {
+    this._eventListeners.forEach((eventListener) =>
+      eventListener.onClearLines(rowsToClear)
+    );
+    this._nextLinesToClear = [];
     for (const row of rowsToClear) {
       for (let c = 0; c < this._cells[row].length; c++) {
         if (this._cells[row][c].player) {
@@ -98,7 +128,11 @@ export default class Grid implements IGrid {
 
     console.log('Clearing rows: ', rowsToClear);
     for (let i = 0; i < rowsToClear.length; i++) {
-      for (let r = rowsToClear[i] + i; r >= 0; r--) {
+      const rowToClear = rowsToClear[i] + i;
+      this._eventListeners.forEach((eventListener) =>
+        eventListener.onLineClear(rowToClear)
+      );
+      for (let r = rowToClear; r >= 0; r--) {
         for (let c = 0; c < this._cells[0].length; c++) {
           if (r > 0) {
             if (this._cells[r][c].behaviour.isReplaceable) {
@@ -115,9 +149,6 @@ export default class Grid implements IGrid {
           }
         }
       }
-      this._eventListeners.forEach((eventListener) =>
-        eventListener.onLineCleared(rowsToClear[i] + i)
-      );
     }
   }
 

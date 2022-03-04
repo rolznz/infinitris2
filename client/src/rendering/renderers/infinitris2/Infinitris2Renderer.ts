@@ -35,6 +35,7 @@ import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
 import { wrap } from '@core/utils/wrap';
 import { fontFamily } from '@models/ui';
+import { TowerIndicator } from '@src/rendering/renderers/infinitris2/TowerIndicator';
 
 const particleDivisions = 4;
 const numPatternDivisions = 4;
@@ -115,6 +116,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _scoreboard!: Scoreboard;
   private _scoreChangeIndicator!: ScoreChangeIndicator;
   private _rendererQuality: RendererQuality | undefined;
+  private _towerIndicator!: TowerIndicator;
   private _worldType: WorldType;
 
   private _oldOverflowStyle: string;
@@ -164,6 +166,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     );
 
     this._gridFloor = new GridFloor(this._app, this._worldType);
+    this._towerIndicator = new TowerIndicator(this._app);
     //this._app.loader.add(faceUrl);
 
     this._scoreboard = new Scoreboard(this._app);
@@ -371,6 +374,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._shadowGradientGraphics = new PIXI.Graphics();
 
     this._app.stage.addChild(this._world);
+
+    this._towerIndicator.create();
 
     this._spawnDelayIndicator.create();
     this._scoreboard.create();
@@ -761,6 +766,15 @@ export default class Infinitris2Renderer extends BaseRenderer {
     );
 
     this.rerenderGrid();
+
+    let towerRow = 0;
+    while (true) {
+      if (!this._simulation.grid.isTower(towerRow)) {
+        break;
+      }
+      ++towerRow;
+    }
+    this._towerIndicator.render(this._gridWidth, towerRow * this._cellSize);
 
     for (const block of Object.values(this._blocks)) {
       this._renderBlock(block.originalBlock);
@@ -1245,6 +1259,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._simulation.grid.isTower(highestPlacementRow);
 
     const displayInvalidPlacement = isMistake || isTower;
+    this._towerIndicator.update(isTower);
 
     // render placement helper shadow - this could be done a lot more efficiently by rendering one line per column,
     // but for now it's easier to reuse the cell rendering code (for shadows)
@@ -1253,9 +1268,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
       const cellDistanceFromLowestRow = lowestBlockRow - cell.row;
       for (
         let y = cell.row + 1;
-        y <= highestPlacementRow - cellDistanceFromLowestRow;
+        //y <= highestPlacementRow - cellDistanceFromLowestRow;
+        y < this._simulation!.grid.numRows;
         y++
       ) {
+        if (!this._simulation!.grid.cells[y][cell.column].isPassable) {
+          break;
+        }
         let renderableCell: IRenderablePlacementHelperCell;
         if (this._placementHelperShadowCells.length > cellIndex) {
           renderableCell = this._placementHelperShadowCells[cellIndex];
@@ -1278,7 +1297,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
           isTower ? 0xff0000 : block.player.color,
           isTower
         );*/
-        const opacity = displayInvalidPlacement ? 0.66 : 0.33;
+        const opacity = displayInvalidPlacement ? 0.5 : 0.33;
+        const isCause = y > highestPlacementRow - cellDistanceFromLowestRow;
         const color = displayInvalidPlacement ? 0xff0000 : block.player.color;
         this._renderCopies(
           renderableCell,
@@ -1295,12 +1315,26 @@ export default class Infinitris2Renderer extends BaseRenderer {
             // TODO: extract rendering of different behaviours
             graphics.beginFill(color, Math.min(opacity, 1));
             if (displayInvalidPlacement) {
-              graphics.drawRect(
-                cellSize * 0.1,
-                cellSize * 0.1,
-                cellSize * 0.8,
-                cellSize * 0.8
-              );
+              if (!isCause) {
+                graphics.drawRect(
+                  cellSize * 0.1,
+                  cellSize * 0.1,
+                  cellSize * 0.8,
+                  cellSize * 0.8
+                );
+              } else {
+                /*graphics.drawRect(
+                  cellSize * 0.3,
+                  cellSize * 0.3,
+                  cellSize * 0.4,
+                  cellSize * 0.4
+                );*/
+                graphics.lineStyle(cellSize * 0.1, color, opacity);
+                graphics.moveTo(cellSize * 0.3, cellSize * 0.3);
+                graphics.lineTo(cellSize * 0.7, cellSize * 0.7);
+                graphics.moveTo(cellSize * 0.7, cellSize * 0.3);
+                graphics.lineTo(cellSize * 0.3, cellSize * 0.7);
+              }
             } else {
               graphics.drawRect(0, 0, cellSize, cellSize);
             }

@@ -454,7 +454,21 @@ export default class Infinitris2Renderer extends BaseRenderer {
   /**
    * @inheritdoc
    */
-  onBlockDied(block: IBlock) {}
+  onBlockDied(block: IBlock) {
+    const numSegments = 4;
+    block.cells.forEach((cell) => {
+      for (let x = 0; x < numSegments; x++) {
+        for (let y = 0; y < numSegments; y++) {
+          this.emitParticle(
+            cell.column + x / numSegments,
+            cell.row + y / numSegments,
+            block.player.color,
+            'classic'
+          );
+        }
+      }
+    });
+  }
 
   /**
    * @inheritdoc
@@ -571,12 +585,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   emitParticle(x: number, y: number, color: number, type: ParticleType) {
-    const life = type === 'classic' ? 100 : 50;
+    const life = 50; //type === 'classic' ? 100 : 50;
     const particle: IParticle = {
       x: x + (type === 'capture' ? (Math.random() - 0.5) * 6 : 0),
       y: y + (type === 'capture' ? (Math.random() - 0.5) * 6 : 0),
       vx: type === 'classic' ? (Math.random() - 0.5) * 0.1 : 0,
-      vy: type === 'classic' ? -(Math.random() + 0.5) * 0.2 : 0,
+      vy: type === 'classic' ? -(Math.random() + 0.5) * 0.05 : 0,
       container: new PIXI.Container(),
       children: [],
       maxLife: life,
@@ -646,6 +660,32 @@ export default class Infinitris2Renderer extends BaseRenderer {
         particle.vx *= 0.99;
         particle.vy += 0.01;
         particle.container.alpha = particle.life / particle.maxLife;
+        if (
+          (particle.vy > 0 &&
+            particle.y + particle.vy > this._simulation.grid.numRows) ||
+          this._simulation.grid.cells[Math.floor(particle.y + particle.vy)]?.[
+            wrap(
+              Math.floor(particle.x + particle.vx),
+              this._simulation.grid.numColumns
+            )
+          ]?.isPassable === false
+        ) {
+          particle.vy *= -0.3;
+          particle.vx *= 0.9;
+        }
+        if (
+          this._simulation.grid.cells[Math.floor(particle.y + particle.vy)]?.[
+            wrap(
+              Math.floor(particle.x + particle.vx),
+              this._simulation.grid.numColumns
+            )
+          ]?.isPassable === false &&
+          this._simulation.grid.cells[Math.floor(particle.y + particle.vy)]?.[
+            wrap(Math.floor(particle.x), this._simulation.grid.numColumns)
+          ]?.isPassable
+        ) {
+          particle.vx *= -0.7;
+        }
       } else {
         particle.vx = (particle.goalX! - particle.x) * 0.1;
         particle.vy = (particle.goalY! - particle.y) * 0.1;

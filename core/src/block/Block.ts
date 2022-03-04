@@ -194,8 +194,8 @@ export default class Block implements IBlock {
 
   die() {
     this._isAlive = false;
-    this.destroy();
     this._eventListener?.onBlockDied(this);
+    this.destroy();
   }
 
   destroy() {

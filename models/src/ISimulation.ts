@@ -1,5 +1,7 @@
+import { GameModeEvent } from '@models/GameModeEvent';
 import { IGameMode } from '@models/IGameMode';
 import { IPlayerEventListener } from '@models/IPlayerEventListener';
+import ISimulationEventListener from '@models/ISimulationEventListener';
 import { SimulationSettings } from '.';
 import IGrid from './IGrid';
 import IGridEventListener from './IGridEventListener';
@@ -8,6 +10,7 @@ import { IPlayer } from './IPlayer';
 export type NetworkSimulationInfo = {
   settings: SimulationSettings;
   gameModeState: unknown;
+  currentRoundDuration: number;
 };
 
 export default interface ISimulation
@@ -20,6 +23,9 @@ export default interface ISimulation
   get fps(): number;
   get followingPlayer(): IPlayer | undefined;
   get shouldNewPlayerSpectate(): boolean;
+  get currentRoundStartTime(): number;
+  set currentRoundStartTime(currentRoundStartTime: number);
+  get currentRoundDuration(): number;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;
@@ -29,4 +35,6 @@ export default interface ISimulation
   getPlayer(playerId: number): IPlayer;
   step(): void;
   startNextRound(): void;
+  addEventListener(...eventListeners: ISimulationEventListener[]): void;
+  onGameModeEvent(event: GameModeEvent): void;
 }

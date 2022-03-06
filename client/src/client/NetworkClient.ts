@@ -39,6 +39,7 @@ import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/ISer
 import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
+import { GameModeEvent } from '@models/GameModeEvent';
 
 export default class NetworkClient
   extends BaseClient
@@ -64,6 +65,10 @@ export default class NetworkClient
     }
     this._socket = new ClientSocket(url, eventListeners);
   }
+  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
+  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
+  onLinesCleared(rows: number[]): void {}
+  onGameModeEvent(event: GameModeEvent): void {}
 
   /**
    * @inheritdoc
@@ -126,6 +131,8 @@ export default class NetworkClient
           this._simulation.addEventListener(this._launchOptions.listener);
         }
         this._simulation.init();
+        this._simulation.currentRoundStartTime =
+          Date.now() - joinResponseData.simulation.currentRoundDuration;
         for (let playerInfo of joinResponseData.players) {
           if (playerInfo.id === joinResponseData.playerId) {
             const humanPlayer = new ControllablePlayer(
@@ -160,6 +167,7 @@ export default class NetworkClient
             );
             this._simulation.addPlayer(otherPlayer);
             otherPlayer.score = playerInfo.score;
+            otherPlayer.health = playerInfo.health;
           }
         }
         for (let i = 0; i < joinResponseData.grid.reducedCells.length; i++) {
@@ -330,6 +338,5 @@ export default class NetworkClient
   onLineClear(row: number): void {}
   onLineClearing() {}
   onClearLines() {}
-  onGridCollapsed(grid: IGrid): void {}
   onGridReset(grid: IGrid): void {}
 }

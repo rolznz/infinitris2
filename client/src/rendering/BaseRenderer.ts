@@ -14,6 +14,7 @@ import {
 } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
 import InputAction from '@models/InputAction';
+import { GameModeEvent } from '@models/GameModeEvent';
 
 const idealCellSize = 38;
 const minVerticalCellCount = 21;
@@ -107,6 +108,9 @@ export abstract class BaseRenderer implements IRenderer {
   abstract onPlayerDestroyed(player: IPlayer): void;
   abstract onPlayerToggleChat(player: IPlayer, wasCancelled: boolean): void;
   abstract onPlayerToggleSpectating(player: IPlayer): void;
+  abstract onPlayerHealthChanged(player: IPlayer, amount: number): void;
+  abstract onPlayerScoreChanged(player: IPlayer, amount: number): void;
+  abstract onGameModeEvent(event: GameModeEvent): void;
   abstract onBlockCreated(block: IBlock): void;
   abstract onBlockCreateFailed(block: IBlock): void;
   abstract onBlockPlaced(block: IBlock): void;
@@ -122,7 +126,7 @@ export abstract class BaseRenderer implements IRenderer {
   abstract onLineClear(row: number): void;
   abstract onLineClearing(row: number): void;
   abstract onClearLines(rows: number[]): void;
-  abstract onGridCollapsed(grid: IGrid): void;
+  abstract onLinesCleared(rows: number[]): void;
   abstract onGridReset(grid: IGrid): void;
   abstract onCellBehaviourChanged(
     cell: ICell,
@@ -137,7 +141,7 @@ export abstract class BaseRenderer implements IRenderer {
     type: ParticleType
   ): void;
 
-  _renderCopies<T>(
+  renderCopies<T>(
     renderableEntity: IRenderableEntity<T>,
     opacity: number,
     renderFunction: (
@@ -165,7 +169,7 @@ export abstract class BaseRenderer implements IRenderer {
 
     if (shadowIndex < this._shadowCount) {
       (shadowDirection === 0 ? [-1, 1] : [shadowDirection]).forEach((i) =>
-        this._renderCopies(
+        this.renderCopies(
           renderableEntity,
           opacity,
           renderFunction,

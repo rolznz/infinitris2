@@ -37,6 +37,7 @@ import { wrap } from '@core/utils/wrap';
 import { fontFamily } from '@models/ui';
 import { TowerIndicator } from '@src/rendering/renderers/infinitris2/TowerIndicator';
 import { LineClearingIndicator } from '@src/rendering/renderers/infinitris2/LineClearingIndicator';
+import { GameModeEvent } from '@models/GameModeEvent';
 
 const particleDivisions = 4;
 const numPatternDivisions = 4;
@@ -546,9 +547,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
     }
   }
-  onPlayerDestroyed(player: IPlayer): void {
-    this._gameModeRenderer?.onPlayerDestroyed(player);
-  }
+  onPlayerDestroyed(player: IPlayer): void {}
   onPlayerToggleChat(player: IPlayer): void {}
   onPlayerToggleSpectating() {}
 
@@ -565,6 +564,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
   onCellIsEmptyChanged(cell: ICell) {
     this._renderCellAndNeighbours(cell);
   }
+
+  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
+  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
+  onGameModeEvent(event: GameModeEvent): void {}
 
   private _renderCellAndNeighbours(cell: ICell) {
     for (let r = -1; r <= 1; r++) {
@@ -724,8 +727,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
     this._particles = this._particles.filter((particle) => particle.life > 0);
 
-    this._gameModeRenderer?.onSimulationStep();
-
     // TODO: animation for where block died
     /*Object.values(this._blocks).forEach((block) => {
       if (!block.block.isAlive) {
@@ -739,9 +740,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     });*/
   }
 
-  onSimulationNextRound() {
-    this._gameModeRenderer?.restart();
-  }
+  onSimulationNextRound() {}
 
   onLineClearing(row: number) {
     this._lineClearingIndicator.setLineClearing(row, true);
@@ -768,6 +767,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
     }
   }
+  onLinesCleared() {}
 
   /**
    * @inheritdoc
@@ -780,11 +780,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
     this._renderCells(this._simulation.grid.reducedCells);
   }
-
-  /**
-   * @inheritdoc
-   */
-  onGridCollapsed(_grid: IGrid) {}
 
   onGridReset(_grid: IGrid): void {}
 
@@ -910,7 +905,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
 
-    this._renderCopies(
+    this.renderCopies(
       blockContainer.block,
       1,
       (pixiObject, shadowIndexWithDirection, child) => {
@@ -1018,7 +1013,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this._moveBlock(block);
 
-    this._renderCopies(
+    this.renderCopies(
       blockContainer.playerNameText,
       1,
       (text, shadowIndexWithDirection) => {
@@ -1038,6 +1033,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           dropShadowDistance: 1,
           dropShadowBlur: 2,
         });
+        text.cacheAsBitmap = true;
         text.anchor.set(0.5, 1);
         blockContainer.playerNameText.container.addChild(text);
         return text;
@@ -1081,7 +1077,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
   private _renderParticle(particle: IParticle, color: number) {
     const particleSize = this._cellSize * 0.1;
-    this._renderCopies(
+    this.renderCopies(
       particle,
       1,
       (graphics, shadowIndexWithDirection) => {
@@ -1118,7 +1114,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
-    this._renderCopies(
+    this.renderCopies(
       renderableCell,
       1,
       (_, shadowIndexWithDirection, child) => {
@@ -1361,7 +1357,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         const opacity = displayInvalidPlacement ? 0.5 : 0.33;
         const isCause = y > highestPlacementRow - cellDistanceFromLowestRow;
         const color = displayInvalidPlacement ? 0xff0000 : block.player.color;
-        this._renderCopies(
+        this.renderCopies(
           renderableCell,
           opacity,
           (graphics, shadowIndexWithDirection) => {

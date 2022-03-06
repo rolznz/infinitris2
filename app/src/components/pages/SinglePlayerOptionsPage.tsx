@@ -36,7 +36,6 @@ import {
 const schema = yup
   .object({
     numBots: yup.number().integer().lessThan(100).moreThan(-1).required(),
-    dayLengthSeconds: yup.number().integer().moreThan(-1).required(),
     botReactionDelay: yup
       .number()
       .positive()
@@ -153,7 +152,7 @@ export function SinglePlayerOptionsPage() {
                   <Select {...field}>
                     {TrackNumberValues.map((type) => (
                       <MenuItem key={type} value={type}>
-                        {type}
+                        {type !== 'bonus' ? 'Track' : ''} {type}
                       </MenuItem>
                     ))}
                   </Select>
@@ -238,17 +237,6 @@ export function SinglePlayerOptionsPage() {
                 </FormControl>
               )}
             />
-            <Controller
-              name="dayLengthSeconds"
-              control={control}
-              render={({ field }) => (
-                <FormControl variant="standard">
-                  <InputLabel>Day Length</InputLabel>
-                  <Input type="number" {...field} />
-                  <p>{errors.dayLengthSeconds?.message}</p>
-                </FormControl>
-              )}
-            />
           </FlexBox>
           <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
             <Controller
@@ -277,19 +265,23 @@ export function SinglePlayerOptionsPage() {
                 </FormGroup>
               )}
             />
-            <Controller
-              name="calculateSpawnDelays"
-              control={control}
-              render={({ field }) => (
-                <FormGroup>
-                  <FormControlLabel
-                    control={<Switch {...field} defaultChecked={field.value} />}
-                    label="Spawn Delays"
-                    labelPlacement="start"
-                  />
-                </FormGroup>
-              )}
-            />
+            {watchedGameModeType !== 'conquest' && (
+              <Controller
+                name="calculateSpawnDelays"
+                control={control}
+                render={({ field }) => (
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <Switch {...field} defaultChecked={field.value} />
+                      }
+                      label="Spawn Delays"
+                      labelPlacement="start"
+                    />
+                  </FormGroup>
+                )}
+              />
+            )}
             <Controller
               name="preventTowers"
               control={control}

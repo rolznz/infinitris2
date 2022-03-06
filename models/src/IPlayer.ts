@@ -10,6 +10,7 @@ export type NetworkPlayerInfo = {
   readonly patternFilename?: string;
   readonly id: number;
   readonly score: number;
+  readonly health: number;
   readonly isSpectating: boolean;
 };
 
@@ -25,6 +26,8 @@ export interface IPlayer {
   get block(): IBlock | undefined;
   get score(): number;
   set score(score: number);
+  get health(): number;
+  set health(health: number);
   get estimatedSpawnDelay(): number;
   set estimatedSpawnDelay(estimatedSpawnDelay: number);
 

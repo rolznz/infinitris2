@@ -1,3 +1,4 @@
+import { GameModeEvent } from '@models/GameModeEvent';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
@@ -6,52 +7,40 @@ import IGrid from '@models/IGrid';
 import { IPlayer } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
 
-const NEXT_ROUND_DELAY_MS = 100;
+const NEXT_ROUND_DELAY_MS =
+  process.env.NODE_ENV === 'development' ? 1000 : 10 * 1000; // 10s
 export interface IColumnCapture {
-  //column:
   playerId?: number;
-  value: number;
-  attackerId?: number;
 }
 
-type PlayerHealthMap = { [playerId: number]: number };
-
 type ConquestGameModeState = {
-  playerHealths: PlayerHealthMap;
   columnCaptures: IColumnCapture[];
-  isWaitingForNextRound: boolean;
+  isWaitingForNextRound: boolean; // TODO: move to simulation
   nextRoundTimeRemaining: number;
-  lastCalculation: number;
 };
 
 export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   private _columnCaptures: IColumnCapture[];
   private _simulation: ISimulation;
-  private _lastCalculation: number;
-  private _playerHealths: PlayerHealthMap;
-  private _isWaitingForNextRound: boolean;
-  private _lastWinner?: IPlayer;
-  private _nextRoundTime: number;
+  private _lastCalculationTime: number;
+  private _isWaitingForNextRound: boolean; // TODO: move to simulation
+  private _lastRoundWinner?: IPlayer; // TODO: move to simulation
+  private _nextRoundTime: number; // TODO: move to simulation
   constructor(simulation: ISimulation) {
     this._simulation = simulation;
     this._columnCaptures = [];
-    this._lastCalculation = 0;
-    this._playerHealths = {};
+    this._lastCalculationTime = 0;
     this._isWaitingForNextRound = false;
     this._nextRoundTime = 0;
     this._waitForNextRound();
   }
 
   get lastWinner(): IPlayer | undefined {
-    return this._lastWinner;
+    return this._lastRoundWinner;
   }
 
   get columnCaptures(): IColumnCapture[] {
     return this._columnCaptures;
-  }
-
-  get playerHealths(): PlayerHealthMap {
-    return this._playerHealths;
   }
 
   get nextRoundTime(): number {
@@ -63,14 +52,16 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   }
 
   step(): void {
+    const now = Date.now();
     // TODO: find a simple way to sync rather than having to send all column data each frame
     // can client scores be slightly off and still function correctly? (this could get out of sync if events are based on score)
     if (
-      /*this._simulation.isNetworkClient || */ ++this._lastCalculation < 100
+      /*this._simulation.isNetworkClient || */ now - this._lastCalculationTime <
+      1000
     ) {
       return;
     }
-    this._lastCalculation = 0;
+    this._lastCalculationTime = now;
 
     const activePlayers = this._simulation.players.filter(
       (player) => !player.isSpectating
@@ -80,9 +71,13 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       this._isWaitingForNextRound = true;
     }
 
+    // TODO: move all this logic into the simulation
     if (this._isWaitingForNextRound) {
       for (const player of activePlayers) {
-        if (player !== this._lastWinner && !this._simulation.isNetworkClient) {
+        if (
+          player !== this._lastRoundWinner &&
+          !this._simulation.isNetworkClient
+        ) {
           player.isSpectating = true;
         }
       }
@@ -92,127 +87,33 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         Date.now() > this._nextRoundTime &&
         !this._simulation.isNetworkClient
       ) {
-        // TODO: simulation cannot listen to events from game modes, as game modes listen to events from the simulation
-        // (this would create infinite recursion)
-        // also, we don't want the simulation to have to know about specific game mode events,
-        // maybe the simulation should just know about general events, like "rounds"
         this._simulation.startNextRound();
       }
       return;
     }
     if (activePlayers.length === 1) {
       if (this._simulation.players.length > 1) {
-        this._lastWinner = activePlayers[0];
+        this._lastRoundWinner = activePlayers[0];
       }
       this._waitForNextRound();
       return;
     }
 
-    /*const summedPlayerScores = Math.max(
-      activePlayers.length > 1
-        ? activePlayers.map((player) => player.score).reduce((a, b) => a + b)
-        : 0,
-      1
-    );*/
-
-    const playerColumnCaptureCounts: { [playerId: number]: number } = {};
-    for (let c = 0; c < this._simulation.grid.numColumns; c++) {
-      const playerCaptureValues: { [playerId: number]: number } = {};
-      for (let r = 0; r < this._simulation.grid.numRows; r++) {
-        const cell = this._simulation.grid.cells[r][c];
-        if (!cell.isEmpty && cell.player) {
-          // TODO: consider lower cells having more weighting
-          // give higher capture value for player with high score
-          playerCaptureValues[cell.player.id] =
-            (playerCaptureValues[cell.player.id] || 0) + 1; // * (cell.player.score / summedPlayerScores);
-        }
-      }
-      const highestPlayerEntry = Object.entries(playerCaptureValues)
-        .map((e) => ({ playerId: e[0], value: e[1] }))
-        .find(
-          (entry, i, array) =>
-            !array.some((other, i2) => i !== i2 && other.value >= entry.value)
-        );
-
-      if (highestPlayerEntry) {
-        const highestPlayer = this._simulation.getPlayer(
-          parseInt(highestPlayerEntry.playerId)
-        );
-        const dominance =
-          highestPlayerEntry.value /
-          Object.values(playerCaptureValues).reduce((a, b) => a + b);
-        // multiply by number of captured cells
-        const changeMultiplier = 0.02 * highestPlayerEntry.value;
-        this._columnCaptures[c].attackerId = highestPlayer.id;
-        if (
-          this._columnCaptures[c].playerId !== highestPlayer.id &&
-          this._columnCaptures[c].value > 0
-        ) {
-          this._columnCaptures[c].value = Math.max(
-            this._columnCaptures[c].value - dominance * changeMultiplier,
-            0
-          );
-        } else {
-          this._columnCaptures[c].value = Math.min(
-            this._columnCaptures[c].value + dominance * changeMultiplier,
-            1
-          );
-          if (this._columnCaptures[c].playerId !== highestPlayer.id) {
-            this._columnCaptures[c].playerId = highestPlayer.id;
-          }
-        }
-        playerColumnCaptureCounts[highestPlayer.id] =
-          (playerColumnCaptureCounts[highestPlayer.id] || 0) + 1;
-        highestPlayer.score += 1;
-      } else {
-        this._columnCaptures[c].attackerId = undefined;
-        this._columnCaptures[c].value = Math.max(
-          this._columnCaptures[c].value - 0.05,
-          0
-        );
-        if (this._columnCaptures[c].value === 0) {
-          this._columnCaptures[c].playerId = undefined;
-        }
-      }
-    }
-
-    if (
-      activePlayers.some((player) => playerColumnCaptureCounts[player.id] > 0)
-    ) {
-      const lowestPlayerCaptureCount = activePlayers
-        .map((player) => playerColumnCaptureCounts[player.id] || 0)
-        .find(
-          (count, _, array) =>
-            array.find((other) => other < count) === undefined
-        )!;
-      const healthChangeSpeed =
-        this._simulation.settings.roundLength === 'short'
-          ? 0.2
-          : this._simulation.settings.roundLength === 'long'
-          ? 0.01
-          : 0.05;
-
-      for (const player of activePlayers) {
-        if (
-          (playerColumnCaptureCounts[player.id] || 0) ===
-          lowestPlayerCaptureCount
-        ) {
-          this._playerHealths[player.id] = Math.max(
-            this._playerHealths[player.id] - healthChangeSpeed,
-            0
-          );
-          if (this._playerHealths[player.id] === 0) {
-            if (!this._simulation.isNetworkClient) {
-              // TODO: need a separate variable for out of the current game
-              player.isSpectating = true;
-              //player.knockedOut = true;
-            }
-          }
-        } else {
-          this._playerHealths[player.id] = Math.min(
-            this._playerHealths[player.id] + healthChangeSpeed,
-            1
-          );
+    const healthChangeSpeed =
+      (1 + this._simulation.currentRoundDuration / 10000) *
+      0.001 *
+      (this._simulation.settings.roundLength === 'short'
+        ? 5
+        : this._simulation.settings.roundLength === 'long'
+        ? 1
+        : 3);
+    for (const player of activePlayers) {
+      player.health = Math.max(player.health - healthChangeSpeed, 0);
+      if (player.health === 0) {
+        if (!this._simulation.isNetworkClient) {
+          // TODO: need a separate variable for out of the current game
+          player.isSpectating = true;
+          //player.knockedOut = true;
         }
       }
     }
@@ -227,9 +128,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   private _removePlayer(player: IPlayer) {
     for (let c = 0; c < this._columnCaptures.length; c++) {
       if (this._columnCaptures[c].playerId === player.id) {
-        this._columnCaptures[c].attackerId = undefined;
         this._columnCaptures[c].playerId = undefined;
-        this._columnCaptures[c].value = 0;
       }
     }
   }
@@ -242,15 +141,21 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
 
   onBlockCreated(block: IBlock): void {}
   onBlockCreateFailed(block: IBlock): void {}
-  onBlockPlaced(block: IBlock): void {}
+  onBlockPlaced(block: IBlock): void {
+    this._checkColumns();
+  }
   onBlockMoved(block: IBlock, dx: number, dy: number, dr: number): void {}
   onBlockDropped(block: IBlock): void {}
-  onBlockDied(block: IBlock): void {}
+  onBlockDied(block: IBlock): void {
+    block.player.health = Math.max(block.player.health - 0.2, 0);
+  }
   onBlockDestroyed(block: IBlock): void {}
   onLineClear(row: number): void {}
   onLineClearing() {}
   onClearLines(): void {}
-  onGridCollapsed(grid: IGrid): void {}
+  onLinesCleared(): void {
+    this._checkColumns();
+  }
   onGridReset(grid: IGrid): void {}
   onCellBehaviourChanged(
     cell: ICell,
@@ -260,16 +165,13 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
 
   onSimulationNextRound() {
     this._columnCaptures = [...new Array(this._simulation.grid.numColumns)].map(
-      () => ({
-        value: 0,
-      })
+      () => ({})
     );
-    this._lastCalculation = 0;
-    this._playerHealths = {};
+    this._lastCalculationTime = 0;
     for (const player of this._simulation.players) {
       player.removeBlock();
       player.isSpectating = false;
-      this._playerHealths[player.id] = 1;
+      player.health = 1;
       player.score = 0;
       player.estimatedSpawnDelay = 0;
     }
@@ -282,13 +184,32 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     this._nextRoundTime = Date.now() + NEXT_ROUND_DELAY_MS;
   }
 
+  private _checkColumns() {
+    for (let c = 0; c < this._simulation.grid.numColumns; c++) {
+      const cell =
+        this._simulation.grid.cells[this._simulation.grid.numRows - 1][c];
+      if (cell.player?.id != this._columnCaptures[c].playerId) {
+        this._columnCaptures[c].playerId = cell.player?.id;
+        if (cell.player) {
+          cell.player.health = Math.min(cell.player.health + 0.1, 2);
+        }
+        this._simulation.onGameModeEvent({
+          type: 'conquest-columnChanged',
+          column: cell.column,
+        });
+      }
+    }
+  }
+
+  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
+  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
+  onGameModeEvent(event: GameModeEvent): void {}
+
   getCurrentState(): ConquestGameModeState {
     return {
       isWaitingForNextRound: this._isWaitingForNextRound,
       nextRoundTimeRemaining: this._nextRoundTime - Date.now(),
       columnCaptures: this._columnCaptures,
-      lastCalculation: this._lastCalculation,
-      playerHealths: this._playerHealths,
     };
   }
 
@@ -296,7 +217,5 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     this._isWaitingForNextRound = state.isWaitingForNextRound;
     this._nextRoundTime = Date.now() + state.nextRoundTimeRemaining;
     this._columnCaptures = state.columnCaptures;
-    this._lastCalculation = state.lastCalculation;
-    this._playerHealths = state.playerHealths;
   }
 }

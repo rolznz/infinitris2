@@ -28,7 +28,7 @@ export default interface IRenderer extends ISimulationEventListener {
   get simulation(): ISimulation | undefined;
   get cellSize(): number;
 
-  _renderCopies<T>(
+  renderCopies<T>(
     renderableEntity: IRenderableEntity<T>,
     opacity: number,
     renderFunction: (pixiObject: T, shadowIndexWithDirection: number) => void,

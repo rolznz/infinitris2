@@ -13,6 +13,7 @@ import { IGameMode } from '@models/IGameMode';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { InfinityGameMode } from '@core/gameModes/InfinityGameMode';
 import { FpsCounter } from '@core/FpsCounter';
+import { GameModeEvent } from '@models/GameModeEvent';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -35,6 +36,7 @@ export default class Simulation implements ISimulation {
   private _gameMode: IGameMode<unknown>;
   private _fpsCounter: FpsCounter;
   private _lastStepTime = 0;
+  private _currentRoundStartTime: number;
 
   constructor(grid: Grid, settings: SimulationSettings = {}, isClient = false) {
     this._eventListeners = [];
@@ -46,6 +48,13 @@ export default class Simulation implements ISimulation {
       gravityEnabled: true,
       ...settings,
     };
+    if (this._settings.gameModeType === 'conquest') {
+      this._settings = {
+        ...this._settings,
+        calculateSpawnDelays: false,
+      };
+    }
+
     this._isNetworkClient = isClient;
     this._gameMode =
       this._settings.gameModeType === 'conquest'
@@ -53,6 +62,18 @@ export default class Simulation implements ISimulation {
         : new InfinityGameMode(this);
     this.addEventListener(this._gameMode);
     this._fpsCounter = new FpsCounter();
+    this._currentRoundStartTime = 0;
+  }
+
+  get currentRoundStartTime(): number {
+    return this._currentRoundStartTime;
+  }
+  set currentRoundStartTime(currentRoundStartTime: number) {
+    this._currentRoundStartTime = currentRoundStartTime;
+  }
+
+  get currentRoundDuration(): number {
+    return Date.now() - this._currentRoundStartTime;
   }
 
   get fps(): number {
@@ -195,6 +216,7 @@ export default class Simulation implements ISimulation {
   }
 
   startNextRound(): void {
+    this._currentRoundStartTime = Date.now();
     this._eventListeners.forEach((listener) =>
       listener.onSimulationNextRound(this)
     );
@@ -302,8 +324,35 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
+  onPlayerScoreChanged(player: IPlayer, amount: number) {
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerScoreChanged(player, amount)
+    );
+  }
+  /**
+   * @inheritdoc
+   */
+  onPlayerHealthChanged(player: IPlayer, amount: number) {
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerHealthChanged(player, amount)
+    );
+  }
+
+  onGameModeEvent(event: GameModeEvent) {
+    this._eventListeners.forEach((listener) => listener.onGameModeEvent(event));
+  }
+
+  /**
+   * @inheritdoc
+   */
   onClearLines(rows: number[]) {
     this._eventListeners.forEach((listener) => listener.onClearLines(rows));
+  }
+  /**
+   * @inheritdoc
+   */
+  onLinesCleared(rows: number[]): void {
+    this._eventListeners.forEach((listener) => listener.onLinesCleared(rows));
   }
   /**
    * @inheritdoc
@@ -317,13 +366,6 @@ export default class Simulation implements ISimulation {
    */
   onLineClear(row: number) {
     this._eventListeners.forEach((listener) => listener.onLineClear(row));
-  }
-
-  /**
-   * @inheritdoc
-   */
-  onGridCollapsed(grid: IGrid): void {
-    this._eventListeners.forEach((listener) => listener.onGridCollapsed(grid));
   }
 
   /**

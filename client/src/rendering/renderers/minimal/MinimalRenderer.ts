@@ -22,6 +22,7 @@ import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import ISimulation from '@models/ISimulation';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
+import { GameModeEvent } from '@models/GameModeEvent';
 
 const minCellSize = 32;
 const particleDivisions = 4;
@@ -380,6 +381,7 @@ export default class MinimalRenderer extends BaseRenderer {
   }
 
   onClearLines() {}
+  onLinesCleared(rows: number[]): void {}
   onLineClearing() {}
 
   /**
@@ -402,16 +404,10 @@ export default class MinimalRenderer extends BaseRenderer {
 
   onSimulationNextRound(): void {}
 
-  /**
-   * @inheritdoc
-   */
-  onGridCollapsed(_grid: IGrid) {
-    if (!this._simulation) {
-      return;
-    }
-    // TODO: optimize
-    this._renderCells(this._simulation.grid.reducedCells);
-  }
+  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
+  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
+  onGameModeEvent(event: GameModeEvent): void {}
+
   /**
    * @inheritdoc
    */
@@ -512,7 +508,7 @@ export default class MinimalRenderer extends BaseRenderer {
       this._renderCellCopies(cell, RenderCellType.Block, 1, block.player.color);
     });
 
-    this._renderCopies(
+    this.renderCopies(
       renderableBlock.playerNameText,
       1,
       () => {},
@@ -552,7 +548,7 @@ export default class MinimalRenderer extends BaseRenderer {
 
   private _renderParticle(particle: IParticle, color: number) {
     const particleSize = this._cellSize / particleDivisions;
-    this._renderCopies(
+    this.renderCopies(
       particle,
       1,
       (graphics) => {
@@ -574,7 +570,7 @@ export default class MinimalRenderer extends BaseRenderer {
     opacity: number,
     color: number
   ) {
-    this._renderCopies(
+    this.renderCopies(
       renderableCell,
       opacity,
       (graphics: PIXI.Graphics) => {

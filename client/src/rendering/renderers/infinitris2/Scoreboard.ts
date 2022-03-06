@@ -75,16 +75,13 @@ export class Scoreboard {
               (c) => c.playerId === player.id
             ).length
           : 0,
-      health:
-        simulation.settings.gameModeType === 'conquest'
-          ? Math.floor(
-              ((simulation.gameMode as ConquestGameMode).playerHealths[
-                player.id
-              ] || 0) * 100
-            )
-          : 0,
+      health: player.health,
     }));
-    playerScores.sort((a, b) => b.score - a.score);
+    if (simulation.settings.gameModeType === 'conquest') {
+      playerScores.sort((a, b) => b.numCaptures - a.numCaptures);
+    } else {
+      playerScores.sort((a, b) => b.score - a.score);
+    }
     for (let i = 0; i < playerScores.length; i++) {
       playerScores[i].placing = i + 1;
     }
@@ -113,19 +110,25 @@ export class Scoreboard {
       const text = this._scoreboardTextLines[i];
       if (i < playerScores.length) {
         text.visible = true;
-        text.text =
-          (playerScores[i].isSpectating
-            ? ''
-            : (playerScores[i].placing - 1 < placingCharacters.length
-                ? placingCharacters[playerScores[i].placing - 1]
-                : playerScores[i].placing) + '  ') +
-          playerScores[i].nickname +
-          (playerScores[i].isSpectating ? ' (spectating)' : '') +
-          (!playerScores[i].isSpectating &&
-          simulation.settings.gameModeType === 'conquest'
-            ? ` (${playerScores[i].numCaptures} ⦿)`
-            : '') +
-          (playerScores[i].isSpectating ? '' : '  ' + playerScores[i].score);
+
+        let playerText = '';
+        if (!playerScores[i].isSpectating) {
+          playerText +=
+            (playerScores[i].placing - 1 < placingCharacters.length
+              ? placingCharacters[playerScores[i].placing - 1]
+              : playerScores[i].placing) + '  ';
+        }
+
+        playerText += playerScores[i].nickname;
+        playerText += playerScores[i].isSpectating ? ' (spectating)' : '';
+        if (!playerScores[i].isSpectating) {
+          playerText +=
+            simulation.settings.gameModeType === 'conquest'
+              ? `  ⦿ ${playerScores[i].numCaptures}`
+              : '  ' + playerScores[i].score;
+        }
+
+        text.text = playerText;
 
         text.tint = playerScores[i].color;
         text.x = padding;

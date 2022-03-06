@@ -115,8 +115,11 @@ export default function ChallengePage() {
         onClearLines() {},
         onCellBehaviourChanged() {},
         onCellIsEmptyChanged() {},
-        onGridCollapsed() {},
         onGridReset() {},
+        onGameModeEvent() {},
+        onLinesCleared() {},
+        onPlayerHealthChanged() {},
+        onPlayerScoreChanged() {},
       };
 
       setChallengeClient(

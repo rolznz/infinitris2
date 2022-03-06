@@ -207,11 +207,14 @@ export default function RoomPage() {
         },
         onLineClear() {},
         onClearLines() {},
+        onLinesCleared() {},
         onLineClearing() {},
         onCellBehaviourChanged() {},
         onCellIsEmptyChanged() {},
-        onGridCollapsed() {},
         onGridReset() {},
+        onGameModeEvent() {},
+        onPlayerHealthChanged() {},
+        onPlayerScoreChanged() {},
       },
     });
   }, [

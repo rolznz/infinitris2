@@ -48,7 +48,7 @@ export class LineClearingIndicator {
       }
       graphics.alpha = 0;
       graphics.clear();
-      graphics.beginFill(clearColor1, 0.5);
+      graphics.beginFill(clearColor1, 0.75);
       graphics.lineStyle(cellSize * 0.1, clearColor2, 0.05);
       graphics.drawRect(0, 0, this._app.renderer.width, cellSize);
     }

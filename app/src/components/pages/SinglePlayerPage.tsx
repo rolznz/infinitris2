@@ -50,9 +50,6 @@ export default function SinglePlayerPage() {
   );
   const gridNumRows = parseInt(useSearchParam('gridNumRows') || '20');
   const gridNumColumns = parseInt(useSearchParam('gridNumColumns') || '10');
-  const dayLengthSeconds = parseInt(
-    useSearchParam('dayLengthSeconds') || '2000'
-  );
   const gameModeType: GameModeType =
     (useSearchParam('gameModeType') as GameModeType) || 'infinity';
   const worldType: WorldType =
@@ -105,7 +102,6 @@ export default function SinglePlayerPage() {
           mistakeDetection,
           calculateSpawnDelays,
           preventTowers,
-          dayLengthSeconds,
           gameModeType,
           roundLength,
         },
@@ -177,8 +173,11 @@ export default function SinglePlayerPage() {
           onClearLines() {},
           onCellBehaviourChanged() {},
           onCellIsEmptyChanged() {},
-          onGridCollapsed() {},
           onGridReset() {},
+          onGameModeEvent() {},
+          onLinesCleared() {},
+          onPlayerHealthChanged() {},
+          onPlayerScoreChanged() {},
         },
       });
       playGameMusic(worldType, trackNumber);
@@ -203,7 +202,6 @@ export default function SinglePlayerPage() {
     mistakeDetection,
     calculateSpawnDelays,
     preventTowers,
-    dayLengthSeconds,
     worldType,
     gameModeType,
     character,

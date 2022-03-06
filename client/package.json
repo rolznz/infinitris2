@@ -9,7 +9,7 @@
     "test:watch": "karma start karma.conf.js watch",
     "copy-infinitris-client": "rm -f ../app/public/client -r && mkdir -p ../app/public/client && cp dist/client/* ../app/public/client -r",
     "build": "yarn clean && webpack && yarn copy-infinitris-client",
-    "dev": "webpack-dev-server --content-base=dist --inline --watch --hot",
+    "dev": "NODE_ENV=development webpack-dev-server --content-base=dist --inline --watch --hot",
     "docs": "typedoc --out docs --readme README.md src",
     "lt": "lt --port 8080 --subdomain infinitris --local-host localhost"
   },

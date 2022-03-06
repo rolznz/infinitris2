@@ -126,7 +126,7 @@ export default class Grid implements IGrid {
       }
     }
 
-    console.log('Clearing rows: ', rowsToClear);
+    //console.log('Clearing rows: ', rowsToClear);
     for (let i = 0; i < rowsToClear.length; i++) {
       const rowToClear = rowsToClear[i] + i;
       this._eventListeners.forEach((eventListener) =>
@@ -150,6 +150,9 @@ export default class Grid implements IGrid {
         }
       }
     }
+    this._eventListeners.forEach((eventListener) =>
+      eventListener.onLinesCleared(rowsToClear)
+    );
   }
 
   reset() {

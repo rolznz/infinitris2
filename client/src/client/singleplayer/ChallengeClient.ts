@@ -31,6 +31,7 @@ import { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
 import IGrid from '@models/IGrid';
 import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
+import { GameModeEvent } from '@models/GameModeEvent';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -62,6 +63,9 @@ export default class ChallengeClient
     this._simulationEventListener = this._launchOptions.listener;
     this._create(challenge);
   }
+  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
+  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
+  onGameModeEvent(event: GameModeEvent): void {}
 
   /**
    * @inheritdoc
@@ -125,11 +129,7 @@ export default class ChallengeClient
 
   onLineClearing() {}
   onClearLines() {}
-
-  /**
-   * @inheritdoc
-   */
-  onGridCollapsed(grid: IGrid): void {}
+  onLinesCleared() {}
 
   onGridReset(grid: IGrid): void {}
 

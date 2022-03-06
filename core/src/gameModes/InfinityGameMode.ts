@@ -1,3 +1,4 @@
+import { GameModeEvent } from '@models/GameModeEvent';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
@@ -27,7 +28,7 @@ export class InfinityGameMode implements IGameMode<InfinityGameModeState> {
   onLineClear(row: number): void {}
   onLineClearing() {}
   onClearLines(): void {}
-  onGridCollapsed(grid: IGrid): void {}
+  onLinesCleared(rows: number[]): void {}
   onGridReset(grid: IGrid): void {}
   onCellBehaviourChanged(
     cell: ICell,
@@ -40,4 +41,8 @@ export class InfinityGameMode implements IGameMode<InfinityGameModeState> {
     return {};
   }
   loadState(state: InfinityGameModeState) {}
+
+  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
+  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
+  onGameModeEvent(event: GameModeEvent): void {}
 }

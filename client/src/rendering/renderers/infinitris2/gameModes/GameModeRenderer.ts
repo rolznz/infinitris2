@@ -1,7 +1,3 @@
-import { IPlayer } from '@models/IPlayer';
+import ISimulationEventListener from '@models/ISimulationEventListener';
 
-export interface IGameModeRenderer {
-  onSimulationStep(): void;
-  onPlayerDestroyed(player: IPlayer): void;
-  restart(): void;
-}
+export interface IGameModeRenderer extends ISimulationEventListener {}

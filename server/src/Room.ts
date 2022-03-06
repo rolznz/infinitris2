@@ -36,6 +36,7 @@ import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/ISer
 import { IServerMessage } from '@models/networking/server/IServerMessage';
 import { IServerNextRoundEvent } from '@core/networking/server/IServerNextRoundEvent';
 import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
+import { GameModeEvent } from '@models/GameModeEvent';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -46,7 +47,7 @@ export default class Room implements ISimulationEventListener {
     gameModeType: GameModeType
   ) {
     this._sendMessage = sendMessage;
-    this._simulation = new Simulation(new Grid(10, 18), {
+    this._simulation = new Simulation(new Grid(50, 18), {
       gameModeType,
     });
     this._simulation.addEventListener(this);
@@ -116,6 +117,7 @@ export default class Room implements ISimulationEventListener {
         simulation: {
           settings: this._simulation.settings,
           gameModeState: this._simulation.gameMode.getCurrentState(),
+          currentRoundDuration: this._simulation.currentRoundDuration,
         },
         grid: {
           numRows: this._simulation.grid.numRows,
@@ -145,6 +147,7 @@ export default class Room implements ISimulationEventListener {
           isSpectating: existingPlayer.isSpectating,
           characterId: existingPlayer.characterId,
           patternFilename: existingPlayer.patternFilename,
+          health: existingPlayer.health,
         })),
         estimatedSpawnDelay: newPlayer.estimatedSpawnDelay,
       },
@@ -338,6 +341,7 @@ export default class Room implements ISimulationEventListener {
   onLineClear(row: number) {}
 
   onLineClearing() {}
+  onLinesCleared(rows: number[]): void {}
   onClearLines(rows: number[]): void {
     const clearLinesEvent: IServerClearLinesEvent = {
       type: ServerMessageType.CLEAR_LINES,
@@ -366,7 +370,6 @@ export default class Room implements ISimulationEventListener {
     previousBehaviour: ICellBehaviour
   ): void {}
   onCellIsEmptyChanged(cell: ICell): void {}
-  onGridCollapsed(grid: IGrid): void {}
   onGridReset(grid: IGrid): void {}
 
   onPlayerCreated(player: IPlayer) {
@@ -377,6 +380,7 @@ export default class Room implements ISimulationEventListener {
         color: player.color,
         nickname: player.nickname,
         isSpectating: player.isSpectating,
+        health: player.health,
       },
     };
 
@@ -409,6 +413,9 @@ export default class Room implements ISimulationEventListener {
     };
     this._sendMessageToAllPlayers(playerToggleSpectatingMessage);
   }
+  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
+  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
+  onGameModeEvent(event: GameModeEvent): void {}
 
   private _sendMessageToAllPlayers(message: ServerMessage) {
     const playerIds: number[] = this._simulation.getPlayerIds();

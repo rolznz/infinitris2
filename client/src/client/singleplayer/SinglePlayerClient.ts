@@ -17,6 +17,7 @@ import { colors } from '@models/colors';
 import IGrid from '@models/IGrid';
 import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
+import { GameModeEvent } from '@models/GameModeEvent';
 
 export default class SinglePlayerClient
   extends BaseClient
@@ -31,11 +32,9 @@ export default class SinglePlayerClient
     super(clientApiConfig, options);
     this._create(options);
   }
-
-  /**
-   * @inheritdoc
-   */
-  onGridCollapsed(grid: IGrid): void {}
+  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
+  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
+  onGameModeEvent(event: GameModeEvent): void {}
 
   onGridReset(grid: IGrid): void {}
 
@@ -84,6 +83,7 @@ export default class SinglePlayerClient
   onLineClear(row: number) {}
   onLineClearing() {}
   onClearLines() {}
+  onLinesCleared() {}
 
   /**
    * @inheritdoc

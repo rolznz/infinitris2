@@ -19,6 +19,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _id: number;
   protected _block?: IBlock;
   private _score: number;
+  private _health: number;
   private _lastPlacementColumn: number | undefined;
   private _eventListeners: IPlayerEventListener[]; // TODO: add IPlayerEventListener
   private _nextLayout?: Layout;
@@ -54,6 +55,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._id = id;
     this._eventListeners = [];
     this._score = 0;
+    this._health = 1;
     this._nickname = nickname;
     this._color = color;
     this._simulation = simulation;
@@ -79,7 +81,27 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     return this._score;
   }
   set score(score: number) {
+    if (this._score === score) {
+      return;
+    }
+    const oldScore = this._score;
     this._score = score;
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerScoreChanged(this, this._score - oldScore)
+    );
+  }
+  get health(): number {
+    return this._health;
+  }
+  set health(health: number) {
+    if (this._health === health) {
+      return;
+    }
+    const oldHealth = this._health;
+    this._health = health;
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerHealthChanged(this, this._health - oldHealth)
+    );
   }
 
   get patternFilename(): string | undefined {
@@ -118,6 +140,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._isSpectating = isSpectating;
     if (this._isSpectating) {
       this._score = 0;
+      this._health = 0;
       this.removeBlock();
     } else {
       this._isFirstBlock = true;

@@ -4,7 +4,7 @@ import ISimulation from '@models/ISimulation';
 import Camera from '@src/rendering/Camera';
 
 // TODO: move to models
-type GridLineType = 'none' | 'inverted' | 'classic';
+type GridLineType = 'none' | 'inverted' | 'classic' | 'dots';
 
 export class GridLines {
   private _grid: IGrid;
@@ -69,9 +69,22 @@ export class GridLines {
       : this._grid.numColumns;
 
     const gridColor = 0xffffff;
-    const gridAlpha = 0.0125;
+    const gridAlpha = 0.5;
 
-    if (this._lineType === 'inverted') {
+    if (this._lineType === 'dots') {
+      for (let r = 0; r < gridRows + 1; r++) {
+        for (let c = 0; c < gridColumns + 1; c++) {
+          this._graphics.beginFill(gridColor, gridAlpha);
+          this._graphics.drawRect(
+            c * cellSize - cellPadding,
+            r * cellSize - cellPadding,
+            cellPadding * 2,
+            cellPadding * 2
+          );
+          this._graphics.endFill();
+        }
+      }
+    } else if (this._lineType === 'inverted') {
       for (let r = 0; r < gridRows; r++) {
         for (let c = 0; c < gridColumns + 1; c++) {
           this._graphics.beginFill(gridColor, gridAlpha);

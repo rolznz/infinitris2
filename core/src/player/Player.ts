@@ -325,10 +325,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       throw new Error('Block mismatch');
     }
 
-    const isMistake = checkMistake(block.cells, this._simulation);
+    //const isMistake = checkMistake(block.cells, this._simulation);
 
     //console.log(`${this._nickname} Mistake detected: `, isMistake);
-    this._modifyScoreFromBlockPlacement(block, isMistake);
+    this._modifyScoreFromBlockPlacement(block, false);
 
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
     this.removeBlock();
@@ -391,6 +391,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
 
   private _modifyScoreFromBlockPlacement(block: IBlock, isMistake: boolean) {
+    if (this._simulation.settings.gameModeType === 'conquest') {
+      return;
+    }
     if (isMistake && this._simulation.settings.mistakeDetection !== false) {
       this._score = Math.max(0, Math.floor(this._score * 0.75) - 1);
     } else {

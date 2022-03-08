@@ -49,6 +49,8 @@ import {
   getRarity,
   useHeadgearOffset,
   getEarsY,
+  getCustomEyesFilename,
+  getCustomMouthFilename,
 } from './customizations';
 import { hexToRgb } from './utils/hexToRgb';
 import { rgbToHex } from './utils/rgbToHex';
@@ -170,6 +172,7 @@ export async function generateCharacterImage(
     comp2b
   ).toString();
 
+  const isFreeCharacter = index < 6;
   let price = 0;
   price += getPriceFromTier(color.tier);
   const isEmptyPattern = Math.floor(index / colors.length) === 0;
@@ -178,13 +181,12 @@ export async function generateCharacterImage(
 
   const maskDimensions = await blockMask.metadata();
   const earsFilename =
-    index !== 0 && random.next() < earsChance
+    !isFreeCharacter && random.next() < earsChance
       ? pickRandomFilename(random, earsFilenames, isEmptyPattern)
       : null;
   const eyesFilename =
-    index === 0
-      ? eyesFilenames[0]
-      : pickRandomFilename(random, eyesFilenames, isEmptyPattern);
+    getCustomEyesFilename(index) ||
+    pickRandomFilename(random, eyesFilenames, isEmptyPattern);
   price += getPrice(eyesFilename);
   const ears = earsFilename
     ? await loadImage(
@@ -198,7 +200,9 @@ export async function generateCharacterImage(
     colorizeSvg2(getPath(eyesFilename), color.hex, borderColor)
   );
   const headgearFilename =
-    index > 0 && hasHeadgear(eyesFilename) && random.next() < headgearChance
+    !isFreeCharacter &&
+    hasHeadgear(eyesFilename) &&
+    random.next() < headgearChance
       ? pickRandomFilename(random, headgearFilenames, isEmptyPattern)
       : null;
   price += headgearFilename ? getPrice(headgearFilename) : 0;
@@ -208,12 +212,10 @@ export async function generateCharacterImage(
       )
     : null;
 
-  const mouthFilename =
-    index === 0
-      ? mouthFilenames[0]
-      : hasMouth(eyesFilename)
-      ? pickRandomFilename(random, mouthFilenames, isEmptyPattern)
-      : undefined;
+  const mouthFilename = hasMouth(eyesFilename)
+    ? getCustomMouthFilename(index) ||
+      pickRandomFilename(random, mouthFilenames, isEmptyPattern)
+    : undefined;
   const mouth = mouthFilename
     ? await loadImage(getPath(mouthFilename), (image) =>
         randomFlop(random, image)
@@ -434,6 +436,10 @@ export async function generateCharacterImage(
     // TODO: remove
     await sharp(habitatOriginFilename).toFile(habitatOriginFilename + '.png');
     fs.rmSync(habitatOriginFilename);
+  }
+
+  if (isFreeCharacter) {
+    price = 0;
   }
 
   return {

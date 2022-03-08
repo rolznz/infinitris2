@@ -239,3 +239,38 @@ export function getPriceFromTier(tier: number): number {
 export function getRarity(filename: string): number {
   return customizations[filename]?.rarity || 0;
 }
+
+export function getCustomEyesFilename(index: number): string | undefined {
+  switch (index) {
+    case 0:
+      return 'eyes_0.svg';
+    case 1:
+      return 'eyes_29.svg';
+    case 2:
+      return 'eyes_31.svg';
+    case 3:
+      return 'eyes_20.svg';
+    case 4:
+      return 'eyes_3.svg';
+    case 5:
+      return 'eyes_8.svg';
+    default:
+      return undefined;
+  }
+}
+export function getCustomMouthFilename(index: number): string | undefined {
+  switch (index) {
+    case 0:
+      return 'mouth_0.svg';
+    case 1:
+      return 'mouth_9.svg';
+    case 2:
+      return 'mouth_29.svg';
+    case 3:
+      return 'mouth_32.svg';
+    case 4:
+      return 'mouth_5.svg';
+    default:
+      return undefined;
+  }
+}

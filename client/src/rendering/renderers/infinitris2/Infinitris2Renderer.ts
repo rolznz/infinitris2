@@ -806,7 +806,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this.rerenderGrid();
 
-    this._towerIndicator.render();
+    this._towerIndicator.render(this._cellSize);
     this._lineClearingIndicator.render(
       this.simulation!.grid.numRows,
       this._cellSize,
@@ -1309,7 +1309,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._simulation.grid.isTower(highestPlacementRow);
 
     const displayInvalidPlacement = isMistake || isTower;
-    this._towerIndicator.update(isTower, this._simulation.grid, this._cellSize);
+    this._towerIndicator.update(
+      this._gridLines.y,
+      isTower,
+      this._simulation.grid,
+      this._cellSize
+    );
     this._lineClearingIndicator.update(this._gridLines.y, this._cellSize);
 
     // render placement helper shadow - this could be done a lot more efficiently by rendering one line per column,

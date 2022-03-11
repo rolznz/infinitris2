@@ -14,7 +14,7 @@ export class TowerIndicator {
     this._graphics.alpha = 0;
   }
 
-  update(isTower: boolean, grid: IGrid, cellSize: number) {
+  update(gridY: number, isTower: boolean, grid: IGrid, cellSize: number) {
     let towerY = 0;
     if (isTower) {
       let towerRow = 0;
@@ -24,24 +24,42 @@ export class TowerIndicator {
         }
         ++towerRow;
       }
-      towerY = (towerRow + 1) * cellSize;
+      towerY = towerRow * cellSize;
+      this._graphics.alpha = Math.max(
+        Math.min(1, this._graphics.alpha + 0.025),
+        0
+      );
+    } else {
+      this._graphics.alpha = 0;
     }
 
-    this._graphics.y = towerY - this._graphics.height;
-    this._graphics.alpha = Math.max(
-      Math.min(1, this._graphics.alpha + (isTower ? 1 : -1) * 0.025),
-      0
-    );
+    this._graphics.y = gridY + towerY - this._graphics.height;
   }
 
-  render() {
+  render(cellSize: number) {
     this._graphics.clear();
-    this._graphics.beginFill(0xff0000, 0.2);
+    this._graphics.beginFill(0xff0000, 0.1);
     this._graphics.drawRect(
       0,
       0,
       this._app.renderer.width,
       this._app.renderer.height
     );
+    this._graphics.beginFill(0xff0000, 0.4);
+    const dashHeight = cellSize * 0.1;
+    const dashWidth = cellSize * 0.3;
+    const dashPadding = dashHeight;
+    for (
+      let i = 0;
+      i < this._app.renderer.width;
+      i += dashWidth + dashPadding * 2
+    ) {
+      this._graphics.drawRect(
+        i + dashPadding,
+        this._app.renderer.height - dashHeight * 0.5,
+        dashWidth,
+        dashHeight
+      );
+    }
   }
 }

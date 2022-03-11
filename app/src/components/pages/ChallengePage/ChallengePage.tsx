@@ -20,6 +20,7 @@ import useSearchParam from 'react-use/lib/useSearchParam';
 import { useDocument } from 'swr-firestore';
 import { IPlayer } from 'infinitris2-models';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
+import { launchFullscreen } from '@/utils/launchFullscreen';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -84,6 +85,7 @@ export default function ChallengePage() {
   useEffect(() => {
     if (challenge && !requiresRedirect && launchChallenge && !hasLaunched) {
       setLaunched(true);
+      launchFullscreen();
 
       const simulationEventListener: ISimulationEventListener = {
         onSimulationInit(simulation: ISimulation) {

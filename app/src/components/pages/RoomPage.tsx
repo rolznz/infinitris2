@@ -38,6 +38,7 @@ import { GameUI } from '@/components/game/GameUI';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { LocalUser } from '@/state/LocalUserStore';
 import useLoaderStore from '@/state/LoaderStore';
+import { launchFullscreen } from '@/utils/launchFullscreen';
 
 interface RoomPageRouteParams {
   id: string;
@@ -129,6 +130,7 @@ export default function RoomPage() {
       return;
     }
     setLaunched(true);
+    launchFullscreen();
     client.launchNetworkClient(serverUrl as string, {
       socketListener: socketEventListener,
       controls_keyboard,

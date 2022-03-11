@@ -4,6 +4,7 @@ import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientO
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
 import { LocalUser } from '@/state/LocalUserStore';
+import { launchFullscreen } from '@/utils/launchFullscreen';
 import {
   GameModeType,
   getCharacterPath,
@@ -76,6 +77,7 @@ export default function SinglePlayerPage() {
 
   useEffect(() => {
     if (!requiresRedirect && launchSinglePlayer && !hasLaunched && hasLoaded) {
+      launchFullscreen();
       setLaunched(true);
       launchSinglePlayer({
         player: {

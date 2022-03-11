@@ -204,6 +204,9 @@ export const coreThemeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           color: colors.white,
+          ':hover': {
+            cursor: 'pointer',
+          },
         },
       },
     },

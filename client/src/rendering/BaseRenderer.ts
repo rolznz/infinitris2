@@ -17,8 +17,8 @@ import InputAction from '@models/InputAction';
 import { GameModeEvent } from '@models/GameModeEvent';
 
 const idealCellSize = 38;
-const minVerticalCellCount = 21;
-const minHorizontalCellCount = 10; // TODO
+const minLandscapeCellCount = 18;
+const minPortraitCellCount = 14; // TODO
 const maxCellCount = 32;
 
 export abstract class BaseRenderer implements IRenderer {
@@ -284,7 +284,8 @@ export abstract class BaseRenderer implements IRenderer {
     this._floorHeight = this._calculateFloorHeight();
     this._hasScrollX = true; // only false if grid < screen width + shadow rendering disabled - for now always enabled
     this._hasShadows = this._gridWidth < this._appWidth;
-    this._hasScrollY = this._gridHeight + this._floorHeight > this._appHeight;
+    this._hasScrollY =
+      this._gridHeight /* + this._floorHeight*/ > this._appHeight;
 
     this._shadowCount = this._hasShadows
       ? Math.ceil(this._appWidth / this._gridWidth / 2)
@@ -301,12 +302,17 @@ export abstract class BaseRenderer implements IRenderer {
   }
 
   private _calculateCellSize = () => {
-    const minDimension = this._app.renderer.height;
-    if (
-      minDimension <
-      idealCellSize * minVerticalCellCount * window.devicePixelRatio
-    ) {
-      return Math.floor(minDimension / minVerticalCellCount);
+    const minDimension = Math.min(
+      this._app.renderer.width,
+      this._app.renderer.height
+    );
+    const minCount =
+      this._app.renderer.height < this._app.renderer.width
+        ? minLandscapeCellCount
+        : minPortraitCellCount;
+
+    if (minDimension < idealCellSize * minCount * window.devicePixelRatio) {
+      return Math.floor(minDimension / minCount);
     }
     return Math.max(idealCellSize, Math.ceil(minDimension / maxCellCount));
   };

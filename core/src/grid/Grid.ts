@@ -13,7 +13,8 @@ export default class Grid implements IGrid {
   private _nextLinesToClear: number[];
   private _nextLineClearTime: number;
 
-  constructor(numColumns: number = 60, numRows: number = 16) {
+  constructor(numColumns: number = 10, numRows: number = 16) {
+    numColumns = Math.max(Math.floor(numColumns / 4), 1) * 4; // force % 4 columns for seamless pattern wrap
     this._cells = [];
     this._eventListeners = [];
     for (let r = 0; r < numRows; r++) {

@@ -69,7 +69,7 @@ export default class ClientApi implements IClientApi {
         worldType,
         player: {
           characterId: '487',
-          patternFilename: 'pattern_5.png',
+          patternFilename: 'pattern_3.png',
         },
       });
     } else if (params.has('url')) {

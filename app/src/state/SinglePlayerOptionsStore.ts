@@ -24,7 +24,7 @@ export const getSinglePlayerOptionsDefaultValues =
     numBots: 4,
     botReactionDelay: 15,
     botRandomReactionDelay: 25,
-    gridNumRows: 18,
+    gridNumRows: 16,
     gridNumColumns: 50,
     dayLengthSeconds: 20,
     spectate: false,

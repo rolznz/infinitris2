@@ -13,7 +13,7 @@ export default class Grid implements IGrid {
   private _nextLinesToClear: number[];
   private _nextLineClearTime: number;
 
-  constructor(numColumns: number = 60, numRows: number = 18) {
+  constructor(numColumns: number = 60, numRows: number = 16) {
     this._cells = [];
     this._eventListeners = [];
     for (let r = 0; r < numRows; r++) {

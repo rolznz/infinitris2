@@ -4,6 +4,17 @@ import ISimulation from '@models/ISimulation';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { fontFamily } from '@models/ui';
 
+type ScoreboardEntry = {
+  playerId: number;
+  nickname: string;
+  score: number;
+  placing: number;
+  isSpectating: boolean;
+  color: number;
+  numCaptures: number;
+  health: number;
+};
+
 const placingCharacters = [
   '\u2460',
   '\u2461',
@@ -33,6 +44,7 @@ export class Scoreboard {
   private _scoreboardContainer!: PIXI.Container;
   private _app: PIXI.Application;
   private _lastUpdate: number = 0;
+  private _lastScoreboardEntries?: ScoreboardEntry[];
   constructor(app: PIXI.Application) {
     this._app = app;
   }
@@ -62,7 +74,7 @@ export class Scoreboard {
     }
     this._lastUpdate = now;
     // TODO: ensure human player is on scoreboard
-    const playerScores = players.map((player) => ({
+    const scoreboardEntries: ScoreboardEntry[] = players.map((player) => ({
       playerId: player.id,
       nickname: player.nickname,
       score: player.score,
@@ -78,15 +90,15 @@ export class Scoreboard {
       health: player.health,
     }));
     if (simulation.settings.gameModeType === 'conquest') {
-      playerScores.sort((a, b) => b.numCaptures - a.numCaptures);
+      scoreboardEntries.sort((a, b) => b.numCaptures - a.numCaptures);
     } else {
-      playerScores.sort((a, b) => b.score - a.score);
+      scoreboardEntries.sort((a, b) => b.score - a.score);
     }
-    for (let i = 0; i < playerScores.length; i++) {
-      playerScores[i].placing = i + 1;
+    for (let i = 0; i < scoreboardEntries.length; i++) {
+      scoreboardEntries[i].placing = i + 1;
     }
     if (followingPlayer) {
-      const playerScoreIndex = playerScores.findIndex(
+      const playerScoreIndex = scoreboardEntries.findIndex(
         (score) => score.playerId === followingPlayer.id
       );
       if (playerScoreIndex > this._scoreboardTextLines.length - 1) {
@@ -95,49 +107,74 @@ export class Scoreboard {
         // (10 - 9)
         // 11 > 9
         // 11 - 9 = 2
-        playerScores.splice(
+        scoreboardEntries.splice(
           this._scoreboardTextLines.length - 1,
           playerScoreIndex - (this._scoreboardTextLines.length - 1)
         );
       }
     }
-    playerScores.splice(this._scoreboardTextLines.length);
+    scoreboardEntries.splice(this._scoreboardTextLines.length);
 
     const padding = this._app.renderer.width * 0.005;
     let widestText = 0;
     let textHeight = 0;
     for (let i = 0; i < this._scoreboardTextLines.length; i++) {
       const text = this._scoreboardTextLines[i];
-      if (i < playerScores.length) {
+      if (i < scoreboardEntries.length) {
         text.visible = true;
 
+        const scoreboardEntry = scoreboardEntries[i];
+
         let playerText = '';
-        if (!playerScores[i].isSpectating) {
+        if (!scoreboardEntry.isSpectating) {
           playerText +=
-            (playerScores[i].placing - 1 < placingCharacters.length
-              ? placingCharacters[playerScores[i].placing - 1]
-              : playerScores[i].placing) + '  ';
+            (scoreboardEntry.placing - 1 < placingCharacters.length
+              ? placingCharacters[scoreboardEntry.placing - 1]
+              : scoreboardEntry.placing) + '  ';
         }
 
-        playerText += playerScores[i].nickname;
-        playerText += playerScores[i].isSpectating ? ' (spectating)' : '';
-        if (!playerScores[i].isSpectating) {
+        playerText += scoreboardEntry.nickname;
+        playerText += scoreboardEntry.isSpectating ? ' (spectating)' : '';
+        if (!scoreboardEntry.isSpectating) {
           playerText +=
             simulation.settings.gameModeType === 'conquest'
-              ? `  ⦿ ${playerScores[i].numCaptures}`
-              : '  ' + playerScores[i].score;
+              ? `  ⦿ ${scoreboardEntry.numCaptures}`
+              : '  ' + scoreboardEntry.score;
         }
 
         text.text = playerText;
 
-        text.tint = playerScores[i].color;
+        (text.style as PIXI.TextStyle).fill = scoreboardEntry.color;
         text.x = padding;
         text.y = padding + i * text.height;
-        if (playerScores[i].playerId === followingPlayer?.id) {
+        if (
+          followingPlayer &&
+          scoreboardEntry.playerId === followingPlayer?.id
+        ) {
           (text.style as PIXI.TextStyle).fontWeight = '900';
+          const oldValue = this._lastScoreboardEntries?.[i];
+          if (oldValue) {
+            if (
+              oldValue.score < scoreboardEntry.score ||
+              oldValue.numCaptures < scoreboardEntry.numCaptures
+            ) {
+              (text.style as PIXI.TextStyle).stroke = '#07da63';
+              (text.style as PIXI.TextStyle).strokeThickness = 3;
+            } else if (
+              oldValue.score > scoreboardEntry.score ||
+              oldValue.numCaptures > scoreboardEntry.numCaptures
+            ) {
+              (text.style as PIXI.TextStyle).stroke = '#cc1100';
+              (text.style as PIXI.TextStyle).strokeThickness = 3;
+            } else {
+              (text.style as PIXI.TextStyle).strokeThickness = 0;
+            }
+          }
         } else {
           (text.style as PIXI.TextStyle).fontWeight = '300';
+          (text.style as PIXI.TextStyle).strokeThickness = 0;
         }
+
         widestText = Math.max(widestText, text.width);
         textHeight += text.height;
       } else {
@@ -149,6 +186,7 @@ export class Scoreboard {
       this._textBackground.width = widestText + padding * 2;
       this._textBackground.height = textHeight + padding * 2;
     }
+    this._lastScoreboardEntries = scoreboardEntries;
   }
 
   _createText(i: number): PIXI.Text {

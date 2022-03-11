@@ -20,7 +20,7 @@ import { GridFloor } from './GridFloor';
 import ControllablePlayer from '@src/ControllablePlayer';
 import { Scoreboard } from './Scoreboard';
 import { SpawnDelayIndicator } from './SpawnDelayIndicator';
-import { ScoreChangeIndicator } from './ScoreChangeIndicator';
+//import { ScoreChangeIndicator } from './ScoreChangeIndicator';
 import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import { IPlayer } from '@models/IPlayer';
@@ -117,7 +117,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _patternTextures: { [filename: string]: PIXI.Texture[] } = {};
   private _spawnDelayIndicator!: SpawnDelayIndicator;
   private _scoreboard!: Scoreboard;
-  private _scoreChangeIndicator!: ScoreChangeIndicator;
+  //private _scoreChangeIndicator!: ScoreChangeIndicator;
   private _rendererQuality: RendererQuality | undefined;
   private _towerIndicator!: TowerIndicator;
   private _lineClearingIndicator!: LineClearingIndicator;
@@ -176,7 +176,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this._scoreboard = new Scoreboard(this._app);
     this._spawnDelayIndicator = new SpawnDelayIndicator(this._app);
-    this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
+    //this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
 
     await new Promise((resolve) => this._app.loader.load(resolve));
 
@@ -384,7 +384,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this._spawnDelayIndicator.create();
     this._scoreboard.create();
-    this._scoreChangeIndicator.create();
+    //this._scoreChangeIndicator.create();
     this._placementHelperShadowCells = [];
 
     if (simulation.settings.gameModeType === 'conquest') {
@@ -675,7 +675,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       followingPlayer,
       this._simulation
     );
-    this._scoreChangeIndicator.update(followingPlayer);
+    //this._scoreChangeIndicator.update(followingPlayer);
     this._spawnDelayIndicator.update(this._simulation, followingPlayer);
 
     //console.log('Rendering', this._particles.length, 'particles');
@@ -1175,6 +1175,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   ) {
     const { graphics } = renderableObject;
     let { patternSprite } = renderableObject;
+    graphics.cacheAsBitmap = false;
     graphics.clear();
     if (isEmpty) {
       if (patternSprite) {
@@ -1211,7 +1212,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     // TODO: extract rendering of different behaviours
     // FIXME: use cell colour - cell colour and cell behaviour color don't have to be the same
     // e.g. non-empty red key cell
-    //graphics.cacheAsBitmap = true;
+
     graphics.beginFill(color);
 
     graphics.drawRect(0, 0, cellSize, cellSize);
@@ -1224,43 +1225,43 @@ export default class Infinitris2Renderer extends BaseRenderer {
       );
     };
     //graphics.
-    const borderSize = this._cellPadding * 2;
+    let borderSize = this._cellPadding * 3;
     const borderColor = PIXI.utils.string2hex(
       getBorderColor(PIXI.utils.hex2string(color))
     );
-    graphics.lineStyle(2, 0, 0.5);
-    graphics.beginFill(borderColor);
-    if (!hasConnection(1, 0)) {
-      graphics.drawRect(cellSize - borderSize, 0, borderSize, cellSize);
-    }
-    if (!hasConnection(-1, 0)) {
-      graphics.drawRect(0, 0, borderSize, cellSize);
-    }
-    if (!hasConnection(0, -1)) {
-      graphics.drawRect(0, 0, cellSize, borderSize);
-    }
-    if (!hasConnection(0, 1)) {
-      graphics.drawRect(0, cellSize - borderSize, cellSize, borderSize);
-    }
 
-    // corners
-    if (!hasConnection(-1, -1)) {
-      graphics.drawRect(0, 0, borderSize, borderSize);
+    // darker edges + black outline
+    for (let i = 0; i < 2; i++) {
+      graphics.beginFill(i === 0 ? borderColor : 0);
+      for (let x = -1; x <= 1; x++) {
+        for (let y = -1; y <= 1; y++) {
+          if (x === y && x === 0) {
+            continue;
+          }
+          if (!hasConnection(x, y)) {
+            if (x === 0 || y === 0) {
+              // edge
+              graphics.drawRect(
+                x > 0 ? cellSize - borderSize : 0,
+                y > 0 ? cellSize - borderSize : 0,
+                x !== 0 ? borderSize : cellSize,
+                y !== 0 ? borderSize : cellSize
+              );
+            } else {
+              // corner
+              graphics.drawRect(
+                x < 0 ? 0 : cellSize - borderSize,
+                y < 0 ? 0 : cellSize - borderSize,
+                borderSize,
+                borderSize
+              );
+            }
+          }
+        }
+      }
+      borderSize = Math.max(borderSize * 0.2, 1);
     }
-    if (!hasConnection(1, -1)) {
-      graphics.drawRect(cellSize - borderSize, 0, borderSize, borderSize);
-    }
-    if (!hasConnection(-1, 1)) {
-      graphics.drawRect(0, cellSize - borderSize, borderSize, borderSize);
-    }
-    if (!hasConnection(1, 1)) {
-      graphics.drawRect(
-        cellSize - borderSize,
-        cellSize - borderSize,
-        borderSize,
-        borderSize
-      );
-    }
+    graphics.cacheAsBitmap = true;
   }
 
   private _renderBlockPlacementShadow(block: IBlock) {

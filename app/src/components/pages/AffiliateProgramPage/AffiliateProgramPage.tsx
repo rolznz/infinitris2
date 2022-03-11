@@ -8,16 +8,12 @@ import { getAffiliatePath, IAffiliate } from 'infinitris2-models';
 import useAuthStore from '../../../state/AuthStore';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import { toast } from 'react-toastify';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
+import ShareIcon from '@mui/icons-material/Share';
 import { useUser } from '@/state/UserStore';
 import { Page } from '../../ui/Page';
 import { openLoginDialog } from '@/state/DialogStore';
 import { appName } from '@/utils/constants';
 import FlexBox from '../../ui/FlexBox';
-import MailIcon from '@mui/icons-material/Mail';
-import { ReactComponent as FacebookIcon } from '@/icons/facebook2.svg';
-
-import { RingIconButton } from '../../ui/RingIconButton';
 import { borderColorLight, boxShadows } from '@/theme/theme';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { AffiliatePageCharacter } from './AffiliatePageCharacter';
@@ -70,21 +66,29 @@ export default function AffiliateProgramPage() {
             variant="contained"
             onClick={() => {
               //console.log(affiliateLink);
-              copy(affiliateLink);
-              toast(
-                intl.formatMessage({
-                  defaultMessage: 'Link copied to clipboard',
-                  description:
-                    'Affiliate Link copied to clipboard toast message',
-                })
-              );
+              try {
+                navigator.share({
+                  title: appName,
+                  url: affiliateLink,
+                });
+              } catch (error) {
+                console.error('Failed to use native share', error);
+                copy(affiliateLink);
+                toast(
+                  intl.formatMessage({
+                    defaultMessage: 'Link copied to clipboard',
+                    description:
+                      'Affiliate Link copied to clipboard toast message',
+                  })
+                );
+              }
             }}
           >
-            <FileCopyIcon color="primary" />
+            <ShareIcon color="primary" />
             <Typography align="center" variant="body1">
               <FormattedMessage
-                defaultMessage="Copy to clipboard"
-                description="Affiliate Program page - copy affiliate link button"
+                defaultMessage="Share"
+                description="Affiliate Program page - share button text"
               />
             </Typography>
           </Button>

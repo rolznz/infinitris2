@@ -274,22 +274,8 @@ export class ConquestRenderer implements IGameModeRenderer {
               healthWidth * 0.2
             );
           }
-          if (player.health > 1) {
-            const extrahealth = Math.min(player.health - 1, 1);
-            graphics.beginFill(0x1260cc);
-            graphics.drawRect(
-              0,
-              0,
-              healthWidth * extrahealth,
-              healthWidth * 0.2
-            );
-          }
           graphics.endFill();
-          graphics.lineStyle(
-            healthWidth * 0.04,
-            player.health > 1 ? 0x00ffff : 0x000000,
-            0.3
-          );
+          graphics.lineStyle(healthWidth * 0.04, 0x000000, 0.3);
           graphics.drawRect(0, 0, healthWidth, healthWidth * 0.2);
         },
         () => {

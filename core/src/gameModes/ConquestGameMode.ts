@@ -147,7 +147,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   onBlockMoved(block: IBlock, dx: number, dy: number, dr: number): void {}
   onBlockDropped(block: IBlock): void {}
   onBlockDied(block: IBlock): void {
-    block.player.health = Math.max(block.player.health - 0.2, 0);
+    block.player.health = Math.max(block.player.health - 0.1, 0);
   }
   onBlockDestroyed(block: IBlock): void {}
   onLineClear(row: number): void {}
@@ -171,7 +171,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     for (const player of this._simulation.players) {
       player.removeBlock();
       player.isSpectating = false;
-      player.health = 1;
+      player.health = 0.5;
       player.score = 0;
       player.estimatedSpawnDelay = 0;
     }
@@ -191,7 +191,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       if (cell.player?.id != this._columnCaptures[c].playerId) {
         this._columnCaptures[c].playerId = cell.player?.id;
         if (cell.player) {
-          cell.player.health = Math.min(cell.player.health + 0.1, 2);
+          cell.player.health = Math.min(cell.player.health + 0.05, 1);
         }
         this._simulation.onGameModeEvent({
           type: 'conquest-columnChanged',

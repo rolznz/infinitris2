@@ -354,6 +354,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
 
   onLineClearCellReward(numRowsCleared: number) {
+    // TODO: find a better way to manage different reward types - simulation settings?
+    if (this._simulation.settings.gameModeType === 'conquest') {
+      return;
+    }
     this._score += numRowsCleared;
   }
 
@@ -391,6 +395,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
 
   private _modifyScoreFromBlockPlacement(block: IBlock, isMistake: boolean) {
+    // TODO: find a better way to manage different reward types - simulation settings?
     if (this._simulation.settings.gameModeType === 'conquest') {
       return;
     }

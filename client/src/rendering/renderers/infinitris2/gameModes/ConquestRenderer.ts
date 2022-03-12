@@ -117,12 +117,17 @@ export class ConquestRenderer implements IGameModeRenderer {
       if (renderablePlayerHealth) {
         if (player.block) {
           renderablePlayerHealth.container.visible = true;
+
+          const healthbarCentreX =
+            player.block.centreX * this._renderer.cellSize;
+          const healthbarY =
+            (player.block.topRow - 1) * this._renderer.cellSize;
+
           renderablePlayerHealth.container.x = this._renderer.getWrappedX(
-            player.block.centreX * this._renderer.cellSize -
+            healthbarCentreX -
               renderablePlayerHealth.children[0].renderableObject.width * 0.5
           );
-          renderablePlayerHealth.container.y =
-            (player.block.row - 1) * this._renderer.cellSize;
+          renderablePlayerHealth.container.y = healthbarY;
         } else {
           renderablePlayerHealth.container.visible = false;
         }
@@ -275,8 +280,12 @@ export class ConquestRenderer implements IGameModeRenderer {
             );
           }
           graphics.endFill();
-          graphics.lineStyle(healthWidth * 0.04, 0x000000, 0.3);
-          graphics.drawRect(0, 0, healthWidth, healthWidth * 0.2);
+          graphics.lineStyle(
+            Math.max(1, Math.floor(healthWidth * 0.04)),
+            0x000000,
+            0.3
+          );
+          graphics.drawRect(0, 0, healthWidth, Math.floor(healthWidth * 0.2));
         },
         () => {
           const graphics = new PIXI.Graphics();

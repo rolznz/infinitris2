@@ -280,10 +280,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
           blockContainer.block.children[0].renderableObject.cells[0].graphics
             .y +
           this.cellSize * 0.5; //(topCells[0].cell.row + 0.5) * cellSize;*/
-        const textCentreX = blockContainer.block.container.x; //block.centreX * cellSize;
-        const textY =
-          blockContainer.block.container.y -
-          (block.layout[0].length / 2) * this._cellSize; //block.topRow * cellSize - cellSize * 1;
+        const textCentreX = block.centreX * this._cellSize;
+        const textY = (block.topRow - 1) * this._cellSize;
         blockContainer.playerNameText.container.x = textCentreX;
         blockContainer.playerNameText.container.y = textY;
 
@@ -1020,13 +1018,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
           //stroke: '#000000',
           //strokeThickness: 7,
           fontFamily,
-          fontSize: 26,
+          fontSize: Math.ceil(this._cellSize * 0.75),
           dropShadow: true,
           dropShadowAngle: Math.PI / 2,
           dropShadowDistance: 1,
           dropShadowBlur: 2,
         });
-        text.cacheAsBitmap = true;
+        //text.cacheAsBitmap = true;
         text.anchor.set(0.5, 1);
         blockContainer.playerNameText.container.addChild(text);
         return text;
@@ -1175,7 +1173,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   ) {
     const { graphics } = renderableObject;
     let { patternSprite } = renderableObject;
-    graphics.cacheAsBitmap = false;
+    //graphics.cacheAsBitmap = false;
     graphics.clear();
     if (isEmpty) {
       if (patternSprite) {
@@ -1261,7 +1259,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
       borderSize = Math.max(borderSize * 0.2, 1);
     }
-    graphics.cacheAsBitmap = true;
+    //graphics.cacheAsBitmap = true;
   }
 
   private _renderBlockPlacementShadow(block: IBlock) {

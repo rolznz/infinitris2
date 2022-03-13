@@ -39,6 +39,9 @@ import { TowerIndicator } from '@src/rendering/renderers/infinitris2/TowerIndica
 import { LineClearingIndicator } from '@src/rendering/renderers/infinitris2/LineClearingIndicator';
 import { GameModeEvent } from '@models/GameModeEvent';
 
+const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
+const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
+
 const particleDivisions = 4;
 const numPatternDivisions = 4;
 
@@ -53,8 +56,17 @@ interface IBlockContainer {
       patternSprite: PIXI.Sprite | undefined;
     }[];
   }>;
+}
 
-  playerNameText: IRenderableEntity<PIXI.Text>;
+interface IPlayerContainer {
+  originalPlayer: IPlayer;
+  healthbar: IRenderableEntity<{
+    outer: PIXI.Sprite;
+    inner: PIXI.Sprite;
+    innerMask: PIXI.Sprite;
+  }>;
+  nicknameText: IRenderableEntity<PIXI.Text>;
+  container: PIXI.Container;
 }
 
 enum RenderCellType {
@@ -104,9 +116,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
   private _shadowGradientGraphics?: PIXI.Graphics;
 
-  // FIXME: blocks should have their own ids!
   private _blocks!: { [playerId: number]: IBlockContainer };
   private _cells!: { [cellId: number]: IRenderableCell };
+  private _players!: { [playerId: number]: IPlayerContainer };
 
   private _particles!: IParticle[];
   private _virtualKeyboardControls?: ControlSettings;
@@ -178,6 +190,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._spawnDelayIndicator = new SpawnDelayIndicator(this._app);
     //this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
 
+    this._app.loader.add(healthbarOuterUrl);
+    this._app.loader.add(healthbarInnerUrl);
+
     await new Promise((resolve) => this._app.loader.load(resolve));
 
     this._worldBackground.createImages();
@@ -229,6 +244,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     for (const player of this._simulation.players) {
       const blockContainer = this._blocks[player.id];
+      const playerContainer = this._players[player.id];
       if (blockContainer) {
         const moveRate = player.block?.isDropping ? 1 : 0.25;
         const rotateRate = 0.25;
@@ -265,25 +281,17 @@ export default class Infinitris2Renderer extends BaseRenderer {
           }
         });
 
-        /*for (const child of blockContainer.face.container.children) {
-          child.rotation =
-            blockContainer.block.children[0].renderableObject.container.rotation;
+        const textCentreX = this.getWrappedX(block.centreX * this._cellSize);
+        const textY = (block.topRow - 1.25) * this._cellSize;
+        playerContainer.container.x = textCentreX;
+        playerContainer.container.y = textY;
+
+        if (this._simulation!.settings.gameModeType === 'conquest') {
+          for (const child of playerContainer.healthbar.children) {
+            child.renderableObject.inner.transform.position.x =
+              -child.renderableObject.outer.width * (1 - player.health);
+          }
         }
-        blockContainer.face.container.x =
-          blockContainer.block.container.x +
-          blockContainer.block.children[0].renderableObject.cells[0].graphics
-            .x +
-          this.cellSize * 0.5;
-        //(topCells[0].cell.column + topCells.length / 2) * cellSize;
-        blockContainer.face.container.y =
-          blockContainer.block.container.y +
-          blockContainer.block.children[0].renderableObject.cells[0].graphics
-            .y +
-          this.cellSize * 0.5; //(topCells[0].cell.row + 0.5) * cellSize;*/
-        const textCentreX = block.centreX * this._cellSize;
-        const textY = (block.topRow - 1) * this._cellSize;
-        blockContainer.playerNameText.container.x = textCentreX;
-        blockContainer.playerNameText.container.y = textY;
 
         const followingPlayer = this._simulation?.followingPlayer;
         if (followingPlayer && block.player.id === followingPlayer.id) {
@@ -367,6 +375,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._particles = [];
     this._blocks = {};
     this._cells = {};
+    this._players = {};
     this._app.stage.removeChildren();
 
     this._worldBackground.addChildren();
@@ -426,21 +435,20 @@ export default class Infinitris2Renderer extends BaseRenderer {
    */
   onBlockCreated(block: IBlock) {
     this._createBlock(block);
+    const playerContainer = this._players[block.player.id];
+    if (playerContainer) {
+      playerContainer.container.visible = true;
+    }
   }
   private _createBlock(block: IBlock) {
     const blockContainer: IBlockContainer = {
       originalBlock: block,
-      playerNameText: {
-        container: new PIXI.Container(),
-        children: [],
-      },
       block: {
         container: new PIXI.Container(),
         children: [],
       },
     };
 
-    this._world.addChild(blockContainer.playerNameText.container);
     this._world.addChild(blockContainer.block.container);
 
     this._blocks[block.player.id] = blockContainer;
@@ -455,9 +463,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   /**
    * @inheritdoc
    */
-  onBlockMoved(block: IBlock) {
-    this._moveBlock(block);
-  }
+  onBlockMoved(block: IBlock) {}
 
   /**
    * @inheritdoc
@@ -490,6 +496,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
         shadow.children.forEach((child) => child.renderableObject.clear());
       });
     }
+    const playerContainer = this._players[block.player.id];
+    if (playerContainer) {
+      playerContainer.container.visible = false;
+    }
   }
 
   /**
@@ -505,6 +515,27 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   onPlayerCreated(player: IPlayer): void {
+    const playerContainer: IPlayerContainer = {
+      originalPlayer: player,
+      nicknameText: {
+        container: new PIXI.Container(),
+        children: [],
+      },
+      healthbar: {
+        container: new PIXI.Container(),
+        children: [],
+      },
+      container: new PIXI.Container(),
+    };
+    playerContainer.container.visible = false;
+
+    playerContainer.container.addChild(playerContainer.nicknameText.container);
+    playerContainer.container.addChild(playerContainer.healthbar.container);
+    this._world.addChild(playerContainer.container);
+
+    this._players[player.id] = playerContainer;
+    this._renderPlayer(player);
+
     if (player.characterId) {
       const faceUrl = this._getFaceUrl(player.characterId);
       if (!this._app.loader.resources[faceUrl]) {
@@ -545,7 +576,82 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
     }
   }
-  onPlayerDestroyed(player: IPlayer): void {}
+
+  _renderPlayer(player: IPlayer) {
+    if (!this._cellSize) {
+      return;
+    }
+    const playerContainer = this._players[player.id];
+    if (!playerContainer) {
+      return;
+    }
+    this.renderCopies(
+      playerContainer.nicknameText,
+      1,
+      (text, shadowIndexWithDirection) => {
+        const shadowX = shadowIndexWithDirection * this._gridWidth;
+        text.x = shadowX;
+      },
+      () => {
+        const text = new PIXI.Text(player.nickname, {
+          fill: PIXI.utils.hex2string(player.color),
+          align: 'center',
+          //stroke: '#000000',
+          //strokeThickness: 7,
+          fontFamily,
+          fontSize: Math.ceil(this._cellSize * 0.75),
+          dropShadow: true,
+          dropShadowAngle: Math.PI / 2,
+          dropShadowDistance: 1,
+          dropShadowBlur: 2,
+        });
+        //text.cacheAsBitmap = true;
+        text.anchor.set(0.5, 0);
+        playerContainer.nicknameText.container.addChild(text);
+        return text;
+      }
+    );
+    if (this._simulation!.settings.gameModeType === 'conquest') {
+      this.renderCopies(
+        playerContainer.healthbar,
+        1,
+        (pixiObject, shadowIndexWithDirection) => {
+          const shadowX = shadowIndexWithDirection * this._gridWidth;
+          for (const image of [
+            pixiObject.outer,
+            pixiObject.inner,
+            pixiObject.innerMask,
+          ]) {
+            image.x = shadowX;
+            image.anchor.set(0.5, 1);
+            image.scale.set(
+              (this._cellSize / pixiObject.outer.texture.width) * 2
+            );
+          }
+          pixiObject.inner.tint = player.color;
+        },
+        () => {
+          const outer: PIXI.Sprite = PIXI.Sprite.from(healthbarOuterUrl);
+          const inner: PIXI.Sprite = PIXI.Sprite.from(healthbarInnerUrl);
+          const innerMask: PIXI.Sprite = PIXI.Sprite.from(healthbarInnerUrl);
+          inner.mask = innerMask;
+
+          playerContainer.healthbar.container.addChild(inner, innerMask, outer);
+
+          return { outer, inner, innerMask };
+        }
+      );
+    }
+  }
+
+  onPlayerDestroyed(player: IPlayer): void {
+    const playerContainer = this._players[player.id];
+    if (!playerContainer) {
+      return;
+    }
+    this._world.removeChild(playerContainer.container);
+    delete this._players[player.id];
+  }
   onPlayerToggleChat(player: IPlayer): void {}
   onPlayerToggleSpectating() {}
 
@@ -632,7 +738,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!blockContainer) {
       return;
     }
-    this._world.removeChild(blockContainer.playerNameText.container);
 
     // remove everything except the face
     blockContainer.block.children.forEach((child) => {
@@ -815,6 +920,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     for (const block of Object.values(this._blocks)) {
       this._renderBlock(block.originalBlock);
     }
+    for (const player of Object.values(this._players)) {
+      this._renderPlayer(player.originalPlayer);
+    }
 
     if (this._shadowGradientGraphics) {
       this._shadowGradientGraphics.cacheAsBitmap = false;
@@ -891,6 +999,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
   };
 
   private _renderBlock(block: IBlock) {
+    if (!this._cellSize) {
+      return;
+    }
     const blockContainer: IBlockContainer = this._blocks[block.player.id];
     if (!blockContainer) {
       return;
@@ -1001,69 +1112,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
         block.player.patternFilename
       );
     });*/
-
-    this._moveBlock(block);
-
-    this.renderCopies(
-      blockContainer.playerNameText,
-      1,
-      (text, shadowIndexWithDirection) => {
-        const shadowX = shadowIndexWithDirection * this._gridWidth;
-        text.x = shadowX;
-      },
-      () => {
-        const text = new PIXI.Text(block.player.nickname, {
-          fill: PIXI.utils.hex2string(block.player.color),
-          align: 'center',
-          //stroke: '#000000',
-          //strokeThickness: 7,
-          fontFamily,
-          fontSize: Math.ceil(this._cellSize * 0.75),
-          dropShadow: true,
-          dropShadowAngle: Math.PI / 2,
-          dropShadowDistance: 1,
-          dropShadowBlur: 2,
-        });
-        //text.cacheAsBitmap = true;
-        text.anchor.set(0.5, 1);
-        blockContainer.playerNameText.container.addChild(text);
-        return text;
-      }
-    );
-  }
-
-  private _moveBlock(block: IBlock) {
-    const cellSize = this._cellSize;
-    const blockContainer: IBlockContainer = this._blocks[block.player.id];
-
-    /*let firstColumn = block.layout.length;
-    let lastColumn = 0;
-    for (let r = 0; r < block.layout.length; r++) {
-      for (let c = 0; c < block.layout[0].length; c++) {
-        if (block.layout[r][c]) {
-          firstColumn = Math.min(firstColumn, c);
-          lastColumn = Math.max(lastColumn, c);
-        }
-      }
-    }
-
-    blockContainer.cells.forEach((cell) => {
-      cell.container.x =
-        (cell.cell.column - Math.floor(block.width * 0.5)) * cellSize;
-      cell.container.y =
-        (cell.cell.row - Math.floor(block.layout.length * 0.5)) * cellSize;
-    });
-
-    const textCentreX = block.centreX * cellSize;
-    const textY = block.topRow * cellSize - cellSize * 1;
-    blockContainer.playerNameText.container.x = textCentreX;
-    blockContainer.playerNameText.container.y = textY;
-
-    const topCells = blockContainer.cells.filter(
-      (cell) =>
-        !blockContainer.cells.some((other) => other.cell.row < cell.cell.row)
-    );
-*/
   }
 
   private _renderParticle(particle: IParticle, color: number) {

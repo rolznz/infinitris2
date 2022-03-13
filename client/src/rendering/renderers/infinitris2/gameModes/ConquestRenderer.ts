@@ -19,21 +19,13 @@ interface IRenderableColumnCapture extends IRenderableEntity<PIXI.Graphics> {
   column: number;
 }
 
-interface IRenderablePlayerHealthBar extends IRenderableEntity<PIXI.Graphics> {
-  playerId: number;
-}
-
 export class ConquestRenderer implements IGameModeRenderer {
   private _columnCaptures!: { [cellId: number]: IRenderableColumnCapture };
-  private _playerHealthBars!: {
-    [playerId: number]: IRenderablePlayerHealthBar;
-  };
   private _lastGameModeStep: number;
   private _renderer: BaseRenderer;
 
   constructor(renderer: BaseRenderer) {
     this._columnCaptures = {};
-    this._playerHealthBars = {};
     this._lastGameModeStep = 0;
     this._renderer = renderer;
     this._renderer.simulation!.addEventListener(this);
@@ -51,11 +43,13 @@ export class ConquestRenderer implements IGameModeRenderer {
   onBlockDropped(block: IBlock): void {}
   onBlockDied(block: IBlock): void {}
   onBlockDestroyed(block: IBlock): void {
-    this.rerender(); // TODO: optimize - only re-render block columns
+    // TODO: should not have to re-render all column captures - only re-render ones that changed
+    //this.rerender();
   }
   onClearLines(row: number[]): void {}
   onLinesCleared() {
-    this.rerender();
+    // TODO: should not have to re-render all column captures - only re-render ones that changed
+    //this.rerender();
   }
   onLineClearing(row: number): void {}
   onLineClear(row: number): void {}
@@ -93,7 +87,6 @@ export class ConquestRenderer implements IGameModeRenderer {
       .gameMode as ConquestGameMode;
 
     this._renderColumnCaptures(conquestGameMode.columnCaptures);
-    this._renderPlayerHealthBars();
   }
 
   onSimulationNextRound() {
@@ -108,31 +101,27 @@ export class ConquestRenderer implements IGameModeRenderer {
     const conquestGameMode = this._renderer.simulation
       .gameMode as ConquestGameMode;
 
-    /*if (++this._lastGameModeStep > 100) {
-      this._lastGameModeStep = 0;
-      this.rerender();
-    }*/
-    for (let player of this._renderer.simulation.players) {
-      const renderablePlayerHealth = this._playerHealthBars[player.id];
-      if (renderablePlayerHealth) {
-        if (player.block) {
-          renderablePlayerHealth.container.visible = true;
+    // for (let player of this._renderer.simulation.players) {
+    //   const renderablePlayerHealth = this._playerHealthBars[player.id];
+    //   if (renderablePlayerHealth) {
+    //     if (player.block) {
+    //       renderablePlayerHealth.container.visible = true;
 
-          const healthbarCentreX =
-            player.block.centreX * this._renderer.cellSize;
-          const healthbarY =
-            (player.block.topRow - 1) * this._renderer.cellSize;
+    //       const healthbarCentreX =
+    //         player.block.centreX * this._renderer.cellSize;
+    //       const healthbarY =
+    //         (player.block.topRow - 1.75) * this._renderer.cellSize;
 
-          renderablePlayerHealth.container.x = this._renderer.getWrappedX(
-            healthbarCentreX -
-              renderablePlayerHealth.children[0].renderableObject.width * 0.5
-          );
-          renderablePlayerHealth.container.y = healthbarY;
-        } else {
-          renderablePlayerHealth.container.visible = false;
-        }
-      }
-    }
+    //       renderablePlayerHealth.container.x = this._renderer.getWrappedX(
+    //         healthbarCentreX -
+    //           renderablePlayerHealth.children[0].renderableObject.outer.width * 0.5
+    //       );
+    //       renderablePlayerHealth.container.y = healthbarY;
+    //     } else {
+    //       renderablePlayerHealth.container.visible = false;
+    //     }
+    //   }
+    // }
 
     for (let i = 0; i < conquestGameMode.columnCaptures.length; i++) {
       const renderableColumnCapture = this._columnCaptures[i];
@@ -164,13 +153,8 @@ export class ConquestRenderer implements IGameModeRenderer {
   }
 
   onPlayerDestroyed(player: IPlayer) {
-    if (this._playerHealthBars[player.id]) {
-      this._renderer.world.removeChild(
-        this._playerHealthBars[player.id].container
-      );
-      delete this._playerHealthBars[player.id];
-    }
-    this.rerender();
+    // TODO: should not have to re-render all column captures - only re-render ones that changed
+    //this.rerender();
   }
 
   private _renderColumnCaptures(columnCaptures: IColumnCapture[]) {
@@ -241,7 +225,7 @@ export class ConquestRenderer implements IGameModeRenderer {
     }
   }
 
-  private _renderPlayerHealthBars() {
+  /*private _renderPlayerHealthBars() {
     if (!this._renderer.simulation) {
       return;
     }
@@ -294,5 +278,5 @@ export class ConquestRenderer implements IGameModeRenderer {
         }
       );
     }
-  }
+  }*/
 }

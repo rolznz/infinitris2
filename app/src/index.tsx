@@ -19,3 +19,6 @@ ReactDOM.render(
   document.getElementById('root')
 );
 //window.addEventListener('selectstart', function(e){ e.preventDefault(); });
+document.onfullscreenerror = (event) => {
+  console.error(event);
+};

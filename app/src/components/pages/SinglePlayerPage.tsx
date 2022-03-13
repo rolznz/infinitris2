@@ -4,7 +4,6 @@ import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientO
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
 import { LocalUser } from '@/state/LocalUserStore';
-import { launchFullscreen } from '@/utils/launchFullscreen';
 import {
   GameModeType,
   getCharacterPath,
@@ -15,6 +14,7 @@ import {
   WorldType,
   IPlayer,
   RoundLength,
+  ISimulation,
 } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
@@ -77,7 +77,6 @@ export default function SinglePlayerPage() {
 
   useEffect(() => {
     if (!requiresRedirect && launchSinglePlayer && !hasLaunched && hasLoaded) {
-      launchFullscreen();
       setLaunched(true);
       launchSinglePlayer({
         player: {
@@ -109,7 +108,9 @@ export default function SinglePlayerPage() {
         },
         // TODO: support multiple listeners, extract SFX listener
         listener: {
-          onSimulationInit() {},
+          onSimulationInit(simulation: ISimulation) {
+            useIngameStore.getState().setSimulation(simulation);
+          },
           onSimulationStep() {},
           onSimulationNextRound() {},
 

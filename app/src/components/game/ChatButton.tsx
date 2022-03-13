@@ -1,17 +1,12 @@
 import { Box, IconButton, SvgIcon } from '@mui/material';
-
 import React from 'react';
-import FlexBox from './FlexBox';
-import { ReactComponent as LeftIcon } from '@/icons/left.svg';
+import { ReactComponent as ChatIcon } from '@/icons/chat.svg';
 import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
-import { useLocation } from 'react-router-dom';
 import { colors } from '@/theme/theme';
+import FlexBox from '@/components/ui/FlexBox';
+import useIngameStore from '@/state/IngameStore';
 
-export default function BackButton() {
-  const location = useLocation();
-  if (location.pathname === '/') {
-    return null;
-  }
+export default function ChatButton() {
   return (
     <Box
       zIndex="hamburgerButton"
@@ -19,7 +14,7 @@ export default function BackButton() {
         opacity: 1,
         position: 'fixed',
         top: 0,
-        left: 0,
+        right: 0,
         pointerEvents: 'none',
       }}
     >
@@ -27,18 +22,23 @@ export default function BackButton() {
         <IconButton
           style={{}}
           onClick={() => {
-            window.history.back();
             playSound(SoundKey.click);
+            const followingPlayer =
+              useIngameStore.getState().simulation?.followingPlayer;
+            if (followingPlayer && followingPlayer.isHuman) {
+              followingPlayer.toggleChat(followingPlayer.isChatting);
+            }
           }}
           size="large"
         >
           <SvgIcon
+            fontSize="large"
             sx={{
               filter: 'drop-shadow(0 0 0.75rem white)',
               color: colors.white,
             }}
           >
-            <LeftIcon />
+            <ChatIcon />
           </SvgIcon>
         </IconButton>
       </FlexBox>

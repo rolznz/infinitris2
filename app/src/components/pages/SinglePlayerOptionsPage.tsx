@@ -32,6 +32,7 @@ import {
   SoundKey,
   TrackNumberValues,
 } from '@/components/sound/MusicPlayer';
+import { launchFullscreen } from '@/utils/launchFullscreen';
 
 const schema = yup
   .object({
@@ -91,6 +92,7 @@ export function SinglePlayerOptionsPage() {
 
   const onSubmit = (data: SinglePlayerOptionsFormData) => {
     playSound(SoundKey.click);
+    launchFullscreen();
     setFormData(data);
     const searchParams = new URLSearchParams();
     Object.entries(data).forEach((entry) => {

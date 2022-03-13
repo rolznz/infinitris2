@@ -3,7 +3,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import React from 'react';
 import Routes from '@/models/Routes';
 import Link from '@mui/material/Link';
-import { Button, SvgIcon, Typography } from '@mui/material';
+import { SvgIcon, Typography } from '@mui/material';
 import { borderColorLight, borderRadiuses, boxShadows } from '@/theme/theme';
 import SignalCellular4BarIcon from '@mui/icons-material/SignalCellular4Bar';
 import SignalCellular3BarIcon from '@mui/icons-material/SignalCellular3Bar';
@@ -15,6 +15,8 @@ import PersonIcon from '@mui/icons-material/Person';
 import FlexBox from '@/components/ui/FlexBox';
 import { DocumentSnapshot } from 'firebase/firestore';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
+import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import { launchFullscreen } from '@/utils/launchFullscreen';
 //import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 
 export const MAX_PING = 10000;
@@ -70,6 +72,10 @@ export default function RoomCard({ large, ping, room, server }: RoomCardProps) {
       key={room.id}
       component={RouterLink}
       to={link}
+      onClick={() => {
+        playSound(SoundKey.click);
+        launchFullscreen();
+      }}
       underline="none"
       sx={{
         width: large ? '100%' : !isLandscape ? '50%' : undefined,

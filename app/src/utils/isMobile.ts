@@ -26,4 +26,6 @@ export default function isMobile() {
 }
 
 export const requiresPwa = () =>
-  isMobile() && !window.matchMedia('(display-mode: standalone)').matches;
+  isMobile() &&
+  !window.matchMedia('(display-mode: standalone)').matches &&
+  !window.location.href.startsWith('http://localhost');

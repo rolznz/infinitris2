@@ -33,7 +33,7 @@ export interface IPlayer {
 
   set isSpectating(isSpectating: boolean);
   get isSpectating(): boolean;
-  toggleChat(cancel: boolean): void;
+  toggleChat(cancel?: boolean): void;
 
   get isChatting(): boolean;
 

@@ -1,3 +1,4 @@
+import ChatButton from '@/components/game/ChatButton';
 import { IngameChat } from '@/components/game/IngameChat';
 import { MessageLog } from '@/components/game/MessageLog';
 import FlexBox from '@/components/ui/FlexBox';
@@ -13,6 +14,7 @@ export function GameUI() {
       height="100%"
       zIndex={1}
     >
+      <ChatButton />
       <IngameChat />
       <MessageLog />
     </FlexBox>

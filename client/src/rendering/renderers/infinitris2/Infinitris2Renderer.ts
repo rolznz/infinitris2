@@ -62,8 +62,7 @@ interface IPlayerContainer {
   originalPlayer: IPlayer;
   healthbar: IRenderableEntity<{
     outer: PIXI.Sprite;
-    inner: PIXI.Sprite;
-    innerMask: PIXI.Sprite;
+    inner: PIXI.TilingSprite;
   }>;
   nicknameText: IRenderableEntity<PIXI.Text>;
   container: PIXI.Container;
@@ -138,6 +137,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _oldOverflowStyle: string;
   private _displayFrameRate = false;
   private _gameModeRenderer: IGameModeRenderer | undefined;
+  private _healthbarOuterTexture!: PIXI.Texture;
+  private _healthbarInnerTexture!: PIXI.Texture;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -192,6 +193,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this._app.loader.add(healthbarOuterUrl);
     this._app.loader.add(healthbarInnerUrl);
+
+    this._healthbarOuterTexture = PIXI.Texture.from(healthbarOuterUrl);
+    this._healthbarInnerTexture = PIXI.Texture.from(healthbarInnerUrl);
 
     await new Promise((resolve) => this._app.loader.load(resolve));
 
@@ -288,8 +292,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
         if (this._simulation!.settings.gameModeType === 'conquest') {
           for (const child of playerContainer.healthbar.children) {
-            child.renderableObject.inner.transform.position.x =
-              -child.renderableObject.outer.width * (1 - player.health);
+            child.renderableObject.inner.width =
+              child.renderableObject.outer.width * player.health;
           }
         }
 
@@ -617,28 +621,28 @@ export default class Infinitris2Renderer extends BaseRenderer {
         1,
         (pixiObject, shadowIndexWithDirection) => {
           const shadowX = shadowIndexWithDirection * this._gridWidth;
-          for (const image of [
-            pixiObject.outer,
-            pixiObject.inner,
-            pixiObject.innerMask,
-          ]) {
-            image.x = shadowX;
-            image.anchor.set(0.5, 1);
-            image.scale.set(
-              (this._cellSize / pixiObject.outer.texture.width) * 2
-            );
-          }
+
+          pixiObject.outer.scale.set(
+            (this._cellSize / pixiObject.outer.texture.width) * 2
+          );
           pixiObject.inner.tint = player.color;
+          pixiObject.inner.tileScale.set(
+            (this._cellSize / pixiObject.outer.texture.width) * 2
+          );
+          pixiObject.inner.width = pixiObject.outer.width;
+          pixiObject.inner.height = pixiObject.outer.height - 1; //fix rounding issue
+
+          for (const image of [pixiObject.outer, pixiObject.inner]) {
+            image.x = shadowX - pixiObject.outer.width * 0.5;
+            image.anchor.set(0, 0.75);
+          }
         },
         () => {
-          const outer: PIXI.Sprite = PIXI.Sprite.from(healthbarOuterUrl);
-          const inner: PIXI.Sprite = PIXI.Sprite.from(healthbarInnerUrl);
-          const innerMask: PIXI.Sprite = PIXI.Sprite.from(healthbarInnerUrl);
-          inner.mask = innerMask;
+          const outer = PIXI.Sprite.from(this._healthbarOuterTexture);
+          const inner = new PIXI.TilingSprite(this._healthbarInnerTexture);
+          playerContainer.healthbar.container.addChild(inner, outer);
 
-          playerContainer.healthbar.container.addChild(inner, innerMask, outer);
-
-          return { outer, inner, innerMask };
+          return { outer, inner };
         }
       );
     }

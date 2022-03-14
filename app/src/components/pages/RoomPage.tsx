@@ -26,6 +26,7 @@ import {
   ServerMessageType,
   stringToHex,
   IServerMessage,
+  reservedPlayerIds,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser } from '../../state/UserStore';
@@ -67,6 +68,13 @@ const socketEventListener: IClientSocketEventListener = {
           message: chatMessage.message,
           nickname: player.nickname,
           color: hexToString(player.color),
+        });
+      } else if (chatMessage.playerId === reservedPlayerIds.SERVER) {
+        useIngameStore.getState().addToMessageLog({
+          createdTime: Date.now(),
+          message: chatMessage.message,
+          nickname: '[SERVER]',
+          color: '#ff0000',
         });
       }
     }

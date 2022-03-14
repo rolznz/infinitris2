@@ -37,6 +37,7 @@ import { IServerMessage } from '@models/networking/server/IServerMessage';
 import { IServerNextRoundEvent } from '@core/networking/server/IServerNextRoundEvent';
 import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
 import { GameModeEvent } from '@models/GameModeEvent';
+import { reservedPlayerIds } from '@models/networking/reservedPlayerIds';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -47,7 +48,7 @@ export default class Room implements ISimulationEventListener {
     gameModeType: GameModeType
   ) {
     this._sendMessage = sendMessage;
-    this._simulation = new Simulation(new Grid(50, 18), {
+    this._simulation = new Simulation(new Grid(50, 16), {
       gameModeType,
     });
     this._simulation.addEventListener(this);
@@ -65,10 +66,12 @@ export default class Room implements ISimulationEventListener {
   /**
    * Creates a player and adds it to the room and the room's simulation.
    *
-   * @param playerId id of new player
+   * @param socketId id of the player's socket
    * @param playerInfo
    */
-  addPlayer(playerId: number, playerInfo?: Partial<NetworkPlayerInfo>) {
+  addPlayer(socketId: number, playerInfo?: Partial<NetworkPlayerInfo>) {
+    const playerId = this._simulation.getFreePlayerId();
+    console.log('Client ' + socketId + ' assigned player ID ' + playerId);
     let freeColor = 0;
     let colorIndex = 0;
     if (
@@ -98,6 +101,7 @@ export default class Room implements ISimulationEventListener {
     }
 
     const newPlayer = new NetworkPlayer(
+      socketId,
       this._simulation,
       playerId,
       playerNickname,
@@ -153,7 +157,10 @@ export default class Room implements ISimulationEventListener {
       },
     };
 
-    this._sendMessage(joinRoomResponse, newPlayer.id);
+    this._sendMessageToPlayers(joinRoomResponse, newPlayer.id);
+    this._sendServerChatMessage(
+      'Player ' + newPlayer.nickname + ' joined the game'
+    );
 
     this._simulation.startInterval();
   }
@@ -161,19 +168,30 @@ export default class Room implements ISimulationEventListener {
   /**
    * Removes a player from the room and the room's simulation.
    *
-   * @param playerId the id of the player to remove.
+   * @param socketId the id of the player's socket.
    */
-  removePlayer(playerId: number) {
-    this._simulation.removePlayer(playerId);
+  removePlayer(socketId: number) {
+    const player = this._simulation.getNetworkPlayerBySocketId(socketId);
+    if (!player) {
+      console.error('No player found matching socket: ' + socketId);
+      return;
+    }
+    this._simulation.removePlayer(player.id);
   }
 
   /**
    * Triggered when a message is received from a client.
    *
-   * @param playerId the id of the player.
+   * @param socketId the id of the player's socket.
    * @param message the message the client sent.
    */
-  onClientMessage(playerId: number, message: IClientMessage) {
+  onClientMessage(socketId: number, message: IClientMessage) {
+    const player = this._simulation.getNetworkPlayerBySocketId(socketId);
+    const playerId = player?.id;
+    if (playerId === undefined) {
+      console.error('No player ID found matching socket: ');
+      return;
+    }
     //console.log('Room received message from player ' + playerId + ':', message);
     //console.log('Received client message', message);
     if (message.type === ClientMessageType.BLOCK_MOVED) {
@@ -223,7 +241,7 @@ export default class Room implements ISimulationEventListener {
             }
 
             // FIXME: socket ids should not have to match player IDs
-            const botId = this._simulation.getFreePlayerId(100000);
+            const botId = this._simulation.getFreePlayerId();
             const botNickname = 'Bot ' + botId;
             const botColor =
               freeColors[Math.floor(Math.random() * (freeColors.length - 1))];
@@ -363,7 +381,7 @@ export default class Room implements ISimulationEventListener {
       type: ServerMessageType.NEXT_SPAWN,
       time: block.player.estimatedSpawnDelay,
     };
-    this._sendMessage(nextSpawnEvent, block.player.id);
+    this._sendMessageToPlayers(nextSpawnEvent, block.player.id);
   }
   onCellBehaviourChanged(
     cell: ICell,
@@ -401,6 +419,7 @@ export default class Room implements ISimulationEventListener {
       this._simulation.grid.reset();
       this._simulation.stopInterval();
     }
+    this._sendServerChatMessage('Player ' + player.nickname + ' left the game');
   }
   onPlayerToggleChat(player: IPlayer): void {
     console.error('TODO: mark player as chatting/not chatting');
@@ -418,8 +437,8 @@ export default class Room implements ISimulationEventListener {
   onGameModeEvent(event: GameModeEvent): void {}
 
   private _sendMessageToAllPlayers(message: ServerMessage) {
-    const playerIds: number[] = this._simulation.getPlayerIds();
-    this._sendMessage(message, ...playerIds);
+    const playerIds: number[] = this._simulation.getNetworkPlayerIds();
+    this._sendMessageToPlayers(message, ...playerIds);
   }
 
   private _sendMessageToAllPlayersExcept(
@@ -427,8 +446,29 @@ export default class Room implements ISimulationEventListener {
     playerId: number
   ) {
     const playerIds = this._simulation
-      .getPlayerIds()
+      .getNetworkPlayerIds()
       .filter((otherPlayerId) => otherPlayerId != playerId);
-    this._sendMessage(message, ...playerIds);
+    this._sendMessageToPlayers(message, ...playerIds);
+  }
+
+  private _sendServerChatMessage(message: string) {
+    this._sendMessageToAllPlayers({
+      message,
+      type: ServerMessageType.CHAT,
+      playerId: reservedPlayerIds.SERVER,
+    } as IServerChatMessage);
+  }
+
+  private _sendMessageToPlayers(
+    message: ServerMessage,
+    ...playerIds: number[]
+  ) {
+    for (const playerId of playerIds) {
+      const socketId =
+        this._simulation.getPlayer<NetworkPlayer>(playerId)?.socketId;
+      if (socketId !== undefined) {
+        this._sendMessage(message, socketId);
+      }
+    }
   }
 }

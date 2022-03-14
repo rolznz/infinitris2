@@ -157,6 +157,7 @@ export default class NetworkClient
             );
           } else {
             const otherPlayer = new NetworkPlayer(
+              -1,
               this._simulation,
               playerInfo.id,
               playerInfo.nickname,
@@ -204,6 +205,7 @@ export default class NetworkClient
       if (message.type === ServerMessageType.PLAYER_CREATED) {
         const playerInfo = (message as IServerPlayerCreatedEvent).playerInfo;
         const newNetworkPlayer = new NetworkPlayer(
+          -1,
           this._simulation,
           playerInfo.id,
           playerInfo.nickname,

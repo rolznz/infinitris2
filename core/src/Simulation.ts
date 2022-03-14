@@ -14,6 +14,7 @@ import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { InfinityGameMode } from '@core/gameModes/InfinityGameMode';
 import { FpsCounter } from '@core/FpsCounter';
 import { GameModeEvent } from '@models/GameModeEvent';
+import NetworkPlayer from '@core/player/NetworkPlayer';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -96,6 +97,19 @@ export default class Simulation implements ISimulation {
     return Object.values(this._players);
   }
 
+  get networkPlayers(): NetworkPlayer[] {
+    return this.players.filter(
+      (player) => player.isNetworked
+    ) as NetworkPlayer[];
+  }
+
+  getNetworkPlayerBySocketId(socketId: number): NetworkPlayer | undefined {
+    return this.players.find(
+      (player) =>
+        player.isNetworked && (player as NetworkPlayer).socketId === socketId
+    ) as NetworkPlayer | undefined;
+  }
+
   get settings(): SimulationSettings {
     return this._settings;
   }
@@ -112,7 +126,8 @@ export default class Simulation implements ISimulation {
     return this._settings.gameModeType === 'conquest';
   }
 
-  getFreePlayerId(startFromId: number = 0): number {
+  getFreePlayerId(): number {
+    let startFromId = 0;
     while (true) {
       if (!this.players.some((player) => player.id === startFromId)) {
         break;
@@ -122,11 +137,10 @@ export default class Simulation implements ISimulation {
     return startFromId;
   }
 
-  getPlayer(playerId: number): IPlayer {
-    return this._players[playerId];
+  getPlayer<T extends IPlayer>(playerId: number): T {
+    return this._players[playerId] as T;
   }
 
-  // TODO: move to renderer
   isFollowingPlayerId(playerId: number) {
     return playerId === this._followingPlayer?.id;
   }
@@ -213,6 +227,13 @@ export default class Simulation implements ISimulation {
    */
   getPlayerIds(): number[] {
     return Object.values(this._players).map((player) => player.id);
+  }
+
+  /**
+   * Returns a list of ids for all networked players within the simulation.
+   */
+  getNetworkPlayerIds(): number[] {
+    return Object.values(this.networkPlayers).map((player) => player.id);
   }
 
   startNextRound(): void {

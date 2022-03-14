@@ -3,7 +3,9 @@ import ISimulation from '@models/ISimulation';
 import Player from './Player';
 
 export default class NetworkPlayer extends Player {
+  private _socketId: number;
   constructor(
+    socketId: number,
     simulation: ISimulation,
     playerId: number,
     nickname: string | undefined,
@@ -21,9 +23,14 @@ export default class NetworkPlayer extends Player {
       patternFilename,
       characterId
     );
+    this._socketId = socketId;
   }
 
   get isNetworked() {
     return true;
+  }
+
+  get socketId(): number {
+    return this._socketId;
   }
 }

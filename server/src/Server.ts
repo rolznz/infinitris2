@@ -51,7 +51,7 @@ export default class Server implements IServerSocketEventListener {
   onClientMessage(socket: IClientSocket, message: IClientMessage) {
     console.log(
       'Received message from client ' + socket.id + ':',
-      message + ' room: ' + socket.roomId
+      message.type + ' room: ' + socket.roomId
     );
     try {
       if (socket.roomId === undefined) {

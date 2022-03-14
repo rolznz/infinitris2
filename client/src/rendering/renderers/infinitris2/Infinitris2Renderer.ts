@@ -175,6 +175,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
   async create() {
     console.log('Infinitris 2 Renderer');
 
+    // wait for font to load
+    document.fonts.load('1em ' + fontFamily);
+    while (!document.fonts.check('1em ' + fontFamily)) {
+      console.log('Waiting for font');
+      await new Promise((resolve) => setTimeout(resolve, 200));
+    }
+
     this._worldBackground = new WorldBackground(
       this._app,
       this._camera,

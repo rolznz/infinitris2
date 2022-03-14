@@ -1,1 +1,1 @@
-export const fontFamily = 'Comfortaa';
+export const fontFamily = 'Luckiest Guy';

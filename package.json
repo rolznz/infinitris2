@@ -10,7 +10,8 @@
       "swr-firestore",
       "client",
       "server",
-      "core"
+      "core",
+      "svg-to-png"
     ]
   },
   "scripts": {

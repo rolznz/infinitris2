@@ -16558,6 +16558,22 @@ fsevents@^1.2.7:
   languageName: unknown
   linkType: soft
 
+"infinitris2-svg-to-png@workspace:svg-to-png":
+  version: 0.0.0-use.local
+  resolution: "infinitris2-svg-to-png@workspace:svg-to-png"
+  dependencies:
+    "@types/node": ^16.10.1
+    "@types/sharp": ^0.29.2
+    "@typescript-eslint/eslint-plugin": ^4.22.0
+    "@typescript-eslint/parser": ^4.22.0
+    eslint: ^7.6.0
+    eslint-plugin-import: ^2.22.0
+    sharp: ^0.29.1
+    ts-node: ^10.2.1
+    typescript: ^4.3.5
+  languageName: unknown
+  linkType: soft
+
 "inflight@npm:^1.0.4":
   version: 1.0.6
   resolution: "inflight@npm:1.0.6"

@@ -348,7 +348,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._gridFloor.update(
         !this._hasScrollY
           ? this._gridLines.y + this._gridHeight
-          : this._world.y + this._gridHeight
+          : this._world.y + this._gridHeight,
+        this._camera.x
       );
     }
 
@@ -360,7 +361,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         ? cell.cell.behaviour.alpha
         : cell.cell.player
         ? 1
-        : 0.75; // distinguish dead cells // TODO: find a better way to do this
+        : 0.5; // distinguish dead cells // TODO: find a better way to do this
     });
   };
 

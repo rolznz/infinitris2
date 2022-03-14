@@ -38,13 +38,13 @@ export class TowerIndicator {
 
   render(cellSize: number) {
     this._graphics.clear();
-    this._graphics.beginFill(0xff0000, 0.1);
+    /*this._graphics.beginFill(0xff0000, 0.1);
     this._graphics.drawRect(
       0,
       0,
       this._app.renderer.width,
       this._app.renderer.height
-    );
+    );*/
     this._graphics.beginFill(0xff0000, 0.4);
     const dashHeight = cellSize * 0.1;
     const dashWidth = cellSize * 0.3;

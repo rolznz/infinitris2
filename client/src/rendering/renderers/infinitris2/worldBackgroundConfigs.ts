@@ -8,18 +8,21 @@ export type WorldBackgroundLayerConfig = {
   offsetX?: number;
   offsetY: number;
   minQuality?: RendererQuality; // optional layers that will only show when the quality is high enough. Unset = required on all layers
+  widthMultiplier?: number;
 };
 
 export type WorldBackgroundConfig = {
   layers: WorldBackgroundLayerConfig[];
   worldType: WorldType;
   floorColor: number;
+  hasFloorImage?: boolean;
 };
 
 export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
   {
     worldType: 'grass',
     floorColor: 0x2066a7,
+    hasFloorImage: true,
     layers: [
       {
         filename: 'theme_grass_0.png',
@@ -29,8 +32,8 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
       },
       {
         filename: 'theme_grass_1.png',
-        speedY: 0.15,
-        speedX: 0.15,
+        speedY: 0.1,
+        speedX: 0.1,
         offsetY: 0,
       },
       {
@@ -38,7 +41,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedY: 0.2,
         speedX: 0.2,
         offsetX: 0.1,
-        offsetY: -0.25,
+        offsetY: 0,
         minQuality: 'high',
       },
       {
@@ -52,37 +55,45 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         filename: 'theme_grass_4.png',
         speedY: 0.3,
         speedX: 0.3,
-        offsetY: 0,
+        offsetX: -0.2,
+        offsetY: -0.6,
         minQuality: 'medium',
+        widthMultiplier: 1.2,
       },
       {
         filename: 'theme_grass_5.png',
-        speedY: 0.35,
-        speedX: 0.35,
-        offsetY: 0.15,
-        offsetX: 0.35,
+        speedY: 0.4,
+        speedX: 0.4,
+        offsetY: 0.35,
         minQuality: 'medium',
       },
       {
         filename: 'theme_grass_6.png',
-        speedY: 0.4,
-        speedX: 0.4,
-        offsetY: 0.45,
+        speedY: 0.5,
+        speedX: 0.5,
+        offsetY: 0.2,
       },
       {
         filename: 'theme_grass_7.png',
-        speedY: 0.45,
-        speedX: 0.45,
-        offsetY: 0.55,
+        speedY: 0.6,
+        speedX: 0.6,
+        offsetY: 0.4,
         minQuality: 'high',
       },
       {
         filename: 'theme_grass_8.png',
-        speedY: 0.5,
-        speedX: 0.5,
-        offsetY: 0.5,
+        speedY: 0.7,
+        speedX: 0.7,
+        offsetY: 0.75,
         minQuality: 'high',
       },
+      /*{
+        filename: 'theme_grass_9.png',
+        speedY: 0.8,
+        speedX: 0.8,
+        offsetY: 0.5,
+        minQuality: 'high',
+      },*/
     ],
   },
   {

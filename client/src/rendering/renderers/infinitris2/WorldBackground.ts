@@ -86,7 +86,7 @@ export class WorldBackground {
           this._app.renderer.width / sprite.texture.width,
           this._app.renderer.height / sprite.texture.height
           //1
-        )
+        ) * (this._worldConfig.layers[i].widthMultiplier || 1)
       );
       //console.log(sprite.tileScale);
       sprite.width = Math.floor(sprite.texture.width * sprite.tileScale.x);
@@ -102,7 +102,7 @@ export class WorldBackground {
       const portraitOffsetMultiplierY =
         1 /
         Math.max(
-          (this._app.renderer.height * 0.8) / this._app.renderer.width,
+          (this._app.renderer.height * 0.6) / this._app.renderer.width,
           1
         );
       const portraitOffsetY =

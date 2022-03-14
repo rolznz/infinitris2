@@ -193,11 +193,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this._app.loader.add(healthbarOuterUrl);
     this._app.loader.add(healthbarInnerUrl);
+    await new Promise((resolve) => this._app.loader.load(resolve));
 
     this._healthbarOuterTexture = PIXI.Texture.from(healthbarOuterUrl);
     this._healthbarInnerTexture = PIXI.Texture.from(healthbarInnerUrl);
-
-    await new Promise((resolve) => this._app.loader.load(resolve));
 
     this._worldBackground.createImages();
     this._gridFloor.createImages();
@@ -357,7 +356,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
       if (cell.cell.behaviour.requiresRerender) {
         this._renderCell(cell.cell);
       }
-      cell.container.alpha = cell.cell.isEmpty ? cell.cell.behaviour.alpha : 1;
+      cell.container.alpha = cell.cell.isEmpty
+        ? cell.cell.behaviour.alpha
+        : cell.cell.player
+        ? 1
+        : 0.75; // distinguish dead cells // TODO: find a better way to do this
     });
   };
 

@@ -127,8 +127,8 @@ export default class NetworkClient
           joinResponseData.simulation.gameModeState
         );
         this._simulation.addEventListener(this._renderer, this);
-        if (this._launchOptions?.listener) {
-          this._simulation.addEventListener(this._launchOptions.listener);
+        if (this._launchOptions?.listeners) {
+          this._simulation.addEventListener(...this._launchOptions.listeners);
         }
         this._simulation.init();
         this._simulation.currentRoundStartTime =

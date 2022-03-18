@@ -10,14 +10,15 @@ import { useEffect } from 'react';
 import usePrevious from 'react-use/lib/usePrevious';
 import useLoaderStore from '@/state/LoaderStore';
 import { firstTimeAnimationDelaySeconds } from '@/components/pages/HomePage/homePageConstants';
+import shallow from 'zustand/shallow';
 
 export default function HamburgerMenuButton() {
   const [isOpen, setIsOpen] = useState(false);
   const wasOpen = usePrevious(isOpen);
-  const [isLoading, delayButtonVisibility] = useLoaderStore((store) => [
-    !store.hasFinished,
-    store.delayButtonVisibility,
-  ]);
+  const [isLoading, delayButtonVisibility] = useLoaderStore(
+    (store) => [!store.hasFinished, store.delayButtonVisibility],
+    shallow
+  );
   const [hasAnimated, setHasAnimated] = useState(
     window.location.pathname !== '/' || !delayButtonVisibility
   );

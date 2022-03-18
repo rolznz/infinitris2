@@ -29,7 +29,7 @@ export default class Simulation implements ISimulation {
   private _players: { [playerId: number]: IPlayer };
   private _followingPlayer?: IPlayer;
   private _grid: Grid;
-  private _eventListeners: ISimulationEventListener[];
+  private _eventListeners: Partial<ISimulationEventListener>[];
   private _stepInterval?: ReturnType<typeof setTimeout>;
   private _settings: SimulationSettings;
   private _runningTime: number;
@@ -148,7 +148,7 @@ export default class Simulation implements ISimulation {
   /**
    * Add one or more listeners to listen to events broadcasted by this simulation.
    */
-  addEventListener(...eventListeners: ISimulationEventListener[]) {
+  addEventListener(...eventListeners: Partial<ISimulationEventListener>[]) {
     this._eventListeners.push(...eventListeners);
   }
 
@@ -156,7 +156,9 @@ export default class Simulation implements ISimulation {
    * Prepares a simulation.
    */
   init() {
-    this._eventListeners.forEach((listener) => listener.onSimulationInit(this));
+    this._eventListeners.forEach((listener) =>
+      listener.onSimulationInit?.(this)
+    );
   }
 
   /**
@@ -239,7 +241,7 @@ export default class Simulation implements ISimulation {
   startNextRound(): void {
     this._currentRoundStartTime = Date.now();
     this._eventListeners.forEach((listener) =>
-      listener.onSimulationNextRound(this)
+      listener.onSimulationNextRound?.(this)
     );
   }
 
@@ -247,7 +249,9 @@ export default class Simulation implements ISimulation {
    * @inheritdoc
    */
   onBlockCreated(block: IBlock) {
-    this._eventListeners.forEach((listener) => listener.onBlockCreated(block));
+    this._eventListeners.forEach((listener) =>
+      listener.onBlockCreated?.(block)
+    );
   }
 
   /**
@@ -255,7 +259,7 @@ export default class Simulation implements ISimulation {
    */
   onBlockCreateFailed(block: IBlock) {
     this._eventListeners.forEach((listener) =>
-      listener.onBlockCreateFailed(block)
+      listener.onBlockCreateFailed?.(block)
     );
   }
 
@@ -264,7 +268,7 @@ export default class Simulation implements ISimulation {
    */
   onBlockMoved(block: IBlock, dx: number, dy: number, dr: number) {
     this._eventListeners.forEach((listener) =>
-      listener.onBlockMoved(block, dx, dy, dr)
+      listener.onBlockMoved?.(block, dx, dy, dr)
     );
   }
 
@@ -272,14 +276,16 @@ export default class Simulation implements ISimulation {
    * @inheritdoc
    */
   onBlockDied(block: IBlock) {
-    this._eventListeners.forEach((listener) => listener.onBlockDied(block));
+    this._eventListeners.forEach((listener) => listener.onBlockDied?.(block));
   }
 
   /**
    * @inheritdoc
    */
   onBlockDropped(block: IBlock) {
-    this._eventListeners.forEach((listener) => listener.onBlockDropped(block));
+    this._eventListeners.forEach((listener) =>
+      listener.onBlockDropped?.(block)
+    );
   }
 
   /**
@@ -287,7 +293,7 @@ export default class Simulation implements ISimulation {
    */
   onBlockDestroyed(block: IBlock) {
     this._eventListeners.forEach((listener) =>
-      listener.onBlockDestroyed(block)
+      listener.onBlockDestroyed?.(block)
     );
   }
 
@@ -295,7 +301,7 @@ export default class Simulation implements ISimulation {
    * @inheritdoc
    */
   onBlockPlaced(block: IBlock) {
-    this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
+    this._eventListeners.forEach((listener) => listener.onBlockPlaced?.(block));
     this._grid.checkLineClears(
       block.cells
         .map((cell) => cell.row)
@@ -308,7 +314,7 @@ export default class Simulation implements ISimulation {
    */
   onPlayerCreated(player: IPlayer) {
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerCreated(player)
+      listener.onPlayerCreated?.(player)
     );
   }
 
@@ -317,7 +323,7 @@ export default class Simulation implements ISimulation {
    */
   onPlayerDestroyed(player: IPlayer) {
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerDestroyed(player)
+      listener.onPlayerDestroyed?.(player)
     );
   }
 
@@ -326,7 +332,7 @@ export default class Simulation implements ISimulation {
    */
   onPlayerToggleChat(player: IPlayer, cancel: boolean) {
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerToggleChat(player, cancel)
+      listener.onPlayerToggleChat?.(player, cancel)
     );
   }
 
@@ -338,7 +344,7 @@ export default class Simulation implements ISimulation {
       this._grid.removePlayer(player);
     }
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerToggleSpectating(player)
+      listener.onPlayerToggleSpectating?.(player)
     );
   }
 
@@ -347,7 +353,7 @@ export default class Simulation implements ISimulation {
    */
   onPlayerScoreChanged(player: IPlayer, amount: number) {
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerScoreChanged(player, amount)
+      listener.onPlayerScoreChanged?.(player, amount)
     );
   }
   /**
@@ -355,45 +361,47 @@ export default class Simulation implements ISimulation {
    */
   onPlayerHealthChanged(player: IPlayer, amount: number) {
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerHealthChanged(player, amount)
+      listener.onPlayerHealthChanged?.(player, amount)
     );
   }
 
   onGameModeEvent(event: GameModeEvent) {
-    this._eventListeners.forEach((listener) => listener.onGameModeEvent(event));
+    this._eventListeners.forEach((listener) =>
+      listener.onGameModeEvent?.(event)
+    );
   }
 
   /**
    * @inheritdoc
    */
   onClearLines(rows: number[]) {
-    this._eventListeners.forEach((listener) => listener.onClearLines(rows));
+    this._eventListeners.forEach((listener) => listener.onClearLines?.(rows));
   }
   /**
    * @inheritdoc
    */
   onLinesCleared(rows: number[]): void {
-    this._eventListeners.forEach((listener) => listener.onLinesCleared(rows));
+    this._eventListeners.forEach((listener) => listener.onLinesCleared?.(rows));
   }
   /**
    * @inheritdoc
    */
   onLineClearing(row: number) {
-    this._eventListeners.forEach((listener) => listener.onLineClearing(row));
+    this._eventListeners.forEach((listener) => listener.onLineClearing?.(row));
   }
 
   /**
    * @inheritdoc
    */
   onLineClear(row: number) {
-    this._eventListeners.forEach((listener) => listener.onLineClear(row));
+    this._eventListeners.forEach((listener) => listener.onLineClear?.(row));
   }
 
   /**
    * @inheritdoc
    */
   onGridReset(grid: IGrid): void {
-    this._eventListeners.forEach((listener) => listener.onGridReset(grid));
+    this._eventListeners.forEach((listener) => listener.onGridReset?.(grid));
   }
 
   /**
@@ -401,7 +409,7 @@ export default class Simulation implements ISimulation {
    */
   onCellBehaviourChanged(cell: ICell, previousBehaviour: ICellBehaviour) {
     this._eventListeners.forEach((listener) =>
-      listener.onCellBehaviourChanged(cell, previousBehaviour)
+      listener.onCellBehaviourChanged?.(cell, previousBehaviour)
     );
   }
   /**
@@ -409,7 +417,7 @@ export default class Simulation implements ISimulation {
    */
   onCellIsEmptyChanged(cell: ICell) {
     this._eventListeners.forEach((listener) =>
-      listener.onCellIsEmptyChanged(cell)
+      listener.onCellIsEmptyChanged?.(cell)
     );
   }
 
@@ -436,7 +444,9 @@ export default class Simulation implements ISimulation {
     this._grid.step(this._isNetworkClient);
     this._gameMode.step();
     this._runningTime += FRAME_LENGTH;
-    this._eventListeners.forEach((listener) => listener.onSimulationStep(this));
+    this._eventListeners.forEach((listener) =>
+      listener.onSimulationStep?.(this)
+    );
   }
 
   private _updatePlayer = (player: IPlayer) => {

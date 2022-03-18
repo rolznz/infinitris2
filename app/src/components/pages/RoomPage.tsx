@@ -39,6 +39,10 @@ import { GameUI } from '@/components/game/GameUI';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { LocalUser } from '@/state/LocalUserStore';
 import useLoaderStore from '@/state/LoaderStore';
+import { listeners } from 'process';
+import { sfxListener } from '@/game/listeners/sfxListener';
+import { leaderboardListener } from '@/game/listeners/leaderboardListener';
+import shallow from 'zustand/shallow';
 
 interface RoomPageRouteParams {
   id: string;
@@ -91,14 +95,17 @@ export default function RoomPage() {
     setDisconnected,
     hasLaunched,
     setLaunched,
-  ] = useRoomStore((store) => [
-    store.connected,
-    store.setConnected,
-    store.disconnected,
-    store.setDisconnected,
-    store.hasLaunched,
-    store.setLaunched,
-  ]);
+  ] = useRoomStore(
+    (store) => [
+      store.connected,
+      store.setConnected,
+      store.disconnected,
+      store.setDisconnected,
+      store.hasLaunched,
+      store.setLaunched,
+    ],
+    shallow
+  );
   const { id } = useParams<RoomPageRouteParams>();
 
   const { data: room } = useDocument<IRoom>(id ? getRoomPath(id) : null);
@@ -125,6 +132,7 @@ export default function RoomPage() {
 
   useReleaseClientOnExitPage();
 
+  // FIXME: multiple listeners
   useEffect(() => {
     if (
       //requiresRedirect ||
@@ -152,78 +160,31 @@ export default function RoomPage() {
         nickname,
       },
       roomId: room.data()!.roomId,
-      listener: {
-        onSimulationInit(simulation: ISimulation) {
-          useIngameStore.getState().setSimulation(simulation);
-        },
-        onSimulationStep() {},
-        onSimulationNextRound() {},
-
-        onBlockCreated(block: IBlock) {
-          if (block.player.isHuman) {
-            playSound(SoundKey.spawn);
-          }
-        },
-        onBlockCreateFailed() {},
-
-        onBlockPlaced(block: IBlock) {
-          if (block.player.isHuman) {
-            playSound(SoundKey.place);
-          }
-        },
-        onBlockDied(block: IBlock) {
-          if (block.player.isHuman) {
-            playSound(SoundKey.death);
-          }
-        },
-        onBlockMoved(block: IBlock, dx: number, dy: number, dr: number) {
-          if (block.player.isHuman && !block.isDropping) {
-            if (dr !== 0) {
-              playSound(SoundKey.rotate);
-            } else if (dx !== 0 || dy !== 0) {
-              playSound(SoundKey.move);
-            }
-          }
-        },
-        onBlockDropped(block: IBlock) {
-          if (block.player.isHuman) {
-            playSound(SoundKey.drop);
-          }
-        },
-        onBlockDestroyed() {},
-        /*onPlayerCreated(player: IPlayer) {
-          useIngameStore.getState().setPlayer(player);
-        },*/
-        onPlayerCreated() {},
-        onPlayerDestroyed() {},
-        onPlayerToggleSpectating() {},
-        onPlayerToggleChat(player: IPlayer, cancel: boolean) {
-          if (player.isHuman) {
-            if (!cancel && useIngameStore.getState().isChatOpen) {
-              const message = useIngameStore.getState().chatMessage?.trim();
-              if (message?.length) {
-                const chatMessage: IClientChatMessage = {
-                  message,
-                  type: ClientMessageType.CHAT,
-                };
-                useRoomStore.getState().socket!.sendMessage(chatMessage);
+      listeners: [
+        sfxListener,
+        leaderboardListener,
+        {
+          onSimulationInit(simulation: ISimulation) {
+            useIngameStore.getState().setSimulation(simulation);
+          },
+          onPlayerToggleChat(player: IPlayer, cancel: boolean) {
+            if (player.isHuman) {
+              if (!cancel && useIngameStore.getState().isChatOpen) {
+                const message = useIngameStore.getState().chatMessage?.trim();
+                if (message?.length) {
+                  const chatMessage: IClientChatMessage = {
+                    message,
+                    type: ClientMessageType.CHAT,
+                  };
+                  useRoomStore.getState().socket!.sendMessage(chatMessage);
+                }
+                useIngameStore.getState().setChatMessage('');
               }
-              useIngameStore.getState().setChatMessage('');
+              useIngameStore.getState().setChatOpen(player.isChatting);
             }
-            useIngameStore.getState().setChatOpen(player.isChatting);
-          }
+          },
         },
-        onLineClear() {},
-        onClearLines() {},
-        onLinesCleared() {},
-        onLineClearing() {},
-        onCellBehaviourChanged() {},
-        onCellIsEmptyChanged() {},
-        onGridReset() {},
-        onGameModeEvent() {},
-        onPlayerHealthChanged() {},
-        onPlayerScoreChanged() {},
-      },
+      ],
     });
   }, [
     disconnected,

@@ -35,6 +35,8 @@ export default interface ISimulation
   getPlayer(playerId: number): IPlayer;
   step(): void;
   startNextRound(): void;
-  addEventListener(...eventListeners: ISimulationEventListener[]): void;
+  addEventListener(
+    ...eventListeners: Partial<ISimulationEventListener>[]
+  ): void;
   onGameModeEvent(event: GameModeEvent): void;
 }

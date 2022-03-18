@@ -121,7 +121,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
             style={{
               opacity: loaderStore.stepsCompleted < loaderStore.steps ? 1 : 0,
               transition: 'opacity 1s',
-              marginTop: '30px',
+              marginTop: '50px',
             }}
             alignItems="flex-start"
           >

@@ -127,7 +127,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _gridFloor!: GridFloor;
   private _patternTextures: { [filename: string]: PIXI.Texture[] } = {};
   private _spawnDelayIndicator!: SpawnDelayIndicator;
-  private _scoreboard!: Scoreboard;
+  private _scoreboard: Scoreboard | undefined;
   //private _scoreChangeIndicator!: ScoreChangeIndicator;
   private _rendererQuality: RendererQuality | undefined;
   private _towerIndicator!: TowerIndicator;
@@ -139,19 +139,22 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _gameModeRenderer: IGameModeRenderer | undefined;
   private _healthbarOuterTexture!: PIXI.Texture;
   private _healthbarInnerTexture!: PIXI.Texture;
+  private _useFallbackUI: boolean;
 
   constructor(
     clientApiConfig: ClientApiConfig,
     preferredInputMethod: InputMethod = 'keyboard',
     teachControls: boolean = false,
     rendererQuality?: RendererQuality,
-    worldType: WorldType = 'grass'
+    worldType: WorldType = 'grass',
+    useFallbackUI = false
   ) {
     super(clientApiConfig);
     this._preferredInputMethod = preferredInputMethod;
     this._teachControls = teachControls;
     this._rendererQuality = rendererQuality;
     this._worldType = worldType;
+    this._useFallbackUI = useFallbackUI;
 
     this._oldOverflowStyle = document.body.style.overflow;
 
@@ -194,7 +197,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._lineClearingIndicator = new LineClearingIndicator(this._app);
     //this._app.loader.add(faceUrl);
 
-    this._scoreboard = new Scoreboard(this._app);
     this._spawnDelayIndicator = new SpawnDelayIndicator(this._app);
     //this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
 
@@ -405,7 +407,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._towerIndicator.create();
 
     this._spawnDelayIndicator.create();
-    this._scoreboard.create();
+    // TODO: support chat as well
+    if (this._useFallbackUI) {
+      this._scoreboard = new Scoreboard(this._app);
+      this._scoreboard.create();
+    }
     //this._scoreChangeIndicator.create();
     this._placementHelperShadowCells = [];
 
@@ -788,7 +794,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     const followingPlayer = this._simulation.followingPlayer;
-    this._scoreboard.update(
+    this._scoreboard?.update(
       this._simulation.players,
       followingPlayer,
       this._simulation

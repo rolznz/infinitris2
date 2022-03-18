@@ -32,8 +32,8 @@ export function ProfilePageCharacterCard() {
     >
       <FlexBox
         position="absolute"
-        top={borderRadiuses.base / 2}
-        right={borderRadiuses.base / 2}
+        top={borderRadiuses.sm}
+        right={borderRadiuses.sm}
       >
         <Link component={RouterLink} underline="none" to={Routes.market}>
           <FilledIcon

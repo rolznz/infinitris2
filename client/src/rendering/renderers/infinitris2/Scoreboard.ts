@@ -11,7 +11,6 @@ type ScoreboardEntry = {
   placing: number;
   isSpectating: boolean;
   color: number;
-  numCaptures: number;
   health: number;
 };
 
@@ -81,19 +80,9 @@ export class Scoreboard {
       placing: 0,
       isSpectating: player.isSpectating,
       color: player.color,
-      numCaptures:
-        simulation.settings.gameModeType === 'conquest'
-          ? (simulation.gameMode as ConquestGameMode).columnCaptures.filter(
-              (c) => c.playerId === player.id
-            ).length
-          : 0,
       health: player.health,
     }));
-    if (simulation.settings.gameModeType === 'conquest') {
-      scoreboardEntries.sort((a, b) => b.numCaptures - a.numCaptures);
-    } else {
-      scoreboardEntries.sort((a, b) => b.score - a.score);
-    }
+    scoreboardEntries.sort((a, b) => b.score - a.score);
     for (let i = 0; i < scoreboardEntries.length; i++) {
       scoreboardEntries[i].placing = i + 1;
     }
@@ -138,7 +127,7 @@ export class Scoreboard {
         if (!scoreboardEntry.isSpectating) {
           playerText +=
             simulation.settings.gameModeType === 'conquest'
-              ? `  ⦿ ${scoreboardEntry.numCaptures}`
+              ? `  ⦿ ${scoreboardEntry.score}`
               : '  ' + scoreboardEntry.score;
         }
 
@@ -151,19 +140,13 @@ export class Scoreboard {
           followingPlayer &&
           scoreboardEntry.playerId === followingPlayer?.id
         ) {
-          (text.style as PIXI.TextStyle).fontWeight = '900';
+          //(text.style as PIXI.TextStyle).fontWeight = '900';
           const oldValue = this._lastScoreboardEntries?.[i];
           if (oldValue) {
-            if (
-              oldValue.score < scoreboardEntry.score ||
-              oldValue.numCaptures < scoreboardEntry.numCaptures
-            ) {
+            if (oldValue.score < scoreboardEntry.score) {
               (text.style as PIXI.TextStyle).stroke = '#07da63';
               (text.style as PIXI.TextStyle).strokeThickness = 3;
-            } else if (
-              oldValue.score > scoreboardEntry.score ||
-              oldValue.numCaptures > scoreboardEntry.numCaptures
-            ) {
+            } else if (oldValue.score > scoreboardEntry.score) {
               (text.style as PIXI.TextStyle).stroke = '#cc1100';
               (text.style as PIXI.TextStyle).strokeThickness = 3;
             } else {

@@ -20,6 +20,8 @@ import useSearchParam from 'react-use/lib/useSearchParam';
 import { useDocument } from 'swr-firestore';
 import { IPlayer } from 'infinitris2-models';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
+import { sfxListener } from '@/game/listeners/sfxListener';
+import { leaderboardListener } from '@/game/listeners/leaderboardListener';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -85,14 +87,10 @@ export default function ChallengePage() {
     if (challenge && !requiresRedirect && launchChallenge && !hasLaunched) {
       setLaunched(true);
 
-      const simulationEventListener: ISimulationEventListener = {
+      const simulationEventListener: Partial<ISimulationEventListener> = {
         onSimulationInit(simulation: ISimulation) {
           setSimulation(simulation);
         },
-        onSimulationStep() {},
-        onSimulationNextRound() {},
-
-        onBlockCreated() {},
         onBlockCreateFailed() {
           setCheckChallengeStatus(true);
         },
@@ -103,28 +101,15 @@ export default function ChallengePage() {
         onBlockDied() {
           setCheckChallengeStatus(true);
         },
-        onBlockMoved() {},
-        onBlockDropped() {},
-        onBlockDestroyed() {},
-        onPlayerCreated() {},
-        onPlayerDestroyed() {},
-        onPlayerToggleChat() {},
-        onPlayerToggleSpectating() {},
-        onLineClear() {},
-        onLineClearing() {},
-        onClearLines() {},
-        onCellBehaviourChanged() {},
-        onCellIsEmptyChanged() {},
-        onGridReset() {},
-        onGameModeEvent() {},
-        onLinesCleared() {},
-        onPlayerHealthChanged() {},
-        onPlayerScoreChanged() {},
       };
 
       setChallengeClient(
         launchChallenge(challenge, {
-          listener: simulationEventListener,
+          listeners: [
+            sfxListener,
+            leaderboardListener,
+            simulationEventListener,
+          ],
           preferredInputMethod,
           controls_keyboard,
           player: player as IPlayer, // FIXME: use a different interface

@@ -33,6 +33,7 @@ import {
   TrackNumberValues,
 } from '@/components/sound/MusicPlayer';
 import { launchFullscreen } from '@/utils/launchFullscreen';
+import shallow from 'zustand/shallow';
 
 const schema = yup
   .object({
@@ -70,7 +71,8 @@ export function SinglePlayerOptionsPage() {
   const intl = useIntl();
   const history = useHistory();
   const [formData, setFormData, resetFormData] = useSinglePlayerOptionsStore(
-    (store) => [store.formData, store.setFormData, store.reset]
+    (store) => [store.formData, store.setFormData, store.reset],
+    shallow
   );
   const {
     control,

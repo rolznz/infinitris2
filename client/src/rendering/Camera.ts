@@ -14,10 +14,10 @@ export default class Camera {
   }
 
   get x(): number {
-    return this._x;
+    return Math.round(this._x);
   }
   get y(): number {
-    return this._y;
+    return Math.round(this._y);
   }
 
   bump(x: number, y: number) {

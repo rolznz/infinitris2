@@ -13,16 +13,17 @@ import FlexBox from '../FlexBox';
 import { useHistory } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import { borderColorDark } from '@/theme/theme';
+import shallow from 'zustand/shallow';
 
 export function DialogManager() {
   const [prevDialogType, setPrevDialogType] = React.useState<
     DialogType | undefined
   >(undefined);
   const history = useHistory();
-  const [dialogType, close] = useDialogStore((dialogStore) => [
-    dialogStore.dialogType,
-    dialogStore.close,
-  ]);
+  const [dialogType, close] = useDialogStore(
+    (dialogStore) => [dialogStore.dialogType, dialogStore.close],
+    shallow
+  );
 
   React.useEffect(() => {
     if (dialogType) {

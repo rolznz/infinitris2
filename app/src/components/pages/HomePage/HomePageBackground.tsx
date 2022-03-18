@@ -30,6 +30,7 @@ import useLoaderStore from '@/state/LoaderStore';
 import useDarkMode from '@/components/hooks/useDarkMode';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
 import { zIndexes } from '@/theme/theme';
+import shallow from 'zustand/shallow';
 
 export const homePageBackgroundTransitionSeconds = 5;
 
@@ -41,10 +42,10 @@ const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
   const isShortScreen = useMediaQuery(
     `(max-height:${isLandscape ? 400 : 600}px)`
   );
-  const [isLoaded, delayButtonVisibility] = useLoaderStore((store) => [
-    store.hasFinished,
-    store.delayButtonVisibility,
-  ]);
+  const [isLoaded, delayButtonVisibility] = useLoaderStore(
+    (store) => [store.hasFinished, store.delayButtonVisibility],
+    shallow
+  );
 
   return (
     <FlexBox

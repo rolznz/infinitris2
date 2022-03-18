@@ -67,6 +67,7 @@ export default class ClientApi implements IClientApi {
         rendererType,
         simulationSettings,
         worldType,
+        useFallbackUI: true,
         player: {
           characterId: '487',
           patternFilename: 'pattern_3.png',
@@ -103,34 +104,36 @@ export default class ClientApi implements IClientApi {
         throw new Error('Could not find challenge matching ID: ' + challengeId);
       }
       this.launchChallenge(challenge, {
-        listener: {
-          onSimulationInit: (simulation: ISimulation) => {
-            simulation.startInterval();
+        listeners: [
+          {
+            onSimulationInit: (simulation: ISimulation) => {
+              simulation.startInterval();
+            },
+            onSimulationStep() {},
+            onSimulationNextRound() {},
+            onBlockCreated() {},
+            onBlockCreateFailed() {},
+            onBlockMoved() {},
+            onBlockDestroyed() {},
+            onBlockDied() {},
+            onBlockDropped() {},
+            onBlockPlaced() {},
+            onPlayerCreated() {},
+            onPlayerDestroyed() {},
+            onPlayerToggleChat() {},
+            onPlayerToggleSpectating() {},
+            onPlayerHealthChanged() {},
+            onPlayerScoreChanged() {},
+            onGameModeEvent() {},
+            onLineClear() {},
+            onLineClearing() {},
+            onClearLines() {},
+            onLinesCleared() {},
+            onCellBehaviourChanged() {},
+            onCellIsEmptyChanged() {},
+            onGridReset() {},
           },
-          onSimulationStep() {},
-          onSimulationNextRound() {},
-          onBlockCreated() {},
-          onBlockCreateFailed() {},
-          onBlockMoved() {},
-          onBlockDestroyed() {},
-          onBlockDied() {},
-          onBlockDropped() {},
-          onBlockPlaced() {},
-          onPlayerCreated() {},
-          onPlayerDestroyed() {},
-          onPlayerToggleChat() {},
-          onPlayerToggleSpectating() {},
-          onPlayerHealthChanged() {},
-          onPlayerScoreChanged() {},
-          onGameModeEvent() {},
-          onLineClear() {},
-          onLineClearing() {},
-          onClearLines() {},
-          onLinesCleared() {},
-          onCellBehaviourChanged() {},
-          onCellIsEmptyChanged() {},
-          onGridReset() {},
-        },
+        ],
         preferredInputMethod,
         controls_keyboard: controls,
       });

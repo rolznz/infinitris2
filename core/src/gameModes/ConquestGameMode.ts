@@ -199,6 +199,14 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         });
       }
     }
+    const activePlayers = this._simulation.players.filter(
+      (player) => !player.isSpectating
+    );
+    for (const player of activePlayers) {
+      player.score = this._columnCaptures.filter(
+        (c) => c.playerId === player.id
+      ).length;
+    }
   }
 
   onPlayerScoreChanged(player: IPlayer, amount: number): void {}

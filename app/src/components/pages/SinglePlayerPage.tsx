@@ -1,6 +1,8 @@
 import { GameUI } from '@/components/game/GameUI';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
+import { leaderboardListener } from '@/game/listeners/leaderboardListener';
+import { sfxListener } from '@/game/listeners/sfxListener';
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
 import { LocalUser } from '@/state/LocalUserStore';
@@ -106,82 +108,33 @@ export default function SinglePlayerPage() {
           gameModeType,
           roundLength,
         },
-        // TODO: support multiple listeners, extract SFX listener
-        listener: {
-          onSimulationInit(simulation: ISimulation) {
-            useIngameStore.getState().setSimulation(simulation);
-          },
-          onSimulationStep() {},
-          onSimulationNextRound() {},
+        listeners: [
+          sfxListener,
+          leaderboardListener,
+          {
+            onSimulationInit(simulation: ISimulation) {
+              useIngameStore.getState().setSimulation(simulation);
+            },
+            onPlayerToggleChat(player: IPlayer, cancel: boolean) {
+              if (player.isHuman) {
+                if (!cancel && useIngameStore.getState().isChatOpen) {
+                  const message = useIngameStore.getState().chatMessage?.trim();
+                  if (message?.length) {
+                    useIngameStore.getState().addToMessageLog({
+                      createdTime: Date.now(),
+                      message,
+                      nickname: player.nickname,
+                      color: hexToString(player.color),
+                    });
+                  }
 
-          onBlockCreated(block: IBlock) {
-            if (block.player.isHuman) {
-              playSound(SoundKey.spawn);
-            }
-          },
-          onBlockCreateFailed() {},
-
-          onBlockPlaced(block: IBlock) {
-            if (block.player.isHuman) {
-              playSound(SoundKey.place);
-            }
-          },
-          onBlockDied(block: IBlock) {
-            if (block.player.isHuman) {
-              playSound(SoundKey.death);
-            }
-          },
-          onBlockMoved(block: IBlock, dx: number, dy: number, dr: number) {
-            if (block.player.isHuman && !block.isDropping) {
-              if (dr !== 0) {
-                console.log('Move: ', dx, dy, dr);
-                playSound(SoundKey.rotate);
-              } else if (dx !== 0 || dy !== 0) {
-                playSound(SoundKey.move);
-              }
-            }
-          },
-          onBlockDropped(block: IBlock) {
-            if (block.player.isHuman) {
-              playSound(SoundKey.drop);
-            }
-          },
-          onBlockDestroyed() {},
-          /*onPlayerCreated(player: IPlayer) {
-            useIngameStore.getState().setPlayer(player);
-          },*/
-          onPlayerCreated() {},
-          onPlayerDestroyed() {},
-          onPlayerToggleSpectating() {},
-          onPlayerToggleChat(player: IPlayer, cancel: boolean) {
-            if (player.isHuman) {
-              if (!cancel && useIngameStore.getState().isChatOpen) {
-                const message = useIngameStore.getState().chatMessage?.trim();
-                if (message?.length) {
-                  useIngameStore.getState().addToMessageLog({
-                    createdTime: Date.now(),
-                    message,
-                    nickname: player.nickname,
-                    color: hexToString(player.color),
-                  });
+                  useIngameStore.getState().setChatMessage('');
                 }
-
-                useIngameStore.getState().setChatMessage('');
+                useIngameStore.getState().setChatOpen(player.isChatting);
               }
-              useIngameStore.getState().setChatOpen(player.isChatting);
-            }
+            },
           },
-          onLineClear() {},
-          onLineClearing() {},
-          onClearLines() {},
-          onCellBehaviourChanged() {},
-          onCellIsEmptyChanged() {},
-          onGridReset() {},
-          onGameModeEvent() {},
-          onLinesCleared() {},
-          onPlayerHealthChanged() {},
-          onPlayerScoreChanged() {},
-        },
+        ],
       });
       playGameMusic(worldType, trackNumber);
     }

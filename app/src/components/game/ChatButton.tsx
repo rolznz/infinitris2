@@ -8,40 +8,29 @@ import useIngameStore from '@/state/IngameStore';
 
 export default function ChatButton() {
   return (
-    <Box
-      zIndex="hamburgerButton"
-      sx={{
-        opacity: 1,
-        position: 'fixed',
-        top: 0,
-        right: 0,
-        pointerEvents: 'none',
-      }}
-    >
-      <FlexBox margin={2} style={{ pointerEvents: 'all' }}>
-        <IconButton
-          style={{}}
-          onClick={() => {
-            playSound(SoundKey.click);
-            const followingPlayer =
-              useIngameStore.getState().simulation?.followingPlayer;
-            if (followingPlayer && followingPlayer.isHuman) {
-              followingPlayer.toggleChat(followingPlayer.isChatting);
-            }
+    <FlexBox style={{ pointerEvents: 'all' }}>
+      <IconButton
+        style={{}}
+        onClick={() => {
+          playSound(SoundKey.click);
+          const followingPlayer =
+            useIngameStore.getState().simulation?.followingPlayer;
+          if (followingPlayer && followingPlayer.isHuman) {
+            followingPlayer.toggleChat(followingPlayer.isChatting);
+          }
+        }}
+        size="large"
+      >
+        <SvgIcon
+          fontSize="large"
+          sx={{
+            filter: 'drop-shadow(0 0 0.75rem white)',
+            color: colors.white,
           }}
-          size="large"
         >
-          <SvgIcon
-            fontSize="large"
-            sx={{
-              filter: 'drop-shadow(0 0 0.75rem white)',
-              color: colors.white,
-            }}
-          >
-            <ChatIcon />
-          </SvgIcon>
-        </IconButton>
-      </FlexBox>
-    </Box>
+          <ChatIcon />
+        </SvgIcon>
+      </IconButton>
+    </FlexBox>
   );
 }

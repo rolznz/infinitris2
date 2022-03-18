@@ -1,10 +1,13 @@
 import ChatButton from '@/components/game/ChatButton';
 import { IngameChat } from '@/components/game/IngameChat';
+import { Leaderboard } from '@/components/game/Leaderboard/Leaderboard';
 import { MessageLog } from '@/components/game/MessageLog';
+import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import FlexBox from '@/components/ui/FlexBox';
+import React from 'react';
 
 export function GameUI() {
-  console.log('Render Game UI');
+  console.log('Re-render game UI');
   return (
     <FlexBox
       position="absolute"
@@ -14,9 +17,35 @@ export function GameUI() {
       height="100%"
       zIndex={1}
     >
-      <ChatButton />
       <IngameChat />
       <MessageLog />
+      <TopRightPanel>
+        <ChatButton />
+        <Leaderboard />
+      </TopRightPanel>
+    </FlexBox>
+  );
+}
+
+function TopRightPanel(props: React.PropsWithChildren<{}>) {
+  console.log('Re-render top right panel');
+  return (
+    <FlexBox
+      flexDirection="row"
+      zIndex="hamburgerButton"
+      sx={{
+        opacity: 1,
+        position: 'fixed',
+        top: 0,
+        right: 0,
+        pointerEvents: 'none',
+      }}
+      justifyContent="flex-start"
+      alignItems="flex-start"
+      p={2}
+      gap={1}
+    >
+      {props.children}
     </FlexBox>
   );
 }

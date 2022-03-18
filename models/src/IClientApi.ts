@@ -11,7 +11,7 @@ import { WithControls } from '@models/IUser';
 import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
 
 export type LaunchOptions = WithControls & {
-  listener?: ISimulationEventListener;
+  listeners?: Partial<ISimulationEventListener>[];
   socketListener?: IClientSocketEventListener;
   preferredInputMethod?: InputMethod;
   player?: Partial<NetworkPlayerInfo>;
@@ -27,6 +27,7 @@ export type LaunchOptions = WithControls & {
   spectate?: boolean;
   worldType?: WorldType;
   roomId?: number;
+  useFallbackUI?: boolean;
 };
 
 export type ClientApiConfig = {

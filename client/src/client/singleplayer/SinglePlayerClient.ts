@@ -120,7 +120,8 @@ export default class SinglePlayerClient
             undefined,
             undefined,
             options.rendererQuality,
-            options.worldType
+            options.worldType,
+            options.useFallbackUI
           );
     await this._renderer.create();
 
@@ -132,8 +133,8 @@ export default class SinglePlayerClient
       simulationSettings
     );
     this._simulation.addEventListener(this, this._renderer);
-    if (options.listener) {
-      this._simulation.addEventListener(options.listener);
+    if (options.listeners) {
+      this._simulation.addEventListener(...options.listeners);
     }
 
     this._simulation.init();

@@ -2,6 +2,7 @@ import {
   ConquestGameMode,
   IColumnCapture,
 } from '@core/gameModes/ConquestGameMode';
+import { getBorderColor } from '@models/index';
 import { GameModeEvent } from '@models/GameModeEvent';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
@@ -30,37 +31,9 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._renderer = renderer;
     this._renderer.simulation!.addEventListener(this);
   }
-  onSimulationInit(simulation: ISimulation): void {}
-  onPlayerCreated(player: IPlayer): void {}
-  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
-  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
-  onPlayerToggleChat(player: IPlayer, wasCancelled: boolean): void {}
-  onPlayerToggleSpectating(player: IPlayer): void {}
-  onBlockCreated(block: IBlock): void {}
-  onBlockCreateFailed(block: IBlock): void {}
-  onBlockPlaced(block: IBlock): void {}
-  onBlockMoved(block: IBlock, dx: number, dy: number, dr: number): void {}
-  onBlockDropped(block: IBlock): void {}
-  onBlockDied(block: IBlock): void {}
-  onBlockDestroyed(block: IBlock): void {
-    // TODO: should not have to re-render all column captures - only re-render ones that changed
-    //this.rerender();
-  }
-  onClearLines(row: number[]): void {}
-  onLinesCleared() {
-    // TODO: should not have to re-render all column captures - only re-render ones that changed
-    //this.rerender();
-  }
-  onLineClearing(row: number): void {}
-  onLineClear(row: number): void {}
-  onGridReset(grid: IGrid): void {}
-  onCellBehaviourChanged(
-    cell: ICell,
-    previousBehaviour: ICellBehaviour
-  ): void {}
-  onCellIsEmptyChanged(cell: ICell): void {}
   onGameModeEvent(event: GameModeEvent): void {
     if (event.type === 'conquest-columnChanged') {
+      this._rerender(event.column);
       const playerId = (this._renderer.simulation!.gameMode as ConquestGameMode)
         .columnCaptures[event.column].playerId;
       if (playerId !== undefined) {
@@ -79,49 +52,26 @@ export class ConquestRenderer implements IGameModeRenderer {
     }
   }
 
-  rerender() {
+  private _rerender(column?: number) {
     if (!this._renderer.simulation) {
       return;
     }
     const conquestGameMode = this._renderer.simulation
       .gameMode as ConquestGameMode;
 
-    this._renderColumnCaptures(conquestGameMode.columnCaptures);
+    this._renderColumnCaptures(conquestGameMode.columnCaptures, column);
   }
 
   onSimulationNextRound() {
-    this.rerender();
+    this._rerender();
   }
 
   onSimulationStep() {
     if (!this._renderer.simulation) {
       return;
     }
-    // TODO: optimize player health rendering
     const conquestGameMode = this._renderer.simulation
       .gameMode as ConquestGameMode;
-
-    // for (let player of this._renderer.simulation.players) {
-    //   const renderablePlayerHealth = this._playerHealthBars[player.id];
-    //   if (renderablePlayerHealth) {
-    //     if (player.block) {
-    //       renderablePlayerHealth.container.visible = true;
-
-    //       const healthbarCentreX =
-    //         player.block.centreX * this._renderer.cellSize;
-    //       const healthbarY =
-    //         (player.block.topRow - 1.75) * this._renderer.cellSize;
-
-    //       renderablePlayerHealth.container.x = this._renderer.getWrappedX(
-    //         healthbarCentreX -
-    //           renderablePlayerHealth.children[0].renderableObject.outer.width * 0.5
-    //       );
-    //       renderablePlayerHealth.container.y = healthbarY;
-    //     } else {
-    //       renderablePlayerHealth.container.visible = false;
-    //     }
-    //   }
-    // }
 
     for (let i = 0; i < conquestGameMode.columnCaptures.length; i++) {
       const renderableColumnCapture = this._columnCaptures[i];
@@ -152,16 +102,17 @@ export class ConquestRenderer implements IGameModeRenderer {
     return lowestFreeCellY;
   }
 
-  onPlayerDestroyed(player: IPlayer) {
-    // TODO: should not have to re-render all column captures - only re-render ones that changed
-    //this.rerender();
-  }
-
-  private _renderColumnCaptures(columnCaptures: IColumnCapture[]) {
+  private _renderColumnCaptures(
+    columnCaptures: IColumnCapture[],
+    column?: number
+  ) {
     if (!this._renderer.simulation) {
       return;
     }
     for (let i = 0; i < columnCaptures.length; i++) {
+      if (column !== undefined && i !== column) {
+        continue;
+      }
       if (!this._columnCaptures[i]) {
         const captureContainer = new PIXI.Container();
         this._renderer.world.addChild(captureContainer);
@@ -194,18 +145,22 @@ export class ConquestRenderer implements IGameModeRenderer {
                 )
               : undefined;
           if (player) {
+            const borderColor = PIXI.utils.string2hex(
+              getBorderColor(PIXI.utils.hex2string(player.color))
+            );
+
+            graphics.beginFill(borderColor);
+            graphics.drawCircle(
+              this._renderer.cellSize * 0.5,
+              this._renderer.cellSize * 0.5,
+              this._renderer.cellSize * 0.3
+            );
+
             graphics.beginFill(player.color);
             graphics.drawCircle(
               this._renderer.cellSize * 0.5,
               this._renderer.cellSize * 0.5,
               this._renderer.cellSize * 0.2
-            );
-
-            graphics.beginFill(player.color, 0.5);
-            graphics.drawCircle(
-              this._renderer.cellSize * 0.5,
-              this._renderer.cellSize * 0.5,
-              this._renderer.cellSize * 0.3
             );
           } else {
             graphics.beginFill(0, 0.1);
@@ -224,59 +179,4 @@ export class ConquestRenderer implements IGameModeRenderer {
       );
     }
   }
-
-  /*private _renderPlayerHealthBars() {
-    if (!this._renderer.simulation) {
-      return;
-    }
-    //
-    for (let player of this._renderer.simulation.players) {
-      if (!this._playerHealthBars[player.id]) {
-        const healthbarContainer = new PIXI.Container();
-        this._renderer.world.addChild(healthbarContainer);
-        this._playerHealthBars[player.id] = {
-          playerId: player.id,
-          container: healthbarContainer,
-          children: [],
-        };
-      }
-      const renderablePlayerHealth = this._playerHealthBars[player.id];
-      const healthWidth = this._renderer.cellSize * 2;
-
-      this._renderer.renderCopies(
-        renderablePlayerHealth,
-        1,
-        (graphics, shadowIndexWithDirection) => {
-          const clampedHealth = Math.min(player.health, 1);
-          const shadowX = shadowIndexWithDirection * this._renderer.gridWidth;
-          graphics.x = shadowX;
-          graphics.clear();
-          graphics.lineStyle(0);
-          if (player.health < 2) {
-            graphics.beginFill(
-              PIXI.utils.rgb2hex([1 - clampedHealth, clampedHealth, 0])
-            );
-            graphics.drawRect(
-              0,
-              0,
-              healthWidth * clampedHealth,
-              healthWidth * 0.2
-            );
-          }
-          graphics.endFill();
-          graphics.lineStyle(
-            Math.max(1, Math.floor(healthWidth * 0.04)),
-            0x000000,
-            0.3
-          );
-          graphics.drawRect(0, 0, healthWidth, Math.floor(healthWidth * 0.2));
-        },
-        () => {
-          const graphics = new PIXI.Graphics();
-          renderablePlayerHealth.container.addChild(graphics);
-          return graphics;
-        }
-      );
-    }
-  }*/
 }

@@ -14,7 +14,7 @@ import { ProfilePageCharacterCard } from './ProfilePageCharacterCard';
 
 export default function ProfilePage() {
   const intl = useIntl();
-  const [userStore, user] = useUserStore((store) => [store, store.user]);
+  //const [userStore, user] = useUserStore((store) => [store, store.user], shallow);
   const userId = useAuthStore().user?.uid;
   /*const { data: userChallenges } = useCollection<IChallenge>(
     userId ? challengesPath : null,

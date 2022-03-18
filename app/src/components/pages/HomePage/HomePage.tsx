@@ -13,14 +13,15 @@ import { appName } from '@/utils/constants';
 import { PlayButton } from './PlayButton';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
 import { GameModePicker } from '@/components/ui/GameModePicker/GameModePicker';
+import shallow from 'zustand/shallow';
 
 const _HomePage = () => {
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width >= windowSize.height;
-  const [isLoaded, delayButtonVisibility] = useLoaderStore((store) => [
-    store.hasFinished,
-    store.delayButtonVisibility,
-  ]);
+  const [isLoaded, delayButtonVisibility] = useLoaderStore(
+    (store) => [store.hasFinished, store.delayButtonVisibility],
+    shallow
+  );
 
   return (
     <>

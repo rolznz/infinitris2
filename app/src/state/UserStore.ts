@@ -17,6 +17,7 @@ import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
 import useLocalUserStore, { LocalUser } from './LocalUserStore';
 import { getAuth, signOut } from 'firebase/auth';
+import shallow from 'zustand/shallow';
 
 export function useUser(): (IUser | LocalUser) & { id?: string } {
   const localUser = useLocalUserStore((store) => store.user);
@@ -84,10 +85,10 @@ export function useUserStore<StateSlice>(
   selector?: StateSelector<IUserStore, StateSlice>
 ): StateSlice | IUserStore {
   const user = useUser();
-  const [updateLocalUser, signoutLocalUser] = useLocalUserStore((store) => [
-    store.updateLocalUser,
-    store.signOutLocalUser,
-  ]);
+  const [updateLocalUser, signoutLocalUser] = useLocalUserStore(
+    (store) => [store.updateLocalUser, store.signOutLocalUser],
+    shallow
+  );
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
   const { data: fireStoreUserDoc /*, update: updateFirestoreDoc*/ } =
     useDocument<IUser>(authStoreUserId ? getUserPath(authStoreUserId) : null);

@@ -45,7 +45,6 @@ export default class ChallengeClient
   private _challenge!: IChallenge;
   private _input!: Input;
   private _preferredInputMethod?: InputMethod;
-  private _simulationEventListener?: ISimulationEventListener;
   private _numBlocksPlaced!: number;
   private _numLinesCleared!: number;
   private _blockCreateFailed!: boolean;
@@ -60,7 +59,6 @@ export default class ChallengeClient
     super(clientApiConfig, options);
     this._preferredInputMethod = options.preferredInputMethod;
     this._controls = options.controls_keyboard;
-    this._simulationEventListener = this._launchOptions.listener;
     this._create(challenge);
   }
   onPlayerScoreChanged(player: IPlayer, amount: number): void {}
@@ -326,8 +324,8 @@ export default class ChallengeClient
       this._challenge.simulationSettings
     ));
     simulation.addEventListener(this, this._renderer);
-    if (this._simulationEventListener) {
-      simulation.addEventListener(this._simulationEventListener);
+    if (this._launchOptions.listeners) {
+      simulation.addEventListener(...this._launchOptions.listeners);
     }
 
     const playerId = 0;

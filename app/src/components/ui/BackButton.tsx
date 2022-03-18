@@ -6,10 +6,11 @@ import { ReactComponent as LeftIcon } from '@/icons/left.svg';
 import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
 import { useLocation } from 'react-router-dom';
 import { colors } from '@/theme/theme';
+import { isPwa } from '@/utils/isMobile';
 
 export default function BackButton() {
   const location = useLocation();
-  if (location.pathname === '/') {
+  if (location.pathname === '/' || !isPwa()) {
     return null;
   }
   return (

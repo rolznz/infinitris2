@@ -7,12 +7,13 @@ import FolderIcon from '@mui/icons-material/Folder';
 import SaveIcon from '@mui/icons-material/Save';
 import { FilledIcon } from '@/components/ui/FilledIcon';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import shallow from 'zustand/shallow';
 
 export function ChallengeEditorInfo() {
-  const [challenge, setChallenge] = useChallengeEditorStore((store) => [
-    store.challenge,
-    store.setChallenge,
-  ]);
+  const [challenge, setChallenge] = useChallengeEditorStore(
+    (store) => [store.challenge, store.setChallenge],
+    shallow
+  );
   if (!challenge) {
     return null;
   }

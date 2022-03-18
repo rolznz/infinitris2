@@ -5,6 +5,7 @@ import isMobile from '@/utils/isMobile';
 import TextField from '@mui/material/TextField';
 import React from 'react';
 import { useIntl } from 'react-intl';
+import shallow from 'zustand/shallow';
 
 function executeMobileChatAction(cancel: boolean) {
   const followingPlayer = useIngameStore.getState().simulation?.followingPlayer;
@@ -19,11 +20,11 @@ function executeMobileChatAction(cancel: boolean) {
 }
 
 export function IngameChat() {
-  const [isChatOpen, chatMessage, setChatMessage] = useIngameStore((store) => [
-    store.isChatOpen,
-    store.chatMessage,
-    store.setChatMessage,
-  ]);
+  const [isChatOpen, chatMessage, setChatMessage] = useIngameStore(
+    (store) => [store.isChatOpen, store.chatMessage, store.setChatMessage],
+    shallow
+  );
+  console.log('Re-render ingame chat');
   const intl = useIntl();
   if (!isChatOpen) {
     return null;

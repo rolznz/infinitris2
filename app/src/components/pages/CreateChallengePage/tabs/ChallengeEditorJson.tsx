@@ -6,16 +6,17 @@ import prettyStringify from '@/utils/prettyStringify';
 import TextField from '@mui/material/TextField';
 import React from 'react';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import shallow from 'zustand/shallow';
 import { FittedChallengeGridPreview } from '../../ChallengesPage/ChallengeGridPreview';
 
 export function ChallengeEditorJson() {
   const isLandscape = useIsLandscape();
   const windowSize = useWindowSize();
   //const [hasError, set]
-  const [challenge, setChallenge] = useChallengeEditorStore((store) => [
-    store.challenge,
-    store.setChallenge,
-  ]);
+  const [challenge, setChallenge] = useChallengeEditorStore(
+    (store) => [store.challenge, store.setChallenge],
+    shallow
+  );
   if (!challenge) {
     return null;
   }

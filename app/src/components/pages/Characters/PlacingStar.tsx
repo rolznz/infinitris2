@@ -29,16 +29,29 @@ type PlacingStarProps = {
   placing?: number;
   offset: number;
   scale?: number;
+  absolute?: boolean;
 };
 
-export function PlacingStar({ placing, offset, scale = 1 }: PlacingStarProps) {
+export function PlacingStar({
+  placing,
+  offset,
+  scale = 1,
+  absolute = true,
+}: PlacingStarProps) {
   return (
     <FlexBox
-      style={{
-        position: 'absolute',
-        top: offset + 'px',
-        left: offset + 'px',
-      }}
+      style={
+        absolute
+          ? {
+              position: 'absolute',
+              top: offset + 'px',
+              left: offset + 'px',
+            }
+          : {
+              width: getScoreSize(placing) * 0.6 * scale + 'px',
+              height: getScoreSize(placing) * scale + 'px',
+            }
+      }
     >
       <StarIcon
         style={{

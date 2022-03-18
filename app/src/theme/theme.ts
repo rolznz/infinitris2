@@ -30,6 +30,7 @@ export const gold = '#D37953';
 
 export const colors = {
   white: '#ECECED',
+  black: '#000000',
 };
 
 export const boxShadows = {
@@ -45,12 +46,12 @@ export const zIndexes = {
 };
 
 export const borderRadiuses = {
-  xs: 4,
-  sm: 8,
-  base: 16,
-  lg: 20,
-  xl: 32,
-  full: 1000,
+  xs: '4px',
+  sm: '8px',
+  base: '16px',
+  lg: '20px',
+  xl: '32px',
+  full: '1000px',
 };
 
 export const coreThemeOptions: ThemeOptions = {

@@ -75,7 +75,7 @@ export class GridFloor {
 
   update(gridBottom: number, cameraX: number) {
     if (this._floorSprite) {
-      this._floorSprite.y = Math.floor(gridBottom) - 2;
+      this._floorSprite.y = Math.floor(gridBottom);
       this._floorSprite.tilePosition.x = cameraX;
     }
     if (this._gridFloorGraphics) {

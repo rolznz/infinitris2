@@ -86,10 +86,13 @@ export class WorldBackground {
           this._app.renderer.width / sprite.texture.width,
           this._app.renderer.height / sprite.texture.height
           //1
-        ) * (this._worldConfig.layers[i].widthMultiplier || 1)
+        ) * (this._worldConfig.layers[i].scale || 1)
       );
       //console.log(sprite.tileScale);
-      sprite.width = Math.floor(sprite.texture.width * sprite.tileScale.x);
+      sprite.width = Math.floor(
+        (sprite.texture.width * sprite.tileScale.x) /
+          (this._worldConfig.layers[i].scale || 1)
+      );
       sprite.height = Math.floor(sprite.texture.height * sprite.tileScale.x);
 
       if (scrollX) {
@@ -114,16 +117,16 @@ export class WorldBackground {
           : 0;
 
       this._layerSprites[i]!.y = Math.floor(
-        Math.max(
-          (scrollY ? clampedCameraY : 0) * this._worldConfig.layers[i].speedY +
-            this._app.renderer.height *
-              this._worldConfig.layers[i].offsetY *
-              portraitOffsetMultiplierY +
-            portraitOffsetY,
-          //this._app.renderer.height -
-          //this._app.renderer.height * this._layerSprites[i].tileScale.y
-          this._app.renderer.height - this._layerSprites[i]!.height
-        )
+        //Math.max(
+        (scrollY ? clampedCameraY : 0) * this._worldConfig.layers[i].speedY +
+          this._app.renderer.height *
+            this._worldConfig.layers[i].offsetY *
+            portraitOffsetMultiplierY +
+          portraitOffsetY
+        //this._app.renderer.height -
+        //this._app.renderer.height * this._layerSprites[i].tileScale.y
+        //this._app.renderer.height - this._layerSprites[i]!.height
+        //)
       );
       // console.log(
       //   'Test',
@@ -137,13 +140,34 @@ export class WorldBackground {
 
   private _createLayerSprite = (layer: WorldBackgroundLayerConfig) => {
     const url = this._getLayerImage(layer);
-    const texture = PIXI.Texture.from(url);
+    let texture = PIXI.Texture.from(url);
+    if (layer.repeatGap) {
+      texture = this._generateGapTexture(
+        texture,
+        layer.repeatGap * texture.width
+      );
+    }
     const sprite = new PIXI.TilingSprite(texture);
     sprite.x = 0;
     sprite.y = 0;
     sprite.alpha = 1;
     return sprite;
   };
+
+  private _generateGapTexture(texture: PIXI.Texture, gap: number) {
+    // thanks to https://github.com/pixijs/pixijs/issues/7189 and
+    // https://stackoverflow.com/questions/46740171/how-to-create-a-texture-from-multiple-graphics
+    const gapBox = new PIXI.Graphics();
+    const originSprite = new PIXI.Sprite(texture);
+    gapBox.drawRect(0, 0, originSprite.width + gap, originSprite.height);
+    gapBox.addChild(originSprite);
+
+    return this._app.renderer.generateTexture(
+      gapBox,
+      PIXI.SCALE_MODES.LINEAR,
+      window.devicePixelRatio
+    );
+  }
 
   private _isLayerRequired(layer: WorldBackgroundLayerConfig) {
     // TODO: review if this is needed

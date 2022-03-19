@@ -7,9 +7,10 @@ export type WorldBackgroundLayerConfig = {
   speedX: number;
   offsetX?: number;
   offsetY: number;
+  portraitOffsetY?: number;
   //minQuality?: RendererQuality; // optional layers that will only show when the quality is high enough. Unset = required on all layers
   scale?: number;
-  repeatGap?: number;
+  repeatGap?: number; // TODO: this needs to be different on mobile
 };
 
 export type WorldBackgroundConfig = {
@@ -43,14 +44,15 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedX: 0.2,
         offsetX: 0.03,
         offsetY: 0.1,
-        repeatGap: 10,
-        scale: 0.25,
+        repeatGap: 15,
+        scale: 0.15,
       },
       {
         filename: 'theme_grass_3.png',
         speedY: 0.25,
         speedX: 0.25,
         offsetY: 0,
+        portraitOffsetY: 0.01,
       },
       {
         filename: 'theme_grass_4.png',
@@ -58,12 +60,14 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedX: 0.3,
         offsetX: -0.2,
         offsetY: -0.2,
+        portraitOffsetY: 0.1,
       },
       {
         filename: 'theme_grass_5.png',
         speedY: 0.4,
         speedX: 0.4,
         offsetY: 0.3,
+        portraitOffsetY: 0.07,
       },
       {
         filename: 'theme_grass_6.png',
@@ -71,6 +75,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedX: 0.5,
         offsetY: 0.05,
         offsetX: 0.1,
+        portraitOffsetY: 0.15,
       },
       {
         filename: 'theme_grass_7.png',
@@ -86,6 +91,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedY: 0.8,
         speedX: 0.8,
         offsetY: 0.4,
+        portraitOffsetY: 0.02,
       },
       {
         filename: 'theme_grass_9.png',
@@ -93,6 +99,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedX: 0.9,
         offsetY: 0.3,
         offsetX: 0.1,
+        portraitOffsetY: 0.02,
       },
       {
         filename: 'theme_grass_10.png',
@@ -100,6 +107,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedX: 1,
         offsetY: 0.8,
         scale: 0.3,
+        portraitOffsetY: 0.02,
       },
     ],
   },

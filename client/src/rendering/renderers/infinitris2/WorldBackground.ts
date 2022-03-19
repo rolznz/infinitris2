@@ -85,7 +85,6 @@ export class WorldBackground {
         Math.max(
           this._app.renderer.width / sprite.texture.width,
           this._app.renderer.height / sprite.texture.height
-          //1
         ) * (this._worldConfig.layers[i].scale || 1)
       );
       //console.log(sprite.tileScale);
@@ -102,27 +101,18 @@ export class WorldBackground {
             this._layerSprites[i]!.width;
       }
 
-      const portraitOffsetMultiplierY =
-        1 /
-        Math.max(
-          (this._app.renderer.height * 0.6) / this._app.renderer.width,
-          1
-        );
-      const portraitOffsetY =
-        this._worldConfig.layers[i].offsetY > 0
-          ? (Math.max(this._app.renderer.height / this._app.renderer.width, 1) -
-              1) *
-            this._app.renderer.height *
-            0.25
-          : 0;
+      const portraitOffsetY = Math.max(
+        (this._app.renderer.height * 1) / this._app.renderer.width,
+        1
+      );
 
       this._layerSprites[i]!.y = Math.floor(
         //Math.max(
         (scrollY ? clampedCameraY : 0) * this._worldConfig.layers[i].speedY +
           this._app.renderer.height *
-            this._worldConfig.layers[i].offsetY *
-            portraitOffsetMultiplierY +
-          portraitOffsetY
+            (this._worldConfig.layers[i].offsetY +
+              (this._worldConfig.layers[i].portraitOffsetY || 0) *
+                portraitOffsetY)
         //this._app.renderer.height -
         //this._app.renderer.height * this._layerSprites[i].tileScale.y
         //this._app.renderer.height - this._layerSprites[i]!.height

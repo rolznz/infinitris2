@@ -15,6 +15,7 @@ import {
 import { ClientApiConfig } from '@models/IClientApi';
 import InputAction from '@models/InputAction';
 import { GameModeEvent } from '@models/GameModeEvent';
+import { RendererQuality } from '@models/RendererQuality';
 
 const idealCellSize = 38;
 const minLandscapeCellCount = 18;
@@ -41,8 +42,13 @@ export abstract class BaseRenderer implements IRenderer {
   protected _floorHeight: number;
   protected _clampedCameraY: number;
   protected _clientApiConfig: ClientApiConfig;
+  protected _rendererQuality: RendererQuality | undefined;
 
-  constructor(clientApiConfig: ClientApiConfig, backgroundColor?: number) {
+  constructor(
+    clientApiConfig: ClientApiConfig,
+    backgroundColor?: number,
+    rendererQuality?: RendererQuality
+  ) {
     this._clientApiConfig = clientApiConfig;
     this._camera = new Camera();
     this._gridWidth = 0;
@@ -51,6 +57,7 @@ export abstract class BaseRenderer implements IRenderer {
     this._shadowCount = 0;
     this._cellSize = 0;
     this._cellPadding = 0;
+    this._rendererQuality = rendererQuality;
     this._app = new PIXI.Application({
       backgroundColor,
       antialias: true,
@@ -212,11 +219,22 @@ export abstract class BaseRenderer implements IRenderer {
   }
 
   tick() {
+    const rendererSizeDivider =
+      !this._rendererQuality || this._rendererQuality === 'high'
+        ? 1
+        : this._rendererQuality === 'medium'
+        ? 2
+        : 4;
+    const requiredWidth = window.innerWidth / rendererSizeDivider;
+    const requiredHeight = window.innerHeight / rendererSizeDivider;
     if (
-      this._app.renderer.width != window.innerWidth ||
-      this._app.renderer.height !== window.innerHeight
+      this._app.renderer.width != requiredWidth ||
+      this._app.renderer.height !== requiredHeight
     ) {
-      this._app.renderer.resize(window.innerWidth, window.innerHeight);
+      this._app.renderer.resize(
+        Math.floor(requiredWidth),
+        Math.floor(requiredHeight)
+      );
       this._app.renderer.view.style.width = window.innerWidth + 'px';
       this._app.renderer.view.style.height = window.innerHeight + 'px';
     }

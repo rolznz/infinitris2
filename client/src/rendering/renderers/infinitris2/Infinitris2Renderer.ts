@@ -129,7 +129,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _spawnDelayIndicator!: SpawnDelayIndicator;
   private _scoreboard: Scoreboard | undefined;
   //private _scoreChangeIndicator!: ScoreChangeIndicator;
-  private _rendererQuality: RendererQuality | undefined;
   private _towerIndicator!: TowerIndicator;
   private _lineClearingIndicator!: LineClearingIndicator;
   private _worldType: WorldType;
@@ -149,10 +148,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     worldType: WorldType = 'grass',
     useFallbackUI = false
   ) {
-    super(clientApiConfig);
+    super(clientApiConfig, undefined, rendererQuality);
     this._preferredInputMethod = preferredInputMethod;
     this._teachControls = teachControls;
-    this._rendererQuality = rendererQuality;
     this._worldType = worldType;
     this._useFallbackUI = useFallbackUI;
 

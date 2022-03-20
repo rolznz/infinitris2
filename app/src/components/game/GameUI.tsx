@@ -1,4 +1,5 @@
 import ChatButton from '@/components/game/ChatButton';
+import { EndRoundDisplay } from '@/components/game/EndRoundDisplay/EndRoundDisplay';
 import { IngameChat } from '@/components/game/IngameChat';
 import { Leaderboard } from '@/components/game/Leaderboard/Leaderboard';
 import { MessageLog } from '@/components/game/MessageLog';
@@ -23,6 +24,7 @@ export function GameUI() {
         <ChatButton />
         <Leaderboard />
       </TopRightPanel>
+      <EndRoundDisplay />
     </FlexBox>
   );
 }

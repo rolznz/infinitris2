@@ -126,8 +126,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _worldBackground!: WorldBackground;
   private _gridFloor!: GridFloor;
   private _patternTextures: { [filename: string]: PIXI.Texture[] } = {};
-  private _spawnDelayIndicator!: SpawnDelayIndicator;
-  private _scoreboard: Scoreboard | undefined;
+  private _fallbackSpawnDelayIndicator: SpawnDelayIndicator | undefined;
+  private _fallbackScoreboard: Scoreboard | undefined;
   //private _scoreChangeIndicator!: ScoreChangeIndicator;
   private _towerIndicator!: TowerIndicator;
   private _lineClearingIndicator!: LineClearingIndicator;
@@ -195,7 +195,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._lineClearingIndicator = new LineClearingIndicator(this._app);
     //this._app.loader.add(faceUrl);
 
-    this._spawnDelayIndicator = new SpawnDelayIndicator(this._app);
     //this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
 
     this._app.loader.add(healthbarOuterUrl);
@@ -404,11 +403,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this._towerIndicator.create();
 
-    this._spawnDelayIndicator.create();
     // TODO: support chat as well
     if (this._useFallbackUI) {
-      this._scoreboard = new Scoreboard(this._app);
-      this._scoreboard.create();
+      this._fallbackSpawnDelayIndicator = new SpawnDelayIndicator(this._app);
+      this._fallbackSpawnDelayIndicator.create();
+      this._fallbackScoreboard = new Scoreboard(this._app);
+      this._fallbackScoreboard.create();
     }
     //this._scoreChangeIndicator.create();
     this._placementHelperShadowCells = [];
@@ -792,13 +792,16 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     const followingPlayer = this._simulation.followingPlayer;
-    this._scoreboard?.update(
+    this._fallbackScoreboard?.update(
       this._simulation.players,
       followingPlayer,
       this._simulation
     );
     //this._scoreChangeIndicator.update(followingPlayer);
-    this._spawnDelayIndicator.update(this._simulation, followingPlayer);
+    this._fallbackSpawnDelayIndicator?.update(
+      this._simulation,
+      followingPlayer
+    );
 
     //console.log('Rendering', this._particles.length, 'particles');
     for (const particle of this._particles) {

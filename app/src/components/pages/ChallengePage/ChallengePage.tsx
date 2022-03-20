@@ -20,8 +20,7 @@ import useSearchParam from 'react-use/lib/useSearchParam';
 import { useDocument } from 'swr-firestore';
 import { IPlayer } from 'infinitris2-models';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
-import { sfxListener } from '@/game/listeners/sfxListener';
-import { leaderboardListener } from '@/game/listeners/leaderboardListener';
+import { coreGameListeners } from '@/game/listeners/coreListeners';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -87,29 +86,26 @@ export default function ChallengePage() {
     if (challenge && !requiresRedirect && launchChallenge && !hasLaunched) {
       setLaunched(true);
 
-      const simulationEventListener: Partial<ISimulationEventListener> = {
-        onSimulationInit(simulation: ISimulation) {
-          setSimulation(simulation);
-        },
-        onBlockCreateFailed() {
-          setCheckChallengeStatus(true);
-        },
+      const challengeSimulationEventListener: Partial<ISimulationEventListener> =
+        {
+          onSimulationInit(simulation: ISimulation) {
+            setSimulation(simulation);
+          },
+          onBlockCreateFailed() {
+            setCheckChallengeStatus(true);
+          },
 
-        onBlockPlaced() {
-          setCheckChallengeStatus(true);
-        },
-        onBlockDied() {
-          setCheckChallengeStatus(true);
-        },
-      };
+          onBlockPlaced() {
+            setCheckChallengeStatus(true);
+          },
+          onBlockDied() {
+            setCheckChallengeStatus(true);
+          },
+        };
 
       setChallengeClient(
         launchChallenge(challenge, {
-          listeners: [
-            sfxListener,
-            leaderboardListener,
-            simulationEventListener,
-          ],
+          listeners: [...coreGameListeners, challengeSimulationEventListener],
           preferredInputMethod,
           controls_keyboard,
           player: player as IPlayer, // FIXME: use a different interface

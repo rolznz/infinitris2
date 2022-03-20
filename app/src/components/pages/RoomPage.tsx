@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useAppStore from '../../state/AppStore';
 import { Link as RouterLink } from 'react-router-dom';
@@ -13,7 +13,6 @@ import {
   getRoomPath,
   getServerPath,
   hexToString,
-  IBlock,
   ICharacter,
   IClientChatMessage,
   IClientSocket,
@@ -33,16 +32,13 @@ import { useUser } from '../../state/UserStore';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { useDocument } from 'swr-firestore';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
-import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
 import useIngameStore from '@/state/IngameStore';
 import { GameUI } from '@/components/game/GameUI';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { LocalUser } from '@/state/LocalUserStore';
 import useLoaderStore from '@/state/LoaderStore';
-import { listeners } from 'process';
-import { sfxListener } from '@/game/listeners/sfxListener';
-import { leaderboardListener } from '@/game/listeners/leaderboardListener';
 import shallow from 'zustand/shallow';
+import { coreGameListeners } from '@/game/listeners/coreListeners';
 
 interface RoomPageRouteParams {
   id: string;
@@ -161,8 +157,7 @@ export default function RoomPage() {
       },
       roomId: room.data()!.roomId,
       listeners: [
-        sfxListener,
-        leaderboardListener,
+        ...coreGameListeners,
         {
           onSimulationInit(simulation: ISimulation) {
             useIngameStore.getState().setSimulation(simulation);

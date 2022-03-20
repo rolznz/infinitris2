@@ -1,8 +1,7 @@
 import { GameUI } from '@/components/game/GameUI';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
-import { leaderboardListener } from '@/game/listeners/leaderboardListener';
-import { sfxListener } from '@/game/listeners/sfxListener';
+import { coreGameListeners } from '@/game/listeners/coreListeners';
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
 import { LocalUser } from '@/state/LocalUserStore';
@@ -10,7 +9,6 @@ import {
   GameModeType,
   getCharacterPath,
   hexToString,
-  IBlock,
   ICharacter,
   stringToHex,
   WorldType,
@@ -109,8 +107,7 @@ export default function SinglePlayerPage() {
           roundLength,
         },
         listeners: [
-          sfxListener,
-          leaderboardListener,
+          ...coreGameListeners,
           {
             onSimulationInit(simulation: ISimulation) {
               useIngameStore.getState().setSimulation(simulation);

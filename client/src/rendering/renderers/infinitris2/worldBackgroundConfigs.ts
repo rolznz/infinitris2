@@ -81,10 +81,10 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         filename: 'theme_grass_7.png',
         speedY: 0.6,
         speedX: 0.6,
-        offsetY: 0.1,
+        offsetY: 0.2,
         offsetX: 0.05,
-        repeatGap: 4,
-        scale: 0.3,
+        repeatGap: 0.5,
+        scale: 0.4,
       },
       {
         filename: 'theme_grass_8.png',

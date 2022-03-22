@@ -84,7 +84,7 @@ export class WorldBackground {
       sprite.tileScale.set(
         Math.max(
           this._app.renderer.width / sprite.texture.width,
-          this._app.renderer.height / sprite.texture.height
+          (this._app.renderer.height * 0.5) / sprite.texture.height
         ) * (this._worldConfig.layers[i].scale || 1)
       );
       //console.log(sprite.tileScale);

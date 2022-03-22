@@ -67,7 +67,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedY: 0.4,
         speedX: 0.4,
         offsetY: 0.3,
-        portraitOffsetY: 0.07,
+        portraitOffsetY: 0.1,
       },
       {
         filename: 'theme_grass_6.png',
@@ -75,7 +75,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedX: 0.5,
         offsetY: 0.05,
         offsetX: 0.1,
-        portraitOffsetY: 0.15,
+        portraitOffsetY: 0.2,
       },
       {
         filename: 'theme_grass_7.png',
@@ -85,21 +85,22 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         offsetX: 0.05,
         repeatGap: 0.5,
         scale: 0.4,
+        portraitOffsetY: 0.13,
       },
       {
         filename: 'theme_grass_8.png',
         speedY: 0.8,
         speedX: 0.8,
         offsetY: 0.4,
-        portraitOffsetY: 0.02,
+        portraitOffsetY: 0.08,
       },
       {
         filename: 'theme_grass_9.png',
         speedY: 0.9,
         speedX: 0.9,
-        offsetY: 0.3,
+        offsetY: 0.25,
         offsetX: 0.1,
-        portraitOffsetY: 0.02,
+        portraitOffsetY: 0.13,
       },
       {
         filename: 'theme_grass_10.png',

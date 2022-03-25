@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js-legacy';
-import { IPlayer } from '@models/IPlayer';
+import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
-import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { fontFamily } from '@models/ui';
 
 export class SpawnDelayIndicator {
@@ -30,28 +29,22 @@ export class SpawnDelayIndicator {
     this._spawnDelayText.y = this._app.renderer.height / 2;
     if (
       humanPlayer &&
-      !humanPlayer.isSpectating &&
+      humanPlayer.status === PlayerStatus.ingame &&
       !humanPlayer.block &&
       humanPlayer.estimatedSpawnDelay > 500
     ) {
       this._spawnDelayText.text =
         'Next Block\n' + Math.ceil(humanPlayer.estimatedSpawnDelay / 1000);
       this._spawnDelayText.visible = true;
-    } else if (
-      humanPlayer &&
-      simulation.settings.gameModeType === 'conquest' &&
-      (simulation.gameMode as ConquestGameMode).isWaitingForNextRound
-    ) {
+    } else if (humanPlayer && simulation.round?.isWaitingForNextRound) {
       if (simulation.players.length > 1) {
-        const gameMode = simulation.gameMode as ConquestGameMode;
+        const round = simulation.round!;
         this._spawnDelayText.text =
           'Next Round\n' +
-          Math.ceil(Math.max(gameMode.nextRoundTime - Date.now(), 0) / 1000);
-        if (gameMode.lastWinner) {
+          Math.ceil(Math.max(round.nextRoundTime - Date.now(), 0) / 1000);
+        if (round.winner) {
           this._spawnDelayText.text =
-            gameMode.lastWinner.nickname +
-            ' wins!\n\n' +
-            this._spawnDelayText.text;
+            round.winner.nickname + ' wins!\n\n' + this._spawnDelayText.text;
         }
       } else {
         this._spawnDelayText.text = 'Waiting for players';

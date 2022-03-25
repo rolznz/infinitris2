@@ -5,7 +5,7 @@ import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 
 export type ParticleType = 'classic' | 'capture';
 
-export default interface IRenderer extends ISimulationEventListener {
+export default interface IRenderer extends Partial<ISimulationEventListener> {
   /**
    * Creates the renderer.
    */

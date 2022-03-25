@@ -2,7 +2,7 @@ import IRenderer, { ParticleType } from '../../IRenderer';
 import * as PIXI from 'pixi.js-legacy';
 import Grid from '@core/grid/Grid';
 import ISimulationEventListener from '@models/ISimulationEventListener';
-import Simulation, { FRAME_LENGTH } from '@core/Simulation';
+import Simulation, { FRAME_LENGTH } from '@core/simulation/Simulation';
 import Camera from '@src/rendering/Camera';
 import CellType from '@models/CellType';
 import LaserBehaviour from '@core/grid/cell/behaviours/LaserBehaviour';
@@ -283,11 +283,6 @@ export default class MinimalRenderer extends BaseRenderer {
     this._removeBlock(block);
   }
 
-  onPlayerCreated(player: IPlayer): void {}
-  onPlayerDestroyed(player: IPlayer): void {}
-  onPlayerToggleChat(player: IPlayer): void {}
-  onPlayerToggleSpectating() {}
-
   /**
    * @inheritdoc
    */
@@ -402,7 +397,7 @@ export default class MinimalRenderer extends BaseRenderer {
     this._renderCells(this._simulation.grid.reducedCells);
   }
 
-  onSimulationNextRound(): void {}
+  onNextRound(): void {}
 
   onPlayerHealthChanged(player: IPlayer, amount: number): void {}
   onPlayerScoreChanged(player: IPlayer, amount: number): void {}

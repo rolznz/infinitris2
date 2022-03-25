@@ -11,38 +11,9 @@ type InfinityGameModeState = {};
 export class InfinityGameMode implements IGameMode<InfinityGameModeState> {
   constructor(simulation: ISimulation) {}
   step(): void {}
-  onSimulationInit(simulation: ISimulation): void {}
-  onSimulationStep(simulation: ISimulation): void {}
-  onSimulationNextRound(simulation: ISimulation): void {}
-  onPlayerCreated(player: IPlayer): void {}
-  onPlayerDestroyed(player: IPlayer): void {}
-  onPlayerToggleChat(player: IPlayer, wasCancelled: boolean): void {}
-  onPlayerToggleSpectating(player: IPlayer): void {}
-  onBlockCreated(block: IBlock): void {}
-  onBlockCreateFailed(block: IBlock): void {}
-  onBlockPlaced(block: IBlock): void {}
-  onBlockMoved(block: IBlock, dx: number, dy: number, dr: number): void {}
-  onBlockDropped(block: IBlock): void {}
-  onBlockDied(block: IBlock): void {}
-  onBlockDestroyed(block: IBlock): void {}
-  onLineClear(row: number): void {}
-  onLineClearing() {}
-  onClearLines(): void {}
-  onLinesCleared(rows: number[]): void {}
-  onGridReset(grid: IGrid): void {}
-  onCellBehaviourChanged(
-    cell: ICell,
-    previousBehaviour: ICellBehaviour
-  ): void {}
 
-  onCellIsEmptyChanged(cell: ICell): void {}
-
-  getCurrentState(): InfinityGameModeState {
+  serialize(): InfinityGameModeState {
     return {};
   }
-  loadState(state: InfinityGameModeState) {}
-
-  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
-  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
-  onGameModeEvent(event: GameModeEvent): void {}
+  deserialize(state: InfinityGameModeState) {}
 }

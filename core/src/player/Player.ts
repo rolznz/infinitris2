@@ -6,10 +6,10 @@ import IBlockEventListener from '@models/IBlockEventListener';
 import { SimulationSettings } from '@models/SimulationSettings';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
-import { IPlayer } from '@models/IPlayer';
+import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
-import { FRAME_LENGTH } from '@core/Simulation';
+import { FRAME_LENGTH } from '@core/simulation/Simulation';
 import { checkMistake } from '@core/block/checkMistake';
 import LayoutUtils from '@core/block/layout/LayoutUtils';
 import { IPlayerEventListener } from '@models/IPlayerEventListener';
@@ -31,15 +31,16 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _simulation: ISimulation;
   private _nextSpawnTime: number;
   private _isFirstBlock: boolean;
-  private _isSpectating: boolean;
   private _isChatting: boolean;
+  private _status: PlayerStatus;
+  private _lastStatusChangeTime: number;
 
   constructor(
     simulation: ISimulation,
     id: number,
+    status: PlayerStatus,
     nickname: string = 'Guest',
     color: number = 0xf33821,
-    isSpectating = false,
     patternFilename?: string,
     characterId?: string
   ) {
@@ -61,7 +62,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._simulation = simulation;
     this._nextSpawnTime = 0;
     this._isFirstBlock = true;
-    this._isSpectating = isSpectating;
+    this._status = status;
+    this._lastStatusChangeTime = 0;
     this._isChatting = false;
     this._patternFilename = patternFilename;
     this._characterId = characterId;
@@ -136,21 +138,28 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._nextLayoutRotation = nextLayoutRotation;
   }
 
-  set isSpectating(isSpectating: boolean) {
-    this._isSpectating = isSpectating;
-    if (this._isSpectating) {
+  set status(status: PlayerStatus) {
+    this._status = status;
+    this._lastStatusChangeTime = Date.now();
+    if (this._status === PlayerStatus.spectating) {
       this._score = 0;
+    }
+    if (this._status !== PlayerStatus.ingame) {
       this._health = 0;
       this.removeBlock();
     } else {
       this._isFirstBlock = true;
     }
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerToggleSpectating(this)
+      listener.onPlayerChangeStatus(this)
     );
   }
-  get isSpectating(): boolean {
-    return this._isSpectating;
+  get status(): PlayerStatus {
+    return this._status;
+  }
+
+  get lastStatusChangeTime(): number {
+    return this._lastStatusChangeTime;
   }
 
   get isChatting(): boolean {
@@ -201,7 +210,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     if (
       !this._block &&
       !this._simulation.isNetworkClient &&
-      !this._isSpectating
+      this._status === PlayerStatus.ingame
     ) {
       if (
         this._simulation.isNetworkClient ||

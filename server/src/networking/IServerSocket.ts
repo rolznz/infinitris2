@@ -1,22 +1,5 @@
 import IServerSocketEventListener from './IServerSocketEventListener';
-import { IServerJoinRoomResponse } from '@core/networking/server/IServerJoinRoomResponse';
-import IServerPlayerCreatedEvent from '@core/networking/server/IServerPlayerCreatedEvent';
-import IServerPlayerDisconnectedEvent from '@core/networking/server/IServerPlayerDisconnectedEvent';
-import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
-import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
-import { IServerBlockPlacedEvent } from '@core/networking/server/IServerBlockPlacedEvent';
-import { IServerNextRoundEvent } from '@core/networking/server/IServerNextRoundEvent';
-import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnEvent';
-
-export type ServerMessage =
-  | IServerJoinRoomResponse
-  | IServerPlayerCreatedEvent
-  | IServerPlayerDisconnectedEvent
-  | IServerBlockCreatedEvent
-  | IServerBlockMovedEvent
-  | IServerBlockPlacedEvent
-  | IServerNextRoundEvent
-  | IServerNextSpawnEvent;
+import { IServerMessage } from '@models/networking/server/IServerMessage';
 
 export default interface IServerSocket {
   /**
@@ -32,5 +15,7 @@ export default interface IServerSocket {
    * @param message the message to send to the clients.
    * @param socketIds a list of client socket ids.
    */
-  sendMessage(message: ServerMessage, ...socketIds: number[]): void;
+  sendMessage(message: IServerMessage, ...socketIds: number[]): void;
+
+  //get sockets(): ServerSocketMap;
 }

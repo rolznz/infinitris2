@@ -3,6 +3,12 @@ import IBlockEventListener from './IBlockEventListener';
 import ICell from './ICell';
 import { SimulationSettings } from './SimulationSettings';
 
+export enum PlayerStatus {
+  ingame,
+  knockedOut,
+  spectating,
+}
+
 export type NetworkPlayerInfo = {
   readonly nickname: string;
   readonly color: number;
@@ -11,7 +17,7 @@ export type NetworkPlayerInfo = {
   readonly id: number;
   readonly score: number;
   readonly health: number;
-  readonly isSpectating: boolean;
+  readonly status: PlayerStatus;
 };
 
 export interface IPlayer {
@@ -22,6 +28,7 @@ export interface IPlayer {
   get id(): number;
   get isHuman(): boolean;
   get isNetworked(): boolean;
+  get status(): PlayerStatus;
 
   get block(): IBlock | undefined;
   get score(): number;
@@ -30,9 +37,8 @@ export interface IPlayer {
   set health(health: number);
   get estimatedSpawnDelay(): number;
   set estimatedSpawnDelay(estimatedSpawnDelay: number);
-
-  set isSpectating(isSpectating: boolean);
-  get isSpectating(): boolean;
+  set status(status: PlayerStatus);
+  get lastStatusChangeTime(): number;
   toggleChat(cancel?: boolean): void;
 
   get isChatting(): boolean;

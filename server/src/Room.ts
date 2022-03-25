@@ -1,4 +1,4 @@
-import Simulation from '@core/Simulation';
+import Simulation from '@core/simulation/Simulation';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import NetworkPlayer from '@core/player/NetworkPlayer';
 import { SendServerMessageFunction } from './networking/ServerSocket';
@@ -13,7 +13,6 @@ import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
-import { ServerMessage } from './networking/IServerSocket';
 import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
 import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
 import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
@@ -23,7 +22,7 @@ import { IServerBlockDroppedEvent } from '@core/networking/server/IServerBlockDr
 import { IServerNextSpawnEvent } from '@core/networking/server/IServerNextSpawnEvent';
 import { stringToHex } from '@models/util/stringToHex';
 import { colors } from '@models/colors';
-import { IPlayer, NetworkPlayerInfo } from '@models/IPlayer';
+import { IPlayer, NetworkPlayerInfo, PlayerStatus } from '@models/IPlayer';
 import { IClientBlockDroppedEvent } from '@core/networking/client/IClientBlockDroppedEvent';
 import { IClientMessage } from '@models/networking/client/IClientMessage';
 import { ServerMessageType } from '@models/networking/server/ServerMessageType';
@@ -32,12 +31,14 @@ import { IClientChatMessage } from '@models/networking/client/IClientChatMessage
 import { IServerChatMessage } from '@models/networking/server/IServerChatMessage';
 import { GameModeType } from '@models/GameModeType';
 import AIPlayer from '@core/player/AIPlayer';
-import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/IServerPlayerToggleSpectatingEvent';
-import { IServerMessage } from '@models/networking/server/IServerMessage';
 import { IServerNextRoundEvent } from '@core/networking/server/IServerNextRoundEvent';
 import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
 import { GameModeEvent } from '@models/GameModeEvent';
 import { reservedPlayerIds } from '@models/networking/reservedPlayerIds';
+import { IServerEndRoundEvent } from '@core/networking/server/IServerEndRoundEvent';
+import { IServerStartNextRoundTimerEvent } from '@core/networking/server/IServerStartNextRoundTimerEvent';
+import { IServerPlayerChangeStatusEvent } from '@core/networking/server/IServerPlayerChangeStatusEvent';
+import { IServerMessage } from '@models/networking/server/IServerMessage';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
@@ -104,9 +105,13 @@ export default class Room implements ISimulationEventListener {
       socketId,
       this._simulation,
       playerId,
+      playerInfo?.status === PlayerStatus.spectating
+        ? PlayerStatus.spectating
+        : this._simulation.shouldNewPlayerSpectate
+        ? PlayerStatus.knockedOut
+        : PlayerStatus.ingame,
       playerNickname,
       freeColor,
-      this._simulation.shouldNewPlayerSpectate,
       playerInfo?.patternFilename,
       playerInfo?.characterId || '0'
     );
@@ -120,8 +125,8 @@ export default class Room implements ISimulationEventListener {
         playerId: newPlayer.id,
         simulation: {
           settings: this._simulation.settings,
-          gameModeState: this._simulation.gameMode.getCurrentState(),
-          currentRoundDuration: this._simulation.currentRoundDuration,
+          gameModeState: this._simulation.gameMode.serialize(),
+          round: this._simulation.round?.serialize(),
         },
         grid: {
           numRows: this._simulation.grid.numRows,
@@ -148,7 +153,7 @@ export default class Room implements ISimulationEventListener {
           id: existingPlayer.id,
           nickname: existingPlayer.nickname,
           score: existingPlayer.score,
-          isSpectating: existingPlayer.isSpectating,
+          status: existingPlayer.status,
           characterId: existingPlayer.characterId,
           patternFilename: existingPlayer.patternFilename,
           health: existingPlayer.health,
@@ -158,9 +163,6 @@ export default class Room implements ISimulationEventListener {
     };
 
     this._sendMessageToPlayers(joinRoomResponse, newPlayer.id);
-    this._sendServerChatMessage(
-      'Player ' + newPlayer.nickname + ' joined the game'
-    );
 
     this._simulation.startInterval();
   }
@@ -249,10 +251,12 @@ export default class Room implements ISimulationEventListener {
             const bot = new AIPlayer(
               this._simulation,
               botId,
+              this._simulation.shouldNewPlayerSpectate
+                ? PlayerStatus.knockedOut
+                : PlayerStatus.ingame,
               botNickname,
               botColor,
-              parseInt(clientMessage.message.split(' ')[1] || '30'),
-              this._simulation.shouldNewPlayerSpectate
+              parseInt(clientMessage.message.split(' ')[1] || '30')
             );
             this._simulation.addPlayer(bot);
           } else if (clientMessage.message.startsWith('/kickbots')) {
@@ -262,7 +266,9 @@ export default class Room implements ISimulationEventListener {
               }
             }
           } else if (clientMessage.message.startsWith('/nextround')) {
-            this._simulation.startNextRound();
+            this._simulation.round!.start();
+          } else if (clientMessage.message.startsWith('/endround')) {
+            this._simulation.round!.end(undefined);
           }
         }
       }
@@ -286,11 +292,26 @@ export default class Room implements ISimulationEventListener {
    */
   onSimulationStep(simulation: Simulation) {}
 
-  onSimulationNextRound(): void {
+  onNextRound(): void {
     const nextRoundEvent: IServerNextRoundEvent = {
       type: ServerMessageType.NEXT_ROUND,
     };
     this._sendMessageToAllPlayers(nextRoundEvent);
+  }
+
+  onEndRound(): void {
+    const endRoundEvent: IServerEndRoundEvent = {
+      type: ServerMessageType.END_ROUND,
+      winnerId: this._simulation.round!.winner?.id,
+    };
+    this._sendMessageToAllPlayers(endRoundEvent);
+  }
+
+  onStartNextRoundTimer(): void {
+    const endRoundEvent: IServerStartNextRoundTimerEvent = {
+      type: ServerMessageType.START_NEXT_ROUND_TIMER,
+    };
+    this._sendMessageToAllPlayers(endRoundEvent);
   }
 
   /**
@@ -397,12 +418,15 @@ export default class Room implements ISimulationEventListener {
         id: player.id,
         color: player.color,
         nickname: player.nickname,
-        isSpectating: player.isSpectating,
+        status: player.status,
         health: player.health,
       },
     };
 
     this._sendMessageToAllPlayersExcept(newPlayerMessage, player.id);
+    this._sendServerChatMessage(
+      'Player ' + player.nickname + ' joined the game'
+    );
   }
   onPlayerDestroyed(player: IPlayer): void {
     const playerDisconnectedMessage: IServerPlayerDisconnectedEvent = {
@@ -422,27 +446,28 @@ export default class Room implements ISimulationEventListener {
     this._sendServerChatMessage('Player ' + player.nickname + ' left the game');
   }
   onPlayerToggleChat(player: IPlayer): void {
-    console.error('TODO: mark player as chatting/not chatting');
+    // TODO: mark player as chatting/not chatting
   }
-  onPlayerToggleSpectating(player: IPlayer) {
-    const playerToggleSpectatingMessage: IServerPlayerToggleSpectatingEvent = {
-      type: ServerMessageType.PLAYER_TOGGLE_SPECTATING,
+  onPlayerChangeStatus(player: IPlayer): void {
+    const playerToggleSpectatingMessage: IServerPlayerChangeStatusEvent = {
+      type: ServerMessageType.PLAYER_CHANGE_STATUS,
       playerId: player.id,
-      isSpectating: player.isSpectating,
+      status: player.status,
     };
     this._sendMessageToAllPlayers(playerToggleSpectatingMessage);
   }
+
   onPlayerHealthChanged(player: IPlayer, amount: number): void {}
   onPlayerScoreChanged(player: IPlayer, amount: number): void {}
   onGameModeEvent(event: GameModeEvent): void {}
 
-  private _sendMessageToAllPlayers(message: ServerMessage) {
+  private _sendMessageToAllPlayers(message: IServerMessage) {
     const playerIds: number[] = this._simulation.getNetworkPlayerIds();
     this._sendMessageToPlayers(message, ...playerIds);
   }
 
   private _sendMessageToAllPlayersExcept(
-    message: ServerMessage,
+    message: IServerMessage,
     playerId: number
   ) {
     const playerIds = this._simulation
@@ -460,7 +485,7 @@ export default class Room implements ISimulationEventListener {
   }
 
   private _sendMessageToPlayers(
-    message: ServerMessage,
+    message: IServerMessage,
     ...playerIds: number[]
   ) {
     for (const playerId of playerIds) {

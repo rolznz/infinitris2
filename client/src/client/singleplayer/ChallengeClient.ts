@@ -11,7 +11,7 @@ import IChallengeClient from '@models/IChallengeClient';
 import { InputMethod } from '@models/InputMethod';
 import { IChallenge } from '@models/IChallenge';
 import ISimulation from '@models/ISimulation';
-import Simulation from '@core/Simulation';
+import Simulation from '@core/simulation/Simulation';
 import ChallengeCompletionStats from '@models/ChallengeCompletionStats';
 import ChallengeCellType from '@models/ChallengeCellType';
 import createBehaviour from '@core/grid/cell/behaviours/createBehaviour';
@@ -20,7 +20,7 @@ import parseGrid from '@models/util/parseGrid';
 import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
-import { IPlayer } from '@models/IPlayer';
+import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import {
   ChallengeStatusCode,
   IChallengeAttempt,
@@ -37,7 +37,7 @@ import { GameModeEvent } from '@models/GameModeEvent';
 // this client should be replaced with a single player / network client that supports a challenge
 export default class ChallengeClient
   extends BaseClient
-  implements IChallengeClient, ISimulationEventListener
+  implements IChallengeClient, Partial<ISimulationEventListener>
 {
   // FIXME: restructure to not require definite assignment
   private _renderer!: BaseRenderer;
@@ -61,24 +61,11 @@ export default class ChallengeClient
     this._controls = options.controls_keyboard;
     this._create(challenge);
   }
-  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
-  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
-  onGameModeEvent(event: GameModeEvent): void {}
-
-  /**
-   * @inheritdoc
-   */
-  onSimulationInit(simulation: ISimulation) {}
-  /**
-   * @inheritdoc
-   */
   onSimulationStep(simulation: ISimulation) {
     if (this.getChallengeAttempt().status !== 'pending') {
       simulation.stopInterval();
     }
   }
-
-  onSimulationNextRound(): void {}
 
   /**
    * @inheritdoc
@@ -90,15 +77,9 @@ export default class ChallengeClient
   /**
    * @inheritdoc
    */
-  onBlockCreated(block: IBlock) {}
-  /**
-   * @inheritdoc
-   */
   onBlockPlaced(block: IBlock) {
     ++this._numBlocksPlaced;
   }
-
-  onBlockDropped(block: IBlock) {}
 
   /**
    * @inheritdoc
@@ -107,35 +88,12 @@ export default class ChallengeClient
     this._blockDied = true;
   }
 
-  onBlockDestroyed(block: IBlock): void {}
-  /**
-   * @inheritdoc
-   */
-  onBlockMoved(block: IBlock) {}
-
-  onPlayerCreated(player: IPlayer): void {}
-  onPlayerDestroyed(player: IPlayer): void {}
-  onPlayerToggleChat(player: IPlayer): void {}
-  onPlayerToggleSpectating() {}
-
   /**
    * @inheritdoc
    */
   onLineClear(row: number) {
     ++this._numLinesCleared;
   }
-
-  onLineClearing() {}
-  onClearLines() {}
-  onLinesCleared() {}
-
-  onGridReset(grid: IGrid): void {}
-
-  /**
-   * @inheritdoc
-   */
-  onCellBehaviourChanged(_cell: ICell, _previousBehaviour: ICellBehaviour) {}
-  onCellIsEmptyChanged() {}
   /**
    * @inheritdoc
    */
@@ -332,9 +290,11 @@ export default class ChallengeClient
     const player = new ControllablePlayer(
       simulation,
       playerId,
-      this._launchOptions.player?.nickname,
-      this._launchOptions.player?.color,
       this._simulation.shouldNewPlayerSpectate
+        ? PlayerStatus.knockedOut
+        : PlayerStatus.ingame,
+      this._launchOptions.player?.nickname,
+      this._launchOptions.player?.color
     );
     simulation.addPlayer(player);
     simulation.followPlayer(player);

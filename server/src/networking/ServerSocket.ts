@@ -1,24 +1,32 @@
-import * as WebSocket from 'ws';
 import IServerSocketEventListener from './IServerSocketEventListener';
-import { Server as WebSocketServer, Data as WebSocketData } from 'ws';
-import IClientSocket from './IClientSocket';
-import IServerSocket, { ServerMessage } from './IServerSocket';
+import WebSocket, {
+  Server as WebSocketServer,
+  Data as WebSocketData,
+} from 'ws';
+
+import IServerSocket from './IServerSocket';
 import { IClientMessage } from '@models/networking/client/IClientMessage';
+import { IServerMessage } from '@models/networking/server/IServerMessage';
+import IClientSocket from '@src/networking/IClientSocket';
+import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 
 const HEARTBEAT_TIMEOUT = 30000;
 
-export type SendServerMessageFunction = (
-  message: ServerMessage,
-  ...socketIds: number[]
-) => void;
-
 interface ISocketWrapper extends WebSocket, IClientSocket {
   isAlive: boolean;
+  lastMovement: number;
   messageId: number;
 }
 
+type ServerSocketMap = { [id: number]: ISocketWrapper };
+
+export type SendServerMessageFunction = (
+  message: IServerMessage,
+  ...socketIds: number[]
+) => void;
+
 export default class ServerSocket implements IServerSocket {
-  private _sockets: { [id: number]: ISocketWrapper };
+  private _sockets: ServerSocketMap;
   private _nextSocketId: number;
   private _socketServer: WebSocketServer;
   private _eventListeners: IServerSocketEventListener[];
@@ -30,6 +38,10 @@ export default class ServerSocket implements IServerSocket {
     this._eventListeners = [];
   }
 
+  /*get sockets(): ServerSocketMap {
+    return this._sockets;
+  }*/
+
   /**
    * @inheritdoc
    */
@@ -40,7 +52,7 @@ export default class ServerSocket implements IServerSocket {
   /**
    * @inheritdoc
    */
-  sendMessage(message: ServerMessage, ...socketIds: number[]) {
+  sendMessage(message: IServerMessage, ...socketIds: number[]) {
     socketIds.forEach((socketId) => {
       const socket: ISocketWrapper | null = this._sockets[socketId];
       if (socket) {
@@ -55,13 +67,20 @@ export default class ServerSocket implements IServerSocket {
   private _onClientConnect = (socket: ISocketWrapper) => {
     socket.id = this._nextSocketId++;
     socket.messageId = 0;
+    socket.isAlive = true;
+    socket.lastMovement = Date.now();
     this._sockets[socket.id] = socket;
 
     const heartbeat = () => (socket.isAlive = true);
-    heartbeat();
 
     const checkHeartbeat = setInterval(() => {
-      if (!socket.isAlive) {
+      if (!socket.isAlive || Date.now() - socket.lastMovement > 30000) {
+        console.log(
+          'Closed client socket ',
+          socket.id,
+          'Reason',
+          !socket.isAlive ? 'Heartbeat timeout' : 'No recent activity'
+        );
         this._onClientDisconnect(socket, checkHeartbeat);
       } else {
         socket.isAlive = false;
@@ -92,6 +111,9 @@ export default class ServerSocket implements IServerSocket {
 
   private _onClientMessage = (socket: ISocketWrapper, event: WebSocketData) => {
     const message: IClientMessage = JSON.parse(event as string);
+    if (message.type === ClientMessageType.BLOCK_MOVED) {
+      socket.lastMovement = Date.now();
+    }
     this._eventListeners.forEach((listener) =>
       listener.onClientMessage(socket, message)
     );

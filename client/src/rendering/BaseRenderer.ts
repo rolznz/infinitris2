@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js-legacy';
-import { IPlayer } from '@models/IPlayer';
+import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import ControlSettings from '@models/ControlSettings';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
@@ -109,37 +109,6 @@ export abstract class BaseRenderer implements IRenderer {
     this._simulation = simulation;
     this._world.removeChildren();
   }
-  abstract onSimulationStep(simulation: ISimulation): void;
-  abstract onSimulationNextRound(simulation: ISimulation): void;
-  abstract onPlayerCreated(player: IPlayer): void;
-  abstract onPlayerDestroyed(player: IPlayer): void;
-  abstract onPlayerToggleChat(player: IPlayer, wasCancelled: boolean): void;
-  abstract onPlayerToggleSpectating(player: IPlayer): void;
-  abstract onPlayerHealthChanged(player: IPlayer, amount: number): void;
-  abstract onPlayerScoreChanged(player: IPlayer, amount: number): void;
-  abstract onGameModeEvent(event: GameModeEvent): void;
-  abstract onBlockCreated(block: IBlock): void;
-  abstract onBlockCreateFailed(block: IBlock): void;
-  abstract onBlockPlaced(block: IBlock): void;
-  abstract onBlockMoved(
-    block: IBlock,
-    dx: number,
-    dy: number,
-    dr: number
-  ): void;
-  abstract onBlockDropped(block: IBlock): void;
-  abstract onBlockDied(block: IBlock): void;
-  abstract onBlockDestroyed(block: IBlock): void;
-  abstract onLineClear(row: number): void;
-  abstract onLineClearing(row: number): void;
-  abstract onClearLines(rows: number[]): void;
-  abstract onLinesCleared(rows: number[]): void;
-  abstract onGridReset(grid: IGrid): void;
-  abstract onCellBehaviourChanged(
-    cell: ICell,
-    previousBehaviour: ICellBehaviour
-  ): void;
-  abstract onCellIsEmptyChanged(cell: ICell): void;
 
   abstract emitParticle(
     x: number,
@@ -273,7 +242,7 @@ export abstract class BaseRenderer implements IRenderer {
   onInputAction = (action: InputAction) => {
     if (
       !this._simulation?.followingPlayer ||
-      this._simulation?.followingPlayer.isSpectating
+      this._simulation?.followingPlayer.status !== PlayerStatus.ingame
     ) {
       const speed = 100;
       this._camera.bump(

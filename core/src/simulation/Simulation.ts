@@ -1,13 +1,13 @@
-import Grid from './grid/Grid';
-import Player from './player/Player';
-import Block from './block/Block';
+import Grid from '../grid/Grid';
+import Player from '../player/Player';
+import Block from '../block/Block';
 import ISimulation from '@models/ISimulation';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import { SimulationSettings } from '@models/SimulationSettings';
 import IBlock from '@models/IBlock';
 import ICellBehaviour from '@models/ICellBehaviour';
 import ICell from '@models/ICell';
-import { IPlayer } from '@models/IPlayer';
+import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import IGrid from '@models/IGrid';
 import { IGameMode } from '@models/IGameMode';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
@@ -15,6 +15,8 @@ import { InfinityGameMode } from '@core/gameModes/InfinityGameMode';
 import { FpsCounter } from '@core/FpsCounter';
 import { GameModeEvent } from '@models/GameModeEvent';
 import NetworkPlayer from '@core/player/NetworkPlayer';
+import { IRound } from '@models/IRound';
+import { Round } from '@core/simulation/Round';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -37,7 +39,7 @@ export default class Simulation implements ISimulation {
   private _gameMode: IGameMode<unknown>;
   private _fpsCounter: FpsCounter;
   private _lastStepTime = 0;
-  private _currentRoundStartTime: number;
+  private _round: IRound | undefined;
 
   constructor(grid: Grid, settings: SimulationSettings = {}, isClient = false) {
     this._eventListeners = [];
@@ -63,18 +65,16 @@ export default class Simulation implements ISimulation {
         : new InfinityGameMode(this);
     this.addEventListener(this._gameMode);
     this._fpsCounter = new FpsCounter();
-    this._currentRoundStartTime = 0;
-  }
 
-  get currentRoundStartTime(): number {
-    return this._currentRoundStartTime;
+    if (this._settings.gameModeType === 'conquest') {
+      this._round = new Round(this);
+    }
   }
-  set currentRoundStartTime(currentRoundStartTime: number) {
-    this._currentRoundStartTime = currentRoundStartTime;
+  onSimulationInit(): void {
+    throw new Error('should never be called');
   }
-
-  get currentRoundDuration(): number {
-    return Date.now() - this._currentRoundStartTime;
+  onSimulationStep(): void {
+    throw new Error('should never be called');
   }
 
   get fps(): number {
@@ -103,6 +103,16 @@ export default class Simulation implements ISimulation {
     ) as NetworkPlayer[];
   }
 
+  get nonSpectatorPlayers(): IPlayer[] {
+    return this.players.filter(
+      (player) => player.status !== PlayerStatus.spectating
+    );
+  }
+
+  get round(): IRound | undefined {
+    return this._round;
+  }
+
   getNetworkPlayerBySocketId(socketId: number): NetworkPlayer | undefined {
     return this.players.find(
       (player) =>
@@ -120,6 +130,10 @@ export default class Simulation implements ISimulation {
 
   get followingPlayer(): IPlayer | undefined {
     return this.players.find((player) => this.isFollowingPlayerId(player.id));
+  }
+
+  get humanPlayer(): IPlayer | undefined {
+    return this.players.find((player) => player.isHuman);
   }
 
   get shouldNewPlayerSpectate(): boolean {
@@ -238,10 +252,15 @@ export default class Simulation implements ISimulation {
     return Object.values(this.networkPlayers).map((player) => player.id);
   }
 
-  startNextRound(): void {
-    this._currentRoundStartTime = Date.now();
+  onNextRound(simulation: ISimulation): void {
+    this._eventListeners.forEach((listener) => listener.onNextRound?.(this));
+  }
+  onEndRound(simulation: ISimulation): void {
+    this._eventListeners.forEach((listener) => listener.onEndRound?.(this));
+  }
+  onStartNextRoundTimer(simulation: ISimulation): void {
     this._eventListeners.forEach((listener) =>
-      listener.onSimulationNextRound?.(this)
+      listener.onStartNextRoundTimer?.(this)
     );
   }
 
@@ -339,12 +358,12 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
-  onPlayerToggleSpectating(player: IPlayer) {
-    if (player.isSpectating) {
+  onPlayerChangeStatus(player: IPlayer) {
+    if (player.status !== PlayerStatus.ingame) {
       this._grid.removePlayer(player);
     }
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerToggleSpectating?.(player)
+      listener.onPlayerChangeStatus?.(player)
     );
   }
 
@@ -443,6 +462,7 @@ export default class Simulation implements ISimulation {
     Object.values(this._players).forEach(this._updatePlayer);
     this._grid.step(this._isNetworkClient);
     this._gameMode.step();
+    this._round?.step();
     this._runningTime += FRAME_LENGTH;
     this._eventListeners.forEach((listener) =>
       listener.onSimulationStep?.(this)

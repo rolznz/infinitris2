@@ -7,5 +7,5 @@ export interface IPlayerEventListener extends IBlockEventListener {
   onPlayerScoreChanged(player: IPlayer, amount: number): void;
   onPlayerHealthChanged(player: IPlayer, amount: number): void;
   onPlayerToggleChat(player: IPlayer, wasCancelled: boolean): void;
-  onPlayerToggleSpectating(player: IPlayer): void;
+  onPlayerChangeStatus(player: IPlayer): void;
 }

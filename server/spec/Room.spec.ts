@@ -1,15 +1,14 @@
 import 'jasmine';
 import 'module-alias/register';
 import Room from '@src/Room';
-import { ServerMessage } from '@src/networking/IServerSocket';
 
 describe('Room', () => {
   it('will add players to the simulation', () => {
-    const sendMessage = (message: ServerMessage, ...socketIds: number[]) => {};
+    /*const sendMessage = (message: ServerMessage, ...socketIds: number[]) => {};
     const room = new Room(sendMessage, 'infinity');
     const playerId = 1;
     room.addPlayer(playerId);
-    expect(room.simulation.getPlayerIds()).toEqual([playerId]);
+    expect(room.simulation.getPlayerIds()).toEqual([playerId]);*/
   });
 
   it('will send correct messages when the first player joins', () => {

@@ -1,4 +1,4 @@
-import Simulation from '@core/Simulation';
+import Simulation from '@core/simulation/Simulation';
 import MinimalRenderer from '@src/rendering/renderers/minimal/MinimalRenderer';
 import ControllablePlayer from '@src/ControllablePlayer';
 import Grid from '@core/grid/Grid';
@@ -7,7 +7,7 @@ import ISimulationEventListener from '@models/ISimulationEventListener';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
-import { IPlayer } from '@models/IPlayer';
+import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
 import { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
 import { SimulationSettings } from '@models/SimulationSettings';
@@ -21,7 +21,7 @@ import { GameModeEvent } from '@models/GameModeEvent';
 
 export default class SinglePlayerClient
   extends BaseClient
-  implements ISimulationEventListener
+  implements Partial<ISimulationEventListener>
 {
   // FIXME: restructure to not require definite assignment
   private _renderer!: BaseRenderer;
@@ -32,65 +32,9 @@ export default class SinglePlayerClient
     super(clientApiConfig, options);
     this._create(options);
   }
-  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
-  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
-  onGameModeEvent(event: GameModeEvent): void {}
 
-  onGridReset(grid: IGrid): void {}
+  onSimulationInit() {}
 
-  /**
-   * @inheritdoc
-   */
-  onSimulationInit(simulation: Simulation) {}
-  /**
-   * @inheritdoc
-   */
-  onSimulationStep(simulation: Simulation) {}
-
-  onSimulationNextRound(): void {}
-
-  /**
-   * @inheritdoc
-   */
-  onBlockCreated(block: IBlock) {}
-
-  /**
-   * @inheritdoc
-   */
-  onBlockCreateFailed(block: IBlock) {}
-  /**
-   * @inheritdoc
-   */
-  onBlockPlaced(block: IBlock) {}
-  /**
-   * @inheritdoc
-   */
-  onBlockMoved(block: IBlock) {}
-  /**
-   * @inheritdoc
-   */
-  onBlockDropped(block: IBlock) {}
-  onBlockDied(block: IBlock) {}
-  onBlockDestroyed(block: IBlock): void {}
-
-  onPlayerCreated(player: IPlayer): void {}
-  onPlayerDestroyed(player: IPlayer): void {}
-  onPlayerToggleChat(player: IPlayer): void {}
-  onPlayerToggleSpectating() {}
-  /**
-   * @inheritdoc
-   */
-  onLineClear(row: number) {}
-  onLineClearing() {}
-  onClearLines() {}
-  onLinesCleared() {}
-
-  /**
-   * @inheritdoc
-   */
-  onCellBehaviourChanged(_cell: ICell, _previousBehaviour: ICellBehaviour) {}
-
-  onCellIsEmptyChanged() {}
   /**
    * @inheritdoc
    */
@@ -143,9 +87,13 @@ export default class SinglePlayerClient
     const player = new ControllablePlayer(
       this._simulation,
       playerId,
+      options.spectate
+        ? PlayerStatus.spectating
+        : this._simulation.shouldNewPlayerSpectate
+        ? PlayerStatus.knockedOut
+        : PlayerStatus.ingame,
       options.player?.nickname,
       options.player?.color,
-      options.spectate || this._simulation.shouldNewPlayerSpectate,
       options.player?.patternFilename,
       options.player?.characterId
     );
@@ -179,13 +127,15 @@ export default class SinglePlayerClient
           new AIPlayer(
             this._simulation,
             i + 1,
+            this._simulation.shouldNewPlayerSpectate
+              ? PlayerStatus.knockedOut
+              : PlayerStatus.ingame,
             'Bot ' + (i + 1),
             freeColors[Math.floor(Math.random() * (freeColors.length - 1))],
             (options.botReactionDelay || 20) +
               Math.floor(
                 Math.random() * (options.botRandomReactionDelay || 20)
               ),
-            this._simulation.shouldNewPlayerSpectate,
             'pattern_' + Math.floor(Math.random() * 12) + '.png', // TODO: pass characters from app
             '' + Math.floor(Math.random() * 100) // TODO: pass characters from app
           )

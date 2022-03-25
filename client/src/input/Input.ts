@@ -1,6 +1,6 @@
 import ControllablePlayer from '../ControllablePlayer';
 import Grid from '@core/grid/Grid';
-import Simulation from '@core/Simulation';
+import Simulation from '@core/simulation/Simulation';
 import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
 import KeyboardInput from './KeyboardInput';

@@ -1,4 +1,4 @@
-import Simulation from '@core/Simulation';
+import Simulation from '@core/simulation/Simulation';
 import IRenderer from '../rendering/IRenderer';
 import Grid from '@core/grid/Grid';
 import {
@@ -35,15 +35,16 @@ import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 import { ServerMessageType } from '@models/networking/server/ServerMessageType';
 import { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
 import IClientJoinRoomRequest from '@core/networking/client/IClientJoinRoomRequest';
-import { IServerPlayerToggleSpectatingEvent } from '@core/networking/server/IServerPlayerToggleSpectatingEvent';
+import { IServerPlayerChangeStatusEvent } from '@core/networking/server/IServerPlayerChangeStatusEvent';
 import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
 import { GameModeEvent } from '@models/GameModeEvent';
+import { IServerEndRoundEvent } from '@core/networking/server/IServerEndRoundEvent';
 
 export default class NetworkClient
   extends BaseClient
-  implements IClientSocketEventListener, ISimulationEventListener
+  implements IClientSocketEventListener, Partial<ISimulationEventListener>
 {
   private _socket: IClientSocket;
   // FIXME: restructure to not require definite assignment
@@ -65,10 +66,6 @@ export default class NetworkClient
     }
     this._socket = new ClientSocket(url, eventListeners);
   }
-  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
-  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
-  onLinesCleared(rows: number[]): void {}
-  onGameModeEvent(event: GameModeEvent): void {}
 
   /**
    * @inheritdoc
@@ -80,7 +77,8 @@ export default class NetworkClient
       undefined,
       undefined,
       undefined,
-      this._launchOptions.worldType
+      this._launchOptions.worldType,
+      this._launchOptions.useFallbackUI
     );
     await this._renderer.create();
     const joinRoomRequest: IClientJoinRoomRequest = {
@@ -123,7 +121,7 @@ export default class NetworkClient
           joinResponseData.simulation.settings,
           true
         );
-        this._simulation.gameMode.loadState(
+        this._simulation.gameMode.deserialize(
           joinResponseData.simulation.gameModeState
         );
         this._simulation.addEventListener(this._renderer, this);
@@ -131,16 +129,17 @@ export default class NetworkClient
           this._simulation.addEventListener(...this._launchOptions.listeners);
         }
         this._simulation.init();
-        this._simulation.currentRoundStartTime =
-          Date.now() - joinResponseData.simulation.currentRoundDuration;
+        if (this._simulation.round && joinResponseData.simulation.round) {
+          this._simulation.round.deserialize(joinResponseData.simulation.round);
+        }
         for (let playerInfo of joinResponseData.players) {
           if (playerInfo.id === joinResponseData.playerId) {
             const humanPlayer = new ControllablePlayer(
               this._simulation,
               playerInfo.id,
+              playerInfo.status,
               playerInfo.nickname,
               playerInfo.color,
-              playerInfo.isSpectating,
               playerInfo.patternFilename,
               playerInfo.characterId
             );
@@ -160,9 +159,9 @@ export default class NetworkClient
               -1,
               this._simulation,
               playerInfo.id,
+              playerInfo.status,
               playerInfo.nickname,
               playerInfo.color,
-              playerInfo.isSpectating,
               playerInfo.patternFilename,
               playerInfo.characterId
             );
@@ -208,9 +207,9 @@ export default class NetworkClient
           -1,
           this._simulation,
           playerInfo.id,
+          playerInfo.status,
           playerInfo.nickname,
           playerInfo.color,
-          playerInfo.isSpectating,
           playerInfo.patternFilename,
           playerInfo.characterId
         );
@@ -253,18 +252,26 @@ export default class NetworkClient
         const playerId = (message as IServerBlockDiedEvent).playerId;
         const block = this._simulation.getPlayer(playerId).block!;
         block.die();
+      } else if (message.type === ServerMessageType.START_NEXT_ROUND_TIMER) {
+        this._simulation.round!.restartNextRoundTimer();
       } else if (message.type === ServerMessageType.NEXT_ROUND) {
-        this._simulation.startNextRound();
+        this._simulation.round!.start();
+      } else if (message.type === ServerMessageType.END_ROUND) {
+        const winnerId = (message as IServerEndRoundEvent).winnerId;
+        const winner: IPlayer | undefined =
+          winnerId !== undefined
+            ? this._simulation.getPlayer(winnerId)
+            : undefined;
+        this._simulation.round!.end(winner);
       } else if (message.type === ServerMessageType.NEXT_SPAWN) {
         this._simulation.getPlayer(this._playerId!).estimatedSpawnDelay = (
           message as IServerNextSpawnEvent
         ).time;
-      } else if (message.type === ServerMessageType.PLAYER_TOGGLE_SPECTATING) {
-        const playerToggleSpectatingMessage =
-          message as IServerPlayerToggleSpectatingEvent;
-        this._simulation.getPlayer(
-          playerToggleSpectatingMessage.playerId
-        ).isSpectating = playerToggleSpectatingMessage.isSpectating;
+      } else if (message.type === ServerMessageType.PLAYER_CHANGE_STATUS) {
+        const playerChangeStatusMessage =
+          message as IServerPlayerChangeStatusEvent;
+        this._simulation.getPlayer(playerChangeStatusMessage.playerId).status =
+          playerChangeStatusMessage.status;
       } else if (message.type === ServerMessageType.CLEAR_LINES) {
         const clearLinesMessage = message as IServerClearLinesEvent;
         this._simulation.grid.clearLines(clearLinesMessage.rows);
@@ -295,12 +302,6 @@ export default class NetworkClient
     this._input?.destroy();
   }
 
-  onSimulationInit(simulation: ISimulation): void {}
-  onSimulationStep(simulation: ISimulation): void {}
-  onSimulationNextRound(): void {}
-  onBlockCreated(block: IBlock): void {}
-  onBlockCreateFailed(block: IBlock): void {}
-  onBlockPlaced(block: IBlock): void {}
   onBlockMoved(block: IBlock): void {
     if (block.player.id === this._playerId && !block.isDropping) {
       const blockMovedEvent: IClientBlockMovedEvent = {
@@ -326,19 +327,4 @@ export default class NetworkClient
       this._socket.sendMessage(blockDroppedEvent);
     }
   }
-  onBlockDied(block: IBlock): void {}
-  onBlockDestroyed(block: IBlock): void {}
-  onPlayerCreated(player: IPlayer): void {}
-  onPlayerDestroyed(player: IPlayer): void {}
-  onPlayerToggleChat(player: IPlayer): void {}
-  onPlayerToggleSpectating() {}
-  onCellBehaviourChanged(
-    cell: ICell,
-    previousBehaviour: ICellBehaviour
-  ): void {}
-  onCellIsEmptyChanged() {}
-  onLineClear(row: number): void {}
-  onLineClearing() {}
-  onClearLines() {}
-  onGridReset(grid: IGrid): void {}
 }

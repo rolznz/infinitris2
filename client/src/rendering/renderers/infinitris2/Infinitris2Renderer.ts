@@ -2,7 +2,7 @@ import IRenderer, { ParticleType } from '../../IRenderer';
 import * as PIXI from 'pixi.js-legacy';
 import Grid from '@core/grid/Grid';
 import ISimulationEventListener from '@models/ISimulationEventListener';
-import Simulation from '@core/Simulation';
+import Simulation from '@core/simulation/Simulation';
 import Camera from '@src/rendering/Camera';
 import CellType from '@models/CellType';
 import LaserBehaviour from '@core/grid/cell/behaviours/LaserBehaviour';
@@ -671,8 +671,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._world.removeChild(playerContainer.container);
     delete this._players[player.id];
   }
-  onPlayerToggleChat(player: IPlayer): void {}
-  onPlayerToggleSpectating() {}
 
   /**
    * @inheritdoc
@@ -865,7 +863,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     });*/
   }
 
-  onSimulationNextRound() {}
+  onNextRound() {}
 
   onLineClearing(row: number) {
     this._lineClearingIndicator.setLineClearing(row, true);

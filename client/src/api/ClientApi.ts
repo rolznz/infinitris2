@@ -75,6 +75,7 @@ export default class ClientApi implements IClientApi {
       });
     } else if (params.has('url')) {
       this.launchNetworkClient(params.get('url') as string, {
+        useFallbackUI: true,
         controls_keyboard: controls,
         roomId: parseInt(params.get('roomId') || '0'),
         player: {
@@ -93,7 +94,9 @@ export default class ClientApi implements IClientApi {
               socket.sendMessage(chatMessage);
             };
           },
-          onDisconnect: () => {},
+          onDisconnect: () => {
+            alert('Disconnected');
+          },
           onMessage: () => {},
         },
       });
@@ -104,34 +107,12 @@ export default class ClientApi implements IClientApi {
         throw new Error('Could not find challenge matching ID: ' + challengeId);
       }
       this.launchChallenge(challenge, {
+        useFallbackUI: true,
         listeners: [
           {
             onSimulationInit: (simulation: ISimulation) => {
               simulation.startInterval();
             },
-            onSimulationStep() {},
-            onSimulationNextRound() {},
-            onBlockCreated() {},
-            onBlockCreateFailed() {},
-            onBlockMoved() {},
-            onBlockDestroyed() {},
-            onBlockDied() {},
-            onBlockDropped() {},
-            onBlockPlaced() {},
-            onPlayerCreated() {},
-            onPlayerDestroyed() {},
-            onPlayerToggleChat() {},
-            onPlayerToggleSpectating() {},
-            onPlayerHealthChanged() {},
-            onPlayerScoreChanged() {},
-            onGameModeEvent() {},
-            onLineClear() {},
-            onLineClearing() {},
-            onClearLines() {},
-            onLinesCleared() {},
-            onCellBehaviourChanged() {},
-            onCellIsEmptyChanged() {},
-            onGridReset() {},
           },
         ],
         preferredInputMethod,

@@ -1,6 +1,6 @@
 import Grid from '@core/grid/Grid';
 import MinimalRenderer from '@src/rendering/renderers/minimal/MinimalRenderer';
-import Simulation from '@core/Simulation';
+import Simulation from '@core/simulation/Simulation';
 
 describe('MinimalRenderer', () => {
   it('attaches and removes itself from the DOM', async () => {

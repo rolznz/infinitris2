@@ -52,6 +52,7 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       __VERSION__: JSON.stringify(buildNumber),
+      __DEV__: process.env.NODE_ENV === 'development',
     }),
     new Dotenv(),
   ],

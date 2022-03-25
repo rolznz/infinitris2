@@ -1,5 +1,5 @@
 import * as PIXI from 'pixi.js-legacy';
-import { IPlayer } from '@models/IPlayer';
+import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { fontFamily } from '@models/ui';
@@ -78,7 +78,7 @@ export class Scoreboard {
       nickname: player.nickname,
       score: player.score,
       placing: 0,
-      isSpectating: player.isSpectating,
+      isSpectating: player.status === PlayerStatus.ingame,
       color: player.color,
       health: player.health,
     }));

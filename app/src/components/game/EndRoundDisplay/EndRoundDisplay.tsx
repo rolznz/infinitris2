@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import useIngameStore from '@/state/IngameStore';
 import React from 'react';
 import { colors } from '@/theme/theme';
-import { hexToString } from 'infinitris2-models';
+import { hexToString, PlayerStatus } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
 
 const bgSx: SxProps<Theme> = {
@@ -19,28 +19,36 @@ const bgSx: SxProps<Theme> = {
 export function EndRoundDisplay() {
   console.log('Re-render end round display');
   const simulation = useIngameStore((store) => store.simulation);
+  const endRoundDisplayOpen = useIngameStore(
+    (store) => store.endRoundDisplayOpen
+  );
   const windowSize = useWindowSize();
   const characterSize = windowSize.width * 0.3;
   const starSize = characterSize * 1.1;
   const ribbonSize = (starSize * 842) / 643;
-  const player = simulation?.players[0];
+
+  const winner = simulation?.round?.winner;
   const nameTypographySx: SxProps<Theme> = React.useMemo(
     () => ({
-      color: hexToString(player?.color || 0),
+      color: hexToString(winner?.color || 0),
       textShadow: `0px 1px ${colors.black}`,
       size: Math.floor(characterSize / 10) + 'px',
     }),
-    [player?.color, characterSize]
+    [winner?.color, characterSize]
   );
+
+  if (!endRoundDisplayOpen) {
+    return null;
+  }
 
   return (
     <FlexBox width="100%" height="100%" sx={bgSx} gap={2}>
-      {player && (
+      {winner && (
         <FlexBox width={ribbonSize} maxWidth="90vw" position="relative">
           <img alt="" src={starImage} width={starSize} />
           <FlexBox position="absolute">
             <CharacterImage
-              characterId={player.characterId || '0'}
+              characterId={winner.characterId || '0'}
               width={characterSize}
             />
             <PlacingStar
@@ -61,7 +69,7 @@ export function EndRoundDisplay() {
                 defaultMessage="{nickname} WINS!"
                 description="end round display player wins message"
                 values={{
-                  nickname: player.nickname,
+                  nickname: winner.nickname,
                 }}
               />
             </Typography>
@@ -74,17 +82,42 @@ export function EndRoundDisplay() {
 }
 
 export function NextRoundIndicator() {
+  console.log('Re-render next round indicator');
+  const simulation = useIngameStore((store) => store.simulation);
+  const [renderId, setRenderId] = React.useState(0);
+  const conditionsAreMet = useIngameStore(
+    (store) => store.roundConditionsAreMet
+  );
+  React.useEffect(() => {
+    if (conditionsAreMet) {
+      setTimeout(() => setRenderId((state) => state + 1), 1000);
+    }
+  }, [conditionsAreMet, renderId]);
+
+  if (!simulation || !simulation.round) {
+    return null;
+  }
+
   return (
     <FlexBox>
       <Typography variant="h2">
-        <FormattedMessage
-          defaultMessage="Next round starting in"
-          description="end round display next round starting in"
-        />
+        {conditionsAreMet ? (
+          <FormattedMessage
+            defaultMessage="Next round starting in"
+            description="end round display next round starting in"
+          />
+        ) : (
+          <FormattedMessage
+            defaultMessage="Waiting for players..."
+            description="end round display waiting for players"
+          />
+        )}
       </Typography>
-      <Typography variant="h1" fontSize={80}>
-        {3}
-      </Typography>
+      {conditionsAreMet && (
+        <Typography variant="h1" fontSize={80}>
+          {Math.ceil((simulation.round.nextRoundTime - Date.now()) / 1000)}
+        </Typography>
+      )}
     </FlexBox>
   );
 }

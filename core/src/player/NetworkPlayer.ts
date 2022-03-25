@@ -1,4 +1,4 @@
-import IBlockEventListener from '@models/IBlockEventListener';
+import { PlayerStatus } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
 import Player from './Player';
 
@@ -8,18 +8,18 @@ export default class NetworkPlayer extends Player {
     socketId: number,
     simulation: ISimulation,
     playerId: number,
+    status: PlayerStatus,
     nickname: string | undefined,
     color: number | undefined,
-    isSpectating: boolean,
     patternFilename?: string,
     characterId?: string
   ) {
     super(
       simulation,
       playerId,
+      status,
       nickname,
       color,
-      isSpectating,
       patternFilename,
       characterId
     );

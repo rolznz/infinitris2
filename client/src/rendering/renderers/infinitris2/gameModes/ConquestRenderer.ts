@@ -62,7 +62,7 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._renderColumnCaptures(conquestGameMode.columnCaptures, column);
   }
 
-  onSimulationNextRound() {
+  onNextRound() {
     this._rerender();
   }
 

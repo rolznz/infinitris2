@@ -1,5 +1,9 @@
 import useIngameStore, { LeaderboardEntry } from '@/state/IngameStore';
-import { hexToString, ISimulationEventListener } from 'infinitris2-models';
+import {
+  hexToString,
+  ISimulationEventListener,
+  PlayerStatus,
+} from 'infinitris2-models';
 import { debounce } from 'ts-debounce';
 
 function _updateLeaderboard() {
@@ -16,10 +20,23 @@ function _updateLeaderboard() {
       color: hexToString(player.color),
       characterId: player.characterId,
       score: player.score,
-      isSpectating: player.isSpectating,
+      status: player.status,
     })) || [];
 
-  leaderboardEntries.sort((a, b) => b.score - a.score);
+  leaderboardEntries.sort((a, b) => {
+    if (a.status === PlayerStatus.ingame && b.status === PlayerStatus.ingame) {
+      return b.score - a.score;
+    } else if (a.status === PlayerStatus.ingame) {
+      return -1;
+    } else if (b.status === PlayerStatus.ingame) {
+      return 1;
+    } else {
+      return (
+        simulation!.getPlayer(b.playerId).lastStatusChangeTime -
+        simulation!.getPlayer(a.playerId).lastStatusChangeTime
+      );
+    }
+  });
   for (let i = 0; i < leaderboardEntries.length; i++) {
     leaderboardEntries[i].placing = i + 1;
   }
@@ -52,6 +69,7 @@ export const leaderboardListener: Partial<ISimulationEventListener> = {
   onPlayerCreated: updateLeaderboard,
   onPlayerDestroyed: updateLeaderboard,
   onPlayerScoreChanged: updateLeaderboard,
-  onSimulationNextRound: updateLeaderboard,
-  onPlayerToggleSpectating: updateLeaderboard,
+  onNextRound: updateLeaderboard,
+  onEndRound: updateLeaderboard,
+  onPlayerChangeStatus: updateLeaderboard,
 };

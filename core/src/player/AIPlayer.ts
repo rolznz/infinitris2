@@ -1,3 +1,4 @@
+import { PlayerStatus } from '@models/IPlayer';
 import ICell from '@models/ICell';
 import ISimulation from '@models/ISimulation';
 import { SimulationSettings } from '@models/SimulationSettings';
@@ -16,19 +17,19 @@ export default class AIPlayer extends Player {
   constructor(
     simulation: ISimulation,
     playerId: number,
+    status: PlayerStatus,
     nickname: string,
     color: number,
     reflexDelay?: number,
-    isSpectating?: boolean,
     patternFilename?: string,
     characterId?: string
   ) {
     super(
       simulation,
       playerId,
+      status,
       nickname,
       color,
-      isSpectating,
       patternFilename,
       characterId
     );

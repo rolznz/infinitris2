@@ -70,6 +70,8 @@ export * from './networking/server/IServerChatMessage';
 export * from './networking/reservedPlayerIds';
 export * from './ui';
 export * from './GameModeEvent';
+export * from './IRound';
+export * from './IRoundEventListener';
 
 export const NETWORK_VERSION = 1;
 

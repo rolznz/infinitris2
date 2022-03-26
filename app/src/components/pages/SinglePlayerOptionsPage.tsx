@@ -163,7 +163,7 @@ export function SinglePlayerOptionsPage() {
                 </FormControl>
               )}
             />
-            {watchedGameModeType !== 'infinity' && (
+            {watchedGameModeType === 'conquest' && (
               <Controller
                 name="roundLength"
                 control={control}

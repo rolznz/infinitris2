@@ -3,6 +3,7 @@ import { EndRoundDisplay } from '@/components/game/EndRoundDisplay/EndRoundDispl
 import { IngameChat } from '@/components/game/IngameChat';
 import { Leaderboard } from '@/components/game/Leaderboard/Leaderboard';
 import { MessageLog } from '@/components/game/MessageLog';
+import { SpawnDelayDisplay } from '@/components/game/SpawnDelayDisplay';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import FlexBox from '@/components/ui/FlexBox';
 import React from 'react';
@@ -25,6 +26,7 @@ export function GameUI() {
         <Leaderboard />
       </TopRightPanel>
       <EndRoundDisplay />
+      <SpawnDelayDisplay />
     </FlexBox>
   );
 }

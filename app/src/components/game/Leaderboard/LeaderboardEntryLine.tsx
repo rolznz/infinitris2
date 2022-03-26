@@ -1,5 +1,5 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { borderRadiuses, boxShadows, colors } from '@/theme/theme';
+import { borderRadiuses, boxShadows, colors, textShadows } from '@/theme/theme';
 import { PlacingStar } from '@/components/pages/Characters/PlacingStar';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 import Typography from '@mui/material/Typography';
@@ -24,13 +24,13 @@ export function LeaderboardEntryLine({
   const simulation = useIngameStore((store) => store.simulation);
   console.log('Re-render leaderboard entry line');
   const nameTypographySx: SxProps<Theme> = React.useMemo(
-    () => ({ color: entry.color, textShadow: `0px 1px ${colors.black}` }),
+    () => ({ color: entry.color, textShadow: textShadows.small }),
     [entry.color]
   );
   const statusTypographySx: SxProps<Theme> = React.useMemo(
     () => ({
       color: entry.color,
-      textShadow: `0px 1px ${colors.black}`,
+      textShadow: textShadows.small,
       fontSize: 12,
     }),
     [entry.color]

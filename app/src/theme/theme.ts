@@ -37,6 +37,11 @@ export const boxShadows = {
   small: '0px 4px 4px rgba(0, 0, 0, 0.3)',
 };
 
+export const textShadows = {
+  small: `0px 1px ${colors.black}`,
+  base: `0px 1px 3px ${colors.black}`,
+};
+
 export const zIndexes = {
   below: -1,
   above: 1,

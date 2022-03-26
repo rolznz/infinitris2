@@ -18,5 +18,8 @@ export const roundListener: Partial<ISimulationEventListener> = {
   onNextRound: updateRound,
   onEndRound: updateRound,
   onStartNextRoundTimer: updateRound,
-  onSimulationInit: updateRound,
+  onSimulationInit: (simulation) => {
+    updateRound(simulation);
+    setTimeout(() => updateRound(simulation), 1000);
+  },
 };

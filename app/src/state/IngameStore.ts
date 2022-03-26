@@ -34,6 +34,8 @@ type IngameStore = {
   setEndRoundDisplayOpen(endRoundDisplayOpen: boolean): void;
   readonly roundConditionsAreMet: boolean;
   setRoundConditionsAreMet(roundConditionsAreMet: boolean): void;
+  readonly spawnDelayDisplayVisible: boolean;
+  setSpawnDelayDisplayVisible(spawnDelayDisplayVisible: boolean): void;
 };
 
 const useIngameStore = create<IngameStore>((set) => ({
@@ -42,6 +44,7 @@ const useIngameStore = create<IngameStore>((set) => ({
   simulation: undefined,
   endRoundDisplayOpen: false,
   roundConditionsAreMet: false,
+  spawnDelayDisplayVisible: false,
   setSimulation: (simulation: ISimulation | undefined) =>
     set((_) => ({ simulation })),
   isChatOpen: false,
@@ -58,6 +61,8 @@ const useIngameStore = create<IngameStore>((set) => ({
     set((_) => ({ endRoundDisplayOpen })),
   setRoundConditionsAreMet: (roundConditionsAreMet: boolean) =>
     set((_) => ({ roundConditionsAreMet })),
+  setSpawnDelayDisplayVisible: (spawnDelayDisplayVisible: boolean) =>
+    set((_) => ({ spawnDelayDisplayVisible })),
 }));
 
 export default useIngameStore;

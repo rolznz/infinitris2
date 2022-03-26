@@ -19,6 +19,7 @@ export default class Server implements IServerSocketEventListener {
     const sendServerMessage = this._socket.sendMessage.bind(this._socket);
     this._rooms[0] = new Room(sendServerMessage, 'infinity');
     this._rooms[1] = new Room(sendServerMessage, 'conquest');
+    this._rooms[2] = new Room(sendServerMessage, 'race');
   }
 
   /**

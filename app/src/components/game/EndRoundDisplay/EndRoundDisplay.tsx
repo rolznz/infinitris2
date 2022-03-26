@@ -8,7 +8,7 @@ import { PlacingStar } from '@/components/pages/Characters/PlacingStar';
 import Typography from '@mui/material/Typography';
 import useIngameStore from '@/state/IngameStore';
 import React from 'react';
-import { colors } from '@/theme/theme';
+import { colors, textShadows } from '@/theme/theme';
 import { hexToString, PlayerStatus } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
 
@@ -23,15 +23,15 @@ export function EndRoundDisplay() {
     (store) => store.endRoundDisplayOpen
   );
   const windowSize = useWindowSize();
-  const characterSize = windowSize.width * 0.3;
+  const characterSize = windowSize.width * 0.25;
   const starSize = characterSize * 1.1;
-  const ribbonSize = (starSize * 842) / 643;
+  const ribbonSize = starSize * 0.4;
 
   const winner = simulation?.round?.winner;
   const nameTypographySx: SxProps<Theme> = React.useMemo(
     () => ({
       color: hexToString(winner?.color || 0),
-      textShadow: `0px 1px ${colors.black}`,
+      textShadow: textShadows.small,
       size: Math.floor(characterSize / 10) + 'px',
     }),
     [winner?.color, characterSize]
@@ -44,8 +44,8 @@ export function EndRoundDisplay() {
   return (
     <FlexBox width="100%" height="100%" sx={bgSx} gap={2}>
       {winner && (
-        <FlexBox width={ribbonSize} maxWidth="90vw" position="relative">
-          <img alt="" src={starImage} width={starSize} />
+        <FlexBox height={starSize} maxWidth="90vw" position="relative">
+          <img alt="" src={starImage} height={starSize} />
           <FlexBox position="absolute">
             <CharacterImage
               characterId={winner.characterId || '0'}
@@ -57,8 +57,8 @@ export function EndRoundDisplay() {
               scale={characterSize * 0.005}
             />
           </FlexBox>
-          <FlexBox position="absolute" bottom={0}>
-            <img alt="" src={ribbonImage} width={ribbonSize} />
+          <FlexBox position="absolute" bottom={-ribbonSize * 0.1}>
+            <img alt="" src={ribbonImage} height={ribbonSize} />
             <Typography
               variant="h1"
               sx={nameTypographySx}
@@ -87,6 +87,9 @@ export function NextRoundIndicator() {
   const [renderId, setRenderId] = React.useState(0);
   const conditionsAreMet = useIngameStore(
     (store) => store.roundConditionsAreMet
+  );
+  const leaderboardEntries = useIngameStore(
+    (store) => store.leaderboardEntries
   );
   React.useEffect(() => {
     if (conditionsAreMet) {
@@ -129,13 +132,15 @@ export function NextRoundIndicator() {
         />
       </Typography>
       <FlexBox mt={1} flexDirection="row" flexWrap="wrap" width="50%">
-        {simulation.nonSpectatorPlayers.map((player) => (
-          <CharacterImage
-            key={player.id}
-            characterId={player.characterId || '0'}
-            width={32}
-          />
-        ))}
+        {leaderboardEntries
+          .filter((entry) => entry.status !== PlayerStatus.spectating)
+          .map((entry) => (
+            <CharacterImage
+              key={entry.playerId}
+              characterId={entry.characterId || '0'}
+              width={32}
+            />
+          ))}
       </FlexBox>
     </FlexBox>
   );

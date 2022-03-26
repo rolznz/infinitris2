@@ -269,6 +269,15 @@ export default class Room implements ISimulationEventListener {
             this._simulation.round!.start();
           } else if (clientMessage.message.startsWith('/endround')) {
             this._simulation.round!.end(undefined);
+          } else if (clientMessage.message.startsWith('/spectate')) {
+            if (player) {
+              player.status =
+                player?.status === PlayerStatus.ingame
+                  ? PlayerStatus.spectating
+                  : this._simulation.shouldNewPlayerSpectate
+                  ? PlayerStatus.knockedOut
+                  : PlayerStatus.ingame;
+            }
           }
         }
       }
@@ -445,6 +454,7 @@ export default class Room implements ISimulationEventListener {
     }
     this._sendServerChatMessage('Player ' + player.nickname + ' left the game');
   }
+  onPlayerSpawnDelayChanged(player: IPlayer): void {}
   onPlayerToggleChat(player: IPlayer): void {
     // TODO: mark player as chatting/not chatting
   }

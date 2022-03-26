@@ -128,6 +128,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
   set estimatedSpawnDelay(estimatedSpawnDelay: number) {
     this._nextSpawnTime = Date.now() + estimatedSpawnDelay;
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerSpawnDelayChanged(this)
+    );
   }
 
   set nextLayout(nextLayout: Layout | undefined) {
@@ -393,13 +396,12 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
       const scoreDiffWithGrace =
         getScoreWithGrace(highestPlayerScore) - getScoreWithGrace(this._score);
-      this._nextSpawnTime =
-        Date.now() +
+      this.estimatedSpawnDelay =
         (scoreDiffWithGrace *
           ((this._simulation.settings.maxSpawnDelaySeconds ?? 5) * 1000)) /
-          MAX_SCORE;
+        MAX_SCORE;
     } else {
-      this._nextSpawnTime = 0;
+      //this.estimatedSpawnDelay = 0;
     }
   }
 

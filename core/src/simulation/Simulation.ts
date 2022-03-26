@@ -360,6 +360,12 @@ export default class Simulation implements ISimulation {
     );
   }
 
+  onPlayerSpawnDelayChanged(player: IPlayer): void {
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerSpawnDelayChanged?.(player)
+    );
+  }
+
   /**
    * @inheritdoc
    */

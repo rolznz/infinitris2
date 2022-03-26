@@ -22,4 +22,9 @@ export const roundListener: Partial<ISimulationEventListener> = {
     updateRound(simulation);
     setTimeout(() => updateRound(simulation), 1000);
   },
+  onPlayerDestroyed: () => {
+    setTimeout(() => {
+      updateRound(useIngameStore.getState().simulation!);
+    }, 1);
+  },
 };

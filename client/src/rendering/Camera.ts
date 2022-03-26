@@ -1,5 +1,5 @@
 const cameraDrag = 0.25;
-const cameraSpeed = 0.01;
+const cameraSpeed = 0.02;
 export default class Camera {
   // FIXME: restructure to not require definite assignment
   private _x!: number;

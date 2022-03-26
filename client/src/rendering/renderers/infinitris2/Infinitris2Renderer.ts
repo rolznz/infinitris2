@@ -253,15 +253,16 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
 
     if (this._rendererQuality !== 'low' && this._autoQualityAdjust) {
-      if (this._renderFpsFrames.length > 100) {
+      const maxFrames = 1000;
+      if (this._renderFpsFrames.length > maxFrames) {
         this._renderFpsFrames.shift();
       }
       this._renderFpsFrames.push(this._app.ticker.FPS);
-      if (this._renderFpsFrames.length === 100) {
+      if (this._renderFpsFrames.length === maxFrames) {
         const avg =
           this._renderFpsFrames.reduce((a, b) => a + b) /
           this._renderFpsFrames.length;
-        if (avg < 55) {
+        if (avg < 45) {
           this._rendererQuality = (
             !this._rendererQuality || this._rendererQuality === 'high'
               ? 'medium'

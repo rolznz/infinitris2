@@ -24,6 +24,7 @@ import { IconSwitch } from '@/components/ui/IconSwitch';
 import { ReactComponent as LightModeIcon } from '@/icons/lightmode.svg';
 import { ReactComponent as DarkModeIcon } from '@/icons/darkmode.svg';
 import React from 'react';
+import { isPwa } from '@/utils/isMobile';
 
 export function LanguagePicker() {
   const userStore = useUserStore();
@@ -278,6 +279,28 @@ export default function SettingsPage() {
               </Button>
             }
           />
+          {isPwa() && (
+            <SettingsRow
+              left={
+                <FormattedMessage
+                  defaultMessage="Reload Application"
+                  description="Settings Page Table - Reload Application left column"
+                />
+              }
+              right={
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => window.location.reload()}
+                >
+                  <FormattedMessage
+                    defaultMessage="Reload"
+                    description="Settings Page Table - Reload Application button text"
+                  />
+                </Button>
+              }
+            />
+          )}
         </Grid>
       </FlexBox>
     </Page>

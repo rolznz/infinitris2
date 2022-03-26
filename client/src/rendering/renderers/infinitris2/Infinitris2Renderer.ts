@@ -62,7 +62,7 @@ interface IPlayerContainer {
   originalPlayer: IPlayer;
   healthbar: IRenderableEntity<{
     outer: PIXI.Sprite;
-    inner: PIXI.TilingSprite;
+    inner: PIXI.Sprite;
   }>;
   nicknameText: IRenderableEntity<PIXI.Text>;
   container: PIXI.Container;
@@ -139,6 +139,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _healthbarOuterTexture!: PIXI.Texture;
   private _healthbarInnerTexture!: PIXI.Texture;
   private _useFallbackUI: boolean;
+  private _autoQualityAdjust = true;
+  private _renderFpsFrames: number[];
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -157,6 +159,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._oldOverflowStyle = document.body.style.overflow;
 
     document.body.style.overflow = 'none';
+    this._renderFpsFrames = [];
   }
 
   set virtualKeyboardControls(
@@ -249,6 +252,27 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
 
+    if (this._rendererQuality !== 'low' && this._autoQualityAdjust) {
+      if (this._renderFpsFrames.length > 100) {
+        this._renderFpsFrames.shift();
+      }
+      this._renderFpsFrames.push(this._app.ticker.FPS);
+      if (this._renderFpsFrames.length === 100) {
+        const avg =
+          this._renderFpsFrames.reduce((a, b) => a + b) /
+          this._renderFpsFrames.length;
+        if (avg < 55) {
+          this._rendererQuality = (
+            !this._rendererQuality || this._rendererQuality === 'high'
+              ? 'medium'
+              : 'low'
+          ) as RendererQuality;
+          console.log('Automatic quality drop');
+          this._renderFpsFrames = [];
+        }
+      }
+    }
+
     super.tick();
 
     for (const player of this._simulation.players) {
@@ -299,6 +323,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
           for (const child of playerContainer.healthbar.children) {
             child.renderableObject.inner.width =
               child.renderableObject.outer.width * player.health;
+            child.renderableObject.inner.texture.frame = new PIXI.Rectangle(
+              0,
+              0,
+              child.renderableObject.inner.texture.baseTexture.width *
+                player.health,
+              child.renderableObject.inner.texture.baseTexture.height
+            );
           }
         }
 
@@ -319,12 +350,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
 
     if (this._displayFrameRate) {
+      this._fpsText.scale.set(this._cellSize * 0.02);
       this._fpsText.x = this._app.renderer.width / 2;
       this._fpsText.y = 10;
       this._fpsText.anchor.set(0.5, 0);
       this._fpsText.text =
         Math.ceil(this._app.ticker.FPS) +
-        ' rFPS\n' +
+        ' rFPS / ' +
         this._simulation.fps +
         ' sFPS';
     } else {
@@ -618,17 +650,21 @@ export default class Infinitris2Renderer extends BaseRenderer {
           //stroke: '#000000',
           //strokeThickness: 7,
           fontFamily,
-          fontSize: Math.ceil(this._cellSize * 0.75),
+          //fontSize: ,
           dropShadow: true,
           dropShadowAngle: Math.PI / 2,
           dropShadowDistance: 1,
           dropShadowBlur: 2,
         });
+
         //text.cacheAsBitmap = true;
         text.anchor.set(0.5, 0);
         playerContainer.nicknameText.container.addChild(text);
         return text;
       }
+    );
+    playerContainer.nicknameText.children.forEach((child) =>
+      child.renderableObject.scale.set(this._cellSize * 0.03)
     );
     if (this._simulation!.settings.gameModeType === 'conquest') {
       this.renderCopies(
@@ -641,11 +677,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
             (this._cellSize / pixiObject.outer.texture.width) * 2
           );
           pixiObject.inner.tint = player.color;
-          pixiObject.inner.tileScale.set(
+          /*pixiObject.inner.tileScale.set(
             (this._cellSize / pixiObject.outer.texture.width) * 2
-          );
+          );*/
           pixiObject.inner.width = pixiObject.outer.width;
-          pixiObject.inner.height = pixiObject.outer.height - 1; //fix rounding issue
+          pixiObject.inner.height = pixiObject.outer.height; // - 1; //fix rounding issue
 
           for (const image of [pixiObject.outer, pixiObject.inner]) {
             image.x = shadowX - pixiObject.outer.width * 0.5;
@@ -654,7 +690,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
         },
         () => {
           const outer = PIXI.Sprite.from(this._healthbarOuterTexture);
-          const inner = new PIXI.TilingSprite(this._healthbarInnerTexture);
+          // in order to change the frame of the inner sprite's texture, we need a separate texture per player :/
+          // consider using a spritesheet as an optimization
+          const croppableInnerTexture = new PIXI.Texture(
+            this._healthbarInnerTexture.baseTexture,
+            this._healthbarInnerTexture.frame
+          );
+          const inner = PIXI.Sprite.from(croppableInnerTexture);
           playerContainer.healthbar.container.addChild(inner, outer);
 
           return { outer, inner };
@@ -793,7 +835,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._fallbackScoreboard?.update(
       this._simulation.players,
       followingPlayer,
-      this._simulation
+      this._simulation,
+      this._cellSize * 0.03
     );
     //this._scoreChangeIndicator.update(followingPlayer);
     this._fallbackSpawnDelayIndicator?.update(

@@ -65,7 +65,8 @@ export class Scoreboard {
   update(
     players: IPlayer[],
     followingPlayer: IPlayer | undefined,
-    simulation: ISimulation
+    simulation: ISimulation,
+    cellSize: number
   ) {
     const now = Date.now();
     if (now - this._lastUpdate < 1000) {
@@ -163,6 +164,7 @@ export class Scoreboard {
       } else {
         text.visible = false;
       }
+      text.scale.set(cellSize * 1);
       this._scoreboardContainer.x =
         this._app.renderer.width * 0.995 - widestText - padding * 2;
       this._scoreboardContainer.y = this._app.renderer.height * 0.125;

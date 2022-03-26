@@ -3,8 +3,7 @@ import { IRound, NetworkRoundInfo } from '@models/IRound';
 import { IRoundEventListener } from '@models/IRoundEventListener';
 import ISimulation from '@models/ISimulation';
 
-// FIXME: not working
-const NEXT_ROUND_DELAY_MS = __DEV__ ? 10000 : 10000; // 10s
+const NEXT_ROUND_DELAY_MS = __DEV__ ? 1000 : 10000; // 10s
 
 export class Round implements IRound {
   private _simulation: ISimulation;

@@ -18,7 +18,7 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import { WorldBackground } from './WorldBackground';
 import { GridFloor } from './GridFloor';
 import ControllablePlayer from '@src/ControllablePlayer';
-import { Scoreboard } from './Scoreboard';
+import { FallbackLeaderboard } from './FallbackLeaderboard';
 import { SpawnDelayIndicator } from './SpawnDelayIndicator';
 //import { ScoreChangeIndicator } from './ScoreChangeIndicator';
 import IGrid from '@models/IGrid';
@@ -127,7 +127,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _gridFloor!: GridFloor;
   private _patternTextures: { [filename: string]: PIXI.Texture[] } = {};
   private _fallbackSpawnDelayIndicator: SpawnDelayIndicator | undefined;
-  private _fallbackScoreboard: Scoreboard | undefined;
+  private _fallbackLeaderboard: FallbackLeaderboard | undefined;
   //private _scoreChangeIndicator!: ScoreChangeIndicator;
   private _towerIndicator!: TowerIndicator;
   private _lineClearingIndicator!: LineClearingIndicator;
@@ -440,8 +440,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (this._useFallbackUI) {
       this._fallbackSpawnDelayIndicator = new SpawnDelayIndicator(this._app);
       this._fallbackSpawnDelayIndicator.create();
-      this._fallbackScoreboard = new Scoreboard(this._app);
-      this._fallbackScoreboard.create();
+      this._fallbackLeaderboard = new FallbackLeaderboard(this._app);
+      this._fallbackLeaderboard.create();
     }
     //this._scoreChangeIndicator.create();
     this._placementHelperShadowCells = [];
@@ -833,7 +833,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     const followingPlayer = this._simulation.followingPlayer;
-    this._fallbackScoreboard?.update(
+    this._fallbackLeaderboard?.update(
       this._simulation.players,
       followingPlayer,
       this._simulation,

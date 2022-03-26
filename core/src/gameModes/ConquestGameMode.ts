@@ -30,6 +30,10 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     return this._columnCaptures;
   }
 
+  get hasRounds(): boolean {
+    return true;
+  }
+
   step(): void {
     const now = Date.now();
     // TODO: find a simple way to sync rather than having to send all column data each frame
@@ -95,19 +99,6 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       () => ({})
     );
     this._lastCalculationTime = 0;
-    for (const player of this._simulation.players) {
-      if (
-        player.status === PlayerStatus.ingame ||
-        player.status === PlayerStatus.knockedOut
-      ) {
-        player.removeBlock();
-        player.status = PlayerStatus.ingame;
-        player.health = 0.5;
-        player.score = 0;
-        player.estimatedSpawnDelay = 0;
-      }
-    }
-    this._simulation.grid.reset();
   }
 
   private _checkColumns() {

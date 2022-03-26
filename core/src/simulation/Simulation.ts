@@ -17,6 +17,8 @@ import { GameModeEvent } from '@models/GameModeEvent';
 import NetworkPlayer from '@core/player/NetworkPlayer';
 import { IRound } from '@models/IRound';
 import { Round } from '@core/simulation/Round';
+import { GameModeType } from '@models/GameModeType';
+import { RaceGameMode } from '@core/gameModes/RaceGameMode';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -59,15 +61,27 @@ export default class Simulation implements ISimulation {
     }
 
     this._isNetworkClient = isClient;
-    this._gameMode =
-      this._settings.gameModeType === 'conquest'
-        ? new ConquestGameMode(this)
-        : new InfinityGameMode(this);
+    this._gameMode = this._createGameMode(
+      this._settings.gameModeType || 'infinity'
+    );
+
     this.addEventListener(this._gameMode);
     this._fpsCounter = new FpsCounter();
 
-    if (this._settings.gameModeType === 'conquest') {
+    if (this._gameMode.hasRounds) {
       this._round = new Round(this);
+    }
+  }
+  private _createGameMode(gameModeType: GameModeType): IGameMode<unknown> {
+    switch (gameModeType) {
+      case 'infinity':
+        return new InfinityGameMode(this);
+      case 'conquest':
+        return new ConquestGameMode(this);
+      case 'race':
+        return new RaceGameMode(this);
+      default:
+        throw new Error('Unknown game mode: ');
     }
   }
   onSimulationInit(): void {
@@ -137,7 +151,7 @@ export default class Simulation implements ISimulation {
   }
 
   get shouldNewPlayerSpectate(): boolean {
-    return this._settings.gameModeType === 'conquest';
+    return !!this._round;
   }
 
   getFreePlayerId(): number {

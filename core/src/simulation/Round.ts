@@ -80,6 +80,20 @@ export class Round implements IRound {
     this._isWaitingForNextRound = false;
     this._winner = undefined;
     this._eventListener.onNextRound(this._simulation);
+
+    for (const player of this._simulation.players) {
+      if (
+        player.status === PlayerStatus.ingame ||
+        player.status === PlayerStatus.knockedOut
+      ) {
+        player.removeBlock();
+        player.status = PlayerStatus.ingame;
+        player.health = 0.5;
+        player.score = 0;
+        player.estimatedSpawnDelay = 0;
+      }
+    }
+    this._simulation.grid.reset();
   }
 
   end(winner: IPlayer | undefined) {

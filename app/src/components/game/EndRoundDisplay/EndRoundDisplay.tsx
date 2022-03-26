@@ -100,7 +100,7 @@ export function NextRoundIndicator() {
 
   return (
     <FlexBox>
-      <Typography variant="h2">
+      <Typography variant="h2" textAlign="center">
         {conditionsAreMet ? (
           <FormattedMessage
             defaultMessage="Next round starting in"
@@ -114,10 +114,29 @@ export function NextRoundIndicator() {
         )}
       </Typography>
       {conditionsAreMet && (
-        <Typography variant="h1" fontSize={80}>
+        <Typography variant="h1" fontSize={60}>
           {Math.ceil((simulation.round.nextRoundTime - Date.now()) / 1000)}
         </Typography>
       )}
+
+      <Typography variant="h1" fontSize={16} mt={2}>
+        <FormattedMessage
+          defaultMessage="{numPlayers} players connected"
+          description="end round display num players connected"
+          values={{
+            numPlayers: simulation.nonSpectatorPlayers.length,
+          }}
+        />
+      </Typography>
+      <FlexBox mt={1} flexDirection="row" flexWrap="wrap" width="50%">
+        {simulation.nonSpectatorPlayers.map((player) => (
+          <CharacterImage
+            key={player.id}
+            characterId={player.characterId || '0'}
+            width={32}
+          />
+        ))}
+      </FlexBox>
     </FlexBox>
   );
 }

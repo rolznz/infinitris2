@@ -4,7 +4,7 @@ import ISimulation from '@models/ISimulation';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { fontFamily } from '@models/ui';
 
-type ScoreboardEntry = {
+type LeaderboardEntry = {
   playerId: number;
   nickname: string;
   score: number;
@@ -37,13 +37,13 @@ const placingCharacters = [
   '\u2473',
 ];
 
-export class Scoreboard {
+export class FallbackLeaderboard {
   private _scoreboardTextLines!: PIXI.Text[];
   private _textBackground!: PIXI.Sprite;
   private _scoreboardContainer!: PIXI.Container;
   private _app: PIXI.Application;
   private _lastUpdate: number = 0;
-  private _lastScoreboardEntries?: ScoreboardEntry[];
+  private _lastScoreboardEntries?: LeaderboardEntry[];
   constructor(app: PIXI.Application) {
     this._app = app;
   }
@@ -74,12 +74,12 @@ export class Scoreboard {
     }
     this._lastUpdate = now;
     // TODO: ensure human player is on scoreboard
-    const scoreboardEntries: ScoreboardEntry[] = players.map((player) => ({
+    const scoreboardEntries: LeaderboardEntry[] = players.map((player) => ({
       playerId: player.id,
       nickname: player.nickname,
       score: player.score,
       placing: 0,
-      isSpectating: player.status === PlayerStatus.ingame,
+      isSpectating: player.status !== PlayerStatus.ingame,
       color: player.color,
       health: player.health,
     }));
@@ -164,7 +164,7 @@ export class Scoreboard {
       } else {
         text.visible = false;
       }
-      text.scale.set(cellSize * 1);
+      text.scale.set(cellSize * 0.5);
       this._scoreboardContainer.x =
         this._app.renderer.width * 0.995 - widestText - padding * 2;
       this._scoreboardContainer.y = this._app.renderer.height * 0.125;

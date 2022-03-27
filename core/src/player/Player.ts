@@ -106,6 +106,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     );
   }
 
+  get isBot(): boolean {
+    return false;
+  }
+
   get patternFilename(): string | undefined {
     return this._patternFilename;
   }

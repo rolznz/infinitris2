@@ -110,6 +110,7 @@ export default class Room implements ISimulationEventListener {
         : this._simulation.shouldNewPlayerSpectate
         ? PlayerStatus.knockedOut
         : PlayerStatus.ingame,
+      false,
       playerNickname,
       freeColor,
       playerInfo?.patternFilename,
@@ -148,16 +149,7 @@ export default class Room implements ISimulationEventListener {
             layoutId: block.layoutId,
             blockId: block.id,
           })),
-        players: this._simulation.players.map((existingPlayer) => ({
-          color: existingPlayer.color,
-          id: existingPlayer.id,
-          nickname: existingPlayer.nickname,
-          score: existingPlayer.score,
-          status: existingPlayer.status,
-          characterId: existingPlayer.characterId,
-          patternFilename: existingPlayer.patternFilename,
-          health: existingPlayer.health,
-        })),
+        players: this._simulation.players.map(createPlayerInfo),
         estimatedSpawnDelay: newPlayer.estimatedSpawnDelay,
       },
     };
@@ -423,13 +415,7 @@ export default class Room implements ISimulationEventListener {
   onPlayerCreated(player: IPlayer) {
     const newPlayerMessage: IServerPlayerCreatedEvent = {
       type: ServerMessageType.PLAYER_CREATED,
-      playerInfo: {
-        id: player.id,
-        color: player.color,
-        nickname: player.nickname,
-        status: player.status,
-        health: player.health,
-      },
+      playerInfo: createPlayerInfo(player),
     };
 
     this._sendMessageToAllPlayersExcept(newPlayerMessage, player.id);
@@ -506,4 +492,18 @@ export default class Room implements ISimulationEventListener {
       }
     }
   }
+}
+
+function createPlayerInfo(player: IPlayer): NetworkPlayerInfo {
+  return {
+    color: player.color,
+    id: player.id,
+    nickname: player.nickname,
+    score: player.score,
+    status: player.status,
+    characterId: player.characterId,
+    patternFilename: player.patternFilename,
+    health: player.health,
+    isBot: player.isBot,
+  };
 }

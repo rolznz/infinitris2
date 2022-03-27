@@ -18,6 +18,7 @@ export type NetworkPlayerInfo = {
   readonly score: number;
   readonly health: number;
   readonly status: PlayerStatus;
+  readonly isBot: boolean;
 };
 
 export interface IPlayer {
@@ -27,6 +28,7 @@ export interface IPlayer {
   get characterId(): string | undefined;
   get id(): number;
   get isHuman(): boolean;
+  get isBot(): boolean;
   get isNetworked(): boolean;
   get status(): PlayerStatus;
 

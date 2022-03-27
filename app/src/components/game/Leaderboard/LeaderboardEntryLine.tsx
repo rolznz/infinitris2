@@ -8,6 +8,7 @@ import { SxProps, Theme } from '@mui/material/styles';
 import React from 'react';
 import useIngameStore, { LeaderboardEntry } from '@/state/IngameStore';
 import { ReactComponent as ConquestIcon } from '@/icons/conquest.svg';
+import { ReactComponent as BotIcon } from '@/icons/bot.svg';
 import SvgIcon from '@mui/material/SvgIcon';
 import { PlayerStatus } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
@@ -79,6 +80,11 @@ export function LeaderboardEntryLine({
           overflow="hidden"
           whiteSpace="nowrap"
         >
+          {entry.isBot && (
+            <SvgIcon fontSize="small" color="secondary">
+              <BotIcon />
+            </SvgIcon>
+          )}
           {entry.nickname}
         </Typography>
         {entry.status !== PlayerStatus.ingame && (

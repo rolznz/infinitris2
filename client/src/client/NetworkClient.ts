@@ -11,7 +11,7 @@ import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris
 import ControllablePlayer from '@src/ControllablePlayer';
 import IClient from '@models/IClient';
 import Input from '@src/input/Input';
-import { IPlayer } from '@models/IPlayer';
+import { IPlayer, NetworkPlayerInfo } from '@models/IPlayer';
 import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import IBlock from '@models/IBlock';
@@ -155,16 +155,7 @@ export default class NetworkClient
               this._launchOptions?.controls_gamepad
             );
           } else {
-            const otherPlayer = new NetworkPlayer(
-              -1,
-              this._simulation,
-              playerInfo.id,
-              playerInfo.status,
-              playerInfo.nickname,
-              playerInfo.color,
-              playerInfo.patternFilename,
-              playerInfo.characterId
-            );
+            const otherPlayer = this._createNetworkPlayer(playerInfo);
             this._simulation.addPlayer(otherPlayer);
             otherPlayer.score = playerInfo.score;
             otherPlayer.health = playerInfo.health;
@@ -203,16 +194,7 @@ export default class NetworkClient
     } else if (this._simulation) {
       if (message.type === ServerMessageType.PLAYER_CREATED) {
         const playerInfo = (message as IServerPlayerCreatedEvent).playerInfo;
-        const newNetworkPlayer = new NetworkPlayer(
-          -1,
-          this._simulation,
-          playerInfo.id,
-          playerInfo.status,
-          playerInfo.nickname,
-          playerInfo.color,
-          playerInfo.patternFilename,
-          playerInfo.characterId
-        );
+        const newNetworkPlayer = this._createNetworkPlayer(playerInfo);
         this._simulation.addPlayer(newNetworkPlayer);
       } else if (message.type === ServerMessageType.PLAYER_DISCONNECTED) {
         this._simulation.removePlayer(
@@ -277,6 +259,19 @@ export default class NetworkClient
         this._simulation.grid.clearLines(clearLinesMessage.rows);
       }
     }
+  }
+  private _createNetworkPlayer(playerInfo: NetworkPlayerInfo): NetworkPlayer {
+    return new NetworkPlayer(
+      -1,
+      this._simulation,
+      playerInfo.id,
+      playerInfo.status,
+      playerInfo.isBot,
+      playerInfo.nickname,
+      playerInfo.color,
+      playerInfo.patternFilename,
+      playerInfo.characterId
+    );
   }
 
   /**

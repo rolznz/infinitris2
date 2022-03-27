@@ -18,6 +18,7 @@ import IGrid from '@models/IGrid';
 import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { GameModeEvent } from '@models/GameModeEvent';
+import { ICharacter } from '@models/ICharacter';
 
 export default class SinglePlayerClient
   extends BaseClient
@@ -111,17 +112,9 @@ export default class SinglePlayerClient
       for (let i = 0; i < options.numBots; i++) {
         // find a random bot color - unique until there are more players than colors
         // TODO: move to simulation and notify player of color switch if their color is already in use
-        let freeColors = colors
-          .map((color) => stringToHex(color.hex))
-          .filter(
-            (color) =>
-              this._simulation.players
-                .map((player) => player.color)
-                .indexOf(color) < 0
-          );
-        if (!freeColors.length) {
-          freeColors = colors.map((color) => stringToHex(color.hex));
-        }
+
+        const character: Partial<ICharacter> =
+          this._simulation.generateCharacter(this._launchOptions.allCharacters);
 
         this._simulation.addPlayer(
           new AIPlayer(
@@ -130,14 +123,14 @@ export default class SinglePlayerClient
             this._simulation.shouldNewPlayerSpectate
               ? PlayerStatus.knockedOut
               : PlayerStatus.ingame,
-            'Bot ' + (i + 1),
-            freeColors[Math.floor(Math.random() * (freeColors.length - 1))],
+            character.name || 'Bot ' + (i + 1),
+            stringToHex(character.color!),
             (options.botReactionDelay || 20) +
               Math.floor(
                 Math.random() * (options.botRandomReactionDelay || 20)
               ),
-            'pattern_' + Math.floor(Math.random() * 12) + '.png', // TODO: pass characters from app
-            '' + Math.floor(Math.random() * 100) // TODO: pass characters from app
+            character.patternFilename,
+            character.id!.toString()
           )
         );
       }

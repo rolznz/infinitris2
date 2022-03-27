@@ -37,6 +37,10 @@ export default class AIPlayer extends Player {
     this._reactionDelay = reflexDelay || 5 + Math.floor(Math.random() * 40);
   }
 
+  get isBot(): boolean {
+    return true;
+  }
+
   update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
     super.update(gridCells, simulationSettings);
 

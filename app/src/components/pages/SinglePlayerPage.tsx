@@ -15,10 +15,11 @@ import {
   IPlayer,
   RoundLength,
   ISimulation,
+  charactersPath,
 } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
-import { useDocument } from 'swr-firestore';
+import { useCollection, useDocument } from 'swr-firestore';
 import useAppStore from '../../state/AppStore';
 import { useUser, useUserStore } from '../../state/UserStore';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
@@ -71,7 +72,12 @@ export default function SinglePlayerPage() {
     getCharacterPath(characterId)
   );
 
-  const hasLoaded = useLoaderStore((store) => store.hasFinished) && !!character;
+  const allCharacters = useCollection<ICharacter>(charactersPath);
+
+  const hasLoaded =
+    useLoaderStore((store) => store.hasFinished) &&
+    !!character &&
+    allCharacters.data?.length;
 
   useReleaseClientOnExitPage();
 
@@ -79,6 +85,7 @@ export default function SinglePlayerPage() {
     if (!requiresRedirect && launchSinglePlayer && !hasLaunched && hasLoaded) {
       setLaunched(true);
       launchSinglePlayer({
+        allCharacters: allCharacters.data!.map((document) => document.data()),
         player: {
           nickname,
           color:

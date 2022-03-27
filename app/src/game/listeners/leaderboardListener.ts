@@ -13,9 +13,10 @@ function _updateLeaderboard() {
 
   const leaderboardEntries: LeaderboardEntry[] =
     simulation?.players.map((player, i) => ({
-      isHuman: i === 0,
+      isHuman: player.isHuman,
       placing: 0,
       playerId: player.id,
+      isBot: player.isBot,
       nickname: player.nickname,
       color: hexToString(player.color),
       characterId: player.characterId,

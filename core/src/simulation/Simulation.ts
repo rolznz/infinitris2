@@ -19,6 +19,10 @@ import { IRound } from '@models/IRound';
 import { Round } from '@core/simulation/Round';
 import { GameModeType } from '@models/GameModeType';
 import { RaceGameMode } from '@core/gameModes/RaceGameMode';
+import { ICharacter } from '@models/ICharacter';
+import { colors } from '@models/colors';
+import { stringToHex } from '@models/util/stringToHex';
+import { hexToString } from '@models/util/hexToString';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -487,6 +491,38 @@ export default class Simulation implements ISimulation {
     this._eventListeners.forEach((listener) =>
       listener.onSimulationStep?.(this)
     );
+  }
+
+  generateCharacter(
+    allCharacters: ICharacter[] | undefined
+  ): Partial<ICharacter> {
+    const freeCharacters = allCharacters?.filter(
+      (character) =>
+        !this.players.some(
+          (player) => player.characterId === character.id.toString()
+        )
+    );
+
+    if (freeCharacters?.length) {
+      return freeCharacters[Math.floor(Math.random() * freeCharacters.length)];
+    } else {
+      let freeColors = colors
+        .map((color) => stringToHex(color.hex))
+        .filter(
+          (color) =>
+            this.players.map((player) => player.color).indexOf(color) < 0
+        );
+      if (!freeColors.length) {
+        freeColors = colors.map((color) => stringToHex(color.hex));
+      }
+
+      return {
+        id: 0,
+        color: hexToString(
+          freeColors[Math.floor(Math.random() * freeColors.length)]
+        ),
+      };
+    }
   }
 
   private _updatePlayer = (player: IPlayer) => {

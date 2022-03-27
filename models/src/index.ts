@@ -72,6 +72,9 @@ export * from './ui';
 export * from './GameModeEvent';
 export * from './IRound';
 export * from './IRoundEventListener';
+export * from './util/hexToRgb';
+export * from './util/rgbToHex';
+export * from './util/rotateColor';
 
 export const NETWORK_VERSION = 1;
 

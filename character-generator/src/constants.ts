@@ -48,7 +48,6 @@ export const availableY = 1 - paddingY * 2;
 export const mouthRandomXMultiplier = 0.07;
 export const headgearRandomXMultiplier = 0.5;
 export const upsideDownChance = 0.025; // chance of flipping the character
-export const borderAdjustAmount = -20;
 
 export const earsChance = 0.5;
 export const headgearChance = 0.2;

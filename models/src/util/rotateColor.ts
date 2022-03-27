@@ -1,5 +1,5 @@
-import { hexToRgb } from './hexToRgb';
-import { rgbToHex } from './rgbToHex';
+import { hexToRgb } from '@models/util/hexToRgb';
+import { rgbToHex } from '@models/util/rgbToHex';
 
 // from https://stackoverflow.com/a/37657940/4562693
 /* rotateColor : Converts hex value to HSL, shifts

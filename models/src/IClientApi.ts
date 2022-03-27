@@ -9,6 +9,7 @@ import { RendererQuality } from './RendererQuality';
 import { WorldType } from '@models/WorldType';
 import { WithControls } from '@models/IUser';
 import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
+import { ICharacter } from '@models/ICharacter';
 
 export type LaunchOptions = WithControls & {
   listeners?: Partial<ISimulationEventListener>[];
@@ -28,6 +29,7 @@ export type LaunchOptions = WithControls & {
   worldType?: WorldType;
   roomId?: number;
   useFallbackUI?: boolean;
+  allCharacters?: ICharacter[];
 };
 
 export type ClientApiConfig = {

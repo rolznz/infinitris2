@@ -151,7 +151,7 @@ export default class Simulation implements ISimulation {
   }
 
   get humanPlayer(): IPlayer | undefined {
-    return this.players.find((player) => player.isHuman);
+    return this.players.find((player) => player.isControllable);
   }
 
   get shouldNewPlayerSpectate(): boolean {

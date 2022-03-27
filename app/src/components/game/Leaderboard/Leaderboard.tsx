@@ -59,7 +59,8 @@ function LeaderboardButton(props: { toggleIsOpen: () => void }) {
   );
   // return mini preview
   const entry =
-    leaderboardEntries.find((entry) => entry.isHuman) || leaderboardEntries[0];
+    leaderboardEntries.find((entry) => entry.isControllable) ||
+    leaderboardEntries[0];
   return (
     <FlexBox onClick={props.toggleIsOpen} zIndex="hamburgerButton" sx={sx}>
       <LeaderboardEntryLine

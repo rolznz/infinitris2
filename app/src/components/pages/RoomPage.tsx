@@ -163,7 +163,7 @@ export default function RoomPage() {
             useIngameStore.getState().setSimulation(simulation);
           },
           onPlayerToggleChat(player: IPlayer, cancel: boolean) {
-            if (player.isHuman) {
+            if (player.isControllable) {
               if (!cancel && useIngameStore.getState().isChatOpen) {
                 const message = useIngameStore.getState().chatMessage?.trim();
                 if (message?.length) {

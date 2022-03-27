@@ -6,7 +6,7 @@ import {
 } from 'infinitris2-models';
 
 function updateSpawnDelay(player: IPlayer) {
-  if (player.isHuman) {
+  if (player.isControllable) {
     useIngameStore
       .getState()
       .setSpawnDelayDisplayVisible(

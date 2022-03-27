@@ -43,10 +43,10 @@ export function LeaderboardEntryLine({
   return (
     <FlexBox
       boxShadow={
-        isLeaderboardOpen && entry.isHuman ? boxShadows.small : undefined
+        isLeaderboardOpen && entry.isControllable ? boxShadows.small : undefined
       }
       border={
-        isLeaderboardOpen && entry.isHuman
+        isLeaderboardOpen && entry.isControllable
           ? `1px solid ${colors.black}`
           : undefined
       }

@@ -27,7 +27,7 @@ export interface IPlayer {
   get patternFilename(): string | undefined;
   get characterId(): string | undefined;
   get id(): number;
-  get isHuman(): boolean;
+  get isControllable(): boolean;
   get isBot(): boolean;
   get isNetworked(): boolean;
   get status(): PlayerStatus;

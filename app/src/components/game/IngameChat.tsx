@@ -11,7 +11,7 @@ function executeMobileChatAction(cancel: boolean) {
   const followingPlayer = useIngameStore.getState().simulation?.followingPlayer;
   if (
     followingPlayer &&
-    followingPlayer.isHuman &&
+    followingPlayer.isControllable &&
     followingPlayer.isChatting &&
     isMobile()
   ) {

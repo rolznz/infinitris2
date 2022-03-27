@@ -15,7 +15,7 @@ export default function ChatButton() {
           playSound(SoundKey.click);
           const followingPlayer =
             useIngameStore.getState().simulation?.followingPlayer;
-          if (followingPlayer && followingPlayer.isHuman) {
+          if (followingPlayer && followingPlayer.isControllable) {
             followingPlayer.toggleChat(followingPlayer.isChatting);
           }
         }}

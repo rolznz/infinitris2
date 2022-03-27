@@ -14,7 +14,7 @@ export type LeaderboardEntry = {
   nickname: string;
   color: string;
   characterId: string | undefined;
-  isHuman: boolean;
+  isControllable: boolean;
   isBot: boolean;
   score: number;
   status: PlayerStatus;

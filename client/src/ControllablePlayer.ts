@@ -23,7 +23,7 @@ export default class ControllablePlayer extends Player {
     );
   }
 
-  get isHuman(): boolean {
+  get isControllable(): boolean {
     return true;
   }
 }

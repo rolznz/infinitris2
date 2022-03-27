@@ -173,7 +173,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     return this._isChatting;
   }
 
-  get isHuman(): boolean {
+  get isControllable(): boolean {
     return false;
   }
   get isNetworked(): boolean {

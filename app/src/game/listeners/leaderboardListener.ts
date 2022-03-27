@@ -13,7 +13,7 @@ function _updateLeaderboard() {
 
   const leaderboardEntries: LeaderboardEntry[] =
     simulation?.players.map((player, i) => ({
-      isHuman: player.isHuman,
+      isControllable: player.isControllable,
       placing: 0,
       playerId: player.id,
       isBot: player.isBot,
@@ -43,7 +43,7 @@ function _updateLeaderboard() {
   }
 
   const followingPlayer = simulation?.followingPlayer;
-  if (followingPlayer && followingPlayer.isHuman) {
+  if (followingPlayer && followingPlayer.isControllable) {
     const playerScoreIndex = leaderboardEntries.findIndex(
       (score) => score.playerId === followingPlayer.id
     );

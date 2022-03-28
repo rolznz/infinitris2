@@ -113,17 +113,22 @@ export default class SinglePlayerClient
         // find a random bot color - unique until there are more players than colors
         // TODO: move to simulation and notify player of color switch if their color is already in use
 
+        const botId = this._simulation.getFreePlayerId();
         const character: Partial<ICharacter> =
-          this._simulation.generateCharacter(this._launchOptions.allCharacters);
+          this._simulation.generateCharacter(
+            this._launchOptions.allCharacters,
+            botId,
+            true
+          );
 
         this._simulation.addPlayer(
           new AIPlayer(
             this._simulation,
-            i + 1,
+            botId,
             this._simulation.shouldNewPlayerSpectate
               ? PlayerStatus.knockedOut
               : PlayerStatus.ingame,
-            character.name || 'Bot ' + (i + 1),
+            character.name!,
             stringToHex(character.color!),
             (options.botReactionDelay || 20) +
               Math.floor(

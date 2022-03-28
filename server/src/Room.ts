@@ -39,15 +39,19 @@ import { IServerEndRoundEvent } from '@core/networking/server/IServerEndRoundEve
 import { IServerStartNextRoundTimerEvent } from '@core/networking/server/IServerStartNextRoundTimerEvent';
 import { IServerPlayerChangeStatusEvent } from '@core/networking/server/IServerPlayerChangeStatusEvent';
 import { IServerMessage } from '@models/networking/server/IServerMessage';
+import { ICharacter } from '@models/ICharacter';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
   private _simulation: Simulation;
+  private _charactersPool: ICharacter[];
 
   constructor(
     sendMessage: SendServerMessageFunction,
-    gameModeType: GameModeType
+    gameModeType: GameModeType,
+    characters: ICharacter[]
   ) {
+    this._charactersPool = characters;
     this._sendMessage = sendMessage;
     this._simulation = new Simulation(new Grid(50, 16), {
       gameModeType,
@@ -73,23 +77,15 @@ export default class Room implements ISimulationEventListener {
   addPlayer(socketId: number, playerInfo?: Partial<NetworkPlayerInfo>) {
     const playerId = this._simulation.getFreePlayerId();
     console.log('Client ' + socketId + ' assigned player ID ' + playerId);
-    let freeColor = 0;
-    let colorIndex = 0;
-    if (
-      !playerInfo?.color ||
-      this._simulation.players.some(
-        (player) => player.color === playerInfo.color
-      )
-    ) {
-      do {
-        freeColor = stringToHex(colors[colorIndex++].hex);
-      } while (
-        colorIndex < colors.length &&
-        this._simulation.players.some((player) => player.color === freeColor)
-      );
-    } else {
-      freeColor = playerInfo.color;
-    }
+
+    // TODO: verify the player actually owns the character
+    // TODO: update this function to check nicknames
+    const character = this._simulation.generateCharacter(
+      this._charactersPool,
+      playerId,
+      false,
+      playerInfo?.characterId
+    );
     const originalPlayerNickname = playerInfo?.nickname || 'Player ' + playerId;
     let playerNickname = originalPlayerNickname;
     let freeNickNameIndex = 0;
@@ -112,9 +108,9 @@ export default class Room implements ISimulationEventListener {
         : PlayerStatus.ingame,
       false,
       playerNickname,
-      freeColor,
-      playerInfo?.patternFilename,
-      playerInfo?.characterId || '0'
+      stringToHex(character.color!),
+      character.patternFilename!,
+      character.id!.toString()
     );
 
     this._simulation.addPlayer(newPlayer);
@@ -220,25 +216,12 @@ export default class Room implements ISimulationEventListener {
           this._sendMessageToAllPlayers(serverChatMessage);
         } else {
           if (clientMessage.message.startsWith('/addbot')) {
-            // find a random bot color - unique until there are more players than colors
-            // TODO: move to simulation and notify player of color switch if their color is already in use
-            let freeColors = colors
-              .map((color) => stringToHex(color.hex))
-              .filter(
-                (color) =>
-                  this._simulation.players
-                    .map((player) => player.color)
-                    .indexOf(color) < 0
-              );
-            if (!freeColors.length) {
-              freeColors = colors.map((color) => stringToHex(color.hex));
-            }
-
-            // FIXME: socket ids should not have to match player IDs
             const botId = this._simulation.getFreePlayerId();
-            const botNickname = 'Bot ' + botId;
-            const botColor =
-              freeColors[Math.floor(Math.random() * (freeColors.length - 1))];
+            const botCharacter = this._simulation.generateCharacter(
+              this._charactersPool,
+              botId,
+              true
+            );
 
             const bot = new AIPlayer(
               this._simulation,
@@ -246,9 +229,11 @@ export default class Room implements ISimulationEventListener {
               this._simulation.shouldNewPlayerSpectate
                 ? PlayerStatus.knockedOut
                 : PlayerStatus.ingame,
-              botNickname,
-              botColor,
-              parseInt(clientMessage.message.split(' ')[1] || '30')
+              botCharacter.name!,
+              stringToHex(botCharacter.color!),
+              parseInt(clientMessage.message.split(' ')[1] || '30'),
+              botCharacter.patternFilename!,
+              botCharacter.id!.toString()
             );
             this._simulation.addPlayer(bot);
           } else if (clientMessage.message.startsWith('/kickbots')) {
@@ -429,7 +414,10 @@ export default class Room implements ISimulationEventListener {
       playerId: player.id,
     };
     this._sendMessageToAllPlayers(playerDisconnectedMessage);
-    if (!this._simulation.players.filter((p) => p.isNetworked).length) {
+    if (
+      !this._simulation.players.filter((p) => p.isNetworked && p !== player)
+        .length
+    ) {
       for (const player of this._simulation.players) {
         if (!player.isNetworked) {
           this._simulation.removePlayer(player.id);

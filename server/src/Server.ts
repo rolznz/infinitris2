@@ -7,6 +7,9 @@ import IServerSocket from './networking/IServerSocket';
 import { IClientMessage } from '@models/networking/client/IClientMessage';
 import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 import IClientJoinRoomRequest from '@core/networking/client/IClientJoinRoomRequest';
+import { getCharacters } from './firebase';
+import { ICharacter } from '@models/ICharacter';
+import { cachedGet } from '@src/util/cachedGet';
 
 export default class Server implements IServerSocketEventListener {
   private _socket: IServerSocket;
@@ -16,10 +19,26 @@ export default class Server implements IServerSocketEventListener {
     this._socket = socket;
     this._socket.addEventListener(this);
     this._rooms = {};
+    this._init();
+  }
+
+  private async _init() {
+    const time = Date.now();
+    const characters = await cachedGet<ICharacter[]>(
+      'characters',
+      getCharacters
+    );
+    console.log(
+      'Retrieved ' +
+        characters.length +
+        ' characters in ' +
+        (Date.now() - time) +
+        'ms'
+    );
     const sendServerMessage = this._socket.sendMessage.bind(this._socket);
-    this._rooms[0] = new Room(sendServerMessage, 'infinity');
-    this._rooms[1] = new Room(sendServerMessage, 'conquest');
-    this._rooms[2] = new Room(sendServerMessage, 'race');
+    this._rooms[0] = new Room(sendServerMessage, 'infinity', characters);
+    this._rooms[1] = new Room(sendServerMessage, 'conquest', characters);
+    this._rooms[2] = new Room(sendServerMessage, 'race', characters);
   }
 
   /**

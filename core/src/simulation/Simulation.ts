@@ -494,9 +494,12 @@ export default class Simulation implements ISimulation {
   }
 
   generateCharacter(
-    allCharacters: ICharacter[] | undefined
+    charactersPool: ICharacter[] | undefined,
+    playerId: number,
+    isBot: boolean,
+    desiredCharacterId?: string
   ): Partial<ICharacter> {
-    const freeCharacters = allCharacters?.filter(
+    const freeCharacters = charactersPool?.filter(
       (character) =>
         !this.players.some(
           (player) => player.characterId === character.id.toString()
@@ -504,7 +507,12 @@ export default class Simulation implements ISimulation {
     );
 
     if (freeCharacters?.length) {
-      return freeCharacters[Math.floor(Math.random() * freeCharacters.length)];
+      return (
+        freeCharacters.find(
+          (character) =>
+            desiredCharacterId && character.id.toString() === desiredCharacterId
+        ) || freeCharacters[Math.floor(Math.random() * freeCharacters.length)]
+      );
     } else {
       let freeColors = colors
         .map((color) => stringToHex(color.hex))
@@ -521,6 +529,7 @@ export default class Simulation implements ISimulation {
         color: hexToString(
           freeColors[Math.floor(Math.random() * freeColors.length)]
         ),
+        name: `${isBot ? 'Bot' : 'Player'} ${playerId}`,
       };
     }
   }

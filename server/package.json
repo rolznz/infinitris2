@@ -17,6 +17,7 @@
     "dev": "NODE_ENV=development webpack --watch & nodemon ./dist/bundle.js launch",
     "docker:build": "docker build --tag infinitris-server .",
     "docker:run": "docker run --name infinitris-server --publish 9001:9001 infinitris-server",
+    "docker:rm": "docker rm /infinitris-server",
     "docker:run-alt-port": "docker run --name infinitris-server --publish 9000:9000 -e PORT=9000 infinitris-server",
     "docker:restart": "docker restart infinitris-server",
     "docker:stop": "docker stop infinitris-server",
@@ -73,6 +74,8 @@
   },
   "dependencies": {
     "dotenv": "^10.0.0",
+    "firebase": "^9.4.1",
+    "node-fetch": "2.x",
     "ws": "^7.1.2"
   },
   "optionalDependencies": {

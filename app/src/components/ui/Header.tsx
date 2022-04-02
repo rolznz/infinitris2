@@ -60,7 +60,7 @@ export default function Header() {
           <Link
             component={RouterLink}
             underline="none"
-            to={Routes.singlePlayer}
+            to={Routes.singlePlayerPlay}
           >
             <IconButton size="large">
               <SportsEsportsIcon />

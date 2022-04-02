@@ -8,6 +8,8 @@ import { ReactComponent as RightIcon } from '@/icons/right.svg';
 import FlexBox from './FlexBox';
 import { colors, zIndexes } from '@/theme/theme';
 
+const defaultMobileStepperStyles = {};
+
 type SwipeableViewsStyles = {
   root: React.CSSProperties;
   slideContainer: React.CSSProperties;
@@ -39,22 +41,46 @@ export const narrowSwipeableViewsStyles: SwipeableViewsStyles = lodashMerge(
     },
   }
 );
+export const fullScreenSwipeableViewsStyles: SwipeableViewsStyles = lodashMerge(
+  {},
+  coreSwipeableViewsStyles,
+  {
+    root: {},
+    slideContainer: {
+      padding: '0px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    slide: {
+      padding: '0px',
+      color: '#fff',
+      flexGrow: 1,
+    },
+  }
+);
 
 type CarouselProps = {
   slides: React.ReactNode[];
   styles?: SwipeableViewsStyles;
   blurEdges?: boolean;
+  mobileStepperStyles?: React.CSSProperties;
+  scaleTransform?: boolean;
+  innerArrows?: boolean;
 };
 
 export function Carousel({
+  mobileStepperStyles = defaultMobileStepperStyles,
   slides: pages,
   styles = coreSwipeableViewsStyles,
   blurEdges,
+  scaleTransform = true,
+  innerArrows,
 }: React.PropsWithChildren<CarouselProps>) {
   const [activeStep, setActiveStep] = React.useState(0);
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width > windowSize.height;
-  const arrowDistance = 100;
+  const arrowDistance = innerArrows ? -100 : 100;
 
   return (
     <div style={{ position: 'relative' }}>
@@ -101,10 +127,12 @@ export function Carousel({
         enableMouseEvents
         style={styles.root}
         slideStyle={styles.slideContainer}
+        className={scaleTransform ? 'carousel-scaletransform' : ''}
       >
         {pages}
       </SwipeableViews>
       <MobileStepper
+        style={mobileStepperStyles}
         steps={pages.length}
         position="static"
         variant="dots"

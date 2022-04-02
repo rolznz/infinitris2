@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useIntl } from 'react-intl';
 import { Page } from '../../ui/Page';
-import { GameModePicker } from '@/components/ui/GameModePicker/GameModePicker';
+import { PlayTypePicker } from '@/components/ui/GameModePicker/PlayTypePicker';
 
 export default function ScoreboardPage() {
   const intl = useIntl();
@@ -17,7 +17,7 @@ export default function ScoreboardPage() {
       paddingY={0}
       showTitle={false}
     >
-      <GameModePicker display="flex" paddingTop={10} />
+      <PlayTypePicker display="flex" paddingTop={10} />
     </Page>
   );
 }

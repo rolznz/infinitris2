@@ -5,7 +5,7 @@ import { ReactComponent as PlayArrowIcon } from '@/icons/play2.svg';
 
 import { keyframes } from '@mui/system';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
-import { gameModePickerId } from '@/components/ui/GameModePicker/GameModePicker';
+import { playTypePickerId as playTypePickerId } from '@/components/ui/GameModePicker/PlayTypePicker';
 import { playSound, SoundKey } from '@/sound/SoundManager';
 import { requiresPwa } from '@/utils/isMobile';
 import { useHistory } from 'react-router-dom';
@@ -25,8 +25,8 @@ const playButtonAnimation = keyframes`
 
 type PlayButtonProps = { isLoaded: boolean; delayButtonVisibility: boolean };
 
-function scrollGameModePickerIntoView() {
-  const gameModePicker = document.getElementById(gameModePickerId);
+function scrollPlayTypePickerIntoView() {
+  const gameModePicker = document.getElementById(playTypePickerId);
   if (!gameModePicker) {
     return;
   }
@@ -66,7 +66,7 @@ function _PlayButton({ isLoaded, delayButtonVisibility }: PlayButtonProps) {
       onClick={() =>
         requiresPwa()
           ? history.push(Routes.pwa)
-          : scrollGameModePickerIntoView()
+          : scrollPlayTypePickerIntoView()
       }
     >
       <SvgIcon sx={{ width: 26, height: 26, ml: 1.25, mr: 0.75, my: 1 }}>

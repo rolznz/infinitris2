@@ -7,7 +7,7 @@ import Typography from '@mui/material/Typography';
 import FlexBox from '../FlexBox';
 import { playSound, SoundKey } from '@/sound/SoundManager';
 
-type GameModeCardProps = {
+type PlayTypeCardProps = {
   image: string;
   link?: string;
   title: React.ReactNode;
@@ -21,11 +21,11 @@ const imageStyle: React.CSSProperties = {
   borderRadius: borderRadiuses.base,
 };
 
-export function GameModeCard({
+export function PlayTypeCard({
   image,
   link = Routes.comingSoon,
   title,
-}: GameModeCardProps) {
+}: PlayTypeCardProps) {
   const isLandscape = useIsLandscape();
 
   const linkStyle: React.CSSProperties = React.useMemo(

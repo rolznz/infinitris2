@@ -12,7 +12,7 @@ import { Helmet } from 'react-helmet';
 import { appName } from '@/utils/constants';
 import { PlayButton } from './PlayButton';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
-import { GameModePicker } from '@/components/ui/GameModePicker/GameModePicker';
+import { PlayTypePicker } from '@/components/ui/GameModePicker/PlayTypePicker';
 import shallow from 'zustand/shallow';
 
 const _HomePage = () => {
@@ -53,7 +53,7 @@ const _HomePage = () => {
         </FlexBox>
         <Box mt={8} />
       </FlexBox>
-      <GameModePicker display="none" />
+      <PlayTypePicker display="none" />
     </>
   );
 };

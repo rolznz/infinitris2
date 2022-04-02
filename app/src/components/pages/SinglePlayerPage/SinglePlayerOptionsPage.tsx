@@ -96,7 +96,7 @@ export function SinglePlayerOptionsPage() {
     Object.entries(data).forEach((entry) => {
       searchParams.append(entry[0], entry[1].toString());
     });
-    history.push(Routes.singlePlayer + '?' + searchParams);
+    history.push(Routes.singlePlayerPlay + '?' + searchParams);
   };
 
   const watchedGameModeType = watch('gameModeType');

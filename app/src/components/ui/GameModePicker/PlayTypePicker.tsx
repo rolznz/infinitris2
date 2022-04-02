@@ -27,19 +27,19 @@ import communityChallengesImageDark from './assets/illustration_communitychallen
 import communityChallengesImagePortrait from './assets/illustration_communitychallenges_portrait.jpg';
 import communityChallengesImagePortraitDark from './assets/illustration_communitychallenges_portrait_dark.jpg';
 import useDarkMode from '@/components/hooks/useDarkMode';
-import { GameModeCard } from './GameModeCard';
+import { PlayTypeCard } from './PlayTypeCard';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import Routes from '@/models/Routes';
 import { FormattedMessage } from 'react-intl';
 
-export const gameModePickerId = 'game-mode-picker';
+export const playTypePickerId = 'play-type-picker';
 
 type GameModePickerProps = {
   paddingTop?: 10;
   display: 'flex' | 'none';
 };
 
-export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
+export function PlayTypePicker({ paddingTop, display }: GameModePickerProps) {
   const isDarkMode = useDarkMode();
   const isLandscape = useIsLandscape();
   return (
@@ -50,9 +50,9 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
       justifyContent="space-evenly"
       alignItems="flex-start"
       display={display}
-      id={gameModePickerId}
+      id={playTypePickerId}
     >
-      <GameModeCard
+      <PlayTypeCard
         image={
           isLandscape
             ? isDarkMode
@@ -69,7 +69,7 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
           />
         }
       />
-      <GameModeCard
+      <PlayTypeCard
         image={
           isLandscape
             ? isDarkMode
@@ -87,7 +87,7 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
         }
         link={Routes.lobby}
       />
-      <GameModeCard
+      <PlayTypeCard
         image={
           isLandscape
             ? isDarkMode
@@ -104,7 +104,7 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
           />
         }
       />
-      <GameModeCard
+      <PlayTypeCard
         image={
           isLandscape
             ? isDarkMode
@@ -122,7 +122,7 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
         }
         link={Routes.createChallenge}
       />
-      <GameModeCard
+      <PlayTypeCard
         image={
           isLandscape
             ? isDarkMode
@@ -138,9 +138,9 @@ export function GameModePicker({ paddingTop, display }: GameModePickerProps) {
             description="Game Mode Picker Card - Single Player"
           />
         }
-        link={Routes.singlePlayerOptions}
+        link={Routes.singlePlayerGameModePicker}
       />
-      <GameModeCard
+      <PlayTypeCard
         link={Routes.market}
         image={
           isLandscape

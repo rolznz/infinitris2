@@ -33,12 +33,12 @@ body > canvas {
   outline: none !important;
 }
 
-.react-swipeable-view-container [aria-hidden='true'] {
+.carousel-scaletransform .react-swipeable-view-container [aria-hidden='true'] {
   transform: scale(0.9);
   transition: transform 0.3s;
 }
 
-.react-swipeable-view-container [aria-hidden='false'] {
+.carousel-scaletransform .react-swipeable-view-container [aria-hidden='false'] {
   transform: scale(1);
   transition: transform 0.3s;
 }

@@ -1,7 +1,7 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { SxProps, Theme } from '@mui/material/styles';
-import starImage from './assets/star.png';
-import ribbonImage from './assets/ribbon.png';
+import starImage from './assets/winner_star.svg';
+import ribbonImage from './assets/winner_ribbon.svg';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { PlacingStar } from '@/components/pages/Characters/PlacingStar';

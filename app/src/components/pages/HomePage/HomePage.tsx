@@ -1,7 +1,5 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-
-import { FormattedMessage, useIntl } from 'react-intl';
+import Box from '@mui/material/Box';
 
 import logoImage from './assets/logo.png';
 
@@ -15,6 +13,24 @@ import { firstTimeAnimationDelaySeconds } from './homePageConstants';
 import { PlayTypePicker } from '@/components/ui/GameModePicker/PlayTypePicker';
 import shallow from 'zustand/shallow';
 
+import { playTypePickerId } from '@/components/ui/GameModePicker/PlayTypePicker';
+import { requiresPwa } from '@/utils/isMobile';
+import { useHistory } from 'react-router-dom';
+import Routes from '@/models/Routes';
+
+function scrollPlayTypePickerIntoView() {
+  const gameModePicker = document.getElementById(playTypePickerId);
+  if (!gameModePicker) {
+    return;
+  }
+  gameModePicker.style.display = 'flex';
+  gameModePicker.scrollIntoView({
+    behavior: 'smooth',
+    block: 'nearest',
+    inline: 'start',
+  });
+}
+
 const _HomePage = () => {
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width >= windowSize.height;
@@ -22,6 +38,7 @@ const _HomePage = () => {
     (store) => [store.hasFinished, store.delayButtonVisibility],
     shallow
   );
+  const history = useHistory();
 
   return (
     <>
@@ -49,6 +66,11 @@ const _HomePage = () => {
           <PlayButton
             isLoaded={isLoaded}
             delayButtonVisibility={delayButtonVisibility}
+            onClick={() =>
+              requiresPwa()
+                ? history.push(Routes.pwa)
+                : scrollPlayTypePickerIntoView()
+            }
           />
         </FlexBox>
         <Box mt={8} />

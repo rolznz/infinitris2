@@ -5,11 +5,8 @@ import { ReactComponent as PlayArrowIcon } from '@/icons/play2.svg';
 
 import { keyframes } from '@mui/system';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
-import { playTypePickerId as playTypePickerId } from '@/components/ui/GameModePicker/PlayTypePicker';
+
 import { playSound, SoundKey } from '@/sound/SoundManager';
-import { requiresPwa } from '@/utils/isMobile';
-import { useHistory } from 'react-router-dom';
-import Routes from '@/models/Routes';
 
 const playButtonAnimation = keyframes`
   0% {
@@ -23,24 +20,22 @@ const playButtonAnimation = keyframes`
   }
 `;
 
-type PlayButtonProps = { isLoaded: boolean; delayButtonVisibility: boolean };
+type PlayButtonProps = {
+  isLoaded: boolean;
+  delayButtonVisibility: boolean;
+  onClick(): void;
+};
 
-function scrollPlayTypePickerIntoView() {
-  const gameModePicker = document.getElementById(playTypePickerId);
-  if (!gameModePicker) {
-    return;
-  }
-  gameModePicker.style.display = 'flex';
-  gameModePicker.scrollIntoView({
-    behavior: 'smooth',
-    block: 'nearest',
-    inline: 'start',
-  });
-  playSound(SoundKey.click);
-}
+function _PlayButton({
+  isLoaded,
+  delayButtonVisibility,
+  onClick,
+}: PlayButtonProps) {
+  const handleClick = React.useCallback(() => {
+    onClick();
+    playSound(SoundKey.click);
+  }, [onClick]);
 
-function _PlayButton({ isLoaded, delayButtonVisibility }: PlayButtonProps) {
-  const history = useHistory();
   return (
     <IconButton
       sx={{
@@ -63,11 +58,7 @@ function _PlayButton({ isLoaded, delayButtonVisibility }: PlayButtonProps) {
         transform: 'scale(1.0)',
       }}
       size="large"
-      onClick={() =>
-        requiresPwa()
-          ? history.push(Routes.pwa)
-          : scrollPlayTypePickerIntoView()
-      }
+      onClick={handleClick}
     >
       <SvgIcon sx={{ width: 26, height: 26, ml: 1.25, mr: 0.75, my: 1 }}>
         <PlayArrowIcon style={{ color: 'white' }} />

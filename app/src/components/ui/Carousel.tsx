@@ -67,6 +67,8 @@ type CarouselProps = {
   mobileStepperStyles?: React.CSSProperties;
   scaleTransform?: boolean;
   innerArrows?: boolean;
+  initialStep?: number;
+  onChange?(step: number): void;
 };
 
 export function Carousel({
@@ -76,11 +78,21 @@ export function Carousel({
   blurEdges,
   scaleTransform = true,
   innerArrows,
+  initialStep = 0,
+  onChange,
 }: React.PropsWithChildren<CarouselProps>) {
-  const [activeStep, setActiveStep] = React.useState(0);
+  const [activeStep, _setActiveStep] = React.useState(initialStep);
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width > windowSize.height;
   const arrowDistance = innerArrows ? -100 : 100;
+
+  const setActiveStep = React.useCallback(
+    (stepIndex) => {
+      _setActiveStep(stepIndex);
+      onChange?.(stepIndex);
+    },
+    [onChange]
+  );
 
   return (
     <div style={{ position: 'relative' }}>

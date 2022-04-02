@@ -55,6 +55,7 @@ export default class Simulation implements ISimulation {
     this._grid.addEventListener(this);
     this._settings = {
       gravityEnabled: true,
+      instantDrops: true,
       ...settings,
     };
     if (this._settings.gameModeType === 'conquest') {

@@ -12,4 +12,5 @@ export type SimulationSettings = {
   readonly maxSpawnDelaySeconds?: number;
   readonly spawnDelayScoreGraceAmount?: number;
   readonly roundLength?: RoundLength;
+  readonly instantDrops?: boolean;
 };

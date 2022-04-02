@@ -436,21 +436,32 @@ export default class Block implements IBlock {
       --this._fallTimer;
     }
 
-    let fell = false;
-    if (this.isReadyToFall) {
-      fell = this.fall();
-    }
-
-    if (!this._simulation.isNetworkClient && !fell && this.isReadyToLock) {
+    while (true) {
+      let fell = false;
+      if (this.isReadyToFall) {
+        fell = this.fall();
+      }
+      let removed = false;
+      if (!this._simulation.isNetworkClient && !fell && this.isReadyToLock) {
+        if (
+          (this._simulation.settings.preventTowers !== false &&
+            this._simulation.grid.isTower(this.bottomRow)) ||
+          (this._simulation.settings.mistakeDetection !== false &&
+            checkMistake(this._cells, this._simulation))
+        ) {
+          this.die();
+        } else {
+          this.place();
+        }
+        removed = true;
+      }
       if (
-        (this._simulation.settings.preventTowers !== false &&
-          this._simulation.grid.isTower(this.bottomRow)) ||
-        (this._simulation.settings.mistakeDetection !== false &&
-          checkMistake(this._cells, this._simulation))
+        !fell ||
+        removed ||
+        !this.isDropping ||
+        !this._simulation.settings.instantDrops
       ) {
-        this.die();
-      } else {
-        this.place();
+        break;
       }
     }
   }

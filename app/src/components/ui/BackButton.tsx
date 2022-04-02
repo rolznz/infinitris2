@@ -7,10 +7,13 @@ import { playSound, SoundKey } from '@/sound/SoundManager';
 import { useLocation } from 'react-router-dom';
 import { colors } from '@/theme/theme';
 import { isPwa } from '@/utils/isMobile';
+import { exitFullscreen } from '@/utils/launchFullscreen';
+import { useIsFullscreen } from '@/components/hooks/useIsFullscreen';
 
 export default function BackButton() {
+  const isFullscreen = useIsFullscreen();
   const location = useLocation();
-  if (location.pathname === '/' || !isPwa()) {
+  if (location.pathname === '/' || (!isPwa() && !isFullscreen)) {
     return null;
   }
   return (
@@ -28,6 +31,7 @@ export default function BackButton() {
         <IconButton
           style={{}}
           onClick={() => {
+            exitFullscreen();
             window.history.back();
             playSound(SoundKey.click);
           }}

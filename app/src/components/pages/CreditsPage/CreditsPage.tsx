@@ -93,7 +93,7 @@ export function CreditsPage() {
       <Box mt={10} />
       <Typography variant="h4">Special Thanks</Typography>
       <Box mt={2} />
-      <Typography variant="body1" align="center">
+      <Typography variant="body2" align="center">
         AL Kong, Rob Hayes, Zorg, Sven Obermaier, Natalia Golovacheva, Jono
         Burch, Charles Liu, Nick van der Vis, Seth Reid, Eugene van Staden,
         Linda Pettigrew, Mitchel Roy, Niamh Fitzgerald, Tim Bewick, Michał
@@ -102,7 +102,7 @@ export function CreditsPage() {
       </Typography>
 
       <Box mt={10} />
-      <Typography variant="body1">
+      <Typography variant="body2">
         Gestures by Jeff Portaro from&nbsp;
         <Link
           href="https://www.flaticon.com/authors/pixel-buddha"
@@ -112,7 +112,7 @@ export function CreditsPage() {
         </Link>
       </Typography>
       <Box mt={10} />
-      <Typography variant="body1">
+      <Typography variant="body2">
         Flags by&nbsp;
         <Link href="https://flagcdn.com" title="Flag CDN">
           Flag CDN

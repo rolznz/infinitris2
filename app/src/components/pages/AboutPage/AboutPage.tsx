@@ -34,7 +34,7 @@ export default function AboutPage() {
       })}
       narrow
     >
-      <Typography align="center" variant="body1">
+      <Typography align="center" variant="body2">
         <FormattedMessage
           defaultMessage="{appName} is a multiplayer puzzle falling block puzzle game. Place blocks on a giant grid that expands and contracts based on the number of players in-game. Customize your character, create challenges to share with the community and refine your skills in {appName} story mode."
           description="About page description"

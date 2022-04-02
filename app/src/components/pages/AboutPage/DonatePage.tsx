@@ -29,7 +29,7 @@ export default function AboutPage() {
       })}
       narrow
     >
-      <Typography align="center" variant="body1">
+      <Typography align="center" variant="body2">
         <FormattedMessage
           defaultMessage="{appName} is open source and ad-free. Donations will fund future development and operating costs."
           description="Donate page description"
@@ -37,7 +37,7 @@ export default function AboutPage() {
         />
       </Typography>
       <Box mt={2} />
-      <Typography align="center" variant="body1">
+      <Typography align="center" variant="body2">
         <FormattedMessage
           defaultMessage="You can send Bitcoin via the {lightningNetwork} to the below address. An easy way to get started is with the {walletOfSatoshi}."
           description="Donate page lightning QR info"

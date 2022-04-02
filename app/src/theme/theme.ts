@@ -1,7 +1,7 @@
 import { ThemeOptions } from '@mui/material/styles';
 import { SkeletonClassKey } from '@mui/material/Skeleton';
 import '@mui/lab/themeAugmentation';
-import { fontFamily } from 'infinitris2-models';
+import { fontFamily, secondaryFontFamily } from 'infinitris2-models';
 declare module '@mui/material/styles/overrides' {
   interface ComponentNameToClassKey {
     MuiSkeleton: SkeletonClassKey;
@@ -88,8 +88,12 @@ export const coreThemeOptions: ThemeOptions = {
       textTransform: 'lowercase',
     },
     body1: {
-      textTransform: 'lowercase',
       fontSize: 16,
+      fontFamily: [fontFamily].join(','),
+    },
+    body2: {
+      fontSize: 16,
+      fontFamily: [secondaryFontFamily].join(','),
     },
   },
   zIndex: zIndexes as any,

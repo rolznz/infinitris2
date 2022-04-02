@@ -6,7 +6,7 @@ export function TermsOfServicePage() {
   return (
     <Page title="Terms of Service">
       <Typography variant="body1">Last updated: October 11, 2021</Typography>
-      <Typography variant="body1">
+      <Typography variant="body2">
         By using this service you agree to the following:
         <ul>
           <li>
@@ -46,7 +46,7 @@ export function TermsOfServicePage() {
           </li>
         </ul>
       </Typography>
-      <Typography variant="body1">
+      <Typography variant="body2">
         We may occasionally revise our terms of service by posting the changes
         here.
       </Typography>

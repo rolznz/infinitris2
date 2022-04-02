@@ -3,7 +3,7 @@ import { Box, IconButton, SvgIcon } from '@mui/material';
 import React from 'react';
 import FlexBox from './FlexBox';
 import { ReactComponent as LeftIcon } from '@/icons/left.svg';
-import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import { playSound, SoundKey } from '@/sound/SoundManager';
 import { useLocation } from 'react-router-dom';
 import { colors } from '@/theme/theme';
 import { isPwa } from '@/utils/isMobile';

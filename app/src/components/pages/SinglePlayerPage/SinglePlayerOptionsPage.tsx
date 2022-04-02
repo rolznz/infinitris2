@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import Routes from '../../models/Routes';
-import { Page } from '../ui/Page';
+import Routes from '../../../models/Routes';
+import { Page } from '../../ui/Page';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Controller, useForm } from 'react-hook-form';
 import Button from '@mui/material/Button';
 import Input from '@mui/material/Input';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import FlexBox from '../ui/FlexBox';
+import FlexBox from '../../ui/FlexBox';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import {
@@ -27,11 +27,7 @@ import useSinglePlayerOptionsStore, {
   SinglePlayerOptionsFormData,
   getSinglePlayerOptionsDefaultValues,
 } from '@/state/SinglePlayerOptionsStore';
-import {
-  playSound,
-  SoundKey,
-  TrackNumberValues,
-} from '@/components/sound/MusicPlayer';
+import { playSound, SoundKey, TrackNumberValues } from '@/sound/SoundManager';
 import { launchFullscreen } from '@/utils/launchFullscreen';
 import shallow from 'zustand/shallow';
 

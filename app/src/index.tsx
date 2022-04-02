@@ -3,7 +3,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Loader from './components/ui/Loader';
+import Loader from '@/components/ui/Loader';
 import PageRouter from './PageRouter';
 import smoothscroll from 'smoothscroll-polyfill';
 smoothscroll.polyfill();

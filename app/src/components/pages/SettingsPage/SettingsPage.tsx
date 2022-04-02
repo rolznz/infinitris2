@@ -15,7 +15,7 @@ import {
   playSound,
   SoundKey,
   setMusicOn,
-} from '@/components/sound/MusicPlayer';
+} from '@/sound/SoundManager';
 import { Page } from '@/components/ui/Page';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
 import MusicOffIcon from '@mui/icons-material/MusicOff';

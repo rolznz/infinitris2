@@ -1,7 +1,7 @@
 import { Box, IconButton, SvgIcon } from '@mui/material';
 import React from 'react';
 import { ReactComponent as ChatIcon } from '@/icons/chat.svg';
-import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import { playSound, SoundKey } from '@/sound/SoundManager';
 import { colors } from '@/theme/theme';
 import FlexBox from '@/components/ui/FlexBox';
 import useIngameStore from '@/state/IngameStore';

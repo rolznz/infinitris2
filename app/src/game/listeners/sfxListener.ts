@@ -1,4 +1,4 @@
-import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import { playSound, SoundKey } from '@/sound/SoundManager';
 import { IBlock, ISimulationEventListener } from 'infinitris2-models';
 
 export const sfxListener: Partial<ISimulationEventListener> = {

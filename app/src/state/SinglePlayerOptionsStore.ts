@@ -1,4 +1,4 @@
-import { TrackNumber, TrackNumberValues } from '@/components/sound/MusicPlayer';
+import { TrackNumber, TrackNumberValues } from '@/sound/SoundManager';
 import { GameModeType, RoundLength, WorldType } from 'infinitris2-models';
 import create from 'zustand';
 

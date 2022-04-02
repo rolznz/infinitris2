@@ -6,7 +6,7 @@ import { ReactComponent as PlayArrowIcon } from '@/icons/play2.svg';
 import { keyframes } from '@mui/system';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
 import { gameModePickerId } from '@/components/ui/GameModePicker/GameModePicker';
-import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import { playSound, SoundKey } from '@/sound/SoundManager';
 import { requiresPwa } from '@/utils/isMobile';
 import { useHistory } from 'react-router-dom';
 import Routes from '@/models/Routes';

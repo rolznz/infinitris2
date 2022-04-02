@@ -20,15 +20,10 @@ import {
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useCollection, useDocument } from 'swr-firestore';
-import useAppStore from '../../state/AppStore';
-import { useUser, useUserStore } from '../../state/UserStore';
+import useAppStore from '@/state/AppStore';
+import { useUser, useUserStore } from '@/state/UserStore';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
-import {
-  playGameMusic,
-  playSound,
-  SoundKey,
-  TrackNumber,
-} from '../sound/MusicPlayer';
+import { playGameMusic, TrackNumber } from '@/sound/SoundManager';
 
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
@@ -169,6 +164,7 @@ export default function SinglePlayerPage() {
     roundLength,
     characterId,
     trackNumber,
+    allCharacters.data,
   ]);
 
   return <GameUI />;

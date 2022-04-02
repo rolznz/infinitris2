@@ -15,7 +15,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import FlexBox from '@/components/ui/FlexBox';
 import { DocumentSnapshot } from 'firebase/firestore';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
-import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import { playSound, SoundKey } from '@/sound/SoundManager';
 import { launchFullscreen } from '@/utils/launchFullscreen';
 //import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 

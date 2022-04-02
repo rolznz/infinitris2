@@ -1,6 +1,6 @@
 import React from 'react';
 import useAppStore from '@/state/AppStore';
-import { playMenuTheme } from '@/components/sound/MusicPlayer';
+import { playMenuTheme } from '@/sound/SoundManager';
 import useIngameStore from '@/state/IngameStore';
 
 export function useReleaseClientOnExitPage() {

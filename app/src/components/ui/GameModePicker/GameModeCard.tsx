@@ -5,7 +5,7 @@ import Routes from '@/models/Routes';
 import { Link as RouterLink } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import FlexBox from '../FlexBox';
-import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import { playSound, SoundKey } from '@/sound/SoundManager';
 
 type GameModeCardProps = {
   image: string;

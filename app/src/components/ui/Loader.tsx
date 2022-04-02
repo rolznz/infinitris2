@@ -20,7 +20,7 @@ import {
   setMusicOn,
   setSfxOn,
   SoundKey,
-} from '../sound/MusicPlayer';
+} from '../../sound/SoundManager';
 import FlexBox from './FlexBox';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';

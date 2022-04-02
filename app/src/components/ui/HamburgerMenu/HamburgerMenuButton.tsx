@@ -5,7 +5,7 @@ import FlexBox from '../FlexBox';
 import { ReactComponent as HamburgerIcon } from '@/icons/hamburger.svg';
 import { useState } from 'react';
 import HamburgerMenu from './HamburgerMenu';
-import { playSound, SoundKey } from '@/components/sound/MusicPlayer';
+import { playSound, SoundKey } from '@/sound/SoundManager';
 import { useEffect } from 'react';
 import usePrevious from 'react-use/lib/usePrevious';
 import useLoaderStore from '@/state/LoaderStore';

@@ -12,6 +12,9 @@ export class RaceGameMode implements IGameMode<RaceGameModeState> {
   get hasRounds(): boolean {
     return true;
   }
+  get hasHealthbars(): boolean {
+    return true;
+  }
 
   step(): void {}
 
@@ -21,23 +24,34 @@ export class RaceGameMode implements IGameMode<RaceGameModeState> {
   deserialize(state: RaceGameModeState) {}
 
   onPlayerScoreChanged(player: IPlayer) {
-    if (this._simulation.isNetworkClient) {
-      return;
-    }
     const activePlayers = this._simulation.players.filter(
       (otherPlayer) => otherPlayer.status === PlayerStatus.ingame
     );
-
-    // kick out slowest players
     const highestPlayerScore =
       activePlayers
         .map((player) => player.score)
         .find((score) => !activePlayers.some((other) => other.score > score)) ||
       0;
-    const highestPlayerScoreWithGrace = Math.max(highestPlayerScore - 200, 0);
+    const withGrace = (score: number) => Math.max(score - 200, 0);
+    const highestPlayerScoreWithGrace = withGrace(highestPlayerScore);
+    const deathScore = highestPlayerScoreWithGrace - 200;
+
+    for (const activePlayer of activePlayers) {
+      activePlayer.health =
+        Math.max(withGrace(activePlayer.score) - deathScore, 0) /
+        (highestPlayerScoreWithGrace - deathScore);
+      console.log(
+        'Set player ' + activePlayer.id + ' health ' + activePlayer.health
+      );
+    }
+    if (this._simulation.isNetworkClient) {
+      return;
+    }
+
+    // kick out slowest players
 
     for (const otherPlayer of activePlayers) {
-      if (otherPlayer.score < highestPlayerScoreWithGrace - 200) {
+      if (otherPlayer.score < deathScore) {
         otherPlayer.status = PlayerStatus.knockedOut;
       }
     }

@@ -88,7 +88,8 @@ export class Round implements IRound {
       ) {
         player.removeBlock();
         player.status = PlayerStatus.ingame;
-        player.health = 0.5;
+        player.health =
+          this._simulation.settings.gameModeType === 'conquest' ? 0.5 : 1; // TODO: add initial health to game mode
         player.score = 0;
         player.estimatedSpawnDelay = 0;
       }

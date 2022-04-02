@@ -33,6 +33,9 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   get hasRounds(): boolean {
     return true;
   }
+  get hasHealthbars(): boolean {
+    return true;
+  }
 
   step(): void {
     const now = Date.now();

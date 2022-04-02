@@ -14,4 +14,7 @@ export class InfinityGameMode implements IGameMode<InfinityGameModeState> {
   get hasRounds(): boolean {
     return false;
   }
+  get hasHealthbars(): boolean {
+    return false;
+  }
 }

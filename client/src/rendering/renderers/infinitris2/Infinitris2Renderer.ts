@@ -320,7 +320,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         playerContainer.container.x = textCentreX;
         playerContainer.container.y = textY;
 
-        if (this._simulation!.settings.gameModeType === 'conquest') {
+        if (this._simulation!.gameMode.hasHealthbars) {
           for (const child of playerContainer.healthbar.children) {
             child.renderableObject.inner.width =
               child.renderableObject.outer.width * player.health;
@@ -667,7 +667,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     playerContainer.nicknameText.children.forEach((child) =>
       child.renderableObject.scale.set(this._cellSize * 0.03)
     );
-    if (this._simulation!.settings.gameModeType === 'conquest') {
+    if (this._simulation!.gameMode.hasHealthbars) {
       this.renderCopies(
         playerContainer.healthbar,
         1,

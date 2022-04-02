@@ -482,7 +482,7 @@ export default class Block implements IBlock {
       : Math.max(
           INITIAL_FALL_DELAY -
             Math.ceil(
-              this._simulation.settings.gameModeType === 'conquest'
+              this._simulation.settings.gameModeType === 'conquest' // TODO: add blockSpeedAlgorithm for game mode
                 ? Math.pow(this._player.health / 2, 2) *
                     INITIAL_FALL_DELAY *
                     0.8

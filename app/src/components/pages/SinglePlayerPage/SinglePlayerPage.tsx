@@ -6,14 +6,12 @@ import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
 import { LocalUser } from '@/state/LocalUserStore';
 import {
-  GameModeType,
   getCharacterPath,
   hexToString,
   ICharacter,
   stringToHex,
   WorldType,
   IPlayer,
-  RoundLength,
   ISimulation,
   charactersPath,
 } from 'infinitris2-models';
@@ -23,7 +21,21 @@ import { useCollection, useDocument } from 'swr-firestore';
 import useAppStore from '@/state/AppStore';
 import { useUser, useUserStore } from '@/state/UserStore';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
-import { playGameMusic, TrackNumber } from '@/sound/SoundManager';
+import { playGameMusic } from '@/sound/SoundManager';
+import { useHistory } from 'react-router-dom';
+import useSinglePlayerOptionsStore, {
+  SinglePlayerOptionsFormData,
+} from '@/state/SinglePlayerOptionsStore';
+import Routes from '@/models/Routes';
+
+export function launchSinglePlayer(history: ReturnType<typeof useHistory>) {
+  const settings = useSinglePlayerOptionsStore.getState().formData;
+  history.push(
+    `${Routes.singlePlayerPlay}?settings=${encodeURIComponent(
+      JSON.stringify(settings)
+    )}`
+  );
+}
 
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
@@ -40,25 +52,20 @@ export default function SinglePlayerPage() {
     userStore.user.musicOn !== undefined ? userStore.user.musicOn : true;
 
   const requiresRedirect = false;
-  const numBots = parseInt(useSearchParam('numBots') || '0');
-  const botReactionDelay = parseInt(useSearchParam('botReactionDelay') || '30');
-  const botRandomReactionDelay = parseInt(
-    useSearchParam('botRandomReactionDelay') || '30'
-  );
-  const gridNumRows = parseInt(useSearchParam('gridNumRows') || '20');
-  const gridNumColumns = parseInt(useSearchParam('gridNumColumns') || '10');
-  const gameModeType: GameModeType =
-    (useSearchParam('gameModeType') as GameModeType) || 'infinity';
-  const worldType: WorldType =
-    (useSearchParam('worldType') as WorldType) || 'grass';
-  const roundLength: RoundLength =
-    (useSearchParam('roundLength') as RoundLength) || 'medium';
-  const spectate = useSearchParam('spectate') === 'true';
-  const mistakeDetection = useSearchParam('mistakeDetection') === 'true';
-  const calculateSpawnDelays =
-    useSearchParam('calculateSpawnDelays') === 'true';
-  const preventTowers = useSearchParam('preventTowers') === 'true';
-  const trackNumber = useSearchParam('trackNumber') as TrackNumber;
+
+  const settings = JSON.parse(
+    useSearchParam('settings') || encodeURIComponent(JSON.stringify({}))
+  ) as SinglePlayerOptionsFormData;
+
+  const numBots = settings.numBots;
+  const botReactionDelay = settings.botReactionDelay;
+  const botRandomReactionDelay = settings.botRandomReactionDelay;
+  const gridNumRows = settings.gridNumRows;
+  const gridNumColumns = settings.gridNumColumns;
+  const simulationSettings = settings.simulationSettings;
+  const worldType: WorldType = settings.worldType;
+  const spectate = settings.spectate;
+  const trackNumber = settings.trackNumber;
 
   const user = useUser();
   const nickname = (user as LocalUser).nickname;
@@ -101,13 +108,7 @@ export default function SinglePlayerPage() {
         rendererQuality,
         rendererType,
         spectate,
-        simulationSettings: {
-          mistakeDetection,
-          calculateSpawnDelays,
-          preventTowers,
-          gameModeType,
-          roundLength,
-        },
+        simulationSettings,
         listeners: [
           ...coreGameListeners,
           {
@@ -154,14 +155,10 @@ export default function SinglePlayerPage() {
     rendererQuality,
     rendererType,
     spectate,
-    mistakeDetection,
-    calculateSpawnDelays,
-    preventTowers,
     worldType,
-    gameModeType,
     character,
     nickname,
-    roundLength,
+    simulationSettings,
     characterId,
     trackNumber,
     allCharacters.data,

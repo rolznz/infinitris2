@@ -62,6 +62,9 @@ function _updateLeaderboard() {
   leaderboardEntries.splice(maxEntries);
 
   useIngameStore.getState().setLeaderboardEntries(leaderboardEntries);
+  useIngameStore
+    .getState()
+    .setNumNonSpectatorPlayers(simulation?.nonSpectatorPlayers.length || 0);
 }
 
 const updateLeaderboard = debounce(_updateLeaderboard, 500) as () => void;

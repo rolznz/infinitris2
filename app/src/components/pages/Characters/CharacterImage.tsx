@@ -1,10 +1,12 @@
-import { Box } from '@mui/material';
+import { boxShadows, dropShadows } from '@/theme/theme';
+import { Box, SxProps, Theme } from '@mui/material';
 import React from 'react';
 
 type CharacterImageProps = {
   characterId: string;
   thumbnail?: string;
   width: number;
+  hasShadow?: boolean;
 };
 
 // TODO: extract to progressive image component
@@ -23,14 +25,22 @@ function _CharacterImage({
   characterId,
   width,
   thumbnail,
+  hasShadow,
 }: CharacterImageProps) {
   const [isLoaded, setLoaded] = React.useState(false);
+  const sx: SxProps<Theme> = React.useMemo(
+    () => ({
+      filter: hasShadow ? dropShadows.small : undefined,
+    }),
+    [hasShadow]
+  );
   return (
     <Box
       width={width + 'px'}
       height={width + 'px'}
       position="relative"
       flexShrink={0}
+      sx={sx}
     >
       {!isLoaded && (
         <img

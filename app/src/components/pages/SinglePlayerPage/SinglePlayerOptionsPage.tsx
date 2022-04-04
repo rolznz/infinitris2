@@ -1,4 +1,3 @@
-import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import { Page } from '../../ui/Page';
@@ -30,6 +29,7 @@ import useSinglePlayerOptionsStore, {
 import { playSound, SoundKey, TrackNumberValues } from '@/sound/SoundManager';
 import { launchFullscreen } from '@/utils/launchFullscreen';
 import shallow from 'zustand/shallow';
+import { launchSinglePlayer } from '@/components/pages/SinglePlayerPage/SinglePlayerPage';
 
 const schema = yup
   .object({
@@ -92,14 +92,10 @@ export function SinglePlayerOptionsPage() {
     playSound(SoundKey.click);
     launchFullscreen();
     setFormData(data);
-    const searchParams = new URLSearchParams();
-    Object.entries(data).forEach((entry) => {
-      searchParams.append(entry[0], entry[1].toString());
-    });
-    history.push(Routes.singlePlayerPlay + '?' + searchParams);
+    launchSinglePlayer(history);
   };
 
-  const watchedGameModeType = watch('gameModeType');
+  const watchedGameModeType = watch('simulationSettings.gameModeType');
 
   return (
     <Page
@@ -112,7 +108,7 @@ export function SinglePlayerOptionsPage() {
         <FlexBox gap={2}>
           <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
             <Controller
-              name="gameModeType"
+              name="simulationSettings.gameModeType"
               control={control}
               render={({ field }) => (
                 <FormControl variant="standard">
@@ -161,7 +157,7 @@ export function SinglePlayerOptionsPage() {
             />
             {watchedGameModeType === 'conquest' && (
               <Controller
-                name="roundLength"
+                name="simulationSettings.roundLength"
                 control={control}
                 render={({ field }) => (
                   <FormControl variant="standard">
@@ -253,7 +249,20 @@ export function SinglePlayerOptionsPage() {
               )}
             />
             <Controller
-              name="mistakeDetection"
+              name="simulationSettings.instantDrops"
+              control={control}
+              render={({ field }) => (
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Switch {...field} defaultChecked={field.value} />}
+                    label="Instant Drops"
+                    labelPlacement="start"
+                  />
+                </FormGroup>
+              )}
+            />
+            <Controller
+              name="simulationSettings.mistakeDetection"
               control={control}
               render={({ field }) => (
                 <FormGroup>
@@ -267,7 +276,7 @@ export function SinglePlayerOptionsPage() {
             />
             {watchedGameModeType !== 'conquest' && (
               <Controller
-                name="calculateSpawnDelays"
+                name="simulationSettings.calculateSpawnDelays"
                 control={control}
                 render={({ field }) => (
                   <FormGroup>
@@ -283,7 +292,7 @@ export function SinglePlayerOptionsPage() {
               />
             )}
             <Controller
-              name="preventTowers"
+              name="simulationSettings.preventTowers"
               control={control}
               render={({ field }) => (
                 <FormGroup>

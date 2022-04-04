@@ -88,9 +88,6 @@ export function NextRoundIndicator() {
   const conditionsAreMet = useIngameStore(
     (store) => store.roundConditionsAreMet
   );
-  const leaderboardEntries = useIngameStore(
-    (store) => store.leaderboardEntries
-  );
   React.useEffect(() => {
     if (conditionsAreMet) {
       setTimeout(() => setRenderId((state) => state + 1), 1000);
@@ -132,15 +129,14 @@ export function NextRoundIndicator() {
         />
       </Typography>
       <FlexBox mt={1} flexDirection="row" flexWrap="wrap" width="50%">
-        {leaderboardEntries
-          .filter((entry) => entry.status !== PlayerStatus.spectating)
-          .map((entry) => (
-            <CharacterImage
-              key={entry.playerId}
-              characterId={entry.characterId || '0'}
-              width={32}
-            />
-          ))}
+        {simulation.nonSpectatorPlayers.map((player) => (
+          <CharacterImage
+            key={player.id}
+            characterId={player.characterId || '0'}
+            width={32}
+            hasShadow={player.isControllable}
+          />
+        ))}
       </FlexBox>
     </FlexBox>
   );

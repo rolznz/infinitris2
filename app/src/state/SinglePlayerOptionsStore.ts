@@ -1,5 +1,5 @@
 import { TrackNumber, TrackNumberValues } from '@/sound/SoundManager';
-import { GameModeType, RoundLength, WorldType } from 'infinitris2-models';
+import { SimulationSettings, WorldType } from 'infinitris2-models';
 import create from 'zustand';
 
 export type SinglePlayerOptionsFormData = {
@@ -8,15 +8,10 @@ export type SinglePlayerOptionsFormData = {
   botRandomReactionDelay: number;
   gridNumRows: number;
   gridNumColumns: number;
-  dayLengthSeconds: number;
   spectate: boolean;
-  mistakeDetection: boolean;
-  calculateSpawnDelays: boolean;
-  preventTowers: boolean;
   worldType: WorldType;
-  gameModeType: GameModeType;
-  roundLength: RoundLength;
   trackNumber: TrackNumber;
+  simulationSettings: SimulationSettings;
 };
 
 export const getSinglePlayerOptionsDefaultValues =
@@ -26,16 +21,20 @@ export const getSinglePlayerOptionsDefaultValues =
     botRandomReactionDelay: 25,
     gridNumRows: 16,
     gridNumColumns: 50,
-    dayLengthSeconds: 20,
+
     spectate: false,
-    mistakeDetection: true,
-    calculateSpawnDelays: true,
-    preventTowers: true,
+
     worldType: 'grass',
-    gameModeType: 'infinity',
-    roundLength: 'medium',
     trackNumber:
       TrackNumberValues[Math.floor(Math.random() * TrackNumberValues.length)],
+    simulationSettings: {
+      roundLength: 'medium',
+      mistakeDetection: true,
+      calculateSpawnDelays: true,
+      preventTowers: true,
+      instantDrops: true,
+      gameModeType: 'infinity',
+    },
   });
 
 type SinglePlayerOptionsStore = {

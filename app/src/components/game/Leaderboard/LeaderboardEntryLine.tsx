@@ -8,6 +8,7 @@ import { SxProps, Theme } from '@mui/material/styles';
 import React from 'react';
 import useIngameStore, { LeaderboardEntry } from '@/state/IngameStore';
 import { ReactComponent as ConquestIcon } from '@/icons/conquest.svg';
+import { ReactComponent as ScoreIcon } from '@/icons/score.svg';
 import { ReactComponent as BotIcon } from '@/icons/bot.svg';
 import SvgIcon from '@mui/material/SvgIcon';
 import { PlayerStatus } from 'infinitris2-models';
@@ -118,11 +119,13 @@ export function LeaderboardEntryLine({
           <Typography variant="body1" color="secondary" lineHeight="1">
             {entry.score}
           </Typography>
-          {simulation?.settings.gameModeType === 'conquest' && (
-            <SvgIcon fontSize="small">
+          <SvgIcon fontSize="small" sx={{ color: entry.color }}>
+            {simulation?.settings.gameModeType === 'conquest' ? (
               <ConquestIcon />
-            </SvgIcon>
-          )}
+            ) : (
+              <ScoreIcon />
+            )}
+          </SvgIcon>
         </FlexBox>
       )}
     </FlexBox>

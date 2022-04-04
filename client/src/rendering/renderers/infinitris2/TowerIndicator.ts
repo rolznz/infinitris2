@@ -14,6 +14,10 @@ export class TowerIndicator {
     this._graphics.alpha = 0;
   }
 
+  hide() {
+    this._graphics.alpha = 0;
+  }
+
   update(gridY: number, isTower: boolean, grid: IGrid, cellSize: number) {
     let towerY = 0;
     if (isTower) {
@@ -30,7 +34,7 @@ export class TowerIndicator {
         0
       );
     } else {
-      this._graphics.alpha = 0;
+      this.hide();
     }
 
     this._graphics.y = gridY + towerY - this._graphics.height;

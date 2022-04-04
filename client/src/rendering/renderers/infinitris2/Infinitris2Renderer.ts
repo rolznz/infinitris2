@@ -346,6 +346,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
             block.player.id
           );
           this._renderBlockPlacementShadow(block);
+        } else {
+          this._towerIndicator.hide();
         }
       }
     }

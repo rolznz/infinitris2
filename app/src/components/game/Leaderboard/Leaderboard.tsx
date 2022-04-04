@@ -49,6 +49,11 @@ export function Leaderboard() {
       <FlexBox gap={0} mt={1} justifyItems="flex-start" width="100%">
         <LeaderboardContents />
       </FlexBox>
+      {isOpen && (
+        <Typography variant="body1" color="secondary" mt={2}>
+          <LeaderboardNumPlayers />
+        </Typography>
+      )}
     </FlexBox>
   );
 }
@@ -69,5 +74,18 @@ function LeaderboardButton(props: { toggleIsOpen: () => void }) {
         isLeaderboardOpen={false}
       />
     </FlexBox>
+  );
+}
+function LeaderboardNumPlayers() {
+  const numNonSpectatorPlayers = useIngameStore(
+    (store) => store.numNonSpectatorPlayers
+  );
+  // return mini preview
+  return (
+    <FormattedMessage
+      defaultMessage="{numPlayers} players"
+      description="Leaderboard number of players ingame"
+      values={{ numPlayers: numNonSpectatorPlayers }}
+    />
   );
 }

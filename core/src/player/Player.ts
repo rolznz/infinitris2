@@ -152,6 +152,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       this._score = 0;
     }
     if (this._status !== PlayerStatus.ingame) {
+      if (this._status === PlayerStatus.knockedOut && this._block) {
+        this._block.die();
+      }
       this._health = 0;
       this.removeBlock();
     } else {

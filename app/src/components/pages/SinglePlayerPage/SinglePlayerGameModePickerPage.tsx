@@ -17,12 +17,16 @@ import grassImage from './assets/carousel/grass.svg';
 import Link from '@mui/material/Link';
 import { GameModeType, GameModeTypeValues } from 'infinitris2-models';
 import Typography from '@mui/material/Typography';
-import { ReactComponent as ConquestIcon } from '@/icons/gameMode-conquest.svg';
+import { ReactComponent as ConquestIcon } from '@/icons/conquest.svg';
+import { ReactComponent as InfinityIcon } from '@/icons/infinity.svg';
 import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
 import { SvgIcon } from '@mui/material';
 import { borderColor, borderRadiuses, boxShadows } from '@/theme/theme';
 import React from 'react';
 import { PlayButton } from '@/components/pages/HomePage/PlayButton';
+import lodashMerge from 'lodash.merge';
+import { launchSinglePlayer } from '@/components/pages/SinglePlayerPage/SinglePlayerPage';
+import RunCircleIcon from '@mui/icons-material/RunCircle';
 
 const slides: React.ReactNode[] = GameModeTypeValues.map((gameModeType) => (
   <FlexBox
@@ -30,7 +34,9 @@ const slides: React.ReactNode[] = GameModeTypeValues.map((gameModeType) => (
     width="100vw"
     height="100vh"
     sx={{
-      background: `url(${grassImage})`,
+      background: `url(${grassImage}); filter: hue-rotate(${
+        GameModeTypeValues.indexOf(gameModeType) * 45
+      }deg);`,
       backgroundSize: 'cover',
       backgroundRepeat: 'no-repeat',
       backgroundPositionY: '100%',
@@ -55,7 +61,9 @@ const slides: React.ReactNode[] = GameModeTypeValues.map((gameModeType) => (
       alignItems="flex-start"
     >
       <FlexBox flexDirection="row" gap={1}>
-        <ConquestIcon />
+        <SvgIcon color="primary">
+          <GameModeIcon gameModeType={gameModeType} />
+        </SvgIcon>
         <Typography variant="h1">{gameModeType}</Typography>
       </FlexBox>
       <Typography variant="body2">
@@ -72,11 +80,7 @@ export function SinglePlayerGameModePickerPage() {
   const onSubmit = () => {
     playSound(SoundKey.click);
     launchFullscreen();
-    const searchParams = new URLSearchParams();
-    Object.entries(formData).forEach((entry) => {
-      searchParams.append(entry[0], entry[1].toString());
-    });
-    history.push(Routes.singlePlayerPlay + '?' + searchParams);
+    launchSinglePlayer(history);
   };
 
   return (
@@ -104,12 +108,17 @@ export function SinglePlayerGameModePickerPage() {
             }}
             scaleTransform={false}
             innerArrows
-            initialStep={GameModeTypeValues.indexOf(formData.gameModeType)}
+            initialStep={GameModeTypeValues.indexOf(
+              formData.simulationSettings.gameModeType!
+            )}
             onChange={(step) =>
-              useSinglePlayerOptionsStore.getState().setFormData({
-                ...formData,
-                gameModeType: GameModeTypeValues[step],
-              })
+              useSinglePlayerOptionsStore.getState().setFormData(
+                lodashMerge(formData, {
+                  simulationSettings: {
+                    gameModeType: GameModeTypeValues[step],
+                  },
+                })
+              )
             }
           />
         </div>
@@ -134,6 +143,19 @@ export function SinglePlayerGameModePickerPage() {
   );
 }
 
+function GameModeIcon(props: { gameModeType: GameModeType }) {
+  switch (props.gameModeType) {
+    case 'infinity':
+      return <InfinityIcon />;
+    case 'race':
+      return <RunCircleIcon />;
+    case 'conquest':
+      return <ConquestIcon />;
+    default:
+      throw new Error('No description for ' + props.gameModeType);
+  }
+}
+
 function GameModeDescription(props: { gameModeType: GameModeType }) {
   switch (props.gameModeType) {
     case 'infinity':
@@ -146,14 +168,14 @@ function GameModeDescription(props: { gameModeType: GameModeType }) {
     case 'race':
       return (
         <FormattedMessage
-          defaultMessage="Keep a high score to survive."
+          defaultMessage="Keep your score high to stay in the game."
           description="Race Game mode description"
         />
       );
     case 'conquest':
       return (
         <FormattedMessage
-          defaultMessage="Capture columns to survive."
+          defaultMessage="Capture columns by holding the bottom row."
           description="Conquest Game mode description"
         />
       );

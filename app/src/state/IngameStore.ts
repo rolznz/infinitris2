@@ -37,6 +37,8 @@ type IngameStore = {
   setRoundConditionsAreMet(roundConditionsAreMet: boolean): void;
   readonly spawnDelayDisplayVisible: boolean;
   setSpawnDelayDisplayVisible(spawnDelayDisplayVisible: boolean): void;
+  readonly numNonSpectatorPlayers: number;
+  setNumNonSpectatorPlayers(numNonSpectatorPlayers: number): void;
 };
 
 const useIngameStore = create<IngameStore>((set) => ({
@@ -46,11 +48,12 @@ const useIngameStore = create<IngameStore>((set) => ({
   endRoundDisplayOpen: false,
   roundConditionsAreMet: false,
   spawnDelayDisplayVisible: false,
+  isChatOpen: false,
+  chatMessage: '',
+  numNonSpectatorPlayers: 0,
   setSimulation: (simulation: ISimulation | undefined) =>
     set((_) => ({ simulation })),
-  isChatOpen: false,
   setChatOpen: (isChatOpen: boolean) => set((_) => ({ isChatOpen })),
-  chatMessage: '',
   setChatMessage: (chatMessage: string) => set((_) => ({ chatMessage })),
   addToMessageLog: (message: MessageLogEntry) =>
     set((state) => ({
@@ -64,6 +67,8 @@ const useIngameStore = create<IngameStore>((set) => ({
     set((_) => ({ roundConditionsAreMet })),
   setSpawnDelayDisplayVisible: (spawnDelayDisplayVisible: boolean) =>
     set((_) => ({ spawnDelayDisplayVisible })),
+  setNumNonSpectatorPlayers: (numNonSpectatorPlayers: number) =>
+    set((_) => ({ numNonSpectatorPlayers })),
 }));
 
 export default useIngameStore;

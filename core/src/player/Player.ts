@@ -390,7 +390,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     if (this._simulation.isNetworkClient) {
       return;
     }
-    if (this._simulation.settings.calculateSpawnDelays !== false) {
+    if (
+      this._simulation.settings.calculateSpawnDelays !== false &&
+      this._simulation.settings.gameModeType === 'infinity'
+    ) {
       const highestPlayerScore = Math.max(
         ...this._simulation.players.map((player) => player.score)
       );

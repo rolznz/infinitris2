@@ -118,6 +118,8 @@ export function CreditsPage() {
           Flag CDN
         </Link>
       </Typography>
+      <Box mt={10} />
+      <Typography variant="body2">SFX by&nbsp;25Pi25</Typography>
     </Page>
   );
 }

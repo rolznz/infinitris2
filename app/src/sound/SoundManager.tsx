@@ -15,17 +15,42 @@ let _sounds: Howl;
 let _sfxOn: boolean = false;
 let _musicOn: boolean = false;
 
-export const SoundKey = {
-  silence: [0, 500],
-  click: [3000, 500],
-  death: [6000, 500],
-  move: [9000, 500],
-  notification: [12000, 500],
-  place: [16000, 500],
-  rotate: [19000, 500],
-  drop: [22000, 500],
-  spawn: [12000, 500],
+type SoundPackName = '25Pi25' | 'sounds';
+const selectedSoundPackName: SoundPackName = '25Pi25';
+
+const soundPacks: Record<SoundPackName, Partial<SoundEntry>> = {
+  '25Pi25': {
+    click: [2000, 1900],
+    move: [2000, 1900],
+    rotate: [5000, 1900],
+    drop: [8000, 1900],
+    death: [11000, 1900],
+  },
+  sounds: {
+    silence: [0, 500],
+    click: [3000, 500],
+    death: [6000, 500],
+    move: [9000, 500],
+    notification: [12000, 500],
+    place: [16000, 500],
+    rotate: [19000, 500],
+    drop: [22000, 500],
+    spawn: [12000, 500],
+  },
 };
+
+export enum SoundKey {
+  silence = 'silence',
+  click = 'click',
+  death = 'death',
+  move = 'move',
+  notification = 'notification',
+  place = 'place',
+  rotate = 'rotate',
+  drop = 'drop',
+  spawn = 'spawn',
+}
+type SoundEntry = Record<SoundKey, [number, number]>;
 
 export const TrackNumberValues = ['1', '2', '3', '4', '5', 'bonus'] as const;
 export type TrackNumber = typeof TrackNumberValues[number];
@@ -71,7 +96,7 @@ async function prepareSoundEffects() {
     _sfxContext = new AudioContext();
 
     try {
-      _sfxAudioBuffer = await fetch(`${rootUrl}/sounds.mp3`)
+      _sfxAudioBuffer = await fetch(`${rootUrl}/${selectedSoundPackName}.mp3`)
         .then((res) => {
           return res.arrayBuffer();
         })
@@ -87,12 +112,18 @@ async function prepareSoundEffects() {
 
 prepareSoundEffects();
 
-export function playSound([startMs, offsetMs]: number[]) {
+export function playSound(key: SoundKey) {
   if (_sfxOn) {
-    const source = _sfxContext.createBufferSource();
-    source.buffer = _sfxAudioBuffer;
-    source.connect(_sfxContext.destination);
-    source.start(undefined, startMs / 1000, offsetMs / 1000);
+    const pack = soundPacks[selectedSoundPackName];
+    const entry = pack[key];
+    if (entry) {
+      const startMs = entry[0];
+      const offsetMs = entry[1];
+      const source = _sfxContext.createBufferSource();
+      source.buffer = _sfxAudioBuffer;
+      source.connect(_sfxContext.destination);
+      source.start(undefined, startMs / 1000, offsetMs / 1000);
+    }
   }
 }
 

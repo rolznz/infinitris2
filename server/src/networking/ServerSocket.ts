@@ -11,6 +11,7 @@ import IClientSocket from '@src/networking/IClientSocket';
 import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 
 const HEARTBEAT_TIMEOUT = 30000;
+const AFK_TIMEOUT = 10 * 60000;
 
 interface ISocketWrapper extends WebSocket, IClientSocket {
   isAlive: boolean;
@@ -74,7 +75,7 @@ export default class ServerSocket implements IServerSocket {
     const heartbeat = () => (socket.isAlive = true);
 
     const checkHeartbeat = setInterval(() => {
-      if (!socket.isAlive || Date.now() - socket.lastMovement > 30000) {
+      if (!socket.isAlive || Date.now() - socket.lastMovement > AFK_TIMEOUT) {
         console.log(
           'Closed client socket ',
           socket.id,

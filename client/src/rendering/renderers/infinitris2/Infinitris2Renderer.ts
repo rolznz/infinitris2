@@ -99,6 +99,8 @@ interface IParticle extends IRenderableEntity<PIXI.Graphics> {
   isSolid?: boolean;
 }
 
+interface IBlockDropEffect extends IRenderableEntity<PIXI.Graphics> {}
+
 // TODO: retrieve URLs from players
 //const faceUrl = `${imagesDirectory}/face_9.png`;
 //this._app.loader.add(this._getFloorImageFilename());
@@ -120,6 +122,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _players!: { [playerId: number]: IPlayerContainer };
 
   private _particles!: IParticle[];
+  private _blockDropEffects!: IBlockDropEffect[];
   private _virtualKeyboardControls?: ControlSettings;
   private _preferredInputMethod: InputMethod;
   private _teachControls: boolean;
@@ -281,7 +284,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       const playerContainer = this._players[player.id];
       if (blockContainer) {
         const moveRate = player.block?.isDropping ? 1 : 0.25;
-        const rotateRate = 0.25;
+        const rotateRate = 0.35;
         const block = blockContainer.originalBlock;
         // let firstColumn = block.cells.find(
         //   (cell) => !block.cells.some((other) => other.column < cell.column)
@@ -422,6 +425,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   onSimulationInit(simulation: ISimulation) {
     super.onSimulationInit(simulation);
     this._particles = [];
+    this._blockDropEffects = [];
     this._blocks = {};
     this._cells = {};
     this._players = {};
@@ -541,7 +545,58 @@ export default class Infinitris2Renderer extends BaseRenderer {
   /**
    * @inheritdoc
    */
-  onBlockDropped(block: IBlock) {}
+  onBlockDropped(block: IBlock) {
+    if (!this._simulation) {
+      return;
+    }
+
+    if (!this._simulation.settings.instantDrops) {
+      return;
+    }
+
+    const cellSize = this._cellSize;
+    const highestCells = block.cells.filter(
+      (cell) =>
+        !block.cells.find(
+          (other) => other.column === cell.column && other.row < cell.row
+        )
+    );
+    const dropEffect: IBlockDropEffect = {
+      container: new PIXI.Container(),
+      children: [],
+    };
+
+    this.renderCopies(
+      dropEffect,
+      1,
+      (graphics, shadowIndexWithDirection) => {
+        const shadowX = shadowIndexWithDirection * this._gridWidth;
+        graphics.x = shadowX;
+      },
+      () => {
+        const graphics = new PIXI.Graphics();
+        graphics.beginFill(block.player.color);
+        highestCells.forEach((cell) => {
+          for (let y = cell.row; y < this._simulation!.grid.numRows; y++) {
+            graphics.drawRect(
+              (cell.column - block.column) * cellSize,
+              (y - block.row) * cellSize,
+              cellSize,
+              cellSize
+            );
+          }
+        });
+        dropEffect.container.addChild(graphics);
+        return graphics;
+      }
+    );
+    dropEffect.container.zIndex = -100;
+    dropEffect.container.x = this.getWrappedX(block.column * this._cellSize);
+    dropEffect.container.y = block.row * this._cellSize;
+    dropEffect.container.alpha = 0.5;
+    this._world.addChild(dropEffect.container);
+    this._blockDropEffects.push(dropEffect);
+  }
 
   onBlockDestroyed(block: IBlock): void {
     this._removeBlock(block);
@@ -895,6 +950,16 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
     }
     this._particles = this._particles.filter((particle) => particle.life > 0);
+
+    for (const dropEffect of this._blockDropEffects) {
+      dropEffect.container.alpha -= 0.025;
+      if (dropEffect.container.alpha <= 0) {
+        this._world.removeChild(dropEffect.container);
+      }
+    }
+    this._blockDropEffects = this._blockDropEffects.filter(
+      (dropEffect) => dropEffect.container.alpha > 0
+    );
 
     // TODO: animation for where block died
     /*Object.values(this._blocks).forEach((block) => {

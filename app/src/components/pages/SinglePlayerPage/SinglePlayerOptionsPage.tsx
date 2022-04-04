@@ -274,7 +274,7 @@ export function SinglePlayerOptionsPage() {
                 </FormGroup>
               )}
             />
-            {watchedGameModeType !== 'conquest' && (
+            {watchedGameModeType === 'infinity' && (
               <Controller
                 name="simulationSettings.calculateSpawnDelays"
                 control={control}

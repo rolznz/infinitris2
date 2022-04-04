@@ -1,8 +1,8 @@
-import { Box, IconButton, SvgIcon } from '@mui/material';
+import { IconButton, SvgIcon } from '@mui/material';
 import React from 'react';
 import { ReactComponent as ChatIcon } from '@/icons/chat.svg';
 import { playSound, SoundKey } from '@/sound/SoundManager';
-import { colors } from '@/theme/theme';
+import { colors, dropShadows, boxShadows } from '@/theme/theme';
 import FlexBox from '@/components/ui/FlexBox';
 import useIngameStore from '@/state/IngameStore';
 
@@ -10,7 +10,9 @@ export default function ChatButton() {
   return (
     <FlexBox style={{ pointerEvents: 'all' }}>
       <IconButton
-        style={{}}
+        style={{
+          boxShadow: boxShadows.small,
+        }}
         onClick={() => {
           playSound(SoundKey.click);
           const followingPlayer =
@@ -24,7 +26,7 @@ export default function ChatButton() {
         <SvgIcon
           fontSize="large"
           sx={{
-            filter: 'drop-shadow(0 0 0.75rem white)',
+            filter: dropShadows.small,
             color: colors.white,
           }}
         >

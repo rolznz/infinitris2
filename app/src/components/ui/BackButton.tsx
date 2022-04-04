@@ -5,7 +5,7 @@ import FlexBox from './FlexBox';
 import { ReactComponent as LeftIcon } from '@/icons/left.svg';
 import { playSound, SoundKey } from '@/sound/SoundManager';
 import { useLocation } from 'react-router-dom';
-import { colors } from '@/theme/theme';
+import { colors, dropShadows } from '@/theme/theme';
 import { isPwa } from '@/utils/isMobile';
 import { exitFullscreen } from '@/utils/launchFullscreen';
 import { useIsFullscreen } from '@/components/hooks/useIsFullscreen';
@@ -39,7 +39,7 @@ export default function BackButton() {
         >
           <SvgIcon
             sx={{
-              filter: 'drop-shadow(0 0 0.75rem white)',
+              filter: dropShadows.small,
               color: colors.white,
             }}
           >

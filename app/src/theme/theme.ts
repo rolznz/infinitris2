@@ -36,6 +36,9 @@ export const colors = {
 export const boxShadows = {
   small: '0px 4px 4px rgba(0, 0, 0, 0.3)',
 };
+export const dropShadows = {
+  small: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.4))',
+};
 
 export const textShadows = {
   small: `0px 1px ${colors.black}`,

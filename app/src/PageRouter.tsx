@@ -74,13 +74,20 @@ export default function PageRouter() {
   );
 }
 
+let lastPopStateTime = 0;
+window.onpopstate = () => {
+  lastPopStateTime = Date.now();
+};
+
 function RouterContents() {
   useAffiliateLinkRef(); // depends on location
   const location = useLocation();
-  // FIXME: only scroll to 0,0 on new page, not on back
-  /*React.useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location]);*/
+  // only scroll to 0,0 on new page, not on back
+  React.useEffect(() => {
+    if (Date.now() - lastPopStateTime > 1000) {
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
   return (
     <>
       <BackButton />

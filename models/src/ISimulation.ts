@@ -20,7 +20,8 @@ export default interface ISimulation extends ISimulationEventListener {
   get gameMode(): IGameMode<unknown>;
   get fps(): number;
   get followingPlayer(): IPlayer | undefined;
-  get humanPlayer(): IPlayer | undefined;
+  get controllablePlayer(): IPlayer | undefined;
+  get humanPlayers(): IPlayer[];
   get shouldNewPlayerSpectate(): boolean;
   get round(): IRound | undefined;
   startInterval(): void;

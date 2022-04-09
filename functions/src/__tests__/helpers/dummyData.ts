@@ -24,6 +24,13 @@ import {
   IChallengeAttempt,
   getChallengeAttemptPath,
   Updatable,
+  getServerKeyPath,
+  IServerKey,
+  getServerPath,
+  getRoomPath,
+  IRoom,
+  IServer,
+  getRoomId,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -40,7 +47,7 @@ const user1Path = getUserPath(userId1);
 const user2Path = getUserPath(userId2);
 
 const updatableUser: Updatable<IUser> = {
-  controls: DEFAULT_KEYBOARD_CONTROLS,
+  controls_keyboard: DEFAULT_KEYBOARD_CONTROLS,
   hasSeenAllSet: false,
   hasSeenWelcome: true,
   preferredInputMethod: 'keyboard',
@@ -210,6 +217,36 @@ const purchase1: IPurchase = {
 const challengeAttemptId1 = 'challenge-attempt-1';
 const challengeAttempt1Path = getChallengeAttemptPath(challengeAttemptId1);
 
+const server1Id = 'server-1';
+const server1Path = getServerPath(server1Id);
+const server1: IServer = {
+  created: true,
+  name: 'Server 1',
+  region: 'Asia',
+  url: 'https://google.com',
+  userId: userId1,
+  version: 1,
+};
+const serverKey1Id = 'server-key-1';
+const serverKey1Path = getServerKeyPath(serverKey1Id);
+const serverKey1: IServerKey = {
+  created: true,
+  serverId: server1Id,
+  userId: userId1,
+};
+
+const room1: IRoom = {
+  created: true,
+  maxPlayers: 3,
+  numPlayers: 0,
+  name: 'Room 1',
+  roomIndex: 0,
+  serverId: server1Id,
+  userId: userId1,
+};
+const room1Id = getRoomId(server1Id, room1.roomIndex);
+const room1Path = getRoomPath(room1Id);
+
 const creatableChallengeAttempt: Creatable<IChallengeAttempt> = {
   challengeId: challengeId1,
   medalIndex: 1,
@@ -265,6 +302,15 @@ const dummyData = {
   creatableChallengeAttempt,
   challengeAttemptId1,
   challengeAttempt1Path,
+  serverKey1Path,
+  serverKey1,
+  server1Id,
+  server1,
+  serverKey1Id,
+  server1Path,
+  room1Id,
+  room1Path,
+  room1,
 };
 
 export default dummyData;

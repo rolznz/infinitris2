@@ -128,6 +128,10 @@ export default class Simulation implements ISimulation {
     );
   }
 
+  get humanPlayers(): IPlayer[] {
+    return this.players.filter((player) => !player.isBot);
+  }
+
   get round(): IRound | undefined {
     return this._round;
   }
@@ -151,7 +155,7 @@ export default class Simulation implements ISimulation {
     return this.players.find((player) => this.isFollowingPlayerId(player.id));
   }
 
-  get humanPlayer(): IPlayer | undefined {
+  get controllablePlayer(): IPlayer | undefined {
     return this.players.find((player) => player.isControllable);
   }
 

@@ -104,5 +104,5 @@ export async function setup(
 }
 
 export async function teardown() {
-  await Promise.all([app.delete(), test.cleanup()]);
+  await Promise.all([app?.delete(), test?.cleanup()]);
 }

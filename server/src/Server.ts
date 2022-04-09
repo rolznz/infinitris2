@@ -10,6 +10,8 @@ import IClientJoinRoomRequest from '@core/networking/client/IClientJoinRoomReque
 import { getCharacters } from './firebase';
 import { ICharacter } from '@models/ICharacter';
 import { cachedGet } from '@src/util/cachedGet';
+import { UpdateServerRequest } from '@models/UpdateServerRequest';
+import got from 'got';
 
 export default class Server implements IServerSocketEventListener {
   private _socket: IServerSocket;
@@ -36,9 +38,15 @@ export default class Server implements IServerSocketEventListener {
         'ms'
     );
     const sendServerMessage = this._socket.sendMessage.bind(this._socket);
+
+    // TODO: these should come from .env config
+
+    // room index
     this._rooms[0] = new Room(sendServerMessage, 'infinity', characters);
     this._rooms[1] = new Room(sendServerMessage, 'conquest', characters);
     this._rooms[2] = new Room(sendServerMessage, 'race', characters);
+
+    this._updateLobby();
   }
 
   /**
@@ -62,6 +70,7 @@ export default class Server implements IServerSocketEventListener {
     console.log('Client ' + socket.id + ' disconnected');
     if (socket.roomId !== undefined) {
       this._rooms[socket.roomId].removePlayer(socket.id);
+      this._updateLobby(socket.roomId);
     }
   }
 
@@ -83,6 +92,7 @@ export default class Server implements IServerSocketEventListener {
             socket.id,
             joinRoomRequest.player
           );
+          this._updateLobby(socket.roomId);
           console.log('Client ' + socket.id + ' joined room ' + socket.roomId);
         } else {
           console.error(
@@ -100,6 +110,64 @@ export default class Server implements IServerSocketEventListener {
         'Error in onClientMessage(' + socket.id + ')',
         message,
         error
+      );
+    }
+  }
+
+  private async _updateLobby(roomIndex?: number) {
+    const serverId = process.env.SERVER_ID;
+    if (!serverId) {
+      console.log('No SERVER_ID set, not updating lobby server');
+      return;
+    }
+    const serverKey = process.env.SERVER_SECRET_KEY;
+    if (!serverKey) {
+      console.log('No SERVER_SECRET_KEY set, not updating lobby server');
+      return;
+    }
+    const webhookUrl = process.env.WEBHOOK_URL;
+    if (!serverKey) {
+      console.log('No WEBHOOK_URL set, not updating lobby server');
+      return;
+    }
+
+    const request: UpdateServerRequest = {
+      server: roomIndex
+        ? undefined
+        : {
+            created: true,
+            name: 'Server 1',
+            region: 'Local',
+            url: 'ws://127.0.0.1:9001',
+            version: 2,
+          },
+      rooms: Object.entries(this._rooms)
+        .filter((entry) => !roomIndex || parseInt(entry[0]) === roomIndex)
+        .map((entry) => {
+          const roomIndex = parseInt(entry[0]);
+          const room = entry[1];
+          return {
+            created: true,
+            maxPlayers: 12,
+            name: 'Room ' + roomIndex,
+            numPlayers: room.simulation.humanPlayers.length,
+            roomIndex,
+            serverId,
+          };
+        }),
+      serverKey,
+    };
+    const response = await got.patch(`${webhookUrl}/servers/${serverId}`, {
+      json: request,
+    });
+    if (response.statusCode === 204) {
+      console.error('Updated server in lobby');
+    } else {
+      console.error(
+        'Failed to update server in lobby: ' +
+          response.statusCode +
+          ' ' +
+          response.statusMessage
       );
     }
   }

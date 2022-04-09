@@ -55,6 +55,7 @@ export * from './IPlayer';
 export * from './IPlayerEventListener';
 export * from './WorldType';
 export * from './IServer';
+export * from './IServerKey';
 export * from './GameModeType';
 export * from './IGameMode';
 export * from './InputMethod';
@@ -75,6 +76,7 @@ export * from './IRoundEventListener';
 export * from './util/hexToRgb';
 export * from './util/rgbToHex';
 export * from './util/rotateColor';
+export * from './UpdateServerRequest';
 
 export const NETWORK_VERSION = 1;
 

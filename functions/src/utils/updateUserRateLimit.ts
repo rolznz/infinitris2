@@ -40,13 +40,13 @@ export async function updateUserRateLimit(
         user.readOnly.writeRate + writeRateChange
       }`
     );
-  } else {
+  } /* else {
     console.log(
       `Updating write rate for user ${userId}: ${
         user.readOnly.writeRate + writeRateChange
       }`
     );
-  }
+  }*/
   const updateUser = objectToDotNotation<IUser>(
     {
       readOnly: {

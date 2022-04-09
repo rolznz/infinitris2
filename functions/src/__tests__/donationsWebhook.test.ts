@@ -2,9 +2,10 @@ import * as functions from 'firebase-functions';
 import { setup } from './helpers/setup';
 import './helpers/extensions';
 import { Donation, donationsPath } from 'infinitris2-models';
-import { LNURLpRequest, webhooksExpressApp } from '..';
+import { webhooksExpressApp } from '../webhooks';
 import * as request from 'supertest';
 import { getCurrentTimestamp } from '../utils/firebase';
+import { LNURLpRequest } from '../webhooks/donationsWebhook';
 
 test('donation webhook', async () => {
   const { db } = await setup(undefined, {}, false);

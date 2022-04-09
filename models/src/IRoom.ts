@@ -7,6 +7,6 @@ export default interface IRoom extends IEntity {
   //gameMode: string;
   numPlayers: number;
   maxPlayers: number;
-  roomId: number;
+  roomIndex: number; // index within server
   worldType?: WorldType;
 }

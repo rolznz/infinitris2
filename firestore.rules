@@ -59,15 +59,15 @@ service cloud.firestore {
     }
     match /users/{userId} {
       function isValidUser() {
-        let controls = getProperty('controls', {});
+        let controls = getProperty('controls_keyboard', {});
         return
           baseRequestValid() &&
-          entityHasExpectedFields(['controls', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
+          entityHasExpectedFields(['controls_keyboard', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
           getProperty('hasSeenAllSet', false) is bool &&
           getProperty('hasSeenWelcome', false) is bool &&
           getProperty('preferredInputMethod', '') in ['', 'keyboard', 'touch'] &&
           getProperty('locale', '') is string && getProperty('locale', '').size() < 3 &&
-          controls is map && controls.keys().hasOnly(['MoveLeft', 'MoveRight', 'MoveDown', 'RotateClockwise', 'RotateAnticlockwise', 'Drop']) &&
+          controls is map && controls.keys().hasOnly(['MoveLeft', 'MoveRight', 'MoveDown', 'RotateClockwise', 'RotateAnticlockwise', 'Drop', 'Chat', 'Esc']) &&
           controls.get('MoveLeft', '') is string &&
           controls.get('MoveRight', '') is string &&
           controls.get('MoveDown', '') is string &&

@@ -125,7 +125,7 @@ export default function RoomCard({ large, ping, room, server }: RoomCardProps) {
               p={0.5}
             >
               <PersonIcon />
-              <Typography>0</Typography>
+              <Typography>{room.data()!.numPlayers || 0}</Typography>
             </FlexBox>
             <FlexBox
               sx={{ bgcolor: borderColorLight }}

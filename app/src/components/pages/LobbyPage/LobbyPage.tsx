@@ -69,7 +69,8 @@ export default function LobbyPage() {
     .filter((pair) => pair.server)
     .sort(
       (a, b) =>
-        serverPings[a.server!.data().url] - serverPings[b.server!.data().url]
+        serverPings[a.server!.data().url] - serverPings[b.server!.data().url] ||
+        (b.room.data().numPlayers || 0) - (a.room.data().numPlayers || 0)
     );
 
   return (

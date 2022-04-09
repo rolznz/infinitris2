@@ -23,7 +23,7 @@ export function SpawnDelayDisplay() {
   }, [spawnDelayDisplayVisible, renderId]);
 
   const estimatedSpawnDelaySeconds = Math.ceil(
-    (simulation?.humanPlayer?.estimatedSpawnDelay || 0) / 1000
+    (simulation?.controllablePlayer?.estimatedSpawnDelay || 0) / 1000
   );
 
   if (!spawnDelayDisplayVisible || estimatedSpawnDelaySeconds <= 0) {

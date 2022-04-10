@@ -1,103 +1,76 @@
-import { IRoom, IServer, roomsPath, serversPath } from 'infinitris2-models';
-import { useCollection } from 'swr-firestore';
 import React from 'react';
-import RoomCard, { MAX_PING } from '@/components/pages/LobbyPage/RoomCard';
-import { Page } from '@/components/ui/Page';
-import FlexBox from '@/components/ui/FlexBox';
-import Button from '@mui/material/Button';
 import { FormattedMessage } from 'react-intl';
-import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import { RoomCarousel } from '@/components/ui/RoomCarousel';
+import { ReactComponent as InfoIcon } from '@/icons/i.svg';
+import Routes from '@/models/Routes';
+import { RoomCarouselSlideProps } from '@/components/ui/RoomCarouselSlide';
+import { useHistory } from 'react-router-dom';
+import IconButton from '@mui/material/IconButton';
+import { useLobbyServers } from '@/components/hooks/useLobbyServers';
+import useLatest from 'react-use/lib/useLatest';
 
-export type ServerPings = { [url: string]: number };
+let cachedRoomId: string | undefined;
 
 export default function LobbyPage() {
-  const { data: rooms, mutate: mutateRooms } = useCollection<IRoom>(roomsPath);
-  const { data: servers, mutate: mutateServers } =
-    useCollection<IServer>(serversPath);
-  const [serverPings, setServerPings] = React.useState<ServerPings>({});
-  const isLandscape = useIsLandscape();
+  const history = useHistory();
+  const [currentSlide, setCurrentSlide] = React.useState(0);
+  const { roomServerPairs, refresh } = useLobbyServers(cachedRoomId);
+  const latestCurrentSlide = useLatest(currentSlide);
+  const latestRoomServerPairs = useLatest(roomServerPairs);
 
-  function refresh() {
-    mutateRooms();
-    mutateServers();
-    setServerPings({});
-  }
+  const slides: RoomCarouselSlideProps[] | undefined = React.useMemo(
+    () =>
+      roomServerPairs?.map((p) => ({
+        gameModeType: 'infinity',
+        name: p.room.data().name,
+        numPlayers: p.room.data().numPlayers,
+        key: p.room.id,
+      })),
+    [roomServerPairs]
+  );
 
-  React.useEffect(() => {
-    if (!servers) {
-      return;
-    }
-    for (const server of servers) {
-      if (!serverPings[server.data().url]) {
-        const startTime = Date.now();
-        console.log('Pinging', server.data().url);
-        serverPings[server.data().url] = MAX_PING;
-        (async () => {
-          try {
-            const socket = new WebSocket(server.data().url);
-            socket.onopen = () => {
-              setServerPings((existingValue) => ({
-                ...existingValue,
-                [server.data().url]: Date.now() - startTime,
-              }));
-              socket.close();
-            };
-          } catch (error) {
-            console.error(error);
-          }
-        })();
-      }
-    }
-  }, [servers, serverPings, setServerPings]);
+  const onSubmit = React.useCallback(() => {
+    const room =
+      latestRoomServerPairs.current![latestCurrentSlide.current]!.room;
+    cachedRoomId = room.id;
+    const link = `${Routes.rooms}/${room.id}`;
 
-  if (!rooms || !servers) {
+    history.push(link);
+  }, [latestCurrentSlide, latestRoomServerPairs, history]);
+
+  const currentRoom = React.useMemo(
+    () => roomServerPairs?.[currentSlide]?.room,
+    [roomServerPairs, currentSlide]
+  );
+
+  if (!slides) {
     return null;
   }
 
-  const validServers = servers.filter(
-    (server) => serverPings[server.data().url] < MAX_PING
-  );
-
-  const roomServerPairs = rooms
-    .map((room) => ({
-      room,
-      server: validServers.find(
-        (server) => server.id === room.data()!.serverId
-      ),
-    }))
-    .filter((pair) => pair.server)
-    .sort(
-      (a, b) =>
-        serverPings[a.server!.data().url] - serverPings[b.server!.data().url] ||
-        (b.room.data().numPlayers || 0) - (a.room.data().numPlayers || 0)
-    );
-
   return (
-    <Page title="Lobby">
-      <Button onClick={refresh} variant="contained" sx={{ mb: 4 }}>
-        <RefreshIcon fontSize="large" />
+    <RoomCarousel
+      title={
         <FormattedMessage
-          defaultMessage="Refresh"
-          description="Lobby page refresh button text"
+          defaultMessage="Multiplayer {refreshButton}"
+          description="Lobby page title (multiplayer)"
+          values={{
+            refreshButton: (
+              <IconButton onClick={refresh}>
+                <RefreshIcon fontSize="small" color="primary" />
+              </IconButton>
+            ),
+          }}
         />
-      </Button>
-      <FlexBox
-        flexDirection="row"
-        flexWrap="wrap"
-        gap={0}
-        width={isLandscape ? '60vw' : '100%'}
-      >
-        {roomServerPairs.map((pair, index) => (
-          <RoomCard
-            key={pair.room.id}
-            ping={serverPings[pair.server!.data()!.url]}
-            room={pair.room}
-            server={pair.server!}
-            large={index === 0}
-          />
-        ))}
-      </FlexBox>
-    </Page>
+      }
+      secondaryIcon={<InfoIcon />}
+      secondaryIconLink={
+        currentRoom ? `${Routes.rooms}/${currentRoom.id}/info` : undefined
+      }
+      onPlay={onSubmit}
+      slides={slides}
+      initialStep={currentSlide}
+      onChangeSlide={setCurrentSlide}
+    />
   );
 }

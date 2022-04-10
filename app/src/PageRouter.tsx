@@ -37,6 +37,7 @@ import { HomePage } from '@/components/pages/HomePage/HomePage';
 import { SinglePlayerOptionsPage } from '@/components/pages/SinglePlayerPage/SinglePlayerOptionsPage';
 import SinglePlayerPage from '@/components/pages/SinglePlayerPage/SinglePlayerPage';
 import { SinglePlayerGameModePickerPage } from '@/components/pages/SinglePlayerPage/SinglePlayerGameModePickerPage';
+import { RoomInfoPage } from '@/components/pages/RoomInfoPage';
 
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
@@ -48,9 +49,9 @@ function OutsideGameElement(props: React.PropsWithChildren<{}>) {
             location.pathname.length > Routes.challenges.length + 1
           ) // match /challenges or /challenges/ but not /challenges/<challengeId>
         ) &&
-          (!location.pathname.startsWith(Routes.singlePlayerPlay) ||
-            location.pathname.indexOf(Routes.singlePlayerOptions) >= 0) &&
-          !location.pathname.startsWith(Routes.rooms) ? (
+          !location.pathname.startsWith(Routes.singlePlayerPlay) &&
+          (!location.pathname.startsWith(Routes.rooms) ||
+            location.pathname.endsWith('/info')) ? (
           <>{props.children}</>
         ) : null;
       }}
@@ -188,6 +189,9 @@ function RouterContents() {
         </Route>
         <Route exact path={`${Routes.rooms}/:id`}>
           <RoomPage />
+        </Route>
+        <Route exact path={`${Routes.rooms}/:id/info`}>
+          <RoomInfoPage />
         </Route>
         <Route exact path={Routes.pwa}>
           <PwaPage />

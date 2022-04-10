@@ -40,7 +40,7 @@ import useLoaderStore from '@/state/LoaderStore';
 import shallow from 'zustand/shallow';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 
-interface RoomPageRouteParams {
+export interface RoomPageRouteParams {
   id: string;
 }
 

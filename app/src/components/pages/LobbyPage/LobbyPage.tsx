@@ -21,11 +21,12 @@ export default function LobbyPage() {
 
   const slides: RoomCarouselSlideProps[] | undefined = React.useMemo(
     () =>
-      roomServerPairs?.map((p) => ({
-        gameModeType: 'infinity',
-        name: p.room.data().name,
-        numPlayers: p.room.data().numPlayers,
-        key: p.room.id,
+      roomServerPairs?.map((pair) => ({
+        gameModeType: pair.room.data().gameModeType || 'infinity',
+        worldType: pair.room.data().worldType,
+        name: pair.room.data().name,
+        numPlayers: pair.room.data().numHumans,
+        key: pair.room.id,
       })),
     [roomServerPairs]
   );

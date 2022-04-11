@@ -63,11 +63,29 @@ export function RoomInfoPage() {
           {
             title: (
               <FormattedMessage
-                defaultMessage="Num Players"
-                description="room info: num players"
+                defaultMessage="Humans"
+                description="room info: num humans"
               />
             ),
-            value: (room?.data()!.numPlayers || 0).toString(),
+            value: (room?.data()!.numHumans || 0).toString(),
+          },
+          {
+            title: (
+              <FormattedMessage
+                defaultMessage="Bots"
+                description="room info: num bots"
+              />
+            ),
+            value: (room?.data()!.numBots || 0).toString(),
+          },
+          {
+            title: (
+              <FormattedMessage
+                defaultMessage="Spectators"
+                description="room info: num spectators"
+              />
+            ),
+            value: (room?.data()!.numSpectators || 0).toString(),
           },
           {
             title: (

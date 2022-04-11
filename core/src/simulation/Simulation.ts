@@ -56,6 +56,7 @@ export default class Simulation implements ISimulation {
     this._settings = {
       gravityEnabled: true,
       instantDrops: true,
+      gameModeType: 'infinity',
       ...settings,
     };
     if (this._settings.gameModeType === 'conquest') {

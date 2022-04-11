@@ -27,4 +27,9 @@ export const roundListener: Partial<ISimulationEventListener> = {
       updateRound(useIngameStore.getState().simulation!);
     }, 1);
   },
+  onPlayerCreated: () => {
+    setTimeout(() => {
+      updateRound(useIngameStore.getState().simulation!);
+    }, 1);
+  },
 };

@@ -17,7 +17,6 @@ export const serversWebhook = async (req: Request, res: Response) => {
     if (
       !serverId ||
       !body.serverKey ||
-      body.rooms?.some((room, index, array) => room.roomIndex !== index) ||
       body.rooms?.some((room) => room.serverId !== serverId)
     ) {
       res.status(StatusCodes.BAD_REQUEST);

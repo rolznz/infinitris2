@@ -1,7 +1,11 @@
 import FlexBox from '@/components/ui/FlexBox';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import Typography from '@mui/material/Typography';
-import { GameModeType, GameModeTypeValues } from 'infinitris2-models';
+import {
+  GameModeType,
+  GameModeTypeValues,
+  WorldType,
+} from 'infinitris2-models';
 import grassImage from '@/components/pages/SinglePlayerPage/assets/carousel/grass.svg';
 
 import { ReactComponent as ConquestIcon } from '@/icons/conquest.svg';
@@ -17,12 +21,14 @@ export type RoomCarouselSlideProps = {
   key: string;
   name?: string;
   numPlayers?: number;
+  worldType?: WorldType;
 };
 
 export function RoomCarouselSlide({
   numPlayers,
   gameModeType,
   name,
+  worldType,
 }: RoomCarouselSlideProps) {
   const isLandscape = useIsLandscape();
   return (
@@ -31,7 +37,7 @@ export function RoomCarouselSlide({
       width="100vw"
       height="100vh"
       sx={{
-        background: getBackground(gameModeType),
+        background: getBackground(gameModeType, worldType),
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPositionY: '100%',
@@ -132,8 +138,18 @@ function GameModeDescription(props: { gameModeType: GameModeType }) {
   }
 }
 
-function getBackground(gameModeType: GameModeType): string {
-  return `url(${grassImage}); filter: hue-rotate(${
+function getBackground(
+  gameModeType: GameModeType,
+  worldType: WorldType | undefined
+): string {
+  let image = grassImage;
+  switch (worldType) {
+    case 'desert':
+      //TODO: desert image
+      break;
+  }
+
+  return `url(${image}); filter: hue-rotate(${
     GameModeTypeValues.indexOf(gameModeType) * 45
   }deg);`;
 }

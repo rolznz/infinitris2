@@ -40,21 +40,24 @@ import { IServerStartNextRoundTimerEvent } from '@core/networking/server/IServer
 import { IServerPlayerChangeStatusEvent } from '@core/networking/server/IServerPlayerChangeStatusEvent';
 import { IServerMessage } from '@models/networking/server/IServerMessage';
 import { ICharacter } from '@models/ICharacter';
+import IRoom from '@models/IRoom';
 
 export default class Room implements ISimulationEventListener {
   private _sendMessage: SendServerMessageFunction;
   private _simulation: Simulation;
+  private _roomInfo: IRoom;
   private _charactersPool: ICharacter[];
 
   constructor(
     sendMessage: SendServerMessageFunction,
-    gameModeType: GameModeType,
+    roomInfo: IRoom,
     characters: ICharacter[]
   ) {
     this._charactersPool = characters;
+    this._roomInfo = roomInfo;
     this._sendMessage = sendMessage;
     this._simulation = new Simulation(new Grid(50, 16), {
-      gameModeType,
+      gameModeType: roomInfo.gameModeType,
     });
     this._simulation.addEventListener(this);
     this._simulation.init();
@@ -66,6 +69,10 @@ export default class Room implements ISimulationEventListener {
    */
   get simulation(): Simulation {
     return this._simulation;
+  }
+
+  get info(): IRoom {
+    return this._roomInfo;
   }
 
   /**

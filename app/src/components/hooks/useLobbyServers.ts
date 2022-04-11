@@ -68,7 +68,7 @@ export function useLobbyServers(lastSelectedRoomId?: string) {
             ? 1
             : serverPings[a.server!.data().url] -
                 serverPings[b.server!.data().url] ||
-              (b.room.data().numPlayers || 0) - (a.room.data().numPlayers || 0)
+              (b.room.data().numHumans || 0) - (a.room.data().numHumans || 0)
         ),
     [rooms, serverPings, validServers, lastSelectedRoomId]
   );

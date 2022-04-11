@@ -12,6 +12,9 @@ import { ICharacter } from '@models/ICharacter';
 import { cachedGet } from '@src/util/cachedGet';
 import { UpdateServerRequest } from '@models/UpdateServerRequest';
 import got from 'got';
+import { PlayerStatus } from '@models/IPlayer';
+import IRoom from '@models/IRoom';
+import { GameModeTypeValues } from '@models/GameModeType';
 
 export default class Server implements IServerSocketEventListener {
   private _socket: IServerSocket;
@@ -41,10 +44,21 @@ export default class Server implements IServerSocketEventListener {
 
     // TODO: these should come from .env config
 
-    // room index
-    this._rooms[0] = new Room(sendServerMessage, 'infinity', characters);
-    this._rooms[1] = new Room(sendServerMessage, 'conquest', characters);
-    this._rooms[2] = new Room(sendServerMessage, 'race', characters);
+    for (let i = 0; ; i++) {
+      let roomInfoJson = process.env[`ROOM_${i}`];
+      if (!roomInfoJson) {
+        if (i < GameModeTypeValues.length) {
+          roomInfoJson = JSON.stringify({
+            name: 'Room ' + i,
+            gameModeType: GameModeTypeValues[i],
+          } as IRoom);
+        } else {
+          break;
+        }
+      }
+      const roomInfo: IRoom = JSON.parse(roomInfoJson);
+      this._rooms[i] = new Room(sendServerMessage, roomInfo, characters);
+    }
 
     this._updateLobby();
   }
@@ -149,14 +163,24 @@ export default class Server implements IServerSocketEventListener {
           return {
             created: true,
             maxPlayers: 12,
-            name: 'Room ' + roomIndex,
-            numPlayers: room.simulation.humanPlayers.length,
+            name: room.info.name,
+            gameModeType: room.info.gameModeType,
+            numPlayers: room.simulation.players.length,
+            numHumans: room.simulation.humanPlayers.length,
+            numBots: room.simulation.players.filter((player) => player.isBot)
+              .length,
+            numSpectators: room.simulation.players.filter(
+              (player) => player.status === PlayerStatus.spectating
+            ).length,
             roomIndex,
             serverId,
+            worldType: room.info.worldType,
           };
         }),
       serverKey,
     };
+
+    console.log('Updating server in lobby: ', request);
     const response = await got.patch(`${webhookUrl}/servers/${serverId}`, {
       json: request,
     });

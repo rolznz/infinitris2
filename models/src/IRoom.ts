@@ -1,5 +1,5 @@
 import { GameModeType } from '@models/GameModeType';
-import { WorldType } from '@models/WorldType';
+import { WorldType, WorldVariation } from '@models/WorldType';
 import IEntity from './IEntity';
 
 export default interface IRoom extends IEntity {
@@ -13,4 +13,5 @@ export default interface IRoom extends IEntity {
   numPlayers: number;
   maxPlayers: number;
   worldType?: WorldType;
+  worldVariation?: WorldVariation;
 }

@@ -26,7 +26,7 @@ import ISimulation from '@models/ISimulation';
 import { IPlayer } from '@models/IPlayer';
 import { RendererQuality } from '@models/RendererQuality';
 import { getBorderColor } from '@models/util/adjustColor';
-import { WorldType } from '@models/WorldType';
+import { WorldType, WorldVariation } from '@models/WorldType';
 import { GridLines } from '@src/rendering/renderers/infinitris2/GridLines';
 import { ConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes/ConquestRenderer';
 import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GameModeRenderer';
@@ -135,6 +135,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _towerIndicator!: TowerIndicator;
   private _lineClearingIndicator!: LineClearingIndicator;
   private _worldType: WorldType;
+  private _worldVariation: WorldVariation;
 
   private _oldOverflowStyle: string;
   private _displayFrameRate = false;
@@ -151,6 +152,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     teachControls: boolean = false,
     rendererQuality?: RendererQuality,
     worldType: WorldType = 'grass',
+    worldVariation: WorldVariation = 0,
     useFallbackUI = false
   ) {
     super(clientApiConfig, undefined, rendererQuality);
@@ -158,6 +160,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._teachControls = teachControls;
     this._worldType = worldType;
     this._useFallbackUI = useFallbackUI;
+    this._worldVariation = worldVariation;
 
     this._oldOverflowStyle = document.body.style.overflow;
 
@@ -193,10 +196,15 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._app,
       this._camera,
       this._worldType,
+      this._worldVariation,
       this._rendererQuality
     );
 
-    this._gridFloor = new GridFloor(this._app, this._worldType);
+    this._gridFloor = new GridFloor(
+      this._app,
+      this._worldType,
+      this._worldVariation
+    );
     this._towerIndicator = new TowerIndicator(this._app);
     this._lineClearingIndicator = new LineClearingIndicator(this._app);
     //this._app.loader.add(faceUrl);
@@ -349,7 +357,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
             block.player.id
           );
           this._renderBlockPlacementShadow(block);
-        } else {
+        } else if (!followingPlayer) {
           this._towerIndicator.hide();
         }
       }

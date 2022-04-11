@@ -78,6 +78,7 @@ export default class NetworkClient
       undefined,
       undefined,
       this._launchOptions.worldType,
+      this._launchOptions.worldVariation,
       this._launchOptions.useFallbackUI
     );
     await this._renderer.create();

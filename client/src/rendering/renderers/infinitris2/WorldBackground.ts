@@ -7,7 +7,7 @@ import {
   worldBackgroundConfigs,
 } from './worldBackgroundConfigs';
 import { RendererQuality } from '@models/RendererQuality';
-import { WorldType } from '@models/WorldType';
+import { WorldType, WorldVariation } from '@models/WorldType';
 
 export class WorldBackground {
   private _layerSprites: (PIXI.TilingSprite | undefined)[] = [];
@@ -15,15 +15,18 @@ export class WorldBackground {
   private _camera: Camera;
   private _worldConfig: WorldBackgroundConfig;
   private _rendererQuality: RendererQuality | undefined;
+  private _variation: WorldVariation;
 
   constructor(
     app: PIXI.Application,
     camera: Camera,
     worldType: WorldType = 'grass',
+    worldVariation: WorldVariation = 0,
     quality: RendererQuality | undefined
   ) {
     this._app = app;
     this._camera = camera;
+    this._variation = worldVariation;
     quality = 'high';
     this._rendererQuality = quality;
     this._worldConfig = worldBackgroundConfigs.find(
@@ -40,6 +43,9 @@ export class WorldBackground {
   }
   private _getLayerImage(layer: WorldBackgroundLayerConfig): string {
     const layerFilenameParts = layer.filename.split('.');
+    if (this._variation !== 0) {
+      layerFilenameParts[0] += '_variation' + this._variation;
+    }
     // TODO: low and high quality versions
     /*if (this._rendererQuality === 'low') {
       layerFilenameParts[layerFilenameParts.length - 2] += '_s';
@@ -51,6 +57,10 @@ export class WorldBackground {
 
   get config(): WorldBackgroundConfig {
     return this._worldConfig;
+  }
+
+  get variation(): WorldVariation {
+    return this._variation;
   }
 
   destroy() {

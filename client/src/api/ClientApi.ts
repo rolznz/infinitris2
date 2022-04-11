@@ -15,7 +15,7 @@ import { IClientChatMessage } from '@models/networking/client/IClientChatMessage
 import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 import { colors } from '@models/colors';
 import { stringToHex } from '@models/util/stringToHex';
-import { WorldType } from '@models/WorldType';
+import { WorldType, WorldVariation } from '@models/WorldType';
 
 export default class ClientApi implements IClientApi {
   private _client?: IClient;
@@ -53,6 +53,9 @@ export default class ClientApi implements IClientApi {
       const botReactionDelay = parseInt(params.get('botReactionDelay') || '20');
       const spectate = params.get('spectate') === 'true';
       const worldType = (params.get('world') as WorldType) ?? undefined;
+      const worldVariation = parseInt(
+        params.get('worldVariation') || '0'
+      ) as WorldVariation;
       const rendererType = params.get('renderer') as RendererType;
       const gameModeType = params.get('gameMode') as GameModeType;
       const simulationSettings: SimulationSettings = {
@@ -67,6 +70,7 @@ export default class ClientApi implements IClientApi {
         rendererType,
         simulationSettings,
         worldType,
+        worldVariation,
         useFallbackUI: true,
         player: {
           characterId: '487',

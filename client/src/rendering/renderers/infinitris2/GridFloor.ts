@@ -5,7 +5,7 @@ import {
   WorldBackgroundConfig,
   worldBackgroundConfigs,
 } from './worldBackgroundConfigs';
-import { WorldType } from '@models/WorldType';
+import { WorldType, WorldVariation } from '@models/WorldType';
 
 export class GridFloor {
   private _gridFloorGraphics: PIXI.Graphics | undefined;
@@ -13,12 +13,18 @@ export class GridFloor {
   private _glowSprite!: PIXI.Sprite;
   private _app: PIXI.Application;
   private _worldConfig: WorldBackgroundConfig;
+  private _worldVariation: number;
 
-  constructor(app: PIXI.Application, worldType: WorldType) {
+  constructor(
+    app: PIXI.Application,
+    worldType: WorldType,
+    worldVariation: WorldVariation
+  ) {
     this._app = app;
     this._worldConfig = worldBackgroundConfigs.find(
       (config) => config.worldType === worldType
     )!;
+    this._worldVariation = worldVariation;
 
     this._app.loader.add(this._getFloorImageFilename());
     this._app.loader.add(this._getGlowImageFilename());
@@ -28,7 +34,12 @@ export class GridFloor {
   }
   private _getFloorImageFilename(): string {
     // TODO: copied from world background
-    return `${imagesDirectory}/worlds/${this._worldConfig.worldType}/theme_${this._worldConfig.worldType}_floor.png`;
+    let floorImageName = `${imagesDirectory}/worlds/${this._worldConfig.worldType}/theme_${this._worldConfig.worldType}_floor`;
+    if (this._worldVariation !== 0) {
+      floorImageName += '_variation' + this._worldVariation;
+    }
+    floorImageName += '.png';
+    return floorImageName;
   }
   private _getGlowImageFilename(): string {
     // TODO: copied from world background

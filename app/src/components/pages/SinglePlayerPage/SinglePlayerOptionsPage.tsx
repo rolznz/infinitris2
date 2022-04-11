@@ -21,6 +21,7 @@ import {
   GameModeTypeValues,
   RoundLengthValues,
   WorldTypeValues,
+  WorldVariationValues,
 } from 'infinitris2-models';
 import useSinglePlayerOptionsStore, {
   SinglePlayerOptionsFormData,
@@ -131,6 +132,22 @@ export function SinglePlayerOptionsPage() {
                   <InputLabel>World</InputLabel>
                   <Select {...field}>
                     {WorldTypeValues.map((type) => (
+                      <MenuItem key={type} value={type}>
+                        {type}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="worldVariation"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>Variation</InputLabel>
+                  <Select {...field}>
+                    {WorldVariationValues.map((type) => (
                       <MenuItem key={type} value={type}>
                         {type}
                       </MenuItem>

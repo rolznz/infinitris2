@@ -5,8 +5,10 @@ import {
   GameModeType,
   GameModeTypeValues,
   WorldType,
+  WorldVariation,
 } from 'infinitris2-models';
-import grassImage from '@/components/pages/SinglePlayerPage/assets/carousel/grass.svg';
+import grassImage from '@/components/ui/RoomCarousel/assets/carousel/grass.svg';
+import desertImage from '@/components/ui/RoomCarousel/assets/carousel/desert.svg';
 
 import { ReactComponent as ConquestIcon } from '@/icons/conquest.svg';
 import { ReactComponent as InfinityIcon } from '@/icons/infinity.svg';
@@ -22,6 +24,7 @@ export type RoomCarouselSlideProps = {
   name?: string;
   numPlayers?: number;
   worldType?: WorldType;
+  worldVariation: WorldVariation;
 };
 
 export function RoomCarouselSlide({
@@ -29,6 +32,7 @@ export function RoomCarouselSlide({
   gameModeType,
   name,
   worldType,
+  worldVariation,
 }: RoomCarouselSlideProps) {
   const isLandscape = useIsLandscape();
   return (
@@ -37,7 +41,7 @@ export function RoomCarouselSlide({
       width="100vw"
       height="100vh"
       sx={{
-        background: getBackground(gameModeType, worldType),
+        background: getBackground(worldVariation, worldType),
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPositionY: '100%',
@@ -139,17 +143,28 @@ function GameModeDescription(props: { gameModeType: GameModeType }) {
 }
 
 function getBackground(
-  gameModeType: GameModeType,
+  worldVariation: WorldVariation,
   worldType: WorldType | undefined
 ): string {
-  let image = grassImage;
+  let image: string = grassImage;
   switch (worldType) {
-    case 'desert':
-      //TODO: desert image
+    case undefined:
       break;
+    case 'grass':
+      break;
+    case 'desert':
+      image = desertImage;
+      break;
+    default:
+      throw new Error('Unsupported world type: ' + worldType);
   }
 
-  return `url(${image}); filter: hue-rotate(${
-    GameModeTypeValues.indexOf(gameModeType) * 45
-  }deg);`;
+  const index = worldVariation;
+  const hueVariation =
+    index === 0 ? 0 : Math.ceil(index / 2) * (index % 2 === 1 ? 1 : -1);
+  const hueRotation =
+    hueVariation * (index < 3 ? 22.5 : index < 4 ? 45 + 22.5 : 90);
+  //console.log('index', index, 'hueMultiplier', hueVariation);
+
+  return `url(${image}); filter: hue-rotate(${hueRotation}deg);`;
 }

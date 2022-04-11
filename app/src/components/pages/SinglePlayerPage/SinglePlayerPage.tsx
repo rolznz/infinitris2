@@ -14,6 +14,7 @@ import {
   IPlayer,
   ISimulation,
   charactersPath,
+  WorldVariation,
 } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
@@ -64,6 +65,7 @@ export default function SinglePlayerPage() {
   const gridNumColumns = settings.gridNumColumns;
   const simulationSettings = settings.simulationSettings;
   const worldType: WorldType = settings.worldType;
+  const worldVariation: WorldVariation = settings.worldVariation;
   const spectate = settings.spectate;
   const trackNumber = settings.trackNumber;
 
@@ -98,6 +100,7 @@ export default function SinglePlayerPage() {
           characterId,
         },
         worldType,
+        worldVariation,
         controls_keyboard,
         controls_gamepad,
         numBots,
@@ -156,6 +159,7 @@ export default function SinglePlayerPage() {
     rendererType,
     spectate,
     worldType,
+    worldVariation,
     character,
     nickname,
     simulationSettings,

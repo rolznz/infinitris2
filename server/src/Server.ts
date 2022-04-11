@@ -175,6 +175,7 @@ export default class Server implements IServerSocketEventListener {
             roomIndex,
             serverId,
             worldType: room.info.worldType,
+            worldVariation: room.info.worldVariation,
           };
         }),
       serverKey,

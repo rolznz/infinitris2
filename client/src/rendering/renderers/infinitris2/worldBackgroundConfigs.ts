@@ -45,7 +45,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         offsetX: 0.03,
         offsetY: 0.1,
         repeatGap: 15,
-        scale: 0.15,
+        scale: 0.3,
       },
       {
         filename: 'theme_grass_3.png',
@@ -81,10 +81,10 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         filename: 'theme_grass_7.png',
         speedY: 0.6,
         speedX: 0.6,
-        offsetY: 0.2,
+        offsetY: 0,
         offsetX: 0.05,
         repeatGap: 0.5,
-        scale: 0.4,
+        scale: 1,
         portraitOffsetY: 0.13,
       },
       {
@@ -163,6 +163,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
   {
     worldType: 'desert',
     floorColor: 0xffce8e,
+    hasFloorImage: true,
     layers: [
       {
         filename: 'theme_desert_0.png',

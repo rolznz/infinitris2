@@ -1,10 +1,10 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import RefreshIcon from '@mui/icons-material/Refresh';
-import { RoomCarousel } from '@/components/ui/RoomCarousel';
+import { RoomCarousel } from '@/components/ui/RoomCarousel/RoomCarousel';
 import { ReactComponent as InfoIcon } from '@/icons/i.svg';
 import Routes from '@/models/Routes';
-import { RoomCarouselSlideProps } from '@/components/ui/RoomCarouselSlide';
+import { RoomCarouselSlideProps } from '@/components/ui/RoomCarousel/RoomCarouselSlide';
 import { useHistory } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import { useLobbyServers } from '@/components/hooks/useLobbyServers';
@@ -27,6 +27,7 @@ export default function LobbyPage() {
         name: pair.room.data().name,
         numPlayers: pair.room.data().numHumans,
         key: pair.room.id,
+        worldVariation: pair.room.data().worldVariation || 0,
       })),
     [roomServerPairs]
   );

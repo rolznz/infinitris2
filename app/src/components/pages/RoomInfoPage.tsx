@@ -96,6 +96,19 @@ export function RoomInfoPage() {
             ),
             value: room?.data()!.worldType || 'grass',
           },
+          ...(room?.data()!.worldVariation
+            ? [
+                {
+                  title: (
+                    <FormattedMessage
+                      defaultMessage="World Variation"
+                      description="room info: world variation"
+                    />
+                  ),
+                  value: room?.data()!.worldVariation!.toString(),
+                },
+              ]
+            : []),
           /*{
             title: (
               <FormattedMessage

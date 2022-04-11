@@ -66,6 +66,7 @@ export default class SinglePlayerClient
             undefined,
             options.rendererQuality,
             options.worldType,
+            options.worldVariation,
             options.useFallbackUI
           );
     await this._renderer.create();

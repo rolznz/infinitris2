@@ -6,7 +6,7 @@ import { NetworkPlayerInfo } from './IPlayer';
 import { RendererType } from './RendererType';
 import { SimulationSettings } from './SimulationSettings';
 import { RendererQuality } from './RendererQuality';
-import { WorldType } from '@models/WorldType';
+import { WorldType, WorldVariation } from '@models/WorldType';
 import { WithControls } from '@models/IUser';
 import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
 import { ICharacter } from '@models/ICharacter';
@@ -27,6 +27,7 @@ export type LaunchOptions = WithControls & {
   rendererQuality?: RendererQuality;
   spectate?: boolean;
   worldType?: WorldType;
+  worldVariation?: WorldVariation;
   roomId?: number;
   useFallbackUI?: boolean;
   allCharacters?: ICharacter[];

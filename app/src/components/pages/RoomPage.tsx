@@ -146,6 +146,7 @@ export default function RoomPage() {
       controls_keyboard,
       controls_gamepad,
       worldType: room.data()!.worldType,
+      worldVariation: room.data()!.worldVariation,
       player: {
         color:
           character.data()?.color !== undefined

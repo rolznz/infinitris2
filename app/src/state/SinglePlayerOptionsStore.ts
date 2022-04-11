@@ -1,5 +1,9 @@
 import { TrackNumber, TrackNumberValues } from '@/sound/SoundManager';
-import { SimulationSettings, WorldType } from 'infinitris2-models';
+import {
+  SimulationSettings,
+  WorldType,
+  WorldVariation,
+} from 'infinitris2-models';
 import create from 'zustand';
 
 export type SinglePlayerOptionsFormData = {
@@ -10,6 +14,7 @@ export type SinglePlayerOptionsFormData = {
   gridNumColumns: number;
   spectate: boolean;
   worldType: WorldType;
+  worldVariation: WorldVariation;
   trackNumber: TrackNumber;
   simulationSettings: SimulationSettings;
 };
@@ -25,6 +30,7 @@ export const getSinglePlayerOptionsDefaultValues =
     spectate: false,
 
     worldType: 'grass',
+    worldVariation: 0,
     trackNumber:
       TrackNumberValues[Math.floor(Math.random() * TrackNumberValues.length)],
     simulationSettings: {

@@ -9,19 +9,14 @@ import { Link as RouterLink } from 'react-router-dom';
 
 import Link from '@mui/material/Link';
 import SvgIcon from '@mui/material/SvgIcon';
-import {
-  borderColor,
-  borderColorLight,
-  borderRadiuses,
-  boxShadows,
-} from '@/theme/theme';
+import { borderColor, borderRadiuses, boxShadows } from '@/theme/theme';
 import React from 'react';
 import { PlayButton } from '@/components/pages/HomePage/PlayButton';
 import { Page } from '@/components/ui/Page';
 import {
   RoomCarouselSlide,
   RoomCarouselSlideProps,
-} from '@/components/ui/RoomCarouselSlide';
+} from '@/components/ui/RoomCarousel/RoomCarouselSlide';
 import Typography from '@mui/material/Typography/Typography';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 

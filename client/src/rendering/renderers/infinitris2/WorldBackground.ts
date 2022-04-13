@@ -91,16 +91,21 @@ export class WorldBackground {
         continue;
       }
       const sprite = this._layerSprites[i]!;
+      const scale =
+        (this._app.renderer.width < this._app.renderer.height
+          ? this._worldConfig.layers[i].portraitScale
+          : undefined) ||
+        this._worldConfig.layers[i].scale ||
+        1;
       sprite.tileScale.set(
         Math.max(
           this._app.renderer.width / sprite.texture.width,
           (this._app.renderer.height * 0.5) / sprite.texture.height
-        ) * (this._worldConfig.layers[i].scale || 1)
+        ) * scale
       );
       //console.log(sprite.tileScale);
       sprite.width = Math.floor(
-        (sprite.texture.width * sprite.tileScale.x) /
-          (this._worldConfig.layers[i].scale || 1)
+        (sprite.texture.width * sprite.tileScale.x) / scale
       );
       sprite.height = Math.floor(sprite.texture.height * sprite.tileScale.x);
 

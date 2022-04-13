@@ -8,6 +8,7 @@ export type WorldBackgroundLayerConfig = {
   offsetX?: number;
   offsetY: number;
   portraitOffsetY?: number;
+  portraitScale?: number;
   //minQuality?: RendererQuality; // optional layers that will only show when the quality is high enough. Unset = required on all layers
   scale?: number;
   repeatGap?: number; // TODO: this needs to be different on mobile
@@ -170,6 +171,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedY: 0.1,
         speedX: 0,
         offsetY: 0,
+        portraitScale: 1.5,
       },
       {
         filename: 'theme_desert_1.png',
@@ -177,13 +179,16 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedX: 0.05,
         offsetY: 0,
         offsetX: 0,
+        portraitScale: 1.5,
       },
       {
         filename: 'theme_desert_2.png',
         speedY: 0.1,
         speedX: 0.1,
-        offsetY: 0.1,
+        offsetY: 0.0,
         offsetX: 0,
+        portraitOffsetY: 0.02,
+        portraitScale: 1.5,
       },
       {
         filename: 'theme_desert_3.png',
@@ -193,6 +198,8 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         offsetY: 0.1,
         repeatGap: 15,
         scale: 0.3,
+        portraitScale: 0.2,
+        portraitOffsetY: 0.075,
         //minQuality: 'high',
       },
       {
@@ -200,36 +207,44 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         speedY: 0.3,
         speedX: 0.3,
         offsetY: 0.25,
+        portraitOffsetY: 0.075,
       },
       {
         filename: 'theme_desert_5.png',
         speedY: 0.4,
         speedX: 0.4,
         offsetY: 0.1,
+        portraitOffsetY: 0.15,
       },
       {
         filename: 'theme_desert_6.png',
         speedY: 0.5,
         speedX: 0.5,
         offsetY: 0.35,
+        portraitOffsetY: 0.06,
+        portraitScale: 2.5,
       },
       {
         filename: 'theme_desert_7.png',
         speedY: 0.6,
         speedX: 0.6,
         offsetY: 0.65,
+        portraitOffsetY: 0.15,
       },
       {
         filename: 'theme_desert_8.png',
         speedY: 0.7,
         speedX: 0.7,
-        offsetY: 0.15,
+        offsetY: 0.1,
+        scale: 2,
+        portraitOffsetY: 0.15,
       },
       {
         filename: 'theme_desert_9.png',
         speedY: 0.8,
         speedX: 0.8,
-        offsetY: 0.75,
+        offsetY: 0.7,
+        portraitOffsetY: 0.05,
         //minQuality: 'high',
       },
       // unused: theme_desert_10

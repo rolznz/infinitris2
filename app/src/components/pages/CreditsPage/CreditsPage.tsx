@@ -3,23 +3,21 @@ import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import FlexBox from '../../ui/FlexBox';
 import { Page } from '../../ui/Page';
-import coneFace from './assets/faces/cone.png';
-import athleteFace from './assets/faces/athlete.png';
-import chillFace from './assets/faces/chill.png';
 import GlobeIcon from '@mui/icons-material/Public';
 import { RingIconButton } from '@/components/ui/RingIconButton';
+import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 
 type PrimaryContributorProps = {
   name: string;
   role: string;
-  image: string;
+  characterId: number;
   url: string;
 };
 
 function PrimaryContributor({
   name,
   role,
-  image,
+  characterId,
   url,
 }: PrimaryContributorProps) {
   return (
@@ -35,14 +33,7 @@ function PrimaryContributor({
         maxWidth="100%"
         justifyContent="flex-start"
       >
-        <img
-          src={image}
-          alt="character"
-          style={{
-            height: 'auto',
-            width: '200px',
-          }}
-        />
+        <CharacterImage characterId={characterId.toString()} width={200} />
         <FlexBox alignItems="flex-start">
           <Typography variant="h4">{name}</Typography>
           <Box mt={2} />
@@ -72,19 +63,19 @@ export function CreditsPage() {
       <Box mt={4} />
       <FlexBox gap={10}>
         <PrimaryContributor
-          image={coneFace}
+          characterId={97}
           name="Roland B"
           role="Direction & Programming"
           url="https://github.com/rolznz/infinitris2"
         />
         <PrimaryContributor
-          image={athleteFace}
+          characterId={470}
           name="Rebecca B"
           role="Art & UX design"
           url="https://rebeccabewick.com"
         />
         <PrimaryContributor
-          image={chillFace}
+          characterId={265}
           name="Allan Z"
           role="Soundtrack"
           url="https://www.youtube.com/channel/UCzURFiRW3N2hoJupZ4AEGMg"

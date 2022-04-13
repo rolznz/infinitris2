@@ -1,1 +1,1 @@
-Shared models for all projects
+PNG generator for world images

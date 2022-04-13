@@ -11,6 +11,12 @@ const assetsDirectories = fs
   .filter((path) => fs.lstatSync(path).isDirectory());
 
 for (const assetDirectory of assetsDirectories) {
+  if (
+    process.env.DIR_FILTER &&
+    assetDirectory.indexOf(process.env.DIR_FILTER) < 0
+  ) {
+    continue;
+  }
   const files = fs
     .readdirSync(assetDirectory)
     .filter((file) => file.toLowerCase().endsWith('.svg'));
@@ -19,6 +25,12 @@ for (const assetDirectory of assetsDirectories) {
 
   (async () => {
     for (const filename of files) {
+      if (
+        process.env.FILE_FILTER &&
+        filename.indexOf(process.env.FILE_FILTER) < 0
+      ) {
+        continue;
+      }
       const withoutExt = filename.substring(0, filename.length - 4);
       const png = withoutExt + pngExt;
       await sharp(getPath(filename)).toFile(getPath(png));

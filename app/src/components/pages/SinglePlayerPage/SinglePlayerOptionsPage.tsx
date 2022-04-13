@@ -97,6 +97,7 @@ export function SinglePlayerOptionsPage() {
   };
 
   const watchedGameModeType = watch('simulationSettings.gameModeType');
+  const watchedSpectate = watch('spectate');
 
   return (
     <Page
@@ -265,6 +266,23 @@ export function SinglePlayerOptionsPage() {
                 </FormGroup>
               )}
             />
+            {watchedSpectate && (
+              <Controller
+                name="isDemo"
+                control={control}
+                render={({ field }) => (
+                  <FormGroup>
+                    <FormControlLabel
+                      control={
+                        <Switch {...field} defaultChecked={field.value} />
+                      }
+                      label="Demo"
+                      labelPlacement="start"
+                    />
+                  </FormGroup>
+                )}
+              />
+            )}
             <Controller
               name="simulationSettings.instantDrops"
               control={control}

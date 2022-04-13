@@ -52,6 +52,7 @@ export default class ClientApi implements IClientApi {
       const numBots = parseInt(params.get('numBots') || '0');
       const botReactionDelay = parseInt(params.get('botReactionDelay') || '20');
       const spectate = params.get('spectate') === 'true';
+      const demo = params.get('demo') === 'true';
       const worldType = (params.get('world') as WorldType) ?? undefined;
       const worldVariation = parseInt(
         params.get('worldVariation') || '0'
@@ -71,7 +72,8 @@ export default class ClientApi implements IClientApi {
         simulationSettings,
         worldType,
         worldVariation,
-        useFallbackUI: true,
+        useFallbackUI: !demo,
+        isDemo: demo,
         player: {
           characterId: '487',
           patternFilename: 'pattern_3.png',

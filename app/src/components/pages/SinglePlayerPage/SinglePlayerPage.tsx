@@ -67,6 +67,7 @@ export default function SinglePlayerPage() {
   const worldType: WorldType = settings.worldType;
   const worldVariation: WorldVariation = settings.worldVariation;
   const spectate = settings.spectate;
+  const isDemo = settings.isDemo;
   const trackNumber = settings.trackNumber;
 
   const user = useUser();
@@ -111,6 +112,7 @@ export default function SinglePlayerPage() {
         rendererQuality,
         rendererType,
         spectate,
+        isDemo,
         simulationSettings,
         listeners: [
           ...coreGameListeners,
@@ -166,7 +168,8 @@ export default function SinglePlayerPage() {
     characterId,
     trackNumber,
     allCharacters.data,
+    isDemo,
   ]);
 
-  return <GameUI />;
+  return isDemo ? null : <GameUI />;
 }

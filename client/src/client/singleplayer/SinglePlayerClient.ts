@@ -20,6 +20,7 @@ import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { GameModeEvent } from '@models/GameModeEvent';
 import { ICharacter } from '@models/ICharacter';
 
+let oldCursor: string;
 export default class SinglePlayerClient
   extends BaseClient
   implements Partial<ISimulationEventListener>
@@ -54,6 +55,7 @@ export default class SinglePlayerClient
     this._simulation.stopInterval();
     this._renderer.destroy();
     this._input?.destroy();
+    window.document.body.style.cursor = oldCursor;
   }
 
   private async _create(options: LaunchOptions) {
@@ -67,9 +69,15 @@ export default class SinglePlayerClient
             options.rendererQuality,
             options.worldType,
             options.worldVariation,
-            options.useFallbackUI
+            options.useFallbackUI,
+            options.isDemo
           );
     await this._renderer.create();
+
+    oldCursor = window.document.body.style.cursor;
+    if (options.isDemo) {
+      window.document.body.style.cursor = `none`;
+    }
 
     const simulationSettings: SimulationSettings =
       options.simulationSettings || {};

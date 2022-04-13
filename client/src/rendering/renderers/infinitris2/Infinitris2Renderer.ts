@@ -145,6 +145,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _useFallbackUI: boolean;
   private _autoQualityAdjust = true;
   private _renderFpsFrames: number[];
+  private _isDemo: boolean;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -153,7 +154,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     rendererQuality?: RendererQuality,
     worldType: WorldType = 'grass',
     worldVariation: WorldVariation = 0,
-    useFallbackUI = false
+    useFallbackUI = false,
+    isDemo = false
   ) {
     super(clientApiConfig, undefined, rendererQuality);
     this._preferredInputMethod = preferredInputMethod;
@@ -161,6 +163,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._worldType = worldType;
     this._useFallbackUI = useFallbackUI;
     this._worldVariation = worldVariation;
+    this._isDemo = isDemo;
 
     this._oldOverflowStyle = document.body.style.overflow;
 
@@ -263,7 +266,15 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
 
-    if (this._rendererQuality !== 'low' && this._autoQualityAdjust) {
+    if (this._isDemo) {
+      this._camera.bump(-1, 0);
+    }
+
+    if (
+      !this._isDemo &&
+      this._rendererQuality !== 'low' &&
+      this._autoQualityAdjust
+    ) {
       const maxFrames = 1000;
       if (this._renderFpsFrames.length > maxFrames) {
         this._renderFpsFrames.shift();
@@ -287,65 +298,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     super.tick();
 
+    const followingPlayer = this._simulation?.followingPlayer;
     for (const player of this._simulation.players) {
+      this._updatePlayerBlockContainer(player.id);
       const blockContainer = this._blocks[player.id];
-      const playerContainer = this._players[player.id];
       if (blockContainer) {
-        const moveRate = player.block?.isDropping ? 1 : 0.25;
-        const rotateRate = 0.35;
         const block = blockContainer.originalBlock;
-        // let firstColumn = block.cells.find(
-        //   (cell) => !block.cells.some((other) => other.column < cell.column)
-        // )!.column;
 
-        /*blockContainer.container.x +=
-          (block.column * this._cellSize - blockContainer.container.x) *
-          moveRate;*/
-        blockContainer.block.container.x =
-          (block.column + (block.layout.length % 2) * 0.5) * this._cellSize;
-        blockContainer.block.container.y +=
-          ((block.row + block.layout[0].length / 2) * this._cellSize -
-            blockContainer.block.container.y) *
-          moveRate;
-        blockContainer.block.children.forEach((child) => {
-          child.renderableObject.container.rotation +=
-            (() => {
-              let diff = wrap(
-                block.rotation * Math.PI * 0.5 -
-                  child.renderableObject.container.rotation,
-                Math.PI * 2
-              );
-              if (diff > Math.PI) {
-                diff -= Math.PI * 2;
-              }
-              return diff;
-            })() * rotateRate;
-          if (child.renderableObject.faceSprite) {
-            child.renderableObject.faceSprite.rotation =
-              -child.renderableObject.container.rotation;
-          }
-        });
-
-        const textCentreX = this.getWrappedX(block.centreX * this._cellSize);
-        const textY = (block.topRow - 1.25) * this._cellSize;
-        playerContainer.container.x = textCentreX;
-        playerContainer.container.y = textY;
-
-        if (this._simulation!.gameMode.hasHealthbars) {
-          for (const child of playerContainer.healthbar.children) {
-            child.renderableObject.inner.width =
-              child.renderableObject.outer.width * player.health;
-            child.renderableObject.inner.texture.frame = new PIXI.Rectangle(
-              0,
-              0,
-              child.renderableObject.inner.texture.baseTexture.width *
-                player.health,
-              child.renderableObject.inner.texture.baseTexture.height
-            );
-          }
-        }
-
-        const followingPlayer = this._simulation?.followingPlayer;
         if (followingPlayer && block.player.id === followingPlayer.id) {
           // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
           const cellSize = this._cellSize;
@@ -416,6 +375,70 @@ export default class Infinitris2Renderer extends BaseRenderer {
         : 0.5; // distinguish dead cells // TODO: find a better way to do this
     });
   };
+
+  private _updatePlayerBlockContainer(playerId: number) {
+    const player = this._simulation?.getPlayer(playerId);
+    if (!player) {
+      return;
+    }
+    const blockContainer = this._blocks[player.id];
+    const playerContainer = this._players[player.id];
+    if (blockContainer) {
+      const moveRate = player.block?.isDropping ? 1 : 0.25;
+      const rotateRate = 0.35;
+      const block = blockContainer.originalBlock;
+      // let firstColumn = block.cells.find(
+      //   (cell) => !block.cells.some((other) => other.column < cell.column)
+      // )!.column;
+
+      /*blockContainer.container.x +=
+          (block.column * this._cellSize - blockContainer.container.x) *
+          moveRate;*/
+      blockContainer.block.container.x =
+        (block.column + (block.layout.length % 2) * 0.5) * this._cellSize;
+      blockContainer.block.container.y +=
+        ((block.row + block.layout[0].length / 2) * this._cellSize -
+          blockContainer.block.container.y) *
+        moveRate;
+      blockContainer.block.children.forEach((child) => {
+        child.renderableObject.container.rotation +=
+          (() => {
+            let diff = wrap(
+              block.rotation * Math.PI * 0.5 -
+                child.renderableObject.container.rotation,
+              Math.PI * 2
+            );
+            if (diff > Math.PI) {
+              diff -= Math.PI * 2;
+            }
+            return diff;
+          })() * rotateRate;
+        if (child.renderableObject.faceSprite) {
+          child.renderableObject.faceSprite.rotation =
+            -child.renderableObject.container.rotation;
+        }
+      });
+
+      const textCentreX = this.getWrappedX(block.centreX * this._cellSize);
+      const textY = (block.topRow - 1.25) * this._cellSize;
+      playerContainer.container.x = textCentreX;
+      playerContainer.container.y = textY;
+
+      if (this._simulation!.gameMode.hasHealthbars) {
+        for (const child of playerContainer.healthbar.children) {
+          child.renderableObject.inner.width =
+            child.renderableObject.outer.width * player.health;
+          child.renderableObject.inner.texture.frame = new PIXI.Rectangle(
+            0,
+            0,
+            child.renderableObject.inner.texture.baseTexture.width *
+              player.health,
+            child.renderableObject.inner.texture.baseTexture.height
+          );
+        }
+      }
+    }
+  }
 
   /**
    * @inheritdoc
@@ -626,6 +649,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
+    this._updatePlayerBlockContainer(block.player.id);
     //if (block.player === this._simulation.followingPlayer) {
     //this._camera.bump(0, 1000); // TODO: minor camera shake
     //}
@@ -702,36 +726,38 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!playerContainer) {
       return;
     }
-    this.renderCopies(
-      playerContainer.nicknameText,
-      1,
-      (text, shadowIndexWithDirection) => {
-        const shadowX = shadowIndexWithDirection * this._gridWidth;
-        text.x = shadowX;
-      },
-      () => {
-        const text = new PIXI.Text(player.nickname, {
-          fill: PIXI.utils.hex2string(player.color),
-          align: 'center',
-          //stroke: '#000000',
-          //strokeThickness: 7,
-          fontFamily,
-          //fontSize: ,
-          dropShadow: true,
-          dropShadowAngle: Math.PI / 2,
-          dropShadowDistance: 1,
-          dropShadowBlur: 2,
-        });
+    if (!this._isDemo) {
+      this.renderCopies(
+        playerContainer.nicknameText,
+        1,
+        (text, shadowIndexWithDirection) => {
+          const shadowX = shadowIndexWithDirection * this._gridWidth;
+          text.x = shadowX;
+        },
+        () => {
+          const text = new PIXI.Text(player.nickname, {
+            fill: PIXI.utils.hex2string(player.color),
+            align: 'center',
+            //stroke: '#000000',
+            //strokeThickness: 7,
+            fontFamily,
+            //fontSize: ,
+            dropShadow: true,
+            dropShadowAngle: Math.PI / 2,
+            dropShadowDistance: 1,
+            dropShadowBlur: 2,
+          });
 
-        //text.cacheAsBitmap = true;
-        text.anchor.set(0.5, 0);
-        playerContainer.nicknameText.container.addChild(text);
-        return text;
-      }
-    );
-    playerContainer.nicknameText.children.forEach((child) =>
-      child.renderableObject.scale.set(this._cellSize * 0.03)
-    );
+          //text.cacheAsBitmap = true;
+          text.anchor.set(0.5, 0);
+          playerContainer.nicknameText.container.addChild(text);
+          return text;
+        }
+      );
+      playerContainer.nicknameText.children.forEach((child) =>
+        child.renderableObject.scale.set(this._cellSize * 0.03)
+      );
+    }
     if (this._simulation!.gameMode.hasHealthbars) {
       this.renderCopies(
         playerContainer.healthbar,

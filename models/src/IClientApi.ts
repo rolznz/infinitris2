@@ -30,6 +30,7 @@ export type LaunchOptions = WithControls & {
   worldVariation?: WorldVariation;
   roomId?: number;
   useFallbackUI?: boolean;
+  isDemo?: boolean;
   allCharacters?: ICharacter[];
 };
 

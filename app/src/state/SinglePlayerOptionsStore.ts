@@ -13,6 +13,7 @@ export type SinglePlayerOptionsFormData = {
   gridNumRows: number;
   gridNumColumns: number;
   spectate: boolean;
+  isDemo: boolean;
   worldType: WorldType;
   worldVariation: WorldVariation;
   trackNumber: TrackNumber;
@@ -26,8 +27,8 @@ export const getSinglePlayerOptionsDefaultValues =
     botRandomReactionDelay: 25,
     gridNumRows: 16,
     gridNumColumns: 50,
-
     spectate: false,
+    isDemo: false,
 
     worldType: 'grass',
     worldVariation: 0,

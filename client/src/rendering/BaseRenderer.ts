@@ -47,10 +47,11 @@ export abstract class BaseRenderer implements IRenderer {
   constructor(
     clientApiConfig: ClientApiConfig,
     backgroundColor?: number,
-    rendererQuality?: RendererQuality
+    rendererQuality?: RendererQuality,
+    isDemo = false
   ) {
     this._clientApiConfig = clientApiConfig;
-    this._camera = new Camera();
+    this._camera = new Camera(isDemo);
     this._gridWidth = 0;
     this._gridHeight = 0;
     this._hasShadows = false;
@@ -60,11 +61,9 @@ export abstract class BaseRenderer implements IRenderer {
     this._rendererQuality = rendererQuality;
     this._app = new PIXI.Application({
       backgroundColor,
-      antialias: true,
-      // TODO: potentially enable resolution drop for lowest renderer quality
-      // before doing this, other things should probably be considered, such as optimizing grid/block/cell renderering, asset sizes, optional layers, etc.
-      // also, review the simulation speed, maybe the renderer can skip frames.
-      //resolution: 0.5, //rendererQuality === 'low' ? undefined : resolution
+      //antialias: true, // +10% GPU usage
+      //preserveDrawingBuffer: true,
+      //transparent: true, // +5% GPU usage
     });
     this._world = new PIXI.Container();
     this._world.sortableChildren = true;

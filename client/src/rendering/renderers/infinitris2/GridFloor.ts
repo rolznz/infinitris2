@@ -6,20 +6,26 @@ import {
   worldBackgroundConfigs,
 } from './worldBackgroundConfigs';
 import { WorldType, WorldVariation } from '@models/WorldType';
+import { BaseRenderer } from '@src/rendering/BaseRenderer';
+import { WrappedSprite } from '@src/rendering/WrappedSprite';
 
 export class GridFloor {
   private _gridFloorGraphics: PIXI.Graphics | undefined;
-  private _floorSprite: PIXI.TilingSprite | undefined;
+  private _floorSprite: WrappedSprite | undefined;
   private _glowSprite!: PIXI.Sprite;
   private _app: PIXI.Application;
   private _worldConfig: WorldBackgroundConfig;
   private _worldVariation: number;
+  private _enabled = true;
+  private _renderer: BaseRenderer;
 
   constructor(
+    renderer: BaseRenderer,
     app: PIXI.Application,
     worldType: WorldType,
     worldVariation: WorldVariation
   ) {
+    this._renderer = renderer;
     this._app = app;
     this._worldConfig = worldBackgroundConfigs.find(
       (config) => config.worldType === worldType
@@ -52,10 +58,12 @@ export class GridFloor {
 
   createImages() {
     if (this._worldConfig.hasFloorImage) {
-      this._floorSprite = this._createSprite(
-        this._getFloorImageFilename(),
-        true
-      ) as PIXI.TilingSprite;
+      this._floorSprite = new WrappedSprite(() =>
+        this._createSprite(
+          this._getFloorImageFilename()
+          //true
+        )
+      );
     }
     this._glowSprite = this._createSprite(this._getGlowImageFilename());
     this._glowSprite.tint = 0x0c2d21; // TODO: make it per-world
@@ -75,8 +83,11 @@ export class GridFloor {
   }
 
   addChildren() {
+    if (!this._enabled) {
+      return;
+    }
     if (this._floorSprite) {
-      this._app.stage.addChild(this._floorSprite);
+      this._app.stage.addChild(...this._floorSprite.children);
     }
     if (this._gridFloorGraphics) {
       this._app.stage.addChild(this._gridFloorGraphics);
@@ -84,18 +95,13 @@ export class GridFloor {
     this._app.stage.addChild(this._glowSprite);
   }
 
-  update(gridBottom: number, cameraX: number) {
+  update(cameraX: number) {
     if (this._floorSprite) {
-      this._floorSprite.y = Math.floor(gridBottom);
-      this._floorSprite.tilePosition.x = cameraX;
+      this._floorSprite.x = cameraX;
     }
-    if (this._gridFloorGraphics) {
-      this._gridFloorGraphics.y = Math.floor(gridBottom) + 1;
-    }
-    this._glowSprite.y = Math.floor(gridBottom - this._glowSprite.height) + 1;
   }
 
-  resize(floorHeight: number) {
+  resize(gridBottom: number, floorHeight: number) {
     [this._floorSprite, this._gridFloorGraphics, this._glowSprite].forEach(
       (child) => {
         if (child) {
@@ -105,7 +111,7 @@ export class GridFloor {
     );
     if (this._floorSprite) {
       this._floorSprite.height = floorHeight + 2;
-      this._floorSprite.tileScale.set(
+      this._floorSprite.setScale(
         this._floorSprite.height / this._floorSprite.texture.height
       );
     }
@@ -113,13 +119,19 @@ export class GridFloor {
       this._gridFloorGraphics.height = floorHeight;
     }
     this._glowSprite.height = floorHeight * 0.25;
+
+    if (this._floorSprite) {
+      this._floorSprite.y = Math.floor(gridBottom);
+    }
+    if (this._gridFloorGraphics) {
+      this._gridFloorGraphics.y = Math.floor(gridBottom) + 1;
+    }
+    this._glowSprite.y = Math.floor(gridBottom - this._glowSprite.height) + 1;
   }
 
-  private _createSprite = (url: string, tiling = false) => {
+  private _createSprite = (url: string) => {
     const texture = PIXI.Texture.from(url);
-    const sprite = tiling
-      ? new PIXI.TilingSprite(texture)
-      : new PIXI.Sprite(texture);
+    const sprite = new PIXI.Sprite(texture);
 
     sprite.x = 0;
     sprite.y = 0;

@@ -235,7 +235,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         filename: 'theme_desert_8.png',
         speedY: 0.7,
         speedX: 0.7,
-        offsetY: 0.1,
+        offsetY: 0.0,
         scale: 2,
         portraitOffsetY: 0.15,
       },

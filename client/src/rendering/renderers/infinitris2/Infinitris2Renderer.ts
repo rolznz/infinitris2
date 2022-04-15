@@ -23,7 +23,7 @@ import { SpawnDelayIndicator } from './SpawnDelayIndicator';
 //import { ScoreChangeIndicator } from './ScoreChangeIndicator';
 import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
-import { IPlayer } from '@models/IPlayer';
+import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import { RendererQuality } from '@models/RendererQuality';
 import { getBorderColor } from '@models/util/adjustColor';
 import { WorldType, WorldVariation } from '@models/WorldType';
@@ -44,6 +44,7 @@ const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
 
 const particleDivisions = 4;
 const numPatternDivisions = 4;
+let averageRenderFps: number = 0;
 
 interface IBlockContainer {
   originalBlock: IBlock;
@@ -157,7 +158,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     useFallbackUI = false,
     isDemo = false
   ) {
-    super(clientApiConfig, undefined, rendererQuality);
+    super(clientApiConfig, undefined, rendererQuality, isDemo);
     this._preferredInputMethod = preferredInputMethod;
     this._teachControls = teachControls;
     this._worldType = worldType;
@@ -204,6 +205,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     );
 
     this._gridFloor = new GridFloor(
+      this,
       this._app,
       this._worldType,
       this._worldVariation
@@ -267,7 +269,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
 
     if (this._isDemo) {
-      this._camera.bump(-1, 0);
+      this._camera.bumpPosition(
+        (-this._app.ticker.elapsedMS / 1920) * this._app.renderer.width * 0.01,
+        0
+      );
     }
 
     if (
@@ -323,15 +328,21 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
 
     if (this._displayFrameRate) {
-      this._fpsText.scale.set(this._cellSize * 0.02);
+      this._fpsText.scale.set(this._cellSize * 0.04);
       this._fpsText.x = this._app.renderer.width / 2;
       this._fpsText.y = 10;
       this._fpsText.anchor.set(0.5, 0);
+
+      averageRenderFps =
+        averageRenderFps === 0
+          ? this._app.ticker.FPS
+          : averageRenderFps * 0.99 + this._app.ticker.FPS * (1 - 0.99);
       this._fpsText.text =
-        Math.ceil(this._app.ticker.FPS) +
+        Math.floor(averageRenderFps) +
         ' rFPS / ' +
         this._simulation.fps +
         ' sFPS';
+      this._fpsText.tint = averageRenderFps < 50 ? 0xff0000 : 0xffffff;
     } else {
       this._fpsText.visible = false;
     }
@@ -356,12 +367,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         this._clampedCameraY
       );
 
-      this._gridFloor.update(
-        !this._hasScrollY
-          ? this._gridLines.y + this._gridHeight
-          : this._world.y + this._gridHeight,
-        this._camera.x
-      );
+      this._gridFloor.update(this._camera.x);
     }
 
     Object.values(this._cells).forEach((cell) => {
@@ -656,6 +662,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   onPlayerCreated(player: IPlayer): void {
+    if (player.status === PlayerStatus.spectating) {
+      return;
+    }
     const playerContainer: IPlayerContainer = {
       originalPlayer: player,
       nicknameText: {
@@ -1058,8 +1067,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
     super._resize();
 
-    this._gridFloor.resize(this._floorHeight);
-
     this._renderVirtualKeyboard();
     this._renderVirtualGestures();
 
@@ -1071,6 +1078,24 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._hasScrollX,
       this._hasScrollY
     );
+    this._gridLines.update(
+      this._world.x,
+      this._world.y,
+      this._hasScrollX,
+      this._hasScrollY,
+      this._cellSize,
+      this._visibilityX,
+      this._visibilityY,
+      this._clampedCameraY
+    );
+
+    this._gridFloor.resize(
+      !this._hasScrollY
+        ? this._gridLines.y + this._gridHeight
+        : this._world.y + this._gridHeight,
+      this._floorHeight
+    );
+    this._worldBackground.resize();
 
     this.rerenderGrid();
 

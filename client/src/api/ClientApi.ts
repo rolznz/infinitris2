@@ -16,6 +16,7 @@ import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 import { colors } from '@models/colors';
 import { stringToHex } from '@models/util/stringToHex';
 import { WorldType, WorldVariation } from '@models/WorldType';
+import { RendererQuality } from '@models/RendererQuality';
 
 export default class ClientApi implements IClientApi {
   private _client?: IClient;
@@ -58,6 +59,8 @@ export default class ClientApi implements IClientApi {
         params.get('worldVariation') || '0'
       ) as WorldVariation;
       const rendererType = params.get('renderer') as RendererType;
+      const rendererQuality =
+        (params.get('rendererQuality') as RendererQuality) || 'high';
       const gameModeType = params.get('gameMode') as GameModeType;
       const simulationSettings: SimulationSettings = {
         gameModeType,
@@ -74,6 +77,7 @@ export default class ClientApi implements IClientApi {
         worldVariation,
         useFallbackUI: !demo,
         isDemo: demo,
+        rendererQuality,
         player: {
           characterId: '487',
           patternFilename: 'pattern_3.png',

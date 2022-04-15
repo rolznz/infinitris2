@@ -1,5 +1,6 @@
 const cameraDrag = 0.25;
 const cameraSpeed = 0.02;
+
 export default class Camera {
   // FIXME: restructure to not require definite assignment
   private _x!: number;
@@ -9,18 +10,26 @@ export default class Camera {
   private _dx!: number;
   private _dy!: number;
   private _followingId?: number;
-  constructor() {
+  private _isDemo: boolean;
+  constructor(isDemo = false) {
     this.reset();
+    this._isDemo = isDemo;
   }
 
   get x(): number {
-    return Math.round(this._x);
+    return this._isDemo ? this._x : Math.round(this._x);
   }
   get y(): number {
-    return Math.round(this._y);
+    return this._isDemo ? this._y : Math.round(this._y);
   }
 
   bump(x: number, y: number) {
+    this._dx += x;
+    this._dy += y;
+  }
+  bumpPosition(x: number, y: number) {
+    this._x += x;
+    this._y += y;
     this._dx += x;
     this._dy += y;
   }

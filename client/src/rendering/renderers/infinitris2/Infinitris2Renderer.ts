@@ -598,6 +598,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           (other) => other.column === cell.column && other.row < cell.row
         )
     );
+
     const dropEffect: IBlockDropEffect = {
       container: new PIXI.Container(),
       children: [],
@@ -613,10 +614,25 @@ export default class Infinitris2Renderer extends BaseRenderer {
       () => {
         const graphics = new PIXI.Graphics();
         graphics.beginFill(block.player.color);
+        const wrappedBlockColumn = wrap(
+          block.column,
+          this._simulation!.grid.numColumns
+        );
         highestCells.forEach((cell) => {
+          let wrappedCellColumn = cell.column;
+          if (
+            Math.abs(wrappedCellColumn - wrappedBlockColumn) >
+            this._simulation!.grid.numColumns / 2
+          ) {
+            if (wrappedCellColumn < wrappedBlockColumn) {
+              wrappedCellColumn += this._simulation!.grid.numColumns;
+            } else {
+              wrappedCellColumn -= this._simulation!.grid.numColumns;
+            }
+          }
           for (let y = cell.row; y < this._simulation!.grid.numRows; y++) {
             graphics.drawRect(
-              (cell.column - block.column) * cellSize,
+              (wrappedCellColumn - wrappedBlockColumn) * cellSize,
               (y - block.row) * cellSize,
               cellSize,
               cellSize
@@ -995,7 +1011,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._particles = this._particles.filter((particle) => particle.life > 0);
 
     for (const dropEffect of this._blockDropEffects) {
-      dropEffect.container.alpha -= 0.025;
+      dropEffect.container.alpha -= 0.01; //0.025;
       if (dropEffect.container.alpha <= 0) {
         this._world.removeChild(dropEffect.container);
       }

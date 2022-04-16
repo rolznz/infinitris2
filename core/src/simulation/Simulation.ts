@@ -508,7 +508,9 @@ export default class Simulation implements ISimulation {
     const freeCharacters = charactersPool?.filter(
       (character) =>
         !this.players.some(
-          (player) => player.characterId === character.id.toString()
+          (player) =>
+            player.characterId === character.id.toString() ||
+            player.color === stringToHex(character.color)
         )
     );
 

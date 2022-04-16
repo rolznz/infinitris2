@@ -113,7 +113,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
       },
     ],
   },
-  {
+  /*{
     worldType: 'space',
     floorColor: 0x5c6294,
     layers: [
@@ -160,7 +160,7 @@ export const worldBackgroundConfigs: WorldBackgroundConfig[] = [
         offsetY: 0.1,
       },
     ],
-  },
+  },*/
   {
     worldType: 'desert',
     floorColor: 0xffce8e,

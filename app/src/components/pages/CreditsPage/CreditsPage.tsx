@@ -75,7 +75,7 @@ export function CreditsPage() {
           url="https://rebeccabewick.com"
         />
         <PrimaryContributor
-          characterId={265}
+          characterId={759}
           name="Allan Z"
           role="Soundtrack"
           url="https://www.youtube.com/channel/UCzURFiRW3N2hoJupZ4AEGMg"

@@ -2,7 +2,7 @@ import { useHistory } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import useSinglePlayerOptionsStore from '@/state/SinglePlayerOptionsStore';
 
-import { GameModeTypeValues, WorldVariation } from 'infinitris2-models';
+import { GameModeTypeValues } from 'infinitris2-models';
 
 import lodashMerge from 'lodash.merge';
 import { launchSinglePlayer } from '@/components/pages/SinglePlayerPage/SinglePlayerPage';
@@ -12,11 +12,11 @@ import { RoomCarousel } from '@/components/ui/RoomCarousel/RoomCarousel';
 import { FormattedMessage } from 'react-intl';
 
 const slides: RoomCarouselSlideProps[] = GameModeTypeValues.map(
-  (gameModeType, index) => ({
+  (gameModeType) => ({
     gameModeType,
     key: gameModeType,
-    worldType: index % 2 === 0 ? 'grass' : 'desert',
-    worldVariation: index as WorldVariation,
+    worldType: gameModeType === 'conquest' ? 'desert' : 'grass',
+    worldVariation: gameModeType === 'race' ? 1 : 0,
   })
 );
 

@@ -78,7 +78,7 @@ export * from './util/rgbToHex';
 export * from './util/rotateColor';
 export * from './UpdateServerRequest';
 
-export const NETWORK_VERSION = 1;
+export const NETWORK_VERSION = 2;
 
 export {
   exampleChallenges,

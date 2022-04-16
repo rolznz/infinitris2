@@ -28,7 +28,7 @@ export type LaunchOptions = WithControls & {
   spectate?: boolean;
   worldType?: WorldType;
   worldVariation?: WorldVariation;
-  roomId?: number;
+  roomIndex?: number;
   useFallbackUI?: boolean;
   isDemo?: boolean;
   allCharacters?: ICharacter[];

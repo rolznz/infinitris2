@@ -41,6 +41,7 @@ import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
 import { GameModeEvent } from '@models/GameModeEvent';
 import { IServerEndRoundEvent } from '@core/networking/server/IServerEndRoundEvent';
+import { NETWORK_VERSION } from '@models/index';
 
 export default class NetworkClient
   extends BaseClient
@@ -84,8 +85,9 @@ export default class NetworkClient
     await this._renderer.create();
     const joinRoomRequest: IClientJoinRoomRequest = {
       type: ClientMessageType.JOIN_ROOM_REQUEST,
-      roomId: this._launchOptions.roomId || 0,
+      roomIndex: this._launchOptions.roomIndex || 0,
       player: this._launchOptions.player,
+      networkVersion: NETWORK_VERSION,
     };
     this._socket.sendMessage(joinRoomRequest);
   }
@@ -190,7 +192,23 @@ export default class NetworkClient
         this._renderer.rerenderGrid();
         this._simulation.startInterval();
       } else {
-        alert('Could not join room: ' + joinResponseData.status);
+        let message = 'Unknown';
+        switch (joinResponseData.status) {
+          case JoinRoomResponseStatus.FULL:
+            message = 'Room is full';
+            break;
+          case JoinRoomResponseStatus.INCORRECT_VERSION:
+            message = 'Incorrect version';
+            break;
+          case JoinRoomResponseStatus.NOT_READY:
+            message = 'Server is not ready yet';
+            break;
+          case JoinRoomResponseStatus.WRONG_PASSWORD:
+            message = 'Wrong password';
+            break;
+        }
+        this._socket.disconnect();
+        alert('Could not join room: ' + message);
       }
     } else if (this._simulation) {
       if (message.type === ServerMessageType.PLAYER_CREATED) {

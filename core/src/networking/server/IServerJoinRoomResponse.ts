@@ -8,6 +8,8 @@ export enum JoinRoomResponseStatus {
   OK,
   FULL,
   WRONG_PASSWORD,
+  NOT_READY,
+  INCORRECT_VERSION,
 }
 
 type ServerJoinRoomResponseData =
@@ -22,8 +24,10 @@ type ServerJoinRoomResponseData =
     }
   | {
       status:
+        | JoinRoomResponseStatus.NOT_READY
         | JoinRoomResponseStatus.FULL
-        | JoinRoomResponseStatus.WRONG_PASSWORD;
+        | JoinRoomResponseStatus.WRONG_PASSWORD
+        | JoinRoomResponseStatus.INCORRECT_VERSION;
     };
 
 export interface IServerJoinRoomResponse extends IServerMessage {

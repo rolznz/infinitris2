@@ -156,7 +156,7 @@ export default function RoomPage() {
         characterId,
         nickname,
       },
-      roomId: room.data()!.roomIndex,
+      roomIndex: room.data()!.roomIndex,
       listeners: [
         ...coreGameListeners,
         {

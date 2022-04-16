@@ -15,14 +15,27 @@ import got from 'got';
 import { PlayerStatus } from '@models/IPlayer';
 import IRoom from '@models/IRoom';
 import { GameModeTypeValues } from '@models/GameModeType';
+import { IServer } from '@models/IServer';
+import { IServerMessage } from '@models/networking/server/IServerMessage';
+import {
+  IServerJoinRoomResponse,
+  JoinRoomResponseStatus,
+} from '@core/networking/server/IServerJoinRoomResponse';
+import { ServerMessageType } from '@models/networking/server/ServerMessageType';
+import { NETWORK_VERSION } from '@models/index';
 
 export default class Server implements IServerSocketEventListener {
   private _socket: IServerSocket;
   private _rooms: { [id: number]: Room };
+  private _sendServerMessage: (
+    message: IServerMessage,
+    ...socketIds: number[]
+  ) => void;
 
   constructor(socket: IServerSocket) {
     this._socket = socket;
     this._socket.addEventListener(this);
+    this._sendServerMessage = this._socket.sendMessage.bind(this._socket);
     this._rooms = {};
     this._init();
   }
@@ -40,8 +53,6 @@ export default class Server implements IServerSocketEventListener {
         (Date.now() - time) +
         'ms'
     );
-    const sendServerMessage = this._socket.sendMessage.bind(this._socket);
-
     // TODO: these should come from .env config
 
     for (let i = 0; ; i++) {
@@ -57,7 +68,7 @@ export default class Server implements IServerSocketEventListener {
         }
       }
       const roomInfo: IRoom = JSON.parse(roomInfoJson);
-      this._rooms[i] = new Room(sendServerMessage, roomInfo, characters);
+      this._rooms[i] = new Room(this._sendServerMessage, roomInfo, characters);
     }
 
     this._updateLobby();
@@ -82,9 +93,9 @@ export default class Server implements IServerSocketEventListener {
    */
   onClientDisconnect(socket: IClientSocket) {
     console.log('Client ' + socket.id + ' disconnected');
-    if (socket.roomId !== undefined) {
-      this._rooms[socket.roomId].removePlayer(socket.id);
-      this._updateLobby(socket.roomId);
+    if (socket.roomIndex !== undefined) {
+      this._rooms[socket.roomIndex].removePlayer(socket.id);
+      this._updateLobby(socket.roomIndex);
     }
   }
 
@@ -94,20 +105,43 @@ export default class Server implements IServerSocketEventListener {
   onClientMessage(socket: IClientSocket, message: IClientMessage) {
     console.log(
       'Received message from client ' + socket.id + ':',
-      message.type + ' room: ' + socket.roomId
+      message.type + ' room: ' + socket.roomIndex
     );
     try {
-      if (socket.roomId === undefined) {
+      if (socket.roomIndex === undefined) {
         if (message.type === ClientMessageType.JOIN_ROOM_REQUEST) {
-          // TODO: handle and validate full/wrong password/room ID
           const joinRoomRequest = message as IClientJoinRoomRequest;
-          socket.roomId = joinRoomRequest.roomId || 0;
-          this._rooms[socket.roomId].addPlayer(
-            socket.id,
-            joinRoomRequest.player
-          );
-          this._updateLobby(socket.roomId);
-          console.log('Client ' + socket.id + ' joined room ' + socket.roomId);
+
+          const room = this._rooms[joinRoomRequest.roomIndex];
+          const isFull =
+            room && room.simulation.players.length > room.info.maxPlayers;
+          const matchingVersion =
+            joinRoomRequest.networkVersion === NETWORK_VERSION;
+          console.log('Join room request from ' + socket.id, joinRoomRequest);
+          if (!room || isFull || !matchingVersion) {
+            const joinRoomResponse: IServerJoinRoomResponse = {
+              type: ServerMessageType.JOIN_ROOM_RESPONSE,
+              data: {
+                status: isFull
+                  ? JoinRoomResponseStatus.FULL
+                  : !matchingVersion
+                  ? JoinRoomResponseStatus.INCORRECT_VERSION
+                  : JoinRoomResponseStatus.NOT_READY,
+              },
+            };
+            console.log(
+              'Deny room request from ' + socket.id,
+              joinRoomResponse
+            );
+            this._sendServerMessage(joinRoomResponse, socket.id);
+          } else {
+            socket.roomIndex = joinRoomRequest.roomIndex;
+            room.addPlayer(socket.id, joinRoomRequest.player);
+            this._updateLobby(socket.roomIndex);
+            console.log(
+              'Client ' + socket.id + ' joined room ' + socket.roomIndex
+            );
+          }
         } else {
           console.error(
             'Unsupported message received from ' +
@@ -116,8 +150,8 @@ export default class Server implements IServerSocketEventListener {
               message.type
           );
         }
-      } else if (socket.roomId !== undefined) {
-        this._rooms[socket.roomId].onClientMessage(socket.id, message);
+      } else if (socket.roomIndex !== undefined) {
+        this._rooms[socket.roomIndex].onClientMessage(socket.id, message);
       }
     } catch (error) {
       console.error(
@@ -145,15 +179,20 @@ export default class Server implements IServerSocketEventListener {
       return;
     }
 
+    const serverInfoJson = process.env[`SERVER`];
+    if (!serverInfoJson) {
+      console.log('No SERVER set, not updating lobby server');
+      return;
+    }
+    const serverInfo: IServer = JSON.parse(serverInfoJson);
+
     const request: UpdateServerRequest = {
       server: roomIndex
         ? undefined
         : {
+            ...serverInfo,
             created: true,
-            name: 'Server 1',
-            region: 'Local',
-            url: 'ws://127.0.0.1:9001',
-            version: 2,
+            version: NETWORK_VERSION,
           },
       rooms: Object.entries(this._rooms)
         .filter((entry) => !roomIndex || parseInt(entry[0]) === roomIndex)

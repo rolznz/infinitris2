@@ -87,7 +87,7 @@ export default class ClientApi implements IClientApi {
       this.launchNetworkClient(params.get('url') as string, {
         useFallbackUI: true,
         controls_keyboard: controls,
-        roomId: parseInt(params.get('roomId') || '0'),
+        roomIndex: parseInt(params.get('roomId') || '0'),
         player: {
           characterId: '487',
           patternFilename: 'pattern_5.png',

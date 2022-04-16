@@ -11,11 +11,11 @@ export class TowerIndicator {
 
   create() {
     this._app.stage.addChild(this._graphics);
-    this._graphics.alpha = 0;
+    this.hide();
   }
 
   hide() {
-    this._graphics.alpha = 0;
+    this._graphics.visible = false;
   }
 
   update(gridY: number, isTower: boolean, grid: IGrid, cellSize: number) {
@@ -29,10 +29,7 @@ export class TowerIndicator {
         ++towerRow;
       }
       towerY = towerRow * cellSize;
-      this._graphics.alpha = Math.max(
-        Math.min(1, this._graphics.alpha + 0.025),
-        0
-      );
+      this._graphics.visible = true;
     } else {
       this.hide();
     }

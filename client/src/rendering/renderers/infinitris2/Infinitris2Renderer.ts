@@ -1606,7 +1606,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
           isTower
         );*/
         const opacity = displayInvalidPlacement ? 0.5 : 0.33;
-        const isCause = y > highestPlacementRow - cellDistanceFromLowestRow;
+        const isCause =
+          isTower || y > highestPlacementRow - cellDistanceFromLowestRow;
         const color = displayInvalidPlacement ? 0xff0000 : block.player.color;
         this.renderCopies(
           renderableCell,

@@ -39,9 +39,9 @@ import { IServerPlayerChangeStatusEvent } from '@core/networking/server/IServerP
 import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
-import { GameModeEvent } from '@models/GameModeEvent';
 import { IServerEndRoundEvent } from '@core/networking/server/IServerEndRoundEvent';
 import { NETWORK_VERSION } from '@models/index';
+import { IServerBlockDroppedEvent } from '@core/networking/server/IServerBlockDroppedEvent';
 
 export default class NetworkClient
   extends BaseClient
@@ -230,6 +230,10 @@ export default class NetworkClient
           blockInfo.layoutId,
           true
         );
+      } else if (message.type === ServerMessageType.BLOCK_DROPPED) {
+        const playerId = (message as IServerBlockDroppedEvent).playerId;
+        const block = this._simulation.getPlayer(playerId).block!;
+        block.drop();
       } else if (message.type === ServerMessageType.BLOCK_MOVED) {
         const blockInfo = (message as IServerBlockMovedEvent).blockInfo;
         const block = this._simulation.getPlayer(blockInfo.playerId).block!;

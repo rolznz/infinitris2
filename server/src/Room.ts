@@ -347,6 +347,10 @@ export default class Room implements ISimulationEventListener {
    * @inheritdoc
    */
   onBlockMoved(block: IBlock) {
+    // TODO: instant drops cause a lot of unnecessary movement messages
+    /*if (block.isDropping && this._simulation.settings.instantDrops) {
+      return;
+    }*/
     const blockMovedEvent: IServerBlockMovedEvent = {
       type: ServerMessageType.BLOCK_MOVED,
       blockInfo: {

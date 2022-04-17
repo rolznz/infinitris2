@@ -77,6 +77,8 @@ export * from './util/hexToRgb';
 export * from './util/rgbToHex';
 export * from './util/rotateColor';
 export * from './UpdateServerRequest';
+export * from './CreateUserRequest';
+export * from './IPayment';
 
 export const NETWORK_VERSION = 2;
 

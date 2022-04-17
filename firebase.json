@@ -4,12 +4,18 @@
     "indexes": "firestore.indexes.json"
   },
   "functions": {
-    "predeploy": ["echo 'Use firebase functions deploy' && exit 1"],
+    "predeploy": [
+      "echo 'Use firebase functions deploy' && exit 1"
+    ],
     "source": "functions"
   },
   "hosting": {
     "public": "app/build",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "rewrites": [
       {
         "source": "**",
@@ -32,6 +38,9 @@
     },
     "ui": {
       "enabled": true
+    },
+    "pubsub": {
+      "port": 8085
     }
   }
 }

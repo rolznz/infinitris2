@@ -22,8 +22,7 @@ export const donationsWebhook = async (req: Request, res: Response) => {
 
   if (req.query['key'] !== key) {
     res.status(StatusCodes.UNAUTHORIZED);
-    res.end();
-    return;
+    return res.send();
   }
 
   const donation: Donation = {
@@ -33,6 +32,6 @@ export const donationsWebhook = async (req: Request, res: Response) => {
   };
 
   await getDb().collection('donations').add(donation);
-  res.status(204);
-  res.end();
+  res.status(StatusCodes.NO_CONTENT);
+  return res.send();
 };

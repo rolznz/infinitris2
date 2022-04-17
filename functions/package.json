@@ -5,7 +5,7 @@
     "lint": "eslint --ext .js,.ts .",
     "build": "tsc",
     "build-webpack": "yarn lint && webpack",
-    "serve": "yarn build && firebase emulators:start --only functions",
+    "serve": "firebase functions:config:get > .runtimeconfig.json && yarn build && firebase emulators:start --only firestore,functions,auth,pubsub",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
     "deploy:characters": "GOOGLE_APPLICATION_CREDENTIALS=\"infinitris2-admin-service-key.json\" ts-node src/character-uploader.ts",
@@ -37,7 +37,7 @@
     "test:files:updateUserRateLimit": "jest -- \"src/__tests__/updateUserRateLimit.test.ts\"",
     "test:files:donationsWebhook": "jest -- \"src/__tests__/donationsWebhook.test.ts\"",
     "test:files:serversWebhook": "jest -- \"src/__tests__/serversWebhook.test.ts\"",
-    "test:files:serverWebhook": "jest -- \"src/__tests__/donationsWebhook.test.ts\"",
+    "test:files:createUserWebhook": "jest -- \"src/__tests__/createUserWebhook.test.ts\"",
     "logs": "firebase functions:log"
   },
   "engines": {
@@ -48,6 +48,7 @@
     "express": "^4.17.1",
     "firebase-admin": "9.11.1",
     "firebase-functions": "3.15.7",
+    "got": "11.x",
     "http-status-codes": "^2.2.0",
     "infinitris2-models": "^0.1"
   },

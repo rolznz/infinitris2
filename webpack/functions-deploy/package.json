@@ -14,6 +14,7 @@
     "firebase": "^8.6.7",
     "firebase-admin": "^9.11.1",
     "firebase-functions": "^3.15.7",
+    "got": "11.x",
     "http-status-codes": "^2.2.0"
   },
   "private": true

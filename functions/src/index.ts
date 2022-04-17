@@ -8,4 +8,4 @@ export * from './onCreateNickname';
 export * from './onCreateColor';
 
 export * from './schedules';
-export * from './webhooks';
+export * from './webhooks/index';

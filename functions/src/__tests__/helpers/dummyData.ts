@@ -239,10 +239,14 @@ const room1: IRoom = {
   created: true,
   maxPlayers: 3,
   numPlayers: 0,
+  numBots: 0,
+  numHumans: 0,
+  numSpectators: 0,
   name: 'Room 1',
   roomIndex: 0,
   serverId: server1Id,
   userId: userId1,
+  gameModeType: 'infinity',
 };
 const room1Id = getRoomId(server1Id, room1.roomIndex);
 const room1Path = getRoomPath(room1Id);

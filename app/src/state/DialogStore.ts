@@ -26,8 +26,7 @@ const useDialogStore = create<DialogStore>((set, get) => ({
 
 export default useDialogStore;
 
-export const openLoginDialog = () =>
-  /*useDialogStore.getState().open('login')*/ alert('Coming soon');
+export const openLoginDialog = () => useDialogStore.getState().open('login');
 export const openCoinInfoDialog = () =>
   useDialogStore.getState().open('coinInfo');
 export const openImpactInfoDialog = () =>

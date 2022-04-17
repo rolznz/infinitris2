@@ -5,19 +5,15 @@ import { Typography, Box, Link, LinearProgress, SvgIcon } from '@mui/material';
 
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
-import QRCode from 'react-qr-code';
-import { useTheme } from '@mui/material/styles';
 import { colors, zIndexes } from '@/theme/theme';
-import { toast } from 'react-toastify';
-import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
+
 import { Timestamp } from 'infinitris2-models';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';
 import FavoriteIcon from '@mui/icons-material/Favorite';
+import { LightningQR } from '@/components/ui/LightningQR';
 
 export default function AboutPage() {
-  const [, copy] = useCopyToClipboard();
   const intl = useIntl();
-  const theme = useTheme();
 
   const { donations, monthDonationSum } = useDonations();
 
@@ -55,25 +51,8 @@ export default function AboutPage() {
       </Typography>
       {process.env.REACT_APP_LIGHTNING_DONATION && (
         <FlexBox width={400} my={4} maxWidth="100%">
-          <QRCode
-            value={process.env.REACT_APP_LIGHTNING_DONATION}
-            level="L"
-            fgColor={colors.white}
-            bgColor={theme.palette.text.secondary}
-            onClick={() => {
-              copy(process.env.REACT_APP_LIGHTNING_DONATION!);
-              toast(
-                intl.formatMessage({
-                  defaultMessage: 'Address copied to clipboard',
-                  description:
-                    'Lightning Donation Address copied to clipboard toast message',
-                })
-              );
-            }}
-          />
-          <Typography align="center" variant="caption" mt={1}>
-            Payments powered by <Link href="https://lnbits.com/">lnbits</Link>
-          </Typography>
+          <LightningQR value={process.env.REACT_APP_LIGHTNING_DONATION} />
+
           <Box mt={4} />
 
           <Typography align="center" variant="body1">

@@ -11,7 +11,7 @@ export const onCreateEntity = functions.firestore
     try {
       const entity = snapshot.data() as IEntity;
       if (!entity.userId) {
-        throw new Error(
+        console.warn(
           'No userId provided when creating ' +
             context.params.collectionId +
             '/' +

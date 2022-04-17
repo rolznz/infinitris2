@@ -43,9 +43,9 @@ test('update server webhook', async () => {
   const serverData = (
     await db.doc(dummyData.server1Path).get()
   ).data() as IServer;
-  expect(serverData.name).toBe(updateServerRequest.server.name);
+  expect(serverData.name).toBe(updateServerRequest.server!.name);
   const roomData = (await db.doc(dummyData.room1Path).get()).data() as IRoom;
-  expect(roomData.numPlayers).toBe(updateServerRequest.rooms[0].numPlayers);
+  expect(roomData.numPlayers).toBe(updateServerRequest.rooms![0].numPlayers);
 });
 
 test('update server webhook with non existent server key returns not found', async () => {

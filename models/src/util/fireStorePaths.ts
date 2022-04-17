@@ -73,6 +73,9 @@ export const getPurchasePath = (
   );
 
 export const donationsPath = 'donations';
+export const paymentsPath = 'payments';
+export const getPaymentPath = (paymentHash: string) =>
+  getEntityPath(purchasesPath, paymentHash);
 
 export type EntityCollectionPath =
   | typeof colorsPath
@@ -87,7 +90,8 @@ export type EntityCollectionPath =
   | typeof charactersPath
   | typeof purchasesPath
   | typeof serversPath
-  | typeof serverKeysPath;
+  | typeof serverKeysPath
+  | typeof paymentsPath;
 
 export function getEntityPath(
   entityCollectionPath: EntityCollectionPath,

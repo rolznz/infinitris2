@@ -24,20 +24,37 @@ Sometimes a couple of tests fail when the full collection is run. If so, please 
 
 # Run locally using emulator
 
-Coming soon - execute webhooks and functions from localhost
+Test webhook functions locally: `yarn serve` then do CURL requests against `http://127.0.0.1:5001/APPNAME/us-central1/webhooks/v1/<webhookName>` and test firestore functions/hooks
 
 # Deploy
 
 Please note that the deployment scripts are in the parent directory.
 
+# Environment variables setup
+
+- key: must be provided by an external service calling one of the infinitris webhooks (e.g. create donation)
+- url: base url of infinitris webhooks, used for external services to call our webhooks
+- lightning_api_url: external Lightning API used to create invoices
+- lightning_api_key: api key to access external Lightning API
+
+`firebase functions:config:get`
+
+`firebase functions:config:set webhooks.key="SECRET KEY" webhooks.url="https://us-central1-APPNAME.cloudfunctions.net/webhooks" webhooks.lightning_api_url="https://legend.lnbits.com" webhooks.lightning_api_key="your api key"`
+
 ## Deploy firebase rules
+
+Open parent directory and run:
 
 yarn firebase:deploy:rules
 
 ## Deploy all functions
 
+Open parent directory and run:
+
 yarn firebase:deploy:functions
 
 ## Deploy an individual function
+
+Open parent directory and run:
 
 yarn firebase:deploy:functions:onCreateConversion

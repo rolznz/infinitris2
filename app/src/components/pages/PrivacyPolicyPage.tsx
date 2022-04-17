@@ -5,18 +5,17 @@ import { Page } from '../ui/Page';
 export function PrivacyPolicyPage() {
   return (
     <Page title="Privacy Policy">
-      <Typography variant="body1">Last updated: October 2, 2021</Typography>
+      <Typography variant="body1">Last updated: April 17, 2022</Typography>
       <Typography variant="body2">
         {appName} stores your gameplay progress in your browser's local storage.
         You are free to delete this at any time.
       </Typography>
 
       <Typography variant="body2">
-        You may also login to {appName} through a social media integration such
-        as Facebook or Google. We will store your email address under your user
-        account and may use this information to send you emails related to{' '}
-        {appName}. Any emails sent may contain a tracking beacon to determine
-        whether or not the email has been opened.
+        You may also login to {appName} using an email address. We will store
+        that email address under your user account and may use this information
+        to send you emails related to {appName}. Please use an anonymous email
+        address if you are worried about your privacy.
       </Typography>
       <Typography variant="body2">
         Your {appName} user profile (nickname and any other information you
@@ -27,7 +26,7 @@ export function PrivacyPolicyPage() {
         {appName} is a free game that does not intend to invade your privacy in
         any way. We do not intend to share your private information (e.g. email
         address), but there is always a chance that we could be hacked or
-        legally asked to surrender this information. Use at your own risk. Your
+        legally forced to surrender this information. Use at your own risk. Your
         progress will be saved in your online account. If you wish to delete
         your account, please create a ticket on github (link in about page).
       </Typography>

@@ -15,3 +15,6 @@ node_modules/
 
 ./infinitris2-models
 infinitris2-admin-service-key.json
+
+# config variables for local testing
+.runtimeconfig.json

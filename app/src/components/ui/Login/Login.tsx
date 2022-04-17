@@ -1,33 +1,35 @@
 import useAuthStore from '@/state/AuthStore';
 import React, { useState } from 'react';
 
-import { Box, Button, IconButton, SvgIcon, Typography } from '@mui/material';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import FlexBox from '../FlexBox';
 import LoadingSpinner from '../LoadingSpinner';
 import localStorageKeys from '@/utils/localStorageKeys';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import useAffiliateLinkRef from '../../hooks/useAffiliateLinkRef';
-import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
-
-import { ReactComponent as GoogleIcon } from '@/icons/google.svg';
-import { ReactComponent as FacebookIcon } from '@/icons/facebook.svg';
-import { ReactComponent as CrossIcon } from '@/icons/x.svg';
 import { RingIconButton } from '../RingIconButton';
-import {
-  AuthProvider,
-  FacebookAuthProvider,
-  GoogleAuthProvider,
-  signInWithPopup,
-} from 'firebase/auth';
+import { AuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth } from '@/firebase';
-import { getConversionPath, IConversion } from 'infinitris2-models';
+import {
+  CreateUserResponse,
+  getConversionPath,
+  IConversion,
+} from 'infinitris2-models';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
-import { FilledIcon } from '../FilledIcon';
 import { CharacterCoinStatChip } from '../../pages/Characters/CharacterStatChip';
-
-const googleProvider = new GoogleAuthProvider();
-const facebookProvider = new FacebookAuthProvider();
+import Typography from '@mui/material/Typography';
+import Box from '@mui/material/Box';
+import TextField from '@mui/material/TextField';
+import { Controller, useForm } from 'react-hook-form';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Input from '@mui/material/Input';
+import Button from '@mui/material/Button';
+import { SettingsVoice } from '@mui/icons-material';
+import QRCode from 'react-qr-code';
+import { LightningQR } from '@/components/ui/LightningQR';
 
 export const loginTitleId = 'login-title';
 
@@ -37,21 +39,42 @@ export interface LoginProps {
   onClose?(): void;
 }
 
+const schema = yup
+  .object({
+    email: yup.string().email().required(),
+  })
+  .required();
+
+type LoginFormData = {
+  email: string;
+};
+
 export default function Login({
   onLogin,
   onClose,
   showTitle = true,
 }: LoginProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [invoice, setInvoice] = useState<string | undefined>(undefined);
   //const user = useUser();
   //const userStore = useUserStore();
+  const intl = useIntl();
   const authUser = useAuthStore((authStore) => authStore.user);
   const [referredByAffiliateId, , deleteReferredByAffiliateId] =
     useLocalStorage<string>(localStorageKeys.referredByAffiliateId, undefined, {
       raw: true,
     });
+  const [formData, setFormData] = React.useState<LoginFormData>({ email: '' });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    defaultValues: formData,
+    resolver: yupResolver(schema),
+  });
 
-  async function loginWithProvider(provider: AuthProvider) {
+  /*async function loginWithProvider(provider: AuthProvider) {
     try {
       setIsLoading(true);
       const result = await signInWithPopup(auth, provider);
@@ -76,14 +99,14 @@ export default function Login({
           }
           deleteReferredByAffiliateId();
         }
-        /*
+        
         // FIXME: this is an ugly way to do it
         // wait for the firebase onCreateUser function to run
-          await new Promise((resolve) => setTimeout(resolve, 3000));
-          // re-retrieve the user with updated properties
-          await revalidateDocument(userPath);
-          userStore.resyncLocalStorage(userDoc);
-        */
+          // await new Promise((resolve) => setTimeout(resolve, 3000));
+          // // re-retrieve the user with updated properties
+          // await revalidateDocument(userPath);
+          // userStore.resyncLocalStorage(userDoc);
+        
         onLogin?.(result.user.uid);
         onClose?.();
       } else {
@@ -96,14 +119,27 @@ export default function Login({
       );
       setIsLoading(false);
     }
-  }
+  }*/
 
-  function loginWithGoogle() {
-    loginWithProvider(googleProvider);
-  }
-  function loginWithFacebook() {
-    loginWithProvider(facebookProvider);
-  }
+  const onSubmit = React.useCallback(
+    async (data: LoginFormData) => {
+      if (process.env.REACT_APP_API_URL) {
+        const response = (await (
+          await fetch(`${process.env.REACT_APP_API_URL}/v1/users`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+          })
+        ).json()) as CreateUserResponse;
+        if (response.invoice) {
+          setInvoice(response.invoice);
+        }
+      }
+    },
+    [setInvoice]
+  );
 
   if (authUser || isLoading) {
     return (
@@ -124,10 +160,38 @@ export default function Login({
         </Typography>
       )}
       <Box mt={4} />
-      <FlexBox flexDirection="row" style={{ gap: '20px' }}>
-        <LoginIcon icon={<GoogleIcon />} onClick={loginWithGoogle} />
-        <LoginIcon icon={<FacebookIcon />} onClick={loginWithFacebook} />
-      </FlexBox>
+      {invoice ? (
+        <FlexBox width={400} my={4} maxWidth="100%">
+          <LightningQR value={invoice} />
+        </FlexBox>
+      ) : (
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <FlexBox width={300}>
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard" fullWidth>
+                  <InputLabel>Email</InputLabel>
+                  <Input {...field} autoFocus fullWidth />
+                  <p>{errors.email?.message}</p>
+                </FormControl>
+              )}
+            />
+            <Button
+              type="submit"
+              color="primary"
+              variant="contained"
+              sx={{ width: '100%' }}
+            >
+              <FormattedMessage
+                defaultMessage="Next"
+                description="Single Player Options page - play button"
+              />
+            </Button>
+          </FlexBox>
+        </form>
+      )}
       {referredByAffiliateId && (
         <FlexBox flexDirection="row" gap={2} mt={2}>
           <Typography variant="caption" align="center" id={loginTitleId} pt={1}>
@@ -156,24 +220,5 @@ export default function Login({
       )}
       <Box mt={4} />
     </FlexBox>
-  );
-}
-
-type LoginIconProps = {
-  icon: JSX.Element;
-  onClick(): void;
-};
-function LoginIcon({ icon, onClick }: LoginIconProps) {
-  return (
-    <RingIconButton onClick={onClick} padding="none" borderWidth={8}>
-      <SvgIcon
-        sx={{
-          fontSize: '60px',
-          margin: -0.25,
-        }}
-      >
-        {icon}
-      </SvgIcon>
-    </RingIconButton>
   );
 }

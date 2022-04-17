@@ -9,7 +9,7 @@ import {
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 
-export const serversWebhook = async (req: Request, res: Response) => {
+export const updateServerWebhook = async (req: Request, res: Response) => {
   try {
     const body: UpdateServerRequest = req.body;
     const serverId = req.params.serverId;
@@ -20,8 +20,7 @@ export const serversWebhook = async (req: Request, res: Response) => {
       body.rooms?.some((room) => room.serverId !== serverId)
     ) {
       res.status(StatusCodes.BAD_REQUEST);
-      res.end();
-      return;
+      return res.send();
     }
 
     const serverKeyDoc = getDb().doc(getServerKeyPath(body.serverKey));
@@ -29,15 +28,13 @@ export const serversWebhook = async (req: Request, res: Response) => {
     const serverKey = await serverKeyDoc.get();
     if (!serverKey.exists) {
       res.status(StatusCodes.NOT_FOUND);
-      res.end();
-      return;
+      return res.send();
     }
 
     const serverKeyData = serverKey.data() as IServerKey;
     if (serverId !== serverKeyData.serverId) {
       res.status(StatusCodes.UNAUTHORIZED);
-      res.end();
-      return;
+      return res.send();
     }
 
     const serverDoc = getDb().doc(getServerPath(serverId));
@@ -57,11 +54,11 @@ export const serversWebhook = async (req: Request, res: Response) => {
         await roomDoc.set(roomToUpdate, { merge: true });
       }
     }
-    res.status(204);
-    res.end();
+    res.status(StatusCodes.NO_CONTENT);
+    return res.send();
   } catch (error) {
     console.error(error);
-    res.status(500);
-    res.end();
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+    return res.send();
   }
 };

@@ -173,7 +173,8 @@ export default class Server implements IServerSocketEventListener {
       console.log('No SERVER_SECRET_KEY set, not updating lobby server');
       return;
     }
-    const webhookUrl = process.env.WEBHOOK_URL;
+    const apiUrl =
+      process.env.API_URL || process.env.WEBHOOK_URL; /* deprecated field */
     if (!serverKey) {
       console.log('No WEBHOOK_URL set, not updating lobby server');
       return;
@@ -221,7 +222,7 @@ export default class Server implements IServerSocketEventListener {
     };
 
     console.log('Updating server in lobby: ', request);
-    const response = await got.patch(`${webhookUrl}/servers/${serverId}`, {
+    const response = await got.patch(`${apiUrl}/servers/${serverId}`, {
       json: request,
     });
     if (response.statusCode === 204) {

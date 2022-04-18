@@ -6,11 +6,11 @@ import { InvoiceData } from 'infinitris2-models';
 type CreateInvoiceRequest = {
   out: false;
   amount: number;
-  memo?: string;
+  memo: string;
   webhook: string;
 };
 
-type CreateInvoiceResponse = {
+export type CreateInvoiceResponse = {
   // eslint-disable-next-line camelcase
   payment_hash: string;
   // eslint-disable-next-line camelcase
@@ -24,8 +24,8 @@ type CreateInvoiceResponse = {
 export async function createInvoice(
   amount: number,
   data: InvoiceData,
-  memo?: string
-): Promise<string> {
+  memo: string
+): Promise<CreateInvoiceResponse> {
   if (amount < 1) {
     throw new Error('amount must be positive');
   }
@@ -53,7 +53,7 @@ export async function createInvoice(
     const createInvoiceResponse = JSON.parse(
       response.body
     ) as CreateInvoiceResponse;
-    return createInvoiceResponse.payment_request;
+    return createInvoiceResponse;
   } else {
     throw new Error(
       'Failed to create invoice: ' +

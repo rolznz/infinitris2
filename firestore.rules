@@ -245,5 +245,8 @@ service cloud.firestore {
     match /donations/{document=**} {
       allow read: if true;
     }
+    match /payments/{document=**} {
+      allow get: if true;
+    }
   }
 }

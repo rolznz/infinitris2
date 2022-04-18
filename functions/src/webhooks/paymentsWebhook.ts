@@ -3,7 +3,7 @@ import { Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
 import { getDefaultEntityReadOnlyProperties } from '../utils/getDefaultEntityReadOnlyProperties';
-import { getDb } from '../utils/firebase';
+import { createFirebaseUser, getDb } from '../utils/firebase';
 import { getPaymentPath, InvoiceData, IPayment } from 'infinitris2-models';
 
 export type PaidInvoice = {
@@ -52,10 +52,11 @@ export const paymentsWebhook = async (req: Request, res: Response) => {
       created: true,
       status: 'pending',
       amount: invoice.amount / 1000,
+      memo: invoice.memo,
     };
     await paymentRef.set(payment);
 
-    processPayment(data);
+    await processPayment(data, invoice.payment_hash);
 
     res.status(StatusCodes.NO_CONTENT);
     return res.send();
@@ -66,14 +67,33 @@ export const paymentsWebhook = async (req: Request, res: Response) => {
   }
 };
 
-function processPayment(data: InvoiceData) {
-  switch (data.type) {
-    case 'createUser':
-      console.log('TODO: create user: ' + JSON.stringify(data));
-      break;
-    default:
-      throw new Error(
-        'Unsupported invoice type: ' + data.type + ' ' + JSON.stringify(data)
-      );
+async function processPayment(data: InvoiceData, paymentHash: string) {
+  try {
+    switch (data.type) {
+      case 'createUser':
+        await processCreateUser(data, paymentHash);
+        break;
+      default:
+        throw new Error(
+          'Unsupported invoice type: ' + data.type + ' ' + JSON.stringify(data)
+        );
+    }
+    const paymentUpdate: Partial<IPayment> = {
+      status: 'completed',
+    };
+    await getDb().doc(getPaymentPath(paymentHash)).update(paymentUpdate);
+  } catch (error) {
+    console.error(error);
+    const paymentUpdate: Partial<IPayment> = {
+      status: 'failed',
+    };
+    await getDb().doc(getPaymentPath(paymentHash)).update(paymentUpdate);
   }
+}
+async function processCreateUser(
+  data: InvoiceData,
+  paymentHash: string
+): Promise<void> {
+  console.log('create user: ' + JSON.stringify(data));
+  await createFirebaseUser(data.email);
 }

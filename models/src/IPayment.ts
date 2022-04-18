@@ -14,6 +14,8 @@ export type InvoiceData = {
 export interface IPayment extends Omit<IEntity, 'userId'> {
   readonly type: InvoiceData['type'];
   readonly amount: number;
-  readonly status: 'pending' | 'complete';
+  readonly status: 'pending' | 'completed' | 'failed';
   readonly userId?: string;
+  readonly memo: string;
+  readonly email?: string;
 }

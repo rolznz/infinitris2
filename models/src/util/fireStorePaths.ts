@@ -75,7 +75,7 @@ export const getPurchasePath = (
 export const donationsPath = 'donations';
 export const paymentsPath = 'payments';
 export const getPaymentPath = (paymentHash: string) =>
-  getEntityPath(purchasesPath, paymentHash);
+  getEntityPath(paymentsPath, paymentHash);
 
 export type EntityCollectionPath =
   | typeof colorsPath

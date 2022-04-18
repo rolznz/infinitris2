@@ -36,6 +36,8 @@
     "test:files:updateNetworkImpact": "jest -- \"src/__tests__/updateNetworkImpact.test.ts\"",
     "test:files:updateUserRateLimit": "jest -- \"src/__tests__/updateUserRateLimit.test.ts\"",
     "test:files:donationsWebhook": "jest -- \"src/__tests__/donationsWebhook.test.ts\"",
+    "test:files:paymentsWebhook": "jest -- \"src/__tests__/paymentsWebhook.test.ts\"",
+    "test:files:paymentRules": "jest -- \"src/__tests__/paymentRules.test.ts\"",
     "test:files:serversWebhook": "jest -- \"src/__tests__/serversWebhook.test.ts\"",
     "test:files:createUserWebhook": "jest -- \"src/__tests__/createUserWebhook.test.ts\"",
     "logs": "firebase functions:log"

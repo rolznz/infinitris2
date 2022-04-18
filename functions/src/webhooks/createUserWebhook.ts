@@ -25,7 +25,7 @@ export const createUserWebhook = async (req: Request, res: Response) => {
       return res.send();
     }
 
-    const invoice = await createInvoice(
+    const createInvoiceResult = await createInvoice(
       1,
       {
         type: 'createUser',
@@ -35,7 +35,10 @@ export const createUserWebhook = async (req: Request, res: Response) => {
     );
 
     res.status(StatusCodes.CREATED);
-    const responseData: CreateUserResponse = { invoice };
+    const responseData: CreateUserResponse = {
+      invoice: createInvoiceResult.payment_request,
+      paymentId: createInvoiceResult.payment_hash,
+    };
     res.json(responseData);
     return res.send();
   } catch (error) {

@@ -27,4 +27,17 @@ export function increment(n: number): number {
   return admin.firestore.FieldValue.increment(n) as any as number;
 }
 
+export function createFirebaseUser(
+  email: string
+): Promise<admin.auth.UserRecord> {
+  try {
+    return admin.auth().createUser({
+      email,
+    });
+  } catch (error) {
+    console.error('Failed to create user for email', email);
+    throw error;
+  }
+}
+
 export const systemUserId = 'SYSTEM';

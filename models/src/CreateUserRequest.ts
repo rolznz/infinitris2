@@ -4,4 +4,5 @@ export type CreateUserRequest = {
 
 export type CreateUserResponse = {
   invoice: string;
+  paymentId: string;
 };

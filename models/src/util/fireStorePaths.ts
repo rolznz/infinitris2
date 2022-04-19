@@ -77,6 +77,10 @@ export const paymentsPath = 'payments';
 export const getPaymentPath = (paymentHash: string) =>
   getEntityPath(paymentsPath, paymentHash);
 
+export const loginCodesPath = 'loginCodes';
+export const getLoginCodePath = (email: string) =>
+  getEntityPath(loginCodesPath, email);
+
 export type EntityCollectionPath =
   | typeof colorsPath
   | typeof usersPath
@@ -91,7 +95,8 @@ export type EntityCollectionPath =
   | typeof purchasesPath
   | typeof serversPath
   | typeof serverKeysPath
-  | typeof paymentsPath;
+  | typeof paymentsPath
+  | typeof loginCodesPath;
 
 export function getEntityPath(
   entityCollectionPath: EntityCollectionPath,

@@ -79,6 +79,8 @@ export * from './util/rotateColor';
 export * from './UpdateServerRequest';
 export * from './CreateUserRequest';
 export * from './IPayment';
+export * from './LoginRequest';
+export * from './LoginCode';
 
 export const NETWORK_VERSION = 2;
 

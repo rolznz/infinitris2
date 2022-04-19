@@ -4,6 +4,7 @@ import { donationsWebhook } from './donationsWebhook';
 import { updateServerWebhook } from './updateServerWebhook';
 import { createUserWebhook } from './createUserWebhook';
 import { paymentsWebhook } from './paymentsWebhook';
+import { loginWebhook } from './loginWebhook';
 
 const app = express();
 app.use(express.json());
@@ -11,6 +12,7 @@ app.use(express.json());
 app.post('/v1/users', createUserWebhook);
 app.post('/v1/donations', donationsWebhook);
 app.post('/v1/payments', paymentsWebhook);
+app.post('/v1/login', loginWebhook);
 app.patch('/v1/servers/:serverId', updateServerWebhook);
 
 // expose for testing only

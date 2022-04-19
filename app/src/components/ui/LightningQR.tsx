@@ -20,7 +20,7 @@ export function LightningQR({ value }: LightningQRProps) {
     <FlexBox>
       <QRCode
         value={value}
-        level="L"
+        //level="L"
         fgColor={colors.white}
         bgColor={theme.palette.text.secondary}
         onClick={() => {

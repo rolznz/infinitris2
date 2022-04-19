@@ -4,6 +4,8 @@ import { firestore } from 'firebase-admin';
 let _app: admin.app.App;
 let _db: firestore.Firestore;
 
+export const systemUserId = 'SYSTEM';
+
 export function getApp(): admin.app.App {
   if (!_app) {
     _app = admin.initializeApp();
@@ -40,4 +42,17 @@ export function createFirebaseUser(
   }
 }
 
-export const systemUserId = 'SYSTEM';
+export async function createCustomLoginToken(email: string): Promise<string> {
+  try {
+    const { uid } = await getUserByEmail(email);
+
+    return admin.auth().createCustomToken(uid);
+  } catch (error) {
+    console.error('Failed to create custom login token for email', email);
+    throw error;
+  }
+}
+
+export function getUserByEmail(email: string): Promise<admin.auth.UserRecord> {
+  return admin.auth().getUserByEmail(email);
+}

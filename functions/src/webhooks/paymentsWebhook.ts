@@ -5,6 +5,8 @@ import { StatusCodes } from 'http-status-codes';
 import { getDefaultEntityReadOnlyProperties } from '../utils/getDefaultEntityReadOnlyProperties';
 import { createFirebaseUser, getDb } from '../utils/firebase';
 import { getPaymentPath, InvoiceData, IPayment } from 'infinitris2-models';
+import { sendLoginCode } from '../utils/sendLoginCode';
+import { generateLoginCode } from '../utils/generateLoginCode';
 
 export type PaidInvoice = {
   // eslint-disable-next-line camelcase
@@ -96,4 +98,6 @@ async function processCreateUser(
 ): Promise<void> {
   console.log('create user: ' + JSON.stringify(data));
   await createFirebaseUser(data.email);
+  const loginCode = await generateLoginCode(data.email);
+  sendLoginCode(data.email, loginCode.code);
 }

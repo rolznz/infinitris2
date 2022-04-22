@@ -8,6 +8,8 @@ import {
   getUserByEmail,
   increment,
 } from '../utils/firebase';
+import { generateLoginCode } from '../utils/generateLoginCode';
+import { sendLoginCode } from '../utils/sendLoginCode';
 let LAST_REQ_MS = 0;
 
 /**
@@ -34,7 +36,16 @@ export const loginWebhook = async (req: Request, res: Response) => {
 
     let loginCode = (await loginCodeRef.get()).data() as LoginCode | undefined;
 
-    if (!loginCode || !loginRequest.code) {
+    if (
+      loginCode &&
+      loginRequest.code === loginCode.code &&
+      loginCode.numAttempts < 3
+    ) {
+      await loginCodeRef.delete();
+      const customToken = await createCustomLoginToken(loginRequest.email);
+      res.status(StatusCodes.CREATED);
+      return res.json(customToken);
+    } else if (!loginCode || !loginRequest.code) {
       if (
         loginCode &&
         getCurrentTimestamp().seconds - loginCode.createdDateTime.seconds < 60
@@ -49,28 +60,11 @@ export const loginWebhook = async (req: Request, res: Response) => {
         res.status(StatusCodes.NOT_FOUND);
         return res.send();
       }
+      loginCode = await generateLoginCode(loginRequest.email);
 
-      loginCode = {
-        code: Math.random().toString(16).slice(6).toUpperCase(),
-        createdDateTime: getCurrentTimestamp(),
-        numAttempts: 0,
-      };
-      await loginCodeRef.set(loginCode);
+      sendLoginCode(loginRequest.email, loginCode.code);
 
-      if (1 + 3 > 2) {
-        throw new Error('Send email');
-      }
-
-      res.status(StatusCodes.NO_CONTENT);
-      return res.send();
-    }
-
-    if (loginRequest.code === loginCode.code && loginCode.numAttempts < 3) {
-      await loginCodeRef.delete();
-      const customToken = await createCustomLoginToken(loginRequest.email);
-      res.status(StatusCodes.CREATED);
-      res.json(customToken);
-      return res.send(customToken);
+      return res.status(StatusCodes.NO_CONTENT).send();
     } else {
       await loginCodeRef.update({
         numAttempts: increment(1),

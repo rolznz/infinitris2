@@ -33,9 +33,11 @@ export function createFirebaseUser(
   email: string
 ): Promise<admin.auth.UserRecord> {
   try {
-    return admin.auth().createUser({
+    const result = admin.auth().createUser({
       email,
     });
+    console.log('Created user for email: ' + email);
+    return result;
   } catch (error) {
     console.error('Failed to create user for email', email);
     throw error;

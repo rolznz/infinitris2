@@ -36,10 +36,12 @@ Please note that the deployment scripts are in the parent directory.
 - url: base url of infinitris webhooks, used for external services to call our webhooks
 - lightning_api_url: external Lightning API used to create invoices
 - lightning_api_key: api key to access external Lightning API
+- email_user: email address of sender email. Used to send emails to users e.g. login codes
+- email_password: password of sender email account
 
 `firebase functions:config:get`
 
-`firebase functions:config:set webhooks.key="SECRET KEY" webhooks.url="https://us-central1-APPNAME.cloudfunctions.net/webhooks" webhooks.lightning_api_url="https://legend.lnbits.com" webhooks.lightning_api_key="your api key"`
+`firebase functions:config:set webhooks.key="SECRET KEY" webhooks.url="https://us-central1-APPNAME.cloudfunctions.net/webhooks" webhooks.lightning_api_url="https://legend.lnbits.com" webhooks.lightning_api_key="your api key" webhooks.email_user="test@email.com" webhooks.email_password="test"`
 
 ## Deploy firebase rules
 

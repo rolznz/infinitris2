@@ -7767,6 +7767,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/nodemailer@npm:^6.4.4":
+  version: 6.4.4
+  resolution: "@types/nodemailer@npm:6.4.4"
+  dependencies:
+    "@types/node": "*"
+  checksum: 16ed1bad2cd8471fd3b026471e234da33ba3b65935dc44b31be3145eff7bdb067eb4d08ec4b41d23339b988075299abc1a0c0fe77b99f04ca235827bca95af81
+  languageName: node
+  linkType: hard
+
 "@types/normalize-package-data@npm:^2.4.0":
   version: 2.4.1
   resolution: "@types/normalize-package-data@npm:2.4.1"
@@ -15404,6 +15413,7 @@ fsevents@^1.2.7:
     firebase-functions: ^3.15.7
     got: 11.x
     http-status-codes: ^2.2.0
+    nodemailer: ^6.7.3
   languageName: unknown
   linkType: soft
 
@@ -15424,6 +15434,7 @@ fsevents@^1.2.7:
     "@types/express": ^4.17.13
     "@types/jest": ^25.x
     "@types/node": ^16.10.1
+    "@types/nodemailer": ^6.4.4
     "@types/supertest": ^2.0.11
     "@typescript-eslint/eslint-plugin": ^4.22.0
     "@typescript-eslint/parser": ^4.22.0
@@ -15440,6 +15451,7 @@ fsevents@^1.2.7:
     http-status-codes: ^2.2.0
     infinitris2-models: ^0.1
     jest: ^25.x
+    nodemailer: ^6.7.3
     supertest: ^6.1.6
     ts-jest: ^25.x
     ts-loader: 8.x
@@ -21489,6 +21501,13 @@ fsevents@^1.2.7:
   version: 2.0.1
   resolution: "node-releases@npm:2.0.1"
   checksum: b20dd8d4bced11f75060f0387e05e76b9dc4a0451f7bb3516eade6f50499ea7768ba95d8a60d520c193402df1e58cb3fe301510cc1c1ad68949c3d57b5149866
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:^6.7.3":
+  version: 6.7.3
+  resolution: "nodemailer@npm:6.7.3"
+  checksum: b94d099f00f25666fc96a7cb498045e7428045b8cc0245ce10522190fd513b586d6e31305afd019f6878f1540d14d169d0dbe2e1f77385795c7054912d822ec0
   languageName: node
   linkType: hard
 

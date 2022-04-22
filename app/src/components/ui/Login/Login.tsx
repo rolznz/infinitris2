@@ -14,6 +14,7 @@ import {
   AuthProvider,
   getAuth,
   sendSignInLinkToEmail,
+  signInWithCustomToken,
   signInWithPopup,
 } from 'firebase/auth';
 import { auth } from '@/firebase';
@@ -39,7 +40,6 @@ import { LightningQR } from '@/components/ui/LightningQR';
 import { useDocument } from 'swr-firestore';
 
 export interface LoginProps {
-  showTitle?: boolean;
   onLogin?(userId: string): void;
   onClose?(): void;
 }
@@ -50,16 +50,23 @@ const schema = yup
   })
   .required();
 
+const codeSchema = yup
+  .object({
+    code: yup.string().required(),
+  })
+  .required();
+
 type LoginFormData = {
   email: string;
 };
 
-export default function Login({
-  onLogin,
-  onClose,
-  showTitle = true,
-}: LoginProps) {
+type EnterCodeFormData = {
+  code: string;
+};
+
+export default function Login({ onLogin, onClose }: LoginProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [codeSent, setCodeSent] = useState(false);
   const [invoice, setInvoice] = useState<string | undefined>(undefined);
   const [paymentId, setPaymentId] = useState<string | undefined>(undefined);
 
@@ -85,6 +92,18 @@ export default function Login({
   } = useForm<LoginFormData>({
     defaultValues: formData,
     resolver: yupResolver(schema),
+  });
+
+  const [codeFormData, setCodeFormData] = React.useState<EnterCodeFormData>({
+    code: '',
+  });
+  const {
+    control: control2,
+    handleSubmit: handleSubmit2,
+    formState: { errors: errors2 },
+  } = useForm<EnterCodeFormData>({
+    defaultValues: codeFormData,
+    resolver: yupResolver(codeSchema),
   });
 
   React.useEffect(() => {
@@ -146,28 +165,91 @@ export default function Login({
 
   const onSubmit = React.useCallback(
     async (data: LoginFormData) => {
+      setFormData(data);
       setIsLoading(true);
       if (process.env.REACT_APP_API_URL) {
-        const response = (await (
-          await fetch(`${process.env.REACT_APP_API_URL}/v1/users`, {
+        const loginResponse = await fetch(
+          `${process.env.REACT_APP_API_URL}/v1/login`,
+          {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify(data),
-          })
-        ).json()) as CreateUserResponse;
-        console.log('Create user response', response);
-        if (response.invoice) {
-          setPaymentId(response.paymentId);
-          setInvoice(response.invoice);
+          }
+        );
+
+        if (loginResponse.ok) {
+          setCodeSent(true);
+        } else if (loginResponse.status === 404) {
+          const createUserResponse = (await (
+            await fetch(`${process.env.REACT_APP_API_URL}/v1/users`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(data),
+            })
+          ).json()) as CreateUserResponse;
+          console.log('Create user response', createUserResponse);
+          if (createUserResponse.invoice) {
+            setPaymentId(createUserResponse.paymentId);
+            setInvoice(createUserResponse.invoice);
+          } else {
+            alert('Failed to request invoice');
+          }
         } else {
-          alert('Failed to request invoice');
+          alert(
+            'Login failed: ' +
+              loginResponse.status +
+              ' ' +
+              loginResponse.statusText +
+              '\nPlease try again.'
+          );
         }
+
         setIsLoading(false);
       }
     },
-    [setInvoice, setIsLoading]
+    [setInvoice, setIsLoading, setCodeSent, setFormData]
+  );
+
+  const onSubmit2 = React.useCallback(
+    async (data: EnterCodeFormData) => {
+      setIsLoading(true);
+      if (process.env.REACT_APP_API_URL) {
+        const loginResponse = await fetch(
+          `${process.env.REACT_APP_API_URL}/v1/login`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: formData.email,
+              code: data.code,
+            }),
+          }
+        );
+
+        if (loginResponse.ok) {
+          const loginToken: string = await loginResponse.json();
+          await signInWithCustomToken(getAuth(), loginToken);
+          alert('Login success');
+        } else {
+          alert(
+            'Login failed: ' +
+              loginResponse.status +
+              ' ' +
+              loginResponse.statusText +
+              '\nPlease try again.'
+          );
+        }
+
+        setIsLoading(false);
+      }
+    },
+    [formData.email]
   );
 
   if (authUser || isLoading) {
@@ -180,16 +262,50 @@ export default function Login({
 
   return (
     <FlexBox flex={1} pt={8} px={8}>
-      {showTitle && (
-        <Typography variant="h5" align="center">
-          <FormattedMessage
-            defaultMessage="Login to continue"
-            description="Login page title"
-          />
-        </Typography>
-      )}
+      <Typography variant="h5" align="center">
+        <FormattedMessage
+          defaultMessage="Login"
+          description="Login page title"
+        />
+      </Typography>
+
       <Box mt={4} />
-      {payment?.exists() ? (
+      {codeSent ? (
+        <FlexBox>
+          <Typography variant="body1" align="center">
+            <FormattedMessage
+              defaultMessage="Please check your email and enter the 6-letter code"
+              description="Login email code instructions"
+            />
+          </Typography>
+          <form onSubmit={handleSubmit2(onSubmit2)}>
+            <FlexBox width={300}>
+              <Controller
+                name="code"
+                control={control2}
+                render={({ field }) => (
+                  <FormControl variant="standard" fullWidth>
+                    <InputLabel>Code</InputLabel>
+                    <Input {...field} autoFocus fullWidth />
+                    <p>{errors2.code?.message}</p>
+                  </FormControl>
+                )}
+              />
+              <Button
+                type="submit"
+                color="primary"
+                variant="contained"
+                sx={{ width: '100%' }}
+              >
+                <FormattedMessage
+                  defaultMessage="Next"
+                  description="Enter code next button"
+                />
+              </Button>
+            </FlexBox>
+          </form>
+        </FlexBox>
+      ) : payment?.exists() ? (
         <FlexBox>
           <Typography variant="body1" align="center">
             <FormattedMessage
@@ -232,7 +348,7 @@ export default function Login({
             >
               <FormattedMessage
                 defaultMessage="Next"
-                description="Single Player Options page - play button"
+                description="login with email next button text"
               />
             </Button>
           </FlexBox>

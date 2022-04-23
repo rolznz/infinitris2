@@ -28,7 +28,7 @@ export function EmailForm() {
   const [
     setIsLoading,
     setCodeSent,
-    setIsNewUser,
+    setViewingBenefits,
     setPaymentId,
     setInvoice,
     setEmail,
@@ -37,7 +37,7 @@ export function EmailForm() {
     (store) => [
       store.setIsLoading,
       store.setCodeSent,
-      store.setIsNewUser,
+      store.setViewingBenefits,
       store.setPaymentId,
       store.setInvoice,
       store.setEmail,
@@ -81,7 +81,7 @@ export function EmailForm() {
         } else if (loginResponse.status === 429) {
           alert('Please try again in a minute.');
         } else if (loginResponse.status === 404) {
-          setIsNewUser(true);
+          setViewingBenefits(true);
           // TODO: move this to a new page and show benefits of logging in
           // TODO: affiliate conversion must be moved to after first login
           /*
@@ -121,7 +121,7 @@ export function EmailForm() {
       setEmail,
       setIsLoading,
       setCodeSent,
-      setIsNewUser,
+      setViewingBenefits,
       setPaymentId,
       setInvoice,
     ]

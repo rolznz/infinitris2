@@ -16,12 +16,12 @@ export interface LoginProps {
 }
 
 export default function Login({ onLogin, onClose }: LoginProps) {
-  const [isLoading, invoice, codeSent, isNewUser] = useLoginStore(
+  const [isLoading, invoice, codeSent, isViewingBenefits] = useLoginStore(
     (store) => [
       store.isLoading,
       store.invoice,
       store.codeSent,
-      store.isNewUser,
+      store.viewingBenefits,
     ],
     shallow
   );
@@ -37,10 +37,10 @@ export default function Login({ onLogin, onClose }: LoginProps) {
   return (
     <FlexBox flex={1} pt={8} px={8}>
       <Typography variant="h5" align="center">
-        {isNewUser ? (
+        {isViewingBenefits ? (
           <FormattedMessage
-            defaultMessage="Create New Account"
-            description="Login page create account"
+            defaultMessage="New Account"
+            description="Login page create new account"
           />
         ) : codeSent ? (
           <FormattedMessage
@@ -66,7 +66,7 @@ export default function Login({ onLogin, onClose }: LoginProps) {
         </FlexBox>
       ) : codeSent ? (
         <CodeForm onSuccess={handleSuccess} />
-      ) : isNewUser ? (
+      ) : isViewingBenefits ? (
         <NewUserStep />
       ) : invoice ? (
         <PaymentStep />

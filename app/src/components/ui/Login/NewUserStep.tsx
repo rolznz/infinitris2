@@ -76,8 +76,8 @@ const benefitsPages: React.ReactNode[] = [
 ];
 
 export function NewUserStep() {
-  const [setIsNewUser] = useLoginStore(
-    (store) => [store.setIsNewUser],
+  const [setViewingBenefits] = useLoginStore(
+    (store) => [store.setViewingBenefits],
     shallow
   );
 
@@ -102,7 +102,7 @@ export function NewUserStep() {
       <Button
         color="primary"
         variant="contained"
-        onClick={() => setIsNewUser(false)}
+        onClick={() => setViewingBenefits(false)}
       >
         <FormattedMessage
           defaultMessage="Prove you're human"

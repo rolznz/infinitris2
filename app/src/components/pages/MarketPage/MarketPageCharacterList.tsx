@@ -12,7 +12,7 @@ import { ICharacter, charactersPath } from 'infinitris2-models';
 import React from 'react';
 import { useInView } from 'react-intersection-observer';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import { useCollection } from 'swr-firestore';
+import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { CharacterTile } from './MarketPageCharacterTile';
 
 const cachedCharacters: Record<
@@ -54,10 +54,8 @@ export function MarketPageCharacterList({
   const characterId = (user as LocalUser).characterId;
   const myIds = React.useMemo(() => [characterId], [characterId]);
 
-  // TODO: useCollection purchases for my-blocks
-  const { data: characters } = useCollection<ICharacter>(
-    loadMore ? charactersPath : null,
-    {
+  const useCharactersOptions: UseCollectionOptions = React.useMemo(
+    () => ({
       constraints: [
         ...(filter === 'my-blocks'
           ? [
@@ -79,7 +77,14 @@ export function MarketPageCharacterList({
         ...(lastCharacter ? [startAfter(lastCharacter)] : []),
         limit(fetchLimit),
       ],
-    }
+    }),
+    [fetchLimit, filter, lastCharacter, myIds]
+  );
+
+  // TODO: useCollection purchases for my-blocks
+  const { data: characters } = useCollection<ICharacter>(
+    loadMore ? charactersPath : null,
+    useCharactersOptions
   );
 
   React.useEffect(() => {

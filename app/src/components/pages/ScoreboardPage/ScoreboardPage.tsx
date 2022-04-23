@@ -4,18 +4,20 @@ import { Box, Card, Typography } from '@mui/material';
 import FlexBox from '../../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { IScoreboardEntry, scoreboardEntriesPath } from 'infinitris2-models';
-import { useCollection } from 'swr-firestore';
+import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { Page } from '../../ui/Page';
 import { ScoreboardCard } from './ScoreboardCard';
 import { orderBy } from 'firebase/firestore';
+
+const scoreboardCollectionOptions: UseCollectionOptions = {
+  constraints: [orderBy('networkImpact', 'desc')],
+};
 
 export default function ScoreboardPage() {
   const intl = useIntl();
   const { data: scoreboardEntries } = useCollection<IScoreboardEntry>(
     scoreboardEntriesPath,
-    {
-      constraints: [orderBy('networkImpact', 'desc')],
-    }
+    scoreboardCollectionOptions
   );
 
   return (

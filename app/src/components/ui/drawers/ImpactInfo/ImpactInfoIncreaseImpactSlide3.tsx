@@ -25,7 +25,7 @@ export function ImpactInfoIncreaseImpactSlide3() {
       }
       content={
         <FlexBox height="100%">
-          <Typography variant="body1" mt={1}>
+          <Typography variant="body2" mt={1}>
             <FormattedMessage
               defaultMessage="By inviting your friends!"
               description="Impact info slide 3 - increase impact by inviting friends"

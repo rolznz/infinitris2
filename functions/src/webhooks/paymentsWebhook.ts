@@ -73,7 +73,7 @@ async function processPayment(data: InvoiceData, paymentHash: string) {
   try {
     switch (data.type) {
       case 'createUser':
-        await processCreateUser(data, paymentHash);
+        await processCreateUser(data);
         break;
       default:
         throw new Error(
@@ -92,12 +92,9 @@ async function processPayment(data: InvoiceData, paymentHash: string) {
     await getDb().doc(getPaymentPath(paymentHash)).update(paymentUpdate);
   }
 }
-async function processCreateUser(
-  data: InvoiceData,
-  paymentHash: string
-): Promise<void> {
+async function processCreateUser(data: InvoiceData): Promise<void> {
   console.log('create user: ' + JSON.stringify(data));
   await createFirebaseUser(data.email);
   const loginCode = await generateLoginCode(data.email);
-  sendLoginCode(data.email, loginCode.code);
+  await sendLoginCode(data.email, loginCode.code);
 }

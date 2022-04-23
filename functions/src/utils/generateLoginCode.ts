@@ -5,7 +5,7 @@ export async function generateLoginCode(email: string) {
   const loginCodeRef = getDb().doc(getLoginCodePath(email));
 
   const loginCode: LoginCode = {
-    code: Math.random().toString(16).slice(6).toUpperCase(),
+    code: Math.random().toString(16).slice(2, 8).toUpperCase(),
     createdDateTime: getCurrentTimestamp(),
     numAttempts: 0,
   };

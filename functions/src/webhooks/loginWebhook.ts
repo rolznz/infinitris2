@@ -62,7 +62,7 @@ export const loginWebhook = async (req: Request, res: Response) => {
       }
       loginCode = await generateLoginCode(loginRequest.email);
 
-      sendLoginCode(loginRequest.email, loginCode.code);
+      await sendLoginCode(loginRequest.email, loginCode.code);
 
       return res.status(StatusCodes.NO_CONTENT).send();
     } else {

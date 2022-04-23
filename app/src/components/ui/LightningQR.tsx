@@ -7,6 +7,7 @@ import QRCode from 'react-qr-code';
 import { toast } from 'react-toastify';
 import { useCopyToClipboard } from 'react-use';
 import { useTheme } from '@mui/material/styles';
+import isMobile from '@/utils/isMobile';
 
 type LightningQRProps = {
   value: string;
@@ -20,7 +21,7 @@ export function LightningQR({ value }: LightningQRProps) {
     <FlexBox>
       <QRCode
         value={value}
-        //level="L"
+        level="L"
         fgColor={colors.white}
         bgColor={theme.palette.text.secondary}
         onClick={() => {
@@ -34,6 +35,11 @@ export function LightningQR({ value }: LightningQRProps) {
           );
         }}
       />
+      {isMobile() && (
+        <Typography align="center" variant="caption" mt={1}>
+          Tap to copy
+        </Typography>
+      )}
       <Typography align="center" variant="caption" mt={1}>
         Payments powered by <Link href="https://lnbits.com/">lnbits</Link>
       </Typography>

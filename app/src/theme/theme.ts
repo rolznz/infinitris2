@@ -98,9 +98,19 @@ export const coreThemeOptions: ThemeOptions = {
       fontSize: 16,
       fontFamily: [secondaryFontFamily].join(','),
     },
+    caption: {
+      fontFamily: [secondaryFontFamily].join(','),
+    },
   },
   zIndex: zIndexes as any,
   components: {
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          color: borderColor,
+        },
+      },
+    },
     MuiTextField: {},
     MuiPaper: {
       styleOverrides: {

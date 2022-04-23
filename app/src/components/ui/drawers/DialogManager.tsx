@@ -1,5 +1,6 @@
 import Login from '@/components/ui/Login/Login';
 import useDialogStore, {
+  closeDialog,
   dialogAnimationLength,
   DialogType,
 } from '@/state/DialogStore';
@@ -9,6 +10,7 @@ import { RingIconButton } from '../RingIconButton';
 import { CoinInfoDrawerContent } from './CoinInfo/CoinInfoDrawerContent';
 import { ImpactInfoDrawerContent } from './ImpactInfo/ImpactInfoDrawerContent';
 import { ReactComponent as CrossIcon } from '@/icons/x.svg';
+import { ReactComponent as BackIcon } from '@/icons/left.svg';
 import FlexBox from '../FlexBox';
 import { useHistory } from 'react-router-dom';
 import Routes from '@/models/Routes';
@@ -16,25 +18,13 @@ import { borderColorDark } from '@/theme/theme';
 import shallow from 'zustand/shallow';
 
 export function DialogManager() {
-  const [prevDialogType, setPrevDialogType] = React.useState<
-    DialogType | undefined
-  >(undefined);
   const history = useHistory();
-  const [dialogType, close] = useDialogStore(
-    (dialogStore) => [dialogStore.dialogType, dialogStore.close],
+  const [dialogTypes] = useDialogStore(
+    (dialogStore) => [dialogStore.dialogTypes],
     shallow
   );
 
-  React.useEffect(() => {
-    if (dialogType) {
-      setPrevDialogType(dialogType);
-    } else {
-      setTimeout(
-        () => setPrevDialogType(useDialogStore.getState().dialogType),
-        dialogAnimationLength
-      );
-    }
-  }, [setPrevDialogType, dialogType]);
+  const currentDialogType = dialogTypes[dialogTypes.length - 1];
 
   const onLogin = React.useCallback(() => {
     history.push(Routes.profile);
@@ -44,23 +34,23 @@ export function DialogManager() {
     <>
       <Drawer
         anchor="bottom"
-        open={!!dialogType}
-        onClose={close}
+        open={!!currentDialogType}
+        onClose={closeDialog}
         transitionDuration={{
           enter: dialogAnimationLength,
           exit: dialogAnimationLength,
         }}
       >
-        {prevDialogType === 'login' && (
-          <Login onClose={close} onLogin={onLogin} />
+        {currentDialogType === 'login' && (
+          <Login onClose={closeDialog} onLogin={onLogin} />
         )}
-        {prevDialogType === 'coinInfo' && <CoinInfoDrawerContent />}
-        {prevDialogType === 'impactInfo' && <ImpactInfoDrawerContent />}
-        {prevDialogType && (
+        {currentDialogType === 'coinInfo' && <CoinInfoDrawerContent />}
+        {currentDialogType === 'impactInfo' && <ImpactInfoDrawerContent />}
+        {currentDialogType && (
           <FlexBox mt={2} mb={4}>
-            <RingIconButton padding="large" onClick={close}>
+            <RingIconButton padding="large" onClick={closeDialog}>
               <SvgIcon sx={{ color: borderColorDark }}>
-                <CrossIcon />
+                {dialogTypes.length === 1 ? <CrossIcon /> : <BackIcon />}
               </SvgIcon>
             </RingIconButton>
           </FlexBox>

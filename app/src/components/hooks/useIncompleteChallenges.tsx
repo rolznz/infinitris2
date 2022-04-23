@@ -1,14 +1,16 @@
-import { useCollection } from 'swr-firestore';
+import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import { where } from 'firebase/firestore';
 //import { useUser } from '../../state/UserStore';
 
+const useIncompleteChallengesOptions: UseCollectionOptions = {
+  constraints: [where('isOfficial', '==', true)],
+};
+
 export default function useIncompleteChallenges() {
   const { data: officialChallenges } = useCollection<IChallenge>(
     challengesPath,
-    {
-      constraints: [where('isOfficial', '==', true)],
-    }
+    useIncompleteChallengesOptions
   );
 
   const isLoadingOfficialChallenges = !officialChallenges?.length;

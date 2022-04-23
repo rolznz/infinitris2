@@ -1,5 +1,5 @@
 import { Card, Typography } from '@mui/material';
-import { useCollection } from 'swr-firestore';
+import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -50,9 +50,17 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
 export function LoadChallengePage() {
   const userId = useAuthStore().user?.uid;
 
-  const { data: userChallenges } = useCollection<IChallenge>(challengesPath, {
-    constraints: [where('userId', '==', userId)],
-  });
+  const useUserChallengesOptions: UseCollectionOptions = React.useMemo(
+    () => ({
+      constraints: [where('userId', '==', userId)],
+    }),
+    [userId]
+  );
+
+  const { data: userChallenges } = useCollection<IChallenge>(
+    challengesPath,
+    useUserChallengesOptions
+  );
   const { data: challenges } = useCollection<IChallenge>(challengesPath);
 
   if (!challenges) {

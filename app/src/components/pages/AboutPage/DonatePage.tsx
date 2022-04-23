@@ -15,7 +15,7 @@ import { LightningQR } from '@/components/ui/LightningQR';
 export default function AboutPage() {
   const intl = useIntl();
 
-  const { donations, monthDonationSum } = useDonations();
+  const { donations, monthDonationSum } = useDonations(true, true);
 
   return (
     <Page

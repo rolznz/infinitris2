@@ -20,7 +20,7 @@ export function ImpactInfoIncreaseImpactSlide() {
       }
       content={
         <FlexBox>
-          <Typography variant="body1" mt={1}>
+          <Typography variant="body2" mt={1}>
             <FormattedMessage
               defaultMessage="To ascend the scoreboard, earn coins and more!"
               description="Impact info slide 1 - impact benefits"

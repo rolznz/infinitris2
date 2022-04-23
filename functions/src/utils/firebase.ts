@@ -1,5 +1,5 @@
 import * as admin from 'firebase-admin';
-import { firestore } from 'firebase-admin';
+import { FirebaseError, firestore } from 'firebase-admin';
 
 let _app: admin.app.App;
 let _db: firestore.Firestore;
@@ -46,7 +46,7 @@ export function createFirebaseUser(
 
 export async function createCustomLoginToken(email: string): Promise<string> {
   try {
-    const { uid } = await getUserByEmail(email);
+    const { uid } = (await getUserByEmail(email))!;
 
     return admin.auth().createCustomToken(uid);
   } catch (error) {
@@ -55,6 +55,17 @@ export async function createCustomLoginToken(email: string): Promise<string> {
   }
 }
 
-export function getUserByEmail(email: string): Promise<admin.auth.UserRecord> {
-  return admin.auth().getUserByEmail(email);
+export async function getUserByEmail(
+  email: string
+): Promise<admin.auth.UserRecord | null> {
+  try {
+    const result = await admin.auth().getUserByEmail(email);
+    return result;
+  } catch (error) {
+    if ((error as FirebaseError).code === 'auth/user-not-found') {
+      return Promise.resolve(null);
+    } else {
+      throw error;
+    }
+  }
 }

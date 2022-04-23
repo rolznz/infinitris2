@@ -1,6 +1,7 @@
-import { useCollection } from 'swr-firestore';
+import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { Donation } from 'infinitris2-models';
 import { orderBy, Timestamp, where } from 'firebase/firestore';
+import React from 'react';
 
 const ONE_MONTH_IN_SECONDS = 60 * 60 * 24 * 30;
 
@@ -9,11 +10,9 @@ oneMonthAgo.setSeconds(oneMonthAgo.getSeconds() - ONE_MONTH_IN_SECONDS);
 
 export const donationTarget = 10; // sats
 
-export function useDonations(active: boolean = true) {
-  // FIXME: swr-firestore timestamp where query is broken
-  const { data: donations } = useCollection<Donation>(
-    active ? 'donations' : null,
-    {
+export function useDonations(active = true, listen = false) {
+  const useDonationOptions: UseCollectionOptions = React.useMemo(
+    () => ({
       constraints: [
         where(
           'createdTimestamp',
@@ -22,7 +21,15 @@ export function useDonations(active: boolean = true) {
         ),
         orderBy('createdTimestamp', 'desc'),
       ],
-    }
+      listen,
+    }),
+    [listen]
+  );
+
+  // FIXME: swr-firestore timestamp where query is broken
+  const { data: donations } = useCollection<Donation>(
+    active ? 'donations' : null,
+    useDonationOptions
   );
   const donationsThisMonth = donations
     ?.filter(

@@ -1,3 +1,4 @@
+import useLoginStore from '@/state/LoginStore';
 import create from 'zustand';
 
 export type DialogType = 'login' | 'coinInfo' | 'impactInfo';
@@ -5,23 +6,28 @@ export type DialogType = 'login' | 'coinInfo' | 'impactInfo';
 export const dialogAnimationLength = 500;
 
 type DialogStore = {
-  readonly dialogType?: DialogType;
-  //readonly pr?: DialogType;
+  readonly dialogTypes: DialogType[];
   open(dialogType?: DialogType): void;
   close(): void;
 };
 
 const useDialogStore = create<DialogStore>((set, get) => ({
-  dialog: null,
+  dialogTypes: [],
   open: (dialogType: DialogType = 'login') => {
-    const currentDialogType = get().dialogType;
-    if (currentDialogType) {
-      get().close();
-    }
-    const executeOpen = () => set((_) => ({ dialogType }));
-    setTimeout(executeOpen, currentDialogType ? dialogAnimationLength : 0);
+    const executeOpen = () =>
+      set((prevState) => ({
+        dialogTypes: [...prevState.dialogTypes, dialogType],
+      }));
+    executeOpen();
+    //setTimeout(executeOpen, currentDialogType ? dialogAnimationLength : 0);
   },
-  close: () => set((_) => ({ dialogType: undefined })),
+  close: () =>
+    set((prevState) => ({
+      dialogTypes: prevState.dialogTypes.slice(
+        0,
+        prevState.dialogTypes.length - 1
+      ),
+    })),
 }));
 
 export default useDialogStore;
@@ -31,4 +37,10 @@ export const openCoinInfoDialog = () =>
   useDialogStore.getState().open('coinInfo');
 export const openImpactInfoDialog = () =>
   useDialogStore.getState().open('impactInfo');
-export const closeDialog = () => useDialogStore.getState().close();
+export const closeDialog = () => {
+  const currentDialogTypes = useDialogStore.getState().dialogTypes;
+  if (currentDialogTypes[currentDialogTypes.length - 1] === 'login') {
+    useLoginStore.getState().reset();
+  }
+  useDialogStore.getState().close();
+};

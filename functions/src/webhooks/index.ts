@@ -5,8 +5,12 @@ import { updateServerWebhook } from './updateServerWebhook';
 import { createUserWebhook } from './createUserWebhook';
 import { paymentsWebhook } from './paymentsWebhook';
 import { loginWebhook } from './loginWebhook';
+import * as cors from 'cors';
+
+const corsHandler = cors({ origin: true });
 
 const app = express();
+app.use(corsHandler);
 app.use(express.json());
 
 app.post('/v1/users', createUserWebhook);

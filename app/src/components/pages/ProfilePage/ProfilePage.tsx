@@ -18,7 +18,7 @@ export default function ProfilePage() {
   const userId = useAuthStore().user?.uid;
   /*const { data: userChallenges } = useCollection<IChallenge>(
     userId ? challengesPath : null,
-    {
+    {MEMO
       where: [['userId', '==', userId]],
     }
   );*/

@@ -1,45 +1,16 @@
-import useAuthStore from '@/state/AuthStore';
-import React, { useState } from 'react';
+import React from 'react';
 
-import { FormattedMessage, useIntl } from 'react-intl';
+import { FormattedMessage } from 'react-intl';
 import FlexBox from '../FlexBox';
-import LoadingSpinner from '../LoadingSpinner';
-import localStorageKeys from '@/utils/localStorageKeys';
-import useLocalStorage from 'react-use/lib/useLocalStorage';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
-import useAffiliateLinkRef from '../../hooks/useAffiliateLinkRef';
-import { RingIconButton } from '../RingIconButton';
+
+
 import {
-  AuthProvider,
-  getAuth,
-  sendSignInLinkToEmail,
-  signInWithCustomToken,
-  signInWithPopup,
-} from 'firebase/auth';
-import { auth } from '@/firebase';
-import {
-  CreateUserResponse,
-  getConversionPath,
   getPaymentPath,
-  IConversion,
   IPayment,
 } from 'infinitris2-models';
-import { doc, getFirestore, setDoc } from 'firebase/firestore';
-import { CharacterCoinStatChip } from '../../pages/Characters/CharacterStatChip';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import { Controller, useForm } from 'react-hook-form';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Input from '@mui/material/Input';
-import Button from '@mui/material/Button';
-import { SettingsVoice } from '@mui/icons-material';
 import { LightningQR } from '@/components/ui/LightningQR';
 import { useDocument, UseDocumentOptions } from 'swr-firestore';
-import { CodeForm } from '@/components/ui/Login/CodeForm';
-import { EmailForm } from '@/components/ui/Login/EmailForm';
 import useLoginStore from '@/state/LoginStore';
 import shallow from 'zustand/shallow';
 import Link from '@mui/material/Link';

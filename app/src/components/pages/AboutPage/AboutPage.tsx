@@ -23,7 +23,6 @@ import { AboutIconButton } from './AboutIconButton';
 }));*/
 
 export default function AboutPage() {
-  const classes = { shareButton: '' }; //useStyles();
   const intl = useIntl();
 
   return (

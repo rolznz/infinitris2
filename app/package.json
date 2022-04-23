@@ -61,10 +61,29 @@
     "formatjs:compile:all": "yarn formatjs:compile:en && yarn formatjs:compile:th",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook -s public",
-    "lt": "lt --port 3000 --subdomain infinitris"
+    "lt": "lt --port 3000 --subdomain infinitris",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "plugins": [
+      "unused-imports"
+    ],
+    "rules": {
+      "no-sparse-arrays": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          "vars": "all",
+          "varsIgnorePattern": "^_",
+          "args": "after-used",
+          "argsIgnorePattern": "^_"
+        }
+      ]
+    }
   },
   "repository": {
     "type": "git",
@@ -116,6 +135,8 @@
     "@types/react-swipeable-views": "^0.13.1",
     "@types/smoothscroll-polyfill": "^0.3.1",
     "@types/uuid": "^8.3.0",
-    "dotenv-cli": "^5.0.0"
+    "dotenv-cli": "^5.0.0",
+    "eslint": "^7.6.0",
+    "eslint-plugin-unused-imports": "^2.0.0"
   }
 }

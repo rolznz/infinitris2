@@ -19,7 +19,7 @@ export default function Loadable({ id: key, child }: LoadableProps) {
       loadedKeys.push(key);
       increaseSteps();
     }
-  }, [increaseSteps]);
+  }, [increaseSteps, key]);
 
   function onLoad() {
     increaseStepsCompleted();

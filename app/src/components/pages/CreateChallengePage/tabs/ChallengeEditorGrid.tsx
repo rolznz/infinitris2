@@ -1,11 +1,10 @@
 import FlexBox from '@/components/ui/FlexBox';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import Button from '@mui/material/Button';
-import { parseGrid } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import ChallengeGridPreview, {
+import {
   FittedChallengeGridPreview,
 } from '../../ChallengesPage/ChallengeGridPreview';
 import { Link as RouterLink } from 'react-router-dom';

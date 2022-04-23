@@ -59,14 +59,6 @@ function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   );
 }
 
-type PageAnimationType = 'slideup';
-
-type RouteProps = React.PropsWithChildren<{
-  exact?: boolean;
-  path?: string;
-  animation?: PageAnimationType;
-}>;
-
 export default function PageRouter() {
   return (
     <BrowserRouter>

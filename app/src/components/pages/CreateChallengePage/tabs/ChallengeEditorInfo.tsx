@@ -1,6 +1,6 @@
 import FlexBox from '@/components/ui/FlexBox';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
-import { FormControl, Input, FormHelperText } from '@mui/material';
+import { FormControl, Input } from '@mui/material';
 import React from 'react';
 import PublicOffIcon from '@mui/icons-material/PublicOff';
 import FolderIcon from '@mui/icons-material/Folder';

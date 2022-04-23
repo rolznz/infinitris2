@@ -3,7 +3,6 @@ import { borderRadiuses, boxShadows, colors, textShadows } from '@/theme/theme';
 import { PlacingStar } from '@/components/pages/Characters/PlacingStar';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import { SxProps, Theme } from '@mui/material/styles';
 import React from 'react';
 import useIngameStore, { LeaderboardEntry } from '@/state/IngameStore';

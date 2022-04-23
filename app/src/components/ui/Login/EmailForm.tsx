@@ -1,5 +1,4 @@
 import FlexBox from '@/components/ui/FlexBox';
-import Typography from '@mui/material/Typography';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import React from 'react';
@@ -9,7 +8,6 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Input from '@mui/material/Input';
 import Button from '@mui/material/Button';
-import { getAuth, signInWithCustomToken } from 'firebase/auth';
 import useLoginStore from '@/state/LoginStore';
 import shallow from 'zustand/shallow';
 import { CreateUserResponse } from 'infinitris2-models';

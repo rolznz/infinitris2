@@ -1,12 +1,10 @@
-import { Typography, SvgIcon, Box, Button } from '@mui/material';
+import { Typography, SvgIcon, Box } from '@mui/material';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import FlexBox from '../../FlexBox';
 import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
-import { openImpactInfoDialog } from '@/state/DialogStore';
 import { useUser } from '@/state/UserStore';
 import { InfoSlide } from '../InfoSlide';
-import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 
 export function ImpactInfoIncreaseImpactSlide() {
   const impact = useUser().readOnly?.networkImpact || 0;

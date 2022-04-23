@@ -6,7 +6,6 @@ import {
   Checkbox,
   FormControlLabel,
   LinearProgress,
-  SxProps,
   Typography,
 } from '@mui/material';
 

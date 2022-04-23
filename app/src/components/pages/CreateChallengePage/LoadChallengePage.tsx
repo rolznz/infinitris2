@@ -6,8 +6,6 @@ import { FormattedMessage } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import useAuthStore from '../../../state/AuthStore';
-import localStorageKeys from '../../../utils/localStorageKeys';
-import prettyStringify from '../../../utils/prettyStringify';
 
 import FlexBox from '../../ui/FlexBox';
 import LoadingSpinner from '../../ui/LoadingSpinner';

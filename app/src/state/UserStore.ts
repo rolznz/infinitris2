@@ -136,7 +136,10 @@ export function useUserStore<StateSlice>(
     ) => {
       updateUser({ preferredInputMethod });
     },
-    addChallengeAttempt: (challengeId: string, attempt: IChallengeAttempt) => {
+    addChallengeAttempt: (
+      _challengeId: string,
+      _attempt: IChallengeAttempt
+    ) => {
       // TODO: store locally, plus challenge attempt sync
       /*const attempts = user.challengeAttempts[challengeId] || [];
       updateUser({
@@ -146,7 +149,7 @@ export function useUserStore<StateSlice>(
         },
       });*/
     },
-    completeChallenge: (challengeId: string) => {
+    completeChallenge: (_challengeId: string) => {
       // TODO: remove this function, just use addChallengeAttempt
       /*const uniqueIds = new Set([...user.completedChallengeIds, challengeId]);
       updateUser({

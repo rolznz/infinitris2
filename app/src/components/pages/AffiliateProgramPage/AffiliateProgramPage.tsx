@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Button, Link, SvgIcon, Typography } from '@mui/material';
+import { Box, Button, Link, Typography } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 

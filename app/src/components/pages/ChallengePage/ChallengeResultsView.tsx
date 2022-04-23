@@ -1,10 +1,8 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { borderRadiuses } from '@/theme/theme';
 import { Button, Typography } from '@mui/material';
-import { IIngameChallengeAttempt } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import { useUser } from '../../../state/UserStore';
 import ChallengeMedalDisplay from './ChallengeMedalDisplay';
 import RateChallenge from './RateChallenge';
 
@@ -23,7 +21,7 @@ export default function ChallengeResultsView({
   onContinue,
   onRetry,
 }: ChallengeResultsViewProps) {
-  const user = useUser();
+  //const user = useUser();
 
   // TODO: add keyboard shortcuts / improve accessibility
   /*const [hasReceivedRetryInput] = useReceivedInput('r', true);

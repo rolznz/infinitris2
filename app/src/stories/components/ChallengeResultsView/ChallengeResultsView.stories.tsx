@@ -1,7 +1,6 @@
 import ChallengeResultsView, {
   ChallengeResultsViewProps,
 } from '@/components/pages/ChallengePage/ChallengeResultsView';
-import { IChallengeAttempt } from 'infinitris2-models';
 import React from 'react';
 
 import { Meta, Story } from '@storybook/react';
@@ -24,18 +23,18 @@ export default {
   decorators: [],
 } as Meta;
 
-const status: IChallengeAttempt = {
-  medalIndex: 3,
-  status: 'success',
-  stats: {
-    blocksPlaced: 1,
-    linesCleared: 1,
-    timeTakenMs: 1500,
-  },
-  userId: '',
-  created: false,
-  challengeId: '',
-};
+// const status: IChallengeAttempt = {
+//   medalIndex: 3,
+//   status: 'success',
+//   stats: {
+//     blocksPlaced: 1,
+//     linesCleared: 1,
+//     timeTakenMs: 1500,
+//   },
+//   userId: '',
+//   created: false,
+//   challengeId: '',
+// };
 
 const Template: Story<ChallengeResultsViewProps> = (args) => (
   <ChallengeResultsView {...args} />

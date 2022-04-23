@@ -1,4 +1,4 @@
-import { borderColorLight, boxShadows, borderRadiuses } from '@/theme/theme';
+import { boxShadows, borderRadiuses } from '@/theme/theme';
 import { Typography, Box } from '@mui/material';
 import React from 'react';
 import FlexBox from '../FlexBox';

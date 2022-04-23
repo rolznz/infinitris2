@@ -1,7 +1,6 @@
 import { Link as RouterLink } from 'react-router-dom';
 import { IChallenge } from 'infinitris2-models';
 import React from 'react';
-import { useUser } from '../../../state/UserStore';
 import Routes from '../../../models/Routes';
 import useIncompleteChallenges from '../../hooks/useIncompleteChallenges';
 import ChallengeGridPreview from './ChallengeGridPreview';
@@ -15,7 +14,7 @@ interface ChallengeCardProps {
 }
 
 export default function ChallengeCard({ challenge }: ChallengeCardProps) {
-  const user = useUser();
+  //const user = useUser();
   //const translation = challenge?.translations?.[user.locale];
   const { incompleteChallenges } = useIncompleteChallenges();
   const isLocked = incompleteChallenges.find(

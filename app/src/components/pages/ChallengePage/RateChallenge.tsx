@@ -66,8 +66,8 @@ export default function RateChallenge({
   const intl = useIntl();
   const userId = useAuthStore().user?.uid;
   const [hoverRating, setHoverRating] = useState(0);
-  const [isLoginModalOpen, setLoginModalOpen] = useState(false);
-  const [guestRating, setGuestRating] = useState(0);
+  const [_isLoginModalOpen, setLoginModalOpen] = useState(false);
+  const [_guestRating, setGuestRating] = useState(0);
 
   const { data: challenge } = useDocument<IChallenge>(
     !isTest && challengeId ? getChallengePath(challengeId) : null

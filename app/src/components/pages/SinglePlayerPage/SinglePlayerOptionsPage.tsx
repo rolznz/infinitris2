@@ -1,5 +1,4 @@
 import { useHistory } from 'react-router-dom';
-import Routes from '../../../models/Routes';
 import { Page } from '../../ui/Page';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Controller, useForm } from 'react-hook-form';

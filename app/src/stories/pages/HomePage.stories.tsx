@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { Meta } from '@storybook/react';
-import { HomePage } from '@/components/pages/HomePage/HomePage';
 import { HomePageBackground } from '@/components/pages/HomePage/HomePageBackground';
 
 export default {

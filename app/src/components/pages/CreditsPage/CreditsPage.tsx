@@ -1,6 +1,6 @@
 import { Box, Link, SvgIcon, Typography } from '@mui/material';
 import React from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
+import { useIntl } from 'react-intl';
 import FlexBox from '../../ui/FlexBox';
 import { Page } from '../../ui/Page';
 import GlobeIcon from '@mui/icons-material/Public';

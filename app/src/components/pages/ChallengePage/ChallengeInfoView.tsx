@@ -3,8 +3,7 @@ import { borderRadiuses } from '@/theme/theme';
 import { Box, Typography } from '@mui/material';
 import { IChallenge } from 'infinitris2-models';
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
-import { useUser } from '../../../state/UserStore';
+//import { useUser } from '../../../state/UserStore';
 import useTrue from '../../hooks/useTrue';
 import FlexBox from '../../ui/FlexBox';
 
@@ -17,7 +16,7 @@ export default function ChallengeInfoView({
   onReceivedInput,
   challenge,
 }: ChallengeInfoViewProps) {
-  const user = useUser();
+  //const user = useUser();
   const [hasReceivedInput, continueButton] = useContinueButton();
 
   useTrue(hasReceivedInput, onReceivedInput);

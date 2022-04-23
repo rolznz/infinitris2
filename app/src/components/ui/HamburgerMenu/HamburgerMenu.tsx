@@ -18,11 +18,9 @@ import { ReactComponent as ShareEarnIcon } from '@/icons/share_earn.svg';
 import { ReactComponent as ScoreboardIcon } from '@/icons/scoreboard.svg';
 import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
 import { ReactComponent as AboutIcon } from '@/icons/about.svg';
-import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { ReactComponent as LogoutIcon } from '@/icons/logout.svg';
 import { ReactComponent as LoginIcon } from '@/icons/login.svg';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import useAppStore from '@/state/AppStore';
 import { FormattedMessage } from 'react-intl';
 import Routes from '@/models/Routes';
 import HamburgerListItem from './HamburgerListItem';
@@ -32,7 +30,7 @@ import logoImage from './assets/logo.png';
 import useAuthStore from '@/state/AuthStore';
 import { useUserStore } from '@/state/UserStore';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';
-import { borderRadiuses, boxShadows, colors, zIndexes } from '@/theme/theme';
+import { colors, zIndexes } from '@/theme/theme';
 import { openLoginDialog } from '@/state/DialogStore';
 
 type HamburgerMenuProps = {
@@ -41,7 +39,7 @@ type HamburgerMenuProps = {
 };
 
 export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
-  const appStore = useAppStore();
+  //const appStore = useAppStore();
   const userId = useAuthStore().user?.uid;
   const signOut = useUserStore((userStore) => userStore.signOut);
   const { donations, monthDonationSum } = useDonations(isOpen);

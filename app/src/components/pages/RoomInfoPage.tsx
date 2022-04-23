@@ -11,7 +11,7 @@ import { useDocument } from 'swr-firestore';
 import { ReactComponent as InfoIcon } from '@/icons/i.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import { borderColor, borderRadiuses, boxShadows } from '@/theme/theme';
-import { MAX_PING, pingServer } from '@/components/hooks/useLobbyServers';
+import { pingServer } from '@/components/hooks/useLobbyServers';
 import React from 'react';
 
 type InfoStat = { title: React.ReactNode; value: string };

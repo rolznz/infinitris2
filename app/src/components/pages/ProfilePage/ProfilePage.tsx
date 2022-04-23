@@ -4,9 +4,6 @@ import { Button } from '@mui/material';
 import FlexBox from '../../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
 
-import { useUserStore } from '../../../state/UserStore';
-import { useCollection } from 'swr-firestore';
-import { challengesPath, IChallenge } from 'infinitris2-models';
 import useAuthStore from '../../../state/AuthStore';
 import { Page } from '../../ui/Page';
 import { openLoginDialog } from '@/state/DialogStore';

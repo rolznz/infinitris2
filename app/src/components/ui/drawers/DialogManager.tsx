@@ -2,7 +2,6 @@ import Login from '@/components/ui/Login/Login';
 import useDialogStore, {
   closeDialog,
   dialogAnimationLength,
-  DialogType,
 } from '@/state/DialogStore';
 import { Drawer, SvgIcon } from '@mui/material';
 import React from 'react';

@@ -3,7 +3,6 @@ import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import Typography from '@mui/material/Typography';
 import {
   GameModeType,
-  GameModeTypeValues,
   WorldType,
   WorldVariation,
 } from 'infinitris2-models';

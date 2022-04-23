@@ -12,7 +12,7 @@ function _updateLeaderboard() {
   const maxEntries = 5; // TODO: responsive
 
   const leaderboardEntries: LeaderboardEntry[] =
-    simulation?.players.map((player, i) => ({
+    simulation?.players.map((player) => ({
       isControllable: player.isControllable,
       placing: 0,
       playerId: player.id,

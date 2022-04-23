@@ -11,7 +11,7 @@ type DialogStore = {
   close(): void;
 };
 
-const useDialogStore = create<DialogStore>((set, get) => ({
+const useDialogStore = create<DialogStore>((set, _get) => ({
   dialogTypes: [],
   open: (dialogType: DialogType = 'login') => {
     const executeOpen = () =>

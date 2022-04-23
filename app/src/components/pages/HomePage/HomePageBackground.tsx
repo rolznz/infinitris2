@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React from 'react';
 import { useMediaQuery } from '@mui/material';
 
 import backgroundImage from './assets/background.png';

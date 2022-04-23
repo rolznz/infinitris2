@@ -1,4 +1,3 @@
-import { createNewChallenge } from '@/components/pages/CreateChallengePage/createNewChallenge';
 import { WithId } from '@/models/WithId';
 import localStorageKeys from '@/utils/localStorageKeys';
 import { IChallenge } from 'infinitris2-models';

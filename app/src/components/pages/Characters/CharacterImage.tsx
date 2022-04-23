@@ -1,4 +1,4 @@
-import { boxShadows, dropShadows } from '@/theme/theme';
+import { dropShadows } from '@/theme/theme';
 import { Box, SxProps, Theme } from '@mui/material';
 import React from 'react';
 

@@ -8,8 +8,8 @@ import { PlacingStar } from '@/components/pages/Characters/PlacingStar';
 import Typography from '@mui/material/Typography';
 import useIngameStore from '@/state/IngameStore';
 import React from 'react';
-import { colors, textShadows } from '@/theme/theme';
-import { hexToString, PlayerStatus } from 'infinitris2-models';
+import { textShadows } from '@/theme/theme';
+import { hexToString } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
 
 const bgSx: SxProps<Theme> = {

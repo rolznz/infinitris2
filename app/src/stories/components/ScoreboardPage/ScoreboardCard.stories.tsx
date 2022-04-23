@@ -1,11 +1,8 @@
-import React from 'react';
 
-import { Meta, Story } from '@storybook/react';
+import { Meta } from '@storybook/react';
 import {
   ScoreboardCard,
-  ScoreboardCardProps,
 } from '@/components/pages/ScoreboardPage/ScoreboardCard';
-import FlexBox from '@/components/ui/FlexBox';
 
 export default {
   title: 'Components/ScoreboardPage',
@@ -14,9 +11,9 @@ export default {
   decorators: [],
 } as Meta;
 
-const Template: Story<ScoreboardCardProps> = (args) => (
+/*const Template: Story<ScoreboardCardProps> = (args) => (
   <ScoreboardCard {...args} />
-);
+);*/
 
 /*export const _ScoreboardCard = Template.bind({});
 _ScoreboardCard.args = {

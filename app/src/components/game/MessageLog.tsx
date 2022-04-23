@@ -1,6 +1,6 @@
 import FlexBox from '@/components/ui/FlexBox';
 import useIngameStore, { MessageLogEntry } from '@/state/IngameStore';
-import { borderColor, borderRadiuses, boxShadows } from '@/theme/theme';
+import { borderRadiuses, boxShadows } from '@/theme/theme';
 import { Typography } from '@mui/material';
 import React from 'react';
 import { useEffect } from 'react';

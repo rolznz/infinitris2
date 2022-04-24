@@ -22,6 +22,9 @@
     "firebase:deploy:functions": "firebase --config firebase.functions-deploy.json deploy --only functions",
     "firebase:deploy:functions:onCreateAuthUser": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateAuthUser",
     "firebase:deploy:functions:onCreateConversion": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateConversion",
+    "firebase:deploy:functions:onCreateNickname": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateNickname",
+    "firebase:deploy:functions:onCreateEntity": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateEntity",
+    "firebase:deploy:functions:onUpdateEntity": "firebase --config firebase.functions-deploy.json deploy --only functions:onUpdateEntity",
     "firebase:deploy:functions:webhooks": "firebase --config firebase.functions-deploy.json deploy --only functions:webhooks",
     "delete-zone-identifiers": "./scripts/delete-zone-identifiers.sh",
     "delete-node-modules": "./scripts/delete-node-modules.sh"

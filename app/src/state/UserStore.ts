@@ -1,4 +1,4 @@
-import { useDocument } from 'swr-firestore';
+import { useDocument, UseDocumentOptions } from 'swr-firestore';
 import {
   DEFAULT_KEYBOARD_CONTROLS,
   getUserPath,
@@ -18,6 +18,10 @@ import useAuthStore from './AuthStore';
 import useLocalUserStore, { LocalUser } from './LocalUserStore';
 import { getAuth, signOut } from 'firebase/auth';
 import shallow from 'zustand/shallow';
+
+const useFirestoreDocOptions: UseDocumentOptions = {
+  listen: true,
+};
 
 export function useUser(): (IUser | LocalUser) & { id?: string } {
   const localUser = useLocalUserStore((store) => store.user);
@@ -91,7 +95,10 @@ export function useUserStore<StateSlice>(
   );
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
   const { data: fireStoreUserDoc /*, update: updateFirestoreDoc*/ } =
-    useDocument<IUser>(authStoreUserId ? getUserPath(authStoreUserId) : null);
+    useDocument<IUser>(
+      authStoreUserId ? getUserPath(authStoreUserId) : null,
+      useFirestoreDocOptions
+    );
 
   const updateUser = (
     changes: Partial<IUser>,

@@ -8,11 +8,13 @@ import useAuthStore from '../../../state/AuthStore';
 import { Page } from '../../ui/Page';
 import { openLoginDialog } from '@/state/DialogStore';
 import { ProfilePageCharacterCard } from './ProfilePageCharacterCard';
+import { useSyncUserProfile } from '@/components/hooks/useSyncUserProfile';
 
 export default function ProfilePage() {
   const intl = useIntl();
   //const [userStore, user] = useUserStore((store) => [store, store.user], shallow);
   const userId = useAuthStore().user?.uid;
+  useSyncUserProfile();
   /*const { data: userChallenges } = useCollection<IChallenge>(
     userId ? challengesPath : null,
     {MEMO

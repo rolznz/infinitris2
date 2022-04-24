@@ -125,6 +125,7 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
           />
           {userId ? (
             <HamburgerListItem
+              to={Routes.home}
               onClick={signOut}
               icon={<LogoutIcon />}
               text={

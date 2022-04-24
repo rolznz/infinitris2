@@ -12,6 +12,8 @@ import Routes from '@/models/Routes';
 import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { FilledIcon } from '@/components/ui/FilledIcon';
 import { LocalUser } from '@/state/LocalUserStore';
+import { debounce } from 'ts-debounce';
+import { ReactComponent as TickIcon } from '@/icons/tick.svg';
 
 export function ProfilePageCharacterCard() {
   const isSmallScreen = useMediaQuery(`(max-width:600px)`);
@@ -19,6 +21,15 @@ export function ProfilePageCharacterCard() {
   const user = useUser();
   const userStore = useUserStore();
   const characterId = (user as LocalUser).characterId;
+  const setNickname = userStore.setNickname;
+
+  const updateUsername = React.useCallback(
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setNickname(e.target.value);
+    },
+    [setNickname]
+  );
+
   return (
     <FlexBox
       style={{
@@ -29,6 +40,7 @@ export function ProfilePageCharacterCard() {
       borderRadius={borderRadiuses.base}
       py={5}
       position="relative"
+      key={user?.id}
     >
       <FlexBox
         position="absolute"
@@ -57,7 +69,7 @@ export function ProfilePageCharacterCard() {
           // TODO: add nickname to IUser
           defaultValue={(user as LocalUser).nickname || user.readOnly?.nickname}
           //value={user.readOnly?.nickname}
-          onChange={(e) => userStore.setNickname(e.target.value)}
+          onChange={debounce(updateUsername, 500)}
           inputProps={{ style: { textAlign: 'center', color: '#ffffff' } }}
           InputProps={{
             //classes: { input: classes.nicknameInput },
@@ -76,6 +88,12 @@ export function ProfilePageCharacterCard() {
             },
           }}
         />
+        {user.readOnly?.nickname &&
+          user.readOnly?.nickname === (user as LocalUser).nickname && (
+            <FlexBox>
+              <TickIcon /> verified
+            </FlexBox>
+          )}
         <FlexBox mt={-2} position="relative">
           <CharacterImage characterId={characterId} width={400} />
           <PlacingStar

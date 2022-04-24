@@ -29,10 +29,10 @@ export default function HamburgerMenuButton() {
   }, [isOpen, wasOpen]);
 
   useEffect(() => {
-    if (!isLoading && delayButtonVisibility) {
+    if (!isLoading) {
       setTimeout(
         () => setHasAnimated(true),
-        firstTimeAnimationDelaySeconds * 1.1 * 1000
+        delayButtonVisibility ? firstTimeAnimationDelaySeconds * 1.1 * 1000 : 0
       );
     }
   }, [isLoading, delayButtonVisibility, setHasAnimated]);

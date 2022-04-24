@@ -62,18 +62,27 @@ service cloud.firestore {
         let controls = getProperty('controls_keyboard', {});
         return
           baseRequestValid() &&
-          entityHasExpectedFields(['controls_keyboard', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale']) &&
+          entityHasExpectedFields(['controls_keyboard', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality']) &&
           getProperty('hasSeenAllSet', false) is bool &&
           getProperty('hasSeenWelcome', false) is bool &&
+          getProperty('musicOn', false) is bool &&
+          getProperty('musicVolume', 0) is number &&
+          getProperty('sfxOn', false) is bool &&
+          getProperty('sfxVolume', 0) is number &&
           getProperty('preferredInputMethod', '') in ['', 'keyboard', 'touch'] &&
           getProperty('locale', '') is string && getProperty('locale', '').size() < 3 &&
+          getProperty('appTheme', '') in ['', 'light', 'dark', 'default'] &&
+          getProperty('rendererType', '') in ['', 'minimal', 'infinitris2'] &&
+          getProperty('rendererQuality', '') in ['', 'low', 'medium', 'high'] &&
           controls is map && controls.keys().hasOnly(['MoveLeft', 'MoveRight', 'MoveDown', 'RotateClockwise', 'RotateAnticlockwise', 'Drop', 'Chat', 'Esc']) &&
           controls.get('MoveLeft', '') is string &&
           controls.get('MoveRight', '') is string &&
           controls.get('MoveDown', '') is string &&
           controls.get('RotateClockwise', '') is string &&
           controls.get('RotateAnticlockwise', '') is string &&
-          controls.get('Drop', '') is string;
+          controls.get('Drop', '') is string &&
+          controls.get('Chat', '') is string &&
+          controls.get('Esc', '') is string;
       }
     	allow read: if authMatchesUser(userId);
       allow create, delete: if false;

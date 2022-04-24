@@ -28,7 +28,6 @@ import { isPwa } from '@/utils/isMobile';
 
 export function LanguagePicker() {
   const userStore = useUserStore();
-  console.log(userStore.user.locale, supportedLocales);
   return (
     <Select
       disableUnderline
@@ -255,7 +254,7 @@ export default function SettingsPage() {
               }
             />
           )}
-          <SettingsRow
+          {/*<SettingsRow
             left={
               <FormattedMessage
                 defaultMessage="Clear Progress"
@@ -278,7 +277,7 @@ export default function SettingsPage() {
                 />
               </Button>
             }
-          />
+          />*/}
           {isPwa() && (
             <SettingsRow
               left={

@@ -18,6 +18,8 @@ import useAuthStore from './AuthStore';
 import useLocalUserStore, { LocalUser } from './LocalUserStore';
 import { getAuth, signOut } from 'firebase/auth';
 import shallow from 'zustand/shallow';
+import { doc, getFirestore, updateDoc } from 'firebase/firestore';
+import React from 'react';
 
 const useFirestoreDocOptions: UseDocumentOptions = {
   listen: true,
@@ -62,7 +64,7 @@ type IUserStore = {
   setRendererType(rendererType: RendererType): void;
 };
 
-export function getUpdatableUserProperties(
+/*export function getUpdatableUserProperties(
   user: Partial<IUser>
 ): Partial<IUser> {
   return {
@@ -76,7 +78,7 @@ export function getUpdatableUserProperties(
     preferredInputMethod: user.preferredInputMethod,
     locale: user.locale,
   };
-}
+}*/
 
 export function useUserStore(): IUserStore;
 /*useUserStore.getState = {
@@ -94,11 +96,16 @@ export function useUserStore<StateSlice>(
     shallow
   );
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
-  const { data: fireStoreUserDoc /*, update: updateFirestoreDoc*/ } =
-    useDocument<IUser>(
-      authStoreUserId ? getUserPath(authStoreUserId) : null,
-      useFirestoreDocOptions
-    );
+  const { data: fireStoreUserDoc } = useDocument<IUser>(
+    authStoreUserId ? getUserPath(authStoreUserId) : null,
+    useFirestoreDocOptions
+  );
+
+  const updateFirestoreDoc = React.useCallback(
+    (data: Partial<IUser>) =>
+      updateDoc(doc(getFirestore(), getUserPath(authStoreUserId!)), data),
+    [authStoreUserId]
+  );
 
   const updateUser = (
     changes: Partial<IUser>,
@@ -107,7 +114,8 @@ export function useUserStore<StateSlice>(
     if (fireStoreUserDoc && updateSyncedUser) {
       // NB: when updating this list, also update firestore rules
       // FIXME: update user
-      //updateFirestoreDoc(getUpdatableUserProperties(changes));
+      console.log('update firestore user changes:', changes);
+      updateFirestoreDoc(removeUndefinedValues(changes));
     }
     updateLocalUser(removeUndefinedValues(changes));
   };
@@ -118,9 +126,6 @@ export function useUserStore<StateSlice>(
       updateUser(userData, false);
     },
     setNickname: (nickname: string) => {
-      /*updateUser({
-        nickname,
-      });*/
       updateLocalUser({ nickname });
     },
     setCharacterId: (characterId: string) => {

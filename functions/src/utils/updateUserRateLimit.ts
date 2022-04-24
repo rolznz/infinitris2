@@ -29,7 +29,10 @@ export async function updateUserRateLimit(
   if (secondsSinceLastUpdate > RATE_LIMIT_MAX_SECONDS) {
     // reduce rate limiter
     if (user.readOnly.writeRate > 0) {
-      writeRateChange = -RATE_LIMIT_USER_WRITE_RATE_CHANGE;
+      writeRateChange = -Math.min(
+        RATE_LIMIT_USER_WRITE_RATE_CHANGE * secondsSinceLastUpdate,
+        user.readOnly.writeRate
+      );
     }
   } else {
     writeRateChange = RATE_LIMIT_USER_WRITE_RATE_CHANGE;

@@ -3,11 +3,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import FlexBox from '../FlexBox';
 
-
-import {
-  getPaymentPath,
-  IPayment,
-} from 'infinitris2-models';
+import { getPaymentPath, IPayment } from 'infinitris2-models';
 import Typography from '@mui/material/Typography';
 import { LightningQR } from '@/components/ui/LightningQR';
 import { useDocument, UseDocumentOptions } from 'swr-firestore';
@@ -21,8 +17,13 @@ const paymentDocumentOptions: UseDocumentOptions = {
 };
 
 export function PaymentStep() {
-  const [invoice, paymentId, setCodeSent] = useLoginStore(
-    (store) => [store.invoice!, store.paymentId, store.setCodeSent],
+  const [invoice, paymentId, setCodeSent, setHasCreatedNewUser] = useLoginStore(
+    (store) => [
+      store.invoice!,
+      store.paymentId,
+      store.setCodeSent,
+      store.setHasCreatedNewUser,
+    ],
     shallow
   );
 
@@ -33,9 +34,10 @@ export function PaymentStep() {
 
   React.useEffect(() => {
     if (payment?.data()?.status === 'completed') {
+      setHasCreatedNewUser(true);
       setCodeSent(true);
     }
-  }, [payment, setCodeSent]);
+  }, [payment, setCodeSent, setHasCreatedNewUser]);
 
   return (
     <FlexBox width={400} my={4} maxWidth="100%">

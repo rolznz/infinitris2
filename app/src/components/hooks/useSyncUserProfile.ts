@@ -9,7 +9,7 @@ import {
   IUser,
 } from 'infinitris2-models';
 import React from 'react';
-import { toast } from 'react-toastify';
+//import { toast } from 'react-toastify';
 import { useDocument } from 'swr-firestore';
 
 export function useSyncUserProfile() {
@@ -30,7 +30,7 @@ export function useSyncUserProfile() {
       localUserNickname &&
       userNickname !== localUserNickname
     ) {
-      toast('Syncing nickname...');
+      //toast('Syncing nickname...');
       (async () => {
         try {
           const nicknamePath = getNicknamePath(localUserNickname);

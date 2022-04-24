@@ -13,6 +13,8 @@ type LoginStore = {
   setCodeSent(codeSent: boolean): void;
   readonly viewingBenefits: boolean;
   setViewingBenefits(viewingBenefits: boolean): void;
+  readonly hasCreatedNewUser: boolean;
+  setHasCreatedNewUser(hasCreatedNewUser: boolean): void;
   reset(): void;
 };
 
@@ -22,6 +24,8 @@ const useLoginStore = create<LoginStore>((set) => ({
   setInvoice: (invoice: string | undefined) => set((_) => ({ invoice })),
   setPaymentId: (paymentId: string | undefined) => set((_) => ({ paymentId })),
   setIsLoading: (isLoading: boolean) => set((_) => ({ isLoading })),
+  setHasCreatedNewUser: (hasCreatedNewUser: boolean) =>
+    set((_) => ({ hasCreatedNewUser })),
   setCodeSent: (codeSent: boolean) => set((_) => ({ codeSent })),
   setViewingBenefits: (viewingBenefits: boolean) =>
     set((_) => ({ viewingBenefits })),
@@ -36,6 +40,7 @@ function getResetState() {
     invoice: undefined,
     paymentId: undefined,
     viewingBenefits: false,
+    hasCreatedNewUser: false,
   };
 }
 

@@ -89,7 +89,8 @@ export function ProfilePageCharacterCard() {
           }}
         />
         {user.readOnly?.nickname &&
-          user.readOnly?.nickname === (user as LocalUser).nickname && (
+          (user.readOnly?.nickname === (user as LocalUser).nickname ||
+            !(user as LocalUser).nickname) && (
             <FlexBox>
               <TickIcon /> verified
             </FlexBox>

@@ -25,6 +25,7 @@
     "firebase:deploy:functions:onCreateNickname": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateNickname",
     "firebase:deploy:functions:onCreateEntity": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateEntity",
     "firebase:deploy:functions:onUpdateEntity": "firebase --config firebase.functions-deploy.json deploy --only functions:onUpdateEntity",
+    "firebase:deploy:functions:rateLimiters": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateEntity,functions:onUpdateEntity",
     "firebase:deploy:functions:webhooks": "firebase --config firebase.functions-deploy.json deploy --only functions:webhooks",
     "delete-zone-identifiers": "./scripts/delete-zone-identifiers.sh",
     "delete-node-modules": "./scripts/delete-node-modules.sh"

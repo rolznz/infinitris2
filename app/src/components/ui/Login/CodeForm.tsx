@@ -18,6 +18,7 @@ import { setDoc, getFirestore, doc } from 'firebase/firestore';
 import { getConversionPath, IConversion } from 'infinitris2-models';
 import { toast } from 'react-toastify';
 import Link from '@mui/material/Link';
+import useLocalUserStore from '@/state/LocalUserStore';
 
 const codeSchema = yup
   .object({
@@ -31,21 +32,29 @@ type CodeFormProps = { onSuccess(userId: string): void };
 
 export function CodeForm({ onSuccess }: CodeFormProps) {
   const intl = useIntl();
+  const signoutLocalUser = useLocalUserStore((store) => store.signOutLocalUser);
   const [referredByAffiliateId, , deleteReferredByAffiliateId] =
     useLocalStorage<string>(localStorageKeys.referredByAffiliateId, undefined, {
       raw: true,
     });
-  const [setIsLoading, email, setCodeSent, setInvoice, setPaymentId] =
-    useLoginStore(
-      (store) => [
-        store.setIsLoading,
-        store.email,
-        store.setCodeSent,
-        store.setInvoice,
-        store.setPaymentId,
-      ],
-      shallow
-    );
+  const [
+    setIsLoading,
+    email,
+    setCodeSent,
+    setInvoice,
+    setPaymentId,
+    hasCreatedNewUser,
+  ] = useLoginStore(
+    (store) => [
+      store.setIsLoading,
+      store.email,
+      store.setCodeSent,
+      store.setInvoice,
+      store.setPaymentId,
+      store.hasCreatedNewUser,
+    ],
+    shallow
+  );
   const [codeFormData] = React.useState<EnterCodeFormData>({
     code: '',
   });
@@ -78,6 +87,11 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
         );
 
         if (loginResponse.ok) {
+          if (!hasCreatedNewUser) {
+            // reset the current user so that they pick up all settings from the database user
+            // if a user registers and does not login in the same session, their local profile won't be synced.
+            signoutLocalUser();
+          }
           const loginToken: string = await loginResponse.json();
           const credential = await signInWithCustomToken(getAuth(), loginToken);
 
@@ -131,6 +145,8 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
       onSuccess,
       referredByAffiliateId,
       setIsLoading,
+      hasCreatedNewUser,
+      signoutLocalUser,
     ]
   );
 

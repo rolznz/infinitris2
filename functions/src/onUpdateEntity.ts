@@ -1,5 +1,5 @@
 import * as functions from 'firebase-functions';
-import { IEntity, objectToDotNotation } from 'infinitris2-models';
+import { IEntity, objectToDotNotation, usersPath } from 'infinitris2-models';
 import { updateUserRateLimit } from './utils/updateUserRateLimit';
 import { getCurrentTimestamp, getDb, increment } from './utils/firebase';
 
@@ -29,7 +29,6 @@ export const onUpdateEntity = functions.firestore
               context.params.entityId
           );
         }
-        await updateUserRateLimit(entity.userId, currentTime);
 
         const updateReadOnly = objectToDotNotation<IEntity>(
           {
@@ -41,8 +40,18 @@ export const onUpdateEntity = functions.firestore
           ['readOnly.lastModifiedTimestamp', 'readOnly.numTimesModified']
         );
 
-        // apply update using current database instance
-        await getDb().doc(change.after.ref.path).update(updateReadOnly);
+        const isUser = context.params.collectionId === usersPath;
+
+        await updateUserRateLimit(
+          entity.userId,
+          currentTime,
+          isUser ? updateReadOnly : undefined
+        );
+
+        if (!isUser) {
+          // apply update using current database instance
+          await getDb().doc(change.after.ref.path).update(updateReadOnly);
+        }
       }
     } catch (error) {
       console.error(error);

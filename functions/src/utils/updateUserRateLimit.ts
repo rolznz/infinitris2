@@ -12,7 +12,8 @@ export const RATE_LIMIT_MAX_SECONDS = 5;
 
 export async function updateUserRateLimit(
   userId: string | undefined,
-  currentTime: Timestamp
+  currentTime: Timestamp,
+  extraFields?: { [key: string]: Object }
 ) {
   if (!userId) {
     return;
@@ -57,5 +58,8 @@ export async function updateUserRateLimit(
     },
     ['readOnly.lastWriteTimestamp', 'readOnly.writeRate', 'readOnly.numWrites']
   );
-  await userDocRef.update(updateUser);
+  await userDocRef.update({
+    ...updateUser,
+    ...(extraFields || {}),
+  });
 }

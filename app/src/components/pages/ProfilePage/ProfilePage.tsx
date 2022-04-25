@@ -12,7 +12,6 @@ import { useSyncNickname } from '@/components/hooks/useSyncNickname';
 
 export default function ProfilePage() {
   const intl = useIntl();
-  //const [userStore, user] = useUserStore((store) => [store, store.user], shallow);
   const userId = useAuthStore().user?.uid;
   useSyncNickname();
   /*const { data: userChallenges } = useCollection<IChallenge>(

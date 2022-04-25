@@ -6,6 +6,7 @@ import {
   IChallengeClient,
   IChallenge,
   getChallengePath,
+  NetworkPlayerInfo,
 } from 'infinitris2-models';
 import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
@@ -15,12 +16,12 @@ import React from 'react';
 import ChallengeInfoView from './ChallengeInfoView';
 import ChallengeResultsView from './ChallengeResultsView';
 import ChallengeFailedView from './ChallengeFailedView';
-import { useUserStore } from '../../../state/UserStore';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useDocument } from 'swr-firestore';
 import { IPlayer } from 'infinitris2-models';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
+import { useUser } from '@/state/useUser';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -31,7 +32,7 @@ export const isTestChallenge = (challengeId?: string) => challengeId === 'test';
 export default function ChallengePage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
-  const userStore = useUserStore();
+  const user = useUser();
   const history = useHistory();
   const json = useSearchParam('json');
 
@@ -49,8 +50,6 @@ export default function ChallengePage() {
   );
   const challenge = isTest ? JSON.parse(json as string) : syncedChallenge;
 
-  const addChallengeAttempt = userStore.addChallengeAttempt;
-  const completeChallenge = userStore.completeChallenge;
   const launchChallenge = client?.launchChallenge;
   const restartClient = client?.restartClient; // TODO: move to IClient
   const [hasLaunched, setLaunched] = useState(false);
@@ -69,9 +68,10 @@ export default function ChallengePage() {
   const [checkChallengeStatus, setCheckChallengeStatus] = useState(false);
 
   const { preferredInputMethod, controls_keyboard, hasSeenAllSet, readOnly } =
-    userStore.user;
-  const player: Partial<IPlayer> = React.useMemo(
-    // FIXME: use a different interface
+    user;
+
+  // TODO: update (see SinglePlayer/Room page)
+  const player: Partial<NetworkPlayerInfo> = React.useMemo(
     () => ({
       color: 0xff0000, // FIXME: use player's color
       nickname: readOnly.nickname || 'New Player',
@@ -145,7 +145,6 @@ export default function ChallengePage() {
     checkChallengeStatus,
     challengeClient,
     setChallengeFailed,
-    addChallengeAttempt,
     isTest,
   ]);
 
@@ -170,7 +169,7 @@ export default function ChallengePage() {
         isTest={isTest}
         //status={challengeClient.getChallengeAttempt()}
         onContinue={() => {
-          completeChallenge(challenge.id);
+          //completeChallenge(challenge.id);
           const remainingChallenges = incompleteChallenges.filter(
             (incompleteChallenge) => incompleteChallenge.id !== challenge.id
           );

@@ -1,5 +1,5 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { useUser, useUserStore } from '@/state/UserStore';
+import { useUser } from '@/state/useUser';
 import { borderColorLight, borderRadiuses } from '@/theme/theme';
 import { Link, TextField, useMediaQuery } from '@mui/material';
 import React from 'react';
@@ -11,23 +11,23 @@ import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { FilledIcon } from '@/components/ui/FilledIcon';
-import { LocalUser } from '@/state/LocalUserStore';
+import { DEFAULT_CHARACTER_ID, LocalUser } from '@/state/LocalUserStore';
 import { debounce } from 'ts-debounce';
 import { ReactComponent as TickIcon } from '@/icons/tick.svg';
+import { setLocalUserNickname } from '@/state/updateUser';
 
 export function ProfilePageCharacterCard() {
   const isSmallScreen = useMediaQuery(`(max-width:600px)`);
   const intl = useIntl();
   const user = useUser();
-  const userStore = useUserStore();
-  const characterId = (user as LocalUser).characterId;
-  const setNickname = userStore.setNickname;
+  const characterId =
+    (user as LocalUser).selectedCharacterId || DEFAULT_CHARACTER_ID;
 
   const updateUsername = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      setNickname(e.target.value);
+      setLocalUserNickname(e.target.value);
     },
-    [setNickname]
+    []
   );
 
   return (

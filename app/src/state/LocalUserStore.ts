@@ -1,7 +1,7 @@
 import isMobile from '@/utils/isMobile';
-import { IUser, DEFAULT_KEYBOARD_CONTROLS } from 'infinitris2-models';
+import { IUser } from 'infinitris2-models';
 import create from 'zustand';
-import { defaultLocale } from '../internationalization';
+//import { defaultLocale } from '../internationalization';
 import localStorageKeys from '../utils/localStorageKeys';
 
 const localStorageValue = localStorage.getItem(localStorageKeys.localUser);
@@ -9,36 +9,32 @@ const localStorageUser = localStorageValue
   ? (JSON.parse(localStorageValue) as IUser)
   : undefined;
 
-export type LocalUser = IUser & { nickname?: string; characterId: string };
+export type LocalUserWithoutUserProps = {
+  nickname?: string;
+  freeCharacterIds?: string[];
+  selectedCharacterId?: string; // TODO: move to IUser
+};
+export type LocalUser = LocalUserWithoutUserProps &
+  Omit<IUser, 'userId' | 'readOnly' | 'created'>;
+
+export const DEFAULT_CHARACTER_ID = '0';
+export const DEFAULT_CHARACTER_IDs = [DEFAULT_CHARACTER_ID];
 
 const defaultUser: LocalUser = {
-  userId: undefined as unknown as string,
   preferredInputMethod: isMobile() ? 'touch' : 'keyboard',
-  hasSeenWelcome: false,
-  hasSeenAllSet: false,
+  //freeCharacterIds: [DEFAULT_CHARACTER_ID],
+  //selectedCharacterId: DEFAULT_CHARACTER_ID,
+  //hasSeenWelcome: false,
+  //hasSeenAllSet: false,
   //nickname: '',
   //challengeAttempts: {},
-  locale: defaultLocale,
+  //locale: defaultLocale,
   //completedChallengeIds: [],
-  controls_keyboard: DEFAULT_KEYBOARD_CONTROLS,
-  characterId: '0',
+  //controls_keyboard: DEFAULT_KEYBOARD_CONTROLS,
+  //characterId: '0',
   //coins: 0,
   //networkImpact: 0,
   //color: defaultColor,
-
-  readOnly: {
-    createdTimestamp: { seconds: 0, nanoseconds: 0 },
-    lastModifiedTimestamp: { seconds: 0, nanoseconds: 0 },
-    lastWriteTimestamp: { seconds: 0, nanoseconds: 0 },
-    numTimesModified: 0,
-    numWrites: 0,
-    writeRate: 0,
-    purchasedEntityIds: [],
-    coins: 0,
-    networkImpact: 0,
-    email: '',
-  },
-  created: true,
 };
 const initialUser = localStorageUser
   ? { ...defaultUser, ...localStorageUser }

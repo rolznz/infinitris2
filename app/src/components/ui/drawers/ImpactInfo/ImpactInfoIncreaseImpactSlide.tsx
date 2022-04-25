@@ -3,7 +3,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import FlexBox from '../../FlexBox';
 import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
-import { useUser } from '@/state/UserStore';
+import { useUser } from '@/state/useUser';
 import { InfoSlide } from '../InfoSlide';
 
 export function ImpactInfoIncreaseImpactSlide() {

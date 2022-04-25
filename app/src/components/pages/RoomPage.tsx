@@ -28,14 +28,14 @@ import {
   reservedPlayerIds,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
-import { useUser } from '../../state/UserStore';
+import { useUser } from '../../state/useUser';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { useDocument } from 'swr-firestore';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 import useIngameStore from '@/state/IngameStore';
 import { GameUI } from '@/components/game/GameUI';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
-import { LocalUser } from '@/state/LocalUserStore';
+import { DEFAULT_CHARACTER_ID, LocalUser } from '@/state/LocalUserStore';
 import useLoaderStore from '@/state/LoaderStore';
 import shallow from 'zustand/shallow';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
@@ -118,7 +118,8 @@ export default function RoomPage() {
   const controls_gamepad = user.controls_gamepad;
 
   const nickname = (user as LocalUser).nickname;
-  const characterId = (user as LocalUser).characterId;
+  const characterId =
+    (user as LocalUser).selectedCharacterId || DEFAULT_CHARACTER_ID;
   const { data: character } = useDocument<ICharacter>(
     getCharacterPath(characterId)
   );

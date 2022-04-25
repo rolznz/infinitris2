@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import FlexBox from '../../ui/FlexBox';
 
 import { FormattedMessage, useIntl } from 'react-intl';
-import { useUserStore } from '../../../state/UserStore';
 import SettingsRow from './SettingsRow';
 import {
   AdjustableInputMethod,
@@ -16,14 +15,15 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { Typography } from '@mui/material';
+import { useUser } from '@/state/useUser';
+import { resetControls, updateControl } from '@/state/updateUser';
 
 let initialJoypadAxesValues: number[] = [];
 
 export default function ControlSettingsPage() {
   const intl = useIntl();
-  const userStore = useUserStore();
   const adjustableInputType = useSearchParam('type') as AdjustableInputMethod;
-  const { user, resetControls, updateControl } = userStore;
+  const user = useUser();
   const [editingInputAction, setEditingInputAction] = useState<
     InputAction | undefined
   >(undefined);
@@ -59,6 +59,7 @@ export default function ControlSettingsPage() {
           if (gamepad.buttons[i].pressed) {
             setEditingInputAction(undefined);
             updateControl(
+              user,
               adjustableInputType,
               editingInputAction,
               `button_${i}`
@@ -75,6 +76,7 @@ export default function ControlSettingsPage() {
           if (gamepad.axes[i] !== initialJoypadAxesValues[i]) {
             setEditingInputAction(undefined);
             updateControl(
+              user,
               adjustableInputType,
               editingInputAction,
               `axis_${i}_${gamepad.axes[i]}`
@@ -87,13 +89,14 @@ export default function ControlSettingsPage() {
         clearInterval(timeout);
       };
     }
-  }, [adjustableInputType, editingInputAction, updateControl]);
+  }, [adjustableInputType, editingInputAction, user]);
 
   useEffect(() => {
     if (editingInputAction && isDown && lastKeyPressedEvent) {
       setEditingInputAction(undefined);
       if (adjustableInputType === 'keyboard') {
         updateControl(
+          user,
           adjustableInputType,
           editingInputAction,
           lastKeyPressedEvent?.key
@@ -105,7 +108,7 @@ export default function ControlSettingsPage() {
     isDown,
     editingInputAction,
     lastKeyPressedEvent,
-    updateControl,
+    user,
   ]);
 
   function getInputActionMessage(inputAction: InputAction) {

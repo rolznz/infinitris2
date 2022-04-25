@@ -1,4 +1,4 @@
-import { useUser } from '../../state/UserStore';
+import { useUser } from '../../state/useUser';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
 export default function useDarkMode() {

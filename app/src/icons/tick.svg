@@ -3,15 +3,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0.4628" y1="12.1151" x2="23.5372" y2="12.1151">
-	<stop  offset="0" style="stop-color:#0D172A"/>
-	<stop  offset="0.2408" style="stop-color:#0C1B29"/>
-	<stop  offset="0.6081" style="stop-color:#0C1F29"/>
-	<stop  offset="1" style="stop-color:#0C2029"/>
-	<stop  offset="1" style="stop-color:#01343F"/>
-	<stop  offset="1" style="stop-color:#0C1C29"/>
-</linearGradient>
-<path fill="url(#SVGID_1_)" d="M6.778,19.28l-5.469-5.718c0,0-1.788-1.752-0.166-3.137c1.617-1.381,3.255,0.58,3.255,0.58
+<path fill="currentColor" d="M6.778,19.28l-5.469-5.718c0,0-1.788-1.752-0.166-3.137c1.617-1.381,3.255,0.58,3.255,0.58
 	l4.204,4.129c0,0,0.214,0.153,0.311,0.146c0.096-0.006,0.266-0.182,0.266-0.182L19.43,4.95c0,0,2.004-2.125,3.554-0.728
 	c1.529,1.378-0.598,3.551-0.598,3.551L10.613,19.6c0,0-0.83,0.867-1.754,0.883C7.848,20.501,6.778,19.28,6.778,19.28z"/>
 </svg>

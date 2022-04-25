@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Switch, BrowserRouter, useLocation } from 'react-router-dom';
-import AllSetPage from '@/components/pages/AllSetPage';
+// import AllSetPage from '@/components/pages/AllSetPage';
 import { CreateChallengePage } from '@/components/pages/CreateChallengePage/CreateChallengePage';
 import { LoadChallengePage } from '@/components/pages/CreateChallengePage/LoadChallengePage';
 import LobbyPage from '@/components/pages/LobbyPage/LobbyPage';
@@ -13,7 +13,7 @@ import SettingsPage from '@/components/pages/SettingsPage/SettingsPage';
 import ChallengePage from '@/components/pages/ChallengePage/ChallengePage';
 import ChallengeRequiredPage from '@/components/pages/ChallengeRequiredPage';
 import { ChallengesPage } from '@/components/pages/ChallengesPage/ChallengesPage';
-import WelcomePage from '@/components/pages/WelcomePage';
+// import WelcomePage from '@/components/pages/WelcomePage';
 import Routes from './models/Routes';
 import { CreditsPage } from '@/components/pages/CreditsPage/CreditsPage';
 import { PrivacyPolicyPage } from '@/components/pages/PrivacyPolicyPage';
@@ -137,15 +137,15 @@ function RouterContents() {
         <Route exact path={Routes.scoreboard}>
           <ScoreboardPage />
         </Route>
-        <Route exact path={Routes.welcome}>
+        {/* <Route exact path={Routes.welcome}>
           <WelcomePage />
-        </Route>
+        </Route> */}
         <Route exact path={Routes.challengeRequired}>
           <ChallengeRequiredPage />
         </Route>
-        <Route exact path={Routes.allSet}>
+        {/* <Route exact path={Routes.allSet}>
           <AllSetPage />
-        </Route>
+        </Route> */}
         <Route exact path={Routes.market} key="market">
           <MarketPage />
         </Route>

@@ -4,7 +4,7 @@ import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientO
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
-import { LocalUser } from '@/state/LocalUserStore';
+import { DEFAULT_CHARACTER_ID, LocalUser } from '@/state/LocalUserStore';
 import {
   getCharacterPath,
   hexToString,
@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useCollection, useDocument } from 'swr-firestore';
 import useAppStore from '@/state/AppStore';
-import { useUser, useUserStore } from '@/state/UserStore';
+import { useUser } from '@/state/useUser';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
 import { playGameMusic } from '@/sound/SoundManager';
 import { useHistory } from 'react-router-dom';
@@ -48,9 +48,6 @@ export default function SinglePlayerPage() {
   //const requiresRedirect = useForcedRedirect();
   const launchSinglePlayer = client?.launchSinglePlayer;
   const [hasLaunched, setLaunched] = useState(false);
-  const userStore = useUserStore();
-  const musicOn =
-    userStore.user.musicOn !== undefined ? userStore.user.musicOn : true;
 
   const requiresRedirect = false;
 
@@ -72,7 +69,8 @@ export default function SinglePlayerPage() {
 
   const user = useUser();
   const nickname = (user as LocalUser).nickname;
-  const characterId = (user as LocalUser).characterId;
+  const characterId =
+    (user as LocalUser).selectedCharacterId || DEFAULT_CHARACTER_ID;
   const { data: character } = useDocument<ICharacter>(
     getCharacterPath(characterId)
   );
@@ -149,7 +147,6 @@ export default function SinglePlayerPage() {
     hasLaunched,
     controls_keyboard,
     controls_gamepad,
-    musicOn,
     hasLoaded,
     numBots,
     botReactionDelay,

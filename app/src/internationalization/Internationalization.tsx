@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { IntlProvider } from 'react-intl';
 import { defaultLocale } from '.';
 import useAppStore from '../state/AppStore';
-import { useUser } from '../state/UserStore';
+import { useUser } from '../state/useUser';
 
 function loadLocaleData(locale: string) {
   return import(`./compiled-lang/${locale}.json`);

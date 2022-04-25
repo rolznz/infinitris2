@@ -4,7 +4,6 @@ import FlexBox from '../../ui/FlexBox';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 import { supportedLocales } from '../../../internationalization';
-import { useUserStore } from '../../../state/UserStore';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import SettingsRow from './SettingsRow';
@@ -25,15 +24,23 @@ import { ReactComponent as LightModeIcon } from '@/icons/lightmode.svg';
 import { ReactComponent as DarkModeIcon } from '@/icons/darkmode.svg';
 import React from 'react';
 import { isPwa } from '@/utils/isMobile';
+import {
+  setUserAppTheme,
+  setUserLocale,
+  setUserPreferredInputMethod,
+  setUserRendererQuality,
+  setUserRendererType,
+} from '@/state/updateUser';
+import { useUser } from '@/state/useUser';
 
 export function LanguagePicker() {
-  const userStore = useUserStore();
+  const user = useUser();
   return (
     <Select
       disableUnderline
-      value={userStore.user.locale}
+      value={user.locale}
       onChange={(event) => {
-        userStore.setLocale(event.target.value as string);
+        setUserLocale(event.target.value as string);
         playSound(SoundKey.click);
       }}
     >
@@ -48,7 +55,7 @@ export function LanguagePicker() {
 
 export default function SettingsPage() {
   const intl = useIntl();
-  const userStore = useUserStore();
+  const user = useUser();
   const isDarkMode = useDarkMode();
 
   return (
@@ -84,9 +91,7 @@ export default function SettingsPage() {
                 icon={<LightModeIcon />}
                 checkedIcon={<DarkModeIcon />}
                 onChange={(event) => {
-                  userStore.setAppTheme(
-                    event.target.checked ? 'dark' : 'light'
-                  );
+                  setUserAppTheme(event.target.checked ? 'dark' : 'light');
                   playSound(SoundKey.click);
                   //useLoaderStore.getState().reset();
                   //useLoaderStore.getState().initialize();
@@ -104,11 +109,9 @@ export default function SettingsPage() {
             right={
               <Select
                 disableUnderline
-                value={userStore.user.rendererQuality || 'high'}
+                value={user.rendererQuality || 'high'}
                 onChange={(event) =>
-                  userStore.setRendererQuality(
-                    event.target.value as RendererQuality
-                  )
+                  setUserRendererQuality(event.target.value as RendererQuality)
                 }
               >
                 {(['low', 'medium', 'high'] as RendererQuality[]).map(
@@ -131,9 +134,9 @@ export default function SettingsPage() {
             right={
               <Select
                 disableUnderline
-                value={userStore.user.rendererType || 'infinitris2'}
+                value={user.rendererType || 'infinitris2'}
                 onChange={(event) =>
-                  userStore.setRendererType(event.target.value as RendererType)
+                  setUserRendererType(event.target.value as RendererType)
                 }
               >
                 {(['infinitris2', 'minimal'] as RendererType[]).map(
@@ -155,11 +158,7 @@ export default function SettingsPage() {
             }
             right={
               <IconSwitch
-                checked={
-                  userStore.user.musicOn !== undefined
-                    ? userStore.user.musicOn
-                    : true
-                }
+                checked={user.musicOn !== undefined ? user.musicOn : true}
                 icon={<MusicOffIcon />}
                 checkedIcon={<MusicNoteIcon />}
                 onChange={(event) => {
@@ -167,7 +166,7 @@ export default function SettingsPage() {
                   // if (isPlaying && !musicLoaded()) {
                   //   useLoaderStore.getState().reset();
                   // }
-                  userStore.setMusicOn(isPlaying);
+                  setMusicOn(isPlaying);
                   setMusicOn(isPlaying);
                   setMusicPlaying(isPlaying);
                   playSound(SoundKey.click);
@@ -184,11 +183,7 @@ export default function SettingsPage() {
             }
             right={
               <IconSwitch
-                checked={
-                  userStore.user.sfxOn !== undefined
-                    ? userStore.user.sfxOn
-                    : true
-                }
+                checked={user.sfxOn !== undefined ? user.sfxOn : true}
                 icon={<MusicOffIcon />}
                 checkedIcon={<MusicNoteIcon />}
                 onChange={(event) => {
@@ -196,7 +191,7 @@ export default function SettingsPage() {
                   // if (isOn && !soundsLoaded()) {
                   //   prepareSoundEffects();
                   // }
-                  userStore.setSfxOn(isOn);
+                  setSfxOn(isOn);
                   setSfxOn(isOn);
                   playSound(SoundKey.click);
                 }}
@@ -213,11 +208,9 @@ export default function SettingsPage() {
             right={
               <Select
                 disableUnderline
-                value={userStore.user.preferredInputMethod}
+                value={user.preferredInputMethod}
                 onChange={(event) =>
-                  userStore.setPreferredInputMethod(
-                    event.target.value as InputMethod
-                  )
+                  setUserPreferredInputMethod(event.target.value as InputMethod)
                 }
               >
                 {['keyboard', 'touch', 'gamepad'].map((inputMethod) => (
@@ -228,8 +221,8 @@ export default function SettingsPage() {
               </Select>
             }
           />
-          {(userStore.user.preferredInputMethod === 'keyboard' ||
-            userStore.user.preferredInputMethod === 'gamepad') && (
+          {(user.preferredInputMethod === 'keyboard' ||
+            user.preferredInputMethod === 'gamepad') && (
             <SettingsRow
               left={
                 <FormattedMessage
@@ -241,7 +234,7 @@ export default function SettingsPage() {
                 <Link
                   component={RouterLink}
                   underline="none"
-                  to={`${Routes.controlSettings}?type=${userStore.user.preferredInputMethod}`}
+                  to={`${Routes.controlSettings}?type=${user.preferredInputMethod}`}
                   onClick={() => playSound(SoundKey.click)}
                 >
                   <Button variant="contained" color="primary">
@@ -268,7 +261,7 @@ export default function SettingsPage() {
                 onClick={() =>
                   window.confirm(
                     'Are you sure you wish to clear your progress?'
-                  ) && userStore.clearProgress()
+                  ) && clearProgress()
                 }
               >
                 <FormattedMessage

@@ -1,6 +1,10 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { LocalUser } from '@/state/LocalUserStore';
-import { useUser } from '@/state/UserStore';
+import {
+  DEFAULT_CHARACTER_ID,
+  DEFAULT_CHARACTER_IDs,
+  LocalUser,
+} from '@/state/LocalUserStore';
+import { useUser } from '@/state/useUser';
 import {
   QueryDocumentSnapshot,
   orderBy,
@@ -51,8 +55,10 @@ export function MarketPageCharacterList({
   const size = window.innerWidth / (columns * (columns > 3 ? 1.2 : 1.1));
 
   const user = useUser();
-  const characterId = (user as LocalUser).characterId;
-  const myIds = React.useMemo(() => [characterId], [characterId]);
+  const myCharacterId =
+    (user as LocalUser).selectedCharacterId || DEFAULT_CHARACTER_ID;
+  const myCharacterIds =
+    (user as LocalUser).freeCharacterIds || DEFAULT_CHARACTER_IDs;
 
   const useCharactersOptions: UseCollectionOptions = React.useMemo(
     () => ({
@@ -62,7 +68,7 @@ export function MarketPageCharacterList({
               where(
                 'id',
                 'in',
-                myIds.map((id) => parseInt(id))
+                myCharacterIds.map((id) => parseInt(id))
               ),
             ] // TODO: my ids FIXME: character ID should be a string everywhere
           : [
@@ -78,7 +84,7 @@ export function MarketPageCharacterList({
         limit(fetchLimit),
       ],
     }),
-    [fetchLimit, filter, lastCharacter, myIds]
+    [fetchLimit, filter, lastCharacter, myCharacterIds]
   );
 
   // TODO: useCollection purchases for my-blocks
@@ -92,13 +98,13 @@ export function MarketPageCharacterList({
       cachedCharacters[filter] = cachedCharacters[filter].concat(
         characters.filter(
           (character) =>
-            filter === 'my-blocks' || myIds.indexOf(character.id) < 0
+            filter === 'my-blocks' || myCharacterIds.indexOf(character.id) < 0
         )
       );
       console.log('Loaded', cachedCharacters[filter].length, 'characters');
       setLoadMore(false);
     }
-  }, [characters, filter, myIds]);
+  }, [characters, filter, myCharacterIds]);
 
   const onCharacterInView = React.useCallback(
     (index) => {
@@ -123,13 +129,18 @@ export function MarketPageCharacterList({
     >
       {cachedCharacters[filter].map((character, index) => (
         <Intersection
-          key={character.id}
+          key={character.id + '-' + (character.id === myCharacterId)}
           width={size}
           height={characterBlockHeight}
           index={index}
           onInView={onCharacterInView}
         >
-          <CharacterTile character={character} size={size} />
+          <CharacterTile
+            character={character}
+            size={size}
+            isPurchased={filter === 'my-blocks'}
+            isSelected={character.id === myCharacterId}
+          />
         </Intersection>
       ))}
     </FlexBox>

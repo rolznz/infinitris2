@@ -1,5 +1,4 @@
 import useLoaderStore from '@/state/LoaderStore';
-import { useUserStore } from '@/state/UserStore';
 import {
   Box,
   Button,
@@ -27,6 +26,8 @@ import useAppStore from '@/state/AppStore';
 import { LanguagePicker } from '../pages/SettingsPage/SettingsPage';
 import { borderColor, borderRadiuses } from '@/theme/theme';
 import isMobile from '@/utils/isMobile';
+import { useUser } from '@/state/useUser';
+import { setUserMusicOn, setUserSfxOn } from '@/state/updateUser';
 
 // const checkboxStyle: SxProps = {
 //   '& span': {
@@ -36,7 +37,7 @@ import isMobile from '@/utils/isMobile';
 
 export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const loaderStore = useLoaderStore();
-  const userStore = useUserStore();
+  const user = useUser();
   const hasFinished = loaderStore.hasFinished;
   const initializeLoaderStore = loaderStore.initialize;
   const clickStart = loaderStore.clickStart;
@@ -61,10 +62,8 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   }, [initializeLoaderStore, clientLoaded]);
 
   // only show start button if music is on
-  const musicOn =
-    userStore.user.musicOn !== undefined ? userStore.user.musicOn : true;
-  const sfxOn =
-    userStore.user.sfxOn !== undefined ? userStore.user.sfxOn : true;
+  const musicOn = user.musicOn !== undefined ? user.musicOn : true;
+  const sfxOn = user.sfxOn !== undefined ? user.sfxOn : true;
   useEffect(() => {
     if (musicOn === false && sfxOn === false && !hasToggledSounds) {
       // no interaction needed since sound is muted
@@ -206,7 +205,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                         color="primary"
                         checked={musicOn}
                         onChange={(event) => {
-                          userStore.setMusicOn(event.target.checked);
+                          setUserMusicOn(event.target.checked);
                         }}
                         checkedIcon={<CheckCircleIcon />}
                         icon={<RadioButtonUncheckedIcon />}
@@ -224,7 +223,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
                         color="primary"
                         checked={sfxOn}
                         onChange={(event) => {
-                          userStore.setSfxOn(event.target.checked);
+                          setUserSfxOn(event.target.checked);
                           setSfxOn(event.target.checked);
                         }}
                         checkedIcon={<CheckCircleIcon />}

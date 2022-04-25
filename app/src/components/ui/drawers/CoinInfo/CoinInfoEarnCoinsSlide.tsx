@@ -6,7 +6,7 @@ import { InfoSlide } from '../InfoSlide';
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
 import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
 import { openImpactInfoDialog } from '@/state/DialogStore';
-import { useUser } from '@/state/UserStore';
+import { useUser } from '@/state/useUser';
 
 export function CoinInfoEarnCoinsSlide() {
   const impact = useUser().readOnly?.networkImpact || 0;

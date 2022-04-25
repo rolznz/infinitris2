@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from '@mui/material';
 
 import FlexBox from '../../ui/FlexBox';
 import { ICharacter } from 'infinitris2-models';
@@ -9,17 +8,48 @@ import Routes from '@/models/Routes';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { CharacterCoinStatChip } from '../Characters/CharacterStatChip';
 import { DocumentSnapshot } from 'firebase/firestore';
-import { zIndexes } from '@/theme/theme';
+import { dropShadows, zIndexes } from '@/theme/theme';
+import { ReactComponent as TickIcon } from '@/icons/tick.svg';
+import SvgIcon from '@mui/material/SvgIcon';
+import Link from '@mui/material/Link';
+import { SxProps, Theme } from '@mui/material/styles';
+import { setSelectedCharacterId } from '@/state/updateUser';
 
 type CharacterTileProps = {
   character: DocumentSnapshot<ICharacter>;
   size: number;
+  isPurchased: boolean;
+  isSelected: boolean;
 };
 export const characterTileContentPortion = 0.8;
 
-const linkStyle = { width: '100%', height: '100%' };
+const linkStyle = {
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+};
 
-function _CharacterTile({ character, size }: CharacterTileProps) {
+const tickIconSx: SxProps<Theme> = {
+  filter: dropShadows.small,
+};
+
+function _CharacterTile({
+  character,
+  size,
+  isPurchased,
+  isSelected,
+}: CharacterTileProps) {
+  const onClick = React.useCallback(
+    (event: React.MouseEvent<HTMLAnchorElement>) => {
+      if (isPurchased && !isSelected) {
+        setSelectedCharacterId(character.id);
+        event.preventDefault();
+      }
+    },
+    [isPurchased, isSelected, character.id]
+  );
   return (
     <FlexBox
       width={size}
@@ -31,6 +61,7 @@ function _CharacterTile({ character, size }: CharacterTileProps) {
         width={size * characterTileContentPortion}
         height={size * characterTileContentPortion}
         zIndex={zIndexes.above}
+        mt={-size * characterTileContentPortion * 0.05}
         /*style={{
           zIndex: zIndexes.above,
         }}*/
@@ -38,10 +69,23 @@ function _CharacterTile({ character, size }: CharacterTileProps) {
         <Link
           component={RouterLink}
           underline="none"
-          to={`${Routes.market}/${character.id}`}
+          to={
+            !isPurchased || isSelected
+              ? `${Routes.market}/${character.id}`
+              : '#'
+          }
           style={linkStyle}
+          onClick={onClick}
         >
-          <div style={linkStyle} />
+          <div style={linkStyle}>
+            {isSelected && (
+              <FlexBox>
+                <SvgIcon fontSize="large" color="primary" sx={tickIconSx}>
+                  <TickIcon />
+                </SvgIcon>
+              </FlexBox>
+            )}
+          </div>
         </Link>
       </FlexBox>
       <CharacterImage

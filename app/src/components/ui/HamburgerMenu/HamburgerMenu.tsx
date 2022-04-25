@@ -28,10 +28,10 @@ import { Link as RouterLink } from 'react-router-dom';
 import FlexBox from '../FlexBox';
 import logoImage from './assets/logo.png';
 import useAuthStore from '@/state/AuthStore';
-import { useUserStore } from '@/state/UserStore';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';
 import { colors, zIndexes } from '@/theme/theme';
 import { openLoginDialog } from '@/state/DialogStore';
+import { signOut } from '@/state/updateUser';
 
 type HamburgerMenuProps = {
   isOpen: boolean;
@@ -41,7 +41,6 @@ type HamburgerMenuProps = {
 export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
   //const appStore = useAppStore();
   const userId = useAuthStore().user?.uid;
-  const signOut = useUserStore((userStore) => userStore.signOut);
   const { donations, monthDonationSum } = useDonations(isOpen);
 
   return (

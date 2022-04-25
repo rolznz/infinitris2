@@ -44,40 +44,66 @@ const benefitsPages: React.ReactNode[] = [
   <SignupBenefit
     text={
       <FormattedMessage
-        defaultMessage="Earn coins and purchase characters"
-        description="Account benefits text - earn coins & purchase characters"
+        defaultMessage="Earn coins"
+        description="Account benefits text - earn coins"
       />
     }
   />,
   <SignupBenefit
     text={
       <FormattedMessage
-        defaultMessage="Publish and rate challenges"
-        description="Account benefits text - publish & rate challenges"
+        defaultMessage="Access premium characters"
+        description="Account benefits text - premium characters"
       />
     }
   />,
   <SignupBenefit
     text={
       <FormattedMessage
-        defaultMessage="Secure your nickname"
+        defaultMessage="Earn impact points"
+        description="Account benefits text - earn impact points"
+      />
+    }
+  />,
+  <SignupBenefit
+    text={
+      <FormattedMessage
+        defaultMessage="Appear on the scoreboard"
+        description="Account benefits text - impact & scoreboard"
+      />
+    }
+  />,
+  <SignupBenefit
+    text={
+      <FormattedMessage
+        defaultMessage="Publish challenges"
+        description="Account benefits text - publish challenges"
+      />
+    }
+  />,
+  <SignupBenefit
+    text={
+      <FormattedMessage
+        defaultMessage="Rate challenges"
+        description="Account benefits text - rate challenges"
+      />
+    }
+  />,
+
+  <SignupBenefit
+    text={
+      <FormattedMessage
+        defaultMessage="Secure your nickname (tick)"
         description="Account benefits text - nickname"
       />
     }
   />,
+
   <SignupBenefit
     text={
       <FormattedMessage
-        defaultMessage="Registered Star"
-        description="Account benefits text - registered star"
-      />
-    }
-  />,
-  <SignupBenefit
-    text={
-      <FormattedMessage
-        defaultMessage="Earn impact points and appear on the scoreboard"
-        description="Account benefits text - impact & scoreboard"
+        defaultMessage="Gain access to premium rooms"
+        description="Account benefits text - verified player access"
       />
     }
   />,

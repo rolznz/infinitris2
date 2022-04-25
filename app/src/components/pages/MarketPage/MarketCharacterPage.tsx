@@ -4,7 +4,7 @@ import { useDocument } from 'swr-firestore';
 import { Page } from '../../ui/Page';
 import { useParams } from 'react-router-dom';
 import { LargeCharacterTile } from './CharacterPageTile';
-import { useUser } from '@/state/useUser';
+import { useUser } from '@/components/hooks/useUser';
 import FlexBox from '@/components/ui/FlexBox';
 import { Button } from '@mui/material';
 import { zIndexes } from '@/theme/theme';

@@ -21,7 +21,7 @@ import { useDocument } from 'swr-firestore';
 import { IPlayer } from 'infinitris2-models';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
-import { useUser } from '@/state/useUser';
+import { useUser } from '@/components/hooks/useUser';
 
 interface ChallengePageRouteParams {
   id: string;

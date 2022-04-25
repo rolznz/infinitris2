@@ -26,7 +26,7 @@ import useAppStore from '@/state/AppStore';
 import { LanguagePicker } from '../pages/SettingsPage/SettingsPage';
 import { borderColor, borderRadiuses } from '@/theme/theme';
 import isMobile from '@/utils/isMobile';
-import { useUser } from '@/state/useUser';
+import { useUser } from '@/components/hooks/useUser';
 import { setUserMusicOn, setUserSfxOn } from '@/state/updateUser';
 
 // const checkboxStyle: SxProps = {

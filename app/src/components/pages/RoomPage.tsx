@@ -28,7 +28,7 @@ import {
   reservedPlayerIds,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
-import { useUser } from '../../state/useUser';
+import { useUser } from '../hooks/useUser';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { useDocument } from 'swr-firestore';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';

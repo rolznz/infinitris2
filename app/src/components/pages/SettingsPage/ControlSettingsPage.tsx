@@ -15,7 +15,7 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { Typography } from '@mui/material';
-import { useUser } from '@/state/useUser';
+import { useUser } from '@/components/hooks/useUser';
 import { resetControls, updateControl } from '@/state/updateUser';
 
 let initialJoypadAxesValues: number[] = [];

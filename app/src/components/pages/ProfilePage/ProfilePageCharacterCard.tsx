@@ -1,5 +1,5 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { useUser } from '@/state/useUser';
+import { useUser } from '@/components/hooks/useUser';
 import { borderColorLight, borderRadiuses } from '@/theme/theme';
 import { Link, TextField, useMediaQuery } from '@mui/material';
 import React from 'react';

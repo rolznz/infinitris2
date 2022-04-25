@@ -7,7 +7,7 @@ import { FormattedMessage } from 'react-intl';
 import FlexBox from '../../FlexBox';
 import { ReactComponent as CoinIcon } from '@/icons/coin.svg';
 import { Link as RouterLink } from 'react-router-dom';
-import { useUser } from '@/state/useUser';
+import { useUser } from '@/components/hooks/useUser';
 import { InfoSlide } from '../InfoSlide';
 
 export function CoinInfoUseCoinsSlide() {

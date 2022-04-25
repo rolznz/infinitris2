@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import Routes from '../../models/Routes';
 import useAppStore from '../../state/AppStore';
-import { useUser } from '../../state/useUser';
+import { useUser } from './useUser';
 import { isTestChallenge } from '../pages/ChallengePage/ChallengePage';
 import useIncompleteChallenges from './useIncompleteChallenges';
 

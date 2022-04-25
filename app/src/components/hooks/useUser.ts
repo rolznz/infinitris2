@@ -1,7 +1,9 @@
 import { useDocument, UseDocumentOptions } from 'swr-firestore';
 import { getUserPath, IUser } from 'infinitris2-models';
-import useAuthStore from './AuthStore';
-import useLocalUserStore, { LocalUserWithoutUserProps } from './LocalUserStore';
+import useAuthStore from '../../state/AuthStore';
+import useLocalUserStore, {
+  LocalUserWithoutUserProps,
+} from '../../state/LocalUserStore';
 
 type CombinedUser = LocalUserWithoutUserProps & IUser & { id?: string };
 

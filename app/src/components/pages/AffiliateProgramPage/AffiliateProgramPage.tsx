@@ -9,7 +9,7 @@ import useAuthStore from '../../../state/AuthStore';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import { toast } from 'react-toastify';
 import ShareIcon from '@mui/icons-material/Share';
-import { useUser } from '@/state/useUser';
+import { useUser } from '@/components/hooks/useUser';
 import { Page } from '../../ui/Page';
 import { openLoginDialog } from '@/state/DialogStore';
 import { appName } from '@/utils/constants';

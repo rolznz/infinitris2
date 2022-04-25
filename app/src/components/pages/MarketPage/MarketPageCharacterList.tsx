@@ -4,7 +4,7 @@ import {
   DEFAULT_CHARACTER_IDs,
   LocalUser,
 } from '@/state/LocalUserStore';
-import { useUser } from '@/state/useUser';
+import { useUser } from '@/components/hooks/useUser';
 import {
   QueryDocumentSnapshot,
   orderBy,

@@ -20,7 +20,7 @@ import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useCollection, useDocument } from 'swr-firestore';
 import useAppStore from '@/state/AppStore';
-import { useUser } from '@/state/useUser';
+import { useUser } from '@/components/hooks/useUser';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
 import { playGameMusic } from '@/sound/SoundManager';
 import { useHistory } from 'react-router-dom';

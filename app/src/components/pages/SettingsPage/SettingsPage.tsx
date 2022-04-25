@@ -31,7 +31,7 @@ import {
   setUserRendererQuality,
   setUserRendererType,
 } from '@/state/updateUser';
-import { useUser } from '@/state/useUser';
+import { useUser } from '@/components/hooks/useUser';
 
 export function LanguagePicker() {
   const user = useUser();

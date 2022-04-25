@@ -1,9 +1,15 @@
 import IEntity from './IEntity';
 
-export type InvoiceData = {
-  type: 'createUser';
-  email: string;
-};
+export type InvoiceData =
+  | {
+      type: 'createUser';
+      email: string;
+    }
+  | {
+      type: 'buyCoins';
+      userId: string;
+      amount: number;
+    };
 /* | {
       type: 'purchase';
       userId: string;

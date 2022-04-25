@@ -6,6 +6,7 @@ import { createUserWebhook } from './createUserWebhook';
 import { paymentsWebhook } from './paymentsWebhook';
 import { loginWebhook } from './loginWebhook';
 import * as cors from 'cors';
+import { buyCoinsWebhook } from './buyCoinsWebhook';
 
 const corsHandler = cors({ origin: true });
 
@@ -14,6 +15,7 @@ app.use(corsHandler);
 app.use(express.json());
 
 app.post('/v1/users', createUserWebhook);
+app.post('/v1/coins', buyCoinsWebhook);
 app.post('/v1/donations', donationsWebhook);
 app.post('/v1/payments', paymentsWebhook);
 app.post('/v1/login', loginWebhook);

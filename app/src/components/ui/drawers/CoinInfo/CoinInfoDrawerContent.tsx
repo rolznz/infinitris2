@@ -7,10 +7,12 @@ import { Carousel, narrowSwipeableViewsStyles } from '../../Carousel';
 
 import { CoinInfoUseCoinsSlide } from './CoinInfoUseCoinsSlide';
 import { CoinInfoEarnCoinsSlide } from './CoinInfoEarnCoinsSlide';
+import { CoinInfoBuyCoinsSlide } from '@/components/ui/drawers/CoinInfo/CoinInfoBuyCoinsSlide';
 
 const pages = [
   <CoinInfoUseCoinsSlide key="1" />,
   <CoinInfoEarnCoinsSlide key="2" />,
+  <CoinInfoBuyCoinsSlide key="3" />,
 ];
 
 export function CoinInfoDrawerContent() {

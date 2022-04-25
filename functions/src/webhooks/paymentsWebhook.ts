@@ -3,8 +3,15 @@ import { Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
 import { getDefaultEntityReadOnlyProperties } from '../utils/getDefaultEntityReadOnlyProperties';
-import { createFirebaseUser, getDb } from '../utils/firebase';
-import { getPaymentPath, InvoiceData, IPayment } from 'infinitris2-models';
+import { createFirebaseUser, getDb, increment } from '../utils/firebase';
+import {
+  getPaymentPath,
+  getUserPath,
+  InvoiceData,
+  IPayment,
+  IUser,
+  objectToDotNotation,
+} from 'infinitris2-models';
 import { sendLoginCode } from '../utils/sendLoginCode';
 import { generateLoginCode } from '../utils/generateLoginCode';
 
@@ -75,10 +82,11 @@ async function processPayment(data: InvoiceData, paymentHash: string) {
       case 'createUser':
         await processCreateUser(data);
         break;
+      case 'buyCoins':
+        await processBuyCoins(data);
+        break;
       default:
-        throw new Error(
-          'Unsupported invoice type: ' + data.type + ' ' + JSON.stringify(data)
-        );
+        throw new Error('Unsupported invoice type: ' + JSON.stringify(data));
     }
     const paymentUpdate: Partial<IPayment> = {
       status: 'completed',
@@ -92,9 +100,28 @@ async function processPayment(data: InvoiceData, paymentHash: string) {
     await getDb().doc(getPaymentPath(paymentHash)).update(paymentUpdate);
   }
 }
-async function processCreateUser(data: InvoiceData): Promise<void> {
+async function processCreateUser(
+  data: InvoiceData & { type: 'createUser' }
+): Promise<void> {
   console.log('create user: ' + JSON.stringify(data));
   await createFirebaseUser(data.email);
   const loginCode = await generateLoginCode(data.email);
   await sendLoginCode(data.email, loginCode.code);
+}
+
+async function processBuyCoins(
+  data: InvoiceData & { type: 'buyCoins' }
+): Promise<void> {
+  console.log('buy coins: ' + JSON.stringify(data));
+  const userRef = getDb().doc(getUserPath(data.userId));
+  const updateUserCoins = objectToDotNotation<IUser>(
+    {
+      readOnly: {
+        coins: increment(data.amount),
+      },
+    },
+    ['readOnly.coins']
+  );
+
+  await userRef.update(updateUserCoins);
 }

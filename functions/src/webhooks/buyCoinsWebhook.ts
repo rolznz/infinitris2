@@ -1,16 +1,11 @@
-import { CreateUserRequest, CreateUserResponse } from 'infinitris2-models';
+import { BuyCoinsRequest, BuyCoinsResponse } from 'infinitris2-models';
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { createInvoice } from '../utils/createInvoice';
 
 let LAST_REQ_MS = 0;
 
-/**
- * This function simply creates an *invoice* with the user's email.
- * To proceed with the creation process, the user must pay the invoice.
- * This process exists to stop spam and encourage global adoption of Bitcoin.
- */
-export const createUserWebhook = async (req: Request, res: Response) => {
+export const buyCoinsWebhook = async (req: Request, res: Response) => {
   try {
     const now = Date.now();
     if (now - LAST_REQ_MS < 5000) {
@@ -19,24 +14,25 @@ export const createUserWebhook = async (req: Request, res: Response) => {
     }
     LAST_REQ_MS = now;
 
-    const createUserRequest: CreateUserRequest = req.body;
-    console.log('Create user request: ' + JSON.stringify(createUserRequest));
-    if (!createUserRequest.email) {
+    const buyCoinsRequest: BuyCoinsRequest = req.body;
+    console.log('Buy coins request: ' + JSON.stringify(buyCoinsRequest));
+    if (!buyCoinsRequest.userId || (buyCoinsRequest.amount || 0) < 1) {
       res.status(StatusCodes.BAD_REQUEST);
       return res.send();
     }
 
     const createInvoiceResult = await createInvoice(
-      1,
+      buyCoinsRequest.amount * 10,
       {
-        type: 'createUser',
-        email: createUserRequest.email,
+        type: 'buyCoins',
+        userId: buyCoinsRequest.userId,
+        amount: buyCoinsRequest.amount,
       },
-      `Infinitris Signup - ${createUserRequest.email}`
+      `${buyCoinsRequest.amount} Coins Purchase for user - ${buyCoinsRequest.userId}`
     );
 
     res.status(StatusCodes.CREATED);
-    const responseData: CreateUserResponse = {
+    const responseData: BuyCoinsResponse = {
       invoice: createInvoiceResult.payment_request,
       paymentId: createInvoiceResult.payment_hash,
     };

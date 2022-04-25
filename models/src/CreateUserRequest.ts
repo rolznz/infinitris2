@@ -1,8 +1,7 @@
+import { CreatePaymentResponse } from '@models/CreatePaymentResponse';
+
 export type CreateUserRequest = {
   email: string;
 };
 
-export type CreateUserResponse = {
-  invoice: string;
-  paymentId: string;
-};
+export type CreateUserResponse = CreatePaymentResponse;

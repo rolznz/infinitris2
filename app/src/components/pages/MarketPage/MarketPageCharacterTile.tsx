@@ -8,11 +8,11 @@ import Routes from '@/models/Routes';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { CharacterCoinStatChip } from '../Characters/CharacterStatChip';
 import { DocumentSnapshot } from 'firebase/firestore';
-import { dropShadows, zIndexes } from '@/theme/theme';
-import { ReactComponent as TickIcon } from '@/icons/tick.svg';
-import SvgIcon from '@mui/material/SvgIcon';
+import { zIndexes } from '@/theme/theme';
+//import { ReactComponent as TickIcon } from '@/icons/tick.svg';
+//import SvgIcon from '@mui/material/SvgIcon';
 import Link from '@mui/material/Link';
-import { SxProps, Theme } from '@mui/material/styles';
+//import { SxProps, Theme } from '@mui/material/styles';
 import { setSelectedCharacterId } from '@/state/updateUser';
 
 type CharacterTileProps = {
@@ -31,9 +31,9 @@ const linkStyle = {
   alignItems: 'center',
 };
 
-const tickIconSx: SxProps<Theme> = {
-  filter: dropShadows.small,
-};
+// const tickIconSx: SxProps<Theme> = {
+//   filter: dropShadows.small,
+// };
 
 function _CharacterTile({
   character,
@@ -78,13 +78,13 @@ function _CharacterTile({
           onClick={onClick}
         >
           <div style={linkStyle}>
-            {isSelected && (
+            {/*isSelected && (
               <FlexBox>
                 <SvgIcon fontSize="large" color="primary" sx={tickIconSx}>
                   <TickIcon />
                 </SvgIcon>
               </FlexBox>
-            )}
+            )*/}
           </div>
         </Link>
       </FlexBox>
@@ -92,6 +92,7 @@ function _CharacterTile({
         characterId={character.id}
         width={size * 1.2}
         thumbnail={character.data()!.thumbnail}
+        strongShadow={isSelected}
       />
       <FlexBox mt={-size * 0.02} mb={size * 0.02}>
         <CharacterCoinStatChip value={character.data()!.price} />

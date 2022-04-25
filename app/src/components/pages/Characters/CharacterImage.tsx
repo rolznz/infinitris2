@@ -7,6 +7,7 @@ type CharacterImageProps = {
   thumbnail?: string;
   width: number;
   hasShadow?: boolean;
+  strongShadow?: boolean;
 };
 
 // TODO: extract to progressive image component
@@ -26,13 +27,18 @@ function _CharacterImage({
   width,
   thumbnail,
   hasShadow,
+  strongShadow,
 }: CharacterImageProps) {
   const [isLoaded, setLoaded] = React.useState(false);
   const sx: SxProps<Theme> = React.useMemo(
     () => ({
-      filter: hasShadow ? dropShadows.small : undefined,
+      filter: strongShadow
+        ? dropShadows.selected
+        : hasShadow
+        ? dropShadows.small
+        : undefined,
     }),
-    [hasShadow]
+    [hasShadow, strongShadow]
   );
   return (
     <Box

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<g>
+	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="6.6867" y1="20.6402" x2="17.4025" y2="20.6402">
+		<stop  offset="0" style="stop-color:#6DCFF6"/>
+		<stop  offset="0.4292" style="stop-color:#B6E4FA"/>
+		<stop  offset="0.8109" style="stop-color:#E9F6FE"/>
+		<stop  offset="1" style="stop-color:#FFFFFF"/>
+	</linearGradient>
+	<path fill="url(#SVGID_1_)" d="M14.7,17.3H9.4c-1.5,0-2.8,1.2-2.8,2.8V23c1.7,0.7,3.5,1,5.4,1c1.9,0,3.7-0.4,5.3-1V20
+		C17.4,18.5,16.2,17.3,14.7,17.3z"/>
+	<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="2.8932" y1="8.3546" x2="21.4687" y2="8.3546">
+		<stop  offset="0" style="stop-color:#6DCFF6"/>
+		<stop  offset="0.4292" style="stop-color:#B6E4FA"/>
+		<stop  offset="0.8109" style="stop-color:#E9F6FE"/>
+		<stop  offset="1" style="stop-color:#FFFFFF"/>
+	</linearGradient>
+	<path fill="url(#SVGID_2_)" d="M21.5,9.8c0-0.8-1.2-2.1-2.1-2.1h-0.1c-0.7-1.5-2.7-3.1-4.4-3.1h-2.4V3.3c0.8-0.1,1.4-0.8,1.4-1.6
+		c0-0.9-0.7-1.6-1.6-1.6c-0.9,0-1.6,0.7-1.6,1.6c0,0.8,0.6,1.5,1.4,1.6v1.3H9.7C8,4.6,5.8,6.3,5,7.8C4.1,7.9,2.9,9.1,2.9,9.9l0,1.8
+		c0,0.8,1.2,2.2,2.2,2.2h0.2c0.9,1.4,2.6,2.8,4.3,2.8h5.1c1.8,0,3.5-1.4,4.3-2.9h0.3c1.2,0,2.2-1.4,2.2-2.2L21.5,9.8z M9.5,11
+		c-0.5,0-0.9-0.4-0.9-0.9c0-0.5,0.4-0.9,0.9-0.9c0.5,0,0.9,0.4,0.9,0.9C10.5,10.6,10,11,9.5,11z M13.7,12.4c-0.8,0.8-2.1,0.8-2.9,0
+		c-0.4-0.3-0.2-0.8,0.1-0.9c0.2-0.1,0.3,0,0.5,0.1c0.6,0.5,1.1,0.5,1.7,0c0.2-0.2,0.5-0.2,0.7,0C13.9,11.9,13.9,12.2,13.7,12.4z
+		 M13.8,10.1c0-0.5,0.4-0.9,0.9-0.9c0.5,0,0.9,0.4,0.9,0.9c0,0.5-0.4,0.9-0.9,0.9C14.2,11,13.8,10.6,13.8,10.1z"/>
+</g>
+</svg>

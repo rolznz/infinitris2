@@ -12,7 +12,7 @@ import React from 'react';
 //import { toast } from 'react-toastify';
 import { useDocument } from 'swr-firestore';
 
-export function useSyncUserProfile() {
+export function useSyncNickname() {
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
   const { data: user } = useDocument<IUser>(
     authStoreUserId ? getUserPath(authStoreUserId) : null

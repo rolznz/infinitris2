@@ -17,6 +17,7 @@ import * as firebaseUtils from '../../utils/firebase';
 import { FeaturesList } from 'firebase-functions-test/lib/features';
 import { firestore } from 'firebase-admin';
 jest.mock('../../utils/firebase');
+jest.mock('../../utils/sendEmail');
 
 const getAppMock = firebaseUtils.getApp as jest.MockedFunction<
   typeof firebaseUtils.getApp

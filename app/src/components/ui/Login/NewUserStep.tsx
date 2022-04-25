@@ -45,7 +45,7 @@ const benefitsPages: React.ReactNode[] = [
     text={
       <FormattedMessage
         defaultMessage="Earn coins and purchase characters"
-        description="Account benefits text 3"
+        description="Account benefits text - earn coins & purchase characters"
       />
     }
   />,
@@ -53,7 +53,7 @@ const benefitsPages: React.ReactNode[] = [
     text={
       <FormattedMessage
         defaultMessage="Publish and rate challenges"
-        description="Account benefits text 1"
+        description="Account benefits text - publish & rate challenges"
       />
     }
   />,
@@ -61,7 +61,15 @@ const benefitsPages: React.ReactNode[] = [
     text={
       <FormattedMessage
         defaultMessage="Secure your nickname"
-        description="Account benefits text 2"
+        description="Account benefits text - nickname"
+      />
+    }
+  />,
+  <SignupBenefit
+    text={
+      <FormattedMessage
+        defaultMessage="Registered Star"
+        description="Account benefits text - registered star"
       />
     }
   />,
@@ -69,7 +77,7 @@ const benefitsPages: React.ReactNode[] = [
     text={
       <FormattedMessage
         defaultMessage="Earn impact points and appear on the scoreboard"
-        description="Account benefits text 4"
+        description="Account benefits text - impact & scoreboard"
       />
     }
   />,

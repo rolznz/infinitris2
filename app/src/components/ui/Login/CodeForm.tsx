@@ -14,11 +14,16 @@ import useLoginStore from '@/state/LoginStore';
 import shallow from 'zustand/shallow';
 import useLocalStorage from 'react-use/lib/useLocalStorage';
 import localStorageKeys from '@/utils/localStorageKeys';
-import { setDoc, getFirestore, doc } from 'firebase/firestore';
-import { getConversionPath, IConversion } from 'infinitris2-models';
+import { setDoc, getFirestore, doc, updateDoc } from 'firebase/firestore';
+import {
+  getConversionPath,
+  getUserPath,
+  IConversion,
+} from 'infinitris2-models';
 import { toast } from 'react-toastify';
 import Link from '@mui/material/Link';
 import useLocalUserStore from '@/state/LocalUserStore';
+import removeUndefinedValues from '@/utils/removeUndefinedValues';
 
 const codeSchema = yup
   .object({
@@ -32,7 +37,10 @@ type CodeFormProps = { onSuccess(userId: string): void };
 
 export function CodeForm({ onSuccess }: CodeFormProps) {
   const intl = useIntl();
-  const signoutLocalUser = useLocalUserStore((store) => store.signOutLocalUser);
+  const [localUser, signoutLocalUser] = useLocalUserStore(
+    (store) => [store.user, store.signOutLocalUser],
+    shallow
+  );
   const [referredByAffiliateId, , deleteReferredByAffiliateId] =
     useLocalStorage<string>(localStorageKeys.referredByAffiliateId, undefined, {
       raw: true,
@@ -114,6 +122,40 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
             deleteReferredByAffiliateId();
           }
 
+          if (hasCreatedNewUser) {
+            // sync guest settings into newly created account
+            console.log('Syncing account settings');
+            const {
+              appTheme,
+              rendererType,
+              rendererQuality,
+              musicOn,
+              sfxOn,
+              sfxVolume,
+              musicVolume,
+              controls_keyboard,
+              controls_gamepad,
+              locale,
+              preferredInputMethod,
+            } = localUser;
+            await updateDoc(
+              doc(getFirestore(), getUserPath(credential.user.uid)),
+              removeUndefinedValues({
+                musicOn,
+                sfxOn,
+                appTheme,
+                rendererType,
+                rendererQuality,
+                sfxVolume,
+                musicVolume,
+                controls_keyboard,
+                controls_gamepad,
+                locale,
+                preferredInputMethod,
+              })
+            );
+          }
+
           toast(
             intl.formatMessage({
               defaultMessage: 'Logged in successfully',
@@ -147,6 +189,7 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
       setIsLoading,
       hasCreatedNewUser,
       signoutLocalUser,
+      localUser,
     ]
   );
 
@@ -194,6 +237,7 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
             resend: (
               <Link
                 onClick={() => {
+                  alert('Please note that only the latest code will work.');
                   setCodeSent(false);
                   setInvoice(undefined);
                   setPaymentId(undefined);

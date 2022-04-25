@@ -58,11 +58,21 @@ service cloud.firestore {
       allow read, write: if false;
     }
     match /users/{userId} {
+      function verifyControls(controls) {
+        return controls is map && controls.keys().hasOnly(['MoveLeft', 'MoveRight', 'MoveDown', 'RotateClockwise', 'RotateAnticlockwise', 'Drop', 'Chat', 'Esc']) &&
+          controls.get('MoveLeft', '') is string &&
+          controls.get('MoveRight', '') is string &&
+          controls.get('MoveDown', '') is string &&
+          controls.get('RotateClockwise', '') is string &&
+          controls.get('RotateAnticlockwise', '') is string &&
+          controls.get('Drop', '') is string &&
+          controls.get('Chat', '') is string &&
+          controls.get('Esc', '') is string;
+      }
       function isValidUser() {
-        let controls = getProperty('controls_keyboard', {});
         return
           baseRequestValid() &&
-          entityHasExpectedFields(['controls_keyboard', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality']) &&
+          entityHasExpectedFields(['controls_keyboard', 'controls_gamepad', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality']) &&
           getProperty('hasSeenAllSet', false) is bool &&
           getProperty('hasSeenWelcome', false) is bool &&
           getProperty('musicOn', false) is bool &&
@@ -74,15 +84,8 @@ service cloud.firestore {
           getProperty('appTheme', '') in ['', 'light', 'dark', 'default'] &&
           getProperty('rendererType', '') in ['', 'minimal', 'infinitris2'] &&
           getProperty('rendererQuality', '') in ['', 'low', 'medium', 'high'] &&
-          controls is map && controls.keys().hasOnly(['MoveLeft', 'MoveRight', 'MoveDown', 'RotateClockwise', 'RotateAnticlockwise', 'Drop', 'Chat', 'Esc']) &&
-          controls.get('MoveLeft', '') is string &&
-          controls.get('MoveRight', '') is string &&
-          controls.get('MoveDown', '') is string &&
-          controls.get('RotateClockwise', '') is string &&
-          controls.get('RotateAnticlockwise', '') is string &&
-          controls.get('Drop', '') is string &&
-          controls.get('Chat', '') is string &&
-          controls.get('Esc', '') is string;
+          verifyControls(getProperty('controls_keyboard', {})) &&
+          verifyControls(getProperty('controls_gamepad', {}));
       }
     	allow read: if authMatchesUser(userId);
       allow create, delete: if false;

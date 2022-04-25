@@ -104,6 +104,15 @@ export const coreThemeOptions: ThemeOptions = {
   },
   zIndex: zIndexes as any,
   components: {
+    MuiInput: {
+      styleOverrides: {
+        input: {
+          //padding: '10px',
+          //marginBottom: '2px',
+          //borderRadius: borderRadiuses.base,
+        },
+      },
+    },
     MuiInputLabel: {
       styleOverrides: {
         root: {

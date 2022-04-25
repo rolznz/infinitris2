@@ -190,6 +190,7 @@ export function useUserStore<StateSlice>(
       signoutLocalUser();
       signOut(getAuth());
       useAuthStore.getState().setUser(null);
+      setTimeout(() => (window.location.href = '/'), 500);
     },
     setAppTheme: (appTheme: AppTheme) => {
       updateUser({ appTheme });

@@ -40,6 +40,7 @@
     "test:files:paymentRules": "jest -- \"src/__tests__/paymentRules.test.ts\"",
     "test:files:serversWebhook": "jest -- \"src/__tests__/serversWebhook.test.ts\"",
     "test:files:createUserWebhook": "jest -- \"src/__tests__/createUserWebhook.test.ts\"",
+    "test:files:buyCoinsWebhook": "jest -- \"src/__tests__/buyCoinsWebhook.test.ts\"",
     "test:files:loginWebhook": "jest -- \"src/__tests__/loginWebhook.test.ts\"",
     "logs": "firebase functions:log"
   },

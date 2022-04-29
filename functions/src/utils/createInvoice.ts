@@ -16,7 +16,7 @@ export type CreateInvoiceResponse = {
   // eslint-disable-next-line camelcase
   payment_request: string;
   // eslint-disable-next-line camelcase
-  checking_id: string;
+  // checking_id: string;
   // eslint-disable-next-line camelcase
   // "lnurl_response": null
 };

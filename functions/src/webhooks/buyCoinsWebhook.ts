@@ -16,7 +16,11 @@ export const buyCoinsWebhook = async (req: Request, res: Response) => {
 
     const buyCoinsRequest: BuyCoinsRequest = req.body;
     console.log('Buy coins request: ' + JSON.stringify(buyCoinsRequest));
-    if (!buyCoinsRequest.userId || (buyCoinsRequest.amount || 0) < 1) {
+    if (
+      !buyCoinsRequest.userId ||
+      !buyCoinsRequest.email ||
+      (buyCoinsRequest.amount || 0) < 1
+    ) {
       res.status(StatusCodes.BAD_REQUEST);
       return res.send();
     }
@@ -28,7 +32,7 @@ export const buyCoinsWebhook = async (req: Request, res: Response) => {
         userId: buyCoinsRequest.userId,
         amount: buyCoinsRequest.amount,
       },
-      `${buyCoinsRequest.amount} Coins Purchase for user - ${buyCoinsRequest.userId}`
+      `${buyCoinsRequest.amount} Coins Purchase - ${buyCoinsRequest.email}`
     );
 
     res.status(StatusCodes.CREATED);

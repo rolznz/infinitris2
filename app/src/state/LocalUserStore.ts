@@ -12,7 +12,6 @@ const localStorageUser = localStorageValue
 export type LocalUserWithoutUserProps = {
   nickname?: string;
   freeCharacterIds?: string[];
-  selectedCharacterId?: string; // TODO: move to IUser
 };
 export type LocalUser = LocalUserWithoutUserProps &
   Omit<IUser, 'userId' | 'readOnly' | 'created'>;

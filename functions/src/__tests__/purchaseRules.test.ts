@@ -1,7 +1,7 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
-import { IColor, IPurchase } from 'infinitris2-models';
+import { ICharacter, IPurchase } from 'infinitris2-models';
 
 describe('Purchase Rules', () => {
   afterEach(async () => {
@@ -13,7 +13,7 @@ describe('Purchase Rules', () => {
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.color1Path]: dummyData.color1,
+        [dummyData.character1Path]: dummyData.character1,
       }
     );
 
@@ -22,16 +22,34 @@ describe('Purchase Rules', () => {
     ).toAllow();
   });
 
+  test('should deny creating a purchase when character is out of stock', async () => {
+    const character: ICharacter = {
+      ...dummyData.character1,
+      maxPurchases: 0,
+    };
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.character1Path]: character,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.purchase1Path).set(dummyData.purchase1)
+    ).toDeny();
+  });
+
   test('should deny creating a purchase with insufficient coins', async () => {
-    const color: IColor = {
-      ...dummyData.color1,
+    const character: ICharacter = {
+      ...dummyData.character1,
       price: dummyData.existingUser.readOnly.coins + 1,
     };
     const { db } = await setup(
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.color1Path]: color,
+        [dummyData.character1Path]: character,
       }
     );
 
@@ -43,7 +61,7 @@ describe('Purchase Rules', () => {
   test('should allow creating a purchase when logged out', async () => {
     const { db } = await setup(undefined, {
       [dummyData.user1Path]: dummyData.existingUser,
-      [dummyData.color1Path]: dummyData.color1,
+      [dummyData.character1Path]: dummyData.character1,
     });
 
     await expect(
@@ -69,7 +87,7 @@ describe('Purchase Rules', () => {
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.color1Path]: dummyData.color1,
+        [dummyData.character1Path]: dummyData.character1,
         [dummyData.purchase1Path]: dummyData.purchase1,
       }
     );
@@ -82,7 +100,7 @@ describe('Purchase Rules', () => {
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.color1Path]: dummyData.color1,
+        [dummyData.character1Path]: dummyData.character1,
       }
     );
 
@@ -99,7 +117,7 @@ describe('Purchase Rules', () => {
       { uid: dummyData.userId1 },
       {
         [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.color1Path]: dummyData.color1,
+        [dummyData.character1Path]: dummyData.character1,
       }
     );
 

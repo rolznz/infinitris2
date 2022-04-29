@@ -39,7 +39,7 @@ export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
           numWrites: 0,
           writeRate: 0,
           lastWriteTimestamp: getCurrentTimestamp(),
-          purchasedEntityIds: [],
+          characterIds: [],
         },
         userId: user.uid,
         created: true,

@@ -30,7 +30,6 @@
     "test:files:purchaseRules": "jest -- \"src/__tests__/purchaseRules.test.ts\"",
     "test:files:purchaseHooks": "jest -- \"src/__tests__/purchaseHooks.test.ts\"",
     "test:files:affiliateRules": "jest -- \"src/__tests__/affiliateRules.test.ts\"",
-    "test:files:colorHooks": "jest -- \"src/__tests__/colorHooks.test.ts\"",
     "test:files:serverKeyRules": "jest -- \"src/__tests__/serverKeyRules.test.ts\"",
     "test:files:scheduledCreditReward": "jest -- \"src/__tests__/scheduledCreditReward.test.ts\"",
     "test:files:updateNetworkImpact": "jest -- \"src/__tests__/updateNetworkImpact.test.ts\"",

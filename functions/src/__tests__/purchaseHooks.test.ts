@@ -1,7 +1,7 @@
 import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import dummyData from './helpers/dummyData';
-import { IColor, IPurchase, IUser } from 'infinitris2-models';
+import { ICharacter, IPurchase, IUser } from 'infinitris2-models';
 import { firestore } from '@firebase/rules-unit-testing';
 import { onCreatePurchase } from '../onCreatePurchase';
 
@@ -10,13 +10,13 @@ describe('Purchase Hooks', () => {
     await teardown();
   });
 
-  test('can purchase a color', async () => {
+  test('can purchase a character', async () => {
     // assume the user already has one purchase
     const existingUser: IUser = {
       ...dummyData.existingUser,
       readOnly: {
         ...dummyData.existingUser.readOnly,
-        purchasedEntityIds: [dummyData.colorId2],
+        characterIds: [dummyData.characterId2.toString()],
       },
     };
 
@@ -25,7 +25,7 @@ describe('Purchase Hooks', () => {
       {
         [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
         [dummyData.user1Path]: existingUser,
-        [dummyData.color1Path]: dummyData.color1,
+        [dummyData.character1Path]: dummyData.character1,
         [dummyData.purchase1Path]: dummyData.purchase1,
       },
       false
@@ -48,14 +48,16 @@ describe('Purchase Hooks', () => {
       firestore.Timestamp.now().seconds - 5
     );
 
-    const color = (await db.doc(dummyData.color1Path).get()).data() as IColor;
-    expect(color.readOnly!.numPurchases).toBe(1);
+    const character = (
+      await db.doc(dummyData.character1Path).get()
+    ).data() as ICharacter;
+    expect(character.numPurchases).toBe(1);
 
     const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
     expect(user.readOnly.coins).toEqual(0);
-    expect(user.readOnly.purchasedEntityIds).toEqual([
-      dummyData.colorId2,
-      dummyData.colorId1,
+    expect(user.readOnly.characterIds).toEqual([
+      dummyData.characterId2.toString(),
+      dummyData.characterId1.toString(),
     ]);
   });
 });

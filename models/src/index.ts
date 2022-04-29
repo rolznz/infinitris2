@@ -25,7 +25,6 @@ import Timestamp from './Timestamp';
 import IScoreboardEntry from './IScoreboardEntry';
 import ICellEventListener from './ICellEventListener';
 import IAffiliate from './IAffiliate';
-import IColor from './IColor';
 import IEntity from './IEntity';
 import ChallengeCompletionStats from './ChallengeCompletionStats';
 
@@ -106,7 +105,6 @@ export {
   ChallengeCellType,
   IRoom,
   IUser,
-  IColor,
   IAffiliate,
   IRating,
   CreatableRating,

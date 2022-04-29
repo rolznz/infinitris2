@@ -28,11 +28,9 @@ export const onCreatePurchase = functions.firestore
 
       const updateProduct = objectToDotNotation<IProduct>(
         {
-          readOnly: {
-            numPurchases: increment(1),
-          },
+          numPurchases: increment(1),
         },
-        ['readOnly.numPurchases']
+        ['numPurchases']
       );
 
       productDocRef.update(updateProduct);
@@ -43,13 +41,10 @@ export const onCreatePurchase = functions.firestore
         {
           readOnly: {
             coins: increment(-product.price),
-            purchasedEntityIds: [
-              ...user.readOnly.purchasedEntityIds,
-              purchase.entityId,
-            ],
+            characterIds: [...user.readOnly.characterIds, purchase.entityId],
           },
         },
-        ['readOnly.coins', 'readOnly.purchasedEntityIds']
+        ['readOnly.coins', 'readOnly.characterIds']
       );
 
       await userDocRef.update(updateUser);

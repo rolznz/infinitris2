@@ -5,7 +5,7 @@ export interface IPurchaseReadOnlyProperties
 
 export interface IPurchase extends IEntity {
   readonly readOnly?: IPurchaseReadOnlyProperties;
-  readonly entityCollectionPath: 'colors';
+  readonly entityCollectionPath: 'characters';
   readonly entityId: string;
 }
 

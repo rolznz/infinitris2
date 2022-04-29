@@ -16,8 +16,6 @@ import {
   IConversion,
   INickname,
   getNicknamePath,
-  getColorPath,
-  IColor,
   getPurchasePath,
   IPurchase,
   Creatable,
@@ -31,6 +29,8 @@ import {
   IRoom,
   IServer,
   getRoomId,
+  ICharacter,
+  getCharacterPath,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -65,7 +65,7 @@ const existingUser: IUser = {
     networkImpact: 0,
     coins: 3,
     email: 'bob@gmail.com',
-    purchasedEntityIds: [],
+    characterIds: [],
     lastWriteTimestamp: createdTimestamp,
     numWrites: 0,
     writeRate: 0,
@@ -184,32 +184,35 @@ const creatableNickname: INickname = {
   userId: userId1,
 };
 
-const colorId1 = 'red';
-const colorId2 = 'blue';
-const color1Path = getColorPath(colorId1);
-const color1: IColor = {
+const characterId1 = 1;
+const characterId2 = 2;
+const character1Path = getCharacterPath(characterId1.toString());
+const character1: ICharacter = {
   readOnly: {
     createdTimestamp: createdTimestamp,
     lastModifiedTimestamp: createdTimestamp,
-    numPurchases: 0,
     numTimesModified: 0,
   },
+  numPurchases: 0,
+  maxPurchases: 10,
   price: 3,
-  value: 0xff0000,
+  patternFilename: '1.png',
+  thumbnail: '1.png',
+  color: '#ff0000',
+  id: characterId1,
+  name: 'blah',
   created: true,
   userId: userId1,
 };
-const creatableColor: Creatable<IColor> = {
-  value: 0xff0000,
-  price: 3,
-  created: false,
-  userId: userId1,
-};
 
-const purchase1Path = getPurchasePath('colors', colorId1, userId1);
+const purchase1Path = getPurchasePath(
+  'characters',
+  characterId1.toString(),
+  userId1
+);
 const purchase1: IPurchase = {
-  entityCollectionPath: 'colors',
-  entityId: colorId1,
+  entityCollectionPath: 'characters',
+  entityId: characterId1.toString(),
   created: false,
   userId: userId1,
 };
@@ -296,11 +299,10 @@ const dummyData = {
   conversion1Path,
   createdTimestamp,
   lastModifiedTimestamp,
-  colorId1,
-  colorId2,
-  color1Path,
-  color1,
-  creatableColor,
+  characterId1,
+  characterId2,
+  character1Path,
+  character1,
   purchase1Path,
   purchase1,
   creatableChallengeAttempt,

@@ -195,7 +195,7 @@ service cloud.firestore {
     }
     match /purchases/{purchaseId} {
       function isValidCollection() {
-        return request.resource.data.entityCollectionPath == 'colors';
+        return request.resource.data.entityCollectionPath == 'characters';
       }
     	function isValidPurchase() {
         let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
@@ -207,7 +207,8 @@ service cloud.firestore {
           isValidCollection() &&
           entity != null &&
           user != null &&
-          user.data.readOnly.coins >= entity.data.price;
+          user.data.readOnly.coins >= entity.data.price &&
+          (entity.data.get('maxPurchases', -1) < 0 || entity.data.maxPurchases > entity.data.numPurchases);
       }
       allow create: if isValidPurchase();
       allow update: if false;

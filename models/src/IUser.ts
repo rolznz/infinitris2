@@ -12,15 +12,12 @@ export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly nickname?: string;
   readonly colorId?: string;
   readonly email: string;
-
   readonly affiliateId?: string;
   readonly referredByAffiliateId?: string;
-  // readonly patternId?: string;
-  // readonly
-  readonly purchasedEntityIds: string[];
   readonly lastWriteTimestamp: Timestamp;
   readonly numWrites: number;
   readonly writeRate: number;
+  readonly characterIds: string[];
 }
 
 export interface WithControls {
@@ -41,4 +38,5 @@ export default interface IUser extends IEntity, WithControls {
   readonly sfxVolume?: number;
   readonly rendererQuality?: RendererQuality;
   readonly rendererType?: RendererType;
+  readonly selectedCharacterId?: string;
 }

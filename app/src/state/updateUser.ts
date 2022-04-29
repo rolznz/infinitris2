@@ -49,7 +49,7 @@ export const purchaseFreeCharacter = (
   });
 };
 export const setSelectedCharacterId = (selectedCharacterId: string) => {
-  updateLocalUser({
+  updateUser({
     selectedCharacterId,
   });
 };

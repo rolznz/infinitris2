@@ -14,7 +14,7 @@
     "test": "jest --runInBand",
     "test:files:entityHooks": "jest -- \"src/__tests__/entityHooks.test.ts\"",
     "test:files:authUserHooks": "jest -- \"src/__tests__/authUserHooks.test.ts\"",
-    "test:files:userRules": "jest -- \"src/__tests__/userRules.test.ts\"",
+    "test:files:userRules": "jest --runInBand -- \"src/__tests__/userRules.test.ts\"",
     "test:files:conversionRules": "jest -- \"src/__tests__/conversionRules.test.ts\"",
     "test:files:conversionHooks": "jest -- \"src/__tests__/conversionHooks.test.ts\"",
     "test:files:nicknameHooks": "jest -- \"src/__tests__/nicknameHooks.test.ts\"",

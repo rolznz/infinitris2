@@ -72,7 +72,7 @@ service cloud.firestore {
       function isValidUser() {
         return
           baseRequestValid() &&
-          entityHasExpectedFields(['controls_keyboard', 'controls_gamepad', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality']) &&
+          entityHasExpectedFields(['controls_keyboard', 'controls_gamepad', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality', 'selectedCharacterId']) &&
           getProperty('hasSeenAllSet', false) is bool &&
           getProperty('hasSeenWelcome', false) is bool &&
           getProperty('musicOn', false) is bool &&
@@ -84,6 +84,7 @@ service cloud.firestore {
           getProperty('appTheme', '') in ['', 'light', 'dark', 'default'] &&
           getProperty('rendererType', '') in ['', 'minimal', 'infinitris2'] &&
           getProperty('rendererQuality', '') in ['', 'low', 'medium', 'high'] &&
+          (getProperty('selectedCharacterId', '0') == '0' || request.resource.data.selectedCharacterId in resource.data.readOnly.characterIds) &&
           verifyControls(getProperty('controls_keyboard', {})) &&
           verifyControls(getProperty('controls_gamepad', {}));
       }

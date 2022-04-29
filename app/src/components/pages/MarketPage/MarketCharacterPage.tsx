@@ -1,12 +1,17 @@
 import React from 'react';
-import { ICharacter, getCharacterPath } from 'infinitris2-models';
+import {
+  ICharacter,
+  getCharacterPath,
+  getPurchasePath,
+  Creatable,
+  IPurchase,
+} from 'infinitris2-models';
 import { useDocument } from 'swr-firestore';
 import { Page } from '../../ui/Page';
 import { useParams } from 'react-router-dom';
 import { LargeCharacterTile } from './CharacterPageTile';
 import { useUser } from '@/components/hooks/useUser';
 import FlexBox from '@/components/ui/FlexBox';
-import { Button } from '@mui/material';
 import { zIndexes } from '@/theme/theme';
 import { Carousel } from '@/components/ui/Carousel';
 import { BlockPreview } from './BlockPreview';
@@ -17,12 +22,19 @@ import {
   purchaseFreeCharacter,
   setSelectedCharacterId,
 } from '@/state/updateUser';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import useAuthStore from '@/state/AuthStore';
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 export default function MarketPage() {
+  const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
   const { id } = useParams<{ id: string }>();
   const { data: character } = useDocument<ICharacter>(getCharacterPath(id));
   const intl = useIntl();
   const user = useUser();
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const pages: React.ReactNode[] = character
     ? [
@@ -75,27 +87,62 @@ export default function MarketPage() {
       }
     >
       <FlexBox zIndex={zIndexes.above}>
+        {isLoading && <LoadingSpinner />}
         {character &&
-          ((user as LocalUser).freeCharacterIds?.indexOf(id) ?? -1) < 0 && (
+          !isLoading &&
+          ((!authStoreUserId &&
+            ((user as LocalUser).freeCharacterIds?.indexOf(id) ?? -1)) < 0 ||
+            (authStoreUserId &&
+              (user.readOnly.characterIds?.indexOf(id) ?? -1) < 0)) && (
             <Button
               autoFocus
               color="primary"
               variant="contained"
               sx={{ mb: 2 }}
-              onClick={() => {
+              onClick={async () => {
+                setIsLoading(true);
+                let purchaseSucceeded = false;
                 if (character.data()!.price <= (user.readOnly?.coins || 0)) {
-                  purchaseFreeCharacter(
-                    (user as LocalUser).freeCharacterIds ||
-                      DEFAULT_CHARACTER_IDs,
-                    id
-                  );
-                  setSelectedCharacterId(id);
-                  toast(
-                    intl.formatMessage({
-                      defaultMessage: 'Character Purchased',
-                      description: 'Character Purchased toast message',
-                    })
-                  );
+                  if (authStoreUserId) {
+                    const purchase: Creatable<IPurchase> = {
+                      created: false,
+                      entityCollectionPath: 'characters',
+                      entityId: character.id,
+                      userId: authStoreUserId,
+                    };
+                    try {
+                      await setDoc(
+                        doc(
+                          getFirestore(),
+                          getPurchasePath(
+                            'characters',
+                            character.id,
+                            authStoreUserId
+                          )
+                        ),
+                        purchase
+                      );
+                      purchaseSucceeded = true;
+                    } catch (error) {
+                      console.error('Failed to purchase character', error);
+                    }
+                  } else {
+                    purchaseFreeCharacter(
+                      (user as LocalUser).freeCharacterIds ||
+                        DEFAULT_CHARACTER_IDs,
+                      id
+                    );
+                    purchaseSucceeded = true;
+                  }
+                  if (purchaseSucceeded) {
+                    setSelectedCharacterId(id);
+                    toast(
+                      intl.formatMessage({
+                        defaultMessage: 'Character Purchased',
+                        description: 'Character Purchased toast message',
+                      })
+                    );
+                  }
                 } else {
                   toast(
                     intl.formatMessage({
@@ -105,6 +152,7 @@ export default function MarketPage() {
                     {}
                   );
                 }
+                setIsLoading(false);
               }}
             >
               <FormattedMessage
@@ -113,6 +161,19 @@ export default function MarketPage() {
               />
             </Button>
           )}
+        {character && character.data()?.maxPurchases && (
+          <Typography>
+            <FormattedMessage
+              defaultMessage="{numRemaining} remaining"
+              description="number of stock remaining for purchase"
+              values={{
+                numRemaining:
+                  character.data()!.maxPurchases -
+                  (character.data()!.numPurchases || 0),
+              }}
+            />
+          </Typography>
+        )}
         {character && <Carousel slides={pages} />}
         {/*<FlexBox
         top={0}

@@ -37,15 +37,30 @@ export const onCreatePurchase = functions.firestore
 
       const userDocRef = getDb().doc(getUserPath(userId));
       const user = (await userDocRef.get()).data() as IUser;
-      const updateUser = objectToDotNotation<IUser>(
+      let updateUser = objectToDotNotation<IUser>(
         {
           readOnly: {
             coins: increment(-product.price),
-            characterIds: [...user.readOnly.characterIds, purchase.entityId],
+            characterIds: [
+              ...(user.readOnly.characterIds || []),
+              purchase.entityId,
+            ],
           },
         },
         ['readOnly.coins', 'readOnly.characterIds']
       );
+
+      if (purchase.entityCollectionPath === 'characters') {
+        updateUser = {
+          ...updateUser,
+          ...objectToDotNotation<IUser>(
+            {
+              selectedCharacterId: purchase.entityId,
+            },
+            ['selectedCharacterId']
+          ),
+        };
+      }
 
       await userDocRef.update(updateUser);
 

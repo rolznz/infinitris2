@@ -29,6 +29,7 @@ console.log('Uploading ' + characterFilenames.length + ' characters');
 let index = 0;
 (async () => {
   for (const filename of characterFilenames) {
+    // console.log(filename);
     const promises: Promise<any>[] = [];
     const contents = JSON.parse(
       readFileSync(`${definitionsDirectory}/${filename}`).toString()
@@ -36,7 +37,9 @@ let index = 0;
     const id = parseInt(filename.substring(0, filename.indexOf('.')));
 
     // console.log(contents);
-    promises.push(getDb().doc(`characters/${id}`).set(contents));
+    promises.push(
+      getDb().doc(`characters/${id}`).set(contents, { merge: true })
+    );
 
     const imageFilename = `${id}.png`;
     const thumbnailFilename = `${id}_thumbnail.png`;

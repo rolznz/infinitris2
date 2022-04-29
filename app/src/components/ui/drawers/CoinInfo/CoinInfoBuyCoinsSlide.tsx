@@ -156,7 +156,7 @@ export function CoinInfoBuyCoinsSlide() {
                   render={({ field }) => (
                     <FormControl variant="standard" fullWidth>
                       <InputLabel>Coins</InputLabel>
-                      <Input {...field} autoFocus fullWidth />
+                      <Input {...field} fullWidth />
                       <p>{errors.amount?.message}</p>
                     </FormControl>
                   )}

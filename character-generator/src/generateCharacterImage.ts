@@ -50,7 +50,12 @@ import {
   getCustomEyesFilename,
   getCustomMouthFilename,
 } from './customizations';
-import { colors, getBorderColor, getCompositeColors } from 'infinitris2-models';
+import {
+  colors,
+  getBorderColor,
+  getCompositeColors,
+  ICharacter,
+} from 'infinitris2-models';
 
 const pickRandomFilename = (
   random: Random,
@@ -384,7 +389,12 @@ export async function generateCharacterImage(
     patternFilename:
       patternFilename.substring(0, patternFilename.length - 3) + 'png',
     thumbnail,
-  };
+    //[0,5,200, 800, 1000].map(price => price > 0? Math.floor(Math.pow((1000 - Math.min(price, 1000)) / 250, 4) * 10) + 1 : -1) (5) [-1, 2510, 1049, 5, 1]
+    maxPurchases:
+      price > 0
+        ? Math.floor(Math.pow((1000 - Math.min(price, 1000)) / 250, 4) * 10) + 1
+        : -1,
+  } as ICharacter;
 }
 
 function createEmptyImage() {

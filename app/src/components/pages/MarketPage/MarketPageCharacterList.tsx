@@ -18,6 +18,7 @@ import { useInView } from 'react-intersection-observer';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { CharacterTile } from './MarketPageCharacterTile';
+import useAuthStore from '@/state/AuthStore';
 
 const cachedCharacters: Record<
   MarketPageCharacterListFilter,
@@ -44,6 +45,7 @@ type MarketPageCharacterListProps = {
 export function MarketPageCharacterList({
   filter,
 }: MarketPageCharacterListProps) {
+  const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
   const [loadMore, setLoadMore] = React.useState(
     cachedCharacters[filter].length === 0
   );
@@ -57,8 +59,13 @@ export function MarketPageCharacterList({
   const user = useUser();
   const myCharacterId =
     (user as LocalUser).selectedCharacterId || DEFAULT_CHARACTER_ID;
-  const myCharacterIds =
-    (user as LocalUser).freeCharacterIds || DEFAULT_CHARACTER_IDs;
+  const myCharacterIds = React.useMemo(
+    () =>
+      !authStoreUserId
+        ? (user as LocalUser).freeCharacterIds || DEFAULT_CHARACTER_IDs
+        : user.readOnly?.characterIds || DEFAULT_CHARACTER_IDs,
+    [user, authStoreUserId]
+  );
 
   const useCharactersOptions: UseCollectionOptions = React.useMemo(
     () => ({

@@ -61,6 +61,46 @@ describe('Users Rules', () => {
     ).toAllow();
   });
 
+  test('should deny updating a user with a character the user has not purchased', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.character1Path]: dummyData.character1,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.user1Path).update({
+        ...dummyData.updatableUser,
+        selectedCharacterId: dummyData.characterId1.toString(),
+      } as IUser)
+    ).toDeny();
+  });
+
+  test('should allow updating a user with a character the user has purchased', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: {
+          ...dummyData.existingUser,
+          readOnly: {
+            ...dummyData.existingUser.readOnly,
+            characterIds: [dummyData.characterId1.toString()],
+          },
+        } as IUser,
+        [dummyData.character1Path]: dummyData.character1,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.user1Path).update({
+        ...dummyData.updatableUser,
+        selectedCharacterId: dummyData.characterId1.toString(),
+      } as IUser)
+    ).toAllow();
+  });
+
   test('should deny updating created property', async () => {
     const { db } = await setup(
       { uid: dummyData.userId1 },

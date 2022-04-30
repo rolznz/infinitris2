@@ -38,6 +38,7 @@ import { SinglePlayerOptionsPage } from '@/components/pages/SinglePlayerPage/Sin
 import SinglePlayerPage from '@/components/pages/SinglePlayerPage/SinglePlayerPage';
 import { SinglePlayerGameModePickerPage } from '@/components/pages/SinglePlayerPage/SinglePlayerGameModePickerPage';
 import { RoomInfoPage } from '@/components/pages/RoomInfoPage';
+import CoinsDisplay from '@/components/ui/CoinsDisplay';
 
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
@@ -89,6 +90,11 @@ function RouterContents() {
         <HamburgerMenuButton />
         {/*<Header />*/}
       </OutsideGameElement>
+      <Switch location={location}>
+        <Route path={Routes.market}>
+          <CoinsDisplay />
+        </Route>
+      </Switch>
       <Switch location={location}>
         <Route exact path={Routes.home}>
           <HomePageBackground>

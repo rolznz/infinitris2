@@ -1,4 +1,4 @@
-import { colors } from '@/theme/theme';
+import { colors, textShadows } from '@/theme/theme';
 import { appName } from '@/utils/constants';
 import { Box, Typography } from '@mui/material';
 
@@ -122,6 +122,9 @@ export function Page({
               <Typography
                 variant="h1"
                 color={whiteTitle ? colors.white : undefined}
+                sx={{
+                  textShadow: whiteTitle ? textShadows.small : undefined,
+                }}
               >
                 {props.title}
               </Typography>

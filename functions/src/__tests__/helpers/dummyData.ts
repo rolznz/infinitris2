@@ -80,7 +80,7 @@ const challenge2Path = getChallengePath(challengeId2);
 const user1AdminPath = getAdminPath(userId1);
 
 const updatableChallenge: UpdatableChallenge = {
-  title: 'New challenge',
+  title: 'new challenge',
   simulationSettings: {
     allowedBlockLayoutIds: ['1', '2'],
   },

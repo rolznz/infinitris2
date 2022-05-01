@@ -25,7 +25,7 @@ export function LargeCharacterTile({ character }: LargeCharacterTileProps) {
   const isLandscape = windowSize.width > windowSize.height;
   const size =
     Math.min(windowSize.width, windowSize.height) -
-    (isLandscape ? windowSize.width * 0.15 : 0);
+    (isLandscape ? windowSize.width * 0.25 : 0);
   //const openDialog = useDialogStore((store) => store.open);
   //const styles = useStyles();
   return (

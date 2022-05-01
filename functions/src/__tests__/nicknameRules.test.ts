@@ -16,7 +16,7 @@ describe('Nickname Rules', () => {
       }
     );
 
-    const validNicknames = ['Big Ben 123', 'AL', 'a'.repeat(15)];
+    const validNicknames = ['big ben 123', 'al', 'a'.repeat(15)];
 
     for (const nicknameId of validNicknames) {
       await expect(
@@ -76,6 +76,7 @@ describe('Nickname Rules', () => {
     const invalidNicknames = [
       '######', // invalid character
       'a', // must be at least 2 chars
+      'Aa', // capitals not allowed
       'a'.repeat(16), // must be less than 16 chars
     ];
     for (const nicknameId of invalidNicknames) {

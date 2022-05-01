@@ -8,18 +8,27 @@ import useAuthStore from '../../../state/AuthStore';
 import { Page } from '../../ui/Page';
 import { openLoginDialog } from '@/state/DialogStore';
 import { ProfilePageCharacterCard } from './ProfilePageCharacterCard';
-import { useSyncNickname } from '@/components/hooks/useSyncNickname';
+import { CharacterHabitatBackground } from '@/components/ui/CharacterHabitatBackground';
+import { useDocument } from 'swr-firestore';
+import { useUser } from '@/components/hooks/useUser';
+import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
+import { getCharacterPath, ICharacter } from 'infinitris2-models';
+import { UserNicknameForm } from '@/components/pages/ProfilePage/UserNicknameForm';
 
 export default function ProfilePage() {
   const intl = useIntl();
   const userId = useAuthStore().user?.uid;
-  useSyncNickname();
+  const user = useUser();
   /*const { data: userChallenges } = useCollection<IChallenge>(
     userId ? challengesPath : null,
     {MEMO
       where: [['userId', '==', userId]],
     }
   );*/
+  const characterId = user.selectedCharacterId || DEFAULT_CHARACTER_ID;
+  const { data: character } = useDocument<ICharacter>(
+    getCharacterPath(characterId)
+  );
 
   return (
     <Page
@@ -27,8 +36,8 @@ export default function ProfilePage() {
         defaultMessage: 'Profile',
         description: 'Profile title',
       })}
-      useGradient
-      narrow
+      whiteTitle
+      background={<CharacterHabitatBackground character={character} />}
     >
       {!userId && (
         <Button color="primary" variant="contained" onClick={openLoginDialog}>
@@ -40,6 +49,8 @@ export default function ProfilePage() {
       )}
 
       <FlexBox py={2}>
+        {/* force refresh on login/logout/signup */}
+        <UserNicknameForm key={user?.id + '-' + user?.readOnly?.nickname} />
         <ProfilePageCharacterCard />
       </FlexBox>
 

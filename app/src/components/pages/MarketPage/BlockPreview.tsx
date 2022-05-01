@@ -12,7 +12,7 @@ type BlockPreviewProps = {
 export function BlockPreview({ character }: BlockPreviewProps) {
   const windowSize = useWindowSize();
   const size =
-    (Math.min(windowSize.width, windowSize.height) - windowSize.width * 0.15) /
+    (Math.min(windowSize.width, windowSize.height) - windowSize.width * 0.27) /
     5;
 
   return (

@@ -10,12 +10,15 @@ import {
   RendererQuality,
   RendererType,
   ControlSettings,
+  Creatable,
+  INickname,
+  getNicknamePath,
 } from 'infinitris2-models';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
 import useLocalUserStore, { LocalUser } from './LocalUserStore';
 import { getAuth, signOut as signOutAuthUser } from 'firebase/auth';
-import { doc, getFirestore, updateDoc } from 'firebase/firestore';
+import { doc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
 
 const updateFirestoreDoc = (userId: string, data: Partial<IUser>) =>
   updateDoc(doc(getFirestore(), getUserPath(userId)), data);
@@ -37,9 +40,30 @@ const updateUser = (
   updateLocalUser(changes);
 };
 
-export const setLocalUserNickname = (nickname: string) => {
+const setLocalUserNickname = (nickname: string) => {
   updateLocalUser({ nickname });
 };
+
+export async function setNickname(nicknameId: string): Promise<boolean> {
+  const userId = useAuthStore.getState().user?.uid;
+  if (!userId) {
+    setLocalUserNickname(nicknameId);
+    return true;
+  }
+  try {
+    const nickname: Creatable<INickname> = {
+      created: false,
+      userId,
+    };
+    await setDoc(doc(getFirestore(), getNicknamePath(nicknameId)), nickname);
+    return true;
+  } catch (error) {
+    console.error('Failed to create nickname', error);
+    //alert('Failed to sync nickname');
+    return false;
+  }
+}
+
 export const purchaseFreeCharacter = (
   existingCharacterIds: string[],
   characterId: string

@@ -39,8 +39,8 @@ export default function Login({ onLogin, onClose }: LoginProps) {
       <Typography variant="h5" align="center">
         {isViewingBenefits ? (
           <FormattedMessage
-            defaultMessage="New Account"
-            description="Login page create new account"
+            defaultMessage="Infinitris Premium"
+            description="Login page create new account (Infinitris Premium)"
           />
         ) : codeSent ? (
           <FormattedMessage

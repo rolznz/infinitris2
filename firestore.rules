@@ -116,7 +116,7 @@ service cloud.firestore {
           (!request.resource.data.get('isOfficial', false) || isAdmin()) &&
           entityHasExpectedFields(['description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
           title is string &&
-          (title.size() == 0 || (title.size() < 21 && title.matches('[a-zA-Z0-9 ]+'))) &&
+          (title.size() == 0 || (title.size() < 21 && title.matches('[a-z0-9 ]+'))) &&
           description is string && description.size() < 280 &&
           getProperty('firstBlockLayoutId', '') is string &&
           grid is string && grid.size() > 0 &&
@@ -209,7 +209,7 @@ service cloud.firestore {
           entity != null &&
           user != null &&
           user.data.readOnly.coins >= entity.data.price &&
-          (entity.data.get('maxPurchases', -1) < 0 || entity.data.maxPurchases > entity.data.numPurchases);
+          (entity.data.get('maxPurchases', -1) < 0 || entity.data.maxPurchases > entity.data.get('numPurchases', 0));
       }
       allow create: if isValidPurchase();
       allow update: if false;
@@ -241,7 +241,7 @@ service cloud.firestore {
         isLoggedIn() &&
         nicknameId.size() > 1 &&
         nicknameId.size() < 16 &&
-        nicknameId.matches('[a-zA-Z0-9 ]+');
+        nicknameId.matches('[a-z0-9 ]+');
       allow update, delete: if false;
     }
     match /characters/{document=**} {

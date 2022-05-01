@@ -118,8 +118,7 @@ export default function RoomPage() {
   const controls_gamepad = user.controls_gamepad;
 
   const nickname = (user as LocalUser).nickname;
-  const characterId =
-    (user as LocalUser).selectedCharacterId || DEFAULT_CHARACTER_ID;
+  const characterId = user.selectedCharacterId || DEFAULT_CHARACTER_ID;
   const { data: character } = useDocument<ICharacter>(
     getCharacterPath(characterId)
   );

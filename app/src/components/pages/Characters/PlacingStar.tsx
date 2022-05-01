@@ -1,7 +1,10 @@
 import FlexBox from '@/components/ui/FlexBox';
-import { Typography } from '@mui/material';
 import { ReactComponent as StarIcon } from '@/icons/scoreboard_star.svg';
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import Routes from '@/models/Routes';
+import Link from '@mui/material/Link';
+import Typography from '@mui/material/Typography';
 import { colors } from '@/theme/theme';
 
 // https://stackoverflow.com/a/39466341/4562693
@@ -30,6 +33,7 @@ type PlacingStarProps = {
   offset: number;
   scale?: number;
   absolute?: boolean;
+  linkToScoreboard?: boolean;
 };
 
 export function PlacingStar({
@@ -37,11 +41,12 @@ export function PlacingStar({
   offset,
   scale = 1,
   absolute = true,
+  linkToScoreboard,
 }: PlacingStarProps) {
   return (
     <FlexBox
-      style={
-        absolute
+      style={{
+        ...(absolute
           ? {
               position: 'absolute',
               top: offset + 'px',
@@ -50,8 +55,9 @@ export function PlacingStar({
           : {
               width: getScoreSize(placing) * 0.6 * scale + 'px',
               height: getScoreSize(placing) * scale + 'px',
-            }
-      }
+            }),
+        pointerEvents: 'none',
+      }}
     >
       <StarIcon
         style={{
@@ -73,6 +79,26 @@ export function PlacingStar({
         {placing || '?'}
         {placing && <sup>{getOrdinalSuffix(placing)}</sup>}
       </Typography>
+      {linkToScoreboard && (
+        <FlexBox
+          style={{
+            position: 'absolute',
+            width: getScoreSize(placing) * scale + 'px',
+            height: getScoreSize(placing) * scale + 'px',
+          }}
+        >
+          <Link
+            component={RouterLink}
+            underline="none"
+            to={Routes.scoreboard}
+            width="60%"
+            height="60%"
+            style={{
+              pointerEvents: 'all',
+            }}
+          ></Link>
+        </FlexBox>
+      )}
     </FlexBox>
   );
 }

@@ -57,8 +57,7 @@ export function MarketPageCharacterList({
   const size = window.innerWidth / (columns * (columns > 3 ? 1.2 : 1.1));
 
   const user = useUser();
-  const myCharacterId =
-    (user as LocalUser).selectedCharacterId || DEFAULT_CHARACTER_ID;
+  const myCharacterId = user.selectedCharacterId || DEFAULT_CHARACTER_ID;
   const myCharacterIds = React.useMemo(
     () =>
       !authStoreUserId

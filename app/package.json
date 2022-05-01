@@ -73,6 +73,7 @@
     "rules": {
       "no-sparse-arrays": "off",
       "@typescript-eslint/no-unused-vars": "off",
+      "react-hooks/exhaustive-deps": "error",
       "unused-imports/no-unused-imports": "error",
       "unused-imports/no-unused-vars": [
         "warn",

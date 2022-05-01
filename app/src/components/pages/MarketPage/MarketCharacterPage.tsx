@@ -27,6 +27,8 @@ import useAuthStore from '@/state/AuthStore';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import { CharacterHabitatBackground } from '@/components/ui/CharacterHabitatBackground';
+import { CharacterCoinStatChip } from '@/components/pages/Characters/CharacterStatChip';
 
 export default function MarketPage() {
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
@@ -47,44 +49,7 @@ export default function MarketPage() {
     <Page
       title={character ? `${character?.data()?.name}` : undefined}
       whiteTitle
-      background={
-        <FlexBox zIndex={zIndexes.below}>
-          {character && (
-            <div
-              style={{
-                position: 'fixed',
-                top: 0,
-                right: 0,
-                width: '100%',
-                height: '100%',
-                background: `url(${process.env.REACT_APP_IMAGES_ROOT_URL}/habitats/${id}.svg)`,
-                backgroundRepeat: 'no-repeat',
-                backgroundSize: 'cover',
-                pointerEvents: 'none',
-              }}
-            ></div>
-          )}
-          {character && (
-            <div
-              style={{
-                position: 'fixed',
-                top: 0,
-                right: 0,
-                width: '100vw',
-                height: '100vh',
-                background: `url(${
-                  process.env.REACT_APP_IMAGES_ROOT_URL
-                }/patterns/${character.data()!.patternFilename})`,
-                backgroundRepeat: 'repeat',
-                backgroundSize:
-                  Math.max(window.innerWidth, window.innerHeight) / 4,
-                opacity: 0.2,
-                pointerEvents: 'none',
-              }}
-            ></div>
-          )}
-        </FlexBox>
-      }
+      background={<CharacterHabitatBackground character={character} />}
     >
       <FlexBox zIndex={zIndexes.above}>
         {isLoading && <LoadingSpinner />}
@@ -93,11 +58,16 @@ export default function MarketPage() {
           ((!authStoreUserId &&
             ((user as LocalUser).freeCharacterIds?.indexOf(id) ?? -1)) < 0 ||
             (authStoreUserId &&
-              (user.readOnly.characterIds?.indexOf(id) ?? -1) < 0)) && (
+              (user.readOnly?.characterIds?.indexOf(id) ?? -1) < 0)) && (
             <Button
               autoFocus
               color="primary"
               variant="contained"
+              disabled={
+                (character.data()?.maxPurchases || -1) -
+                  (character.data()?.numPurchases || 0) ===
+                0
+              }
               sx={{ mb: 2 }}
               onClick={async () => {
                 setIsLoading(true);
@@ -161,8 +131,8 @@ export default function MarketPage() {
               />
             </Button>
           )}
-        {character && character.data()?.maxPurchases && (
-          <Typography>
+        {character && (character.data()?.maxPurchases || -1) >= 0 && (
+          <Typography variant="caption" color="secondary">
             <FormattedMessage
               defaultMessage="{numRemaining} remaining"
               description="number of stock remaining for purchase"
@@ -174,7 +144,15 @@ export default function MarketPage() {
             />
           </Typography>
         )}
-        {character && <Carousel slides={pages} />}
+        {character && (
+          <FlexBox position="relative">
+            <Carousel slides={pages} />
+            <FlexBox position="absolute" bottom={40}>
+              <CharacterCoinStatChip value={character?.data()!.price} />
+            </FlexBox>
+          </FlexBox>
+        )}
+
         {/*<FlexBox
         top={0}
         left={0}

@@ -1,4 +1,4 @@
-import isMobile from '@/utils/isMobile';
+//import isMobile from '@/utils/isMobile';
 import { IUser } from 'infinitris2-models';
 import create from 'zustand';
 //import { defaultLocale } from '../internationalization';
@@ -20,7 +20,7 @@ export const DEFAULT_CHARACTER_ID = '0';
 export const DEFAULT_CHARACTER_IDs = [DEFAULT_CHARACTER_ID];
 
 const defaultUser: LocalUser = {
-  preferredInputMethod: isMobile() ? 'touch' : 'keyboard',
+  //preferredInputMethod: isMobile() ? 'touch' : 'keyboard',
   //freeCharacterIds: [DEFAULT_CHARACTER_ID],
   //selectedCharacterId: DEFAULT_CHARACTER_ID,
   //hasSeenWelcome: false,

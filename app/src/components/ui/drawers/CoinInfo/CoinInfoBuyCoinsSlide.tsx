@@ -121,7 +121,7 @@ export function CoinInfoBuyCoinsSlide() {
         setIsLoading(false);
       }
     },
-    [authUserId, authUserEmail]
+    [authUserId, authUserEmail, intl]
   );
 
   const coins = useUser().readOnly?.coins || 0;

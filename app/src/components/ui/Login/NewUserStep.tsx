@@ -11,6 +11,7 @@ import { Carousel } from '@/components/ui/Carousel';
 import React from 'react';
 import { borderRadiuses, boxShadows } from '@/theme/theme';
 import marketImage from './assets/market_illustration.svg';
+import { appName } from '@/utils/constants';
 
 type SignupBenefitProps = {
   text: React.ReactNode;
@@ -124,7 +125,7 @@ export function NewUserStep() {
     <FlexBox width={400} my={4} maxWidth="100%">
       <Typography variant="body2" align="center">
         <FormattedMessage
-          defaultMessage="With an account you can:"
+          defaultMessage="With a premium account you can:"
           description="New user information"
         />
       </Typography>
@@ -139,8 +140,9 @@ export function NewUserStep() {
         onClick={() => setViewingBenefits(false)}
       >
         <FormattedMessage
-          defaultMessage="Prove you're human"
-          description="Prove you're human button"
+          defaultMessage="Purchase {appName} premium"
+          description="Premium registration button text"
+          values={{ appName }}
         />
       </Button>
 

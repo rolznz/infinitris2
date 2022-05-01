@@ -24,6 +24,7 @@ import { toast } from 'react-toastify';
 import Link from '@mui/material/Link';
 import useLocalUserStore from '@/state/LocalUserStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
+import { setNickname } from '@/state/updateUser';
 
 const codeSchema = yup
   .object({
@@ -125,41 +126,63 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
           if (hasCreatedNewUser) {
             // sync guest settings into newly created account
             console.log('Syncing account settings');
-            const {
-              appTheme,
-              rendererType,
-              rendererQuality,
-              musicOn,
-              sfxOn,
-              sfxVolume,
-              musicVolume,
-              controls_keyboard,
-              controls_gamepad,
-              locale,
-              preferredInputMethod,
-            } = localUser;
-            await updateDoc(
-              doc(getFirestore(), getUserPath(credential.user.uid)),
-              removeUndefinedValues({
-                musicOn,
-                sfxOn,
+            try {
+              const {
                 appTheme,
                 rendererType,
                 rendererQuality,
+                musicOn,
+                sfxOn,
                 sfxVolume,
                 musicVolume,
                 controls_keyboard,
                 controls_gamepad,
                 locale,
                 preferredInputMethod,
-              })
-            );
+              } = localUser;
+              await updateDoc(
+                doc(getFirestore(), getUserPath(credential.user.uid)),
+                removeUndefinedValues({
+                  musicOn,
+                  sfxOn,
+                  appTheme,
+                  rendererType,
+                  rendererQuality,
+                  sfxVolume,
+                  musicVolume,
+                  controls_keyboard,
+                  controls_gamepad,
+                  locale,
+                  preferredInputMethod,
+                })
+              );
+            } catch (error) {
+              toast(
+                intl.formatMessage({
+                  defaultMessage: 'Failed to sync user settings',
+                  description:
+                    'Failed to sync user settings on register toast message',
+                })
+              );
+            }
+
+            if (localUser.nickname) {
+              if (!(await setNickname(localUser.nickname))) {
+                toast(
+                  intl.formatMessage({
+                    defaultMessage: 'Failed to secure nickname.',
+                    description:
+                      'Failed to sync nickname on register toast message',
+                  })
+                );
+              }
+            }
           }
 
           toast(
             intl.formatMessage({
               defaultMessage: 'Logged in successfully',
-              description: 'Thanks for rating toast message',
+              description: 'Logged in successfully toast message',
             })
           );
           onSuccess(credential.user.uid);

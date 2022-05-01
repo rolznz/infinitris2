@@ -12,6 +12,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { characterTileContentPortion } from '../MarketPage/MarketPageCharacterTile';
 import { zIndexes } from '@/theme/theme';
 import Routes from '@/models/Routes';
+import useAuthStore from '@/state/AuthStore';
 
 export type ScoreboardCardProps = {
   entry: DocumentSnapshot<IScoreboardEntry>;
@@ -24,7 +25,8 @@ export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
   const isSmallScreen = useMediaQuery(`(max-width:600px)`);
   const width = isSmallScreen ? 220 : 250;
   const starOffset = isSmallScreen ? 50 : 60;
-  const characterId = placing.toString(); /*entry.data()!.characterId*/
+  const characterId = entry.data()?.characterId || '0';
+  const isMe = useAuthStore().user?.uid === entry.id;
 
   return (
     <FlexBox mb={8} mx={-2.5}>
@@ -50,7 +52,11 @@ export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
             <div style={linkStyle} />
           </Link>
         </FlexBox>
-        <CharacterImage characterId={characterId} width={width} />
+        <CharacterImage
+          characterId={characterId}
+          width={width}
+          strongShadow={isMe}
+        />
         <PlacingStar placing={placing} offset={starOffset} />
       </FlexBox>
       <FlexBox mt={-3}>

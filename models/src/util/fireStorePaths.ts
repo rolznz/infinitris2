@@ -10,6 +10,8 @@ export const affiliatesPath = 'affiliates';
 export const getAffiliatePath = (affiliateId: string) =>
   getEntityPath(affiliatesPath, affiliateId);
 export const scoreboardEntriesPath = 'scoreboardEntries';
+export const getScoreboardEntryPath = (userId: string) =>
+  getEntityPath(scoreboardEntriesPath, userId);
 export const roomsPath = 'rooms';
 
 export const getRoomId = (serverId: string, roomIndex: number) =>
@@ -92,7 +94,8 @@ export type EntityCollectionPath =
   | typeof serversPath
   | typeof serverKeysPath
   | typeof paymentsPath
-  | typeof loginCodesPath;
+  | typeof loginCodesPath
+  | typeof scoreboardEntriesPath;
 
 export function getEntityPath(
   entityCollectionPath: EntityCollectionPath,

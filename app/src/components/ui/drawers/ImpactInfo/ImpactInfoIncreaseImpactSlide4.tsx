@@ -23,7 +23,7 @@ export function ImpactInfoIncreaseImpactSlide4() {
         <FlexBox height="100%">
           <Typography variant="body2" mt={1}>
             <FormattedMessage
-              defaultMessage="your impact score symbolises your personal, positive impact to this game. infinitris is free, open source and community driven. by increasing your impact, you are helping infinitris to grow."
+              defaultMessage="your impact score symbolises your personal, positive impact to this game. infinitris is open source and community driven. by increasing your impact, you are helping infinitris to grow."
               description="Infinitris Network description"
             />
           </Typography>

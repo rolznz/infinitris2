@@ -27,11 +27,14 @@ import { isPwa } from '@/utils/isMobile';
 import {
   setUserAppTheme,
   setUserLocale,
+  setUserMusicOn,
+  setUserSfxOn,
   setUserPreferredInputMethod,
   setUserRendererQuality,
   setUserRendererType,
 } from '@/state/updateUser';
 import { useUser } from '@/components/hooks/useUser';
+import { getDefaultPreferredInputMethod } from '@/state/LocalUserStore';
 
 export function LanguagePicker() {
   const user = useUser();
@@ -166,7 +169,7 @@ export default function SettingsPage() {
                   // if (isPlaying && !musicLoaded()) {
                   //   useLoaderStore.getState().reset();
                   // }
-                  setMusicOn(isPlaying);
+                  setUserMusicOn(isPlaying);
                   setMusicOn(isPlaying);
                   setMusicPlaying(isPlaying);
                   playSound(SoundKey.click);
@@ -191,7 +194,7 @@ export default function SettingsPage() {
                   // if (isOn && !soundsLoaded()) {
                   //   prepareSoundEffects();
                   // }
-                  setSfxOn(isOn);
+                  setUserSfxOn(isOn);
                   setSfxOn(isOn);
                   playSound(SoundKey.click);
                 }}
@@ -201,14 +204,16 @@ export default function SettingsPage() {
           <SettingsRow
             left={
               <FormattedMessage
-                defaultMessage="Input"
+                defaultMessage="Preferred Input"
                 description="Settings Page Table - Preferred Input Method left column"
               />
             }
             right={
               <Select
                 disableUnderline
-                value={user.preferredInputMethod}
+                value={
+                  user.preferredInputMethod || getDefaultPreferredInputMethod()
+                }
                 onChange={(event) =>
                   setUserPreferredInputMethod(event.target.value as InputMethod)
                 }

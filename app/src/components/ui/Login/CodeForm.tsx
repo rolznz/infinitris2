@@ -22,9 +22,11 @@ import {
 } from 'infinitris2-models';
 import { toast } from 'react-toastify';
 import Link from '@mui/material/Link';
-import useLocalUserStore from '@/state/LocalUserStore';
+import useLocalUserStore, {
+  DEFAULT_CHARACTER_ID,
+} from '@/state/LocalUserStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
-import { setNickname } from '@/state/updateUser';
+import { purchaseCharacter, setNickname } from '@/state/updateUser';
 
 const codeSchema = yup
   .object({
@@ -124,6 +126,12 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
           }
 
           if (hasCreatedNewUser) {
+            toast(
+              intl.formatMessage({
+                defaultMessage: 'Your account is being created. Please wait...',
+                description: 'Your account is being created toast message',
+              })
+            );
             // sync guest settings into newly created account
             console.log('Syncing account settings');
             try {
@@ -177,6 +185,32 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
                 );
               }
             }
+
+            for (const freeCharacterId of localUser.freeCharacterIds || []) {
+              if (freeCharacterId !== DEFAULT_CHARACTER_ID) {
+                await purchaseCharacter(freeCharacterId);
+                // make sure not to trigger spam + give some time before changing the user's character
+                await new Promise((resolve) => setTimeout(resolve, 1000));
+              }
+            }
+
+            if (localUser.selectedCharacterId !== DEFAULT_CHARACTER_ID) {
+              try {
+                const { selectedCharacterId } = localUser;
+                await updateDoc(
+                  doc(getFirestore(), getUserPath(credential.user.uid)),
+                  {
+                    selectedCharacterId,
+                  }
+                );
+              } catch (error) {
+                console.error('Failed to set selected character', error);
+              }
+            }
+
+            // after syncing all user settings to their account, delete the data stored in local storage
+            // so that user gets correct view of new account
+            signoutLocalUser();
           }
 
           toast(

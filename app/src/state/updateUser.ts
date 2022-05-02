@@ -13,6 +13,8 @@ import {
   Creatable,
   INickname,
   getNicknamePath,
+  getPurchasePath,
+  IPurchase,
 } from 'infinitris2-models';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
@@ -64,7 +66,33 @@ export async function setNickname(nicknameId: string): Promise<boolean> {
   }
 }
 
-export const purchaseFreeCharacter = (
+export async function purchaseCharacter(characterId: string): Promise<boolean> {
+  const authStoreUserId = useAuthStore.getState().user?.uid;
+  if (!authStoreUserId) {
+    return false;
+  }
+  const purchase: Creatable<IPurchase> = {
+    created: false,
+    entityCollectionPath: 'characters',
+    entityId: characterId,
+    userId: authStoreUserId,
+  };
+  try {
+    await setDoc(
+      doc(
+        getFirestore(),
+        getPurchasePath('characters', characterId, authStoreUserId)
+      ),
+      purchase
+    );
+    return true;
+  } catch (error) {
+    console.error('Failed to purchase character', error);
+    return false;
+  }
+}
+
+export const localPurchaseFreeCharacter = (
   existingCharacterIds: string[],
   characterId: string
 ) => {

@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  ICharacter,
-  getCharacterPath,
-  getPurchasePath,
-  Creatable,
-  IPurchase,
-} from 'infinitris2-models';
+import { ICharacter, getCharacterPath } from 'infinitris2-models';
 import { useDocument } from 'swr-firestore';
 import { Page } from '../../ui/Page';
 import { useParams } from 'react-router-dom';
@@ -19,12 +13,12 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import { DEFAULT_CHARACTER_IDs, LocalUser } from '@/state/LocalUserStore';
 import { toast } from 'react-toastify';
 import {
-  purchaseFreeCharacter,
+  purchaseCharacter,
+  localPurchaseFreeCharacter,
   setSelectedCharacterId,
 } from '@/state/updateUser';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import useAuthStore from '@/state/AuthStore';
-import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { CharacterHabitatBackground } from '@/components/ui/CharacterHabitatBackground';
@@ -74,30 +68,9 @@ export default function MarketPage() {
                 let purchaseSucceeded = false;
                 if (character.data()!.price <= (user.readOnly?.coins || 0)) {
                   if (authStoreUserId) {
-                    const purchase: Creatable<IPurchase> = {
-                      created: false,
-                      entityCollectionPath: 'characters',
-                      entityId: character.id,
-                      userId: authStoreUserId,
-                    };
-                    try {
-                      await setDoc(
-                        doc(
-                          getFirestore(),
-                          getPurchasePath(
-                            'characters',
-                            character.id,
-                            authStoreUserId
-                          )
-                        ),
-                        purchase
-                      );
-                      purchaseSucceeded = true;
-                    } catch (error) {
-                      console.error('Failed to purchase character', error);
-                    }
+                    purchaseSucceeded = await purchaseCharacter(character.id);
                   } else {
-                    purchaseFreeCharacter(
+                    localPurchaseFreeCharacter(
                       (user as LocalUser).freeCharacterIds ||
                         DEFAULT_CHARACTER_IDs,
                       id

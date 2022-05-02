@@ -10,7 +10,7 @@ export function checkMistake(cells: ICell[], simulation: ISimulation) {
     //AX
     //A
     const cellBelow = simulation.grid.getNeighbour(cell, 0, 1);
-    if (cellBelow?.isEmpty && !cells.includes(cellBelow)) {
+    if (cellBelow?.isPassable && !cells.includes(cellBelow)) {
       isMistake = true;
     }
 

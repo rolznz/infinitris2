@@ -40,6 +40,7 @@ export interface IChallenge extends IEntity {
     readonly maxLinesCleared?: number;
     readonly maxTimeTakenMs?: number;
     readonly gridEmpty?: boolean;
+    readonly noMistakes?: boolean;
   };
 
   readonly simulationSettings?: SimulationSettings;

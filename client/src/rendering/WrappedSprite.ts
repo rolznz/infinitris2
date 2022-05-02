@@ -49,6 +49,10 @@ export class WrappedSprite {
     this._sprites.forEach((sprite) => (sprite.y = y));
   }
 
+  get y(): number {
+    return this._sprites[0].y;
+  }
+
   set height(height: number) {
     this._sprites.forEach((sprite) => (sprite.height = height));
   }

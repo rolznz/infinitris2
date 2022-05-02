@@ -95,13 +95,20 @@ export class GridFloor {
     this._app.stage.addChild(this._glowSprite);
   }
 
-  update(cameraX: number) {
+  update(cameraX: number, gridBottom: number) {
     if (this._floorSprite) {
       this._floorSprite.x = cameraX;
     }
+    if (this._floorSprite) {
+      this._floorSprite.y = Math.floor(gridBottom);
+    }
+    if (this._gridFloorGraphics) {
+      this._gridFloorGraphics.y = Math.floor(gridBottom) + 1;
+    }
+    this._glowSprite.y = Math.floor(gridBottom - this._glowSprite.height) + 1;
   }
 
-  resize(gridBottom: number, floorHeight: number) {
+  resize(floorHeight: number) {
     [this._floorSprite, this._gridFloorGraphics, this._glowSprite].forEach(
       (child) => {
         if (child) {
@@ -119,14 +126,6 @@ export class GridFloor {
       this._gridFloorGraphics.height = floorHeight;
     }
     this._glowSprite.height = floorHeight * 0.25;
-
-    if (this._floorSprite) {
-      this._floorSprite.y = Math.floor(gridBottom);
-    }
-    if (this._gridFloorGraphics) {
-      this._gridFloorGraphics.y = Math.floor(gridBottom) + 1;
-    }
-    this._glowSprite.y = Math.floor(gridBottom - this._glowSprite.height) + 1;
   }
 
   private _createSprite = (url: string) => {

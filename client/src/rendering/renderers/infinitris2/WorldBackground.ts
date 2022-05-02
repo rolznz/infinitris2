@@ -149,6 +149,11 @@ export class WorldBackground {
         //this._app.renderer.height - sprite.height
         //)
       );
+
+      if (i === 0) {
+        // force sky always to show
+        sprite.y = Math.min(sprite.y, 0);
+      }
       // console.log(
       //   'Test',
       //   this._layerSprites[i].tileScale.y,

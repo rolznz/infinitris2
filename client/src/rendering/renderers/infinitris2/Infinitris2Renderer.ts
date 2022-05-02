@@ -38,6 +38,7 @@ import { fontFamily } from '@models/ui';
 import { TowerIndicator } from '@src/rendering/renderers/infinitris2/TowerIndicator';
 import { LineClearingIndicator } from '@src/rendering/renderers/infinitris2/LineClearingIndicator';
 import { GameModeEvent } from '@models/GameModeEvent';
+import { renderCellBehaviour } from '@src/rendering/renderers/infinitris2/renderCellBehaviour';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -364,10 +365,19 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._worldBackground.update(
         this._hasScrollX,
         this._hasScrollY,
-        this._clampedCameraY
+        this._clampedCameraY +
+          Math.max(
+            this._gridHeight - this._app.renderer.height + this._visibilityY,
+            0
+          )
       );
 
-      this._gridFloor.update(this._camera.x);
+      this._gridFloor.update(
+        this._camera.x,
+        !this._hasScrollY
+          ? this._gridLines.y + this._gridHeight
+          : this._world.y + this._gridHeight
+      );
     }
 
     Object.values(this._cells).forEach((cell) => {
@@ -631,6 +641,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
             }
           }
           for (let y = cell.row; y < this._simulation!.grid.numRows; y++) {
+            if (!this._simulation?.grid.cells[y][cell.column].isPassable) {
+              break;
+            }
             graphics.drawRect(
               (wrappedCellColumn - wrappedBlockColumn) * cellSize,
               (y - block.row) * cellSize,
@@ -1105,12 +1118,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._clampedCameraY
     );
 
-    this._gridFloor.resize(
-      !this._hasScrollY
-        ? this._gridLines.y + this._gridHeight
-        : this._world.y + this._gridHeight,
-      this._floorHeight
-    );
+    this._gridFloor.resize(this._floorHeight);
     this._worldBackground.resize();
 
     this.rerenderGrid();
@@ -1192,7 +1200,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
         renderableCell,
         RenderCellType.Cell,
         cell.color,
-        cell.player?.patternFilename
+        cell.player?.patternFilename,
+        cell.behaviour
       );
     } else {
       renderableCell.children.forEach((child) => {
@@ -1354,7 +1363,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     renderableCell: IRenderableCell,
     renderCellType: RenderCellType,
     color: number,
-    patternFilename: string | undefined
+    patternFilename: string | undefined,
+    behaviour?: ICellBehaviour
   ) {
     if (!this._simulation) {
       return;
@@ -1394,7 +1404,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
           renderableCell.cell.isEmpty,
           color,
           patternFilename,
-          connections
+          connections,
+          behaviour
         );
 
         const shadowX = shadowIndexWithDirection * this._gridWidth;
@@ -1423,12 +1434,17 @@ export default class Infinitris2Renderer extends BaseRenderer {
     isEmpty: boolean,
     color: number,
     patternFilename: string | undefined,
-    connections: { row: number; column: number }[]
+    connections: { row: number; column: number }[],
+    behaviour?: ICellBehaviour
   ) {
     const { graphics } = renderableObject;
     let { patternSprite } = renderableObject;
     //graphics.cacheAsBitmap = false;
     graphics.clear();
+    if (behaviour && behaviour?.type !== CellType.Normal) {
+      renderCellBehaviour(behaviour, isEmpty, graphics, this._cellSize);
+      return;
+    }
     if (isEmpty) {
       if (patternSprite) {
         patternSprite.visible = false;

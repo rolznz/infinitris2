@@ -32,6 +32,7 @@ import IGrid from '@models/IGrid';
 import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { GameModeEvent } from '@models/GameModeEvent';
+import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -122,7 +123,10 @@ export default class ChallengeClient
   getChallengeAttempt(): IIngameChallengeAttempt {
     const { finishCriteria, rewardCriteria } = this._challenge;
     const matchesFinishCriteria = () => {
-      if (this._blockCreateFailed || this._blockDied) {
+      if (
+        this._blockCreateFailed ||
+        (this._blockDied && finishCriteria?.noMistakes)
+      ) {
         return true;
       }
       if (
@@ -241,10 +245,13 @@ export default class ChallengeClient
 
   private async _create(challenge: IChallenge) {
     this._challenge = challenge;
-    this._renderer = new MinimalRenderer(
+    this._renderer = new Infinitris2Renderer(
       this._clientApiConfig,
       this._preferredInputMethod,
-      true // TODO: check if there is 1+ key instruction cell
+      undefined,
+      undefined,
+      'desert'
+      //true // TODO: check if there is 1+ key instruction cell
     );
     await this._renderer.create();
 
@@ -262,7 +269,7 @@ export default class ChallengeClient
       cellTypes.push(...parseGrid(this._challenge.grid));
     }
 
-    const grid = new Grid(cellTypes[0].length, cellTypes.length);
+    const grid = new Grid(cellTypes[0].length, cellTypes.length, false);
     if (cellTypes.length) {
       for (let r = 0; r < grid.cells.length; r++) {
         for (let c = 0; c < grid.cells[0].length; c++) {
@@ -277,15 +284,15 @@ export default class ChallengeClient
       }
     }
 
-    const simulation = (this._simulation = new Simulation(
-      grid,
-      this._challenge.simulationSettings
-    ));
+    const simulation = (this._simulation = new Simulation(grid, {
+      preventTowers: false, // TODO: re-enable for some challenges
+      ...this._challenge.simulationSettings,
+    }));
     simulation.addEventListener(this, this._renderer);
     if (this._launchOptions.listeners) {
       simulation.addEventListener(...this._launchOptions.listeners);
     }
-
+    simulation.init();
     const playerId = 0;
     const player = new ControllablePlayer(
       simulation,
@@ -307,7 +314,6 @@ export default class ChallengeClient
     this._input = new Input(simulation, this._renderer, player, this._controls);
     //this._renderer.virtualKeyboardControls = this._input.controls;
 
-    simulation.init();
     simulation.step();
   }
 }

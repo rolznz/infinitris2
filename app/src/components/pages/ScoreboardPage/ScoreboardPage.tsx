@@ -12,7 +12,7 @@ import { openLoginDialog } from '@/state/DialogStore';
 import useAuthStore from '@/state/AuthStore';
 
 const scoreboardCollectionOptions: UseCollectionOptions = {
-  constraints: [orderBy('networkImpact', 'desc')],
+  constraints: [orderBy('placing', 'asc')],
 };
 
 export default function ScoreboardPage() {
@@ -56,8 +56,12 @@ export default function ScoreboardPage() {
       )}
       {scoreboardEntries && (
         <FlexBox flexDirection="row" flexWrap="wrap" mt={4}>
-          {scoreboardEntries?.map((entry, index) => (
-            <ScoreboardCard key={entry.id} entry={entry} placing={index + 1} />
+          {scoreboardEntries?.map((entry) => (
+            <ScoreboardCard
+              key={entry.id}
+              entry={entry}
+              placing={entry.data().placing}
+            />
           ))}
         </FlexBox>
       )}

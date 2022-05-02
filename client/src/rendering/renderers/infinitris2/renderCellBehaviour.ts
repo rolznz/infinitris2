@@ -13,6 +13,10 @@ export function renderCellBehaviour(
 
   if (isEmpty) {
     switch (behaviour.type) {
+      case CellType.Infection:
+        graphics.beginFill(color);
+        graphics.drawRect(0, 0, cellSize, cellSize);
+        break;
       case CellType.FinishChallenge:
         graphics.beginFill(color);
         graphics.drawRect(0, 0, cellSize, cellSize);
@@ -115,6 +119,8 @@ export function renderCellBehaviour(
         break;
     }
   } else {
+    graphics.beginFill(color);
+    graphics.drawRect(0, 0, cellSize, cellSize);
     switch (behaviour.type) {
     }
   }

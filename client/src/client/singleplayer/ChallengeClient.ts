@@ -62,9 +62,15 @@ export default class ChallengeClient
     this._controls = options.controls_keyboard;
     this._create(challenge);
   }
-  onSimulationStep(simulation: ISimulation) {
+  onSimulationStep() {
+    this._checkChallengeStatus();
+  }
+  onBlockMoved() {
+    this._checkChallengeStatus();
+  }
+  private _checkChallengeStatus() {
     if (this.getChallengeAttempt().status !== 'pending') {
-      simulation.stopInterval();
+      this._simulation.stopInterval();
     }
   }
 
@@ -80,6 +86,7 @@ export default class ChallengeClient
    */
   onBlockPlaced(block: IBlock) {
     ++this._numBlocksPlaced;
+    this._checkChallengeStatus();
   }
 
   /**
@@ -131,7 +138,9 @@ export default class ChallengeClient
       }
       if (
         !this._simulation.grid.reducedCells.some(
-          (cell) => !cell.isEmpty && cell.type === CellType.FinishChallenge
+          (cell) =>
+            (!cell.isEmpty || cell.blocks.length) &&
+            cell.type === CellType.FinishChallenge
         )
       ) {
         return false;

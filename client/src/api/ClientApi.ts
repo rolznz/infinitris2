@@ -112,7 +112,27 @@ export default class ClientApi implements IClientApi {
       });
     } else if (params.has('challengeId')) {
       const challengeId = params.get('challengeId')!;
-      const challenge = exampleChallenges[challengeId];
+      const enableChallengeEditor = challengeId === 'new';
+      const challenge: IChallenge =
+        challengeId === 'new'
+          ? {
+              created: false,
+              grid: `
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+0000000000
+`,
+              title: 'New',
+              userId: '',
+            }
+          : exampleChallenges[challengeId];
       if (!challenge) {
         throw new Error('Could not find challenge matching ID: ' + challengeId);
       }
@@ -121,12 +141,15 @@ export default class ClientApi implements IClientApi {
         listeners: [
           {
             onSimulationInit: (simulation: ISimulation) => {
-              simulation.startInterval();
+              if (!enableChallengeEditor) {
+                simulation.startInterval();
+              }
             },
           },
         ],
         preferredInputMethod,
         controls_keyboard: controls,
+        challengeEditorEnabled: enableChallengeEditor,
       });
     } else {
       return false;

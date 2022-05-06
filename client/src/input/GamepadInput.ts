@@ -73,7 +73,7 @@ export default class GamepadInput {
           fireAction = false;
         }
         if (fireAction) {
-          this._fireAction(controlAction);
+          this._fireAction({ type: controlAction });
           pressState.lastAction = time;
         }
       } else {

@@ -2,6 +2,7 @@ import Cell from '../Cell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import CellType from '@models/CellType';
 import ICell from '@models/ICell';
+import ChallengeCellType from '@models/ChallengeCellType';
 
 const CHARGE_RATE = 0.01;
 const COOLDOWN_RATE = 0.05;
@@ -64,5 +65,8 @@ export default class LaserBehaviour implements ICellBehaviour {
 
   get type(): CellType {
     return CellType.Laser;
+  }
+  toChallengeCellType() {
+    return ChallengeCellType.Laser;
   }
 }

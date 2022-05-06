@@ -1,4 +1,5 @@
 import CellType from '@models/CellType';
+import ChallengeCellType from '@models/ChallengeCellType';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
@@ -22,7 +23,7 @@ export default class InfectionBehaviour implements ICellBehaviour {
   step(): void {
     if (this._life === 0) {
       this._cell.isEmpty = false;
-      this._cell.behaviour = new NormalCellBehaviour(0x9944ee);
+      this._cell.behaviour = new NormalCellBehaviour(this._cell, 0x9944ee);
       this._grid.checkLineClears([this._cell.row]);
       return;
     }
@@ -35,11 +36,12 @@ export default class InfectionBehaviour implements ICellBehaviour {
           if (row === 0 && column === 0) {
             continue;
           }
-          const cell = this._grid.cells[this._cell.row + row][
-            (((this._cell.column + column) % this._grid.numColumns) +
-              this._grid.numColumns) %
-              this._grid.numColumns
-          ];
+          const cell =
+            this._grid.cells[this._cell.row + row][
+              (((this._cell.column + column) % this._grid.numColumns) +
+                this._grid.numColumns) %
+                this._grid.numColumns
+            ];
           if (cell && cell.isPassable && cell.behaviour.isReplaceable) {
             cell.behaviour = new InfectionBehaviour(cell, this._grid);
           }
@@ -73,5 +75,9 @@ export default class InfectionBehaviour implements ICellBehaviour {
 
   get type(): CellType {
     return CellType.Infection;
+  }
+
+  toChallengeCellType() {
+    return ChallengeCellType.Infection;
   }
 }

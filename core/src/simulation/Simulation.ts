@@ -97,6 +97,10 @@ export default class Simulation implements ISimulation {
     throw new Error('should never be called');
   }
 
+  get isPaused(): boolean {
+    return !this._stepInterval;
+  }
+
   get fps(): number {
     return this._fpsCounter.fps;
   }
@@ -451,6 +455,13 @@ export default class Simulation implements ISimulation {
    */
   onGridReset(grid: IGrid): void {
     this._eventListeners.forEach((listener) => listener.onGridReset?.(grid));
+  }
+
+  /**
+   * @inheritdoc
+   */
+  onGridResize(grid: IGrid): void {
+    this._eventListeners.forEach((listener) => listener.onGridResize?.(grid));
   }
 
   /**

@@ -1,4 +1,5 @@
 import CellType from '@models/CellType';
+import ChallengeCellType from '@models/ChallengeCellType';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
@@ -19,10 +20,10 @@ export default class WaferBehaviour implements ICellBehaviour {
         (block) => block.isDropping
       )
     ) {
-      this._cell.behaviour = new NormalCellBehaviour();
-      this._grid.cells[this._cell.row - 1][
-        this._cell.column
-      ].blocks.forEach((block) => block.slowDown(this._cell.row));
+      this._cell.behaviour = new NormalCellBehaviour(this._cell);
+      this._grid.cells[this._cell.row - 1][this._cell.column].blocks.forEach(
+        (block) => block.slowDown(this._cell.row)
+      );
       // TODO: rather than cancelling the drop, slow it down slightly
       /*this._grid.cells[this._cell.row - 1][
         this._cell.column
@@ -52,5 +53,8 @@ export default class WaferBehaviour implements ICellBehaviour {
 
   get type(): CellType {
     return CellType.Wafer;
+  }
+  toChallengeCellType() {
+    return ChallengeCellType.Wafer;
   }
 }

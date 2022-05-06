@@ -1,19 +1,19 @@
-import InputAction from './InputAction';
+import { CustomizableInputAction } from './InputAction';
 import { EnumDictionary } from './util/EnumDictionary';
 
-type ControlSettings = EnumDictionary<InputAction, string>;
+type ControlSettings = EnumDictionary<CustomizableInputAction, string>;
 
 export default ControlSettings;
 
 export const DEFAULT_KEYBOARD_CONTROLS: ControlSettings = {
-  [InputAction.MoveLeft]: 'ArrowLeft',
-  [InputAction.MoveRight]: 'ArrowRight',
-  [InputAction.Drop]: ' ',
-  [InputAction.MoveDown]: 'ArrowDown',
-  [InputAction.RotateAnticlockwise]: 'z',
-  [InputAction.RotateClockwise]: 'x',
-  [InputAction.Chat]: 'Enter',
-  [InputAction.Esc]: 'Escape',
+  [CustomizableInputAction.MoveLeft]: 'ArrowLeft',
+  [CustomizableInputAction.MoveRight]: 'ArrowRight',
+  [CustomizableInputAction.Drop]: ' ',
+  [CustomizableInputAction.MoveDown]: 'ArrowDown',
+  [CustomizableInputAction.RotateAnticlockwise]: 'z',
+  [CustomizableInputAction.RotateClockwise]: 'x',
+  [CustomizableInputAction.Chat]: 'Enter',
+  [CustomizableInputAction.Esc]: 'Escape',
 };
 /*start: 'Enter',
   pause: 'p',*/

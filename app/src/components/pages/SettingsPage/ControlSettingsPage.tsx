@@ -5,6 +5,8 @@ import { FormattedMessage, useIntl } from 'react-intl';
 import SettingsRow from './SettingsRow';
 import {
   AdjustableInputMethod,
+  CustomizableInputAction,
+  DEFAULT_KEYBOARD_CONTROLS,
   getUserFriendlyKeyText,
   InputAction,
 } from 'infinitris2-models';
@@ -115,56 +117,56 @@ export default function ControlSettingsPage() {
     // TODO: is there a way to reduce duplication here?
     // [React Intl] Messages must be statically evaluate-able for extraction.
     switch (inputAction) {
-      case InputAction.Drop:
+      case CustomizableInputAction.Drop:
         return (
           <FormattedMessage
             defaultMessage="Drop"
             description="Drop action text"
           />
         );
-      case InputAction.MoveDown:
+      case CustomizableInputAction.MoveDown:
         return (
           <FormattedMessage
             defaultMessage="Move Down"
             description="MoveDown action text"
           />
         );
-      case InputAction.MoveLeft:
+      case CustomizableInputAction.MoveLeft:
         return (
           <FormattedMessage
             defaultMessage="Move Left"
             description="MoveLeft action text"
           />
         );
-      case InputAction.MoveRight:
+      case CustomizableInputAction.MoveRight:
         return (
           <FormattedMessage
             defaultMessage="Move Right"
             description="MoveRight action text"
           />
         );
-      case InputAction.RotateClockwise:
+      case CustomizableInputAction.RotateClockwise:
         return (
           <FormattedMessage
             defaultMessage="Rotate Clockwise"
             description="RotateClockwise action text"
           />
         );
-      case InputAction.RotateAnticlockwise:
+      case CustomizableInputAction.RotateAnticlockwise:
         return (
           <FormattedMessage
             defaultMessage="Rotate Anticlockwise"
             description="RotateAnticlockwise action text"
           />
         );
-      case InputAction.Chat:
+      case CustomizableInputAction.Chat:
         return (
           <FormattedMessage
             defaultMessage="Chat"
             description="Chat action text"
           />
         );
-      case InputAction.Esc:
+      case CustomizableInputAction.Esc:
         return (
           <FormattedMessage
             defaultMessage="Esc"
@@ -222,29 +224,31 @@ export default function ControlSettingsPage() {
             alignItems="center"
             justifyContent="center"
           >
-            {(Object.values(InputAction) as InputAction[]).map(
-              (inputAction) => {
-                return (
-                  <SettingsRow
-                    key={inputAction}
-                    left={getInputActionMessage(inputAction)}
-                    right={
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={() => setEditingInputAction(inputAction)}
-                      >
-                        {getUserFriendlyKeyText(
-                          user[`controls_${adjustableInputType}`]?.[
-                            inputAction
-                          ] || 'Unset'
-                        )}
-                      </Button>
-                    }
-                  />
-                );
-              }
-            )}
+            {(
+              Object.values(
+                CustomizableInputAction
+              ) as CustomizableInputAction[]
+            ).map((inputAction) => {
+              return (
+                <SettingsRow
+                  key={inputAction}
+                  left={getInputActionMessage(inputAction)}
+                  right={
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={() => setEditingInputAction(inputAction)}
+                    >
+                      {getUserFriendlyKeyText(
+                        user[`controls_${adjustableInputType}`]?.[
+                          inputAction
+                        ] || DEFAULT_KEYBOARD_CONTROLS[inputAction]
+                      )}
+                    </Button>
+                  }
+                />
+              );
+            })}
           </Grid>
           <Box mb={10} />
           <FlexBox flex={1} justifyContent="flex-end" mb={4}>

@@ -3,6 +3,8 @@ import ICell from '@models/ICell';
 import CellType from '@models/CellType';
 import KeyBehaviour from './KeyBehaviour';
 import IGrid from '@models/IGrid';
+import { lockColors } from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
+import ChallengeCellType from '@models/ChallengeCellType';
 
 export default class LockBehaviour implements ICellBehaviour {
   private _cell: ICell;
@@ -78,5 +80,20 @@ export default class LockBehaviour implements ICellBehaviour {
 
   get requiresRerender(): boolean {
     return this._requiresRerender;
+  }
+
+  toChallengeCellType() {
+    switch (this._color) {
+      case lockColors.redColor:
+        return ChallengeCellType.RedLock;
+      case lockColors.blueColor:
+        return ChallengeCellType.BlueLock;
+      case lockColors.yellowColor:
+        return ChallengeCellType.YellowLock;
+      case lockColors.greenColor:
+        return ChallengeCellType.GreenLock;
+      default:
+        throw new Error('Unsupported lock color: ' + this._color);
+    }
   }
 }

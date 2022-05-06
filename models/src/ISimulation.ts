@@ -24,6 +24,7 @@ export default interface ISimulation extends ISimulationEventListener {
   get humanPlayers(): IPlayer[];
   get shouldNewPlayerSpectate(): boolean;
   get round(): IRound | undefined;
+  get isPaused(): boolean;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;

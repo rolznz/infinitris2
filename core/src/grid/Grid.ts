@@ -22,15 +22,9 @@ export default class Grid implements IGrid {
       numColumns = Math.max(Math.floor(numColumns / 4), 1) * 4; // force % 4 columns for seamless pattern wrap
     }
     this._cells = [];
+    this._reducedCells = [];
     this._eventListeners = [];
-    for (let r = 0; r < numRows; r++) {
-      const row: ICell[] = [];
-      for (let c = 0; c < numColumns; c++) {
-        row.push(new Cell(this, r, c));
-      }
-      this._cells.push(row);
-    }
-    this._reducedCells = ([] as ICell[]).concat(...this._cells);
+    this.resize(numRows, numColumns);
     this._nextLineClearTime = 0;
     this._nextLinesToClear = [];
   }
@@ -193,5 +187,25 @@ export default class Grid implements IGrid {
     );
     // first 4 rows must never be placeable (to ensure blocks can always be placed)
     return row < Math.max(this.numRows - numFilledRows - 4, 7);
+  }
+
+  resize(numRows: number, numColumns: number): void {
+    for (let r = 0; r < numRows; r++) {
+      const row: ICell[] = this._cells[r] || [];
+      for (let c = 0; c < numColumns; c++) {
+        if (!row[c]) {
+          row.push(new Cell(this, r, c));
+        }
+      }
+      if (!this._cells[r]) {
+        this._cells.push(row);
+      }
+      row.splice(numColumns);
+    }
+    this._cells.splice(numRows);
+
+    this._reducedCells = ([] as ICell[]).concat(...this._cells);
+
+    this._eventListeners.forEach((listener) => listener.onGridResize(this));
   }
 }

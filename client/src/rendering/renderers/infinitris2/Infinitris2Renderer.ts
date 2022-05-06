@@ -21,7 +21,7 @@ import ControllablePlayer from '@src/ControllablePlayer';
 import { FallbackLeaderboard } from './FallbackLeaderboard';
 import { SpawnDelayIndicator } from './SpawnDelayIndicator';
 //import { ScoreChangeIndicator } from './ScoreChangeIndicator';
-import IGrid from '@models/IGrid';
+import IGrid, { GridLineType } from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import { RendererQuality } from '@models/RendererQuality';
@@ -148,6 +148,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _autoQualityAdjust = true;
   private _renderFpsFrames: number[];
   private _isDemo: boolean;
+  private _gridLineType: GridLineType | undefined;
+  private _challengeEditorEnabled: boolean;
+  private _challengeEditorGuide: PIXI.Graphics | undefined;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -157,7 +160,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     worldType: WorldType = 'grass',
     worldVariation: WorldVariation = 0,
     useFallbackUI = false,
-    isDemo = false
+    isDemo = false,
+    gridLineType?: GridLineType,
+    challengeEditorEnabled = false
   ) {
     super(clientApiConfig, undefined, rendererQuality, isDemo);
     this._preferredInputMethod = preferredInputMethod;
@@ -166,6 +171,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._useFallbackUI = useFallbackUI;
     this._worldVariation = worldVariation;
     this._isDemo = isDemo;
+    this._gridLineType = gridLineType;
+    this._challengeEditorEnabled = challengeEditorEnabled;
 
     this._oldOverflowStyle = document.body.style.overflow;
 
@@ -257,6 +264,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._virtualGestureSprites.push(createGestureSprite(tapUrl));
       this._virtualGestureSprites.push(createGestureSprite(tapUrl));
       this._virtualGestureSprites.push(createGestureSprite(swipeUpUrl));
+    }
+
+    if (this._challengeEditorEnabled) {
+      this._challengeEditorGuide = new PIXI.Graphics();
     }
 
     document.body.appendChild(this._app.view);
@@ -479,7 +490,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._app.stage.removeChildren();
 
     this._worldBackground.addChildren();
-    this._gridLines = new GridLines(simulation, this._app, this._camera);
+    this._gridLines = new GridLines(
+      simulation,
+      this._app,
+      this._camera,
+      this._gridLineType
+    );
 
     this._gridFloor.addChildren();
 
@@ -533,6 +549,20 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (this._preferredInputMethod === 'touch' && this._teachControls) {
       this._app.stage.addChild(...this._virtualGestureSprites);
     }
+    if (this._challengeEditorGuide) {
+      this._world.addChild(this._challengeEditorGuide);
+    }
+
+    this._resize();
+  }
+
+  onGridResize() {
+    // FIXME: this is broken. For now just recreating the simulation and grid
+    /*for (var renderableCell of Object.values(this._cells)) {
+      this._world.removeChild(renderableCell.container);
+    }
+    this._cells = {};
+    this._resize();*/
   }
 
   /**
@@ -1168,6 +1198,19 @@ export default class Infinitris2Renderer extends BaseRenderer {
       );
       this._world.mask = PIXI.Sprite.from(texture);
       this._shadowGradientGraphics.cacheAsBitmap = true;
+
+      if (this._challengeEditorGuide) {
+        this._challengeEditorGuide.clear();
+        this._challengeEditorGuide.beginFill(0xaaffff, 0.25);
+        this._challengeEditorGuide.lineStyle(this._cellSize * 0.1, 0x00ffff);
+        this._challengeEditorGuide.drawRect(
+          0,
+          0,
+          this._gridWidth,
+          this._gridHeight
+        );
+        this._challengeEditorGuide.position.set(0, 0);
+      }
     }
   };
 
@@ -1720,10 +1763,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
       sprite.x =
         this._app.renderer.width *
         (i ===
-        Object.values(InputAction).indexOf(InputAction.RotateAnticlockwise)
+        Object.values(InputAction).indexOf(CustomizableInputAction.RotateAnticlockwise)
           ? 0.25
           : i ===
-            Object.values(InputAction).indexOf(InputAction.RotateClockwise)
+            Object.values(InputAction).indexOf(CustomizableInputAction.RotateClockwise)
           ? 0.75
           : 0.5);
       sprite.y = this._app.renderer.height * 0.75;

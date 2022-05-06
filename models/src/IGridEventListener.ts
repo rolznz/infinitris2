@@ -26,4 +26,9 @@ export default interface IGridEventListener extends ICellEventListener {
    * Triggered when grid has all cells reset to their default state
    */
   onGridReset(grid: IGrid): void;
+
+  /**
+   * Triggered when the number of rows or columns in the grid changes
+   */
+  onGridResize(grid: IGrid): void;
 }

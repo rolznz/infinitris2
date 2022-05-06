@@ -811,10 +811,10 @@ export default class MinimalRenderer extends BaseRenderer {
       sprite.x =
         this._app.renderer.width *
         (i ===
-        Object.values(InputAction).indexOf(InputAction.RotateAnticlockwise)
+        Object.values(InputAction).indexOf(CustomizableInputAction.RotateAnticlockwise)
           ? 0.25
           : i ===
-            Object.values(InputAction).indexOf(InputAction.RotateClockwise)
+            Object.values(InputAction).indexOf(CustomizableInputAction.RotateClockwise)
           ? 0.75
           : 0.5);
       sprite.y = this._app.renderer.height * 0.75;

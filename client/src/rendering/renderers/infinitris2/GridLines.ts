@@ -1,11 +1,7 @@
 import * as PIXI from 'pixi.js-legacy';
-import IGrid from '@models/IGrid';
+import IGrid, { GridLineType } from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import Camera from '@src/rendering/Camera';
-
-// TODO: move to models
-type GridLineType = 'none' | 'inverted' | 'classic' | 'dots';
-
 export class GridLines {
   private _grid: IGrid;
   private _graphics: PIXI.Graphics;
@@ -71,7 +67,7 @@ export class GridLines {
     const gridColor = 0xffffff;
     const gridAlpha = 0.5;
 
-    if (this._lineType === 'dots') {
+    if (this._lineType === 'dots' || this._lineType === 'editor') {
       for (let r = 0; r < gridRows + 1; r++) {
         for (let c = 0; c < gridColumns + 1; c++) {
           this._graphics.beginFill(gridColor, gridAlpha);
@@ -84,7 +80,8 @@ export class GridLines {
           this._graphics.endFill();
         }
       }
-    } else if (this._lineType === 'inverted') {
+    }
+    if (this._lineType === 'inverted') {
       for (let r = 0; r < gridRows; r++) {
         for (let c = 0; c < gridColumns + 1; c++) {
           this._graphics.beginFill(gridColor, gridAlpha);
@@ -97,7 +94,9 @@ export class GridLines {
           this._graphics.endFill();
         }
       }
-    } else {
+    }
+
+    if (this._lineType === 'classic' || this._lineType === 'editor') {
       this._graphics.lineStyle(cellPadding, gridColor, gridAlpha);
       for (let r = 0; r < gridRows + 1; r++) {
         this._graphics.moveTo(0, r * cellSize);

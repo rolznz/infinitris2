@@ -13,9 +13,14 @@ import {
   IRenderableEntityChild,
 } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
-import InputAction from '@models/InputAction';
+import InputAction, {
+  CustomizableInputAction,
+  InputActionWithData,
+} from '@models/InputAction';
 import { GameModeEvent } from '@models/GameModeEvent';
 import { RendererQuality } from '@models/RendererQuality';
+import { ScreenPositionToCell } from '@src/input/Input';
+import { wrap } from '@core/utils/wrap';
 
 const idealCellSize = 38;
 const minLandscapeCellCount = 18;
@@ -238,21 +243,34 @@ export abstract class BaseRenderer implements IRenderer {
     }
   }
 
-  onInputAction = (action: InputAction) => {
+  onInputAction = (action: InputActionWithData) => {
     if (
       !this._simulation?.followingPlayer ||
-      this._simulation?.followingPlayer.status !== PlayerStatus.ingame
+      this._simulation?.followingPlayer.status !== PlayerStatus.ingame ||
+      this._simulation.isPaused
     ) {
       const speed = 100;
       this._camera.bump(
-        action == InputAction.MoveLeft
+        action.type == CustomizableInputAction.MoveLeft
           ? speed
-          : action === InputAction.MoveRight
+          : action.type === CustomizableInputAction.MoveRight
           ? -speed
           : 0,
-        0
+        action.type == CustomizableInputAction.RotateAnticlockwise
+          ? speed
+          : action.type === CustomizableInputAction.RotateClockwise
+          ? -speed
+          : 0
       );
     }
+  };
+
+  screenPositionToCell: ScreenPositionToCell = (x, y) => {
+    const column = Math.floor(
+      wrap(x - this._world.x, this._gridWidth) / this._cellSize
+    );
+    const row = Math.floor((y - this._world.y) / this._cellSize);
+    return this._simulation?.grid.cells[row]?.[column];
   };
 
   protected _resize() {

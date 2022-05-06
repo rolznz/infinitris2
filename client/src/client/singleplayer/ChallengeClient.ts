@@ -1,11 +1,8 @@
-import IRenderer from '@src/rendering/IRenderer';
-import MinimalRenderer from '@src/rendering/renderers/minimal/MinimalRenderer';
 import ControllablePlayer from '@src/ControllablePlayer';
 import Grid from '@core/grid/Grid';
 import Input from '@src/input/Input';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import CellType from '@models/CellType';
-import InputAction from '@models/InputAction';
 import IBlock from '@models/IBlock';
 import IChallengeClient from '@models/IChallengeClient';
 import { InputMethod } from '@models/InputMethod';
@@ -14,25 +11,21 @@ import ISimulation from '@models/ISimulation';
 import Simulation from '@core/simulation/Simulation';
 import ChallengeCompletionStats from '@models/ChallengeCompletionStats';
 import ChallengeCellType from '@models/ChallengeCellType';
-import createBehaviour from '@core/grid/cell/behaviours/createBehaviour';
 import ControlSettings from '@models/ControlSettings';
 import parseGrid from '@models/util/parseGrid';
 import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
-import ICell from '@models/ICell';
-import ICellBehaviour from '@models/ICellBehaviour';
-import { IPlayer, PlayerStatus } from '@models/IPlayer';
+import { PlayerStatus } from '@models/IPlayer';
 import {
   ChallengeStatusCode,
-  IChallengeAttempt,
   IIngameChallengeAttempt,
 } from '@models/IChallengeAttempt';
 import ChallengeRewardCriteria from '@models/ChallengeRewardCriteria';
 import { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
-import IGrid from '@models/IGrid';
 import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
-import { GameModeEvent } from '@models/GameModeEvent';
 import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
+import { ChallengeEditor } from '@src/client/singleplayer/ChallengeEditor';
+import createBehaviourFromChallengeCellType from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -51,6 +44,7 @@ export default class ChallengeClient
   private _blockCreateFailed!: boolean;
   private _blockDied!: boolean;
   private _controls?: ControlSettings;
+  private _editor?: ChallengeEditor;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -60,8 +54,15 @@ export default class ChallengeClient
     super(clientApiConfig, options);
     this._preferredInputMethod = options.preferredInputMethod;
     this._controls = options.controls_keyboard;
+    if (options.challengeEditorEnabled) {
+      this._editor = new ChallengeEditor(this, options.onSaveGrid);
+    }
     this._create(challenge);
   }
+  get challenge(): IChallenge {
+    return this._challenge;
+  }
+
   onSimulationStep() {
     this._checkChallengeStatus();
   }
@@ -259,9 +260,18 @@ export default class ChallengeClient
       this._preferredInputMethod,
       undefined,
       undefined,
-      'desert'
-      //true // TODO: check if there is 1+ key instruction cell
+      'desert',
+      undefined,
+      undefined,
+      false,
+      this._launchOptions.challengeEditorEnabled
+        ? 'editor'
+        : this._launchOptions.gridLineType,
+      true
     );
+    if (this._editor) {
+      this._editor.renderer = this._renderer;
+    }
     await this._renderer.create();
 
     this._createTempObjects();
@@ -279,16 +289,13 @@ export default class ChallengeClient
     }
 
     const grid = new Grid(cellTypes[0].length, cellTypes.length, false);
+
     if (cellTypes.length) {
       for (let r = 0; r < grid.cells.length; r++) {
         for (let c = 0; c < grid.cells[0].length; c++) {
           const cell = grid.cells[r][c];
           const cellType = cellTypes[r][c];
-          cell.behaviour = createBehaviour(cell, grid, cellType);
-
-          if (cellType === ChallengeCellType.Full) {
-            cell.isEmpty = false;
-          }
+          createBehaviourFromChallengeCellType(cell, grid, cellType);
         }
       }
     }
@@ -315,14 +322,30 @@ export default class ChallengeClient
     simulation.addPlayer(player);
     simulation.followPlayer(player);
     if (this._challenge.firstBlockLayoutId) {
-      // TODO: remove hard coded tetrominoes to support multiple block sets from Firestore
+      // TODO: remove hard coded tetrominoes to support multiple block sets
       player.nextLayout = tetrominoes[this._challenge.firstBlockLayoutId];
     }
     //player.nextLayoutRotation = this._challenge.layoutRotation;
 
-    this._input = new Input(simulation, this._renderer, player, this._controls);
+    // TODO: shouldn't have to create the input each time
+    this._input = new Input(
+      simulation,
+      this._renderer.onInputAction,
+      this._renderer.screenPositionToCell,
+      player,
+      this._launchOptions.controls_keyboard,
+      this._launchOptions.controls_gamepad,
+      this._launchOptions.challengeEditorEnabled
+    );
     //this._renderer.virtualKeyboardControls = this._input.controls;
+    if (this._editor) {
+      this._editor.simulation = simulation;
+      this._input.addListener(this._editor.inputListener);
+    }
 
-    simulation.step();
+    if (!this._editor) {
+      // execute one frame to warm up the simulation (creates the player's block, etc)
+      simulation.step();
+    }
   }
 }

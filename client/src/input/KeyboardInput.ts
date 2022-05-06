@@ -1,5 +1,8 @@
 import ControlSettings from '@models/ControlSettings';
-import InputAction from '@models/InputAction';
+import {
+  CustomizableInputAction,
+  HardCodedInputAction,
+} from '@models/InputAction';
 import { ActionListener } from './Input';
 
 export default class KeyboardInput {
@@ -16,32 +19,35 @@ export default class KeyboardInput {
   }
 
   private _onKeyDown = (event: KeyboardEvent) => {
-    if (event.key === this._controls[InputAction.Esc]) {
-      this._fireAction(InputAction.Esc);
-    } else if (event.key === this._controls[InputAction.Chat]) {
-      this._fireAction(InputAction.Chat);
+    if (event.key === this._controls[CustomizableInputAction.Esc]) {
+      this._fireAction({ type: CustomizableInputAction.Esc });
+    } else if (event.key === this._controls[CustomizableInputAction.Chat]) {
+      this._fireAction({ type: CustomizableInputAction.Chat });
     } else if (
-      event.key === this._controls[InputAction.MoveLeft] ||
-      event.key === this._controls[InputAction.MoveRight]
+      event.key === this._controls[CustomizableInputAction.MoveLeft] ||
+      event.key === this._controls[CustomizableInputAction.MoveRight]
     ) {
       const action =
-        event.key === this._controls[InputAction.MoveLeft]
-          ? InputAction.MoveLeft
-          : InputAction.MoveRight;
-      this._fireAction(action);
-    } else if (event.key === this._controls[InputAction.MoveDown]) {
-      this._fireAction(InputAction.MoveDown);
-    } else if (event.key === this._controls[InputAction.Drop]) {
-      this._fireAction(InputAction.Drop);
+        event.key === this._controls[CustomizableInputAction.MoveLeft]
+          ? CustomizableInputAction.MoveLeft
+          : CustomizableInputAction.MoveRight;
+      this._fireAction({ type: action });
+    } else if (event.key === this._controls[CustomizableInputAction.MoveDown]) {
+      this._fireAction({ type: CustomizableInputAction.MoveDown });
+    } else if (event.key === this._controls[CustomizableInputAction.Drop]) {
+      this._fireAction({ type: CustomizableInputAction.Drop });
     } else if (
-      event.key === this._controls[InputAction.RotateAnticlockwise] ||
-      event.key === this._controls[InputAction.RotateClockwise]
+      event.key ===
+        this._controls[CustomizableInputAction.RotateAnticlockwise] ||
+      event.key === this._controls[CustomizableInputAction.RotateClockwise]
     ) {
       const action =
-        event.key === this._controls[InputAction.RotateAnticlockwise]
-          ? InputAction.RotateAnticlockwise
-          : InputAction.RotateClockwise;
-      this._fireAction(action);
+        event.key ===
+        this._controls[CustomizableInputAction.RotateAnticlockwise]
+          ? CustomizableInputAction.RotateAnticlockwise
+          : CustomizableInputAction.RotateClockwise;
+      this._fireAction({ type: action });
     }
+    this._fireAction({ type: HardCodedInputAction.KeyDown, data: event });
   };
 }

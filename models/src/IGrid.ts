@@ -2,6 +2,8 @@ import ICellEventListener from '@models/ICellEventListener';
 import { IPlayer } from '@models/IPlayer';
 import ICell, { NetworkCellInfo } from './ICell';
 
+export type GridLineType = 'none' | 'inverted' | 'classic' | 'dots' | 'editor';
+
 export type NetworkGridInfo = {
   readonly numRows: number;
   readonly numColumns: number;
@@ -21,4 +23,5 @@ export default interface IGrid extends ICellEventListener {
   step(isNetworkClient: boolean): void;
   checkLineClears(rows: number[]): void;
   clearLines(rows: number[]): void;
+  resize(rows: number, cols: number): void;
 }

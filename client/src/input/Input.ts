@@ -1,7 +1,10 @@
 import ControllablePlayer from '../ControllablePlayer';
 import Grid from '@core/grid/Grid';
 import Simulation from '@core/simulation/Simulation';
-import InputAction from '@models/InputAction';
+import InputAction, {
+  CustomizableInputAction,
+  InputActionWithData,
+} from '@models/InputAction';
 import IBlock from '@models/IBlock';
 import KeyboardInput from './KeyboardInput';
 import TouchInput from './TouchInput';
@@ -9,9 +12,12 @@ import GamepadInput from '@src/input/GamepadInput';
 import ControlSettings, {
   DEFAULT_KEYBOARD_CONTROLS,
 } from '@models/ControlSettings';
-import { BaseRenderer } from '@src/rendering/BaseRenderer';
+import MouseInput from '@src/input/MouseInput';
+import ICell from '@models/ICell';
 
-export type ActionListener = (action: InputAction) => void;
+export type ActionListener = (action: InputActionWithData) => void;
+
+export type ScreenPositionToCell = (x: number, y: number) => ICell | undefined;
 
 export default class Input {
   private _player: ControllablePlayer;
@@ -20,25 +26,33 @@ export default class Input {
   private _controls: ControlSettings;
   private _actionListeners: ActionListener[];
   private _keyboardInput: KeyboardInput;
+  private _mouseInput?: MouseInput;
   private _touchInput: TouchInput;
   private _gamepadInput?: GamepadInput;
+  private _challengeEditorEnabled: boolean;
 
   constructor(
     simulation: Simulation,
-    renderer: BaseRenderer,
+    onInputAction: ActionListener,
+    screenPositionToCell: ScreenPositionToCell,
     player: ControllablePlayer,
     keyboardControls: ControlSettings = DEFAULT_KEYBOARD_CONTROLS,
-    gamepadControls?: ControlSettings
+    gamepadControls?: ControlSettings,
+    challengeEditorEnabled = false
   ) {
     this._simulation = simulation;
     this._grid = simulation.grid;
     this._player = player;
     this._controls = { ...DEFAULT_KEYBOARD_CONTROLS, ...keyboardControls }; // ensure newly added controls use default keys
-    this._actionListeners = [renderer.onInputAction];
+    this._actionListeners = [onInputAction];
     this._keyboardInput = new KeyboardInput(this._fireAction, this._controls);
     this._touchInput = new TouchInput(this._fireAction);
+    this._challengeEditorEnabled = challengeEditorEnabled;
     if (gamepadControls) {
       this._gamepadInput = new GamepadInput(this._fireAction, gamepadControls);
+    }
+    if (this._challengeEditorEnabled) {
+      this._mouseInput = new MouseInput(this._fireAction, screenPositionToCell);
     }
   }
 
@@ -57,13 +71,14 @@ export default class Input {
     this._keyboardInput.destroy();
     this._touchInput.destroy();
     this._gamepadInput?.destroy();
+    this._mouseInput?.destroy();
   }
 
   private _isActionAllowed(action: InputAction) {
     if (
       this._player.isChatting &&
-      action !== InputAction.Esc &&
-      action !== InputAction.Chat
+      action !== CustomizableInputAction.Esc &&
+      action !== CustomizableInputAction.Chat
     ) {
       return false;
     }
@@ -74,37 +89,45 @@ export default class Input {
     return true;
   }
 
-  private _fireAction = (action: InputAction) => {
-    if (!this._simulation.isRunning || !this._isActionAllowed(action)) {
+  private _fireAction = (action: InputActionWithData) => {
+    if (
+      !this._challengeEditorEnabled &&
+      (!this._simulation.isRunning || !this._isActionAllowed(action.type))
+    ) {
       return;
     }
     const block: IBlock | undefined = this._player.block;
-    switch (action) {
-      case InputAction.Esc:
+    switch (action.type) {
+      case CustomizableInputAction.Esc:
         this._player.cancelChat();
         break;
-      case InputAction.Chat:
+      case CustomizableInputAction.Chat:
         this._player.toggleChat();
         break;
-      case InputAction.MoveLeft:
-      case InputAction.MoveRight:
-      case InputAction.MoveDown:
+      case CustomizableInputAction.MoveLeft:
+      case CustomizableInputAction.MoveRight:
+      case CustomizableInputAction.MoveDown:
         block?.move(
-          action === InputAction.MoveLeft
+          action.type === CustomizableInputAction.MoveLeft
             ? -1
-            : action === InputAction.MoveRight
+            : action.type === CustomizableInputAction.MoveRight
             ? 1
             : 0,
-          action === InputAction.MoveDown ? 1 : 0,
+          action.type === CustomizableInputAction.MoveDown ? 1 : 0,
           0
         );
         break;
-      case InputAction.Drop:
+      case CustomizableInputAction.Drop:
         block?.drop();
         break;
-      case InputAction.RotateClockwise:
-      case InputAction.RotateAnticlockwise:
-        block?.move(0, 0, action === InputAction.RotateClockwise ? 1 : -1);
+      case CustomizableInputAction.RotateClockwise:
+      case CustomizableInputAction.RotateAnticlockwise:
+        block?.move(
+          0,
+          0,
+          action.type === CustomizableInputAction.RotateClockwise ? 1 : -1
+        );
+        break;
     }
 
     this._actionListeners.forEach((listener) => listener(action));

@@ -1,6 +1,7 @@
 import ICellBehaviour from '@models/ICellBehaviour';
 import CellType from '@models/CellType';
 import ICell from '@models/ICell';
+import ChallengeCellType from '@models/ChallengeCellType';
 
 export default class DeadlyBehaviour implements ICellBehaviour {
   private _cell: ICell;
@@ -33,5 +34,8 @@ export default class DeadlyBehaviour implements ICellBehaviour {
 
   get type(): CellType {
     return CellType.Deadly;
+  }
+  toChallengeCellType() {
+    return ChallengeCellType.Deadly;
   }
 }

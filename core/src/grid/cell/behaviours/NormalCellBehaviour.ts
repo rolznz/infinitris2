@@ -1,15 +1,18 @@
 import CellType from '@models/CellType';
+import ChallengeCellType from '@models/ChallengeCellType';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 
 export default class NormalCellBehaviour implements ICellBehaviour {
   private _color: number;
-  constructor(color: number = 0xaaaaaa) {
+  private _cell: ICell;
+  constructor(cell: ICell, color: number = 0xaaaaaa) {
+    this._cell = cell;
     this._color = color;
   }
 
-  clone(_forCell: ICell): ICellBehaviour {
-    return new NormalCellBehaviour(this._color);
+  clone(cell: ICell): ICellBehaviour {
+    return new NormalCellBehaviour(cell, this._color);
   }
 
   get color(): number {
@@ -30,5 +33,13 @@ export default class NormalCellBehaviour implements ICellBehaviour {
 
   get alpha(): number {
     return 1;
+  }
+
+  toChallengeCellType(): ChallengeCellType {
+    if (this._cell.isEmpty) {
+      return ChallengeCellType.Empty;
+    } else {
+      return ChallengeCellType.Full;
+    }
   }
 }

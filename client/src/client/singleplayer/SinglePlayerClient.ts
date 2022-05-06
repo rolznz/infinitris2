@@ -111,7 +111,8 @@ export default class SinglePlayerClient
     this._simulation.followPlayer(player);
     this._input = new Input(
       this._simulation,
-      this._renderer,
+      this._renderer.onInputAction,
+      this._renderer.screenPositionToCell,
       player,
       options.controls_keyboard,
       options.controls_gamepad

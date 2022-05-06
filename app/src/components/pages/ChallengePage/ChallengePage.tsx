@@ -22,6 +22,7 @@ import { IPlayer } from 'infinitris2-models';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import { useUser } from '@/components/hooks/useUser';
+import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -74,10 +75,10 @@ export default function ChallengePage() {
   const player: Partial<NetworkPlayerInfo> = React.useMemo(
     () => ({
       color: 0xff0000, // FIXME: use player's color
-      nickname: readOnly.nickname || 'New Player',
+      nickname: readOnly?.nickname || 'New Player',
       id: -1,
     }),
-    [readOnly.nickname]
+    [readOnly?.nickname]
   );
 
   // TODO: load challenge from firebase
@@ -109,6 +110,13 @@ export default function ChallengePage() {
           preferredInputMethod,
           controls_keyboard,
           player: player as IPlayer, // FIXME: use a different interface
+          challengeEditorEnabled: isTest,
+          onSaveGrid: (grid: string) => {
+            useChallengeEditorStore.getState().setChallenge({
+              ...useChallengeEditorStore.getState().challenge!,
+              grid,
+            });
+          },
         })
       );
     }
@@ -122,6 +130,7 @@ export default function ChallengePage() {
     setChallengeClient,
     controls_keyboard,
     player,
+    isTest,
   ]);
 
   useEffect(() => {

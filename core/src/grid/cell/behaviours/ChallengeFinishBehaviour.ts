@@ -1,4 +1,5 @@
 import CellType from '@models/CellType';
+import ChallengeCellType from '@models/ChallengeCellType';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 
@@ -26,5 +27,9 @@ export default class ChallengeFinishBehaviour implements ICellBehaviour {
 
   get alpha(): number {
     return 0.25;
+  }
+
+  toChallengeCellType() {
+    return ChallengeCellType.Finish;
   }
 }

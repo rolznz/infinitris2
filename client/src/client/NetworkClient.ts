@@ -152,7 +152,8 @@ export default class NetworkClient
             this._simulation.followPlayer(humanPlayer);
             this._input = new Input(
               this._simulation,
-              this._renderer,
+              this._renderer.onInputAction,
+              this._renderer.screenPositionToCell,
               humanPlayer,
               this._launchOptions?.controls_keyboard,
               this._launchOptions?.controls_gamepad

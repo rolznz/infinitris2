@@ -226,7 +226,8 @@ export default function SettingsPage() {
               </Select>
             }
           />
-          {(user.preferredInputMethod === 'keyboard' ||
+          {(!user.preferredInputMethod ||
+            user.preferredInputMethod === 'keyboard' ||
             user.preferredInputMethod === 'gamepad') && (
             <SettingsRow
               left={
@@ -239,7 +240,9 @@ export default function SettingsPage() {
                 <Link
                   component={RouterLink}
                   underline="none"
-                  to={`${Routes.controlSettings}?type=${user.preferredInputMethod}`}
+                  to={`${Routes.controlSettings}?type=${
+                    user.preferredInputMethod || 'keyboard'
+                  }`}
                   onClick={() => playSound(SoundKey.click)}
                 >
                   <Button variant="contained" color="primary">

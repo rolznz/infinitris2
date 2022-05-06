@@ -81,6 +81,7 @@ export * from './IPayment';
 export * from './LoginRequest';
 export * from './LoginCode';
 export * from './BuyCoinsRequest';
+export * from './InputAction';
 
 export const NETWORK_VERSION = 2;
 

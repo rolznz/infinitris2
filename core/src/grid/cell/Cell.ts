@@ -1,5 +1,4 @@
 import IBlock from '@models/IBlock';
-import createBehaviour from './behaviours/createBehaviour';
 import ICell from '@models/ICell';
 import CellType from '@models/CellType';
 import ICellBehaviour from '@models/ICellBehaviour';
@@ -21,7 +20,7 @@ export default class Cell implements ICell {
     this._grid = grid;
     this._row = row;
     this._column = column;
-    this._behaviour = new NormalCellBehaviour();
+    this._behaviour = new NormalCellBehaviour(this);
     this._isEmpty = true;
     this._blocks = [];
     this._eventListener = grid;
@@ -86,7 +85,7 @@ export default class Cell implements ICell {
   place(player: IPlayer | undefined) {
     this.isEmpty = false;
     this._player = player;
-    this.behaviour = new NormalCellBehaviour(player?.color);
+    this.behaviour = new NormalCellBehaviour(this, player?.color);
   }
 
   step() {
@@ -101,7 +100,7 @@ export default class Cell implements ICell {
   reset(): void {
     this.isEmpty = true;
     this._player = undefined;
-    this.behaviour = new NormalCellBehaviour();
+    this.behaviour = new NormalCellBehaviour(this);
   }
 
   addBlock(block: IBlock) {

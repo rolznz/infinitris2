@@ -1,4 +1,4 @@
-import InputAction from '@models/InputAction';
+import { CustomizableInputAction } from '@models/InputAction';
 import { ActionListener } from './Input';
 
 const TIME_THRESHOLD = 300;
@@ -31,6 +31,7 @@ export default class TouchInput {
     this._pointerStartTime = 0;
     this._hasMoved = false;
     this._hasMovedHorizontally = false;
+    // FIXME: use canvas instead of document
     document.addEventListener('touchstart', this._onTouchStart);
     document.addEventListener('touchend', this._onTouchEnd);
     document.addEventListener('touchmove', this._onTouchMove);
@@ -75,12 +76,14 @@ export default class TouchInput {
 
     if (pointerChangeDistance < this._rotateThreshold) {
       if (this._pointerX < document.body.clientWidth * 0.5) {
-        this._fireAction(InputAction.RotateAnticlockwise);
+        this._fireAction({
+          type: CustomizableInputAction.RotateAnticlockwise,
+        });
       } else {
-        this._fireAction(InputAction.RotateClockwise);
+        this._fireAction({ type: CustomizableInputAction.RotateClockwise });
       }
     } else if (Math.abs(totalPointerChangeY) > this._movementThreshold) {
-      this._fireAction(InputAction.Drop);
+      this._fireAction({ type: CustomizableInputAction.Drop });
     }
   };
 
@@ -99,20 +102,20 @@ export default class TouchInput {
           this._lastActionY = this._pointerY;
           this._hasMoved = true;
           this._hasMovedHorizontally = true;
-          this._fireAction(InputAction.MoveRight);
+          this._fireAction({ type: CustomizableInputAction.MoveRight });
         } else if (pointerChangeX < -this._movementThreshold) {
           this._lastActionX -= this._movementThreshold;
           this._lastActionY = this._pointerY;
           this._hasMoved = true;
           this._hasMovedHorizontally = true;
-          this._fireAction(InputAction.MoveLeft);
+          this._fireAction({ type: CustomizableInputAction.MoveLeft });
         }
       } else {
         if (pointerChangeY > this._movementThreshold) {
           this._lastActionX = this._pointerX;
           this._lastActionY += this._movementThreshold;
           this._hasMoved = true;
-          this._fireAction(InputAction.MoveDown);
+          this._fireAction({ type: CustomizableInputAction.MoveDown });
         }
       }
       break;

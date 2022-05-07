@@ -55,7 +55,11 @@ export default class ChallengeClient
     this._preferredInputMethod = options.preferredInputMethod;
     this._controls = options.controls_keyboard;
     if (options.challengeEditorEnabled) {
-      this._editor = new ChallengeEditor(this, options.onSaveGrid);
+      this._editor = new ChallengeEditor(
+        this,
+        options.onSaveGrid,
+        options.challengeEditorIsEditing
+      );
     }
     this._create(challenge);
   }
@@ -343,7 +347,7 @@ export default class ChallengeClient
       this._input.addListener(this._editor.inputListener);
     }
 
-    if (!this._editor) {
+    if (!this._editor || !this._editor.isEditing) {
       // execute one frame to warm up the simulation (creates the player's block, etc)
       simulation.step();
     }

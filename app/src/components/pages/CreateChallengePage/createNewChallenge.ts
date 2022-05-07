@@ -1,13 +1,9 @@
 import { IChallenge } from 'infinitris2-models';
 
-import { v4 as uuidv4 } from 'uuid';
-import { WithId } from '@/models/WithId';
-
-export function createNewChallenge(userId: string): WithId<IChallenge> {
+export function createNewChallenge(): IChallenge {
   return {
     title: '',
-    userId,
-    id: uuidv4(),
+    userId: '',
     grid: `
 000000000
 000000000

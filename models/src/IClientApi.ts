@@ -37,6 +37,7 @@ export type LaunchOptions = WithControls & {
   allCharacters?: ICharacter[];
   gridLineType?: GridLineType;
   challengeEditorEnabled?: boolean;
+  challengeEditorIsEditing?: boolean;
   onSaveGrid?: SaveGridFunction;
 };
 

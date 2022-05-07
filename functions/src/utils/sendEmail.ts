@@ -19,6 +19,6 @@ export function sendEmail(to: string, subject: string, html: string) {
     to,
     subject,
     html,
-    from: 'Infinitris Bot',
+    from: 'Infinitris',
   });
 }

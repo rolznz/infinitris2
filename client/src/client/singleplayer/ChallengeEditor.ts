@@ -17,6 +17,8 @@ import { ActionListener } from '@src/input/Input';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 
 export class ChallengeEditor {
+  // FIXME: this is a bad name - more like isolated editing (simulation is disabled)
+  // Or change to editMode
   private _isEditing: boolean;
   private _simulation?: ISimulation;
   private _renderer?: BaseRenderer;
@@ -24,9 +26,13 @@ export class ChallengeEditor {
   private _challengeCellType: ChallengeCellType;
   private _onSaveGrid?: SaveGridFunction;
 
-  constructor(client: ChallengeClient, onSaveGrid?: SaveGridFunction) {
+  constructor(
+    client: ChallengeClient,
+    onSaveGrid?: SaveGridFunction,
+    isEditing = true
+  ) {
     this._client = client;
-    this._isEditing = true;
+    this._isEditing = isEditing;
     this._challengeCellType = ChallengeCellType.Full;
     this._onSaveGrid = onSaveGrid;
   }
@@ -87,69 +93,68 @@ export class ChallengeEditor {
       }
     }
 
-    if (this._isEditing) {
-      // TODO: only enable these hotkeys in dev mode once app has a better UI
-      if (action.type === HardCodedInputAction.KeyDown) {
-        const keyPressActionWithData = action as KeyPressActionWithData;
-        if (
-          keyPressActionWithData.data.ctrlKey &&
-          keyPressActionWithData.data.shiftKey &&
-          keyPressActionWithData.data.altKey &&
-          keyPressActionWithData.data.key === 'T'
-        ) {
-          const newCellTypeNumberString = prompt(
-            'Enter new cell type:\n' +
-              Object.values(ChallengeCellType)
-                .map(
-                  (type, index) =>
-                    `${index}: ${getChallengeCellTypeDescription(type)}`
-                )
-                .join('\n'),
+    /*if (this._isEditing) {
+    }*/
+
+    // TODO: only enable these hotkeys in dev mode once app has a better UI
+    if (action.type === HardCodedInputAction.KeyDown) {
+      const keyPressActionWithData = action as KeyPressActionWithData;
+      if (
+        keyPressActionWithData.data.ctrlKey &&
+        keyPressActionWithData.data.shiftKey &&
+        keyPressActionWithData.data.altKey &&
+        keyPressActionWithData.data.key === 'T'
+      ) {
+        const newCellTypeNumberString = prompt(
+          'Enter new cell type:\n' +
             Object.values(ChallengeCellType)
-              .indexOf(this._challengeCellType)
-              .toString()
-          );
-          if (newCellTypeNumberString) {
-            const numberValue = parseInt(newCellTypeNumberString);
-            this._challengeCellType =
-              Object.values(ChallengeCellType)[numberValue];
-          }
+              .map(
+                (type, index) =>
+                  `${index}: ${getChallengeCellTypeDescription(type)}`
+              )
+              .join('\n'),
+          Object.values(ChallengeCellType)
+            .indexOf(this._challengeCellType)
+            .toString()
+        );
+        if (newCellTypeNumberString) {
+          const numberValue = parseInt(newCellTypeNumberString);
+          this._challengeCellType =
+            Object.values(ChallengeCellType)[numberValue];
         }
+      }
 
-        if (
-          keyPressActionWithData.data.ctrlKey &&
-          keyPressActionWithData.data.shiftKey &&
-          keyPressActionWithData.data.altKey &&
-          keyPressActionWithData.data.key === 'G'
-        ) {
-          const newGridSizeResponse = prompt(
-            'Enter new grid size (rows, columns)',
-            this._simulation.grid.numRows +
-              ',' +
-              this._simulation.grid.numColumns
-          );
-          const newGridSizeParts = newGridSizeResponse
-            ?.split(',')
-            .map((part) => part.trim());
-          if (newGridSizeParts?.length === 2) {
-            const rows = parseInt(newGridSizeParts[0]);
-            const cols = parseInt(newGridSizeParts[1]);
-            this._simulation.grid.resize(rows, cols);
-            this._saveGrid();
-            // FIXME: shouldn't have to restart everything when changing the grid size
-            // renderer needs to pick up new grid changes and rerender properly
-            this._client.restart();
-          }
+      if (
+        keyPressActionWithData.data.ctrlKey &&
+        keyPressActionWithData.data.shiftKey &&
+        keyPressActionWithData.data.altKey &&
+        keyPressActionWithData.data.key === 'G'
+      ) {
+        const newGridSizeResponse = prompt(
+          'Enter new grid size (rows, columns)',
+          this._simulation.grid.numRows + ',' + this._simulation.grid.numColumns
+        );
+        const newGridSizeParts = newGridSizeResponse
+          ?.split(',')
+          .map((part) => part.trim());
+        if (newGridSizeParts?.length === 2) {
+          const rows = parseInt(newGridSizeParts[0]);
+          const cols = parseInt(newGridSizeParts[1]);
+          this._simulation.grid.resize(rows, cols);
+          this._saveGrid();
+          // FIXME: shouldn't have to restart everything when changing the grid size
+          // renderer needs to pick up new grid changes and rerender properly
+          this._client.restart();
         }
+      }
 
-        if (
-          keyPressActionWithData.data.ctrlKey &&
-          keyPressActionWithData.data.shiftKey &&
-          keyPressActionWithData.data.altKey &&
-          keyPressActionWithData.data.key === 'J'
-        ) {
-          alert(stringifyGrid(this._simulation.grid));
-        }
+      if (
+        keyPressActionWithData.data.ctrlKey &&
+        keyPressActionWithData.data.shiftKey &&
+        keyPressActionWithData.data.altKey &&
+        keyPressActionWithData.data.key === 'J'
+      ) {
+        alert(stringifyGrid(this._simulation.grid));
       }
     }
 

@@ -40,6 +40,8 @@ import { SinglePlayerGameModePickerPage } from '@/components/pages/SinglePlayerP
 import { RoomInfoPage } from '@/components/pages/RoomInfoPage';
 import CoinsDisplay from '@/components/ui/CoinsDisplay';
 
+const coinsDisplayPaths = [Routes.market, Routes.profile];
+
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
     <Route
@@ -91,7 +93,7 @@ function RouterContents() {
         {/*<Header />*/}
       </OutsideGameElement>
       <Switch location={location}>
-        <Route path={Routes.market}>
+        <Route path={coinsDisplayPaths}>
           <CoinsDisplay />
         </Route>
       </Switch>

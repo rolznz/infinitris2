@@ -1,5 +1,5 @@
 import useContinueButton from '@/components/hooks/useContinueButton';
-import { borderRadiuses } from '@/theme/theme';
+import { borderRadiuses, zIndexes } from '@/theme/theme';
 import { Box, Typography } from '@mui/material';
 import { IChallenge } from 'infinitris2-models';
 import React from 'react';
@@ -30,6 +30,7 @@ export default function ChallengeInfoView({
         px={6}
         py={4}
         borderRadius={borderRadiuses.base}
+        zIndex={zIndexes.above}
       >
         <Typography variant="h6">
           {challenge.title || 'Untitled Challenge'}

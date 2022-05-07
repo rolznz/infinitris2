@@ -1,17 +1,16 @@
-import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import FlexBox from '@/components/ui/FlexBox';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import { zIndexes } from '@/theme/theme';
 import prettyStringify from '@/utils/prettyStringify';
 import TextField from '@mui/material/TextField';
 import React from 'react';
-import useWindowSize from 'react-use/lib/useWindowSize';
+//import useWindowSize from 'react-use/lib/useWindowSize';
 import shallow from 'zustand/shallow';
-import { FittedChallengeGridPreview } from '../../ChallengesPage/ChallengeGridPreview';
+//import { FittedChallengeGridPreview } from '../../ChallengesPage/ChallengeGridPreview';
 
+// TODO: consder removing. This UI is bad on all screens, users should not be able to manually edit the JSON anyway.
 export function ChallengeEditorJson() {
-  const isLandscape = useIsLandscape();
-  const windowSize = useWindowSize();
+  //const windowSize = useWindowSize();
   //const [hasError, set]
   const [challenge, setChallenge] = useChallengeEditorStore(
     (store) => [store.challenge, store.setChallenge],
@@ -31,7 +30,7 @@ export function ChallengeEditorJson() {
       position="relative"
     >
       <TextField
-        label="Challenge Settings"
+        label="Challenge JSON"
         multiline
         fullWidth
         disabled={challenge.isPublished}
@@ -57,13 +56,13 @@ export function ChallengeEditorJson() {
           },
         }}
         style={{
-          height: '100%',
-          width: isLandscape ? '50%' : '100%',
+          height: '50vh',
+          width: '100%',
           zIndex: zIndexes.above,
         }}
         variant="outlined"
       />
-      <FlexBox
+      {/*<FlexBox
         flex={1}
         sx={{
           position: isLandscape ? undefined : 'absolute',
@@ -77,7 +76,7 @@ export function ChallengeEditorJson() {
           maxWidth={windowSize.width * (isLandscape ? 0.45 : 0.1)}
           maxHeight={windowSize.height * (isLandscape ? 0.8 : 0.1)}
         />
-      </FlexBox>
+      </FlexBox>*/}
     </FlexBox>
   );
 }

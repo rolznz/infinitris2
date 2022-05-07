@@ -25,8 +25,7 @@ import { LightningQR } from '@/components/ui/LightningQR';
 import useAuthStore from '@/state/AuthStore';
 import { useDocument, UseDocumentOptions } from 'swr-firestore';
 import shallow from 'zustand/shallow';
-import { openLoginDialog } from '@/state/DialogStore';
-import { toast } from 'react-toastify';
+import { showLoginPrompt } from '@/utils/showLoginMessage';
 
 const schema = yup
   .object({
@@ -74,14 +73,7 @@ export function CoinInfoBuyCoinsSlide() {
   const onSubmit = React.useCallback(
     async (data: BuyCoinsFormData) => {
       if (!authUserId || !authUserEmail) {
-        toast(
-          intl.formatMessage({
-            defaultMessage: 'Please login',
-            description: 'Please login to purchase coins toast message',
-          }),
-          {}
-        );
-        openLoginDialog();
+        showLoginPrompt(intl);
         return;
       }
       if (process.env.REACT_APP_API_URL) {

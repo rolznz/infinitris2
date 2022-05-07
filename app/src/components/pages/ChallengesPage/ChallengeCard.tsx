@@ -17,11 +17,11 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
   //const user = useUser();
   //const translation = challenge?.translations?.[user.locale];
   const { incompleteChallenges } = useIncompleteChallenges();
-  const isLocked = incompleteChallenges.find(
+  const isLocked = false; /*incompleteChallenges.find(
     (t) =>
       t.data()!.isMandatory &&
       (t.data()!.priority || 0) > (challenge.data()!.priority || 0)
-  );
+  );*/
 
   const child = (
     <Card>

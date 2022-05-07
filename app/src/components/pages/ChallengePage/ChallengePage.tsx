@@ -8,7 +8,7 @@ import {
   getChallengePath,
   NetworkPlayerInfo,
 } from 'infinitris2-models';
-import useForcedRedirect from '../../hooks/useForcedRedirect';
+//import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
 import useIncompleteChallenges from '../../hooks/useIncompleteChallenges';
 import Routes from '../../../models/Routes';
@@ -23,6 +23,7 @@ import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import { useUser } from '@/components/hooks/useUser';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
+import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -43,13 +44,16 @@ export default function ChallengePage() {
   console.log('isTest', isTest);
 
   usePwaRedirect();
-  const requiresRedirect = useForcedRedirect(true, challengeId, !isTest);
+  useReleaseClientOnExitPage();
+  //const requiresRedirect = useForcedRedirect(true, challengeId, !isTest);
   const { incompleteChallenges } = useIncompleteChallenges();
 
   const { data: syncedChallenge } = useDocument<IChallenge>(
     !isTest ? getChallengePath(challengeId) : null
   );
-  const challenge = isTest ? JSON.parse(json as string) : syncedChallenge;
+  const challenge: IChallenge = isTest
+    ? JSON.parse(json as string)
+    : syncedChallenge?.data();
 
   const launchChallenge = client?.launchChallenge;
   const restartClient = client?.restartClient; // TODO: move to IClient
@@ -84,7 +88,7 @@ export default function ChallengePage() {
   // TODO: load challenge from firebase
 
   useEffect(() => {
-    if (challenge && !requiresRedirect && launchChallenge && !hasLaunched) {
+    if (challenge /*&& !requiresRedirect*/ && launchChallenge && !hasLaunched) {
       setLaunched(true);
 
       const challengeSimulationEventListener: Partial<ISimulationEventListener> =
@@ -111,6 +115,7 @@ export default function ChallengePage() {
           controls_keyboard,
           player: player as IPlayer, // FIXME: use a different interface
           challengeEditorEnabled: isTest,
+          challengeEditorIsEditing: false,
           onSaveGrid: (grid: string) => {
             useChallengeEditorStore.getState().setChallenge({
               ...useChallengeEditorStore.getState().challenge!,
@@ -121,7 +126,7 @@ export default function ChallengePage() {
       );
     }
   }, [
-    requiresRedirect,
+    //requiresRedirect,
     challenge,
     hasLaunched,
     preferredInputMethod,
@@ -174,13 +179,13 @@ export default function ChallengePage() {
   } else if (challengeCompleted && challengeClient && restartClient) {
     return (
       <ChallengeResultsView
-        challengeId={challenge.id}
+        challengeId={id}
         isTest={isTest}
         //status={challengeClient.getChallengeAttempt()}
         onContinue={() => {
           //completeChallenge(challenge.id);
           const remainingChallenges = incompleteChallenges.filter(
-            (incompleteChallenge) => incompleteChallenge.id !== challenge.id
+            (incompleteChallenge) => incompleteChallenge.id !== id
           );
           if (isTest) {
             history.goBack();

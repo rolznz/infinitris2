@@ -453,7 +453,6 @@ export function CreateChallengePage() {
 
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { Page } from '@/components/ui/Page';
-import useAuthStore from '@/state/AuthStore';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -462,18 +461,15 @@ import { createNewChallenge } from './createNewChallenge';
 
 export function CreateChallengePage() {
   const intl = useIntl();
-  const userId = useAuthStore((store) => store.user?.uid);
   usePwaRedirect();
 
   const challenge = useChallengeEditorStore((store) => store.challenge);
   const challengeExists = !!challenge;
   React.useEffect(() => {
-    if (!challengeExists && userId) {
-      useChallengeEditorStore
-        .getState()
-        .setChallenge(createNewChallenge(userId));
+    if (!challengeExists) {
+      useChallengeEditorStore.getState().setChallenge(createNewChallenge());
     }
-  }, [challengeExists, userId]);
+  }, [challengeExists]);
 
   return (
     <Page

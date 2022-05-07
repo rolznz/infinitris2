@@ -1,11 +1,10 @@
-import { WithId } from '@/models/WithId';
 import localStorageKeys from '@/utils/localStorageKeys';
 import { IChallenge } from 'infinitris2-models';
 import create from 'zustand';
 
 type ChallengeEditorStore = {
-  challenge?: WithId<IChallenge>;
-  setChallenge(challenge: WithId<IChallenge> | undefined): void;
+  challenge?: IChallenge;
+  setChallenge(challenge: IChallenge | undefined): void;
 };
 
 function loadExistingChallenge() {
@@ -13,14 +12,14 @@ function loadExistingChallenge() {
     localStorageKeys.challenge
   );
   let existingChallenge = existingChallengeJson
-    ? (JSON.parse(existingChallengeJson) as WithId<IChallenge>)
+    ? (JSON.parse(existingChallengeJson) as IChallenge)
     : undefined;
   return existingChallenge;
 }
 
 const useChallengeEditorStore = create<ChallengeEditorStore>((set) => ({
   challenge: loadExistingChallenge(),
-  setChallenge: (challenge: WithId<IChallenge> | undefined) =>
+  setChallenge: (challenge: IChallenge | undefined) =>
     set((_) => {
       if (challenge) {
         localStorage.setItem(

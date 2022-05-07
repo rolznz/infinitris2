@@ -1,25 +1,31 @@
+import { ChallengeEditorSettingsForm } from '@/components/pages/CreateChallengePage/tabs/ChallengeEditorSettingsForm';
 import FlexBox from '@/components/ui/FlexBox';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
-import { FormControl, Input } from '@mui/material';
 import React from 'react';
-import PublicOffIcon from '@mui/icons-material/PublicOff';
-import FolderIcon from '@mui/icons-material/Folder';
-import SaveIcon from '@mui/icons-material/Save';
-import { FilledIcon } from '@/components/ui/FilledIcon';
-import NoteAddIcon from '@mui/icons-material/NoteAdd';
+//import PublicOffIcon from '@mui/icons-material/PublicOff';
+//import FolderIcon from '@mui/icons-material/Folder';
+//import SaveIcon from '@mui/icons-material/Save';
+//import { FilledIcon } from '@/components/ui/FilledIcon';
+//import NoteAddIcon from '@mui/icons-material/NoteAdd';
 import shallow from 'zustand/shallow';
 
-export function ChallengeEditorInfo() {
-  const [challenge, setChallenge] = useChallengeEditorStore(
+//import { ChallengeEditorJson } from '@/components/pages/CreateChallengePage/tabs/ChallengeEditorJson';
+
+export function ChallengeEditorSettingsTab() {
+  const [challenge] = useChallengeEditorStore(
     (store) => [store.challenge, store.setChallenge],
     shallow
   );
+
   if (!challenge) {
     return null;
   }
+
   return (
     <FlexBox width="100%" height="100%" justifyContent="flex-start">
-      <FormControl>
+      <ChallengeEditorSettingsForm challenge={challenge} />
+
+      {/* <FormControl>
         <Input
           id="my-input"
           aria-describedby="my-helper-text"
@@ -29,8 +35,8 @@ export function ChallengeEditorInfo() {
             setChallenge({ ...challenge, title: event.target.value })
           }
         />
-      </FormControl>
-      <FlexBox flexDirection="row" gap={1} mt={10}>
+      </FormControl> */}
+      {/*<FlexBox flexDirection="row" gap={1} mt={10}>
         <FilledIcon>
           <NoteAddIcon />
         </FilledIcon>
@@ -43,7 +49,8 @@ export function ChallengeEditorInfo() {
         <FilledIcon>
           <PublicOffIcon />
         </FilledIcon>
-      </FlexBox>
+        </FlexBox>*/}
+      {/*TODO: button to export/import challenge that opens prompt*/}
     </FlexBox>
   );
 }

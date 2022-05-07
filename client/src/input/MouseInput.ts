@@ -15,17 +15,24 @@ export default class MouseInput {
     this._mouseButtonDown = undefined;
     this._fireAction = fireAction;
     this._screenPositionToCell = screenPositionToCell;
-    // FIXME: use canvas instead of document
-    document.addEventListener('mousedown', this._onMouseDown);
-    document.addEventListener('mousemove', this._onMouseMove);
-    document.addEventListener('mouseup', this._onMouseUp);
-    document.addEventListener('contextmenu', this._disableContextMenu);
+    this._getCanvas().addEventListener('mousedown', this._onMouseDown);
+    this._getCanvas().addEventListener('mousemove', this._onMouseMove);
+    this._getCanvas().addEventListener('mouseup', this._onMouseUp);
+    this._getCanvas().addEventListener('contextmenu', this._disableContextMenu);
   }
   destroy() {
-    document.removeEventListener('mousedown', this._onMouseDown);
-    document.removeEventListener('mousemove', this._onMouseMove);
-    document.removeEventListener('mouseup', this._onMouseUp);
-    document.removeEventListener('contextmenu', this._disableContextMenu);
+    this._getCanvas().removeEventListener('mousedown', this._onMouseDown);
+    this._getCanvas().removeEventListener('mousemove', this._onMouseMove);
+    this._getCanvas().removeEventListener('mouseup', this._onMouseUp);
+    this._getCanvas().removeEventListener(
+      'contextmenu',
+      this._disableContextMenu
+    );
+  }
+
+  // TODO: pass in or make this a utility function
+  private _getCanvas() {
+    return document.getElementsByTagName('canvas')[0];
   }
   private _disableContextMenu(event: MouseEvent) {
     event.preventDefault();

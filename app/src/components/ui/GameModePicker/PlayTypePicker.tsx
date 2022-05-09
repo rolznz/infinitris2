@@ -88,7 +88,7 @@ export function PlayTypePicker({ paddingTop, display }: GameModePickerProps) {
         link={Routes.lobby}
       />
       <PlayTypeCard
-        link={Routes.challenges}
+        //link={Routes.challenges}
         image={
           isLandscape
             ? isDarkMode

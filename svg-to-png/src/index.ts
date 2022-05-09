@@ -35,12 +35,14 @@ for (const assetDirectory of assetsDirectories) {
       const png = withoutExt + pngExt;
       await sharp(getPath(filename)).toFile(getPath(png));
       // generate alternate hues
-      for (let variation = 1; variation < 6; variation++) {
-        await colorSpin(
-          getPath(png),
-          getPath(withoutExt + '_variation' + variation + pngExt),
-          variation
-        );
+      if (process.env.GENERATE_VARIATIONS !== 'false') {
+        for (let variation = 1; variation < 6; variation++) {
+          await colorSpin(
+            getPath(png),
+            getPath(withoutExt + '_variation' + variation + pngExt),
+            variation
+          );
+        }
       }
       console.log(filename);
     }

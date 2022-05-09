@@ -3,11 +3,11 @@ import { imagesDirectory } from '..';
 import {
   WorldBackgroundLayerConfig,
   WorldBackgroundConfig,
-  worldBackgroundConfigs,
-} from './worldBackgroundConfigs';
+} from './WorldBackgroundConfig';
 import { WorldType, WorldVariation } from '@models/WorldType';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { WrappedSprite } from '@src/rendering/WrappedSprite';
+import { worldBackgroundConfigs } from '@src/rendering/renderers/infinitris2/backgroundConfigs/worldBackgroundConfigs';
 
 export class GridFloor {
   private _gridFloorGraphics: PIXI.Graphics | undefined;

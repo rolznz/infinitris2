@@ -4,13 +4,13 @@ import { imagesDirectory } from '..';
 import {
   WorldBackgroundLayerConfig,
   WorldBackgroundConfig,
-  worldBackgroundConfigs,
-} from './worldBackgroundConfigs';
+} from './WorldBackgroundConfig';
 import { RendererQuality } from '@models/RendererQuality';
 import { WorldType, WorldVariation } from '@models/WorldType';
 import { resizeTexture } from '@src/rendering/resizeTexture';
 import { generateGapTexture } from '@src/rendering/generateGapTexture';
 import { WrappedSprite } from '@src/rendering/WrappedSprite';
+import { worldBackgroundConfigs } from '@src/rendering/renderers/infinitris2/backgroundConfigs/worldBackgroundConfigs';
 
 export class WorldBackground {
   private _layerSprites: (WrappedSprite | undefined)[] = [];

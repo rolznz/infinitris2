@@ -72,7 +72,7 @@ export function playGameMusic(
   _gameTheme = playMusic(
     _gameTheme,
     `${rootUrl}/${
-      worldType === 'grass' ? worldType : 'volcano'
+      worldType === 'grass' || worldType === 'volcano' ? worldType : 'space'
     }_${trackNumber}.mp3`,
     true
   );

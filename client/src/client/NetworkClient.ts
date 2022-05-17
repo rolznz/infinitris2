@@ -50,7 +50,6 @@ export default class NetworkClient
   private _socket: IClientSocket;
   // FIXME: restructure to not require definite assignment
   private _renderer!: BaseRenderer;
-  private _simulation!: Simulation;
   private _playerId?: number;
   private _input: Input | undefined;
   private _lastMessageId: number;

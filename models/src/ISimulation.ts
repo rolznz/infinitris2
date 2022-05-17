@@ -1,4 +1,5 @@
 import { GameModeEvent } from '@models/GameModeEvent';
+import { ICharacter } from '@models/ICharacter';
 import { IGameMode } from '@models/IGameMode';
 import { IRound, NetworkRoundInfo } from '@models/IRound';
 import ISimulationEventListener from '@models/ISimulationEventListener';
@@ -25,6 +26,8 @@ export default interface ISimulation extends ISimulationEventListener {
   get shouldNewPlayerSpectate(): boolean;
   get round(): IRound | undefined;
   get isPaused(): boolean;
+  get isRunning(): boolean;
+  get grid(): IGrid;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;
@@ -37,4 +40,14 @@ export default interface ISimulation extends ISimulationEventListener {
     ...eventListeners: Partial<ISimulationEventListener>[]
   ): void;
   onGameModeEvent(event: GameModeEvent): void;
+  init(): void;
+  followPlayer(player: IPlayer): void;
+  removePlayer(playerId: number): void;
+  getFreePlayerId(): number;
+  generateCharacter(
+    charactersPool: ICharacter[] | undefined,
+    playerId: number,
+    isBot: boolean,
+    desiredCharacterId?: string
+  ): Partial<ICharacter>;
 }

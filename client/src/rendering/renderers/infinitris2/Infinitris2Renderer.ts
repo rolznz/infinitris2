@@ -627,7 +627,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
 
-    if (!this._simulation.settings.instantDrops) {
+    if (!this._simulation.settings.instantDrops || this._simulation.isPaused) {
       return;
     }
 
@@ -635,7 +635,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     const highestCells = block.cells.filter(
       (cell) =>
         !block.cells.find(
-          (other) => other.column === cell.column && other.row < cell.row
+          (other) =>
+            other.column === cell.column &&
+            (!reverseEffect ? other.row < cell.row : other.row > cell.row)
         )
     );
 
@@ -643,6 +645,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
       container: new PIXI.Container(),
       children: [],
     };
+
+    const reverseEffect = this._isDemo; // FIXME: make this an optional setting
 
     this.renderCopies(
       dropEffect,
@@ -670,8 +674,19 @@ export default class Infinitris2Renderer extends BaseRenderer {
               wrappedCellColumn -= this._simulation!.grid.numColumns;
             }
           }
-          for (let y = cell.row; y < this._simulation!.grid.numRows; y++) {
-            if (!this._simulation?.grid.cells[y][cell.column].isPassable) {
+          let index = 0;
+          for (
+            let y = cell.row;
+            !reverseEffect
+              ? y < this._simulation!.grid.numRows
+              : y > -this._simulation!.grid.numRows;
+            !reverseEffect ? y++ : y--
+          ) {
+            index++;
+            if (
+              !reverseEffect &&
+              !this._simulation?.grid.cells[y][cell.column].isPassable
+            ) {
               break;
             }
             graphics.drawRect(

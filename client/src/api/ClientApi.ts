@@ -53,7 +53,7 @@ export default class ClientApi implements IClientApi {
       const numBots = parseInt(params.get('numBots') || '0');
       const botReactionDelay = parseInt(params.get('botReactionDelay') || '20');
       const spectate = params.get('spectate') === 'true';
-      const demo = params.get('demo') === 'true';
+      const isDemo = params.get('demo') === 'true';
       const worldType = (params.get('world') as WorldType) ?? undefined;
       const worldVariation = parseInt(
         params.get('worldVariation') || '0'
@@ -66,6 +66,9 @@ export default class ClientApi implements IClientApi {
         gameModeType,
       };
 
+      const gridNumColumns: number | undefined =
+        parseInt(params.get('gridNumColumns') || '0') || undefined;
+
       this.launchSinglePlayer({
         controls_keyboard: controls,
         numBots,
@@ -75,13 +78,37 @@ export default class ClientApi implements IClientApi {
         simulationSettings,
         worldType,
         worldVariation,
-        useFallbackUI: !demo,
-        isDemo: demo,
+        useFallbackUI: !isDemo,
+        gridNumColumns,
+        isDemo,
         rendererQuality,
         player: {
           characterId: '487',
           patternFilename: 'pattern_3.png',
         },
+        listeners: [
+          {
+            onSimulationInit(simulation: ISimulation) {
+              // FIXME: remove setTimeout and do onSimulationStartInterval
+              setTimeout(() => {
+                const initialSteps = parseInt(
+                  params.get('initialSteps') || '0'
+                );
+                for (let i = 0; i < initialSteps; i++) {
+                  simulation.step();
+                }
+                if (initialSteps > 0 && isDemo) {
+                  for (const player of simulation.players) {
+                    player.block?.drop();
+                  }
+                }
+                if (params.get('paused') === 'true') {
+                  simulation.stopInterval();
+                }
+              }, 1000);
+            },
+          },
+        ],
       });
     } else if (params.has('url')) {
       this.launchNetworkClient(params.get('url') as string, {

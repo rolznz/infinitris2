@@ -35,7 +35,6 @@ export default class ChallengeClient
 {
   // FIXME: restructure to not require definite assignment
   private _renderer!: BaseRenderer;
-  private _simulation!: ISimulation;
   private _challenge!: IChallenge;
   private _input!: Input;
   private _preferredInputMethod?: InputMethod;

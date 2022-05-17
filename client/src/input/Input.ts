@@ -1,6 +1,4 @@
 import ControllablePlayer from '../ControllablePlayer';
-import Grid from '@core/grid/Grid';
-import Simulation from '@core/simulation/Simulation';
 import InputAction, {
   CustomizableInputAction,
   InputActionWithData,
@@ -14,6 +12,7 @@ import ControlSettings, {
 } from '@models/ControlSettings';
 import MouseInput from '@src/input/MouseInput';
 import ICell from '@models/ICell';
+import ISimulation from '@models/ISimulation';
 
 export type ActionListener = (action: InputActionWithData) => void;
 
@@ -21,8 +20,6 @@ export type ScreenPositionToCell = (x: number, y: number) => ICell | undefined;
 
 export default class Input {
   private _player: ControllablePlayer;
-  private _simulation: Simulation;
-  private _grid: Grid;
   private _controls: ControlSettings;
   private _actionListeners: ActionListener[];
   private _keyboardInput: KeyboardInput;
@@ -32,7 +29,7 @@ export default class Input {
   private _challengeEditorEnabled: boolean;
 
   constructor(
-    simulation: Simulation,
+    simulation: ISimulation,
     onInputAction: ActionListener,
     screenPositionToCell: ScreenPositionToCell,
     player: ControllablePlayer,
@@ -40,8 +37,6 @@ export default class Input {
     gamepadControls?: ControlSettings,
     challengeEditorEnabled = false
   ) {
-    this._simulation = simulation;
-    this._grid = simulation.grid;
     this._player = player;
     this._controls = { ...DEFAULT_KEYBOARD_CONTROLS, ...keyboardControls }; // ensure newly added controls use default keys
     this._actionListeners = [onInputAction];
@@ -92,7 +87,7 @@ export default class Input {
   private _fireAction = (action: InputActionWithData) => {
     if (
       !this._challengeEditorEnabled &&
-      (!this._simulation.isRunning || !this._isActionAllowed(action.type))
+      /*!this._simulation.isRunning || */ !this._isActionAllowed(action.type)
     ) {
       return;
     }

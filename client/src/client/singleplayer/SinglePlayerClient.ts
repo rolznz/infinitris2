@@ -27,7 +27,6 @@ export default class SinglePlayerClient
 {
   // FIXME: restructure to not require definite assignment
   private _renderer!: BaseRenderer;
-  private _simulation!: Simulation;
   private _input!: Input;
 
   constructor(clientApiConfig: ClientApiConfig, options: LaunchOptions) {

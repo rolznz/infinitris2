@@ -247,8 +247,7 @@ export default class Simulation implements ISimulation {
     this._players[player.id] = player;
   }
 
-  // TODO: move to renderer
-  followPlayer(player: Player) {
+  followPlayer(player: IPlayer) {
     this._followingPlayer = player;
   }
 

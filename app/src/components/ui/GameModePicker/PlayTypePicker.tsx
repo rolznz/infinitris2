@@ -3,34 +3,43 @@ import React from 'react';
 import FlexBox from '../FlexBox';
 
 import desertImage from './assets/illustration_storymode_desert.jpg';
-import desertImageDark from './assets/illustration_storymode_desert_dark.jpg';
+import desertImageDark from './assets/illustration_storymode_desert.jpg';
 import desertImagePortrait from './assets/illustration_storymode_desert_portrait.jpg';
-import desertImagePortraitDark from './assets/illustration_storymode_desert_portrait_dark.jpg';
+import desertImagePortraitDark from './assets/illustration_storymode_desert_portrait.jpg';
+import grassImage from './assets/illustration_storymode_grass.jpg';
+import grassImageDark from './assets/illustration_storymode_grass.jpg';
+import grassImagePortrait from './assets/illustration_storymode_grass_portrait.jpg';
+import grassImagePortraitDark from './assets/illustration_storymode_grass_portrait.jpg';
+import volcanicImage from './assets/illustration_storymode_volcanic.jpg';
+import volcanicImageDark from './assets/illustration_storymode_volcanic.jpg';
+import volcanicImagePortrait from './assets/illustration_storymode_volcanic_portrait.jpg';
+import volcanicImagePortraitDark from './assets/illustration_storymode_volcanic_portrait.jpg';
 import multiplayerImage from './assets/illustration_multiplayer.jpg';
-import multiplayerImageDark from './assets/illustration_multiplayer_dark.jpg';
+import multiplayerImageDark from './assets/illustration_multiplayer.jpg';
 import multiplayerImagePortrait from './assets/illustration_multiplayer_portrait.jpg';
-import multiplayerImagePortraitDark from './assets/illustration_multiplayer_portrait_dark.jpg';
+import multiplayerImagePortraitDark from './assets/illustration_multiplayer_portrait.jpg';
 import marketImage from './assets/illustration_market.jpg';
-import marketImageDark from './assets/illustration_market_dark.jpg';
+import marketImageDark from './assets/illustration_market.jpg';
 import marketImagePortrait from './assets/illustration_market_portrait.jpg';
-import marketImagePortraitDark from './assets/illustration_market_portrait_dark.jpg';
+import marketImagePortraitDark from './assets/illustration_market_portrait.jpg';
 import singleplayerImage from './assets/illustration_singleplayer.jpg';
-import singleplayerImageDark from './assets/illustration_singleplayer_dark.jpg';
+import singleplayerImageDark from './assets/illustration_singleplayer.jpg';
 import singleplayerImagePortrait from './assets/illustration_singleplayer_portrait.jpg';
-import singleplayerImagePortraitDark from './assets/illustration_singleplayer_portrait_dark.jpg';
-import challengemakerImage from './assets/illustration_challengemaker.jpg';
-import challengemakerImageDark from './assets/illustration_challengemaker_dark.jpg';
-import challengemakerImagePortrait from './assets/illustration_challengemaker_portrait.jpg';
-import challengemakerImagePortraitDark from './assets/illustration_challengemaker_portrait_dark.jpg';
+import singleplayerImagePortraitDark from './assets/illustration_singleplayer_portrait.jpg';
+import challengecreatorImage from './assets/illustration_challengecreator.jpg';
+import challengecreatorImageDark from './assets/illustration_challengecreator.jpg';
+import challengecreatorImagePortrait from './assets/illustration_challengecreator_portrait.jpg';
+import challengecreatorImagePortraitDark from './assets/illustration_challengecreator_portrait.jpg';
 import communityChallengesImage from './assets/illustration_communitychallenges.jpg';
-import communityChallengesImageDark from './assets/illustration_communitychallenges_dark.jpg';
+import communityChallengesImageDark from './assets/illustration_communitychallenges.jpg';
 import communityChallengesImagePortrait from './assets/illustration_communitychallenges_portrait.jpg';
-import communityChallengesImagePortraitDark from './assets/illustration_communitychallenges_portrait_dark.jpg';
+import communityChallengesImagePortraitDark from './assets/illustration_communitychallenges_portrait.jpg';
 import useDarkMode from '@/components/hooks/useDarkMode';
 import { PlayTypeCard } from './PlayTypeCard';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import Routes from '@/models/Routes';
 import { FormattedMessage } from 'react-intl';
+import { WorldType } from 'infinitris2-models';
 
 export const playTypePickerId = 'play-type-picker';
 
@@ -42,6 +51,7 @@ type GameModePickerProps = {
 export function PlayTypePicker({ paddingTop, display }: GameModePickerProps) {
   const isDarkMode = useDarkMode();
   const isLandscape = useIsLandscape();
+  const stage: WorldType = (process.env.FIXME as WorldType) || 'volcano';
   return (
     <FlexBox
       pt={paddingTop}
@@ -56,11 +66,27 @@ export function PlayTypePicker({ paddingTop, display }: GameModePickerProps) {
         image={
           isLandscape
             ? isDarkMode
-              ? desertImageDark
-              : desertImage
+              ? stage === 'grass'
+                ? grassImageDark
+                : stage === 'desert'
+                ? desertImageDark
+                : volcanicImageDark
+              : stage === 'grass'
+              ? grassImage
+              : stage === 'desert'
+              ? desertImage
+              : volcanicImage
             : isDarkMode
-            ? desertImagePortraitDark
-            : desertImagePortrait
+            ? stage === 'grass'
+              ? grassImagePortraitDark
+              : stage === 'desert'
+              ? desertImagePortraitDark
+              : volcanicImagePortraitDark
+            : stage === 'grass'
+            ? grassImagePortrait
+            : stage === 'desert'
+            ? desertImagePortrait
+            : volcanicImagePortrait
         }
         title={
           <FormattedMessage
@@ -109,11 +135,11 @@ export function PlayTypePicker({ paddingTop, display }: GameModePickerProps) {
         image={
           isLandscape
             ? isDarkMode
-              ? challengemakerImageDark
-              : challengemakerImage
+              ? challengecreatorImageDark
+              : challengecreatorImage
             : isDarkMode
-            ? challengemakerImagePortraitDark
-            : challengemakerImagePortrait
+            ? challengecreatorImagePortraitDark
+            : challengecreatorImagePortrait
         }
         title={
           <FormattedMessage

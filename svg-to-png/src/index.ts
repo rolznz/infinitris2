@@ -2,15 +2,20 @@ import fs from 'fs';
 import sharp from 'sharp';
 import jimp from 'jimp';
 
-const worldsDirectory = '../client/www/images/worlds';
 const pngExt = '.png';
+const jpgExt = '.jpg';
 
-const assetsDirectories = fs
-  .readdirSync(worldsDirectory)
-  .map((filename) => `${worldsDirectory}/${filename}`)
+const chosenExt = process.env.EXTENSION || pngExt;
+
+const assetsDirectory =
+  chosenExt === pngExt ? '../client/www/images/worlds' : jpgExt;
+
+const childAssetDirectories = fs
+  .readdirSync(assetsDirectory)
+  .map((filename) => `${assetsDirectory}/${filename}`)
   .filter((path) => fs.lstatSync(path).isDirectory());
 
-for (const assetDirectory of assetsDirectories) {
+for (const assetDirectory of childAssetDirectories) {
   if (
     process.env.DIR_FILTER &&
     assetDirectory.indexOf(process.env.DIR_FILTER) < 0
@@ -32,14 +37,14 @@ for (const assetDirectory of assetsDirectories) {
         continue;
       }
       const withoutExt = filename.substring(0, filename.length - 4);
-      const png = withoutExt + pngExt;
-      await sharp(getPath(filename)).toFile(getPath(png));
+      const outputFilename = withoutExt + chosenExt;
+      await sharp(getPath(filename)).toFile(getPath(outputFilename));
       // generate alternate hues
-      if (process.env.GENERATE_VARIATIONS !== 'false') {
+      if (process.env.GENERATE_VARIATIONS !== 'false' && chosenExt === pngExt) {
         for (let variation = 1; variation < 6; variation++) {
           await colorSpin(
-            getPath(png),
-            getPath(withoutExt + '_variation' + variation + pngExt),
+            getPath(outputFilename),
+            getPath(withoutExt + '_variation' + variation + chosenExt),
             variation
           );
         }

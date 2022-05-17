@@ -38,7 +38,7 @@ export type LaunchOptions = WithControls & {
   gridLineType?: GridLineType;
   challengeEditorEnabled?: boolean;
   challengeEditorIsEditing?: boolean;
-  onSaveGrid?: SaveGridFunction;
+  onSaveGrid?: SaveGridFunction; // TODO: move to challenge client listener
 };
 
 export type ClientApiConfig = {

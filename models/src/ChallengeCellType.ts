@@ -14,6 +14,9 @@ enum ChallengeCellType {
   Finish = 'F',
   Wafer = 'W',
   Infection = 'I',
+  // TODO: fans (up, down, left, right)
+  // TODO: teleport (to, from)
+  // TODO:
 }
 
 export default ChallengeCellType;

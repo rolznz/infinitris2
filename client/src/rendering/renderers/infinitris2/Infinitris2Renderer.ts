@@ -397,7 +397,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
       cell.container.alpha = cell.cell.isEmpty
         ? cell.cell.behaviour.alpha
-        : cell.cell.player
+        : cell.cell.player || !cell.cell.wasPlayerRemoved
         ? 1
         : 0.5; // distinguish dead cells // TODO: find a better way to do this
     });

@@ -26,7 +26,7 @@ export default class ChallengeFinishBehaviour implements ICellBehaviour {
   }
 
   get alpha(): number {
-    return 0.25;
+    return 1;
   }
 
   toChallengeCellType() {

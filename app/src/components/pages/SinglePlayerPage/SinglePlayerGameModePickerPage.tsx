@@ -15,8 +15,13 @@ const slides: RoomCarouselSlideProps[] = GameModeTypeValues.map(
   (gameModeType) => ({
     gameModeType,
     key: gameModeType,
-    worldType: gameModeType === 'conquest' ? 'desert' : 'grass',
-    worldVariation: gameModeType === 'race' ? 1 : 0,
+    worldType:
+      gameModeType === 'conquest'
+        ? 'volcano'
+        : gameModeType === 'race'
+        ? 'desert'
+        : 'grass',
+    worldVariation: 0,
   })
 );
 

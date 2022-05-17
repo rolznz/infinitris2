@@ -2,8 +2,12 @@ import FlexBox from '@/components/ui/FlexBox';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import Typography from '@mui/material/Typography';
 import { GameModeType, WorldType, WorldVariation } from 'infinitris2-models';
-import grassImage from '@/components/ui/RoomCarousel/assets/carousel/grass.svg';
-import desertImage from '@/components/ui/RoomCarousel/assets/carousel/desert.svg';
+import grassImage from '@/components/ui/RoomCarousel/assets/carousel/grass_desktop.svg';
+import desertImage from '@/components/ui/RoomCarousel/assets/carousel/desert_desktop.svg';
+import volcanoImage from '@/components/ui/RoomCarousel/assets/carousel/volcano_desktop.svg';
+import grassImageMobile from '@/components/ui/RoomCarousel/assets/carousel/grass_mobile.svg';
+import desertImageMobile from '@/components/ui/RoomCarousel/assets/carousel/desert_mobile.svg';
+import volcanoImageMobile from '@/components/ui/RoomCarousel/assets/carousel/volcano_mobile.svg';
 
 import { ReactComponent as ConquestIcon } from '@/icons/conquest.svg';
 import { ReactComponent as InfinityIcon } from '@/icons/infinity.svg';
@@ -36,7 +40,7 @@ export function RoomCarouselSlide({
       width="100vw"
       height="100vh"
       sx={{
-        background: getBackground(worldVariation, worldType),
+        background: getBackground(isLandscape, worldVariation, worldType),
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPositionY: '100%',
@@ -139,17 +143,21 @@ function GameModeDescription(props: { gameModeType: GameModeType }) {
 }
 
 function getBackground(
+  isLandscape: boolean,
   worldVariation: WorldVariation,
   worldType: WorldType | undefined
 ): string {
-  let image: string = grassImage;
+  let image: string = isLandscape ? grassImage : grassImageMobile;
   switch (worldType) {
     case undefined:
       break;
     case 'grass':
       break;
     case 'desert':
-      image = desertImage;
+      image = isLandscape ? desertImage : desertImageMobile;
+      break;
+    case 'volcano':
+      image = isLandscape ? volcanoImage : volcanoImageMobile;
       break;
     default:
       throw new Error('Unsupported world type: ' + worldType);

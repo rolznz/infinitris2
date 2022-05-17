@@ -45,7 +45,7 @@ export const volcano: WorldBackgroundConfig = {
       filename: 'theme_volcano_5.png',
       speedY: 0.3,
       speedX: 0.3,
-      offsetY: -0.2,
+      offsetY: -0.1,
       //portraitOffsetY: 0.1,
     },
     {
@@ -60,7 +60,7 @@ export const volcano: WorldBackgroundConfig = {
       filename: 'theme_volcano_7.png',
       speedY: 0.6,
       speedX: 0.6,
-      offsetY: 0.6,
+      offsetY: 0.65,
       /*offsetX: 0.05,
       repeatGap: 0.5,
       scale: 1,

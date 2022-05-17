@@ -50,11 +50,12 @@ export function PlayTypeCard({
         bottom={0}
         left={0}
         pl={2}
-        pb={isLandscape ? 0.5 : 1.5}
+        pb={isLandscape ? 0.5 : 2}
       >
         <Typography
-          variant={isLandscape ? 'h4' : 'h5'}
+          variant="h4"
           lineHeight={isLandscape ? undefined : 1}
+          fontSize="20px"
           color={colors.white}
         >
           {title}

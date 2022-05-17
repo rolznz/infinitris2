@@ -271,7 +271,7 @@ export default class ChallengeClient
       this._launchOptions.challengeEditorEnabled
         ? 'editor'
         : this._launchOptions.gridLineType,
-      true
+      this._launchOptions.challengeEditorEnabled
     );
     if (this._editor) {
       this._editor.renderer = this._renderer;

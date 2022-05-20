@@ -176,7 +176,7 @@ export default class ClientApi implements IClientApi {
         ],
         preferredInputMethod,
         controls_keyboard: controls,
-        challengeEditorEnabled: enableChallengeEditor,
+        challengeEditorSettings: enableChallengeEditor ? {} : undefined,
       });
     } else {
       return false;

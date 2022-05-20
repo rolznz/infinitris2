@@ -46,6 +46,9 @@ export default class Cell implements ICell {
   get isPassable(): boolean {
     return this._behaviour.isPassable && this._isEmpty;
   }
+  get isPassableWhileDropping(): boolean {
+    return this._behaviour.isPassableWhileDropping || false;
+  }
 
   get isEmpty(): boolean {
     return this._isEmpty;

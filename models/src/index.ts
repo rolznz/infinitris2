@@ -82,6 +82,8 @@ export * from './LoginRequest';
 export * from './LoginCode';
 export * from './BuyCoinsRequest';
 export * from './InputAction';
+export * from './IChallengeEditor';
+export * from './ChallengeCellType';
 
 export const NETWORK_VERSION = 2;
 

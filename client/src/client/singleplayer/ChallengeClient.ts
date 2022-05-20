@@ -26,6 +26,7 @@ import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
 import { ChallengeEditor } from '@src/client/singleplayer/ChallengeEditor';
 import createBehaviourFromChallengeCellType from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
+import { IChallengeEditor } from '@models/IChallengeEditor';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -43,7 +44,7 @@ export default class ChallengeClient
   private _blockCreateFailed!: boolean;
   private _blockDied!: boolean;
   private _controls?: ControlSettings;
-  private _editor?: ChallengeEditor;
+  private _editor?: IChallengeEditor;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -53,17 +54,20 @@ export default class ChallengeClient
     super(clientApiConfig, options);
     this._preferredInputMethod = options.preferredInputMethod;
     this._controls = options.controls_keyboard;
-    if (options.challengeEditorEnabled) {
+    if (options.challengeEditorSettings) {
       this._editor = new ChallengeEditor(
         this,
-        options.onSaveGrid,
-        options.challengeEditorIsEditing
+        options.challengeEditorSettings.listeners,
+        options.challengeEditorSettings.isEditing
       );
     }
     this._create(challenge);
   }
   get challenge(): IChallenge {
     return this._challenge;
+  }
+  get editor(): IChallengeEditor | undefined {
+    return this._editor;
   }
 
   onSimulationStep() {
@@ -267,14 +271,14 @@ export default class ChallengeClient
       undefined,
       undefined,
       false,
-      this._launchOptions.challengeEditorEnabled
+      this._launchOptions.challengeEditorSettings
         ? 'editor'
         : this._launchOptions.gridLineType,
-      this._launchOptions.challengeEditorEnabled
+      !!this._launchOptions.challengeEditorSettings
     );
-    if (this._editor) {
-      this._editor.renderer = this._renderer;
-    }
+    // if (this._editor) {
+    //   this._editor.renderer = this._renderer;
+    // }
     await this._renderer.create();
 
     this._createTempObjects();
@@ -338,12 +342,12 @@ export default class ChallengeClient
       player,
       this._launchOptions.controls_keyboard,
       this._launchOptions.controls_gamepad,
-      this._launchOptions.challengeEditorEnabled
+      !!this._launchOptions.challengeEditorSettings
     );
     //this._renderer.virtualKeyboardControls = this._input.controls;
     if (this._editor) {
       this._editor.simulation = simulation;
-      this._input.addListener(this._editor.inputListener);
+      this._input.addListener(this._editor.inputActionListener);
     }
 
     if (!this._editor || !this._editor.isEditing) {

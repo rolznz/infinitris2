@@ -1,6 +1,5 @@
 import ControlSettings from '@models/ControlSettings';
-import InputAction from '@models/InputAction';
-import { ActionListener } from './Input';
+import InputAction, { InputActionListener } from '@models/InputAction';
 
 // TODO: make these customisable
 const repeatDelay = 500; //ms
@@ -15,10 +14,10 @@ type ButtonPressState = {
 export default class GamepadInput {
   private _controls: ControlSettings;
   private _controlEntries: [InputAction, string][];
-  private _fireAction: ActionListener;
+  private _fireAction: InputActionListener;
   private _pressStates: ButtonPressState[];
 
-  constructor(fireAction: ActionListener, controls: ControlSettings) {
+  constructor(fireAction: InputActionListener, controls: ControlSettings) {
     this._controls = controls;
     this._controlEntries = Object.entries(
       controls

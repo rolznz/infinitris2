@@ -31,6 +31,8 @@ export const gold = '#D37953';
 export const colors = {
   white: '#ECECED',
   black: '#000000',
+  green: '#44ff44',
+  blue: '#4444ff',
 };
 
 export const boxShadows = {
@@ -45,6 +47,10 @@ export const dropShadows = {
 export const textShadows = {
   small: `0px 1px ${colors.black}`,
   base: `0px 1px 3px ${colors.black}`,
+};
+
+export const spacing = {
+  small: 1,
 };
 
 export const zIndexes = {
@@ -280,6 +286,15 @@ export const coreThemeOptions: ThemeOptions = {
     MuiButton: {
       styleOverrides: {
         contained: {
+          borderRadius: 32,
+          paddingTop: 0,
+          paddingBottom: 0,
+          textTransform: 'lowercase',
+          border: `4px solid ${borderColor}`,
+          boxShadow: 'none',
+          backgroundClip: 'padding-box',
+        },
+        outlined: {
           borderRadius: 32,
           paddingTop: 0,
           paddingBottom: 0,

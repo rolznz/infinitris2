@@ -928,7 +928,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           cell.column + x / particleDivisions,
           cell.row + y / particleDivisions,
           color || cell.color,
-          'capture'
+          'classic'
         );
       }
     }

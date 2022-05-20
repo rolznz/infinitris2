@@ -11,8 +11,7 @@ import { WithControls } from '@models/IUser';
 import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
 import { ICharacter } from '@models/ICharacter';
 import { GridLineType } from '@models/IGrid';
-
-export type SaveGridFunction = (grid: string) => void;
+import { IChallengeEditorEventListener } from '@models/IChallengeEditor';
 
 export type LaunchOptions = WithControls & {
   listeners?: Partial<ISimulationEventListener>[];
@@ -36,9 +35,10 @@ export type LaunchOptions = WithControls & {
   isDemo?: boolean;
   allCharacters?: ICharacter[];
   gridLineType?: GridLineType;
-  challengeEditorEnabled?: boolean;
-  challengeEditorIsEditing?: boolean;
-  onSaveGrid?: SaveGridFunction; // TODO: move to challenge client listener
+  challengeEditorSettings?: {
+    isEditing?: boolean;
+    listeners?: Partial<IChallengeEditorEventListener>[];
+  };
 };
 
 export type ClientApiConfig = {

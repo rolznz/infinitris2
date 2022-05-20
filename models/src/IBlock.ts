@@ -45,7 +45,7 @@ export default interface IBlock {
   move(dx: number, dy: number, dr: number, force?: boolean): boolean;
   drop(): void;
   cancelDrop(): void;
-  slowDown(row: number): void;
+  slowDown(): void;
   place(): void;
   die(): void;
   destroy(): void;

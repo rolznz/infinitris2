@@ -36,3 +36,5 @@ export type InputActionWithData =
   | { type: InputAction };
 
 export default InputAction;
+
+export type InputActionListener = (action: InputActionWithData) => void;

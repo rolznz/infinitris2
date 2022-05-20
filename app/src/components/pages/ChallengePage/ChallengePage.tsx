@@ -24,6 +24,9 @@ import { coreGameListeners } from '@/game/listeners/coreListeners';
 import { useUser } from '@/components/hooks/useUser';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
+import { GameUI } from '@/components/game/GameUI';
+import useIngameStore from '@/state/IngameStore';
+import shallow from 'zustand/shallow';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -59,8 +62,9 @@ export default function ChallengePage() {
   const restartClient = client?.restartClient; // TODO: move to IClient
   const [hasLaunched, setLaunched] = useState(false);
 
-  const [simulation, setSimulation] = useState<ISimulation | undefined>(
-    undefined
+  const [simulation, setSimulation] = useIngameStore(
+    (store) => [store.simulation, store.setSimulation],
+    shallow
   );
   const [challengeClient, setChallengeClient] = useState<
     IChallengeClient | undefined
@@ -108,25 +112,42 @@ export default function ChallengePage() {
           },
         };
 
-      setChallengeClient(
-        launchChallenge(challenge, {
-          listeners: [...coreGameListeners, challengeSimulationEventListener],
-          preferredInputMethod,
-          controls_keyboard,
-          player: player as IPlayer, // FIXME: use a different interface
-          challengeEditorEnabled: isTest,
-          challengeEditorIsEditing: false,
-          onSaveGrid: (grid: string) => {
-            useChallengeEditorStore.getState().setChallenge({
-              ...useChallengeEditorStore.getState().challenge!,
-              grid,
-            });
-          },
-        })
-      );
+      const challengeClient = launchChallenge(challenge, {
+        listeners: [...coreGameListeners, challengeSimulationEventListener],
+        preferredInputMethod,
+        controls_keyboard,
+        player: player as IPlayer, // FIXME: use a different interface
+        challengeEditorSettings: isTest
+          ? {
+              isEditing: false,
+              listeners: [
+                {
+                  onToggleIsEditing: (editor) => {
+                    useChallengeEditorStore
+                      .getState()
+                      .setIsEditing(editor.isEditing);
+                  },
+                  onSaveGrid: (_editor, grid: string) => {
+                    useChallengeEditorStore.getState().setChallenge({
+                      ...useChallengeEditorStore.getState().challenge!,
+                      grid,
+                    });
+                  },
+                  onChangeChallengeCellType: (editor) => {
+                    useChallengeEditorStore
+                      .getState()
+                      .setChallengeCellType(editor.challengeCellType);
+                  },
+                },
+              ],
+            }
+          : undefined,
+      });
+      useChallengeEditorStore.getState().setEditor(challengeClient.editor);
+
+      setChallengeClient(challengeClient);
     }
   }, [
-    //requiresRedirect,
     challenge,
     hasLaunched,
     preferredInputMethod,
@@ -136,6 +157,7 @@ export default function ChallengePage() {
     controls_keyboard,
     player,
     isTest,
+    setSimulation,
   ]);
 
   useEffect(() => {
@@ -216,5 +238,10 @@ export default function ChallengePage() {
     );
   }
 
-  return null;
+  return (
+    <GameUI
+      challengeEditorEnabled={isTest}
+      showLeaderboard={false /* TODO: based on challenge settings */}
+    />
+  );
 }

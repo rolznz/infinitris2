@@ -14,13 +14,12 @@ export function renderCellBehaviour(
   if (isEmpty) {
     switch (behaviour.type) {
       case CellType.Infection:
-        graphics.beginFill(color);
-        graphics.drawRect(0, 0, cellSize, cellSize);
-        break;
+      case CellType.Deadly:
       case CellType.FinishChallenge:
-        graphics.beginFill(color);
+        graphics.beginFill(color, behaviour.alpha);
         graphics.drawRect(0, 0, cellSize, cellSize);
         break;
+
       case CellType.Wafer:
         graphics.beginFill(color, Math.min(opacity, 1));
 

@@ -29,7 +29,7 @@ export default class Block implements IBlock {
   private _eventListener?: IBlockEventListener;
   private _isAlive: boolean;
   private _cancelDrop: boolean;
-  private _slowdownRows: number[];
+  private _slowdownAmount: number;
   private _gridCells: ICell[][];
   private _simulation: ISimulation;
   private _layoutId: number;
@@ -61,7 +61,7 @@ export default class Block implements IBlock {
     this._cells = [];
     this._fallTimer = 0;
     this._lockTimer = 0;
-    this._slowdownRows = [];
+    this._slowdownAmount = 0;
     this._isAlive = true;
     this._simulation = simulation;
     this._gridCells = simulation.grid.cells;
@@ -220,10 +220,8 @@ export default class Block implements IBlock {
     this._eventListener?.onBlockDropped(this);
   }
 
-  slowDown(row: number) {
-    if (this._slowdownRows.indexOf(row) < 0) {
-      this._slowdownRows.push(row);
-    }
+  slowDown() {
+    this._slowdownAmount++;
   }
 
   cancelDrop() {
@@ -266,7 +264,9 @@ export default class Block implements IBlock {
           if (cell) {
             newCells.push(cell);
           }
-          canMove = Boolean(canMove && cell && cell.isPassable);
+          canMove =
+            Boolean(canMove && cell && cell.isPassable) ||
+            Boolean(this.isDropping && cell?.isPassableWhileDropping);
         }
       );
 
@@ -455,7 +455,12 @@ export default class Block implements IBlock {
         }
         removed = true;
       }
+      const slowDown = this._slowdownAmount > 0;
+      if (slowDown) {
+        this._slowdownAmount -= 0.1;
+      }
       if (
+        slowDown ||
         !fell ||
         removed ||
         !this.isDropping ||
@@ -489,7 +494,7 @@ export default class Block implements IBlock {
 
   private _resetFallTimer() {
     this._fallTimer = this._isDropping
-      ? this._slowdownRows.length * 3
+      ? this._slowdownAmount * 3
       : Math.max(
           INITIAL_FALL_DELAY -
             Math.ceil(
@@ -507,7 +512,7 @@ export default class Block implements IBlock {
   }
 
   private _resetLockTimer() {
-    this._lockTimer = this._isDropping ? this._slowdownRows.length * 3 : 45;
+    this._lockTimer = this._isDropping ? this._slowdownAmount * 3 : 45;
   }
 
   private _addCell = (cell?: ICell) => {

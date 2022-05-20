@@ -1,3 +1,4 @@
+import IBlock from '@models/IBlock';
 import CellType from '@models/CellType';
 import ChallengeCellType from '@models/ChallengeCellType';
 import ICell from '@models/ICell';
@@ -14,21 +15,31 @@ export default class WaferBehaviour implements ICellBehaviour {
   }
 
   step(): void {
+    let fallingBlock: IBlock | undefined;
     if (
       this._cell.row > 0 &&
-      this._grid.cells[this._cell.row - 1][this._cell.column].blocks.some(
-        (block) => block.isDropping
-      )
-    ) {
-      this._cell.behaviour = new NormalCellBehaviour(this._cell);
-      this._grid.cells[this._cell.row - 1][this._cell.column].blocks.forEach(
-        (block) => block.slowDown(this._cell.row)
-      );
-      // TODO: rather than cancelling the drop, slow it down slightly
-      /*this._grid.cells[this._cell.row - 1][
+      (fallingBlock = this._grid.cells[this._cell.row - 1][
         this._cell.column
-      ].blocks.forEach((block) => block.cancelDrop());*/
+      ].blocks.find((block) => block.isDropping))
+    ) {
+      this._explode(fallingBlock);
     }
+  }
+
+  onAddBlock(block: IBlock) {
+    block.cells.forEach((cell) => {
+      if (cell.behaviour === this) {
+        this._explode(block);
+      }
+    });
+  }
+  private _explode(block: IBlock) {
+    this._cell.behaviour = new NormalCellBehaviour(this._cell);
+    block.slowDown();
+    // TODO: rather than cancelling the drop, slow it down slightly
+    /*this._grid.cells[this._cell.row - 1][
+      this._cell.column
+    ].blocks.forEach((block) => block.cancelDrop());*/
   }
 
   get color(): number {
@@ -41,6 +52,9 @@ export default class WaferBehaviour implements ICellBehaviour {
 
   get isPassable(): boolean {
     return false;
+  }
+  get isPassableWhileDropping(): boolean {
+    return true;
   }
 
   get isReplaceable(): boolean {

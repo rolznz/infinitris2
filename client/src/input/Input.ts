@@ -1,6 +1,7 @@
 import ControllablePlayer from '../ControllablePlayer';
 import InputAction, {
   CustomizableInputAction,
+  InputActionListener,
   InputActionWithData,
 } from '@models/InputAction';
 import IBlock from '@models/IBlock';
@@ -14,14 +15,12 @@ import MouseInput from '@src/input/MouseInput';
 import ICell from '@models/ICell';
 import ISimulation from '@models/ISimulation';
 
-export type ActionListener = (action: InputActionWithData) => void;
-
 export type ScreenPositionToCell = (x: number, y: number) => ICell | undefined;
 
 export default class Input {
   private _player: ControllablePlayer;
   private _controls: ControlSettings;
-  private _actionListeners: ActionListener[];
+  private _actionListeners: InputActionListener[];
   private _keyboardInput: KeyboardInput;
   private _mouseInput?: MouseInput;
   private _touchInput: TouchInput;
@@ -30,7 +29,7 @@ export default class Input {
 
   constructor(
     simulation: ISimulation,
-    onInputAction: ActionListener,
+    onInputAction: InputActionListener,
     screenPositionToCell: ScreenPositionToCell,
     player: ControllablePlayer,
     keyboardControls: ControlSettings = DEFAULT_KEYBOARD_CONTROLS,
@@ -55,7 +54,7 @@ export default class Input {
     return this._controls;
   }
 
-  addListener(listener: ActionListener) {
+  addListener(listener: InputActionListener) {
     this._actionListeners.push(listener);
   }
 

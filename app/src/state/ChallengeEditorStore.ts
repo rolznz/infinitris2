@@ -1,10 +1,20 @@
 import localStorageKeys from '@/utils/localStorageKeys';
-import { IChallenge } from 'infinitris2-models';
+import {
+  ChallengeCellType,
+  IChallenge,
+  IChallengeEditor,
+} from 'infinitris2-models';
 import create from 'zustand';
 
 type ChallengeEditorStore = {
   challenge?: IChallenge;
   setChallenge(challenge: IChallenge | undefined): void;
+  isEditing?: boolean;
+  setIsEditing(isEditing: boolean): void;
+  editor?: IChallengeEditor;
+  setEditor(editor: IChallengeEditor | undefined): void;
+  challengeCellType: ChallengeCellType;
+  setChallengeCellType(challengeCellType: ChallengeCellType): void;
 };
 
 function loadExistingChallenge() {
@@ -18,6 +28,8 @@ function loadExistingChallenge() {
 }
 
 const useChallengeEditorStore = create<ChallengeEditorStore>((set) => ({
+  isEditing: false,
+  challengeCellType: ChallengeCellType.Full,
   challenge: loadExistingChallenge(),
   setChallenge: (challenge: IChallenge | undefined) =>
     set((_) => {
@@ -31,6 +43,10 @@ const useChallengeEditorStore = create<ChallengeEditorStore>((set) => ({
       }
       return { challenge };
     }),
+  setIsEditing: (isEditing: boolean) => set((_) => ({ isEditing })),
+  setEditor: (editor: IChallengeEditor | undefined) => set((_) => ({ editor })),
+  setChallengeCellType: (challengeCellType: ChallengeCellType) =>
+    set((_) => ({ challengeCellType })),
 }));
 
 export default useChallengeEditorStore;

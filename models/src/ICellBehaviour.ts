@@ -12,6 +12,7 @@ export default interface ICellBehaviour {
   color?: number;
   alpha: number;
   isPassable: boolean;
+  isPassableWhileDropping?: boolean;
   isReplaceable: boolean;
   type: CellType;
   requiresRerender?: boolean;

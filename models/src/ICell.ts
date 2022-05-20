@@ -17,6 +17,7 @@ export default interface ICell {
   set isEmpty(empty: boolean);
   get isEmptyWithNoBlocks(): boolean;
   get isPassable(): boolean;
+  get isPassableWhileDropping(): boolean;
   get behaviour(): ICellBehaviour;
   set behaviour(behaviour: ICellBehaviour);
   get blocks(): IBlock[];

@@ -1,3 +1,4 @@
+import { ChallengeEditorTopRightPanelContents } from '@/components/game/ChallengeEditor/ChallengeEditorTopRightPanelContents';
 import ChatButton from '@/components/game/ChatButton';
 import { EndRoundDisplay } from '@/components/game/EndRoundDisplay/EndRoundDisplay';
 import { IngameChat } from '@/components/game/IngameChat';
@@ -7,7 +8,15 @@ import { SpawnDelayDisplay } from '@/components/game/SpawnDelayDisplay';
 import FlexBox from '@/components/ui/FlexBox';
 import React from 'react';
 
-export function GameUI() {
+type GameUIProps = {
+  challengeEditorEnabled?: boolean;
+  showLeaderboard?: boolean;
+};
+
+export function GameUI({
+  challengeEditorEnabled,
+  showLeaderboard = true,
+}: GameUIProps) {
   console.log('Re-render game UI');
   return (
     <FlexBox
@@ -17,12 +26,16 @@ export function GameUI() {
       width="100%"
       height="100%"
       zIndex={1}
+      sx={{
+        pointerEvents: 'none',
+      }}
     >
       <IngameChat />
       <MessageLog />
       <TopRightPanel>
-        <ChatButton />
-        <Leaderboard />
+        {challengeEditorEnabled && <ChallengeEditorTopRightPanelContents />}
+        {!challengeEditorEnabled && <ChatButton />}
+        {showLeaderboard && <Leaderboard />}
       </TopRightPanel>
       <EndRoundDisplay />
       <SpawnDelayDisplay />

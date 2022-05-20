@@ -1,15 +1,15 @@
 import ICell from '@models/ICell';
-import { HardCodedInputAction } from '@models/InputAction';
-import { ActionListener, ScreenPositionToCell } from './Input';
+import { HardCodedInputAction, InputActionListener } from '@models/InputAction';
+import { ScreenPositionToCell } from './Input';
 
 export default class MouseInput {
-  private _fireAction: ActionListener;
+  private _fireAction: InputActionListener;
   private _screenPositionToCell: ScreenPositionToCell;
   private _mouseButtonDown: number | undefined;
   private _currentCell: ICell | undefined;
 
   constructor(
-    fireAction: ActionListener,
+    fireAction: InputActionListener,
     screenPositionToCell: ScreenPositionToCell
   ) {
     this._mouseButtonDown = undefined;
@@ -18,13 +18,19 @@ export default class MouseInput {
     this._getCanvas().addEventListener('mousedown', this._onMouseDown);
     this._getCanvas().addEventListener('mousemove', this._onMouseMove);
     this._getCanvas().addEventListener('mouseup', this._onMouseUp);
+    this._getCanvas().addEventListener('pointerdown', this._onMouseDown);
+    this._getCanvas().addEventListener('pointermove', this._onMouseMove);
+    this._getCanvas().addEventListener('pointerup', this._onMouseUp);
     this._getCanvas().addEventListener('contextmenu', this._disableContextMenu);
   }
   destroy() {
-    this._getCanvas().removeEventListener('mousedown', this._onMouseDown);
-    this._getCanvas().removeEventListener('mousemove', this._onMouseMove);
-    this._getCanvas().removeEventListener('mouseup', this._onMouseUp);
-    this._getCanvas().removeEventListener(
+    this._getCanvas()?.removeEventListener('mousedown', this._onMouseDown);
+    this._getCanvas()?.removeEventListener('mousemove', this._onMouseMove);
+    this._getCanvas()?.removeEventListener('mouseup', this._onMouseUp);
+    this._getCanvas()?.removeEventListener('pointerdown', this._onMouseDown);
+    this._getCanvas()?.removeEventListener('pointermove', this._onMouseMove);
+    this._getCanvas()?.removeEventListener('pointerup', this._onMouseUp);
+    this._getCanvas()?.removeEventListener(
       'contextmenu',
       this._disableContextMenu
     );

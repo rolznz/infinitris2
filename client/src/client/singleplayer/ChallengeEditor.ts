@@ -2,10 +2,14 @@ import createBehaviourFromChallengeCellType from '@core/grid/cell/behaviours/cre
 import ChallengeCellType, {
   getChallengeCellTypeDescription,
 } from '@models/ChallengeCellType';
-import { SaveGridFunction } from '@models/IClientApi';
+import {
+  IChallengeEditor,
+  IChallengeEditorEventListener,
+} from '@models/IChallengeEditor';
 import InputAction, {
   CustomizableInputAction,
   HardCodedInputAction,
+  InputActionListener,
   InputActionWithData,
   KeyPressActionWithData,
   MouseClickActionWithData,
@@ -13,66 +17,77 @@ import InputAction, {
 import ISimulation from '@models/ISimulation';
 import { stringifyGrid } from '@models/util/stringifyGrid';
 import ChallengeClient from '@src/client/singleplayer/ChallengeClient';
-import { ActionListener } from '@src/input/Input';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 
-export class ChallengeEditor {
-  // FIXME: this is a bad name - more like isolated editing (simulation is disabled)
-  // Or change to editMode
+export class ChallengeEditor implements IChallengeEditor {
   private _isEditing: boolean;
   private _simulation?: ISimulation;
-  private _renderer?: BaseRenderer;
+  //private _renderer?: BaseRenderer;
   private _client: ChallengeClient;
   private _challengeCellType: ChallengeCellType;
-  private _onSaveGrid?: SaveGridFunction;
+  private _eventListeners: Partial<IChallengeEditorEventListener>[];
 
   constructor(
     client: ChallengeClient,
-    onSaveGrid?: SaveGridFunction,
+    eventListeners?: Partial<IChallengeEditorEventListener>[],
     isEditing = true
   ) {
     this._client = client;
     this._isEditing = isEditing;
     this._challengeCellType = ChallengeCellType.Full;
-    this._onSaveGrid = onSaveGrid;
+    this._eventListeners = eventListeners || [];
   }
-
-  get inputListener(): ActionListener {
+  get challengeCellType(): ChallengeCellType {
+    return this._challengeCellType;
+  }
+  set challengeCellType(challengeCellType: ChallengeCellType) {
+    if (this._challengeCellType === challengeCellType) {
+      return;
+    }
+    this._challengeCellType = challengeCellType;
+    this._eventListeners?.forEach((eventListener) =>
+      eventListener.onChangeChallengeCellType?.(this)
+    );
+  }
+  get inputActionListener(): InputActionListener {
     return this._actionListener;
-  }
-  get isEnabled(): boolean {
-    return this._isEditing;
   }
 
   get isEditing(): boolean {
     return this._isEditing;
   }
   set isEditing(isEditing: boolean) {
-    this._isEditing = isEditing;
-    if (!this._simulation) {
+    if (this._isEditing === isEditing || !this._simulation) {
       return;
     }
+    this._isEditing = isEditing;
     if (this._isEditing) {
       this._client.restart();
     } else {
       this._saveGrid();
       this._simulation.startInterval();
     }
+    this._eventListeners.forEach((eventListener) =>
+      eventListener.onToggleIsEditing?.(this)
+    );
   }
 
   set simulation(simulation: ISimulation) {
     this._simulation = simulation;
   }
 
-  set renderer(renderer: BaseRenderer) {
-    this._renderer = renderer;
-  }
+  // set renderer(renderer: BaseRenderer) {
+  //   this._renderer = renderer;
+  // }
 
   _actionListener = (action: InputActionWithData) => {
     if (!this._simulation) {
       return;
     }
-    if (action.type === HardCodedInputAction.MouseClick) {
+    if (
+      action.type === HardCodedInputAction.MouseClick &&
+      this._isEditing /** || editWhilePlayingEnabled (Desktop only) */
+    ) {
       const mouseClickAction = action as MouseClickActionWithData;
       if (mouseClickAction.data.cell) {
         if (mouseClickAction.data.button === 0) {
@@ -119,7 +134,7 @@ export class ChallengeEditor {
         );
         if (newCellTypeNumberString) {
           const numberValue = parseInt(newCellTypeNumberString);
-          this._challengeCellType =
+          this.challengeCellType =
             Object.values(ChallengeCellType)[numberValue];
         }
       }
@@ -140,11 +155,7 @@ export class ChallengeEditor {
         if (newGridSizeParts?.length === 2) {
           const rows = parseInt(newGridSizeParts[0]);
           const cols = parseInt(newGridSizeParts[1]);
-          this._simulation.grid.resize(rows, cols);
-          this._saveGrid();
-          // FIXME: shouldn't have to restart everything when changing the grid size
-          // renderer needs to pick up new grid changes and rerender properly
-          this._client.restart();
+          this.setGridSize(rows, cols);
         }
       }
 
@@ -171,10 +182,24 @@ export class ChallengeEditor {
     }
   };
 
+  setGridSize(numRows: number, numColumns: number): void {
+    this._simulation!.grid.resize(numRows, numColumns);
+    this._saveGrid();
+    // FIXME: shouldn't have to restart everything when changing the grid size
+    // renderer needs to pick up new grid changes and rerender properly
+    this._client.restart();
+    // TODO: should show the challenge info screen instead?
+    if (!this._isEditing) {
+      this._client.simulation.startInterval();
+    }
+  }
+
   private _saveGrid() {
     (this._client.challenge.grid as string) = stringifyGrid(
       this._simulation!.grid
     );
-    this._onSaveGrid?.(this._client.challenge.grid);
+    this._eventListeners?.forEach((eventListener) =>
+      eventListener.onSaveGrid?.(this, this._client.challenge.grid)
+    );
   }
 }

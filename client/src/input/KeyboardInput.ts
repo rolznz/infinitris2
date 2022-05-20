@@ -2,14 +2,14 @@ import ControlSettings from '@models/ControlSettings';
 import {
   CustomizableInputAction,
   HardCodedInputAction,
+  InputActionListener,
 } from '@models/InputAction';
-import { ActionListener } from './Input';
 
 export default class KeyboardInput {
   private _controls: ControlSettings;
-  private _fireAction: ActionListener;
+  private _fireAction: InputActionListener;
 
-  constructor(fireAction: ActionListener, controls: ControlSettings) {
+  constructor(fireAction: InputActionListener, controls: ControlSettings) {
     this._controls = controls;
     this._fireAction = fireAction;
     document.addEventListener('keydown', this._onKeyDown);

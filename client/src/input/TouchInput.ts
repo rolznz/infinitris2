@@ -1,11 +1,13 @@
-import { CustomizableInputAction } from '@models/InputAction';
-import { ActionListener } from './Input';
+import {
+  CustomizableInputAction,
+  InputActionListener,
+} from '@models/InputAction';
 
 const TIME_THRESHOLD = 300;
 const NUM_DIVISIONS = 20;
 
 export default class TouchInput {
-  private _fireAction: ActionListener;
+  private _fireAction: InputActionListener;
   private _pointerX: number;
   private _pointerY: number;
   private _pointerStartTime: number;
@@ -18,7 +20,7 @@ export default class TouchInput {
   private _hasMoved: boolean;
   private _hasMovedHorizontally: boolean;
 
-  constructor(fireAction: ActionListener) {
+  constructor(fireAction: InputActionListener) {
     this._fireAction = fireAction;
     this._pointerX = 0;
     this._pointerY = 0;

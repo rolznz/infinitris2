@@ -134,7 +134,7 @@ export function CoinInfoBuyCoinsSlide() {
         <FlexBox height="100%">
           <Typography variant="body2">
             <FormattedMessage
-              defaultMessage="You currently have {coins} coins"
+              defaultMessage="You currently have {coins} {coins, plural, one {coin} other {coins}}"
               description="Coin info buy slide - your amount"
               values={{ coins }}
             />
@@ -199,7 +199,6 @@ export function CoinInfoBuyCoinsSlide() {
                     type="submit"
                     color="primary"
                     variant="contained"
-                    sx={{ width: '100%' }}
                     disabled={!isValid}
                   >
                     <FormattedMessage

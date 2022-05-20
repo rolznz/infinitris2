@@ -1,6 +1,8 @@
 import { useHistory } from 'react-router-dom';
 import Routes from '../../../models/Routes';
-import useSinglePlayerOptionsStore from '@/state/SinglePlayerOptionsStore';
+import useSinglePlayerOptionsStore, {
+  SinglePlayerOptionsFormData,
+} from '@/state/SinglePlayerOptionsStore';
 
 import { GameModeTypeValues } from 'infinitris2-models';
 
@@ -15,12 +17,7 @@ const slides: RoomCarouselSlideProps[] = GameModeTypeValues.map(
   (gameModeType) => ({
     gameModeType,
     key: gameModeType,
-    worldType:
-      gameModeType === 'conquest'
-        ? 'volcano'
-        : gameModeType === 'race'
-        ? 'desert'
-        : 'grass',
+    worldType: getWorldType(gameModeType),
     worldVariation: 0,
   })
 );
@@ -54,9 +51,17 @@ export function SinglePlayerGameModePickerPage() {
             simulationSettings: {
               gameModeType: GameModeTypeValues[step],
             },
-          })
+            worldType: getWorldType(GameModeTypeValues[step]),
+          } as SinglePlayerOptionsFormData)
         )
       }
     />
   );
+}
+function getWorldType(gameModeType: string): any {
+  return gameModeType === 'conquest'
+    ? 'volcano'
+    : gameModeType === 'race'
+    ? 'desert'
+    : 'grass';
 }

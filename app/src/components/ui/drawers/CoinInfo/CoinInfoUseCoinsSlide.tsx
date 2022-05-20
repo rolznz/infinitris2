@@ -23,13 +23,13 @@ export function CoinInfoUseCoinsSlide() {
       content={
         <FlexBox height="100%">
           <FlexBox flexDirection="row">
-            <Typography variant="h6" style={{ alignSelf: 'flex-start' }}>
+            <Typography variant="body2" style={{ alignSelf: 'flex-start' }}>
               <FormattedMessage
-                defaultMessage="To customise your character!"
+                defaultMessage="to customise your character!"
                 description="Coin info slide 1 - use coins to customize your character"
               />
             </Typography>
-            <CharacterImage characterId="0" width={100} />
+            <CharacterImage characterId="0" width={120} />
           </FlexBox>
           <Typography variant="body1">
             <FormattedMessage

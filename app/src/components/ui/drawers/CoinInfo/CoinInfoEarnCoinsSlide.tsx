@@ -25,9 +25,9 @@ export function CoinInfoEarnCoinsSlide() {
       }
       content={
         <FlexBox height="100%">
-          <Typography variant="h6">
+          <Typography variant="body2">
             <FormattedMessage
-              defaultMessage="By increasing your impact!"
+              defaultMessage="by increasing your impact!"
               description="Coin info page - by increasing impact text"
             />
           </Typography>

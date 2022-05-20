@@ -144,7 +144,6 @@ export function EmailForm() {
             type="submit"
             color="primary"
             variant="contained"
-            sx={{ width: '100%' }}
             disabled={!isValid}
           >
             <FormattedMessage

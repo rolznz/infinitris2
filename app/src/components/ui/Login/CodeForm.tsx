@@ -276,7 +276,6 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
             type="submit"
             color="primary"
             variant="contained"
-            sx={{ width: '100%' }}
             disabled={!isValid}
           >
             <FormattedMessage

@@ -59,6 +59,7 @@ export function UserNicknameForm() {
     handleSubmit,
     formState: { errors, isValid },
     watch,
+    setValue,
   } = useForm<NicknameFormData>({
     defaultValues: {
       nickname: defaultNickname,
@@ -70,6 +71,12 @@ export function UserNicknameForm() {
   const currentNicknameValue = watch('nickname');
   const isDirty =
     currentNicknameValue !== defaultNickname && currentNicknameValue.length > 1;
+
+  if (currentNicknameValue.toLowerCase() !== currentNicknameValue) {
+    setValue('nickname', currentNicknameValue.toLowerCase(), {
+      shouldValidate: true,
+    });
+  }
 
   return (
     <FlexBox position="relative" zIndex="above">
@@ -92,8 +99,12 @@ export function UserNicknameForm() {
                   />
                 </InputLabel>
                 <Input {...field} fullWidth inputProps={{ maxLength: 15 }} />
-                {currentNicknameValue?.length > 1 && (
-                  <p>{errors.nickname?.message}</p>
+                {currentNicknameValue?.length > 1 && errors.nickname && (
+                  <p>
+                    {
+                      /*errors.nickname?.message*/ 'Pleace choose only letters, numbers and spaces.'
+                    }
+                  </p>
                 )}
               </FormControl>
             )}
@@ -103,7 +114,6 @@ export function UserNicknameForm() {
               type="submit"
               color="primary"
               variant="contained"
-              sx={{ width: '100%' }}
               disabled={!isValid || isLoading}
             >
               <FormattedMessage

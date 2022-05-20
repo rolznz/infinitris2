@@ -110,7 +110,7 @@ export function LeaderboardEntryLine({
           px={1}
           py={0.5}
           justifySelf="flex-end"
-          width={0.2}
+          //width={0.2}
           gap={0.5}
           flexDirection="row"
           flexShrink={0}

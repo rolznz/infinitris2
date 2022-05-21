@@ -94,6 +94,12 @@ export function Carousel({
     [onChange]
   );
 
+  React.useEffect(() => {
+    if (pages.length <= activeStep) {
+      setActiveStep(Math.max(pages.length - 1, 0));
+    }
+  }, [activeStep, pages.length, setActiveStep]);
+
   return (
     <div style={{ position: 'relative' }}>
       {blurEdges && (

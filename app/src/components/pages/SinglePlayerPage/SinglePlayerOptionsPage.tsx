@@ -26,10 +26,12 @@ import useSinglePlayerOptionsStore, {
   SinglePlayerOptionsFormData,
   getSinglePlayerOptionsDefaultValues,
 } from '@/state/SinglePlayerOptionsStore';
-import { playSound, SoundKey, TrackNumberValues } from '@/sound/SoundManager';
+import { playSound, SoundKey } from '@/sound/SoundManager';
 import { launchFullscreen } from '@/utils/launchFullscreen';
 import shallow from 'zustand/shallow';
 import { launchSinglePlayer } from '@/components/pages/SinglePlayerPage/SinglePlayerPage';
+import React from 'react';
+import { RoomCarouselSlide } from '@/components/ui/RoomCarousel/RoomCarouselSlide';
 
 const schema = yup
   .object({
@@ -95,6 +97,13 @@ export function SinglePlayerOptionsPage() {
     launchSinglePlayer(history);
   };
 
+  const watchedValues = watch();
+  const valuesSame = shallow(formData, watchedValues);
+  React.useEffect(() => {
+    if (!valuesSame) {
+      setFormData(watchedValues);
+    }
+  }, [valuesSame, setFormData, watchedValues]);
   const watchedGameModeType = watch('simulationSettings.gameModeType');
   const watchedSpectate = watch('spectate');
 
@@ -104,6 +113,16 @@ export function SinglePlayerOptionsPage() {
         defaultMessage: 'Single Player Options',
         description: 'Single Player Options page title',
       })}
+      background={
+        <FlexBox position="fixed" top={0} zIndex="below" sx={{ opacity: 0.75 }}>
+          <RoomCarouselSlide
+            gameModeType={formData.simulationSettings.gameModeType!}
+            key={'custom'}
+            worldType={formData.worldType}
+            worldVariation={formData.worldVariation}
+          />
+        </FlexBox>
+      }
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <FlexBox gap={2}>
@@ -156,7 +175,7 @@ export function SinglePlayerOptionsPage() {
                 </FormControl>
               )}
             />
-            <Controller
+            {/* <Controller
               name="trackNumber"
               control={control}
               render={({ field }) => (
@@ -171,7 +190,7 @@ export function SinglePlayerOptionsPage() {
                   </Select>
                 </FormControl>
               )}
-            />
+            /> */}
             {watchedGameModeType === 'conquest' && (
               <Controller
                 name="simulationSettings.roundLength"

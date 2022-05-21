@@ -1,4 +1,3 @@
-import { TrackNumber, TrackNumberValues } from '@/sound/SoundManager';
 import {
   SimulationSettings,
   WorldType,
@@ -16,7 +15,6 @@ export type SinglePlayerOptionsFormData = {
   isDemo: boolean;
   worldType: WorldType;
   worldVariation: WorldVariation;
-  trackNumber: TrackNumber;
   simulationSettings: SimulationSettings;
 };
 
@@ -32,8 +30,6 @@ export const getSinglePlayerOptionsDefaultValues =
 
     worldType: 'grass',
     worldVariation: 0,
-    trackNumber:
-      TrackNumberValues[Math.floor(Math.random() * TrackNumberValues.length)],
     simulationSettings: {
       roundLength: 'medium',
       mistakeDetection: true,

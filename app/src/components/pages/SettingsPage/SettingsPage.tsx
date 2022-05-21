@@ -3,7 +3,7 @@ import { MenuItem, Select, Grid, Link, Button } from '@mui/material';
 import FlexBox from '../../ui/FlexBox';
 
 import { FormattedMessage, useIntl } from 'react-intl';
-import { supportedLocales } from '../../../internationalization';
+import { defaultLocale, supportedLocales } from '../../../internationalization';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import SettingsRow from './SettingsRow';
@@ -41,7 +41,7 @@ export function LanguagePicker() {
   return (
     <Select
       disableUnderline
-      value={user.locale}
+      value={user.locale || defaultLocale}
       onChange={(event) => {
         setUserLocale(event.target.value as string);
         playSound(SoundKey.click);

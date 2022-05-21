@@ -1,7 +1,12 @@
 import FlexBox from '@/components/ui/FlexBox';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import Typography from '@mui/material/Typography';
-import { GameModeType, WorldType, WorldVariation } from 'infinitris2-models';
+import {
+  GameModeType,
+  getVariationHueRotation,
+  WorldType,
+  WorldVariation,
+} from 'infinitris2-models';
 import grassImage from '@/components/ui/RoomCarousel/assets/carousel/grass_desktop.svg';
 import desertImage from '@/components/ui/RoomCarousel/assets/carousel/desert_desktop.svg';
 import volcanoImage from '@/components/ui/RoomCarousel/assets/carousel/volcano_desktop.svg';

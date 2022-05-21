@@ -15,6 +15,7 @@ import {
   ISimulation,
   charactersPath,
   WorldVariation,
+  WorldVariationValues,
 } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
@@ -22,7 +23,7 @@ import { useCollection, useDocument } from 'swr-firestore';
 import useAppStore from '@/state/AppStore';
 import { useUser } from '@/components/hooks/useUser';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
-import { playGameMusic } from '@/sound/SoundManager';
+import { playGameMusic, TrackNumberValues } from '@/sound/SoundManager';
 import { useHistory } from 'react-router-dom';
 import useSinglePlayerOptionsStore, {
   SinglePlayerOptionsFormData,
@@ -65,7 +66,8 @@ export default function SinglePlayerPage() {
   const worldVariation: WorldVariation = settings.worldVariation;
   const spectate = settings.spectate;
   const isDemo = settings.isDemo;
-  const trackNumber = settings.trackNumber;
+  const trackNumber =
+    TrackNumberValues[WorldVariationValues.indexOf(settings.worldVariation)];
 
   const user = useUser();
   const nickname = (user as LocalUser).nickname;

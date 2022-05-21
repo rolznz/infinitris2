@@ -125,6 +125,7 @@ export const coreThemeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           color: borderColor,
+          overflow: 'visible',
         },
       },
     },
@@ -237,6 +238,19 @@ export const coreThemeOptions: ThemeOptions = {
           border: `4px solid ${borderColor}`,
           padding: 0,
           margin: 4,
+          /*'&.Mui-focusVisible': {
+            color: '#ffffffaa',
+          },*/
+          '.MuiTouchRipple-root': {
+            width: '100%',
+            height: '100%',
+            //borderRadius: 32,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            color: 'white',
+            transform: 'translate(2px, 2px)',
+          },
         },
       },
     },
@@ -285,6 +299,22 @@ export const coreThemeOptions: ThemeOptions = {
     },
     MuiButton: {
       styleOverrides: {
+        root: {
+          '.MuiTouchRipple-root': {
+            width: '100%',
+            height: '100%',
+            borderRadius: 32,
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+          '.MuiTouchRipple-child': {
+            width: 'calc(100% + 16px)',
+            position: 'absolute',
+            left: '-8px',
+            right: '-8px',
+          },
+        },
         contained: {
           borderRadius: 32,
           paddingTop: 0,

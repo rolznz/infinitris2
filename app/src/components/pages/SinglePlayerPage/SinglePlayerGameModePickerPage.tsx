@@ -1,6 +1,7 @@
 import { useHistory } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import useSinglePlayerOptionsStore, {
+  getSinglePlayerOptionsDefaultValues,
   SinglePlayerOptionsFormData,
 } from '@/state/SinglePlayerOptionsStore';
 
@@ -12,19 +13,33 @@ import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
 import { RoomCarouselSlideProps } from '@/components/ui/RoomCarousel/RoomCarouselSlide';
 import { RoomCarousel } from '@/components/ui/RoomCarousel/RoomCarousel';
 import { FormattedMessage } from 'react-intl';
-
-const slides: RoomCarouselSlideProps[] = GameModeTypeValues.map(
-  (gameModeType) => ({
-    gameModeType,
-    key: gameModeType,
-    worldType: getWorldType(gameModeType),
-    worldVariation: 0,
-  })
-);
+import React from 'react';
 
 export function SinglePlayerGameModePickerPage() {
   const history = useHistory();
   const formData = useSinglePlayerOptionsStore((store) => store.formData);
+
+  const advancedOptionsChanged =
+    JSON.stringify(formData) !==
+    JSON.stringify(getSinglePlayerOptionsDefaultValues());
+
+  const slides: RoomCarouselSlideProps[] = React.useMemo(() => {
+    return !advancedOptionsChanged
+      ? GameModeTypeValues.map((gameModeType) => ({
+          gameModeType,
+          key: gameModeType,
+          worldType: getWorldType(gameModeType),
+          worldVariation: 0,
+        }))
+      : [
+          {
+            gameModeType: formData.simulationSettings.gameModeType!,
+            key: JSON.stringify(formData),
+            worldType: formData.worldType,
+            worldVariation: formData.worldVariation,
+          },
+        ];
+  }, [formData, advancedOptionsChanged]);
 
   const onSubmit = () => {
     launchSinglePlayer(history);
@@ -42,19 +57,22 @@ export function SinglePlayerGameModePickerPage() {
       secondaryIconLink={Routes.singlePlayerOptions}
       onPlay={onSubmit}
       slides={slides}
-      initialStep={GameModeTypeValues.indexOf(
-        formData.simulationSettings.gameModeType!
-      )}
-      onChangeSlide={(step) =>
-        useSinglePlayerOptionsStore.getState().setFormData(
-          lodashMerge(formData, {
-            simulationSettings: {
-              gameModeType: GameModeTypeValues[step],
-            },
-            worldType: getWorldType(GameModeTypeValues[step]),
-          } as SinglePlayerOptionsFormData)
-        )
+      initialStep={
+        GameModeTypeValues.indexOf(formData.simulationSettings.gameModeType!) ||
+        0
       }
+      onChangeSlide={(step) => {
+        if (!advancedOptionsChanged) {
+          useSinglePlayerOptionsStore.getState().setFormData(
+            lodashMerge(formData, {
+              simulationSettings: {
+                gameModeType: GameModeTypeValues[step],
+              },
+              worldType: getWorldType(GameModeTypeValues[step]),
+            } as SinglePlayerOptionsFormData)
+          );
+        }
+      }}
     />
   );
 }

@@ -34,6 +34,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _isChatting: boolean;
   private _status: PlayerStatus;
   private _lastStatusChangeTime: number;
+  private _spawnLocationCell: ICell | undefined;
 
   constructor(
     simulation: ISimulation,
@@ -145,6 +146,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._nextLayoutRotation = nextLayoutRotation;
   }
 
+  set spawnLocationCell(cell: ICell | undefined) {
+    this._spawnLocationCell = cell;
+  }
+
   set status(status: PlayerStatus) {
     this._status = status;
     this._lastStatusChangeTime = Date.now();
@@ -243,16 +248,18 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         this._nextLayout ||
         validLayouts[Math.floor(Math.random() * validLayouts.length)];
 
-      const column =
-        this._lastPlacementColumn === undefined
-          ? simulationSettings.randomBlockPlacement !== false
-            ? Math.floor(Math.random() * gridCells[0].length)
-            : Math.floor((gridCells[0].length - layout[0].length) / 2)
-          : this._lastPlacementColumn;
+      const row = this._spawnLocationCell?.row || 0;
+      const column = this._spawnLocationCell
+        ? this._spawnLocationCell.column
+        : this._lastPlacementColumn === undefined
+        ? simulationSettings.randomBlockPlacement !== false
+          ? Math.floor(Math.random() * gridCells[0].length)
+          : Math.floor((gridCells[0].length - layout[0].length) / 2)
+        : this._lastPlacementColumn;
 
       this.createBlock(
         ++uniqueBlockId,
-        0,
+        row,
         column,
         this._nextLayoutRotation || 0,
         Object.values(tetrominoes).indexOf(layout)

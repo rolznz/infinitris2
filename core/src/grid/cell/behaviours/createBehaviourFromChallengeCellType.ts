@@ -10,6 +10,8 @@ import DeadlyBehaviour from './DeadlyBehaviour';
 import WaferBehaviour from './WaferBehaviour';
 import IGrid from '@models/IGrid';
 import InfectionBehaviour from './InfectionBehaviour';
+import RockGeneratorBehaviour from '@core/grid/cell/behaviours/RockGeneratorBehaviour';
+import SpawnLocationCellBehaviour from '@core/grid/cell/behaviours/SpawnLocationCellBehaviour';
 
 export const keyColors = {
   redColor: 0xff0000,
@@ -40,6 +42,8 @@ function getBehaviour(
     case ChallengeCellType.Empty:
     case ChallengeCellType.Full:
       return new NormalCellBehaviour(cell);
+    case ChallengeCellType.SpawnLocation:
+      return new SpawnLocationCellBehaviour(cell);
     case ChallengeCellType.Laser:
       return new LaserBehaviour(cell);
     case ChallengeCellType.Deadly:
@@ -67,6 +71,8 @@ function getBehaviour(
       return new WaferBehaviour(cell, grid);
     case ChallengeCellType.Infection:
       return new InfectionBehaviour(cell, grid);
+    case ChallengeCellType.RockGenerator:
+      return new RockGeneratorBehaviour(cell, grid);
     default:
       throw new Error('Unknown challenge cell type: ' + challengeCellType);
   }

@@ -27,6 +27,7 @@ import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris
 import { ChallengeEditor } from '@src/client/singleplayer/ChallengeEditor';
 import createBehaviourFromChallengeCellType from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
 import { IChallengeEditor } from '@models/IChallengeEditor';
+import ICell from '@models/ICell';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -297,12 +298,17 @@ export default class ChallengeClient
 
     const grid = new Grid(cellTypes[0].length, cellTypes.length, false);
 
+    let spawnLocationCell: ICell | undefined;
+
     if (cellTypes.length) {
       for (let r = 0; r < grid.cells.length; r++) {
         for (let c = 0; c < grid.cells[0].length; c++) {
           const cell = grid.cells[r][c];
           const cellType = cellTypes[r][c];
           createBehaviourFromChallengeCellType(cell, grid, cellType);
+          if (cell.behaviour.type === CellType.SpawnLocation) {
+            spawnLocationCell = cell;
+          }
         }
       }
     }
@@ -326,12 +332,16 @@ export default class ChallengeClient
       this._launchOptions.player?.nickname,
       this._launchOptions.player?.color
     );
+    if (spawnLocationCell) {
+      player.spawnLocationCell = spawnLocationCell;
+    }
     simulation.addPlayer(player);
     simulation.followPlayer(player);
     if (this._challenge.firstBlockLayoutId) {
       // TODO: remove hard coded tetrominoes to support multiple block sets
       player.nextLayout = tetrominoes[this._challenge.firstBlockLayoutId];
     }
+
     //player.nextLayoutRotation = this._challenge.layoutRotation;
 
     // TODO: shouldn't have to create the input each time
@@ -342,7 +352,8 @@ export default class ChallengeClient
       player,
       this._launchOptions.controls_keyboard,
       this._launchOptions.controls_gamepad,
-      !!this._launchOptions.challengeEditorSettings
+      !!this._launchOptions.challengeEditorSettings,
+      false
     );
     //this._renderer.virtualKeyboardControls = this._input.controls;
     if (this._editor) {

@@ -71,4 +71,8 @@ export default class WaferBehaviour implements ICellBehaviour {
   toChallengeCellType() {
     return ChallengeCellType.Wafer;
   }
+
+  shouldExplode() {
+    return true;
+  }
 }

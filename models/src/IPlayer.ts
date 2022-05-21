@@ -31,6 +31,7 @@ export interface IPlayer {
   get isBot(): boolean;
   get isNetworked(): boolean;
   get status(): PlayerStatus;
+  set spawnLocationCell(cell: ICell | undefined);
 
   get block(): IBlock | undefined;
   get score(): number;

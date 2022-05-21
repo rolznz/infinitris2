@@ -39,6 +39,7 @@ import { TowerIndicator } from '@src/rendering/renderers/infinitris2/TowerIndica
 import { LineClearingIndicator } from '@src/rendering/renderers/infinitris2/LineClearingIndicator';
 import { GameModeEvent } from '@models/GameModeEvent';
 import { renderCellBehaviour } from '@src/rendering/renderers/infinitris2/renderCellBehaviour';
+import RockBehaviour from '@core/grid/cell/behaviours/RockBehaviour';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -400,6 +401,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
         : cell.cell.player || !cell.cell.wasPlayerRemoved
         ? 1
         : 0.5; // distinguish dead cells // TODO: find a better way to do this
+
+      // TODO: do not access cell type directly like this
+      if (cell.cell.behaviour.type === CellType.Rock) {
+        cell.container.y =
+          (cell.cell.row + (cell.cell.behaviour as RockBehaviour).offsetY) *
+          this._cellSize;
+      }
     });
   };
 
@@ -893,7 +901,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
    * @inheritdoc
    */
   onCellBehaviourChanged(cell: ICell, previousBehaviour: ICellBehaviour) {
-    if (previousBehaviour.type == CellType.Wafer) {
+    // TODO: previousBehaviour.shouldExplode
+    if (previousBehaviour.shouldExplode?.()) {
       this._explodeCell(cell, previousBehaviour.color);
     }
     this._renderCellAndNeighbours(cell);

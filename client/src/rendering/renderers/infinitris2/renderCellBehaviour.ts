@@ -16,10 +16,22 @@ export function renderCellBehaviour(
       case CellType.Infection:
       case CellType.Deadly:
       case CellType.FinishChallenge:
+      case CellType.RockGenerator:
+      case CellType.Rock:
         graphics.beginFill(color, behaviour.alpha);
         graphics.drawRect(0, 0, cellSize, cellSize);
         break;
 
+      case CellType.SpawnLocation:
+        graphics.beginFill(color);
+
+        graphics.drawRect(
+          (cellSize * 3) / 8,
+          (cellSize * 3) / 8,
+          (cellSize * 2) / 8,
+          (cellSize * 2) / 8
+        );
+        break;
       case CellType.Wafer:
         graphics.beginFill(color, Math.min(opacity, 1));
 

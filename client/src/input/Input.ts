@@ -26,6 +26,8 @@ export default class Input {
   private _touchInput: TouchInput;
   private _gamepadInput?: GamepadInput;
   private _challengeEditorEnabled: boolean;
+  private _simulation: ISimulation;
+  private _chatEnabled: boolean;
 
   constructor(
     simulation: ISimulation,
@@ -34,8 +36,11 @@ export default class Input {
     player: ControllablePlayer,
     keyboardControls: ControlSettings = DEFAULT_KEYBOARD_CONTROLS,
     gamepadControls?: ControlSettings,
-    challengeEditorEnabled = false
+    challengeEditorEnabled = false,
+    chatEnabled = true
   ) {
+    this._chatEnabled = chatEnabled;
+    this._simulation = simulation;
     this._player = player;
     this._controls = { ...DEFAULT_KEYBOARD_CONTROLS, ...keyboardControls }; // ensure newly added controls use default keys
     this._actionListeners = [onInputAction];
@@ -96,32 +101,38 @@ export default class Input {
         this._player.cancelChat();
         break;
       case CustomizableInputAction.Chat:
-        this._player.toggleChat();
+        if (this._chatEnabled) {
+          this._player.toggleChat();
+        }
         break;
-      case CustomizableInputAction.MoveLeft:
-      case CustomizableInputAction.MoveRight:
-      case CustomizableInputAction.MoveDown:
-        block?.move(
-          action.type === CustomizableInputAction.MoveLeft
-            ? -1
-            : action.type === CustomizableInputAction.MoveRight
-            ? 1
-            : 0,
-          action.type === CustomizableInputAction.MoveDown ? 1 : 0,
-          0
-        );
-        break;
-      case CustomizableInputAction.Drop:
-        block?.drop();
-        break;
-      case CustomizableInputAction.RotateClockwise:
-      case CustomizableInputAction.RotateAnticlockwise:
-        block?.move(
-          0,
-          0,
-          action.type === CustomizableInputAction.RotateClockwise ? 1 : -1
-        );
-        break;
+    }
+    if (this._simulation.isRunning) {
+      switch (action.type) {
+        case CustomizableInputAction.MoveLeft:
+        case CustomizableInputAction.MoveRight:
+        case CustomizableInputAction.MoveDown:
+          block?.move(
+            action.type === CustomizableInputAction.MoveLeft
+              ? -1
+              : action.type === CustomizableInputAction.MoveRight
+              ? 1
+              : 0,
+            action.type === CustomizableInputAction.MoveDown ? 1 : 0,
+            0
+          );
+          break;
+        case CustomizableInputAction.Drop:
+          block?.drop();
+          break;
+        case CustomizableInputAction.RotateClockwise:
+        case CustomizableInputAction.RotateAnticlockwise:
+          block?.move(
+            0,
+            0,
+            action.type === CustomizableInputAction.RotateClockwise ? 1 : -1
+          );
+          break;
+      }
     }
 
     this._actionListeners.forEach((listener) => listener(action));

@@ -8,6 +8,8 @@ import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import { DocumentSnapshot } from 'firebase/firestore';
+import { launchFullscreen } from '@/utils/launchFullscreen';
+import { playSound, SoundKey } from '@/sound/SoundManager';
 
 interface ChallengeCardProps {
   challenge: DocumentSnapshot<IChallenge>;
@@ -22,6 +24,11 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
       t.data()!.isMandatory &&
       (t.data()!.priority || 0) > (challenge.data()!.priority || 0)
   );*/
+
+  const onClick = React.useCallback(() => {
+    launchFullscreen();
+    playSound(SoundKey.click);
+  }, []);
 
   const child = (
     <Card>
@@ -44,6 +51,7 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
       component={RouterLink}
       underline="none"
       to={`${Routes.challenges}/${challenge?.id}`}
+      onClick={onClick}
     >
       {child}
     </Link>

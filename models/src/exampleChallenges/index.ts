@@ -1,3 +1,4 @@
+import rockTest from '@models/exampleChallenges/rockTest';
 import { IChallenge } from '../IChallenge';
 import basicMovement from './basicMovement';
 import controlCheck from './controlCheck';
@@ -23,4 +24,5 @@ export const exampleChallenges: { [key: string]: IChallenge } = {
   'infection-1': infectionTest,
   'infection-2': infectionTest2,
   't-spins-1': tSpins1,
+  'rock-test': rockTest,
 };

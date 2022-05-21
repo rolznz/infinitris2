@@ -14,9 +14,8 @@ enum ChallengeCellType {
   Finish = 'F',
   Wafer = 'W',
   Infection = 'I',
-  // TODO: fans (up, down, left, right)
-  // TODO: teleport (to, from)
-  // TODO:
+  RockGenerator = 'S',
+  SpawnLocation = 's',
 }
 
 export default ChallengeCellType;
@@ -55,7 +54,18 @@ export function getChallengeCellTypeDescription(
       return 'Wafer';
     case ChallengeCellType.Infection:
       return 'Infection';
+    case ChallengeCellType.RockGenerator:
+      return 'Rock Generator';
+    case ChallengeCellType.SpawnLocation:
+      return 'Spawn Location';
     default:
       throw new Error('No challenge cell type description for ' + type);
   }
+}
+
+export function isChallengeCellTypeEnabled(type: ChallengeCellType): boolean {
+  if (type === ChallengeCellType.Laser) {
+    return false;
+  }
+  return true;
 }

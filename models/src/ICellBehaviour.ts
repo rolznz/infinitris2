@@ -9,6 +9,7 @@ export default interface ICellBehaviour {
   onRemoveBlock?(block: IBlock): void;
   clone(forCell: ICell): ICellBehaviour;
   toChallengeCellType(): ChallengeCellType;
+  shouldExplode?(): boolean;
   color?: number;
   alpha: number;
   isPassable: boolean;

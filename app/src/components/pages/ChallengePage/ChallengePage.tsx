@@ -27,6 +27,7 @@ import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientO
 import { GameUI } from '@/components/game/GameUI';
 import useIngameStore from '@/state/IngameStore';
 import shallow from 'zustand/shallow';
+import { playGameMusic } from '@/sound/SoundManager';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -144,6 +145,7 @@ export default function ChallengePage() {
           : undefined,
       });
       useChallengeEditorStore.getState().setEditor(challengeClient.editor);
+      playGameMusic('grass', '1');
 
       setChallengeClient(challengeClient);
     }
@@ -240,6 +242,7 @@ export default function ChallengePage() {
 
   return (
     <GameUI
+      chatEnabled={false}
       challengeEditorEnabled={isTest}
       showLeaderboard={false /* TODO: based on challenge settings */}
     />

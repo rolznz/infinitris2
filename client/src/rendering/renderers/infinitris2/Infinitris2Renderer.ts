@@ -1559,9 +1559,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     // darker edges + black outline
     for (let i = 0; i < 2; i++) {
       graphics.beginFill(
-        i === 0
-          ? borderColor
-          : this._worldBackground.config.blockOutlineColor || 0
+        i === 0 ? borderColor : this._worldBackground.blockOutlineColor
       );
       for (let x = -1; x <= 1; x++) {
         for (let y = -1; y <= 1; y++) {

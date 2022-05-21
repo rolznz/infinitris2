@@ -163,11 +163,7 @@ function getBackground(
       throw new Error('Unsupported world type: ' + worldType);
   }
 
-  const index = worldVariation;
-  const hueVariation =
-    index === 0 ? 0 : Math.ceil(index / 2) * (index % 2 === 1 ? 1 : -1);
-  const hueRotation =
-    hueVariation * (index < 3 ? 22.5 : index < 4 ? 45 + 22.5 : 90);
+  const hueRotation = getVariationHueRotation(worldVariation);
   //console.log('index', index, 'hueMultiplier', hueVariation);
 
   return `url(${image}); filter: hue-rotate(${hueRotation}deg);`;

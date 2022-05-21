@@ -11,6 +11,9 @@ import { resizeTexture } from '@src/rendering/resizeTexture';
 import { generateGapTexture } from '@src/rendering/generateGapTexture';
 import { WrappedSprite } from '@src/rendering/WrappedSprite';
 import { worldBackgroundConfigs } from '@src/rendering/renderers/infinitris2/backgroundConfigs/worldBackgroundConfigs';
+import { getVariationHueRotation, rotateColor } from '@models/util/rotateColor';
+import { stringToHex } from '@models/util/stringToHex';
+import { hexToString } from '@models/util/hexToString';
 
 export class WorldBackground {
   private _layerSprites: (WrappedSprite | undefined)[] = [];
@@ -20,6 +23,7 @@ export class WorldBackground {
   private _rendererQuality: RendererQuality | undefined;
   private _variation: WorldVariation;
   private _enabled = true;
+  private _blockOutlineColor: number;
 
   constructor(
     app: PIXI.Application,
@@ -44,7 +48,20 @@ export class WorldBackground {
         this._app.loader.add(this._getLayerImage(layer));
       }
     }
+    this._blockOutlineColor = this._worldConfig.blockOutlineColor
+      ? stringToHex(
+          rotateColor(
+            hexToString(this._worldConfig.blockOutlineColor),
+            getVariationHueRotation(worldVariation)
+          )
+        )
+      : 0;
   }
+
+  get blockOutlineColor(): number {
+    return this._blockOutlineColor;
+  }
+
   private _getLayerImage(layer: WorldBackgroundLayerConfig): string {
     const layerFilenameParts = layer.filename.split('.');
     if (this._variation !== 0) {

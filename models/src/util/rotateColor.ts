@@ -81,3 +81,10 @@ export function rotateColor(hex: string, shift: number) {
 
   return rgbToHex(r, g, b);
 }
+
+export function getVariationHueRotation(worldVariation: number) {
+  const index = worldVariation;
+  const hueVariation =
+    index === 0 ? 0 : Math.ceil(index / 2) * (index % 2 === 1 ? 1 : -1);
+  return hueVariation * (index < 3 ? 22.5 : index < 4 ? 45 + 22.5 : 90);
+}

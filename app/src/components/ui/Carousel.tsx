@@ -149,15 +149,17 @@ export function Carousel({
       >
         {pages}
       </SwipeableViews>
-      <MobileStepper
-        style={mobileStepperStyles}
-        steps={pages.length}
-        position="static"
-        variant="dots"
-        activeStep={activeStep}
-        nextButton={null}
-        backButton={null}
-      />
+      {pages.length > 1 && (
+        <MobileStepper
+          style={mobileStepperStyles}
+          steps={pages.length}
+          position="static"
+          variant="dots"
+          activeStep={activeStep}
+          nextButton={null}
+          backButton={null}
+        />
+      )}
     </div>
   );
 }

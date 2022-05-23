@@ -309,10 +309,10 @@ export const coreThemeOptions: ThemeOptions = {
             alignItems: 'center',
           },
           '.MuiTouchRipple-child': {
-            width: 'calc(100% + 16px)',
+            width: 'calc(100% + 16px) !important',
             position: 'absolute',
-            left: '-8px',
-            right: '-8px',
+            left: '-8px !important',
+            right: '-8px !important',
           },
         },
         contained: {

@@ -11,6 +11,8 @@ import FlexBox from '../../ui/FlexBox';
 import LoadingSpinner from '../../ui/LoadingSpinner';
 import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
 import { DocumentSnapshot, where } from 'firebase/firestore';
+import useChallengeEditorStore from '@/state/ChallengeEditorStore';
+import { createNewChallenge } from '@/components/pages/CreateChallengePage/createNewChallenge';
 
 interface ChallengesRowProps {
   challenges: DocumentSnapshot<IChallenge>[] | null | undefined;
@@ -28,7 +30,10 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
         <FlexBox key={challenge.id} margin={4}>
           <Card
             onClick={() => {
-              // FIXME: load challenge
+              useChallengeEditorStore.getState().setChallenge({
+                ...createNewChallenge(),
+                grid: challenge.data()!.grid,
+              });
               history.push(Routes.createChallenge);
             }}
           >
@@ -47,7 +52,17 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
 
 export function LoadChallengePage() {
   const userId = useAuthStore().user?.uid;
+  if (!userId) {
+    return null;
+  }
+  return <LoadChallengePageInternal userId={userId} />;
+}
 
+type LoadChallengePageInternalProps = {
+  userId: string;
+};
+
+function LoadChallengePageInternal({ userId }: LoadChallengePageInternalProps) {
   const useUserChallengesOptions: UseCollectionOptions = React.useMemo(
     () => ({
       constraints: [where('userId', '==', userId)],

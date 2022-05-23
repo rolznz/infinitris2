@@ -16,6 +16,8 @@ import { showLoginPrompt } from '@/utils/showLoginMessage';
 import { v4 as uuidv4 } from 'uuid';
 import { useHistory } from 'react-router-dom';
 import Routes from '@/models/Routes';
+import Link from '@mui/material/Link/Link';
+import { Link as RouterLink } from 'react-router-dom';
 
 const schema = yup.object({
   title: yup
@@ -171,12 +173,14 @@ export function ChallengeEditorSettingsForm({
             description="Reset challenge button text"
           />
         </Button>
-        {/*<Button color="secondary" variant="contained">
-        <FormattedMessage
-          defaultMessage="Load Challenge"
-          description="Load challenge button text"
-        />
-</Button>*/}
+        <Link component={RouterLink} to={Routes.loadChallenge}>
+          <Button color="secondary" variant="contained">
+            <FormattedMessage
+              defaultMessage="Load Challenge"
+              description="Load challenge button text"
+            />
+          </Button>
+        </Link>
       </FlexBox>
     </FlexBox>
   );

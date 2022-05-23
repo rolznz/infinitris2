@@ -61,8 +61,8 @@ export default class WaferBehaviour implements ICellBehaviour {
     return false;
   }
 
-  clone(_forCell: ICell): ICellBehaviour {
-    throw new Error('clone unsupported');
+  clone(cell: ICell): ICellBehaviour {
+    return new WaferBehaviour(cell, this._grid);
   }
 
   get type(): CellType {

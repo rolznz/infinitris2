@@ -23,5 +23,5 @@ export default interface IGrid extends ICellEventListener {
   step(isNetworkClient: boolean): void;
   checkLineClears(rows: number[]): void;
   clearLines(rows: number[]): void;
-  resize(rows: number, cols: number): void;
+  resize(rows: number, cols: number, atRow: number, atColumn: number): void;
 }

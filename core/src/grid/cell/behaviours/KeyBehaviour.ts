@@ -21,8 +21,8 @@ export default class KeyBehaviour implements ICellBehaviour {
     return false;
   }
 
-  clone(_forCell: ICell): ICellBehaviour {
-    throw new Error('clone unsupported');
+  clone(): ICellBehaviour {
+    return new KeyBehaviour(this._color);
   }
 
   get type(): CellType {

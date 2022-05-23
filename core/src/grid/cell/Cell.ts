@@ -27,6 +27,10 @@ export default class Cell implements ICell {
     this._eventListener = grid;
     this._wasPlayerRemoved = false;
   }
+
+  get grid(): IGrid {
+    return this._grid;
+  }
   get row(): number {
     return this._row;
   }

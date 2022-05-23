@@ -7,7 +7,7 @@ export default class NormalCellBehaviour implements ICellBehaviour {
   constructor(_cell: ICell) {}
 
   clone(cell: ICell): ICellBehaviour {
-    throw new Error('Unsupported');
+    return new NormalCellBehaviour(cell);
   }
 
   get color(): number {

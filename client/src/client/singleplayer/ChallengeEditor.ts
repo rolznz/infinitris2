@@ -111,8 +111,21 @@ export class ChallengeEditor implements IChallengeEditor {
     /*if (this._isEditing) {
     }*/
 
-    // TODO: only enable these hotkeys in dev mode once app has a better UI
     if (action.type === HardCodedInputAction.KeyDown) {
+      if (this._isEditing) {
+        /*if (keyPressActionWithData.data.key === 'ArrowUp' || keyPressActionWithData.data.key === 'ArrowDown') {
+          const speed = 100;
+          this._renderer.bumpPosition(
+            0,
+            keyPressActionWithData.data.key === 'ArrowUp'
+              ? speed
+              : action.type === CustomizableInputAction.RotateClockwise
+              ? -speed
+              : 0
+          );
+        }*/
+      }
+
       const keyPressActionWithData = action as KeyPressActionWithData;
       if (
         keyPressActionWithData.data.ctrlKey &&
@@ -155,7 +168,7 @@ export class ChallengeEditor implements IChallengeEditor {
         if (newGridSizeParts?.length === 2) {
           const rows = parseInt(newGridSizeParts[0]);
           const cols = parseInt(newGridSizeParts[1]);
-          this.setGridSize(rows, cols);
+          this.setGridSize(rows, cols, 0, 0);
         }
       }
 
@@ -182,8 +195,13 @@ export class ChallengeEditor implements IChallengeEditor {
     }
   };
 
-  setGridSize(numRows: number, numColumns: number): void {
-    this._simulation!.grid.resize(numRows, numColumns);
+  setGridSize(
+    numRows: number,
+    numColumns: number,
+    atRow: number,
+    atColumn: number
+  ): void {
+    this._simulation!.grid.resize(numRows, numColumns, atRow, atColumn);
     this._saveGrid();
     // FIXME: shouldn't have to restart everything when changing the grid size
     // renderer needs to pick up new grid changes and rerender properly

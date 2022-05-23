@@ -47,8 +47,8 @@ export default class LaserBehaviour implements ICellBehaviour {
     return false;
   }
 
-  clone(_forCell: ICell): ICellBehaviour {
-    throw new Error('clone unsupported');
+  clone(cell: ICell): ICellBehaviour {
+    return new LaserBehaviour(cell);
   }
 
   get alpha(): number {

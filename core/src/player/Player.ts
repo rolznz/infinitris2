@@ -358,6 +358,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
     this.removeBlock();
+    this._spawnLocationCell = undefined;
   }
 
   /**

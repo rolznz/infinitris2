@@ -21,6 +21,7 @@ import { GameModeEvent } from '@models/GameModeEvent';
 import { RendererQuality } from '@models/RendererQuality';
 import { ScreenPositionToCell } from '@src/input/Input';
 import { wrap } from '@core/utils/wrap';
+import { interpolate } from '@core/utils/interpolate';
 
 const idealCellSize = 38;
 const minLandscapeCellCount = 18;
@@ -45,6 +46,7 @@ export abstract class BaseRenderer implements IRenderer {
   protected _hasScrollY: boolean;
   protected _hasScrollX: boolean;
   protected _floorHeight: number;
+  protected _lastClampedCameraY: number | undefined;
   protected _clampedCameraY: number;
   protected _clientApiConfig: ClientApiConfig;
   protected _rendererQuality: RendererQuality | undefined;
@@ -222,12 +224,29 @@ export abstract class BaseRenderer implements IRenderer {
 
     this._camera.update(this._app.ticker.deltaMS / 16.66);
 
+    // figure out the floor beneath the block and clamp the camera
+    // otherwise the camera will scroll down unnecessarily
+    let unpassableCellHeight = this._gridHeight;
+    if (this._simulation?.followingPlayer?.block) {
+      let floorHeightBeneathBlock = this._simulation.grid.numRows - 1;
+      for (let cell of this._simulation.followingPlayer.block.cells) {
+        for (let row = cell.row; row < this._simulation.grid.numRows; row++) {
+          if (!this._simulation.grid.cells[row][cell.column].isPassable) {
+            floorHeightBeneathBlock = Math.min(floorHeightBeneathBlock, row);
+            break;
+          }
+        }
+      }
+      unpassableCellHeight = floorHeightBeneathBlock * this._cellSize;
+      console.log(floorHeightBeneathBlock);
+    }
+
     // clamp the camera to fit within the grid
     this._clampedCameraY = Math.min(
       Math.max(
         this._camera.y,
         -(
-          this._gridHeight -
+          unpassableCellHeight -
           this._app.renderer.height +
           this._visibilityY +
           this._calculateFloorHeight()
@@ -235,6 +254,15 @@ export abstract class BaseRenderer implements IRenderer {
       ),
       0
     );
+    if (this._lastClampedCameraY !== undefined) {
+      this._clampedCameraY = interpolate(
+        this._lastClampedCameraY,
+        this._clampedCameraY,
+        0.05
+      );
+    }
+    this._lastClampedCameraY = this._clampedCameraY;
+
     if (this._hasScrollX) {
       this._world.x = this._camera.x + this._visibilityX;
     }

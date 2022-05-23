@@ -28,8 +28,8 @@ export default class DeadlyBehaviour implements ICellBehaviour {
     return false;
   }
 
-  clone(_forCell: ICell): ICellBehaviour {
-    throw new Error('clone unsupported');
+  clone(forCell: ICell): ICellBehaviour {
+    return new DeadlyBehaviour(forCell);
   }
 
   get type(): CellType {

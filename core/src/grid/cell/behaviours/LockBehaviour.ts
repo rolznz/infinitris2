@@ -58,8 +58,8 @@ export default class LockBehaviour implements ICellBehaviour {
     return false;
   }
 
-  clone(_forCell: ICell): ICellBehaviour {
-    throw new Error('clone unsupported');
+  clone(forCell: ICell): ICellBehaviour {
+    return new LockBehaviour(forCell, this._grid, this._color);
   }
 
   get alpha(): number {

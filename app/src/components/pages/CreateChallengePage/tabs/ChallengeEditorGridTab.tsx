@@ -36,6 +36,9 @@ export function ChallengeEditorGridTab() {
               stableStringify(challenge)
             )}`}
             mb={1}
+            onClick={() => {
+              useChallengeEditorStore.getState().setIsEditing(false);
+            }}
           >
             <Button
               color="primary"

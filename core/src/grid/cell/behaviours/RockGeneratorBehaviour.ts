@@ -33,7 +33,7 @@ export default class RockGeneratorBehaviour implements ICellBehaviour {
   }
 
   clone(forCell: ICell): ICellBehaviour {
-    throw new Error('Unsupported');
+    return new RockGeneratorBehaviour(forCell, this._grid);
   }
 
   get isReplaceable(): boolean {

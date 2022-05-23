@@ -14,7 +14,7 @@ export default class ChallengeFinishBehaviour implements ICellBehaviour {
   }
 
   clone(_forCell: ICell): ICellBehaviour {
-    throw new Error('clone unsupported');
+    return new ChallengeFinishBehaviour();
   }
 
   get isReplaceable(): boolean {

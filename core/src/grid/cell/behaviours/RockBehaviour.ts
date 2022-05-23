@@ -58,7 +58,7 @@ export default class RockBehaviour implements ICellBehaviour {
   }
 
   clone(forCell: ICell): ICellBehaviour {
-    throw new Error('Unsupported');
+    return new RockBehaviour(forCell, this._grid);
   }
 
   get isReplaceable(): boolean {

@@ -15,5 +15,12 @@ export interface IChallengeEditor {
   get inputActionListener(): InputActionListener;
   get challengeCellType(): ChallengeCellType;
   set challengeCellType(challengeCellType: ChallengeCellType);
-  setGridSize(numRows: number, numColumns: number): void;
+  setGridSize(
+    numRows: number,
+    numColumns: number,
+    atRow: number,
+    atColumn: number
+  ): void;
+  //insertRows(numRows: number, atRow: number): void;
+  //insertColumns(numColumns: number, atColumn: number): void;
 }

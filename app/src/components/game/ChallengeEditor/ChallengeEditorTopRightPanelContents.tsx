@@ -62,17 +62,21 @@ export function ChallengeEditorGridSize() {
       variant="outlined"
       onClick={() => {
         const newGridSizeResponse = prompt(
-          'Enter new grid size (rows, columns)',
-          simulation.grid.numRows + ',' + simulation.grid.numColumns
+          'Enter new grid size (rows, columns, atRow, atColumn)',
+          simulation.grid.numRows + ',' + simulation.grid.numColumns + ',0,0'
         );
         const newGridSizeParts = newGridSizeResponse
           ?.split(',')
           .map((part) => part.trim());
-        if (newGridSizeParts?.length === 2) {
+        if (newGridSizeParts?.length === 4) {
           const rows = parseInt(newGridSizeParts[0]);
           const cols = parseInt(newGridSizeParts[1]);
+          const atRow = parseInt(newGridSizeParts[2]);
+          const atColumn = parseInt(newGridSizeParts[3]);
 
-          useChallengeEditorStore.getState().editor?.setGridSize(rows, cols);
+          useChallengeEditorStore
+            .getState()
+            .editor?.setGridSize(rows, cols, atRow, atColumn);
         }
       }}
     >

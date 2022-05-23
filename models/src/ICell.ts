@@ -2,6 +2,7 @@ import IBlock from './IBlock';
 import CellType from './CellType';
 import ICellBehaviour from './ICellBehaviour';
 import { IPlayer } from './IPlayer';
+import IGrid from '@models/IGrid';
 
 export type NetworkCellInfo = {
   readonly playerId?: number;
@@ -18,6 +19,7 @@ export default interface ICell {
   get isEmptyWithNoBlocks(): boolean;
   get isPassable(): boolean;
   get isPassableWhileDropping(): boolean;
+  get grid(): IGrid;
   get behaviour(): ICellBehaviour;
   set behaviour(behaviour: ICellBehaviour);
   get blocks(): IBlock[];

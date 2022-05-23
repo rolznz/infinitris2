@@ -36,7 +36,7 @@ export default class Grid implements IGrid {
     return this._reducedCells;
   }
   get numColumns(): number {
-    return this._cells[0].length;
+    return this._cells[0]?.length || 0;
   }
   get numRows(): number {
     return this._cells.length;
@@ -189,20 +189,44 @@ export default class Grid implements IGrid {
     return row < Math.max(this.numRows - numFilledRows - 4, 7);
   }
 
-  resize(numRows: number, numColumns: number): void {
+  resize(numRows: number, numColumns: number, atRow = 0, atColumn = 0): void {
+    let originalNumRows = this.numRows;
+    let originalNumColumns = this.numColumns;
+    // addition
+    for (let i = originalNumRows; i < numRows; i++) {
+      const row: ICell[] = [];
+      this._cells.splice(atRow, 0, row);
+    }
+
+    for (let i = originalNumColumns; i < numColumns; i++) {
+      for (let r = 0; r < numRows; r++) {
+        this._cells[r].splice(atColumn, 0, new Cell(this, 0, 0)); // will be fixed
+      }
+    }
+
+    // deletion
+    for (let i = 0; i < originalNumRows - numRows; i++) {
+      this._cells.splice(Math.max(atRow - i, 0), 1);
+    }
+    for (let i = 0; i < originalNumColumns - numColumns; i++) {
+      for (let r = 0; r < this.numRows; r++) {
+        this._cells[r].splice(Math.max(atColumn - i, 0), 1);
+      }
+    }
+
+    // fix cells
     for (let r = 0; r < numRows; r++) {
-      const row: ICell[] = this._cells[r] || [];
       for (let c = 0; c < numColumns; c++) {
-        if (!row[c]) {
-          row.push(new Cell(this, r, c));
+        const cell = this._cells[r][c];
+        if (cell?.row !== r || cell?.column !== c) {
+          const newCell = new Cell(this, r, c);
+          if (cell) {
+            newCell.replaceWith(cell);
+          }
+          this._cells[r][c] = newCell;
         }
       }
-      if (!this._cells[r]) {
-        this._cells.push(row);
-      }
-      row.splice(numColumns);
     }
-    this._cells.splice(numRows);
 
     this._reducedCells = ([] as ICell[]).concat(...this._cells);
 

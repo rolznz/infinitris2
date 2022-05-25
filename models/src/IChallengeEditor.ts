@@ -1,5 +1,6 @@
 import ChallengeCellType from '@models/ChallengeCellType';
 import { InputActionListener } from '@models/InputAction';
+import { IRenderer } from '@models/IRenderer';
 import ISimulation from '@models/ISimulation';
 
 export interface IChallengeEditorEventListener {
@@ -11,6 +12,7 @@ export interface IChallengeEditorEventListener {
 export interface IChallengeEditor {
   get isEditing(): boolean;
   set isEditing(isEditing: boolean);
+  set renderer(renderer: IRenderer);
   set simulation(simulation: ISimulation);
   get inputActionListener(): InputActionListener;
   get challengeCellType(): ChallengeCellType;

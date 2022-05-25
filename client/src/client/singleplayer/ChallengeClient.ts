@@ -277,9 +277,9 @@ export default class ChallengeClient
         : this._launchOptions.gridLineType,
       !!this._launchOptions.challengeEditorSettings
     );
-    // if (this._editor) {
-    //   this._editor.renderer = this._renderer;
-    // }
+    if (this._editor) {
+      this._editor.renderer = this._renderer;
+    }
     await this._renderer.create();
 
     this._createTempObjects();

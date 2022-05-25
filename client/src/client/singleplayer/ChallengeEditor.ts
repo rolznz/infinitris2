@@ -116,12 +116,21 @@ export class ChallengeEditor implements IChallengeEditor {
       if (this._isEditing) {
         const speed = 100;
         if (
-          keyPressActionWithData.data.key === 'ArrowUp' ||
-          keyPressActionWithData.data.key === 'ArrowDown'
+          ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].indexOf(
+            keyPressActionWithData.data.key
+          ) >= 0
         ) {
-          this._renderer!.camera.bumpPosition(
-            0,
-            keyPressActionWithData.data.key === 'ArrowUp' ? speed : -speed
+          this._renderer!.camera.bump(
+            keyPressActionWithData.data.key === 'ArrowLeft'
+              ? speed
+              : keyPressActionWithData.data.key === 'ArrowRight'
+              ? -speed
+              : 0,
+            keyPressActionWithData.data.key === 'ArrowUp'
+              ? speed
+              : keyPressActionWithData.data.key === 'ArrowDown'
+              ? -speed
+              : 0
           );
         }
       }

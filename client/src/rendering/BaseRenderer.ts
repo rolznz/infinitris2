@@ -7,7 +7,7 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import Camera from '@src/rendering/Camera';
-import IRenderer, { ParticleType } from '@src/rendering/IRenderer';
+import { IRenderer, ParticleType } from '@models/IRenderer';
 import {
   IRenderableEntity,
   IRenderableEntityChild,
@@ -287,10 +287,13 @@ export abstract class BaseRenderer implements IRenderer {
   }
 
   onInputAction = (action: InputActionWithData) => {
+    // FIXME: need different actions/controls when the player is spectating
+    // keyboard: arrows
+    // mobile: drag around to move (horizontally and vertically)
+    // TODO: challenge editor camera handling will need to be moved
     if (
       !this._simulation?.followingPlayer ||
-      this._simulation?.followingPlayer.status !== PlayerStatus.ingame ||
-      this._simulation.isPaused
+      this._simulation?.followingPlayer.status !== PlayerStatus.ingame
     ) {
       const speed = 100;
       this._camera.bump(
@@ -299,11 +302,11 @@ export abstract class BaseRenderer implements IRenderer {
           : action.type === CustomizableInputAction.MoveRight
           ? -speed
           : 0,
-        action.type == CustomizableInputAction.RotateAnticlockwise
+        /*action.type == CustomizableInputAction.RotateAnticlockwise
           ? speed
           : action.type === CustomizableInputAction.RotateClockwise
           ? -speed
-          : 0
+          : */ 0
       );
     }
   };

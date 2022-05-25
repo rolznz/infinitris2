@@ -4,15 +4,8 @@ import {
 } from '@core/gameModes/ConquestGameMode';
 import { getBorderColor } from '@models/index';
 import { GameModeEvent } from '@models/GameModeEvent';
-import IBlock from '@models/IBlock';
-import ICell from '@models/ICell';
-import ICellBehaviour from '@models/ICellBehaviour';
-import IGrid from '@models/IGrid';
-import { IPlayer } from '@models/IPlayer';
-import ISimulation from '@models/ISimulation';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
-import IRenderer from '@src/rendering/IRenderer';
 import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GameModeRenderer';
 import * as PIXI from 'pixi.js-legacy';
 

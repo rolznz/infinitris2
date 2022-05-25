@@ -1,5 +1,4 @@
 import Simulation from '@core/simulation/Simulation';
-import IRenderer from '../rendering/IRenderer';
 import Grid from '@core/grid/Grid';
 import {
   IServerJoinRoomResponse,

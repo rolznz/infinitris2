@@ -84,6 +84,7 @@ export * from './BuyCoinsRequest';
 export * from './InputAction';
 export * from './IChallengeEditor';
 export * from './ChallengeCellType';
+export * from './IRenderer';
 
 export const NETWORK_VERSION = 2;
 

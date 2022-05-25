@@ -21,15 +21,6 @@ export const desert: WorldBackgroundConfig = {
       portraitScale: 1.5,
     },
     {
-      filename: 'theme_desert_2.png',
-      speedY: 0.1,
-      speedX: 0.1,
-      offsetY: 0.0,
-      offsetX: 0,
-      portraitOffsetY: 0.02,
-      portraitScale: 1.5,
-    },
-    {
       filename: 'theme_desert_3.png',
       speedY: 0.2,
       speedX: 0.2,
@@ -40,6 +31,15 @@ export const desert: WorldBackgroundConfig = {
       portraitScale: 0.2,
       portraitOffsetY: 0.075,
       //minQuality: 'high',
+    },
+    {
+      filename: 'theme_desert_2.png',
+      speedY: 0.1,
+      speedX: 0.1,
+      offsetY: 0.0,
+      offsetX: 0,
+      portraitOffsetY: 0.02,
+      portraitScale: 1.5,
     },
     {
       filename: 'theme_desert_4.png',

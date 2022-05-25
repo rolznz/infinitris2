@@ -37,11 +37,12 @@ export const homePageBackgroundTransitionSeconds = 5;
 const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
   const isDarkMode = useDarkMode();
   const windowSize = useWindowSize();
-  useOrientation(); // force re-render on orientation change
+  const orientation = useOrientation(); // force re-render on orientation change
   const isLandscape = windowSize.width >= windowSize.height;
   const isShortScreen = useMediaQuery(
     `(max-height:${isLandscape ? 400 : 600}px)`
   );
+
   const [isLoaded, delayButtonVisibility] = useLoaderStore(
     (store) => [store.hasFinished, store.delayButtonVisibility],
     shallow
@@ -53,6 +54,13 @@ const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
       position="relative"
       bgcolor={'background.paper'}
       overflow="hidden"
+      key={
+        orientation.type +
+        ' ' +
+        windowSize.width +
+        ' ' +
+        windowSize.height /* force home page images re-render */
+      }
     >
       <FlexBox
         position="absolute"
@@ -186,6 +194,9 @@ let backgroundImageMap: { [key: string]: HTMLImageElement } = {};
 let backgroundImageLoadedMap: { [key: string]: boolean } = {};
 const HomePageBackgroundImage = React.memo(
   (props: HomePageBackgroundImageProps) => {
+    useWindowSize();
+    useOrientation();
+
     return (
       <img
         ref={(imageRef) => {

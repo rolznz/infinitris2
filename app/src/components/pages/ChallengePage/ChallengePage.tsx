@@ -80,6 +80,10 @@ export default function ChallengePage() {
   const { preferredInputMethod, controls_keyboard, hasSeenAllSet, readOnly } =
     user;
 
+  const isEditingChallenge = useChallengeEditorStore(
+    (store) => store.isEditing
+  );
+
   // TODO: update (see SinglePlayer/Room page)
   const player: Partial<NetworkPlayerInfo> = React.useMemo(
     () => ({
@@ -197,49 +201,53 @@ export default function ChallengePage() {
         challengeEditorEnabled={isTest}
         showLeaderboard={false /* TODO: based on challenge settings */}
       />
-      {showChallengeInfo ? (
-        <ChallengeInfoView
-          challenge={challenge}
-          onReceivedInput={() => {
-            simulation?.startInterval();
-            setShowChallengeInfo(false);
-          }}
-        />
-      ) : challengeCompleted && challengeClient && restartClient ? (
-        <ChallengeResultsView
-          challengeId={id}
-          isTest={isTest}
-          //status={challengeClient.getChallengeAttempt()}
-          onContinue={() => {
-            //completeChallenge(challenge.id);
-            const remainingChallenges = incompleteChallenges.filter(
-              (incompleteChallenge) => incompleteChallenge.id !== id
-            );
-            if (isTest) {
-              history.goBack();
-            } else if (remainingChallenges.length) {
-              history.push(Routes.challengeRequired);
-            } else if (!hasSeenAllSet) {
-              history.push(Routes.allSet);
-            } else {
-              history.goBack();
-            }
-          }}
-          onRetry={() => {
-            setChallengeCompleted(false);
-            setShowChallengeInfo(true);
-            restartClient();
-          }}
-        />
-      ) : challengeFailed && restartClient ? (
-        <ChallengeFailedView
-          onReceivedInput={() => {
-            setChallengeFailed(false);
-            setShowChallengeInfo(true);
-            restartClient();
-          }}
-        />
-      ) : null}
+      {!isEditingChallenge && (
+        <>
+          {showChallengeInfo ? (
+            <ChallengeInfoView
+              challenge={challenge}
+              onReceivedInput={() => {
+                simulation?.startInterval();
+                setShowChallengeInfo(false);
+              }}
+            />
+          ) : challengeCompleted && challengeClient && restartClient ? (
+            <ChallengeResultsView
+              challengeId={id}
+              isTest={isTest}
+              //status={challengeClient.getChallengeAttempt()}
+              onContinue={() => {
+                //completeChallenge(challenge.id);
+                const remainingChallenges = incompleteChallenges.filter(
+                  (incompleteChallenge) => incompleteChallenge.id !== id
+                );
+                if (isTest) {
+                  history.goBack();
+                } else if (remainingChallenges.length) {
+                  history.push(Routes.challengeRequired);
+                } else if (!hasSeenAllSet) {
+                  history.push(Routes.allSet);
+                } else {
+                  history.goBack();
+                }
+              }}
+              onRetry={() => {
+                setChallengeCompleted(false);
+                setShowChallengeInfo(true);
+                restartClient();
+              }}
+            />
+          ) : challengeFailed && restartClient ? (
+            <ChallengeFailedView
+              onReceivedInput={() => {
+                setChallengeFailed(false);
+                setShowChallengeInfo(true);
+                restartClient();
+              }}
+            />
+          ) : null}
+        </>
+      )}
     </>
   );
 }

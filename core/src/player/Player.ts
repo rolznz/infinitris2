@@ -1,7 +1,6 @@
 import Block, { MAX_SCORE } from '../block/Block';
 import Cell from '../grid/cell/Cell';
 import Layout from '@models/Layout';
-import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
 import IBlockEventListener from '@models/IBlockEventListener';
 import { SimulationSettings } from '@models/SimulationSettings';
 import IBlock from '@models/IBlock';
@@ -22,8 +21,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _health: number;
   private _lastPlacementColumn: number | undefined;
   private _eventListeners: IPlayerEventListener[]; // TODO: add IPlayerEventListener
-  private _nextLayout?: Layout;
-  private _nextLayoutRotation?: number;
+  //private _nextLayout?: Layout;
+  //private _nextLayoutRotation?: number;
   private _nickname: string;
   private _color: number;
   private _patternFilename?: string;
@@ -138,13 +137,13 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     );
   }
 
-  set nextLayout(nextLayout: Layout | undefined) {
+  /*set nextLayout(nextLayout: Layout | undefined) {
     this._nextLayout = nextLayout;
   }
 
   set nextLayoutRotation(nextLayoutRotation: number | undefined) {
     this._nextLayoutRotation = nextLayoutRotation;
-  }
+  }*/
 
   set spawnLocationCell(cell: ICell | undefined) {
     this._spawnLocationCell = cell;
@@ -234,7 +233,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         return;
       }
 
-      const validLayouts = Object.entries(tetrominoes)
+      const validLayouts = Object.entries(this._simulation.layoutSet.layouts)
         .filter(
           (entry) =>
             (!simulationSettings.allowedBlockLayoutIds ||
@@ -245,7 +244,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         .map((entry) => entry[1]);
 
       const layout =
-        this._nextLayout ||
+        //this._nextLayout ||
         validLayouts[Math.floor(Math.random() * validLayouts.length)];
 
       const row = this._spawnLocationCell?.row || 0;
@@ -261,11 +260,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         ++uniqueBlockId,
         row,
         column,
-        this._nextLayoutRotation || 0,
-        Object.values(tetrominoes).indexOf(layout)
+        0,
+        Object.values(this._simulation.layoutSet.layouts).indexOf(layout)
       );
-      this._nextLayout = undefined;
-      this._nextLayoutRotation = undefined;
+      //this._nextLayout = undefined;
+      //this._nextLayoutRotation = undefined;
     } else {
       this._block?.update();
     }
@@ -279,7 +278,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     layoutIndex: number,
     force: boolean = false
   ) {
-    const layouts = Object.values(tetrominoes);
+    const layouts = Object.values(this._simulation.layoutSet.layouts);
     const newBlock = new Block(
       blockId,
       this,

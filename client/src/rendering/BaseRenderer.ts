@@ -264,7 +264,6 @@ export abstract class BaseRenderer implements IRenderer {
           ),
           this._simulation.grid.numRows
         ) * this._cellSize;
-      console.log(floorHeightBeneathBlock);
     }
 
     // clamp the camera to fit within the grid

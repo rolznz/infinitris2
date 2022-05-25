@@ -13,7 +13,7 @@ import ChallengeCompletionStats from '@models/ChallengeCompletionStats';
 import ChallengeCellType from '@models/ChallengeCellType';
 import ControlSettings from '@models/ControlSettings';
 import parseGrid from '@models/util/parseGrid';
-import tetrominoes from '@models/exampleBlockLayouts/Tetrominoes';
+import tetrominoes from '@models/blockLayouts/Tetrominoes';
 import { PlayerStatus } from '@models/IPlayer';
 import {
   ChallengeStatusCode,
@@ -337,10 +337,9 @@ export default class ChallengeClient
     }
     simulation.addPlayer(player);
     simulation.followPlayer(player);
-    if (this._challenge.firstBlockLayoutId) {
-      // TODO: remove hard coded tetrominoes to support multiple block sets
-      player.nextLayout = tetrominoes[this._challenge.firstBlockLayoutId];
-    }
+    /*if (this._challenge.firstBlockLayoutId) {
+      player.nextLayout = simulation.layoutSet[this._challenge.firstBlockLayoutId];
+    }*/
 
     //player.nextLayoutRotation = this._challenge.layoutRotation;
 

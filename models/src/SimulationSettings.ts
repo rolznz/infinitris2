@@ -13,4 +13,5 @@ export type SimulationSettings = {
   readonly spawnDelayScoreGraceAmount?: number;
   readonly roundLength?: RoundLength;
   readonly instantDrops?: boolean;
+  readonly layoutSetId?: string;
 };

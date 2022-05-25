@@ -31,7 +31,7 @@ export interface IChallenge extends IEntity {
   readonly isMandatory?: boolean;
   readonly isPublished?: boolean;
   readonly locale?: string;
-  readonly firstBlockLayoutId?: string;
+  //readonly firstBlockLayoutId?: string;
   //readonly firstBlockColumn?: number;
   readonly grid: string;
 

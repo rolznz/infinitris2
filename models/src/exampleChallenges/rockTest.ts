@@ -19,6 +19,9 @@ const rockTest: IChallenge = {
       maxBlocksPlaced: 20,
     },
   },
+  simulationSettings: {
+    layoutSetId: 'lsOnly',
+  },
   grid: `
 0000XXXXXXXXXX00000000000000XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX00
 0000XXXXXXXXXX00000000000000XXXXXXXXXXXXXXXXXSXXXXXXXXSSSSSSXX00

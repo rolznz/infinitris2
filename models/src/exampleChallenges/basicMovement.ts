@@ -7,7 +7,6 @@ const basicMovement: IChallenge = {
   title: 'Basic Movement',
   description: '',
   locale: 'en',
-  firstBlockLayoutId: 'L',
   isMandatory: true,
   isPublished: true,
   priority: 9000,

@@ -23,6 +23,8 @@ import { ICharacter } from '@models/ICharacter';
 import { colors } from '@models/colors';
 import { stringToHex } from '@models/util/stringToHex';
 import { hexToString } from '@models/util/hexToString';
+import { defaultLayoutSet, LayoutSet } from '@models/Layout';
+import { blockLayoutSets } from '@models/blockLayouts/blockLayoutSets';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -46,6 +48,7 @@ export default class Simulation implements ISimulation {
   private _fpsCounter: FpsCounter;
   private _lastStepTime = 0;
   private _round: IRound | undefined;
+  private _layoutSet: LayoutSet | undefined;
 
   constructor(grid: Grid, settings: SimulationSettings = {}, isClient = false) {
     this._eventListeners = [];
@@ -59,6 +62,10 @@ export default class Simulation implements ISimulation {
       gameModeType: 'infinity',
       ...settings,
     };
+
+    this._layoutSet = this._settings.layoutSetId
+      ? blockLayoutSets.find((set) => set.id === this._settings.layoutSetId)
+      : undefined;
     if (this._settings.gameModeType === 'conquest') {
       this._settings = {
         ...this._settings,
@@ -95,6 +102,10 @@ export default class Simulation implements ISimulation {
   }
   onSimulationStep(): void {
     throw new Error('should never be called');
+  }
+
+  get layoutSet(): LayoutSet {
+    return this._layoutSet || defaultLayoutSet;
   }
 
   get isPaused(): boolean {

@@ -5,16 +5,18 @@ import { ScreenPositionToCell } from './Input';
 export default class MouseInput {
   private _fireAction: InputActionListener;
   private _screenPositionToCell: ScreenPositionToCell;
-  private _mouseButtonDown: number | undefined;
+  private _mouseButtonIndex: number | undefined;
   private _currentCell: ICell | undefined;
   private _lastPointerEvent: PointerEvent | undefined;
   private _pointerDragDistance: number;
+  private _isMouseDown: boolean;
 
   constructor(
     fireAction: InputActionListener,
     screenPositionToCell: ScreenPositionToCell
   ) {
-    this._mouseButtonDown = undefined;
+    this._mouseButtonIndex = undefined;
+    this._isMouseDown = false;
     this._pointerDragDistance = 0;
     this._fireAction = fireAction;
     this._screenPositionToCell = screenPositionToCell;
@@ -48,7 +50,7 @@ export default class MouseInput {
   }
 
   private _onMouseMove = (event: MouseEvent) => {
-    if (this._mouseButtonDown !== undefined) {
+    if (this._mouseButtonIndex !== undefined) {
       const currentCell = this._screenPositionToCell(event.x, event.y);
       if (currentCell !== this._currentCell) {
         this._fireAction({
@@ -56,7 +58,7 @@ export default class MouseInput {
           data: {
             cell: currentCell,
             event,
-            button: this._mouseButtonDown,
+            button: this._mouseButtonIndex,
           },
         });
         this._currentCell = currentCell;
@@ -65,24 +67,30 @@ export default class MouseInput {
   };
 
   private _onMouseDown = (event: MouseEvent) => {
+    this._isMouseDown = true;
     this._currentCell = this._screenPositionToCell(event.x, event.y);
-    this._mouseButtonDown = event.button;
+    this._mouseButtonIndex = event.button;
     this._fireAction({
       type: HardCodedInputAction.MouseEvent,
       data: {
         cell: this._currentCell,
         event,
-        button: this._mouseButtonDown,
+        button: this._mouseButtonIndex,
       },
     });
   };
 
   private _onMouseUp = (event: MouseEvent) => {
-    this._mouseButtonDown = undefined;
+    this._mouseButtonIndex = undefined;
+    this._isMouseDown = false;
   };
 
   private _onPointerMove = (event: PointerEvent) => {
-    if (this._mouseButtonDown !== undefined && this._lastPointerEvent) {
+    if (
+      !this._isMouseDown &&
+      this._mouseButtonIndex !== undefined &&
+      this._lastPointerEvent
+    ) {
       this._pointerDragDistance += Math.sqrt(
         Math.pow(event.x - this._lastPointerEvent.x, 2) +
           Math.pow(event.y - this._lastPointerEvent.y, 2)
@@ -100,13 +108,16 @@ export default class MouseInput {
 
   private _onPointerDown = (event: PointerEvent) => {
     this._currentCell = this._screenPositionToCell(event.x, event.y);
-    this._mouseButtonDown = event.button;
+    this._mouseButtonIndex = event.button;
     this._lastPointerEvent = event;
     this._pointerDragDistance = 0;
   };
 
   private _onPointerUp = (event: PointerEvent) => {
-    if (this._mouseButtonDown !== undefined && this._pointerDragDistance < 10) {
+    if (
+      this._mouseButtonIndex !== undefined &&
+      this._pointerDragDistance < 10
+    ) {
       const currentCell = this._screenPositionToCell(event.x, event.y);
       if (currentCell === this._currentCell) {
         this._fireAction({
@@ -114,12 +125,12 @@ export default class MouseInput {
           data: {
             cell: currentCell,
             event,
-            button: this._mouseButtonDown,
+            button: this._mouseButtonIndex,
           },
         });
         this._currentCell = currentCell;
       }
     }
-    this._mouseButtonDown = undefined;
+    this._mouseButtonIndex = undefined;
   };
 }

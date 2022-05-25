@@ -7,7 +7,12 @@ import InputLabel from '@mui/material/InputLabel';
 import Input from '@mui/material/Input';
 import Button from '@mui/material/Button';
 import React from 'react';
-import { getChallengePath, IChallenge } from 'infinitris2-models';
+import {
+  blockLayoutSets,
+  defaultLayoutSet,
+  getChallengePath,
+  IChallenge,
+} from 'infinitris2-models';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import FlexBox from '@/components/ui/FlexBox';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
@@ -18,6 +23,9 @@ import { useHistory } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import Link from '@mui/material/Link/Link';
 import { Link as RouterLink } from 'react-router-dom';
+import Select from '@mui/material/Select/Select';
+import MenuItem from '@mui/material/MenuItem';
+import shallow from 'zustand/shallow';
 
 const schema = yup.object({
   title: yup
@@ -27,9 +35,7 @@ const schema = yup.object({
     .matches(/^[a-z0-9 ]*$/),
 });
 
-type SettingsFormData = {
-  title: string;
-};
+type SettingsFormData = Pick<IChallenge, 'title' | 'simulationSettings'>;
 
 type ChallengeEditorSettingsFormProps = {
   challenge: IChallenge;
@@ -52,11 +58,22 @@ export function ChallengeEditorSettingsForm({
     reset,
   } = useForm<SettingsFormData>({
     defaultValues: {
-      title: challenge.title,
+      ...challenge,
     },
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
+
+  const watchedValues = watch();
+  const valuesSame = shallow(challenge, { ...challenge, ...watchedValues });
+  React.useEffect(() => {
+    if (!valuesSame) {
+      setChallenge({
+        ...challenge,
+        ...watchedValues,
+      });
+    }
+  }, [valuesSame, setChallenge, watchedValues, challenge]);
 
   const { title } = watch();
   if (title.toLowerCase() !== title) {
@@ -143,6 +160,22 @@ export function ChallengeEditorSettingsForm({
                   inputProps={{ maxLength: 15, placeholder: 'New Challenge' }}
                 />
                 {!!title.length && <p>{errors.title?.message}</p>}
+              </FormControl>
+            )}
+          />
+          <Controller
+            name="simulationSettings.layoutSetId"
+            control={control}
+            render={({ field }) => (
+              <FormControl variant="standard">
+                <InputLabel>Layout Set</InputLabel>
+                <Select {...field} placeholder={defaultLayoutSet.name}>
+                  {blockLayoutSets.map((set) => (
+                    <MenuItem key={set.id} value={set.id}>
+                      {set.name}
+                    </MenuItem>
+                  ))}
+                </Select>
               </FormControl>
             )}
           />

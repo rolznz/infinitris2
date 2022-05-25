@@ -1,4 +1,4 @@
-import Layout from '../Layout';
+import Layout, { LayoutSet } from '../Layout';
 
 const I: Layout = [
   [0, 0, 1, 0],
@@ -42,6 +42,10 @@ const Z: Layout = [
   [0, 0, 0],
 ];
 
-const tetrominoes: { [key: string]: Layout } = { I, J, L, O, S, T, Z };
+const tetrominoes: LayoutSet = {
+  id: 'tetrominoes',
+  name: 'Tetrominoes',
+  layouts: { I, J, L, O, S, T, Z },
+};
 
 export default tetrominoes;

@@ -8,7 +8,7 @@ import ISimulation from './ISimulation';
 import ISimulationEventListener from './ISimulationEventListener';
 import Layout from './Layout';
 import IRoom from './IRoom';
-import tetrominoes from './exampleBlockLayouts/Tetrominoes';
+import tetrominoes from './blockLayouts/Tetrominoes';
 import CellType from './CellType';
 import ICellBehaviour from './ICellBehaviour';
 import IChallengeClient from './IChallengeClient';
@@ -85,6 +85,8 @@ export * from './InputAction';
 export * from './IChallengeEditor';
 export * from './ChallengeCellType';
 export * from './IRenderer';
+export * from './Layout';
+export * from './blockLayouts/blockLayoutSets';
 
 export const NETWORK_VERSION = 2;
 

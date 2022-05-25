@@ -114,11 +114,10 @@ service cloud.firestore {
       	return
           baseRequestValid() &&
           (!request.resource.data.get('isOfficial', false) || isAdmin()) &&
-          entityHasExpectedFields(['description', 'finishCriteria', 'firstBlockLayoutId', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
+          entityHasExpectedFields(['description', 'finishCriteria', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
           title is string &&
           (title.size() == 0 || (title.size() < 21 && title.matches('[a-z0-9 ]+'))) &&
           description is string && description.size() < 280 &&
-          getProperty('firstBlockLayoutId', '') is string &&
           grid is string && grid.size() > 0 &&
           getProperty('isOfficial', false) is bool &&
           getProperty('isMandatory', false) is bool &&
@@ -126,8 +125,9 @@ service cloud.firestore {
           getProperty('locale', '') is string &&
           getProperty('priority', 0) is number &&
           simulationSettings is map &&
-          simulationSettings.keys().hasOnly(['gravityEnabled', 'allowedBlockLayoutIds']) &&
-          simulationSettings.get('gravityEnabled', false) is bool && 
+          simulationSettings.keys().hasOnly(['layoutSetId', 'gravityEnabled', 'allowedBlockLayoutIds']) &&
+          simulationSettings.get('gravityEnabled', false) is bool &&
+          simulationSettings.get('layoutSetId', '') is string && simulationSettings.get('layoutSetId', '').size() < 100 &&
           allowedBlockLayoutIds is list &&
           allowedBlockLayoutIds.size() < 4 &&
           (allowedBlockLayoutIds.size() < 1 || allowedBlockLayoutIds[0] is string) &&

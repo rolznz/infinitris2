@@ -50,8 +50,6 @@ export abstract class BaseRenderer implements IRenderer {
   protected _hasScrollY: boolean;
   protected _hasScrollX: boolean;
   protected _floorHeight: number;
-  protected _lastClampedCameraY: number | undefined;
-  protected _clampedCameraY: number;
   protected _clientApiConfig: ClientApiConfig;
   protected _rendererQuality: RendererQuality | undefined;
 
@@ -85,7 +83,7 @@ export abstract class BaseRenderer implements IRenderer {
     this._hasScrollX = false;
     this._hasScrollY = false;
     this._floorHeight = 0;
-    this._clampedCameraY = 0;
+    //this._clampedCameraY = 0;
   }
 
   get simulation(): ISimulation | undefined {
@@ -184,6 +182,12 @@ export abstract class BaseRenderer implements IRenderer {
     );
   }
 
+  /**
+   * Wraps objects based on the camera position so that the world is seamless
+   * This method only works for objects smaller than the grid size. For larger objects, set ignoreVisibility to true on the container.
+   * @param x
+   * @param ignoreVisibility
+   */
   getWrappedX(x: number, ignoreVisibility = false): number {
     // TODO: replace while loops with single operation
     const wrapSize = this._gridWidth;
@@ -239,6 +243,7 @@ export abstract class BaseRenderer implements IRenderer {
 
     // figure out the floor beneath the block and clamp the camera
     // otherwise the camera will scroll down unnecessarily
+    // TODO: this is not very smooth, it should probably be based on an average of cells around the block
     let unpassableCellHeight = this._gridHeight;
     if (this._simulation?.followingPlayer?.block) {
       let floorHeightBeneathBlock = this._simulation.grid.numRows - 1;
@@ -250,37 +255,34 @@ export abstract class BaseRenderer implements IRenderer {
           }
         }
       }
-      unpassableCellHeight = floorHeightBeneathBlock * this._cellSize;
+      unpassableCellHeight =
+        Math.min(
+          Math.max(
+            floorHeightBeneathBlock,
+            this._simulation.followingPlayer.block.cells[0].row +
+              Math.floor(minPortraitCellCount * 0.25)
+          ),
+          this._simulation.grid.numRows
+        ) * this._cellSize;
       console.log(floorHeightBeneathBlock);
     }
 
     // clamp the camera to fit within the grid
-    this._clampedCameraY = Math.min(
-      Math.max(
-        this._camera.y,
-        -(
-          unpassableCellHeight -
-          this._app.renderer.height +
-          this._visibilityY +
-          this._calculateFloorHeight()
-        )
-      ),
-      0
+    this._camera.clampY(
+      0,
+      -(
+        unpassableCellHeight -
+        this._app.renderer.height +
+        this._visibilityY +
+        this._calculateFloorHeight()
+      )
     );
-    if (this._lastClampedCameraY !== undefined) {
-      this._clampedCameraY = interpolate(
-        this._lastClampedCameraY,
-        this._clampedCameraY,
-        0.05
-      );
-    }
-    this._lastClampedCameraY = this._clampedCameraY;
 
     if (this._hasScrollX) {
       this._world.x = this._camera.x + this._visibilityX;
     }
     if (this._hasScrollY) {
-      this._world.y = this._clampedCameraY + this._visibilityY;
+      this._world.y = this._camera.y + this._visibilityY;
     }
   }
 

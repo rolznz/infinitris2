@@ -158,7 +158,7 @@ export default class MinimalRenderer extends BaseRenderer {
       this._cellSize,
       this._visibilityX,
       this._visibilityY,
-      this._clampedCameraY
+      this._camera.y
     );
     if (this._hasScrollX) {
       if (!this._hasShadows) {

@@ -374,7 +374,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._cellSize,
       this._visibilityX,
       this._visibilityY,
-      this._clampedCameraY
+      this._camera.y
     );
 
     if (this._hasScrollX) {
@@ -383,7 +383,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._worldBackground.update(
         this._hasScrollX,
         this._hasScrollY,
-        this._clampedCameraY +
+        this._camera.y +
           Math.max(
             this._gridHeight - this._app.renderer.height + this._visibilityY,
             0
@@ -1175,7 +1175,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._cellSize,
       this._visibilityX,
       this._visibilityY,
-      this._clampedCameraY
+      this._camera.y
     );
 
     this._gridFloor.resize(this._floorHeight);

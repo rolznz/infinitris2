@@ -1,3 +1,5 @@
+import { interpolate } from '@core/utils/interpolate';
+
 const cameraDrag = 0.25;
 const cameraSpeed = 0.02;
 
@@ -11,9 +13,16 @@ export default class Camera {
   private _dy!: number;
   private _followingId?: number;
   private _isDemo: boolean;
+  private _clampTop: number;
+  private _clampBottom: number;
+  //private _lastClampedCameraY: number | undefined;
+  //private _clampedCameraY: number;
+
   constructor(isDemo = false) {
     this.reset();
     this._isDemo = isDemo;
+    this._clampTop = 0;
+    this._clampBottom = 0;
   }
 
   get x(): number {
@@ -21,6 +30,22 @@ export default class Camera {
   }
   get y(): number {
     return this._isDemo ? this._y : Math.round(this._y);
+  }
+
+  clampY(top: number, bottom: number) {
+    this._clampTop = top;
+    this._clampBottom = bottom;
+    /*if (this._y > top) {
+      this._y = interpolate(this._y, top, cameraSpeed);
+      this._dy = this._y;
+    }
+
+    if (this._y < bottom) {
+      this._y = interpolate(this._y, bottom, cameraSpeed);
+      this._dy = this._y;
+    }*/
+
+    //this._y = Math.min(Math.max(this._y, bottom), top);
   }
 
   bump(x: number, y: number) {
@@ -56,6 +81,7 @@ export default class Camera {
   }
 
   update(delta: number) {
+    this._dy = Math.min(Math.max(this._dy, this._clampBottom), this._clampTop);
     this._vx *= 1 - Math.min(cameraDrag * delta, 1);
     this._vy *= 1 - Math.min(cameraDrag * delta, 1);
 

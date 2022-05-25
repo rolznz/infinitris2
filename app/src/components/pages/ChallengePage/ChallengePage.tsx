@@ -80,9 +80,8 @@ export default function ChallengePage() {
   const { preferredInputMethod, controls_keyboard, hasSeenAllSet, readOnly } =
     user;
 
-  const isEditingChallenge = useChallengeEditorStore(
-    (store) => store.isEditing
-  );
+  const isEditingChallenge =
+    useChallengeEditorStore((store) => store.isEditing) && isTest;
 
   // TODO: update (see SinglePlayer/Room page)
   const player: Partial<NetworkPlayerInfo> = React.useMemo(

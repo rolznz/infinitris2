@@ -7,29 +7,32 @@ export default class MouseInput {
   private _screenPositionToCell: ScreenPositionToCell;
   private _mouseButtonDown: number | undefined;
   private _currentCell: ICell | undefined;
+  private _lastPointerEvent: PointerEvent | undefined;
+  private _pointerDragDistance: number;
 
   constructor(
     fireAction: InputActionListener,
     screenPositionToCell: ScreenPositionToCell
   ) {
     this._mouseButtonDown = undefined;
+    this._pointerDragDistance = 0;
     this._fireAction = fireAction;
     this._screenPositionToCell = screenPositionToCell;
     this._getCanvas().addEventListener('mousedown', this._onMouseDown);
     this._getCanvas().addEventListener('mousemove', this._onMouseMove);
     this._getCanvas().addEventListener('mouseup', this._onMouseUp);
-    this._getCanvas().addEventListener('pointerdown', this._onMouseDown);
-    this._getCanvas().addEventListener('pointermove', this._onMouseMove);
-    this._getCanvas().addEventListener('pointerup', this._onMouseUp);
+    this._getCanvas().addEventListener('pointerdown', this._onPointerDown);
+    this._getCanvas().addEventListener('pointermove', this._onPointerMove);
+    this._getCanvas().addEventListener('pointerup', this._onPointerUp);
     this._getCanvas().addEventListener('contextmenu', this._disableContextMenu);
   }
   destroy() {
     this._getCanvas()?.removeEventListener('mousedown', this._onMouseDown);
     this._getCanvas()?.removeEventListener('mousemove', this._onMouseMove);
     this._getCanvas()?.removeEventListener('mouseup', this._onMouseUp);
-    this._getCanvas()?.removeEventListener('pointerdown', this._onMouseDown);
-    this._getCanvas()?.removeEventListener('pointermove', this._onMouseMove);
-    this._getCanvas()?.removeEventListener('pointerup', this._onMouseUp);
+    this._getCanvas()?.removeEventListener('pointerdown', this._onPointerDown);
+    this._getCanvas()?.removeEventListener('pointermove', this._onPointerMove);
+    this._getCanvas()?.removeEventListener('pointerup', this._onPointerUp);
     this._getCanvas()?.removeEventListener(
       'contextmenu',
       this._disableContextMenu
@@ -49,7 +52,7 @@ export default class MouseInput {
       const currentCell = this._screenPositionToCell(event.x, event.y);
       if (currentCell !== this._currentCell) {
         this._fireAction({
-          type: HardCodedInputAction.MouseClick,
+          type: HardCodedInputAction.MouseEvent,
           data: {
             cell: currentCell,
             event,
@@ -65,7 +68,7 @@ export default class MouseInput {
     this._currentCell = this._screenPositionToCell(event.x, event.y);
     this._mouseButtonDown = event.button;
     this._fireAction({
-      type: HardCodedInputAction.MouseClick,
+      type: HardCodedInputAction.MouseEvent,
       data: {
         cell: this._currentCell,
         event,
@@ -75,6 +78,48 @@ export default class MouseInput {
   };
 
   private _onMouseUp = (event: MouseEvent) => {
+    this._mouseButtonDown = undefined;
+  };
+
+  private _onPointerMove = (event: PointerEvent) => {
+    if (this._mouseButtonDown !== undefined && this._lastPointerEvent) {
+      this._pointerDragDistance += Math.sqrt(
+        Math.pow(event.x - this._lastPointerEvent.x, 2) +
+          Math.pow(event.y - this._lastPointerEvent.y, 2)
+      );
+      this._fireAction({
+        type: HardCodedInputAction.PointerDrag,
+        data: {
+          dx: event.x - this._lastPointerEvent.x,
+          dy: event.y - this._lastPointerEvent.y,
+        },
+      });
+    }
+    this._lastPointerEvent = event;
+  };
+
+  private _onPointerDown = (event: PointerEvent) => {
+    this._currentCell = this._screenPositionToCell(event.x, event.y);
+    this._mouseButtonDown = event.button;
+    this._lastPointerEvent = event;
+    this._pointerDragDistance = 0;
+  };
+
+  private _onPointerUp = (event: PointerEvent) => {
+    if (this._mouseButtonDown !== undefined && this._pointerDragDistance < 10) {
+      const currentCell = this._screenPositionToCell(event.x, event.y);
+      if (currentCell === this._currentCell) {
+        this._fireAction({
+          type: HardCodedInputAction.MouseEvent,
+          data: {
+            cell: currentCell,
+            event,
+            button: this._mouseButtonDown,
+          },
+        });
+        this._currentCell = currentCell;
+      }
+    }
     this._mouseButtonDown = undefined;
   };
 }

@@ -13,6 +13,7 @@ import InputAction, {
   InputActionWithData,
   KeyPressActionWithData,
   MouseClickActionWithData,
+  PointerDragActionWithData,
 } from '@models/InputAction';
 import ISimulation from '@models/ISimulation';
 import { stringifyGrid } from '@models/util/stringifyGrid';
@@ -85,7 +86,7 @@ export class ChallengeEditor implements IChallengeEditor {
       return;
     }
     if (
-      action.type === HardCodedInputAction.MouseClick &&
+      action.type === HardCodedInputAction.MouseEvent &&
       this._isEditing /** || editWhilePlayingEnabled (Desktop only) */
     ) {
       const mouseClickAction = action as MouseClickActionWithData;
@@ -110,6 +111,15 @@ export class ChallengeEditor implements IChallengeEditor {
 
     /*if (this._isEditing) {
     }*/
+
+    if (action.type === HardCodedInputAction.PointerDrag && this._isEditing) {
+      const speed = 1;
+      const pointerDragActionWithData = action as PointerDragActionWithData;
+      this._renderer!.camera.bump(
+        pointerDragActionWithData.data.dx * -speed,
+        pointerDragActionWithData.data.dy * -speed
+      );
+    }
 
     if (action.type === HardCodedInputAction.KeyDown) {
       const keyPressActionWithData = action as KeyPressActionWithData;

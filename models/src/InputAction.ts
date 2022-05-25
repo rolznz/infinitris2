@@ -12,18 +12,26 @@ export enum CustomizableInputAction {
 }
 
 export enum HardCodedInputAction {
-  MouseClick = 'MouseClick',
+  MouseEvent = 'MouseEvent',
+  PointerDrag = 'PointerDrag',
   KeyDown = 'KeyDown',
 }
 
 type InputAction = CustomizableInputAction | HardCodedInputAction;
 
 export type MouseClickActionWithData = {
-  type: HardCodedInputAction.MouseClick;
+  type: HardCodedInputAction.MouseEvent;
   data: {
     cell: ICell | undefined;
     event: MouseEvent;
     button: number;
+  };
+};
+export type PointerDragActionWithData = {
+  type: HardCodedInputAction.PointerDrag;
+  data: {
+    dx: number;
+    dy: number;
   };
 };
 export type KeyPressActionWithData = {
@@ -32,6 +40,7 @@ export type KeyPressActionWithData = {
 };
 export type InputActionWithData =
   | MouseClickActionWithData
+  | PointerDragActionWithData
   | KeyPressActionWithData
   | { type: InputAction };
 

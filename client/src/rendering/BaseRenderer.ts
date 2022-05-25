@@ -23,6 +23,10 @@ import { ScreenPositionToCell } from '@src/input/Input';
 import { wrap } from '@core/utils/wrap';
 import { interpolate } from '@core/utils/interpolate';
 
+export type Wrappable = {
+  ignoreVisibility: boolean;
+};
+
 const idealCellSize = 38;
 const minLandscapeCellCount = 18;
 const minPortraitCellCount = 14; // TODO
@@ -108,6 +112,10 @@ export abstract class BaseRenderer implements IRenderer {
     return this._gridHeight;
   }
 
+  get camera(): Camera {
+    return this._camera;
+  }
+
   abstract create(): void;
   abstract destroy(): void;
   abstract rerenderGrid(): void;
@@ -170,13 +178,18 @@ export abstract class BaseRenderer implements IRenderer {
   }
 
   wrapObject(child: PIXI.DisplayObject) {
-    child.x = this.getWrappedX(child.x);
+    child.x = this.getWrappedX(
+      child.x,
+      (child as any as Wrappable).ignoreVisibility
+    );
   }
 
-  getWrappedX(x: number): number {
+  getWrappedX(x: number, ignoreVisibility = false): number {
     // TODO: replace while loops with single operation
     const wrapSize = this._gridWidth;
-    const minVisibilityX = Math.min(this._visibilityX, this._gridWidth);
+    const minVisibilityX = ignoreVisibility
+      ? this._gridWidth
+      : Math.min(this._visibilityX, this._gridWidth);
     let maxIterations = 1000;
     while (x + this._cellSize < -this._camera.x - minVisibilityX) {
       x += wrapSize;

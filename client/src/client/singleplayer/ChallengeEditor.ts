@@ -22,7 +22,7 @@ import { BaseRenderer } from '@src/rendering/BaseRenderer';
 export class ChallengeEditor implements IChallengeEditor {
   private _isEditing: boolean;
   private _simulation?: ISimulation;
-  //private _renderer?: BaseRenderer;
+  private _renderer?: BaseRenderer;
   private _client: ChallengeClient;
   private _challengeCellType: ChallengeCellType;
   private _eventListeners: Partial<IChallengeEditorEventListener>[];
@@ -76,9 +76,9 @@ export class ChallengeEditor implements IChallengeEditor {
     this._simulation = simulation;
   }
 
-  // set renderer(renderer: BaseRenderer) {
-  //   this._renderer = renderer;
-  // }
+  set renderer(renderer: BaseRenderer) {
+    this._renderer = renderer;
+  }
 
   _actionListener = (action: InputActionWithData) => {
     if (!this._simulation) {
@@ -112,21 +112,20 @@ export class ChallengeEditor implements IChallengeEditor {
     }*/
 
     if (action.type === HardCodedInputAction.KeyDown) {
+      const keyPressActionWithData = action as KeyPressActionWithData;
       if (this._isEditing) {
-        /*if (keyPressActionWithData.data.key === 'ArrowUp' || keyPressActionWithData.data.key === 'ArrowDown') {
-          const speed = 100;
-          this._renderer.bumpPosition(
+        const speed = 100;
+        if (
+          keyPressActionWithData.data.key === 'ArrowUp' ||
+          keyPressActionWithData.data.key === 'ArrowDown'
+        ) {
+          this._renderer!.camera.bumpPosition(
             0,
-            keyPressActionWithData.data.key === 'ArrowUp'
-              ? speed
-              : action.type === CustomizableInputAction.RotateClockwise
-              ? -speed
-              : 0
+            keyPressActionWithData.data.key === 'ArrowUp' ? speed : -speed
           );
-        }*/
+        }
       }
 
-      const keyPressActionWithData = action as KeyPressActionWithData;
       if (
         keyPressActionWithData.data.ctrlKey &&
         keyPressActionWithData.data.shiftKey &&

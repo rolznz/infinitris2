@@ -30,7 +30,7 @@ import { WorldType, WorldVariation } from '@models/WorldType';
 import { GridLines } from '@src/rendering/renderers/infinitris2/GridLines';
 import { ConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes/ConquestRenderer';
 import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GameModeRenderer';
-import { BaseRenderer } from '@src/rendering/BaseRenderer';
+import { BaseRenderer, Wrappable } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
 import { wrap } from '@core/utils/wrap';
@@ -151,7 +151,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _isDemo: boolean;
   private _gridLineType: GridLineType | undefined;
   private _challengeEditorEnabled: boolean;
-  private _challengeEditorGuide: PIXI.Graphics | undefined;
+  private _challengeEditorGuide: IRenderableEntity<PIXI.Graphics> | undefined;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -268,7 +268,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
 
     if (this._challengeEditorEnabled) {
-      this._challengeEditorGuide = new PIXI.Graphics();
+      this._challengeEditorGuide = {
+        container: new PIXI.Container(),
+        children: [],
+      };
+      (
+        this._challengeEditorGuide.container as any as Wrappable
+      ).ignoreVisibility = true;
     }
 
     document.body.appendChild(this._app.view);
@@ -558,7 +564,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._app.stage.addChild(...this._virtualGestureSprites);
     }
     if (this._challengeEditorGuide) {
-      this._world.addChild(this._challengeEditorGuide);
+      this._world.addChild(this._challengeEditorGuide.container);
     }
 
     this._resize();
@@ -1222,19 +1228,30 @@ export default class Infinitris2Renderer extends BaseRenderer {
       );
       this._world.mask = PIXI.Sprite.from(texture);
       this._shadowGradientGraphics.cacheAsBitmap = true;
+    }
+    if (this._challengeEditorGuide) {
+      this._challengeEditorGuide.container.removeChildren();
+      this._challengeEditorGuide.children = [];
+      this._challengeEditorGuide.container.x = 0;
+      this._challengeEditorGuide.container.y = 0;
+      this.renderCopies(
+        this._challengeEditorGuide,
+        1,
+        (graphics, shadowIndexWithDirection) => {
+          graphics.clear();
+          graphics.beginFill(0xaaffff, 0.25);
+          graphics.lineStyle(this._cellSize * 0.1, 0x00ffff);
+          graphics.drawRect(0, 0, this._gridWidth, this._gridHeight);
 
-      if (this._challengeEditorGuide) {
-        this._challengeEditorGuide.clear();
-        this._challengeEditorGuide.beginFill(0xaaffff, 0.25);
-        this._challengeEditorGuide.lineStyle(this._cellSize * 0.1, 0x00ffff);
-        this._challengeEditorGuide.drawRect(
-          0,
-          0,
-          this._gridWidth,
-          this._gridHeight
-        );
-        this._challengeEditorGuide.position.set(0, 0);
-      }
+          const shadowX = shadowIndexWithDirection * this._gridWidth;
+          graphics.position.set(shadowX, 0);
+        },
+        () => {
+          const graphics = new PIXI.Graphics();
+          this._challengeEditorGuide!.container.addChild(graphics);
+          return graphics;
+        }
+      );
     }
   };
 

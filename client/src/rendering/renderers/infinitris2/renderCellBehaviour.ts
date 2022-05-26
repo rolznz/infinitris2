@@ -33,28 +33,13 @@ export function renderCellBehaviour(
         );
         break;
       case CellType.Wafer:
-        graphics.beginFill(color, Math.min(opacity, 1));
-
-        graphics.drawRect(
-          0,
-          (cellSize * 1.5) / 8,
-          cellSize,
-          (cellSize * 0.5) / 8
-        );
-
-        graphics.drawRect(
-          0,
-          (cellSize * 4) / 8,
-          cellSize,
-          (cellSize * 0.5) / 8
-        );
-
-        graphics.drawRect(
-          0,
-          (cellSize * 6) / 8,
-          cellSize,
-          (cellSize * 0.5) / 8
-        );
+        graphics.beginFill(color);
+        graphics.drawRect(0, 0, cellSize, cellSize * 0.3);
+        graphics.drawRect(0, cellSize * 0.4, cellSize, cellSize * 0.2);
+        graphics.drawRect(0, cellSize * 0.7, cellSize, cellSize * 0.3);
+        graphics.beginFill(0x5c4033);
+        graphics.drawRect(0, cellSize * 0.3, cellSize, cellSize * 0.1);
+        graphics.drawRect(0, cellSize * 0.6, cellSize, cellSize * 0.1);
 
         break;
       case CellType.Key:

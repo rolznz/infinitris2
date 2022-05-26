@@ -169,7 +169,13 @@ export function ChallengeEditorSettingsForm({
             render={({ field }) => (
               <FormControl variant="standard">
                 <InputLabel>Layout Set</InputLabel>
-                <Select {...field} placeholder={defaultLayoutSet.name}>
+                <Select
+                  {...field}
+                  displayEmpty
+                  renderValue={(value) =>
+                    value?.length ? value : defaultLayoutSet.name
+                  }
+                >
                   {blockLayoutSets.map((set) => (
                     <MenuItem key={set.id} value={set.id}>
                       {set.name}

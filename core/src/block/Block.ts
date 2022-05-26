@@ -441,6 +441,9 @@ export default class Block implements IBlock {
       if (this.isReadyToFall) {
         fell = this.fall();
       }
+      if (!this._isAlive) {
+        break;
+      }
       let removed = false;
       if (!this._simulation.isNetworkClient && !fell && this.isReadyToLock) {
         if (

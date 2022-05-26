@@ -80,6 +80,12 @@ export default class ChallengeClient
   private _checkChallengeStatus() {
     if (this.getChallengeAttempt().status !== 'pending') {
       this._simulation.stopInterval();
+      if (this.getChallengeAttempt().status === 'failed') {
+        setTimeout(() => {
+          this.restart();
+          this._simulation.startInterval();
+        }, 1000);
+      }
     }
   }
 

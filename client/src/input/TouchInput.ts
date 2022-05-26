@@ -84,7 +84,7 @@ export default class TouchInput {
       } else {
         this._fireAction({ type: CustomizableInputAction.RotateClockwise });
       }
-    } else if (Math.abs(totalPointerChangeY) > this._movementThreshold) {
+    } else if (totalPointerChangeY < -this._movementThreshold) {
       this._fireAction({ type: CustomizableInputAction.Drop });
     }
   };

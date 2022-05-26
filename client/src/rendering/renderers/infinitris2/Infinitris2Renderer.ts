@@ -1194,7 +1194,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._shadowGradientGraphics.cacheAsBitmap = false;
     }
     this._shadowGradientGraphics?.clear();
-    if (this._shadowGradientGraphics && this._hasShadows) {
+    if (
+      this._shadowGradientGraphics &&
+      this._hasShadows &&
+      this._shadowCount > 1
+    ) {
       // thanks to https://gist.github.com/gre/1650294
       const easeInOutQuad = (t: number) =>
         t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;

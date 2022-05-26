@@ -2,6 +2,7 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import CellType from '@models/CellType';
 import ICell from '@models/ICell';
 import ChallengeCellType from '@models/ChallengeCellType';
+import IBlock from '@models/IBlock';
 
 export default class DeadlyBehaviour implements ICellBehaviour {
   private _cell: ICell;
@@ -10,6 +11,10 @@ export default class DeadlyBehaviour implements ICellBehaviour {
   }
   step(): void {
     this._cell.blocks.forEach((block) => block.die());
+  }
+
+  onAddBlock(block: IBlock) {
+    block.die();
   }
 
   get alpha(): number {

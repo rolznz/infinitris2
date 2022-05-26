@@ -358,6 +358,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
     this.removeBlock();
     this._spawnLocationCell = undefined;
+    this._lastPlacementColumn = block.column;
   }
 
   /**
@@ -373,7 +374,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
    * @inheritdoc
    */
   onBlockDestroyed(block: IBlock) {
-    this._lastPlacementColumn = block.column;
     this._eventListeners.forEach((listener) =>
       listener.onBlockDestroyed(block)
     );

@@ -19,6 +19,12 @@ export function getCellFillColor(cellType: ChallengeCellType): string {
       return '#ff0';
     case ChallengeCellType.Finish:
       return '#aaffaa';
+    case ChallengeCellType.SpawnLocation:
+      return '#ffffff';
+    case ChallengeCellType.RockGenerator:
+      return '#49311d';
+    case ChallengeCellType.Wafer:
+      return '#d4bbb1';
     default:
       return '#aaaaaa';
   }

@@ -19,10 +19,6 @@ export type LaunchOptions = WithControls & {
   preferredInputMethod?: InputMethod;
   player?: Partial<NetworkPlayerInfo>;
   rendererType?: RendererType;
-  //otherPlayers?: IPlayer[]; // AI & network players
-  numBots?: number;
-  botReactionDelay?: number;
-  botRandomReactionDelay?: number;
   gridNumRows?: number;
   gridNumColumns?: number;
   simulationSettings?: SimulationSettings;

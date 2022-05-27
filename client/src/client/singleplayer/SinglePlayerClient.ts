@@ -117,8 +117,8 @@ export default class SinglePlayerClient
       options.controls_gamepad
     );
 
-    if (options.numBots) {
-      for (let i = 0; i < options.numBots; i++) {
+    if (options.simulationSettings?.botSettings?.numBots) {
+      for (let i = 0; i < options.simulationSettings.botSettings.numBots; i++) {
         // find a random bot color - unique until there are more players than colors
         // TODO: move to simulation and notify player of color switch if their color is already in use
 
@@ -139,9 +139,11 @@ export default class SinglePlayerClient
               : PlayerStatus.ingame,
             character.name!,
             stringToHex(character.color!),
-            (options.botReactionDelay || 20) +
+            (options.simulationSettings?.botSettings.botReactionDelay || 20) + // TODO: consider removing bot parameters and retrieving from simulation
               Math.floor(
-                Math.random() * (options.botRandomReactionDelay || 20)
+                Math.random() *
+                  (options.simulationSettings?.botSettings
+                    .botRandomReactionDelay || 20)
               ),
             character.patternFilename,
             character.id!.toString()

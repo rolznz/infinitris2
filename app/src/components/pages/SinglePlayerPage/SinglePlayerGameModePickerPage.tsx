@@ -29,7 +29,7 @@ export function SinglePlayerGameModePickerPage() {
           gameModeType,
           key: gameModeType,
           worldType: getWorldType(gameModeType),
-          worldVariation: 0,
+          worldVariation: '0',
         }))
       : [
           {

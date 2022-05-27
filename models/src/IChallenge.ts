@@ -6,6 +6,7 @@ import IEntity, {
   IEntityReadOnlyProperties,
   Updatable,
 } from './IEntity';
+import { WorldType, WorldVariation } from '@models/WorldType';
 
 export interface IRateable {
   readonly numRatings: number;
@@ -34,6 +35,9 @@ export interface IChallenge extends IEntity {
   //readonly firstBlockLayoutId?: string;
   //readonly firstBlockColumn?: number;
   readonly grid: string;
+
+  readonly worldType?: WorldType;
+  readonly worldVariation?: WorldVariation;
 
   readonly finishCriteria?: {
     readonly maxBlocksPlaced?: number;

@@ -15,7 +15,6 @@ import {
   ISimulation,
   charactersPath,
   WorldVariation,
-  WorldVariationValues,
 } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
@@ -23,7 +22,10 @@ import { useCollection, useDocument } from 'swr-firestore';
 import useAppStore from '@/state/AppStore';
 import { useUser } from '@/components/hooks/useUser';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
-import { playGameMusic, TrackNumberValues } from '@/sound/SoundManager';
+import {
+  playGameMusic,
+  worldVariationToTrackNumber,
+} from '@/sound/SoundManager';
 import { useHistory } from 'react-router-dom';
 import useSinglePlayerOptionsStore, {
   SinglePlayerOptionsFormData,
@@ -56,9 +58,6 @@ export default function SinglePlayerPage() {
     useSearchParam('settings') || encodeURIComponent(JSON.stringify({}))
   ) as SinglePlayerOptionsFormData;
 
-  const numBots = settings.numBots;
-  const botReactionDelay = settings.botReactionDelay;
-  const botRandomReactionDelay = settings.botRandomReactionDelay;
   const gridNumRows = settings.gridNumRows;
   const gridNumColumns = settings.gridNumColumns;
   const simulationSettings = settings.simulationSettings;
@@ -66,8 +65,7 @@ export default function SinglePlayerPage() {
   const worldVariation: WorldVariation = settings.worldVariation;
   const spectate = settings.spectate;
   const isDemo = settings.isDemo;
-  const trackNumber =
-    TrackNumberValues[WorldVariationValues.indexOf(settings.worldVariation)];
+  const trackNumber = worldVariationToTrackNumber(worldVariation);
 
   const user = useUser();
   const nickname = (user as LocalUser).nickname;
@@ -103,9 +101,6 @@ export default function SinglePlayerPage() {
         worldVariation,
         controls_keyboard,
         controls_gamepad,
-        numBots,
-        botReactionDelay,
-        botRandomReactionDelay,
         gridNumRows,
         gridNumColumns,
         rendererQuality,
@@ -149,9 +144,6 @@ export default function SinglePlayerPage() {
     controls_keyboard,
     controls_gamepad,
     hasLoaded,
-    numBots,
-    botReactionDelay,
-    botRandomReactionDelay,
     client,
     gridNumRows,
     gridNumColumns,

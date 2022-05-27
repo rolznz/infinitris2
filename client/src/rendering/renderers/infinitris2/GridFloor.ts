@@ -15,7 +15,7 @@ export class GridFloor {
   private _glowSprite!: PIXI.Sprite;
   private _app: PIXI.Application;
   private _worldConfig: WorldBackgroundConfig;
-  private _worldVariation: number;
+  private _worldVariation: WorldVariation;
   private _enabled = true;
   private _renderer: BaseRenderer;
 
@@ -41,7 +41,7 @@ export class GridFloor {
   private _getFloorImageFilename(): string {
     // TODO: copied from world background
     let floorImageName = `${imagesDirectory}/worlds/${this._worldConfig.worldType}/theme_${this._worldConfig.worldType}_floor`;
-    if (this._worldVariation !== 0) {
+    if (this._worldVariation !== '0') {
       floorImageName += '_variation' + this._worldVariation;
     }
     floorImageName += '.png';

@@ -6,7 +6,11 @@ import {
   WorldBackgroundConfig,
 } from './WorldBackgroundConfig';
 import { RendererQuality } from '@models/RendererQuality';
-import { WorldType, WorldVariation } from '@models/WorldType';
+import {
+  WorldType,
+  WorldVariation,
+  WorldVariationValues,
+} from '@models/WorldType';
 import { resizeTexture } from '@src/rendering/resizeTexture';
 import { generateGapTexture } from '@src/rendering/generateGapTexture';
 import { WrappedSprite } from '@src/rendering/WrappedSprite';
@@ -29,7 +33,7 @@ export class WorldBackground {
     app: PIXI.Application,
     camera: Camera,
     worldType: WorldType = 'grass',
-    worldVariation: WorldVariation = 0,
+    worldVariation: WorldVariation = '0',
     quality: RendererQuality | undefined
   ) {
     this._app = app;
@@ -52,7 +56,9 @@ export class WorldBackground {
       ? stringToHex(
           rotateColor(
             hexToString(this._worldConfig.blockOutlineColor),
-            getVariationHueRotation(worldVariation)
+            getVariationHueRotation(
+              WorldVariationValues.indexOf(worldVariation)
+            )
           )
         )
       : 0;
@@ -64,7 +70,7 @@ export class WorldBackground {
 
   private _getLayerImage(layer: WorldBackgroundLayerConfig): string {
     const layerFilenameParts = layer.filename.split('.');
-    if (this._variation !== 0) {
+    if (this._variation !== '0') {
       layerFilenameParts[0] += '_variation' + this._variation;
     }
     // TODO: low and high quality versions

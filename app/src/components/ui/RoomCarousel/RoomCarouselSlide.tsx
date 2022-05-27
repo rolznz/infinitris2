@@ -6,6 +6,7 @@ import {
   getVariationHueRotation,
   WorldType,
   WorldVariation,
+  WorldVariationValues,
 } from 'infinitris2-models';
 import grassImage from '@/components/ui/RoomCarousel/assets/carousel/grass_desktop.svg';
 import desertImage from '@/components/ui/RoomCarousel/assets/carousel/desert_desktop.svg';
@@ -168,8 +169,9 @@ function getBackground(
       throw new Error('Unsupported world type: ' + worldType);
   }
 
-  const hueRotation = getVariationHueRotation(worldVariation);
-  //console.log('index', index, 'hueMultiplier', hueVariation);
+  const hueRotation = getVariationHueRotation(
+    WorldVariationValues.indexOf(worldVariation)
+  );
 
   return `url(${image}); filter: hue-rotate(${hueRotation}deg);`;
 }

@@ -151,7 +151,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     teachControls: boolean = false,
     rendererQuality?: RendererQuality,
     worldType: WorldType = 'grass',
-    worldVariation: WorldVariation = 0,
+    worldVariation: WorldVariation = '0',
     useFallbackUI = false,
     isDemo = false,
     gridLineType?: GridLineType,

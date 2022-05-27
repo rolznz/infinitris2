@@ -212,37 +212,49 @@ export function SinglePlayerOptionsPage() {
           </FlexBox>
           <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
             <Controller
-              name="numBots"
+              name="simulationSettings.botSettings.numBots"
               control={control}
               render={({ field }) => (
                 <FormControl variant="standard">
                   <InputLabel>Number of Bots</InputLabel>
                   <Input {...field} />
-                  <p>{errors.numBots?.message}</p>
+                  <p>
+                    {errors.simulationSettings?.botSettings?.numBots?.message}
+                  </p>
                 </FormControl>
               )}
             />
 
             <Controller
-              name="botReactionDelay"
+              name="simulationSettings.botSettings.botReactionDelay"
               control={control}
               render={({ field }) => (
                 <FormControl variant="standard">
                   <InputLabel>Bot Reaction Delay</InputLabel>
                   <Input {...field} />
-                  <p>{errors.botReactionDelay?.message}</p>
+                  <p>
+                    {
+                      errors.simulationSettings?.botSettings?.botReactionDelay
+                        ?.message
+                    }
+                  </p>
                 </FormControl>
               )}
             />
 
             <Controller
-              name="botRandomReactionDelay"
+              name="simulationSettings.botSettings.botRandomReactionDelay"
               control={control}
               render={({ field }) => (
                 <FormControl variant="standard">
                   <InputLabel>Bot Random Reaction Delay</InputLabel>
                   <Input {...field} />
-                  <p>{errors.botRandomReactionDelay?.message}</p>
+                  <p>
+                    {
+                      errors.simulationSettings?.botSettings
+                        ?.botRandomReactionDelay?.message
+                    }
+                  </p>
                 </FormControl>
               )}
             />

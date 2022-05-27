@@ -3,7 +3,11 @@
 // currently only being used for music, but even the fades don't work on ios...
 import { Howl } from 'howler';
 import useLoaderStore from '@/state/LoaderStore';
-import { WorldType } from 'infinitris2-models';
+import {
+  WorldType,
+  WorldVariation,
+  WorldVariationValues,
+} from 'infinitris2-models';
 
 const rootUrl = process.env.REACT_APP_MUSIC_ROOT_URL;
 const musicFadeTimeMs = 2000;
@@ -60,6 +64,14 @@ export function musicLoaded(): boolean {
 }
 export function soundsLoaded(): boolean {
   return !!_sounds;
+}
+
+export function worldVariationToTrackNumber(
+  worldVariation: WorldVariation | undefined
+): TrackNumber {
+  return TrackNumberValues[
+    WorldVariationValues.indexOf(worldVariation || WorldVariationValues[0])
+  ];
 }
 
 export function playGameMusic(

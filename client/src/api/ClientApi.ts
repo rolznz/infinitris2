@@ -55,15 +55,18 @@ export default class ClientApi implements IClientApi {
       const spectate = params.get('spectate') === 'true';
       const isDemo = params.get('demo') === 'true';
       const worldType = (params.get('world') as WorldType) ?? undefined;
-      const worldVariation = parseInt(
-        params.get('worldVariation') || '0'
-      ) as WorldVariation;
+      const worldVariation =
+        (params.get('worldVariation') as WorldVariation) || '0';
       const rendererType = params.get('renderer') as RendererType;
       const rendererQuality =
         (params.get('rendererQuality') as RendererQuality) || 'high';
       const gameModeType = params.get('gameMode') as GameModeType;
       const simulationSettings: SimulationSettings = {
         gameModeType,
+        botSettings: {
+          numBots,
+          botReactionDelay,
+        },
       };
 
       const gridNumColumns: number | undefined =
@@ -71,8 +74,6 @@ export default class ClientApi implements IClientApi {
 
       this.launchSinglePlayer({
         controls_keyboard: controls,
-        numBots,
-        botReactionDelay,
         spectate,
         rendererType,
         simulationSettings,

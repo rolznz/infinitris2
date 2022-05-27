@@ -33,6 +33,11 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
               useChallengeEditorStore.getState().setChallenge({
                 ...createNewChallenge(),
                 grid: challenge.data()!.grid,
+                title: challenge.data()!.title,
+                worldType: challenge.data()!.worldType,
+                worldVariation: challenge.data()!.worldVariation,
+                simulationSettings: challenge.data()!.simulationSettings,
+                // TODO: add other writable settings here (linked with form options)
               });
               history.push(Routes.createChallenge);
             }}

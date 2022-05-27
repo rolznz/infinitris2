@@ -6,9 +6,6 @@ import {
 import create from 'zustand';
 
 export type SinglePlayerOptionsFormData = {
-  numBots: number;
-  botReactionDelay: number;
-  botRandomReactionDelay: number;
   gridNumRows: number;
   gridNumColumns: number;
   spectate: boolean;
@@ -20,16 +17,13 @@ export type SinglePlayerOptionsFormData = {
 
 export const getSinglePlayerOptionsDefaultValues =
   (): SinglePlayerOptionsFormData => ({
-    numBots: 4,
-    botReactionDelay: 15,
-    botRandomReactionDelay: 25,
     gridNumRows: 16,
     gridNumColumns: 50,
     spectate: false,
     isDemo: false,
 
     worldType: 'grass',
-    worldVariation: 0,
+    worldVariation: '0',
     simulationSettings: {
       roundLength: 'medium',
       mistakeDetection: true,
@@ -37,6 +31,11 @@ export const getSinglePlayerOptionsDefaultValues =
       preventTowers: true,
       instantDrops: true,
       gameModeType: 'infinity',
+      botSettings: {
+        numBots: 4,
+        botReactionDelay: 15,
+        botRandomReactionDelay: 25,
+      },
     },
   });
 

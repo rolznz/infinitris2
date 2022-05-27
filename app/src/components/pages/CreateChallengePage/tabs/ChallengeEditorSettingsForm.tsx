@@ -9,9 +9,10 @@ import Button from '@mui/material/Button';
 import React from 'react';
 import {
   blockLayoutSets,
-  defaultLayoutSet,
   getChallengePath,
   IChallenge,
+  WorldTypeValues,
+  WorldVariationValues,
 } from 'infinitris2-models';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import FlexBox from '@/components/ui/FlexBox';
@@ -35,7 +36,10 @@ const schema = yup.object({
     .matches(/^[a-z0-9 ]*$/),
 });
 
-type SettingsFormData = Pick<IChallenge, 'title' | 'simulationSettings'>;
+type SettingsFormData = Pick<
+  IChallenge,
+  'title' | 'simulationSettings' | 'worldType' | 'worldVariation'
+>;
 
 type ChallengeEditorSettingsFormProps = {
   challenge: IChallenge;
@@ -57,15 +61,16 @@ export function ChallengeEditorSettingsForm({
     watch,
     reset,
   } = useForm<SettingsFormData>({
-    defaultValues: {
-      ...challenge,
-    },
+    defaultValues: challenge,
     resolver: yupResolver(schema),
     mode: 'onChange',
   });
 
   const watchedValues = watch();
-  const valuesSame = shallow(challenge, { ...challenge, ...watchedValues });
+  const valuesSame = shallow(challenge, {
+    ...challenge,
+    ...watchedValues,
+  });
   React.useEffect(() => {
     if (!valuesSame) {
       setChallenge({
@@ -79,7 +84,7 @@ export function ChallengeEditorSettingsForm({
   if (title.toLowerCase() !== title) {
     setValue('title', title.toLowerCase(), { shouldValidate: true });
   }
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     const existingChallenge = useChallengeEditorStore.getState().challenge;
     if (existingChallenge) {
       setChallenge({
@@ -87,7 +92,7 @@ export function ChallengeEditorSettingsForm({
         title,
       });
     }
-  }, [setChallenge, title]);
+  }, [setChallenge, title]);*/
 
   const resetChallenge = React.useCallback(() => {
     if (window.confirm('Are you sure you wish to create a new challenge?')) {
@@ -143,49 +148,76 @@ export function ChallengeEditorSettingsForm({
     <FlexBox>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FlexBox>
-          <Controller
-            name="title"
-            control={control}
-            render={({ field }) => (
-              <FormControl variant="standard" fullWidth>
-                <InputLabel>
-                  <FormattedMessage
-                    defaultMessage="Challenge Title"
-                    description="Challenge Title field label text"
+          <FlexBox justifyContent="flex-start" alignItems="flex-start" mb={2}>
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard" fullWidth>
+                  <InputLabel>
+                    <FormattedMessage
+                      defaultMessage="Challenge Title"
+                      description="Challenge Title field label text"
+                    />
+                  </InputLabel>
+                  <Input
+                    {...field}
+                    fullWidth
+                    inputProps={{ maxLength: 15, placeholder: 'New Challenge' }}
                   />
-                </InputLabel>
-                <Input
-                  {...field}
-                  fullWidth
-                  inputProps={{ maxLength: 15, placeholder: 'New Challenge' }}
-                />
-                {!!title.length && <p>{errors.title?.message}</p>}
-              </FormControl>
-            )}
-          />
-          <Controller
-            name="simulationSettings.layoutSetId"
-            control={control}
-            render={({ field }) => (
-              <FormControl variant="standard">
-                <InputLabel>Layout Set</InputLabel>
-                <Select
-                  {...field}
-                  displayEmpty
-                  renderValue={(value) =>
-                    value?.length ? value : defaultLayoutSet.name
-                  }
-                >
-                  {blockLayoutSets.map((set) => (
-                    <MenuItem key={set.id} value={set.id}>
-                      {set.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            )}
-          />
-
+                  {!!title.length && <p>{errors.title?.message}</p>}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="simulationSettings.layoutSetId"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard" fullWidth>
+                  <InputLabel>Layout Set</InputLabel>
+                  <Select {...field}>
+                    {blockLayoutSets.map((set) => (
+                      <MenuItem key={set.id} value={set.id}>
+                        {set.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="worldType"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard" fullWidth>
+                  <InputLabel>World</InputLabel>
+                  <Select {...field}>
+                    {WorldTypeValues.map((worldType) => (
+                      <MenuItem key={worldType} value={worldType}>
+                        {worldType}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="worldVariation"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard" fullWidth>
+                  <InputLabel>World Variation</InputLabel>
+                  <Select {...field}>
+                    {WorldVariationValues.map((variation) => (
+                      <MenuItem key={variation} value={variation}>
+                        {variation}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
+          </FlexBox>
           <FlexBox mt={1}>
             <Button
               type="submit"

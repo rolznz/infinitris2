@@ -14,4 +14,9 @@ export type SimulationSettings = {
   readonly roundLength?: RoundLength;
   readonly instantDrops?: boolean;
   readonly layoutSetId?: string;
+  readonly botSettings?: {
+    numBots?: number;
+    botReactionDelay?: number;
+    botRandomReactionDelay?: number;
+  };
 };

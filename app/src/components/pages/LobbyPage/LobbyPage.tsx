@@ -27,7 +27,7 @@ export default function LobbyPage() {
         name: pair.room.data().name,
         numPlayers: pair.room.data().numHumans,
         key: pair.room.id,
-        worldVariation: pair.room.data().worldVariation || 0,
+        worldVariation: pair.room.data().worldVariation || '0',
       })),
     [roomServerPairs]
   );

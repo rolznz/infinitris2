@@ -274,8 +274,8 @@ export default class ChallengeClient
       this._preferredInputMethod,
       undefined,
       undefined,
-      'desert',
-      undefined,
+      challenge.worldType,
+      challenge.worldVariation,
       undefined,
       false,
       this._launchOptions.challengeEditorSettings

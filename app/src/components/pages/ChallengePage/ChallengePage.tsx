@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import useAppStore from '../../../state/AppStore';
 import {
   ISimulationEventListener,
@@ -27,7 +26,10 @@ import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientO
 import { GameUI } from '@/components/game/GameUI';
 import useIngameStore from '@/state/IngameStore';
 import shallow from 'zustand/shallow';
-import { playGameMusic } from '@/sound/SoundManager';
+import {
+  playGameMusic,
+  worldVariationToTrackNumber,
+} from '@/sound/SoundManager';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -61,21 +63,21 @@ export default function ChallengePage() {
 
   const launchChallenge = client?.launchChallenge;
   const restartClient = client?.restartClient; // TODO: move to IClient
-  const [hasLaunched, setLaunched] = useState(false);
+  const [hasLaunched, setLaunched] = React.useState(false);
 
   const [simulation, setSimulation] = useIngameStore(
     (store) => [store.simulation, store.setSimulation],
     shallow
   );
-  const [challengeClient, setChallengeClient] = useState<
+  const [challengeClient, setChallengeClient] = React.useState<
     IChallengeClient | undefined
   >(undefined);
 
-  const [showChallengeInfo, setShowChallengeInfo] = useState(true);
-  const [challengeFailed, setChallengeFailed] = useState(false);
-  const [challengeCompleted, setChallengeCompleted] = useState(false);
+  const [showChallengeInfo, setShowChallengeInfo] = React.useState(true);
+  const [challengeFailed, setChallengeFailed] = React.useState(false);
+  const [challengeCompleted, setChallengeCompleted] = React.useState(false);
 
-  const [checkChallengeStatus, setCheckChallengeStatus] = useState(false);
+  const [checkChallengeStatus, setCheckChallengeStatus] = React.useState(false);
 
   const { preferredInputMethod, controls_keyboard, hasSeenAllSet, readOnly } =
     user;
@@ -93,9 +95,13 @@ export default function ChallengePage() {
     [readOnly?.nickname]
   );
 
-  // TODO: load challenge from firebase
+  React.useEffect(() => {
+    if (isTest && !isEditingChallenge) {
+      setShowChallengeInfo(true);
+    }
+  }, [isTest, isEditingChallenge, setShowChallengeInfo]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (challenge /*&& !requiresRedirect*/ && launchChallenge && !hasLaunched) {
       setLaunched(true);
 
@@ -148,7 +154,10 @@ export default function ChallengePage() {
           : undefined,
       });
       useChallengeEditorStore.getState().setEditor(challengeClient.editor);
-      playGameMusic('grass', '1');
+      playGameMusic(
+        challenge.worldType || 'grass',
+        worldVariationToTrackNumber(challenge.worldVariation)
+      );
 
       setChallengeClient(challengeClient);
     }
@@ -165,7 +174,7 @@ export default function ChallengePage() {
     setSimulation,
   ]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (challenge && checkChallengeStatus && challengeClient) {
       setCheckChallengeStatus(false);
       const attempt = challengeClient.getChallengeAttempt();

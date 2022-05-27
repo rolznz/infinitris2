@@ -114,7 +114,7 @@ service cloud.firestore {
       	return
           baseRequestValid() &&
           (!request.resource.data.get('isOfficial', false) || isAdmin()) &&
-          entityHasExpectedFields(['description', 'finishCriteria', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title']) &&
+          entityHasExpectedFields(['description', 'finishCriteria', 'grid', 'isMandatory', 'isOfficial', 'isPublished', 'locale', 'priority', 'simulationSettings', 'rewardCriteria', 'title', 'worldType', 'worldVariation']) &&
           title is string &&
           (title.size() == 0 || (title.size() < 21 && title.matches('[a-z0-9 ]+'))) &&
           description is string && description.size() < 280 &&
@@ -124,6 +124,8 @@ service cloud.firestore {
           getProperty('isPublished', false) is bool &&
           getProperty('locale', '') is string &&
           getProperty('priority', 0) is number &&
+          getProperty('worldType', 'grass') in ['grass', 'desert', 'volcano', 'space'] &&
+          getProperty('worldVariation', '0') in ['0', '1', '2', '3', '4', '5'] &&
           simulationSettings is map &&
           simulationSettings.keys().hasOnly(['layoutSetId', 'gravityEnabled', 'allowedBlockLayoutIds']) &&
           simulationSettings.get('gravityEnabled', false) is bool &&

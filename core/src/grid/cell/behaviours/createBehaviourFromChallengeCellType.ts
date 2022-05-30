@@ -50,19 +50,19 @@ function getBehaviour(
       return new DeadlyBehaviour(cell);
     // TODO: find way to reduce duplication
     case ChallengeCellType.RedKey:
-      return new KeyBehaviour(keyColors.redColor);
+      return new KeyBehaviour(cell, keyColors.redColor);
     case ChallengeCellType.RedLock:
       return new LockBehaviour(cell, grid, lockColors.redColor);
     case ChallengeCellType.GreenKey:
-      return new KeyBehaviour(keyColors.greenColor);
+      return new KeyBehaviour(cell, keyColors.greenColor);
     case ChallengeCellType.GreenLock:
       return new LockBehaviour(cell, grid, lockColors.greenColor);
     case ChallengeCellType.BlueKey:
-      return new KeyBehaviour(keyColors.blueColor);
+      return new KeyBehaviour(cell, keyColors.blueColor);
     case ChallengeCellType.BlueLock:
       return new LockBehaviour(cell, grid, lockColors.blueColor);
     case ChallengeCellType.YellowKey:
-      return new KeyBehaviour(keyColors.yellowColor);
+      return new KeyBehaviour(cell, keyColors.yellowColor);
     case ChallengeCellType.YellowLock:
       return new LockBehaviour(cell, grid, lockColors.yellowColor);
     case ChallengeCellType.Finish:

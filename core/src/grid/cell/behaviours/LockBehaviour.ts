@@ -5,6 +5,7 @@ import KeyBehaviour from './KeyBehaviour';
 import IGrid from '@models/IGrid';
 import { lockColors } from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
 import ChallengeCellType from '@models/ChallengeCellType';
+import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
 
 export default class LockBehaviour implements ICellBehaviour {
   private _cell: ICell;
@@ -25,12 +26,14 @@ export default class LockBehaviour implements ICellBehaviour {
   step(): void {
     this._checkLocked();
 
-    if (!this._cell.isEmpty) {
-      this._alpha = 1;
-    } else if (this._isLocked) {
+    if (this._isLocked) {
       this._alpha = Math.min(this._alpha + 0.05, 1);
     } else {
-      this._alpha = Math.max(this._alpha - 0.05, 0.2);
+      this._alpha = Math.max(this._alpha - 0.05, 0.0);
+      if (this._alpha < 0.01) {
+        this._cell.behaviour = new NormalCellBehaviour(this._cell);
+        this._cell.isEmpty = true;
+      }
     }
   }
 

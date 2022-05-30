@@ -3,11 +3,14 @@ import CellType from '@models/CellType';
 import ICell from '@models/ICell';
 import { keyColors } from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
 import ChallengeCellType from '@models/ChallengeCellType';
+import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
 
 export default class KeyBehaviour implements ICellBehaviour {
   private _color: number;
-  constructor(color: number) {
+  private _cell: ICell;
+  constructor(cell: ICell, color: number) {
     this._color = color;
+    this._cell = cell;
   }
   get color(): number {
     return this._color;
@@ -22,7 +25,11 @@ export default class KeyBehaviour implements ICellBehaviour {
   }
 
   clone(): ICellBehaviour {
-    return new KeyBehaviour(this._color);
+    return new KeyBehaviour(this._cell, this._color);
+  }
+
+  onAddBlock() {
+    this._cell.behaviour = new NormalCellBehaviour(this._cell);
   }
 
   get type(): CellType {

@@ -11,6 +11,7 @@ enum CellType {
   RockGenerator = 'RockGenerator',
   Rock = 'Rock',
   SpawnLocation = 'SpawnLocation',
+  Gesture = 'Gesture',
   // Water/Liquid?
 }
 

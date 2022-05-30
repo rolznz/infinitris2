@@ -28,7 +28,7 @@ export default class RockBehaviour implements ICellBehaviour {
         block.die();
       }
       this._remove();
-    } else if (!belowCell) {
+    } else if (!belowCell || !belowCell.isPassable) {
       this._remove();
     }
 

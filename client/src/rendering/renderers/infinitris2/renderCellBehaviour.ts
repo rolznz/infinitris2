@@ -6,7 +6,8 @@ export function renderCellBehaviour(
   behaviour: ICellBehaviour,
   isEmpty: boolean,
   graphics: PIXI.Graphics,
-  cellSize: number
+  cellSize: number,
+  challengeEditorEnabled = false
 ) {
   const color = behaviour.color;
   const opacity = 1;
@@ -31,6 +32,18 @@ export function renderCellBehaviour(
           (cellSize * 2) / 8,
           (cellSize * 2) / 8
         );
+        break;
+      case CellType.Gesture:
+        if (challengeEditorEnabled) {
+          graphics.beginFill(color);
+
+          graphics.drawRect(
+            (cellSize * 2) / 8,
+            (cellSize * 3) / 8,
+            (cellSize * 4) / 8,
+            (cellSize * 2) / 8
+          );
+        }
         break;
       case CellType.Wafer:
         graphics.beginFill(color);

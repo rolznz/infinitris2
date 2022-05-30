@@ -25,6 +25,13 @@ export function getCellFillColor(cellType: ChallengeCellType): string {
       return '#49311d';
     case ChallengeCellType.Wafer:
       return '#d4bbb1';
+    case ChallengeCellType.GestureMoveLeft:
+    case ChallengeCellType.GestureMoveRight:
+    case ChallengeCellType.GestureMoveDown:
+    case ChallengeCellType.GestureRotateClockwise:
+    case ChallengeCellType.GestureRotateAnticlockwise:
+    case ChallengeCellType.GestureDrop:
+      return '#f0f';
     default:
       return '#aaaaaa';
   }

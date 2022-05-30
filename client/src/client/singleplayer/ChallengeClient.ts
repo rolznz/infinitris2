@@ -11,7 +11,9 @@ import ISimulation from '@models/ISimulation';
 import Simulation from '@core/simulation/Simulation';
 import ChallengeCompletionStats from '@models/ChallengeCompletionStats';
 import ChallengeCellType from '@models/ChallengeCellType';
-import ControlSettings from '@models/ControlSettings';
+import ControlSettings, {
+  DEFAULT_KEYBOARD_CONTROLS,
+} from '@models/ControlSettings';
 import parseGrid from '@models/util/parseGrid';
 import tetrominoes from '@models/blockLayouts/Tetrominoes';
 import { PlayerStatus } from '@models/IPlayer';
@@ -272,7 +274,7 @@ export default class ChallengeClient
     this._renderer = new Infinitris2Renderer(
       this._clientApiConfig,
       this._preferredInputMethod,
-      undefined,
+      this._launchOptions.controls_keyboard || DEFAULT_KEYBOARD_CONTROLS,
       undefined,
       challenge.worldType,
       challenge.worldVariation,

@@ -5,7 +5,9 @@ import {
   JoinRoomResponseStatus,
 } from '@core/networking/server/IServerJoinRoomResponse';
 import ClientSocket from '@src/networking/ClientSocket';
-import ControlSettings from '@models/ControlSettings';
+import ControlSettings, {
+  DEFAULT_KEYBOARD_CONTROLS,
+} from '@models/ControlSettings';
 import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
 import ControllablePlayer from '@src/ControllablePlayer';
 import IClient from '@models/IClient';
@@ -74,7 +76,7 @@ export default class NetworkClient
     this._renderer = new Infinitris2Renderer(
       this._clientApiConfig,
       undefined,
-      undefined,
+      this._launchOptions.controls_keyboard || DEFAULT_KEYBOARD_CONTROLS,
       undefined,
       this._launchOptions.worldType,
       this._launchOptions.worldVariation,

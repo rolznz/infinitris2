@@ -32,6 +32,7 @@ import { LineClearingIndicator } from '@src/rendering/renderers/infinitris2/Line
 import { GameModeEvent } from '@models/GameModeEvent';
 import { renderCellBehaviour } from '@src/rendering/renderers/infinitris2/renderCellBehaviour';
 import RockBehaviour from '@core/grid/cell/behaviours/RockBehaviour';
+import { GestureIndicator } from '@src/rendering/renderers/infinitris2/GestureIndicator';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -104,9 +105,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
   // FIXME: restructure to not require definite assignment
   private _gridLines!: GridLines;
   private _placementHelperShadowCells!: IRenderablePlacementHelperCell[];
-  private _virtualKeyboardGraphics?: PIXI.Graphics;
-  private _virtualKeyboardCurrentKeyText!: PIXI.Text;
-  private _virtualGestureSprites?: PIXI.Sprite[];
 
   private _fpsText!: PIXI.Text;
 
@@ -118,9 +116,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
   private _particles!: IParticle[];
   private _blockDropEffects!: IBlockDropEffect[];
-  private _virtualKeyboardControls?: ControlSettings;
+
   private _preferredInputMethod: InputMethod;
-  private _teachControls: boolean;
   private _worldBackground!: WorldBackground;
   private _gridFloor!: GridFloor;
   private _patternTextures: { [filename: string]: PIXI.Texture[] } = {};
@@ -144,11 +141,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _gridLineType: GridLineType | undefined;
   private _challengeEditorEnabled: boolean;
   private _challengeEditorGuide: IRenderableEntity<PIXI.Graphics> | undefined;
+  private _gestureIndicator: GestureIndicator;
 
   constructor(
     clientApiConfig: ClientApiConfig,
     preferredInputMethod: InputMethod = 'keyboard',
-    teachControls: boolean = false,
+    controls: ControlSettings,
     rendererQuality?: RendererQuality,
     worldType: WorldType = 'grass',
     worldVariation: WorldVariation = '0',
@@ -159,29 +157,22 @@ export default class Infinitris2Renderer extends BaseRenderer {
   ) {
     super(clientApiConfig, undefined, rendererQuality, isDemo);
     this._preferredInputMethod = preferredInputMethod;
-    this._teachControls = teachControls;
     this._worldType = worldType;
     this._useFallbackUI = useFallbackUI;
     this._worldVariation = worldVariation;
     this._isDemo = isDemo;
     this._gridLineType = gridLineType;
     this._challengeEditorEnabled = challengeEditorEnabled;
+    this._gestureIndicator = new GestureIndicator(
+      this._app,
+      this._preferredInputMethod,
+      controls
+    );
 
     this._oldOverflowStyle = document.body.style.overflow;
 
     document.body.style.overflow = 'none';
     this._renderFpsFrames = [];
-  }
-
-  set virtualKeyboardControls(
-    virtualKeyboardControls: ControlSettings | undefined
-  ) {
-    this._virtualKeyboardControls = virtualKeyboardControls;
-  }
-
-  set allowedActions(allowedActions: InputAction[] | undefined) {
-    this._renderVirtualKeyboard();
-    this._renderVirtualGestures();
   }
 
   /**
@@ -227,37 +218,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._worldBackground.createImages();
     this._gridFloor.createImages();
 
-    // TODO: extract from here and minimal renderer
-    if (this._preferredInputMethod === 'touch' && this._teachControls) {
-      const gesturesDirectory = `${imagesDirectory}/gestures`;
-      const swipeLeftUrl = `${gesturesDirectory}/swipe-left.png`;
-      const swipeRightUrl = `${gesturesDirectory}/swipe-right.png`;
-      const swipeUpUrl = `${gesturesDirectory}/swipe-up.png`;
-      const swipeDownUrl = `${gesturesDirectory}/swipe-down.png`;
-      const tapUrl = `${gesturesDirectory}/tap.png`;
-      this._app.loader.add(swipeLeftUrl);
-      this._app.loader.add(swipeRightUrl);
-      this._app.loader.add(swipeUpUrl);
-      this._app.loader.add(swipeDownUrl);
-      this._app.loader.add(tapUrl);
-      await new Promise((resolve) => this._app.loader.load(resolve));
-      const createGestureSprite = (url: string) => {
-        const sprite = PIXI.Sprite.from(
-          this._app.loader.resources[url].texture
-        );
-        sprite.anchor.set(0.5);
-        sprite.alpha = 0;
-        return sprite;
-      };
-      // one sprite is added for each input action
-      this._virtualGestureSprites = [];
-      this._virtualGestureSprites.push(createGestureSprite(swipeLeftUrl));
-      this._virtualGestureSprites.push(createGestureSprite(swipeRightUrl));
-      this._virtualGestureSprites.push(createGestureSprite(swipeDownUrl));
-      this._virtualGestureSprites.push(createGestureSprite(tapUrl));
-      this._virtualGestureSprites.push(createGestureSprite(tapUrl));
-      this._virtualGestureSprites.push(createGestureSprite(swipeUpUrl));
-    }
+    await this._gestureIndicator.loadImages();
 
     if (this._challengeEditorEnabled) {
       this._challengeEditorGuide = {
@@ -534,27 +495,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     });
     this._app.stage.addChild(this._fpsText);
 
-    if (
-      this._virtualKeyboardControls &&
-      this._preferredInputMethod === 'keyboard' &&
-      this._teachControls
-    ) {
-      this._virtualKeyboardGraphics = new PIXI.Graphics();
-      this._app.stage.addChild(this._virtualKeyboardGraphics);
-
-      this._virtualKeyboardCurrentKeyText = new PIXI.Text('', {
-        font: 'bold italic 60px Arvo',
-        fill: '#444444',
-        align: 'center',
-        stroke: '#000000',
-        strokeThickness: 7,
-      });
-      this._app.stage.addChild(this._virtualKeyboardCurrentKeyText);
-    }
-
-    if (this._preferredInputMethod === 'touch' && this._teachControls) {
-      this._app.stage.addChild(...this._virtualGestureSprites);
-    }
+    this._gestureIndicator.addChildren();
     if (this._challengeEditorGuide) {
       this._world.addChild(this._challengeEditorGuide.container);
     }
@@ -1013,6 +954,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
+    this._gestureIndicator.update(this._simulation.followingPlayer?.block);
     const followingPlayer = this._simulation.followingPlayer;
     this._fallbackLeaderboard?.update(
       this._simulation.players,
@@ -1147,9 +1089,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     super._resize();
-
-    this._renderVirtualKeyboard();
-    this._renderVirtualGestures();
 
     this._gridLines.render(
       this._gridWidth,
@@ -1522,7 +1461,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
     //graphics.cacheAsBitmap = false;
     graphics.clear();
     if (behaviour && behaviour?.type !== CellType.Normal) {
-      renderCellBehaviour(behaviour, isEmpty, graphics, this._cellSize);
+      renderCellBehaviour(
+        behaviour,
+        isEmpty,
+        graphics,
+        this._cellSize,
+        this._challengeEditorEnabled
+      );
       return;
     }
     if (isEmpty) {
@@ -1758,64 +1703,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     });
   }
 
-  private _renderVirtualKeyboard() {
-    if (!this._virtualKeyboardGraphics || !this._virtualKeyboardControls) {
-      return;
-    }
-    this._virtualKeyboardGraphics.clear();
-    this._virtualKeyboardCurrentKeyText.text = '';
-
-    if (!this._teachControls) {
-      return;
-    }
-
-    // TODO: store last landed on action
-    /*const key = this._virtualKeyboardControls[this._allowedActions[0]];
-    const keySymbol = getUserFriendlyKeyText(key);
-    const keyHeight = this._app.renderer.width * 0.05;
-    const keyWidth = (1 + (keySymbol.length - 1) * 0.2) * keyHeight;
-    const keyPadding = keyHeight * 0.1;
-
-    const x = this._app.renderer.width * 0.6;
-    const y = this._app.renderer.height * 0.25 - keyHeight * 2;
-    this._virtualKeyboardCurrentKeyText.text = keySymbol;
-    this._virtualKeyboardCurrentKeyText.x = x + keyWidth * 0.5;
-    this._virtualKeyboardCurrentKeyText.y = y + keyHeight * 0.5;
-    this._virtualKeyboardCurrentKeyText.anchor.x = 0.5;
-    this._virtualKeyboardCurrentKeyText.anchor.y = 0.5;
-
-    this._virtualKeyboardGraphics.beginFill(0xffffff);
-    this._virtualKeyboardGraphics.drawRect(
-      x + keyPadding,
-      y + keyPadding,
-      keyWidth - keyPadding * 2,
-      keyHeight - keyPadding * 2
-    );*/
-  }
-
-  private _renderVirtualGestures() {
-    if (!this._virtualGestureSprites) {
-      return;
-    }
-    // TODO: store last landed on action
-    /*this._virtualGestureSprites.forEach((sprite, i) => {
-      sprite.x =
-        this._app.renderer.width *
-        (i ===
-        Object.values(InputAction).indexOf(CustomizableInputAction.RotateAnticlockwise)
-          ? 0.25
-          : i ===
-            Object.values(InputAction).indexOf(CustomizableInputAction.RotateClockwise)
-          ? 0.75
-          : 0.5);
-      sprite.y = this._app.renderer.height * 0.75;
-      sprite.alpha =
-        this._allowedActions?.length === 1 &&
-        Object.values(InputAction).indexOf(this._allowedActions[0]) === i
-          ? 1
-          : 0;
-    });*/
-  }
   private _getFaceUrl(characterId: string): string {
     return `${this._clientApiConfig.imagesRootUrl}/faces/${characterId}.png`;
   }

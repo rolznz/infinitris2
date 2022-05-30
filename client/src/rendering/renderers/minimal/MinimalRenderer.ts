@@ -58,9 +58,6 @@ interface IParticle extends IRenderableEntity<PIXI.Graphics> {
 export default class MinimalRenderer extends BaseRenderer {
   // FIXME: restructure to not require definite assignment
   private _placementHelperShadowCells!: IRenderableCell[];
-  private _virtualKeyboardGraphics?: PIXI.Graphics;
-  private _virtualKeyboardCurrentKeyText!: PIXI.Text;
-  private _virtualGestureSprites?: PIXI.Sprite[];
 
   private _shadowGradientGraphics?: PIXI.Graphics;
 
@@ -70,67 +67,16 @@ export default class MinimalRenderer extends BaseRenderer {
   private _particles!: IParticle[];
   //private _playerScores!: IPlayerScore[];
 
-  private _virtualKeyboardControls?: ControlSettings;
-  private _preferredInputMethod: InputMethod;
-  private _teachControls: boolean;
   private _gridLines!: GridLines;
 
-  constructor(
-    clientApiConfig: ClientApiConfig,
-    preferredInputMethod: InputMethod = 'keyboard',
-    teachControls: boolean = false
-  ) {
+  constructor(clientApiConfig: ClientApiConfig) {
     super(clientApiConfig, 0x333333);
-    this._preferredInputMethod = preferredInputMethod;
-    this._teachControls = teachControls;
-  }
-
-  set virtualKeyboardControls(
-    virtualKeyboardControls: ControlSettings | undefined
-  ) {
-    this._virtualKeyboardControls = virtualKeyboardControls;
-  }
-
-  set allowedActions(allowedActions: InputAction[] | undefined) {
-    this._renderVirtualKeyboard();
-    this._renderVirtualGestures();
   }
 
   /**
    * @inheritdoc
    */
   async create() {
-    if (this._preferredInputMethod === 'touch' && this._teachControls) {
-      const gesturesDirectory = `${imagesDirectory}/gestures`;
-      const swipeLeftUrl = `${gesturesDirectory}/swipe-left.png`;
-      const swipeRightUrl = `${gesturesDirectory}/swipe-right.png`;
-      const swipeUpUrl = `${gesturesDirectory}/swipe-up.png`;
-      const swipeDownUrl = `${gesturesDirectory}/swipe-down.png`;
-      const tapUrl = `${gesturesDirectory}/tap.png`;
-      this._app.loader.add(swipeLeftUrl);
-      this._app.loader.add(swipeRightUrl);
-      this._app.loader.add(swipeUpUrl);
-      this._app.loader.add(swipeDownUrl);
-      this._app.loader.add(tapUrl);
-      await new Promise((resolve) => this._app.loader.load(resolve));
-      const createGestureSprite = (url: string) => {
-        const sprite = PIXI.Sprite.from(
-          this._app.loader.resources[url].texture
-        );
-        sprite.anchor.set(0.5);
-        sprite.alpha = 0;
-        return sprite;
-      };
-      // one sprite is added for each input action
-      this._virtualGestureSprites = [];
-      this._virtualGestureSprites.push(createGestureSprite(swipeLeftUrl));
-      this._virtualGestureSprites.push(createGestureSprite(swipeRightUrl));
-      this._virtualGestureSprites.push(createGestureSprite(swipeDownUrl));
-      this._virtualGestureSprites.push(createGestureSprite(tapUrl));
-      this._virtualGestureSprites.push(createGestureSprite(tapUrl));
-      this._virtualGestureSprites.push(createGestureSprite(swipeUpUrl));
-    }
-
     document.body.appendChild(this._app.view);
 
     // TODO: remove and use same resize logic as Infinitris2Renderer
@@ -196,28 +142,6 @@ export default class MinimalRenderer extends BaseRenderer {
     this._app.stage.addChild(this._shadowGradientGraphics);
 
     this._placementHelperShadowCells = [];
-
-    if (
-      this._virtualKeyboardControls &&
-      this._preferredInputMethod === 'keyboard' &&
-      this._teachControls
-    ) {
-      this._virtualKeyboardGraphics = new PIXI.Graphics();
-      this._app.stage.addChild(this._virtualKeyboardGraphics);
-
-      this._virtualKeyboardCurrentKeyText = new PIXI.Text('', {
-        font: 'bold italic 60px Arvo',
-        fill: '#444444',
-        align: 'center',
-        stroke: '#000000',
-        strokeThickness: 7,
-      });
-      this._app.stage.addChild(this._virtualKeyboardCurrentKeyText);
-    }
-
-    if (this._preferredInputMethod === 'touch' && this._teachControls) {
-      this._app.stage.addChild(...this._virtualGestureSprites);
-    }
   }
 
   /**
@@ -413,9 +337,6 @@ export default class MinimalRenderer extends BaseRenderer {
       return;
     }
     super._resize();
-
-    this._renderVirtualKeyboard();
-    this._renderVirtualGestures();
 
     this._gridLines.render(
       this._gridWidth,
@@ -759,64 +680,5 @@ export default class MinimalRenderer extends BaseRenderer {
         cellIndex++;
       }
     });
-  }
-
-  private _renderVirtualKeyboard() {
-    if (!this._virtualKeyboardGraphics || !this._virtualKeyboardControls) {
-      return;
-    }
-    this._virtualKeyboardGraphics.clear();
-    this._virtualKeyboardCurrentKeyText.text = '';
-
-    if (!this._teachControls) {
-      return;
-    }
-
-    // TODO: store last landed on action
-    /*const key = this._virtualKeyboardControls[this._allowedActions[0]];
-    const keySymbol = getUserFriendlyKeyText(key);
-    const keyHeight = this._app.renderer.width * 0.05;
-    const keyWidth = (1 + (keySymbol.length - 1) * 0.2) * keyHeight;
-    const keyPadding = keyHeight * 0.1;
-
-    const x = this._app.renderer.width * 0.6;
-    const y = this._app.renderer.height * 0.25 - keyHeight * 2;
-    this._virtualKeyboardCurrentKeyText.text = keySymbol;
-    this._virtualKeyboardCurrentKeyText.x = x + keyWidth * 0.5;
-    this._virtualKeyboardCurrentKeyText.y = y + keyHeight * 0.5;
-    this._virtualKeyboardCurrentKeyText.anchor.x = 0.5;
-    this._virtualKeyboardCurrentKeyText.anchor.y = 0.5;
-
-    this._virtualKeyboardGraphics.beginFill(0xffffff);
-    this._virtualKeyboardGraphics.drawRect(
-      x + keyPadding,
-      y + keyPadding,
-      keyWidth - keyPadding * 2,
-      keyHeight - keyPadding * 2
-    );*/
-  }
-
-  private _renderVirtualGestures() {
-    if (!this._virtualGestureSprites) {
-      return;
-    }
-    // TODO: store last landed on action
-    /*this._virtualGestureSprites.forEach((sprite, i) => {
-      sprite.x =
-        this._app.renderer.width *
-        (i ===
-        Object.values(InputAction).indexOf(CustomizableInputAction.RotateAnticlockwise)
-          ? 0.25
-          : i ===
-            Object.values(InputAction).indexOf(CustomizableInputAction.RotateClockwise)
-          ? 0.75
-          : 0.5);
-      sprite.y = this._app.renderer.height * 0.75;
-      sprite.alpha =
-        this._allowedActions?.length === 1 &&
-        Object.values(InputAction).indexOf(this._allowedActions[0]) === i
-          ? 1
-          : 0;
-    });*/
   }
 }

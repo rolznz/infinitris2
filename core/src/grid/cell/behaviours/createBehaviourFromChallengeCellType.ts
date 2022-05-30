@@ -12,6 +12,8 @@ import IGrid from '@models/IGrid';
 import InfectionBehaviour from './InfectionBehaviour';
 import RockGeneratorBehaviour from '@core/grid/cell/behaviours/RockGeneratorBehaviour';
 import SpawnLocationCellBehaviour from '@core/grid/cell/behaviours/SpawnLocationCellBehaviour';
+import { CustomizableInputAction } from '@models/InputAction';
+import GestureBehaviour from '@core/grid/cell/behaviours/GestureBehaviour';
 
 export const keyColors = {
   redColor: 0xff0000,
@@ -73,7 +75,17 @@ function getBehaviour(
       return new InfectionBehaviour(cell, grid);
     case ChallengeCellType.RockGenerator:
       return new RockGeneratorBehaviour(cell, grid);
-    default:
-      throw new Error('Unknown challenge cell type: ' + challengeCellType);
+    case ChallengeCellType.GestureMoveLeft:
+      return new GestureBehaviour(CustomizableInputAction.MoveLeft);
+    case ChallengeCellType.GestureMoveRight:
+      return new GestureBehaviour(CustomizableInputAction.MoveRight);
+    case ChallengeCellType.GestureMoveDown:
+      return new GestureBehaviour(CustomizableInputAction.MoveDown);
+    case ChallengeCellType.GestureRotateClockwise:
+      return new GestureBehaviour(CustomizableInputAction.RotateClockwise);
+    case ChallengeCellType.GestureRotateAnticlockwise:
+      return new GestureBehaviour(CustomizableInputAction.RotateAnticlockwise);
+    case ChallengeCellType.GestureDrop:
+      return new GestureBehaviour(CustomizableInputAction.Drop);
   }
 }

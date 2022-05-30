@@ -1,3 +1,5 @@
+import { assertUnreachable } from '@models/util/assertUnreachable';
+
 enum ChallengeCellType {
   Empty = '0',
   Full = 'X',
@@ -16,6 +18,12 @@ enum ChallengeCellType {
   Infection = 'I',
   RockGenerator = 'S',
   SpawnLocation = 's',
+  GestureMoveLeft = '1',
+  GestureMoveRight = '2',
+  GestureMoveDown = '3',
+  GestureRotateClockwise = '4',
+  GestureRotateAnticlockwise = '5',
+  GestureDrop = '6',
 }
 
 export default ChallengeCellType;
@@ -58,8 +66,18 @@ export function getChallengeCellTypeDescription(
       return 'Rock Generator';
     case ChallengeCellType.SpawnLocation:
       return 'Spawn Location';
-    default:
-      throw new Error('No challenge cell type description for ' + type);
+    case ChallengeCellType.GestureMoveLeft:
+      return 'Gesture MoveLeft';
+    case ChallengeCellType.GestureMoveRight:
+      return 'Gesture MoveRight';
+    case ChallengeCellType.GestureMoveDown:
+      return 'Gesture MoveDown';
+    case ChallengeCellType.GestureRotateClockwise:
+      return 'Gesture RotateClockwise';
+    case ChallengeCellType.GestureRotateAnticlockwise:
+      return 'Gesture RotateAnticlockwise';
+    case ChallengeCellType.GestureDrop:
+      return 'Gesture Drop';
   }
 }
 

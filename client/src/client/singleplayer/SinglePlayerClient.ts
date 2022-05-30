@@ -19,6 +19,7 @@ import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { GameModeEvent } from '@models/GameModeEvent';
 import { ICharacter } from '@models/ICharacter';
+import { DEFAULT_KEYBOARD_CONTROLS } from '@models/ControlSettings';
 
 let oldCursor: string;
 export default class SinglePlayerClient
@@ -64,7 +65,7 @@ export default class SinglePlayerClient
         : new Infinitris2Renderer(
             this._clientApiConfig,
             undefined,
-            undefined,
+            this._launchOptions.controls_keyboard || DEFAULT_KEYBOARD_CONTROLS,
             options.rendererQuality,
             options.worldType,
             options.worldVariation,

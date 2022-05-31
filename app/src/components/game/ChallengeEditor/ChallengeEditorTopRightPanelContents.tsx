@@ -9,7 +9,10 @@ import useIngameStore from '@/state/IngameStore';
 import Button from '@mui/material/Button/Button';
 import React from 'react';
 import Select from '@mui/material/Select/Select';
-import { ChallengeCellType } from 'infinitris2-models';
+import {
+  ChallengeCellType,
+  isChallengeCellTypeEnabled,
+} from 'infinitris2-models';
 import MenuItem from '@mui/material/MenuItem/MenuItem';
 import { getChallengeCellTypeDescription } from 'infinitris2-models';
 
@@ -103,11 +106,13 @@ export function ChallengeEditorCellTypePicker() {
         editor.challengeCellType = event.target.value as ChallengeCellType;
       }}
     >
-      {Object.values(ChallengeCellType).map((challengeCellType) => (
-        <MenuItem key={challengeCellType} value={challengeCellType}>
-          {getChallengeCellTypeDescription(challengeCellType)}
-        </MenuItem>
-      ))}
+      {Object.values(ChallengeCellType)
+        .filter(isChallengeCellTypeEnabled)
+        .map((challengeCellType) => (
+          <MenuItem key={challengeCellType} value={challengeCellType}>
+            {getChallengeCellTypeDescription(challengeCellType)}
+          </MenuItem>
+        ))}
     </Select>
   );
 }

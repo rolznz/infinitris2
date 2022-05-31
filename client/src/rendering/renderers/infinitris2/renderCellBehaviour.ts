@@ -15,11 +15,12 @@ export function renderCellBehaviour(
   if (isEmpty) {
     switch (behaviour.type) {
       case CellType.Infection:
+      case CellType.Laser:
       case CellType.Deadly:
       case CellType.FinishChallenge:
       case CellType.RockGenerator:
       case CellType.Rock:
-        graphics.beginFill(color, behaviour.alpha);
+        graphics.beginFill(color, 1);
         graphics.drawRect(0, 0, cellSize, cellSize);
         break;
 

@@ -35,19 +35,23 @@ import { RoomCarouselSlide } from '@/components/ui/RoomCarousel/RoomCarouselSlid
 
 const schema = yup
   .object({
-    numBots: yup.number().integer().lessThan(100).moreThan(-1).required(),
-    botReactionDelay: yup
-      .number()
-      .positive()
-      .integer()
-      .lessThan(1000)
-      .required(),
-    botRandomReactionDelay: yup
-      .number()
-      .integer()
-      .lessThan(1000)
-      .moreThan(-1)
-      .required(),
+    simulationSettings: yup.object({
+      botSettings: yup.object({
+        numBots: yup.number().integer().lessThan(100).moreThan(-1).required(),
+        botReactionDelay: yup
+          .number()
+          .positive()
+          .integer()
+          .lessThan(1000)
+          .required(),
+        botRandomReactionDelay: yup
+          .number()
+          .integer()
+          .lessThan(1000)
+          .moreThan(-1)
+          .required(),
+      }),
+    }),
     gridNumRows: yup
       .number()
       .positive()

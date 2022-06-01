@@ -11,9 +11,11 @@ import {
 import grassImage from '@/components/ui/RoomCarousel/assets/carousel/grass_desktop.svg';
 import desertImage from '@/components/ui/RoomCarousel/assets/carousel/desert_desktop.svg';
 import volcanoImage from '@/components/ui/RoomCarousel/assets/carousel/volcano_desktop.svg';
+import spaceImage from '@/components/ui/RoomCarousel/assets/carousel/space_desktop.svg';
 import grassImageMobile from '@/components/ui/RoomCarousel/assets/carousel/grass_mobile.svg';
 import desertImageMobile from '@/components/ui/RoomCarousel/assets/carousel/desert_mobile.svg';
 import volcanoImageMobile from '@/components/ui/RoomCarousel/assets/carousel/volcano_mobile.svg';
+import spaceImageMobile from '@/components/ui/RoomCarousel/assets/carousel/space_mobile.svg';
 
 import { ReactComponent as ConquestIcon } from '@/icons/conquest.svg';
 import { ReactComponent as InfinityIcon } from '@/icons/infinity.svg';
@@ -75,7 +77,7 @@ export function RoomCarouselSlide({
         height="30%"
         sx={{
           background:
-            'linear-gradient(180deg, rgba(47, 107, 113, 0) 0%, #04555C 53.65%, #00363C 73.96%, #012024 100%)',
+            'linear-gradient(180deg, rgba(160, 160, 160, 0.024) 0%, rgba(94, 94, 94, 0.2) 21.05%, rgba(0, 0, 0, 0.24) 37.42%, rgba(0, 0, 0, 0.505092) 58.36%, rgba(0, 0, 0, 0.8) 100%)',
         }}
       />
       <FlexBox
@@ -84,6 +86,7 @@ export function RoomCarouselSlide({
         left="5%"
         gap={1}
         alignItems="flex-start"
+        //zIndex="above"
       >
         <FlexBox flexDirection="row" gap={1}>
           <SvgIcon color="primary">
@@ -164,6 +167,9 @@ function getBackground(
       break;
     case 'volcano':
       image = isLandscape ? volcanoImage : volcanoImageMobile;
+      break;
+    case 'space':
+      image = isLandscape ? spaceImage : spaceImageMobile;
       break;
     default:
       throw new Error('Unsupported world type: ' + worldType);

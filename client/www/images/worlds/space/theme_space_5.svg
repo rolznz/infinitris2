@@ -2,11 +2,11 @@
 <!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 width="27.728px" height="27.632px" viewBox="1167.755 768.161 27.728 27.632"
-	 enable-background="new 1167.755 768.161 27.728 27.632" xml:space="preserve">
+	 width="181.28px" height="180.653px" viewBox="27.785 -105.629 181.28 180.653"
+	 enable-background="new 27.785 -105.629 181.28 180.653" xml:space="preserve">
 <g>
 	
-		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="1466.1172" y1="1294.9502" x2="1442.1208" y2="1281.0958" gradientTransform="matrix(1 0 0 -1 -272.5 2070)">
+		<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="741.8668" y1="-1684.5916" x2="584.983" y2="-1594.0142" gradientTransform="matrix(1 0 0 1 -545 1624)">
 		<stop  offset="0.0897" style="stop-color:#5194B0"/>
 		<stop  offset="0.5124" style="stop-color:#494988"/>
 		<stop  offset="0.588" style="stop-color:#4D4987"/>
@@ -16,12 +16,12 @@
 		<stop  offset="0.9347" style="stop-color:#9E367A"/>
 		<stop  offset="1" style="stop-color:#B62975"/>
 	</linearGradient>
-	<ellipse fill="url(#SVGID_1_)" cx="1181.619" cy="781.977" rx="13.864" ry="13.816"/>
-	<path opacity="0.1" fill="#F7F7F6" enable-background="new    " d="M1192.576,790.442c0,0-3.3,5.351-10.957,5.351
-		s-13.864-6.185-13.864-13.816c0-7.63,6.207-13.816,13.864-13.816c0,0-2.784,7.567,0.511,14.524
-		C1185.372,789.528,1192.576,790.442,1192.576,790.442z"/>
-	<path opacity="0.1" fill="#F7F7F6" enable-background="new    " d="M1188.114,793.931c0,0-1.908,1.205-6.494,1.492
-		c-7.641,0.478-13.864-6.096-13.864-13.617c0-7.52,4.891-10.06,6.815-11.728c0,0-5.003,9.39-1.564,16.221
-		C1177.76,795.741,1188.114,793.931,1188.114,793.931z"/>
+	<ellipse fill="url(#SVGID_1_)" cx="118.425" cy="-15.303" rx="90.64" ry="90.326"/>
+	<path opacity="0.1" fill="#F7F7F6" enable-background="new    " d="M190.06,40.04c0,0-21.575,34.984-71.635,34.984
+		s-90.64-40.436-90.64-90.326c0-49.883,40.58-90.326,90.64-90.326c0,0-18.202,49.472,3.341,94.955
+		C142.961,34.064,190.06,40.04,190.06,40.04z"/>
+	<path opacity="0.1" fill="#F7F7F6" enable-background="new    " d="M160.888,62.85c0,0-12.474,7.878-42.457,9.754
+		c-49.955,3.125-90.64-39.854-90.64-89.025c0-49.164,31.976-65.77,44.555-76.675c0,0-32.709,61.39-10.225,106.05
+		C93.195,74.684,160.888,62.85,160.888,62.85z"/>
 </g>
 </svg>

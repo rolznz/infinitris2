@@ -27,6 +27,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import Select from '@mui/material/Select/Select';
 import MenuItem from '@mui/material/MenuItem';
 import shallow from 'zustand/shallow';
+import removeUndefinedValues from '@/utils/removeUndefinedValues';
 
 const schema = yup.object({
   title: yup
@@ -122,12 +123,11 @@ export function ChallengeEditorSettingsForm({
         };
 
         const challengeId = uuidv4();
-        console.log('SET', getChallengePath(challengeId), challengeToPublish);
 
         try {
           await setDoc(
             doc(getFirestore(), getChallengePath(challengeId)),
-            challengeToPublish
+            removeUndefinedValues(challengeToPublish)
           );
 
           setChallenge(undefined);

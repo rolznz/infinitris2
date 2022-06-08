@@ -74,9 +74,7 @@
   },
   "dependencies": {
     "dotenv": "^10.0.0",
-    "firebase": "^9.4.1",
     "got": "11.x",
-    "node-fetch": "2.x",
     "ws": "^7.1.2"
   },
   "optionalDependencies": {

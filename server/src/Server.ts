@@ -24,6 +24,7 @@ import {
 import { ServerMessageType } from '@models/networking/server/ServerMessageType';
 import { NETWORK_VERSION } from '@models/index';
 
+export const apiUrl = process.env.API_URL;
 export default class Server implements IServerSocketEventListener {
   private _socket: IServerSocket;
   private _rooms: { [id: number]: Room };
@@ -42,13 +43,13 @@ export default class Server implements IServerSocketEventListener {
 
   private async _init() {
     const time = Date.now();
-    const characters = await cachedGet<ICharacter[]>(
+    const characters = await cachedGet<ICharacter[] | undefined>(
       'characters',
       getCharacters
     );
     console.log(
       'Retrieved ' +
-        characters.length +
+        characters?.length +
         ' characters in ' +
         (Date.now() - time) +
         'ms'
@@ -173,10 +174,8 @@ export default class Server implements IServerSocketEventListener {
       console.log('No SERVER_SECRET_KEY set, not updating lobby server');
       return;
     }
-    const apiUrl =
-      process.env.API_URL || process.env.WEBHOOK_URL; /* deprecated field */
-    if (!serverKey) {
-      console.log('No WEBHOOK_URL set, not updating lobby server');
+    if (!apiUrl) {
+      console.log('No API_URL set, not updating lobby server');
       return;
     }
 

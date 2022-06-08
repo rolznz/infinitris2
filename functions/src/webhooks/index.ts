@@ -7,6 +7,7 @@ import { paymentsWebhook } from './paymentsWebhook';
 import { loginWebhook } from './loginWebhook';
 import * as cors from 'cors';
 import { buyCoinsWebhook } from './buyCoinsWebhook';
+import { publicDataWebhook } from './publicDataWebhook';
 
 const corsHandler = cors({ origin: true });
 
@@ -20,6 +21,7 @@ app.post('/v1/donations', donationsWebhook);
 app.post('/v1/payments', paymentsWebhook);
 app.post('/v1/login', loginWebhook);
 app.patch('/v1/servers/:serverId', updateServerWebhook);
+app.get('/v1/public/:collectionId', publicDataWebhook);
 
 // expose for testing only
 export const webhooksExpressApp = app;

@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
-    "lib": ["ES2017"],
+    "lib": ["ES2017", "DOM"],
     "moduleResolution": "node",
     "esModuleInterop": true,
     "sourceMap": true,

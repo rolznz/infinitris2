@@ -42,16 +42,16 @@ import { IServerMessage } from '@models/networking/server/IServerMessage';
 import { ICharacter } from '@models/ICharacter';
 import IRoom from '@models/IRoom';
 
-export default class Room implements ISimulationEventListener {
+export default class Room implements Partial<ISimulationEventListener> {
   private _sendMessage: SendServerMessageFunction;
   private _simulation: Simulation;
   private _roomInfo: IRoom;
-  private _charactersPool: ICharacter[];
+  private _charactersPool: ICharacter[] | undefined;
 
   constructor(
     sendMessage: SendServerMessageFunction,
     roomInfo: IRoom,
-    characters: ICharacter[]
+    characters: ICharacter[] | undefined
   ) {
     this._charactersPool = characters;
     this._roomInfo = roomInfo;
@@ -371,13 +371,6 @@ export default class Room implements ISimulationEventListener {
     this._sendMessageToAllPlayersExcept(blockDroppedEvent, block.player.id);
   }
 
-  /**
-   * @inheritdoc
-   */
-  onLineClear(row: number) {}
-
-  onLineClearing() {}
-  onLinesCleared(rows: number[]): void {}
   onClearLines(rows: number[]): void {
     const clearLinesEvent: IServerClearLinesEvent = {
       type: ServerMessageType.CLEAR_LINES,
@@ -386,7 +379,6 @@ export default class Room implements ISimulationEventListener {
     this._sendMessageToAllPlayers(clearLinesEvent);
   }
 
-  onBlockCreateFailed(block: IBlock): void {}
   onBlockDied(block: IBlock): void {
     const blockDiedEvent: IServerBlockDiedEvent = {
       type: ServerMessageType.BLOCK_DIED,
@@ -401,12 +393,6 @@ export default class Room implements ISimulationEventListener {
     };
     this._sendMessageToPlayers(nextSpawnEvent, block.player.id);
   }
-  onCellBehaviourChanged(
-    cell: ICell,
-    previousBehaviour: ICellBehaviour
-  ): void {}
-  onCellIsEmptyChanged(cell: ICell): void {}
-  onGridReset(grid: IGrid): void {}
 
   onPlayerCreated(player: IPlayer) {
     const newPlayerMessage: IServerPlayerCreatedEvent = {
@@ -439,7 +425,6 @@ export default class Room implements ISimulationEventListener {
     }
     this._sendServerChatMessage('Player ' + player.nickname + ' left the game');
   }
-  onPlayerSpawnDelayChanged(player: IPlayer): void {}
   onPlayerToggleChat(player: IPlayer): void {
     // TODO: mark player as chatting/not chatting
   }
@@ -452,8 +437,6 @@ export default class Room implements ISimulationEventListener {
     this._sendMessageToAllPlayers(playerToggleSpectatingMessage);
   }
 
-  onPlayerHealthChanged(player: IPlayer, amount: number): void {}
-  onPlayerScoreChanged(player: IPlayer, amount: number): void {}
   onGameModeEvent(event: GameModeEvent): void {}
 
   private _sendMessageToAllPlayers(message: IServerMessage) {

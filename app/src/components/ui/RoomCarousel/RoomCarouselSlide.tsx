@@ -179,12 +179,5 @@ function getBackground(
     WorldVariationValues.indexOf(worldVariation || '0')
   );
 
-  console.log(
-    'GOT BACCKGROUND',
-    worldType,
-    worldVariation,
-    hueRotation,
-    WorldVariationValues
-  );
   return `url(${image}); filter: hue-rotate(${hueRotation}deg);`;
 }

@@ -31,7 +31,7 @@ export type RoomCarouselSlideProps = {
   name?: string;
   numPlayers?: number;
   worldType?: WorldType;
-  worldVariation: WorldVariation;
+  worldVariation?: WorldVariation;
 };
 
 export function RoomCarouselSlide({
@@ -48,7 +48,7 @@ export function RoomCarouselSlide({
       width="100vw"
       height="100vh"
       sx={{
-        background: getBackground(isLandscape, worldVariation, worldType),
+        background: getBackground(isLandscape, worldType, worldVariation),
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPositionY: '100%',
@@ -153,8 +153,8 @@ function GameModeDescription(props: { gameModeType: GameModeType }) {
 
 function getBackground(
   isLandscape: boolean,
-  worldVariation: WorldVariation,
-  worldType: WorldType | undefined
+  worldType: WorldType | undefined,
+  worldVariation: WorldVariation | undefined
 ): string {
   let image: string = isLandscape ? grassImage : grassImageMobile;
   switch (worldType) {
@@ -176,8 +176,15 @@ function getBackground(
   }
 
   const hueRotation = getVariationHueRotation(
-    WorldVariationValues.indexOf(worldVariation)
+    WorldVariationValues.indexOf(worldVariation || '0')
   );
 
+  console.log(
+    'GOT BACCKGROUND',
+    worldType,
+    worldVariation,
+    hueRotation,
+    WorldVariationValues
+  );
   return `url(${image}); filter: hue-rotate(${hueRotation}deg);`;
 }

@@ -230,6 +230,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       ).ignoreVisibility = true;
     }
 
+    this._app.view.style.visibility = 'hidden';
     document.body.appendChild(this._app.view);
 
     this._app.ticker.add(this._tick);
@@ -1088,6 +1089,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
+    this._app.view.style.visibility = 'visible';
     super._resize();
 
     this._gridLines.render(

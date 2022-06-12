@@ -14,26 +14,6 @@ const app = initializeApp(JSON.parse(firebaseOptions));
 const auth = getAuth(app);
 auth.useDeviceLanguage();
 onAuthStateChanged(auth, async (user) => {
-  if (user) {
-    /*const referredByAffiliateId = localStorage.getItem(
-      localStorageKeys.referredByAffiliateId
-    );
-
-    if (referredByAffiliateId) {
-      const conversionPath = getConversionPath(referredByAffiliateId, user.uid);
-      const conversion: IConversion = {
-        created: false,
-      };
-
-      console.log('Setting conversion ' + conversionPath, conversion);
-      try {
-        await setDoc(doc(getFirestore(), conversionPath), conversion);
-        localStorage.removeItem(localStorageKeys.referredByAffiliateId);
-      } catch (error) {
-        console.error(error);
-      }
-    }*/
-  }
   useAuthStore.getState().setUser(user);
 });
 

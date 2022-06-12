@@ -28,6 +28,8 @@ import { borderColor, borderRadiuses } from '@/theme/theme';
 import isMobile from '@/utils/isMobile';
 import { useUser } from '@/components/hooks/useUser';
 import { setUserMusicOn, setUserSfxOn } from '@/state/updateUser';
+import useAuthStore from '@/state/AuthStore';
+import usePrevious from 'react-use/lib/usePrevious';
 
 // const checkboxStyle: SxProps = {
 //   '& span': {
@@ -37,9 +39,14 @@ import { setUserMusicOn, setUserSfxOn } from '@/state/updateUser';
 
 export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const loaderStore = useLoaderStore();
+  const isLoggedIn = useAuthStore((store) => store.isLoggedIn);
+  const prevIsLoggedIn = usePrevious(isLoggedIn);
   const user = useUser();
+  const userExists = !!user?.id;
   const hasFinished = loaderStore.hasFinished;
   const initializeLoaderStore = loaderStore.initialize;
+  const increaseSteps = loaderStore.increaseSteps;
+  const increaseStepsCompleted = loaderStore.increaseStepsCompleted;
   const clickStart = loaderStore.clickStart;
   const intl = useIntl();
   const [hasToggledSounds, setHasToggledSounds] = useState(false);
@@ -47,6 +54,22 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const classes = { startButton: '', checkbox: '' }; //useStyles();
 
   const clientLoaded = useAppStore((appStore) => !!appStore.clientApi);
+
+  // Wait for the user to load if they are logged in
+  // this also ensures if the app thinks they were logged in but aren't anymore (for whatever reason), the step will be reversed
+  useEffect(() => {
+    if (isLoggedIn && prevIsLoggedIn !== undefined) {
+      increaseSteps();
+    } else if (prevIsLoggedIn) {
+      increaseSteps(-1);
+    }
+  }, [isLoggedIn, prevIsLoggedIn, increaseSteps]);
+
+  useEffect(() => {
+    if (userExists) {
+      increaseStepsCompleted();
+    }
+  }, [userExists, increaseStepsCompleted]);
 
   useEffect(() => {
     const htmlLoaderSpiner = document.getElementById('html-loader-spinner');

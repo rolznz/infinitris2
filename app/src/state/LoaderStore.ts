@@ -8,7 +8,7 @@ type LoaderStore = {
   readonly hasInitialized: boolean;
   readonly hasFinished: boolean;
   readonly delayButtonVisibility: boolean;
-  increaseSteps(): void;
+  increaseSteps(amount?: number): void;
   increaseStepsCompleted(): void;
   clickStart(delayButtonVisibility: boolean): void;
   reset(): void;
@@ -31,9 +31,9 @@ const useLoaderStore = create<LoaderStore>((set) => ({
   startClicked: false,
   hasInitialized: false,
   hasFinished: false,
-  increaseSteps: () =>
+  increaseSteps: (amount = 1) =>
     set((state) => ({
-      steps: state.steps + 1,
+      steps: state.steps + amount,
       hasFinished: calculateHasFinished({ ...state, steps: state.steps + 1 }),
     })),
   increaseStepsCompleted: () =>

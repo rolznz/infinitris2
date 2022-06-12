@@ -83,6 +83,10 @@ export default class NetworkClient
       this._launchOptions.useFallbackUI
     );
     await this._renderer.create();
+    await this._tryJoinRoom();
+  }
+
+  private _tryJoinRoom() {
     const joinRoomRequest: IClientJoinRoomRequest = {
       type: ClientMessageType.JOIN_ROOM_REQUEST,
       roomIndex: this._launchOptions.roomIndex || 0,
@@ -201,15 +205,18 @@ export default class NetworkClient
           case JoinRoomResponseStatus.INCORRECT_VERSION:
             message = 'Incorrect version';
             break;
-          case JoinRoomResponseStatus.NOT_READY:
-            message = 'Server is not ready yet';
-            break;
           case JoinRoomResponseStatus.WRONG_PASSWORD:
             message = 'Wrong password';
             break;
         }
-        this._socket.disconnect();
-        alert('Could not join room: ' + message);
+        if (joinResponseData.status === JoinRoomResponseStatus.NOT_READY) {
+          // TODO: add a maximum retries?
+          console.log('Server not ready yet. Retrying in 1s...');
+          setTimeout(() => this._tryJoinRoom(), 1000);
+        } else {
+          this._socket.disconnect();
+          alert('Could not join room: ' + message);
+        }
       }
     } else if (this._simulation) {
       if (message.type === ServerMessageType.PLAYER_CREATED) {

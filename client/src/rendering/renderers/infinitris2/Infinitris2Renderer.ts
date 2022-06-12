@@ -955,7 +955,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
-    this._gestureIndicator.update(this._simulation.followingPlayer?.block);
+    this._gestureIndicator.update(
+      this._simulation.followingPlayer?.block,
+      this._simulation.isRunning
+    );
     const followingPlayer = this._simulation.followingPlayer;
     this._fallbackLeaderboard?.update(
       this._simulation.players,

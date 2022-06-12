@@ -29,11 +29,13 @@ export class GestureIndicator {
     this._controls = controls;
   }
 
-  update(block: IBlock | undefined) {
-    const inputAction: CustomizableInputAction | undefined = (
-      block?.cells.find((cell) => cell.behaviour.type === CellType.Gesture)
-        ?.behaviour as GestureBehaviour
-    )?.inputAction;
+  update(block: IBlock | undefined, simulationIsRunning: boolean) {
+    const inputAction: CustomizableInputAction | undefined = simulationIsRunning
+      ? (
+          block?.cells.find((cell) => cell.behaviour.type === CellType.Gesture)
+            ?.behaviour as GestureBehaviour
+        )?.inputAction
+      : undefined;
     this._renderVirtualKeyboard(inputAction);
     this._renderVirtualGestures(inputAction);
   }

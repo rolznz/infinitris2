@@ -285,7 +285,7 @@ export abstract class BaseRenderer implements IRenderer {
     }
   }
 
-  onInputAction = (action: InputActionWithData) => {
+  onInputAction(action: InputActionWithData) {
     // FIXME: need different actions/controls when the player is spectating
     // keyboard: arrows
     // mobile: drag around to move (horizontally and vertically)
@@ -308,7 +308,7 @@ export abstract class BaseRenderer implements IRenderer {
           : */ 0
       );
     }
-  };
+  }
 
   screenPositionToCell: ScreenPositionToCell = (x, y) => {
     const column = Math.floor(

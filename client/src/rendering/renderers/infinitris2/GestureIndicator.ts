@@ -2,7 +2,10 @@ import GestureBehaviour from '@core/grid/cell/behaviours/GestureBehaviour';
 import CellType from '@models/CellType';
 import ControlSettings from '@models/ControlSettings';
 import IBlock from '@models/IBlock';
-import { CustomizableInputAction } from '@models/InputAction';
+import {
+  CustomizableInputAction,
+  InputActionWithData,
+} from '@models/InputAction';
 import { InputMethod } from '@models/InputMethod';
 import { fontFamily } from '@models/ui';
 import getUserFriendlyKeyText from '@models/util/getUserFriendlyKeyText';
@@ -18,6 +21,8 @@ export class GestureIndicator {
   private _virtualGestureSprites?: PIXI.Sprite[];
   private _preferredInputMethod: InputMethod;
   private _controls: ControlSettings;
+  private _learnedInputActions: CustomizableInputAction[];
+  private _lastInputAction: CustomizableInputAction | undefined;
 
   constructor(
     app: PIXI.Application,
@@ -27,17 +32,44 @@ export class GestureIndicator {
     this._app = app;
     this._preferredInputMethod = preferredInputMethod;
     this._controls = controls;
+    this._learnedInputActions = [];
+  }
+
+  reset() {
+    this._learnedInputActions = [];
+    this._lastInputAction = undefined;
   }
 
   update(block: IBlock | undefined, simulationIsRunning: boolean) {
-    const inputAction: CustomizableInputAction | undefined = simulationIsRunning
+    let inputAction: CustomizableInputAction | undefined = simulationIsRunning
       ? (
           block?.cells.find((cell) => cell.behaviour.type === CellType.Gesture)
             ?.behaviour as GestureBehaviour
         )?.inputAction
       : undefined;
+
+    if (
+      this._lastInputAction &&
+      this._learnedInputActions.indexOf(this._lastInputAction) >= 0
+    ) {
+      this._lastInputAction = undefined;
+    }
+    if (inputAction && this._learnedInputActions.indexOf(inputAction) >= 0) {
+      inputAction = undefined;
+    }
+    if (!inputAction) {
+      inputAction = this._lastInputAction;
+    }
+
     this._renderVirtualKeyboard(inputAction);
     this._renderVirtualGestures(inputAction);
+    if (inputAction) {
+      this._lastInputAction = inputAction;
+    }
+  }
+
+  onInputAction(action: InputActionWithData) {
+    this._learnedInputActions.push(action.type as CustomizableInputAction);
   }
 
   async loadImages() {

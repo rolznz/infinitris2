@@ -1,7 +1,7 @@
 import { ParticleType } from '../../../../../models/src/IRenderer';
 import * as PIXI from 'pixi.js-legacy';
 import CellType from '@models/CellType';
-import InputAction from '@models/InputAction';
+import InputAction, { InputActionWithData } from '@models/InputAction';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import { imagesDirectory } from '..';
@@ -371,6 +371,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
     });
   };
 
+  onInputAction = (action: InputActionWithData) => {
+    super.onInputAction(action);
+    this._gestureIndicator.onInputAction(action);
+  };
+
   private _updatePlayerBlockContainer(playerId: number) {
     const player = this._simulation?.getPlayer(playerId);
     if (!player) {
@@ -451,6 +456,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   onSimulationInit(simulation: ISimulation) {
     super.onSimulationInit(simulation);
     this._particles = [];
+    this._gestureIndicator.reset();
     this._blockDropEffects = [];
     this._blocks = {};
     this._cells = {};

@@ -135,7 +135,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _healthbarOuterTexture!: PIXI.Texture;
   private _healthbarInnerTexture!: PIXI.Texture;
   private _useFallbackUI: boolean;
-  private _autoQualityAdjust = true;
+  private _autoQualityAdjust = false;
   private _renderFpsFrames: number[];
   private _isDemo: boolean;
   private _gridLineType: GridLineType | undefined;
@@ -232,11 +232,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this._app.view.style.visibility = 'hidden';
     document.body.appendChild(this._app.view);
-
-    this._app.ticker.add(this._tick);
   }
 
-  private _tick = () => {
+  tick() {
     if (!this._simulation) {
       return;
     }
@@ -369,7 +367,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           this._cellSize;
       }
     });
-  };
+  }
 
   onInputAction = (action: InputActionWithData) => {
     super.onInputAction(action);
@@ -506,8 +504,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (this._challengeEditorGuide) {
       this._world.addChild(this._challengeEditorGuide.container);
     }
-
-    this._resize();
   }
 
   onGridResize() {
@@ -1098,7 +1094,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
-    this._app.view.style.visibility = 'visible';
     super._resize();
 
     this._gridLines.render(
@@ -1199,6 +1194,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         }
       );
     }
+    this._app.view.style.visibility = 'visible';
   };
 
   private _renderCells(cells: ICell[]) {

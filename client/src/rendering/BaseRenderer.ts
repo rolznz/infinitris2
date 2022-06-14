@@ -52,6 +52,7 @@ export abstract class BaseRenderer implements IRenderer {
   protected _floorHeight: number;
   protected _clientApiConfig: ClientApiConfig;
   protected _rendererQuality: RendererQuality | undefined;
+  private _startedTicker: boolean;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -59,6 +60,7 @@ export abstract class BaseRenderer implements IRenderer {
     rendererQuality?: RendererQuality,
     isDemo = false
   ) {
+    this._startedTicker = false;
     this._clientApiConfig = clientApiConfig;
     this._camera = new Camera(isDemo);
     this._gridWidth = 0;
@@ -117,9 +119,16 @@ export abstract class BaseRenderer implements IRenderer {
   abstract create(): void;
   abstract destroy(): void;
   abstract rerenderGrid(): void;
+  private _startTicker(): void {
+    if (!this._startedTicker) {
+      this._startedTicker = true;
+      this._app.ticker.add(this.tick.bind(this));
+    }
+  }
   onSimulationInit(simulation: ISimulation) {
     this._simulation = simulation;
     this._world.removeChildren();
+    this._startTicker();
   }
 
   abstract emitParticle(
@@ -208,6 +217,10 @@ export abstract class BaseRenderer implements IRenderer {
       }
     }
     return x;
+  }
+
+  reset() {
+    this._resize();
   }
 
   tick() {
@@ -322,7 +335,10 @@ export abstract class BaseRenderer implements IRenderer {
     if (!this._simulation) {
       return;
     }
-    this._camera.reset();
+    console.log(
+      'Resize ' + this._app.renderer.width + ' ' + this._app.renderer.height
+    );
+    //this._camera.reset();
     this._appWidth = this._app.renderer.width;
     this._appHeight = this._app.renderer.height;
     this._cellSize = this._calculateCellSize();

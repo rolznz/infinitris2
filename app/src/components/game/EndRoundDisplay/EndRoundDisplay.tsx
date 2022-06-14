@@ -9,12 +9,23 @@ import Typography from '@mui/material/Typography';
 import useIngameStore from '@/state/IngameStore';
 import React from 'react';
 import { textShadows } from '@/theme/theme';
-import { hexToString } from 'infinitris2-models';
+import { hexToString, IPlayer } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
+import ChallengeMedalDisplay from '@/components/pages/ChallengePage/ChallengeMedalDisplay';
 
 const bgSx: SxProps<Theme> = {
-  background: 'linear-gradient(180deg, rgba(11, 9, 86, 0) 0%, #0C0A60 100%)',
+  background: 'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%)',
 };
+
+export function EndRoundDisplayOverlay({
+  children,
+}: React.PropsWithChildren<{}>) {
+  return (
+    <FlexBox width="100%" height="100%" sx={bgSx} gap={2}>
+      {children}
+    </FlexBox>
+  );
+}
 
 export function EndRoundDisplay() {
   console.log('Re-render end round display');
@@ -23,60 +34,94 @@ export function EndRoundDisplay() {
     (store) => store.endRoundDisplayOpen
   );
   const windowSize = useWindowSize();
-  const characterSize = windowSize.width * 0.25;
-  const starSize = characterSize * 1.1;
-  const ribbonSize = starSize * 0.4;
+  const characterSize = Math.min(
+    windowSize.width * 0.55,
+    windowSize.height * 0.45
+  );
 
   const winner = simulation?.round?.winner;
-  const nameTypographySx: SxProps<Theme> = React.useMemo(
-    () => ({
-      color: hexToString(winner?.color || 0),
-      textShadow: textShadows.small,
-      size: Math.floor(characterSize / 10) + 'px',
-    }),
-    [winner?.color, characterSize]
-  );
 
   if (!endRoundDisplayOpen) {
     return null;
   }
 
   return (
-    <FlexBox width="100%" height="100%" sx={bgSx} gap={2}>
+    <EndRoundDisplayOverlay>
       {winner && (
-        <FlexBox height={starSize} maxWidth="90vw" position="relative">
-          <img alt="" src={starImage} height={starSize} />
-          <FlexBox position="absolute">
-            <CharacterImage
-              characterId={winner.characterId || '0'}
-              width={characterSize}
-            />
-            <PlacingStar
-              placing={1}
-              offset={characterSize * 0.22}
-              scale={characterSize * 0.005}
-            />
-          </FlexBox>
-          <FlexBox position="absolute" bottom={-ribbonSize * 0.1}>
-            <img alt="" src={ribbonImage} height={ribbonSize} />
-            <Typography
-              variant="h1"
-              sx={nameTypographySx}
-              position="absolute"
-              top={characterSize / 11}
-            >
-              <FormattedMessage
-                defaultMessage="{nickname} WINS!"
-                description="end round display player wins message"
-                values={{
-                  nickname: winner.nickname,
-                }}
-              />
-            </Typography>
-          </FlexBox>
-        </FlexBox>
+        <RoundWinnerDisplay winner={winner} characterSize={characterSize} />
       )}
       <NextRoundIndicator />
+    </EndRoundDisplayOverlay>
+  );
+}
+
+type RoundWinnerDisplayProps = {
+  characterSize: number;
+  winner: IPlayer;
+  message?: React.ReactNode;
+  medalIndex?: number;
+};
+
+export function RoundWinnerDisplay({
+  winner,
+  characterSize,
+  message,
+  medalIndex,
+}: RoundWinnerDisplayProps) {
+  const starSize = characterSize * 1.1;
+  const ribbonSize = starSize * 0.4;
+  const nameTypographySx: SxProps<Theme> = React.useMemo(
+    () => ({
+      color: hexToString(winner?.color || 0),
+      textShadow: textShadows.small,
+      fontSize: Math.floor(characterSize / 10) + 'px',
+    }),
+    [winner?.color, characterSize]
+  );
+
+  return (
+    <FlexBox height={starSize} maxWidth="90vw" position="relative">
+      <img alt="" src={starImage} height={starSize} />
+      <FlexBox position="absolute">
+        <CharacterImage
+          characterId={winner.characterId || '0'}
+          width={characterSize}
+        />
+        {medalIndex === undefined && (
+          <PlacingStar
+            placing={1}
+            offset={characterSize * 0.22}
+            scale={characterSize * 0.005}
+          />
+        )}
+      </FlexBox>
+      <FlexBox position="absolute" bottom={ribbonSize * 0}>
+        {medalIndex !== undefined && (
+          <ChallengeMedalDisplay
+            medalIndex={medalIndex}
+            size={characterSize * 0.3}
+          />
+        )}
+      </FlexBox>
+      <FlexBox position="absolute" bottom={-ribbonSize * 0.1}>
+        <img alt="" src={ribbonImage} height={ribbonSize} />
+        <Typography
+          variant="h1"
+          sx={nameTypographySx}
+          position="absolute"
+          top={characterSize / 10}
+        >
+          {message || (
+            <FormattedMessage
+              defaultMessage="{nickname} WINS!"
+              description="end round display player wins message"
+              values={{
+                nickname: winner.nickname,
+              }}
+            />
+          )}
+        </Typography>
+      </FlexBox>
     </FlexBox>
   );
 }

@@ -17,6 +17,7 @@ import { colors } from '@models/colors';
 import { stringToHex } from '@models/util/stringToHex';
 import { WorldType, WorldVariation } from '@models/WorldType';
 import { RendererQuality } from '@models/RendererQuality';
+import { IChallengeEventListener } from '@models/IChallengeEventListener';
 
 export default class ClientApi implements IClientApi {
   private _client?: IClient;
@@ -164,21 +165,25 @@ export default class ClientApi implements IClientApi {
       if (!challenge) {
         throw new Error('Could not find challenge matching ID: ' + challengeId);
       }
-      this.launchChallenge(challenge, {
-        useFallbackUI: true,
-        listeners: [
-          {
-            onSimulationInit: (simulation: ISimulation) => {
-              if (!enableChallengeEditor) {
-                simulation.startInterval();
-              }
+      this.launchChallenge(
+        challenge,
+        { onAttempt: () => {} },
+        {
+          useFallbackUI: true,
+          listeners: [
+            {
+              onSimulationInit: (simulation: ISimulation) => {
+                if (!enableChallengeEditor) {
+                  simulation.startInterval();
+                }
+              },
             },
-          },
-        ],
-        preferredInputMethod,
-        controls_keyboard: controls,
-        challengeEditorSettings: enableChallengeEditor ? {} : undefined,
-      });
+          ],
+          preferredInputMethod,
+          controls_keyboard: controls,
+          challengeEditorSettings: enableChallengeEditor ? {} : undefined,
+        }
+      );
     } else {
       return false;
     }
@@ -197,11 +202,16 @@ export default class ClientApi implements IClientApi {
   /**
    * Runs the game in challenge mode with no connection to a server.
    */
-  launchChallenge = (challenge: IChallenge, options: LaunchOptions) => {
+  launchChallenge = (
+    challenge: IChallenge,
+    listener: IChallengeEventListener,
+    options: LaunchOptions
+  ) => {
     this.releaseClient();
     const challengeClient = new ChallengeClient(
       this._config,
       challenge,
+      listener,
       options
     );
     this._client = challengeClient;

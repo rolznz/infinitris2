@@ -11,7 +11,9 @@ service cloud.firestore {
       return request.auth != null;
     }
   	function isAdmin() {
-      return request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      return
+        request.auth != null &&
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.readOnly.isAdmin == true;
     }
     function isOwner() {
     	return request.auth != null && request.auth.uid == resource.data.userId;
@@ -72,9 +74,9 @@ service cloud.firestore {
       function isValidUser() {
         return
           baseRequestValid() &&
-          entityHasExpectedFields(['controls_keyboard', 'controls_gamepad', 'hasSeenAllSet', 'hasSeenWelcome', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality', 'selectedCharacterId']) &&
-          getProperty('hasSeenAllSet', false) is bool &&
-          getProperty('hasSeenWelcome', false) is bool &&
+          entityHasExpectedFields(['controls_keyboard', 'controls_gamepad', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality', 'selectedCharacterId', 'unlockedFeatures', 'completedOfficialChallengeIds']) &&
+          getProperty('unlockedFeatures', []) is list &&
+          getProperty('completedOfficialChallengeIds', []) is list &&
           getProperty('musicOn', false) is bool &&
           getProperty('musicVolume', 0) is number &&
           getProperty('sfxOn', false) is bool &&

@@ -82,7 +82,7 @@ export function ChallengeEditorSettingsForm({
   }, [valuesSame, setChallenge, watchedValues, challenge]);
 
   const { title } = watch();
-  if (title.toLowerCase() !== title) {
+  if (title && title.toLowerCase() !== title) {
     setValue('title', title.toLowerCase(), { shouldValidate: true });
   }
   /*React.useEffect(() => {
@@ -165,7 +165,7 @@ export function ChallengeEditorSettingsForm({
                     fullWidth
                     inputProps={{ maxLength: 15, placeholder: 'New Challenge' }}
                   />
-                  {!!title.length && <p>{errors.title?.message}</p>}
+                  {!!title?.length && <p>{errors.title?.message}</p>}
                 </FormControl>
               )}
             />

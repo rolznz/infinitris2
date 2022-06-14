@@ -147,6 +147,8 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
                 controls_gamepad,
                 locale,
                 preferredInputMethod,
+                completedOfficialChallengeIds,
+                unlockedFeatures,
               } = localUser;
               await updateDoc(
                 doc(getFirestore(), getUserPath(credential.user.uid)),
@@ -162,6 +164,8 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
                   controls_gamepad,
                   locale,
                   preferredInputMethod,
+                  completedOfficialChallengeIds,
+                  unlockedFeatures,
                 })
               );
             } catch (error) {

@@ -24,11 +24,11 @@ export const getDefaultPreferredInputMethod = () =>
   isMobile() ? 'touch' : 'keyboard';
 
 const defaultUser: LocalUser = {
+  //completedOfficialChallengeIds: [],
+  //unlockedFeatures: [],
   //preferredInputMethod: isMobile() ? 'touch' : 'keyboard',
   //freeCharacterIds: [DEFAULT_CHARACTER_ID],
   //selectedCharacterId: DEFAULT_CHARACTER_ID,
-  //hasSeenWelcome: false,
-  //hasSeenAllSet: false,
   //nickname: '',
   //challengeAttempts: {},
   //locale: defaultLocale,

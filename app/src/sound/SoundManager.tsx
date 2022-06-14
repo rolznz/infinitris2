@@ -202,7 +202,7 @@ function playMusic(
   existingHowl.seek(0);
   existingHowl.play();
   if (fadeIn) {
-    existingHowl.fade(0, 1, musicFadeTimeMs);
+    existingHowl.fade(0, 0.5, musicFadeTimeMs);
   }
   return existingHowl;
 }

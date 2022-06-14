@@ -24,7 +24,7 @@ export type UpdatableChallenge = Updatable<IChallenge>;
 
 export interface IChallenge extends IEntity {
   readonly readOnly?: IChallengeReadOnlyProperties;
-  readonly title: string;
+  readonly title?: string;
   readonly description?: string;
 
   readonly priority?: number;

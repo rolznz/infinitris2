@@ -12,6 +12,7 @@ import { IClientSocketEventListener } from '@models/networking/client/IClientSoc
 import { ICharacter } from '@models/ICharacter';
 import { GridLineType } from '@models/IGrid';
 import { IChallengeEditorEventListener } from '@models/IChallengeEditor';
+import { IChallengeEventListener } from '@models/IChallengeEventListener';
 
 export type LaunchOptions = WithControls & {
   listeners?: Partial<ISimulationEventListener>[];
@@ -48,6 +49,7 @@ export default interface IClientApi {
   launchSinglePlayer(options: LaunchOptions): void;
   launchChallenge(
     challenge: IChallenge,
+    listener: IChallengeEventListener,
     options: LaunchOptions
   ): IChallengeClient;
   restartClient(): void; // TODO: remove

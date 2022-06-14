@@ -87,6 +87,7 @@ export * from './ChallengeCellType';
 export * from './IRenderer';
 export * from './Layout';
 export * from './blockLayouts/blockLayoutSets';
+export * from './IChallengeEventListener';
 
 export const NETWORK_VERSION = 2;
 

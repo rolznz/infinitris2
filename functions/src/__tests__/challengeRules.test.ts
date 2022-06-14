@@ -105,11 +105,17 @@ describe('Challenges Rules', () => {
   });
 
   test('should allow creating a challenge with isOfficial property when admin', async () => {
+    const adminUser: IUser = {
+      ...dummyData.existingUser,
+      readOnly: {
+        ...dummyData.existingUser.readOnly,
+        isAdmin: true,
+      },
+    };
     const { db } = await setup(
       { uid: dummyData.userId1 },
       {
-        [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.user1AdminPath]: {},
+        [dummyData.user1Path]: adminUser,
       }
     );
 
@@ -177,11 +183,17 @@ describe('Challenges Rules', () => {
   });
 
   test('should allow admin updating a published challenge', async () => {
+    const adminUser: IUser = {
+      ...dummyData.existingUser,
+      readOnly: {
+        ...dummyData.existingUser.readOnly,
+        isAdmin: true,
+      },
+    };
     const { db } = await setup(
       { uid: dummyData.userId1 },
       {
-        [dummyData.user1Path]: dummyData.existingUser,
-        [dummyData.user1AdminPath]: {},
+        [dummyData.user1Path]: adminUser,
         [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
       }
     );

@@ -9,11 +9,9 @@ import HomeIcon from '@mui/icons-material/Home';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import {
   ClientMessageType,
-  getCharacterPath,
   getRoomPath,
   getServerPath,
   hexToString,
-  ICharacter,
   IClientChatMessage,
   IClientSocket,
   IClientSocketEventListener,
@@ -23,7 +21,6 @@ import {
   IServerChatMessage,
   ISimulation,
   ServerMessageType,
-  stringToHex,
   IServerMessage,
   reservedPlayerIds,
 } from 'infinitris2-models';
@@ -35,10 +32,10 @@ import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientO
 import useIngameStore from '@/state/IngameStore';
 import { GameUI } from '@/components/game/GameUI';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
-import { DEFAULT_CHARACTER_ID, LocalUser } from '@/state/LocalUserStore';
 import useLoaderStore from '@/state/LoaderStore';
 import shallow from 'zustand/shallow';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
+import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
 
 export interface RoomPageRouteParams {
   id: string;
@@ -112,19 +109,15 @@ export default function RoomPage() {
   const [retryCount, setRetryCount] = useState(0);
   const serverUrl = server?.data()?.url;
   usePwaRedirect();
+  const player = useNetworkPlayerInfo();
+
   const user = useUser();
   //const requiresRedirect = useForcedRedirect();
   const controls_keyboard = user.controls_keyboard;
   const controls_gamepad = user.controls_gamepad;
 
-  const nickname = (user as LocalUser).nickname;
-  const characterId = user.selectedCharacterId || DEFAULT_CHARACTER_ID;
-  const { data: character } = useDocument<ICharacter>(
-    getCharacterPath(characterId)
-  );
-
   const hasLoaded =
-    useLoaderStore((store) => store.hasFinished) && !!character && !!room;
+    useLoaderStore((store) => store.hasFinished) && !!player && !!room;
 
   useReleaseClientOnExitPage();
 
@@ -147,15 +140,7 @@ export default function RoomPage() {
       controls_gamepad,
       worldType: room.data()!.worldType,
       worldVariation: room.data()!.worldVariation,
-      player: {
-        color:
-          character.data()?.color !== undefined
-            ? stringToHex(character?.data()?.color!)
-            : undefined,
-        patternFilename: character.data()?.patternFilename,
-        characterId,
-        nickname,
-      },
+      player,
       roomIndex: room.data()!.roomIndex,
       listeners: [
         ...coreGameListeners,
@@ -194,9 +179,7 @@ export default function RoomPage() {
     controls_keyboard,
     controls_gamepad,
     hasLoaded,
-    characterId,
-    nickname,
-    character,
+    player,
     room,
   ]);
 

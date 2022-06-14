@@ -2,7 +2,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import { IChallenge } from 'infinitris2-models';
 import React from 'react';
 import Routes from '../../../models/Routes';
-//import useIncompleteChallenges from '../../hooks/useIncompleteChallenges';
 import ChallengeGridPreview from './ChallengeGridPreview';
 import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
@@ -18,12 +17,7 @@ interface ChallengeCardProps {
 export default function ChallengeCard({ challenge }: ChallengeCardProps) {
   //const user = useUser();
   //const translation = challenge?.translations?.[user.locale];
-  //const { incompleteChallenges } = useIncompleteChallenges();
-  const isLocked = false; /*incompleteChallenges.find(
-    (t) =>
-      t.data()!.isMandatory &&
-      (t.data()!.priority || 0) > (challenge.data()!.priority || 0)
-  );*/
+  const isLocked = false; /*TODO: check unlocked features*/
 
   const onClick = React.useCallback(() => {
     launchFullscreen();

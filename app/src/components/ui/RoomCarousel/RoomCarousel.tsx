@@ -85,7 +85,7 @@ export function RoomCarousel({
     >
       <PlayButton
         onClick={onSubmit}
-        isLoaded={true}
+        //isLoaded={true}
         delayButtonVisibility={false}
       />
       {secondaryIconLink && secondaryIcon && (

@@ -5,16 +5,10 @@ import {
   IChallengeClient,
   IChallenge,
   getChallengePath,
-  NetworkPlayerInfo,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
-import useIncompleteChallenges from '../../hooks/useIncompleteChallenges';
-import Routes from '../../../models/Routes';
 import React from 'react';
-import ChallengeInfoView from './ChallengeInfoView';
-import ChallengeResultsView from './ChallengeResultsView';
-import ChallengeFailedView from './ChallengeFailedView';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useDocument } from 'swr-firestore';
 import { IPlayer } from 'infinitris2-models';
@@ -30,6 +24,13 @@ import {
   playGameMusic,
   worldVariationToTrackNumber,
 } from '@/sound/SoundManager';
+import { IIngameChallengeAttempt } from 'infinitris2-models';
+import { IChallengeEditor } from 'infinitris2-models';
+import { ChallengeUI } from '@/components/pages/ChallengePage/ChallengeUI';
+import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
+import { completeOfficialChallenge, unlockFeature } from '@/state/updateUser';
+import useIncompleteChallenges from '@/components/hooks/useIncompleteChallenges';
+import Routes from '@/models/Routes';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -37,22 +38,30 @@ interface ChallengePageRouteParams {
 
 export const isTestChallenge = (challengeId?: string) => challengeId === 'test';
 
+let challengeClient: IChallengeClient | undefined;
+
 export default function ChallengePage() {
+  const { id } = useParams<ChallengePageRouteParams>();
+  useReleaseClientOnExitPage(true);
+  return <ChallengePageInternal key={id} challengeId={id!} />;
+}
+
+type ChallengePageInternalProps = { challengeId: string };
+
+function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const appStore = useAppStore();
   const client = appStore.clientApi;
   const user = useUser();
-  const history = useHistory();
+
   const json = useSearchParam('json');
 
-  const { id } = useParams<ChallengePageRouteParams>();
-  const challengeId = id!; // guaranteed not to be null due to router
   const isTest = isTestChallenge(challengeId);
   console.log('isTest', isTest);
 
+  const history = useHistory();
   usePwaRedirect();
-  useReleaseClientOnExitPage();
+  useReleaseClientOnExitPage(false);
   //const requiresRedirect = useForcedRedirect(true, challengeId, !isTest);
-  const { incompleteChallenges } = useIncompleteChallenges();
 
   const { data: syncedChallenge } = useDocument<IChallenge>(
     !isTest ? getChallengePath(challengeId) : null
@@ -62,38 +71,62 @@ export default function ChallengePage() {
     : syncedChallenge?.data();
 
   const launchChallenge = client?.launchChallenge;
-  const restartClient = client?.restartClient; // TODO: move to IClient
+  const restartClient = client?.restartClient;
   const [hasLaunched, setLaunched] = React.useState(false);
+  const [hasContinued, setContinued] = React.useState(false);
 
   const [simulation, setSimulation] = useIngameStore(
     (store) => [store.simulation, store.setSimulation],
     shallow
   );
-  const [challengeClient, setChallengeClient] = React.useState<
-    IChallengeClient | undefined
-  >(undefined);
 
   const [showChallengeInfo, setShowChallengeInfo] = React.useState(true);
-  const [challengeFailed, setChallengeFailed] = React.useState(false);
-  const [challengeCompleted, setChallengeCompleted] = React.useState(false);
+  const [challengeAttempt, setChallengeAttempt] = React.useState<
+    IIngameChallengeAttempt | undefined
+  >(undefined);
 
-  const [checkChallengeStatus, setCheckChallengeStatus] = React.useState(false);
+  const handleRetry = React.useCallback(() => {
+    setChallengeAttempt(undefined);
+    setShowChallengeInfo(true);
+    restartClient?.();
+  }, [restartClient]);
 
-  const { preferredInputMethod, controls_keyboard, hasSeenAllSet, readOnly } =
-    user;
+  const { preferredInputMethod, controls_keyboard } = user;
 
   const isEditingChallenge =
     useChallengeEditorStore((store) => store.isEditing) && isTest;
 
-  // TODO: update (see SinglePlayer/Room page)
-  const player: Partial<NetworkPlayerInfo> = React.useMemo(
-    () => ({
-      color: 0xff0000, // FIXME: use player's color
-      nickname: readOnly?.nickname || 'New Player',
-      id: -1,
-    }),
-    [readOnly?.nickname]
+  const player = useNetworkPlayerInfo();
+
+  const { incompleteChallenges } = useIncompleteChallenges(
+    challenge?.worldType
   );
+
+  const handleContinue = React.useCallback(() => {
+    if (hasContinued) {
+      return;
+    }
+    setContinued(true);
+    if (isTest) {
+      history.goBack();
+    } else if (incompleteChallenges.length) {
+      history.push(`${Routes.challenges}/${incompleteChallenges[0].id}`);
+    } else {
+      // TODO: show this as a page
+      // TODO: unlocked features should come from challenges?
+      if (challenge.worldType === 'grass') {
+        unlockFeature(user.unlockedFeatures, 'playTypePicker', 'volcano');
+      }
+      history.push(Routes.home);
+    }
+  }, [
+    hasContinued,
+    isTest,
+    incompleteChallenges,
+    history,
+    challenge.worldType,
+    user.unlockedFeatures,
+  ]);
 
   React.useEffect(() => {
     if (isTest && !isEditingChallenge) {
@@ -102,7 +135,12 @@ export default function ChallengePage() {
   }, [isTest, isEditingChallenge, setShowChallengeInfo]);
 
   React.useEffect(() => {
-    if (challenge /*&& !requiresRedirect*/ && launchChallenge && !hasLaunched) {
+    if (
+      challenge &&
+      player /*&& !requiresRedirect*/ &&
+      launchChallenge &&
+      !hasLaunched
+    ) {
       setLaunched(true);
 
       const challengeSimulationEventListener: Partial<ISimulationEventListener> =
@@ -110,97 +148,81 @@ export default function ChallengePage() {
           onSimulationInit(simulation: ISimulation) {
             setSimulation(simulation);
           },
-          onBlockCreateFailed() {
-            setCheckChallengeStatus(true);
-          },
-
-          onBlockPlaced() {
-            setCheckChallengeStatus(true);
-          },
-          onBlockDied() {
-            setCheckChallengeStatus(true);
-          },
         };
 
-      const challengeClient = launchChallenge(challenge, {
-        listeners: [...coreGameListeners, challengeSimulationEventListener],
-        preferredInputMethod,
-        controls_keyboard,
-        player: player as IPlayer, // FIXME: use a different interface
-        challengeEditorSettings: isTest
-          ? {
-              isEditing: false,
-              listeners: [
-                {
-                  onToggleIsEditing: (editor) => {
-                    useChallengeEditorStore
-                      .getState()
-                      .setIsEditing(editor.isEditing);
-                  },
-                  onSaveGrid: (_editor, grid: string) => {
-                    useChallengeEditorStore.getState().setChallenge({
-                      ...useChallengeEditorStore.getState().challenge!,
-                      grid,
-                    });
-                  },
-                  onChangeChallengeCellType: (editor) => {
-                    useChallengeEditorStore
-                      .getState()
-                      .setChallengeCellType(editor.challengeCellType);
-                  },
-                },
-              ],
+      challengeClient = launchChallenge(
+        challenge,
+        {
+          onAttempt(attempt: IIngameChallengeAttempt) {
+            setChallengeAttempt(attempt);
+            if (attempt.status === 'success' && challenge.isOfficial) {
+              completeOfficialChallenge(
+                user.completedOfficialChallengeIds,
+                challengeId
+              );
             }
-          : undefined,
-      });
+          },
+        },
+        {
+          listeners: [...coreGameListeners, challengeSimulationEventListener],
+          preferredInputMethod,
+          controls_keyboard,
+          player: player as IPlayer, // FIXME: use a different interface
+          challengeEditorSettings: isTest
+            ? {
+                isEditing: false,
+                listeners: [
+                  {
+                    onToggleIsEditing: (editor: IChallengeEditor) => {
+                      useChallengeEditorStore
+                        .getState()
+                        .setIsEditing(editor.isEditing);
+                    },
+                    onSaveGrid: (_editor: IChallengeEditor, grid: string) => {
+                      useChallengeEditorStore.getState().setChallenge({
+                        ...useChallengeEditorStore.getState().challenge!,
+                        grid,
+                      });
+                    },
+                    onChangeChallengeCellType: (editor) => {
+                      useChallengeEditorStore
+                        .getState()
+                        .setChallengeCellType(editor.challengeCellType);
+                    },
+                  },
+                ],
+              }
+            : undefined,
+        }
+      );
       useChallengeEditorStore.getState().setEditor(challengeClient.editor);
       playGameMusic(
         challenge.worldType || 'grass',
         worldVariationToTrackNumber(challenge.worldVariation)
       );
-
-      setChallengeClient(challengeClient);
     }
   }, [
     challenge,
     hasLaunched,
     preferredInputMethod,
     launchChallenge,
-    setCheckChallengeStatus,
-    setChallengeClient,
     controls_keyboard,
     player,
     isTest,
     setSimulation,
+    user.completedOfficialChallengeIds,
+    challengeId,
   ]);
 
-  React.useEffect(() => {
-    if (challenge && checkChallengeStatus && challengeClient) {
-      setCheckChallengeStatus(false);
-      const attempt = challengeClient.getChallengeAttempt();
-      if (attempt && attempt.status !== 'pending') {
-        if (!isTest) {
-          // TODO:
-          //addChallengeAttempt(challenge.id, attempt);
-        }
-        if (attempt.status === 'success') {
-          setChallengeCompleted(true);
-        } else {
-          setChallengeFailed(true);
-        }
-      }
-    }
-  }, [
-    challenge,
-    checkChallengeStatus,
-    challengeClient,
-    setChallengeFailed,
-    isTest,
-  ]);
-
-  if (!hasLaunched || !challenge) {
+  if (!hasLaunched || !challenge || !simulation) {
     return null;
   }
+
+  console.log(
+    'Render challenge page UI: ',
+    challengeAttempt,
+    isEditingChallenge
+  );
 
   return (
     <>
@@ -210,51 +232,18 @@ export default function ChallengePage() {
         showLeaderboard={false /* TODO: based on challenge settings */}
       />
       {!isEditingChallenge && (
-        <>
-          {showChallengeInfo ? (
-            <ChallengeInfoView
-              challenge={challenge}
-              onReceivedInput={() => {
-                simulation?.startInterval();
-                setShowChallengeInfo(false);
-              }}
-            />
-          ) : challengeCompleted && challengeClient && restartClient ? (
-            <ChallengeResultsView
-              challengeId={id}
-              isTest={isTest}
-              //status={challengeClient.getChallengeAttempt()}
-              onContinue={() => {
-                //completeChallenge(challenge.id);
-                const remainingChallenges = incompleteChallenges.filter(
-                  (incompleteChallenge) => incompleteChallenge.id !== id
-                );
-                if (isTest) {
-                  history.goBack();
-                } else if (remainingChallenges.length) {
-                  history.push(Routes.challengeRequired);
-                } else if (!hasSeenAllSet) {
-                  history.push(Routes.allSet);
-                } else {
-                  history.goBack();
-                }
-              }}
-              onRetry={() => {
-                setChallengeCompleted(false);
-                setShowChallengeInfo(true);
-                restartClient();
-              }}
-            />
-          ) : challengeFailed && restartClient ? (
-            <ChallengeFailedView
-              onReceivedInput={() => {
-                setChallengeFailed(false);
-                setShowChallengeInfo(true);
-                restartClient();
-              }}
-            />
-          ) : null}
-        </>
+        <ChallengeUI
+          showChallengeInfo={showChallengeInfo}
+          simulation={simulation}
+          challengeAttempt={challengeAttempt}
+          challenge={challenge}
+          challengeId={challengeId}
+          player={simulation.humanPlayers[0]}
+          setShowChallengeInfo={setShowChallengeInfo}
+          retryChallenge={handleRetry}
+          isTest={isTest}
+          onContinue={handleContinue}
+        />
       )}
     </>
   );

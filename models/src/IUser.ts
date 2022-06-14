@@ -5,6 +5,7 @@ import Timestamp from './Timestamp';
 import { AppTheme } from './AppTheme';
 import { RendererQuality } from './RendererQuality';
 import { RendererType } from './RendererType';
+import { WorldType } from '@models/WorldType';
 
 export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly coins: number;
@@ -18,6 +19,7 @@ export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly numWrites: number;
   readonly writeRate: number;
   readonly characterIds: string[];
+  readonly isAdmin?: boolean;
 }
 
 export interface WithControls {
@@ -25,10 +27,10 @@ export interface WithControls {
   readonly controls_gamepad?: ControlSettings;
 }
 
+export type UnlockableFeature = 'playTypePicker' | WorldType;
+
 export default interface IUser extends IEntity, WithControls {
   readonly readOnly: IUserReadOnlyProperties;
-  readonly hasSeenWelcome?: boolean;
-  readonly hasSeenAllSet?: boolean;
   readonly locale?: string;
   readonly preferredInputMethod?: InputMethod;
   readonly appTheme?: AppTheme;
@@ -39,4 +41,6 @@ export default interface IUser extends IEntity, WithControls {
   readonly rendererQuality?: RendererQuality;
   readonly rendererType?: RendererType;
   readonly selectedCharacterId?: string;
+  readonly unlockedFeatures?: UnlockableFeature[];
+  readonly completedOfficialChallengeIds?: string[];
 }

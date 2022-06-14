@@ -4,12 +4,9 @@ import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientO
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import useIngameStore from '@/state/IngameStore';
 import useLoaderStore from '@/state/LoaderStore';
-import { DEFAULT_CHARACTER_ID, LocalUser } from '@/state/LocalUserStore';
 import {
-  getCharacterPath,
   hexToString,
   ICharacter,
-  stringToHex,
   WorldType,
   IPlayer,
   ISimulation,
@@ -18,7 +15,7 @@ import {
 } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
-import { useCollection, useDocument } from 'swr-firestore';
+import { useCollection } from 'swr-firestore';
 import useAppStore from '@/state/AppStore';
 import { useUser } from '@/components/hooks/useUser';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
@@ -31,6 +28,7 @@ import useSinglePlayerOptionsStore, {
   SinglePlayerOptionsFormData,
 } from '@/state/SinglePlayerOptionsStore';
 import Routes from '@/models/Routes';
+import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
 
 export function launchSinglePlayer(history: ReturnType<typeof useHistory>) {
   const settings = useSinglePlayerOptionsStore.getState().formData;
@@ -66,19 +64,12 @@ export default function SinglePlayerPage() {
   const spectate = settings.spectate;
   const isDemo = settings.isDemo;
   const trackNumber = worldVariationToTrackNumber(worldVariation);
-
-  const user = useUser();
-  const nickname = (user as LocalUser).nickname;
-  const characterId = user.selectedCharacterId || DEFAULT_CHARACTER_ID;
-  const { data: character } = useDocument<ICharacter>(
-    getCharacterPath(characterId)
-  );
-
+  const player = useNetworkPlayerInfo();
   const allCharacters = useCollection<ICharacter>(charactersPath);
 
   const hasLoaded =
     useLoaderStore((store) => store.hasFinished) &&
-    !!character &&
+    !!player &&
     allCharacters.data?.length;
 
   useReleaseClientOnExitPage();
@@ -88,15 +79,7 @@ export default function SinglePlayerPage() {
       setLaunched(true);
       launchSinglePlayer({
         allCharacters: allCharacters.data!.map((document) => document.data()),
-        player: {
-          nickname,
-          color:
-            character.data()?.color !== undefined
-              ? stringToHex(character?.data()?.color!)
-              : undefined,
-          patternFilename: character.data()?.patternFilename,
-          characterId,
-        },
+        player,
         worldType,
         worldVariation,
         controls_keyboard,
@@ -152,13 +135,11 @@ export default function SinglePlayerPage() {
     spectate,
     worldType,
     worldVariation,
-    character,
-    nickname,
     simulationSettings,
-    characterId,
     trackNumber,
     allCharacters.data,
     isDemo,
+    player,
   ]);
 
   return isDemo ? null : <GameUI />;

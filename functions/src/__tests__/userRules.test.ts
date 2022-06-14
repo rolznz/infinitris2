@@ -158,16 +158,6 @@ describe('Users Rules', () => {
     ).toDeny();
     await expect(
       db.doc(dummyData.user1Path).update({
-        hasSeenAllSet: 5,
-      })
-    ).toDeny();
-    await expect(
-      db.doc(dummyData.user1Path).update({
-        hasSeenWelcome: 5,
-      })
-    ).toDeny();
-    await expect(
-      db.doc(dummyData.user1Path).update({
         preferredInputMethod: 5,
       })
     ).toDeny();

@@ -11,7 +11,6 @@ import RoomPage from '@/components/pages/RoomPage';
 import ControlSettingsPage from '@/components/pages/SettingsPage/ControlSettingsPage';
 import SettingsPage from '@/components/pages/SettingsPage/SettingsPage';
 import ChallengePage from '@/components/pages/ChallengePage/ChallengePage';
-import ChallengeRequiredPage from '@/components/pages/ChallengeRequiredPage';
 import { ChallengesPage } from '@/components/pages/ChallengesPage/ChallengesPage';
 // import WelcomePage from '@/components/pages/WelcomePage';
 import Routes from './models/Routes';
@@ -145,15 +144,6 @@ function RouterContents() {
         <Route exact path={Routes.scoreboard}>
           <ScoreboardPage />
         </Route>
-        {/* <Route exact path={Routes.welcome}>
-          <WelcomePage />
-        </Route> */}
-        <Route exact path={Routes.challengeRequired}>
-          <ChallengeRequiredPage />
-        </Route>
-        {/* <Route exact path={Routes.allSet}>
-          <AllSetPage />
-        </Route> */}
         <Route exact path={Routes.market} key="market">
           <MarketPage />
         </Route>

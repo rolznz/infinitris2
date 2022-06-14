@@ -21,25 +21,25 @@ const playButtonAnimation = keyframes`
 `;
 
 type PlayButtonProps = {
-  isLoaded: boolean;
   delayButtonVisibility: boolean;
   onClick(): void;
 };
 
-function _PlayButton({
-  isLoaded,
-  delayButtonVisibility,
-  onClick,
-}: PlayButtonProps) {
+function _PlayButton({ delayButtonVisibility, onClick }: PlayButtonProps) {
   const handleClick = React.useCallback(() => {
     onClick();
     playSound(SoundKey.click);
   }, [onClick]);
+  const [isFirstRender, setIsFirstRender] = React.useState(true);
+
+  React.useEffect(() => {
+    setIsFirstRender(false);
+  }, [setIsFirstRender]);
 
   return (
     <IconButton
       sx={{
-        opacity: isLoaded ? 1 : 0,
+        opacity: isFirstRender ? 0 : 1,
         transition: delayButtonVisibility
           ? `opacity 2s ${firstTimeAnimationDelaySeconds}s`
           : undefined,
@@ -59,6 +59,7 @@ function _PlayButton({
       }}
       size="large"
       onClick={handleClick}
+      autoFocus
     >
       <SvgIcon sx={{ width: 26, height: 26, ml: 1.25, mr: 0.75, my: 1 }}>
         <PlayArrowIcon style={{ color: 'white' }} />
@@ -67,7 +68,8 @@ function _PlayButton({
   );
 }
 
-export const PlayButton = React.memo(
+export const PlayButton = _PlayButton;
+/*export const PlayButton = React.memo(
   _PlayButton,
   (prevProps, nextProps) => prevProps.isLoaded === nextProps.isLoaded
-);
+);*/

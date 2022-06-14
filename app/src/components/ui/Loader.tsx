@@ -88,12 +88,23 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const musicOn = user.musicOn !== undefined ? user.musicOn : true;
   const sfxOn = user.sfxOn !== undefined ? user.sfxOn : true;
   useEffect(() => {
-    if (musicOn === false && sfxOn === false && !hasToggledSounds) {
-      // no interaction needed since sound is muted
-      clickStart(false);
+    if (loaderStore.stepsCompleted === loaderStore.steps) {
+      if (musicOn === false && sfxOn === false && !hasToggledSounds) {
+        // no interaction needed since sound is muted
+        clickStart(false);
+      }
+      setHasToggledSounds(true);
     }
-    setHasToggledSounds(true);
-  }, [clickStart, musicOn, sfxOn, hasToggledSounds, setHasToggledSounds]);
+  }, [
+    hasFinished,
+    clickStart,
+    musicOn,
+    sfxOn,
+    hasToggledSounds,
+    setHasToggledSounds,
+    loaderStore.stepsCompleted,
+    loaderStore.steps,
+  ]);
 
   useEffect(() => {
     const htmlLoader = document.getElementById('html-loader');
@@ -102,9 +113,9 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
     }
   }, [hasFinished]);
 
-  if (!hasToggledSounds) {
-    return null;
-  }
+  // if (!hasToggledSounds) {
+  //   return null;
+  // }
 
   return (
     <>

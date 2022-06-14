@@ -42,10 +42,6 @@ export const getRatingPath = (
     getUniqueUserEntityId(entityCollectionPath, entityId, userId)
   );
 
-export const adminsPath = 'admins';
-export const getAdminPath = (adminId: string) =>
-  getEntityPath(adminsPath, adminId);
-
 // requires subcollection to easily iterate through network impacts
 // in order to create recursive network impacts
 export const impactedUsersPath = 'impactedUsers';
@@ -87,7 +83,6 @@ export type EntityCollectionPath =
   | typeof affiliatesPath
   | typeof roomsPath
   | typeof nicknamesPath
-  | typeof adminsPath
   | typeof challengeAttemptsPath
   | typeof charactersPath
   | typeof purchasesPath

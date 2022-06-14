@@ -13,6 +13,7 @@ type LoaderStore = {
   clickStart(delayButtonVisibility: boolean): void;
   reset(): void;
   initialize(): void;
+  disableDelayButtonVisiblity(): void;
 };
 
 const calculateHasFinished = (state: LoaderStore) => {
@@ -31,6 +32,10 @@ const useLoaderStore = create<LoaderStore>((set) => ({
   startClicked: false,
   hasInitialized: false,
   hasFinished: false,
+  disableDelayButtonVisiblity: () =>
+    set((_) => ({
+      delayButtonVisibility: false,
+    })),
   increaseSteps: (amount = 1) =>
     set((state) => ({
       steps: state.steps + amount,

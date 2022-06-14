@@ -1,22 +1,20 @@
-import { useDocument } from 'swr-firestore';
-import { getChallengePath, IChallenge } from 'infinitris2-models';
-import React from 'react';
-import { useEffect } from 'react';
-import { useHistory, useLocation } from 'react-router-dom';
-import Routes from '../../models/Routes';
-import useAppStore from '../../state/AppStore';
-import { useUser } from './useUser';
-import { isTestChallenge } from '../pages/ChallengePage/ChallengePage';
-import useIncompleteChallenges from './useIncompleteChallenges';
+// import { useDocument } from 'swr-firestore';
+// import { getChallengePath, IChallenge } from 'infinitris2-models';
+// import React from 'react';
+// import { useEffect } from 'react';
+// import { useHistory, useLocation } from 'react-router-dom';
+// import Routes from '../../models/Routes';
+// import useAppStore from '../../state/AppStore';
+// import { useUser } from './useUser';
+// import { isTestChallenge } from '../pages/ChallengePage/ChallengePage';
+// import useIncompleteChallenges from './useIncompleteChallenges';
 
-export default function useForcedRedirect(
-  onChallengePage: boolean = false,
-  challengeId?: string,
-  enabled: boolean = true
-) {
-  const appStore = useAppStore();
+export function useForcedRedirect() {
+  // onChallengePage: boolean = false,
+  // challengeId?: string,
+  // enabled: boolean = true
+  /*const appStore = useAppStore();
   const user = useUser();
-  const userHasSeenWelcome = user?.hasSeenWelcome;
   const setReturnToUrl = appStore.setReturnToUrl;
   const location = useLocation();
   const history = useHistory();
@@ -43,9 +41,7 @@ export default function useForcedRedirect(
       history.replace(url);
     }
 
-    if (!userHasSeenWelcome) {
-      replaceHistory(Routes.welcome);
-    } else if (
+    if (
       incompleteChallenges.length > 0 &&
       (!onChallengePage ||
         incompleteChallenges.find(
@@ -65,7 +61,6 @@ export default function useForcedRedirect(
       }
     }
   }, [
-    userHasSeenWelcome,
     history,
     incompleteChallenges,
     isLoadingOfficialChallenges,
@@ -76,5 +71,5 @@ export default function useForcedRedirect(
     setReturnToUrl,
     enabled,
   ]);
-  return requiresRedirect;
+  return requiresRedirect;*/
 }

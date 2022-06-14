@@ -17,6 +17,9 @@ import { playTypePickerId } from '@/components/ui/GameModePicker/PlayTypePicker'
 import { requiresPwa } from '@/utils/isMobile';
 import { useHistory } from 'react-router-dom';
 import Routes from '@/models/Routes';
+import { useUser } from '@/components/hooks/useUser';
+import useIncompleteChallenges from '@/components/hooks/useIncompleteChallenges';
+import { launchFullscreen } from '@/utils/launchFullscreen';
 
 function scrollPlayTypePickerIntoView() {
   const gameModePicker = document.getElementById(playTypePickerId);
@@ -34,11 +37,41 @@ function scrollPlayTypePickerIntoView() {
 const _HomePage = () => {
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width >= windowSize.height;
-  const [isLoaded, delayButtonVisibility] = useLoaderStore(
+  const [loaderHasFinished, delayButtonVisibility] = useLoaderStore(
     (store) => [store.hasFinished, store.delayButtonVisibility],
     shallow
   );
   const history = useHistory();
+  const user = useUser();
+  // TODO: only get when playTypePicker feature is locked
+  // TODO: only retrieve grass world challenges
+  const forceIntroWorld =
+    (user.unlockedFeatures || []).indexOf('playTypePicker') < 0;
+
+  const { incompleteChallenges } = useIncompleteChallenges(
+    forceIntroWorld ? 'grass' : undefined
+  );
+  const isLoaded = Boolean(
+    loaderHasFinished && (!forceIntroWorld || incompleteChallenges?.length)
+  );
+
+  React.useEffect(() => {
+    if (!forceIntroWorld) {
+      useLoaderStore.getState().disableDelayButtonVisiblity();
+    }
+  }, [forceIntroWorld]);
+
+  const handlePlayClick = React.useCallback(() => {
+    useLoaderStore.getState().disableDelayButtonVisiblity();
+    if (requiresPwa()) {
+      history.push(Routes.pwa);
+    } else if (forceIntroWorld) {
+      launchFullscreen();
+      history.push(`${Routes.challenges}/${incompleteChallenges[0].id}`);
+    } else {
+      scrollPlayTypePickerIntoView();
+    }
+  }, [history, forceIntroWorld, incompleteChallenges]);
 
   return (
     <>
@@ -63,15 +96,12 @@ const _HomePage = () => {
         </Box>
         <Box mt={4} />
         <FlexBox>
-          <PlayButton
-            isLoaded={isLoaded}
-            delayButtonVisibility={delayButtonVisibility}
-            onClick={() =>
-              requiresPwa()
-                ? history.push(Routes.pwa)
-                : scrollPlayTypePickerIntoView()
-            }
-          />
+          {isLoaded && (
+            <PlayButton
+              delayButtonVisibility={delayButtonVisibility}
+              onClick={handlePlayClick}
+            />
+          )}
         </FlexBox>
         <Box mt={8} />
       </FlexBox>

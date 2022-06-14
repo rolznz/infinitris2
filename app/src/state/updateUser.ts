@@ -15,6 +15,7 @@ import {
   getNicknamePath,
   getPurchasePath,
   IPurchase,
+  UnlockableFeature,
 } from 'infinitris2-models';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
@@ -109,17 +110,34 @@ export const setSelectedCharacterId = (selectedCharacterId: string) => {
 export const setUserLocale = (locale: string) => {
   updateUser({ locale });
 };
-export const markHasSeenWelcome = () => {
-  updateUser({ hasSeenWelcome: true });
-};
-export const markHasSeenAllSet = () => {
-  updateUser({ hasSeenAllSet: true });
-};
 export const setUserPreferredInputMethod = (
   preferredInputMethod: InputMethod | undefined
 ) => {
   updateUser({ preferredInputMethod });
 };
+
+export const unlockFeature = (
+  unlockedFeatures: UnlockableFeature[] | undefined,
+  ...feature: UnlockableFeature[]
+) => {
+  updateUser({
+    unlockedFeatures: [...(unlockedFeatures || []), ...feature].filter(
+      (v, i, a) => a.indexOf(v) === i
+    ),
+  });
+};
+export const completeOfficialChallenge = (
+  completedOfficialChallengeIds: string[] | undefined,
+  challengeId: string
+) => {
+  updateUser({
+    completedOfficialChallengeIds: [
+      ...(completedOfficialChallengeIds || []),
+      challengeId,
+    ].filter((v, i, a) => a.indexOf(v) === i),
+  });
+};
+
 export const addChallengeAttempt = (
   _challengeId: string,
   _attempt: IChallengeAttempt

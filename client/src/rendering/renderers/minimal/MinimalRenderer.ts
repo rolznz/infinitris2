@@ -78,12 +78,9 @@ export default class MinimalRenderer extends BaseRenderer {
    */
   async create() {
     document.body.appendChild(this._app.view);
-
-    // TODO: remove and use same resize logic as Infinitris2Renderer
-    this._app.ticker.add(this._tick);
   }
 
-  private _tick = () => {
+  tick() {
     if (!this._simulation) {
       return;
     }
@@ -112,7 +109,7 @@ export default class MinimalRenderer extends BaseRenderer {
       }
       cell.container.alpha = cell.cell.isEmpty ? cell.cell.behaviour.alpha : 1;
     });
-  };
+  }
 
   /**
    * @inheritdoc

@@ -1,5 +1,4 @@
 import {
-  getAdminPath,
   getChallengePath,
   getUserPath,
   IUser,
@@ -48,8 +47,6 @@ const user2Path = getUserPath(userId2);
 
 const updatableUser: Updatable<IUser> = {
   controls_keyboard: DEFAULT_KEYBOARD_CONTROLS,
-  hasSeenAllSet: false,
-  hasSeenWelcome: true,
   preferredInputMethod: 'keyboard',
   locale: 'EN',
   userId: userId1,
@@ -77,7 +74,6 @@ const challengeId1 = 'challengeId1';
 const challengeId2 = 'challengeId2';
 const challenge1Path = getChallengePath(challengeId1);
 const challenge2Path = getChallengePath(challengeId2);
-const user1AdminPath = getAdminPath(userId1);
 
 const updatableChallenge: UpdatableChallenge = {
   title: 'new challenge',
@@ -272,7 +268,6 @@ const dummyData = {
   userId1,
   userId2,
   userId3,
-  user1AdminPath,
   user1Path,
   user2Path,
   existingUser,

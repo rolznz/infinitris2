@@ -30,6 +30,7 @@ import { ChallengeEditor } from '@src/client/singleplayer/ChallengeEditor';
 import createBehaviourFromChallengeCellType from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
 import { IChallengeEditor } from '@models/IChallengeEditor';
 import ICell from '@models/ICell';
+import { IChallengeEventListener } from '@models/IChallengeEventListener';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -48,14 +49,17 @@ export default class ChallengeClient
   private _blockDied!: boolean;
   private _controls?: ControlSettings;
   private _editor?: IChallengeEditor;
+  private _listener: IChallengeEventListener;
 
   constructor(
     clientApiConfig: ClientApiConfig,
     challenge: IChallenge,
+    listener: IChallengeEventListener,
     options: LaunchOptions
   ) {
     super(clientApiConfig, options);
     this._preferredInputMethod = options.preferredInputMethod;
+    this._listener = listener;
     this._controls = options.controls_keyboard;
     if (options.challengeEditorSettings) {
       this._editor = new ChallengeEditor(
@@ -80,13 +84,16 @@ export default class ChallengeClient
     this._checkChallengeStatus();
   }
   private _checkChallengeStatus() {
-    if (this.getChallengeAttempt().status !== 'pending') {
+    const attempt = this.getChallengeAttempt();
+    if (attempt.status !== 'pending') {
+      this._listener.onAttempt(attempt);
       this._simulation.stopInterval();
-      if (this.getChallengeAttempt().status === 'failed') {
-        setTimeout(() => {
+      if (attempt.status === 'failed') {
+        // TODO: consider replacing with challenge failed dialog or make it a parameter
+        /*setTimeout(() => {
           this.restart();
           this._simulation.startInterval();
-        }, 1000);
+        }, 1000);*/
       }
     }
   }
@@ -142,6 +149,7 @@ export default class ChallengeClient
   restart() {
     this._destroyTempObjects();
     this._createTempObjects();
+    this._renderer.reset();
   }
 
   getChallengeAttempt(): IIngameChallengeAttempt {
@@ -192,7 +200,10 @@ export default class ChallengeClient
       const matchesRewardCriteria = (
         criteria: ChallengeRewardCriteria
       ): boolean => {
-        if (this._blockCreateFailed || this._blockDied) {
+        if (
+          this
+            ._blockCreateFailed /* || (this._blockDied && criteria.noMistakes)*/
+        ) {
           return false;
         }
         if (
@@ -338,7 +349,9 @@ export default class ChallengeClient
         ? PlayerStatus.knockedOut
         : PlayerStatus.ingame,
       this._launchOptions.player?.nickname,
-      this._launchOptions.player?.color
+      this._launchOptions.player?.color,
+      this._launchOptions.player?.patternFilename,
+      this._launchOptions.player?.characterId
     );
     if (spawnLocationCell) {
       player.spawnLocationCell = spawnLocationCell;
@@ -372,5 +385,6 @@ export default class ChallengeClient
       // execute one frame to warm up the simulation (creates the player's block, etc)
       simulation.step();
     }
+    //this._renderer.startTicker();
   }
 }

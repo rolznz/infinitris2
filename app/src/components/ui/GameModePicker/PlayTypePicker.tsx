@@ -44,17 +44,17 @@ import { WorldType } from 'infinitris2-models';
 export const playTypePickerId = 'play-type-picker';
 
 type GameModePickerProps = {
-  paddingTop?: 10;
   display: 'flex' | 'none';
 };
 
-export function PlayTypePicker({ paddingTop, display }: GameModePickerProps) {
+export function PlayTypePicker({ display }: GameModePickerProps) {
   const isDarkMode = useDarkMode();
   const isLandscape = useIsLandscape();
   const stage: WorldType = (process.env.FIXME as WorldType) || 'volcano';
   return (
     <FlexBox
-      pt={paddingTop}
+      pt={'1%'}
+      mb={'-2%'}
       flexDirection="row"
       flexWrap="wrap"
       justifyContent="space-evenly"
@@ -94,6 +94,7 @@ export function PlayTypePicker({ paddingTop, display }: GameModePickerProps) {
             description="Game Mode Picker Card - Story Mode"
           />
         }
+        link={Routes.storyMode}
       />
       <PlayTypeCard
         image={

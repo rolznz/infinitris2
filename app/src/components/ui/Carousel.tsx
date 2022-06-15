@@ -7,6 +7,8 @@ import { ReactComponent as LeftIcon } from '@/icons/left.svg';
 import { ReactComponent as RightIcon } from '@/icons/right.svg';
 import FlexBox from './FlexBox';
 import { colors, zIndexes } from '@/theme/theme';
+import useKeyPress from 'react-use/lib/useKeyPress';
+import usePrevious from 'react-use/lib/usePrevious';
 
 const defaultMobileStepperStyles = {};
 
@@ -85,6 +87,10 @@ export function Carousel({
   const windowSize = useWindowSize();
   const isLandscape = windowSize.width > windowSize.height;
   const arrowDistance = innerArrows ? -100 : 100;
+  const [leftPressed] = useKeyPress('ArrowLeft');
+  const [rightPressed] = useKeyPress('ArrowRight');
+  const prevLeftPressed = usePrevious(leftPressed);
+  const prevRightPressed = usePrevious(rightPressed);
 
   const setActiveStep = React.useCallback(
     (stepIndex) => {
@@ -93,6 +99,18 @@ export function Carousel({
     },
     [onChange]
   );
+
+  React.useEffect(() => {
+    if (leftPressed && !prevLeftPressed) {
+      setActiveStep(Math.max(activeStep - 1, 0));
+    }
+  }, [activeStep, leftPressed, prevLeftPressed, setActiveStep]);
+
+  React.useEffect(() => {
+    if (rightPressed && !prevRightPressed) {
+      setActiveStep(Math.min(activeStep + 1, pages.length - 1));
+    }
+  }, [activeStep, pages.length, prevRightPressed, rightPressed, setActiveStep]);
 
   React.useEffect(() => {
     if (pages.length <= activeStep) {

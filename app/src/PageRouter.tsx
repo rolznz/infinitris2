@@ -30,7 +30,6 @@ import MarketPage from '@/components/pages/MarketPage/MarketPage';
 import MarketCharacterPage from '@/components/pages/MarketPage/MarketCharacterPage';
 import BackButton from '@/components/ui/BackButton';
 import useAffiliateLinkRef from '@/components/hooks/useAffiliateLinkRef';
-import PlayPage from '@/components/pages/PlayPage/PlayPage';
 import { PwaPage } from '@/components/pages/PwaPage/PwaPage';
 import { HomePage } from '@/components/pages/HomePage/HomePage';
 import { SinglePlayerOptionsPage } from '@/components/pages/SinglePlayerPage/SinglePlayerOptionsPage';
@@ -38,6 +37,7 @@ import SinglePlayerPage from '@/components/pages/SinglePlayerPage/SinglePlayerPa
 import { SinglePlayerGameModePickerPage } from '@/components/pages/SinglePlayerPage/SinglePlayerGameModePickerPage';
 import { RoomInfoPage } from '@/components/pages/RoomInfoPage';
 import CoinsDisplay from '@/components/ui/CoinsDisplay';
+import { StoryModePage } from '@/components/pages/StoryModePage/StoryModePage';
 
 const coinsDisplayPaths = [Routes.market, Routes.profile];
 
@@ -126,8 +126,8 @@ function RouterContents() {
         <Route exact path={Routes.login}>
           <LoginPage />
         </Route>
-        <Route exact path={Routes.play}>
-          <PlayPage />
+        <Route exact path={Routes.storyMode}>
+          <StoryModePage />
         </Route>
         <Route exact path={Routes.comingSoon}>
           <ComingSoonPage />

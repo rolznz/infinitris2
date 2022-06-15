@@ -27,6 +27,7 @@ enum Routes {
   about = '/about',
   play = '/play',
   pwa = '/pwa',
+  storyMode = '/story-mode/picker',
 }
 
 export default Routes;

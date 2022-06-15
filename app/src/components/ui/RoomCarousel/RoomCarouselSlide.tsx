@@ -26,7 +26,8 @@ import { textShadows } from '@/theme/theme';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 
 export type RoomCarouselSlideProps = {
-  gameModeType: GameModeType;
+  gameModeType?: GameModeType;
+  customText?: React.ReactNode;
   key: string;
   name?: string;
   numPlayers?: number;
@@ -37,6 +38,8 @@ export type RoomCarouselSlideProps = {
 export function RoomCarouselSlide({
   numPlayers,
   gameModeType,
+  customText,
+  key,
   name,
   worldType,
   worldVariation,
@@ -44,7 +47,7 @@ export function RoomCarouselSlide({
   const isLandscape = useIsLandscape();
   return (
     <FlexBox
-      key={gameModeType}
+      key={key}
       width="100vw"
       height="100vh"
       sx={{
@@ -89,10 +92,12 @@ export function RoomCarouselSlide({
         //zIndex="above"
       >
         <FlexBox flexDirection="row" gap={1}>
-          <SvgIcon color="primary">
-            <GameModeIcon gameModeType={gameModeType} />
-          </SvgIcon>
-          <Typography variant="h1">{gameModeType}</Typography>
+          {gameModeType && (
+            <SvgIcon color="primary">
+              <GameModeIcon gameModeType={gameModeType} />
+            </SvgIcon>
+          )}
+          <Typography variant="h1">{gameModeType || customText}</Typography>
           {numPlayers !== undefined && (
             <FlexBox flexDirection="row">
               <SvgIcon color="primary">
@@ -102,9 +107,11 @@ export function RoomCarouselSlide({
             </FlexBox>
           )}
         </FlexBox>
-        <Typography variant="body2">
-          <GameModeDescription gameModeType={gameModeType} />
-        </Typography>
+        {gameModeType && (
+          <Typography variant="body2">
+            <GameModeDescription gameModeType={gameModeType} />
+          </Typography>
+        )}
       </FlexBox>
     </FlexBox>
   );

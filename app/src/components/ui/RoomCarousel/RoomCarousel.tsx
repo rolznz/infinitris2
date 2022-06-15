@@ -23,7 +23,7 @@ import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 type RoomCarouselProps = {
   onPlay(): void;
   slides: RoomCarouselSlideProps[];
-  secondaryIcon: React.ReactNode;
+  secondaryIcon?: React.ReactNode;
   secondaryIconLink?: string;
   initialStep: number;
   onChangeSlide(step: number): void;

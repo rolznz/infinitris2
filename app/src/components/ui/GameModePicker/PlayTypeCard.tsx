@@ -31,8 +31,8 @@ export function PlayTypeCard({
   const linkStyle: React.CSSProperties = React.useMemo(
     () => ({
       width: isLandscape ? '29%' : '47%',
-      height: isLandscape ? '44%' : undefined,
-      marginTop: '2%',
+      height: isLandscape ? '45%' : undefined,
+      marginTop: isLandscape ? '0%' : '2%',
       cursor: 'pointer',
       position: 'relative',
     }),

@@ -124,8 +124,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     isTest,
     incompleteChallenges,
     history,
-    challenge.worldType,
-    user.unlockedFeatures,
+    challenge?.worldType,
+    user?.unlockedFeatures,
   ]);
 
   React.useEffect(() => {

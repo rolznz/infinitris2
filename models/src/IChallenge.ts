@@ -34,7 +34,12 @@ export interface IChallenge extends IEntity {
   readonly locale?: string;
   //readonly firstBlockLayoutId?: string;
   //readonly firstBlockColumn?: number;
-  readonly grid: string;
+  readonly grid:
+    | string
+    | {
+        readonly numRows: number;
+        readonly numColumns: number;
+      };
 
   readonly worldType?: WorldType;
   readonly worldVariation?: WorldVariation;

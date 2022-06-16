@@ -33,6 +33,7 @@ export default interface ISimulation extends ISimulationEventListener {
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;
+  addBots(charactersPool?: ICharacter[] | undefined): void;
   runningTime: number;
   grid: IGrid;
   isFollowingPlayerId(playerId: number): boolean;

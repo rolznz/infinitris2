@@ -25,6 +25,7 @@ import { stringToHex } from '@models/util/stringToHex';
 import { hexToString } from '@models/util/hexToString';
 import { defaultLayoutSet, LayoutSet } from '@models/Layout';
 import { blockLayoutSets } from '@models/blockLayouts/blockLayoutSets';
+import AIPlayer from '@core/player/AIPlayer';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -560,6 +561,41 @@ export default class Simulation implements ISimulation {
         ),
         name: `${isBot ? 'Bot' : 'Player'} ${playerId}`,
       };
+    }
+  }
+
+  addBots(charactersPool: ICharacter[] | undefined) {
+    if (this._settings?.botSettings?.numBots) {
+      for (let i = 0; i < this._settings.botSettings.numBots; i++) {
+        // find a random bot color - unique until there are more players than colors
+        // TODO: move to simulation and notify player of color switch if their color is already in use
+
+        const botId = this.getFreePlayerId();
+        const character: Partial<ICharacter> = this.generateCharacter(
+          charactersPool,
+          botId,
+          true
+        );
+
+        this.addPlayer(
+          new AIPlayer(
+            this,
+            botId,
+            this.shouldNewPlayerSpectate
+              ? PlayerStatus.knockedOut
+              : PlayerStatus.ingame,
+            character.name!,
+            stringToHex(character.color!),
+            (this._settings?.botSettings.botReactionDelay || 20) + // TODO: consider removing bot parameters and retrieving from simulation
+              Math.floor(
+                Math.random() *
+                  (this._settings?.botSettings.botRandomReactionDelay || 20)
+              ),
+            character.patternFilename,
+            character.id!.toString()
+          )
+        );
+      }
     }
   }
 

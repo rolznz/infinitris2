@@ -117,41 +117,7 @@ export default class SinglePlayerClient
       options.controls_keyboard,
       options.controls_gamepad
     );
-
-    if (options.simulationSettings?.botSettings?.numBots) {
-      for (let i = 0; i < options.simulationSettings.botSettings.numBots; i++) {
-        // find a random bot color - unique until there are more players than colors
-        // TODO: move to simulation and notify player of color switch if their color is already in use
-
-        const botId = this._simulation.getFreePlayerId();
-        const character: Partial<ICharacter> =
-          this._simulation.generateCharacter(
-            this._launchOptions.allCharacters,
-            botId,
-            true
-          );
-
-        this._simulation.addPlayer(
-          new AIPlayer(
-            this._simulation,
-            botId,
-            this._simulation.shouldNewPlayerSpectate
-              ? PlayerStatus.knockedOut
-              : PlayerStatus.ingame,
-            character.name!,
-            stringToHex(character.color!),
-            (options.simulationSettings?.botSettings.botReactionDelay || 20) + // TODO: consider removing bot parameters and retrieving from simulation
-              Math.floor(
-                Math.random() *
-                  (options.simulationSettings?.botSettings
-                    .botRandomReactionDelay || 20)
-              ),
-            character.patternFilename,
-            character.id!.toString()
-          )
-        );
-      }
-    }
+    this._simulation.addBots(this._launchOptions.allCharacters);
 
     this._simulation.startInterval();
   }

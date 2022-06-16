@@ -235,7 +235,8 @@ export class ChallengeEditor implements IChallengeEditor {
       this._simulation!.grid
     );
     this._eventListeners?.forEach((eventListener) =>
-      eventListener.onSaveGrid?.(this, this._client.challenge.grid)
+      // FIXME: support multiple grid types
+      eventListener.onSaveGrid?.(this, this._client.challenge.grid as string)
     );
   }
 }

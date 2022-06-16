@@ -113,6 +113,10 @@ export default class ChallengeClient
     this._checkChallengeStatus();
   }
 
+  onEndRound() {
+    this._checkChallengeStatus();
+  }
+
   /**
    * @inheritdoc
    */
@@ -155,6 +159,13 @@ export default class ChallengeClient
   getChallengeAttempt(): IIngameChallengeAttempt {
     const { finishCriteria, rewardCriteria } = this._challenge;
     const matchesFinishCriteria = () => {
+      if (this._simulation.round) {
+        if (this._simulation.round.winner) {
+          return true;
+        }
+
+        return false;
+      }
       if (
         this._blockCreateFailed ||
         (this._blockDied && finishCriteria?.noMistakes)
@@ -200,6 +211,16 @@ export default class ChallengeClient
       const matchesRewardCriteria = (
         criteria: ChallengeRewardCriteria
       ): boolean => {
+        if (this._simulation.round) {
+          if (
+            this._simulation.round.winner === this._simulation.humanPlayers[0]
+          ) {
+            return true;
+          }
+
+          return false;
+        }
+
         if (
           this
             ._blockCreateFailed /* || (this._blockDied && criteria.noMistakes)*/
@@ -311,11 +332,22 @@ export default class ChallengeClient
     this._blockDied = false;
 
     const cellTypes: ChallengeCellType[][] = [];
-    if (this._challenge.grid) {
+    let grid: Grid;
+    if (typeof this._challenge.grid === 'string') {
       cellTypes.push(...parseGrid(this._challenge.grid));
+      grid = new Grid(cellTypes[0].length, cellTypes.length, false);
+    } else if (
+      this._challenge.grid.numRows &&
+      this._challenge.grid.numColumns
+    ) {
+      grid = new Grid(
+        this._challenge.grid.numColumns,
+        this._challenge.grid.numRows,
+        false
+      );
+    } else {
+      throw new Error('Unsupported grid type');
     }
-
-    const grid = new Grid(cellTypes[0].length, cellTypes.length, false);
 
     let spawnLocationCell: ICell | undefined;
 
@@ -358,6 +390,7 @@ export default class ChallengeClient
     }
     simulation.addPlayer(player);
     simulation.followPlayer(player);
+    this._simulation.addBots(this._launchOptions.allCharacters);
     /*if (this._challenge.firstBlockLayoutId) {
       player.nextLayout = simulation.layoutSet[this._challenge.firstBlockLayoutId];
     }*/

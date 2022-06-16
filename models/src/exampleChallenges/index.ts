@@ -1,4 +1,5 @@
 import bugfix from '@models/exampleChallenges/bugfix';
+import raceTest from '@models/exampleChallenges/raceTest';
 import rockTest from '@models/exampleChallenges/rockTest';
 import { IChallenge } from '../IChallenge';
 import basicMovement from './basicMovement';
@@ -24,5 +25,6 @@ export const exampleChallenges: { [key: string]: IChallenge } = {
   'infection-2': infectionTest2,
   't-spins-1': tSpins1,
   'rock-test': rockTest,
+  'race-1': raceTest,
   bugfix: bugfix,
 };

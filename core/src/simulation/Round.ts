@@ -48,7 +48,10 @@ export class Round implements IRound {
   }
 
   get conditionsAreMet(): boolean {
-    return this._simulation.nonSpectatorPlayers.length > 1;
+    return (
+      this._simulation.nonSpectatorPlayers.length > 1 &&
+      this._simulation.isRunning
+    );
   }
 
   step() {

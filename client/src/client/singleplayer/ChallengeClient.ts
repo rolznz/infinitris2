@@ -163,6 +163,12 @@ export default class ChallengeClient
         if (this._simulation.round.winner) {
           return true;
         }
+        if (
+          !this._simulation.round.isWaitingForNextRound &&
+          this._simulation.humanPlayers[0].status === PlayerStatus.knockedOut
+        ) {
+          return true;
+        }
 
         return false;
       }

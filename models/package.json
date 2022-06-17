@@ -19,8 +19,7 @@
     "url": "https://github.com/rolznz/infinitris2/issues"
   },
   "scripts": {
-    "clean-build": "mkdir -p dist && rm -r dist && yarn build",
-    "build": "ttsc && \\cp -r dist-temp dist && rm -r dist-temp && yarn version patch",
+    "build": "mkdir -p dist && rm -r dist && ttsc && yarn version patch",
     "lint": "eslint --ext .js,.ts .",
     "test": "jest"
   },

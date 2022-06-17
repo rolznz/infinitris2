@@ -170,10 +170,13 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           onAttempt(attempt: IIngameChallengeAttempt) {
             setChallengeAttempt(attempt);
             if (attempt.status === 'success' && challenge.isOfficial) {
-              completeOfficialChallenge(
-                user.completedOfficialChallengeIds,
-                challengeId
-              );
+              setTimeout(() => {
+                // delay completion for world progress effect
+                completeOfficialChallenge(
+                  user.completedOfficialChallengeIds,
+                  challengeId
+                );
+              }, 500);
             }
           },
         },

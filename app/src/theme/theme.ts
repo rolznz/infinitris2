@@ -33,6 +33,7 @@ export const colors = {
   black: '#000000',
   green: '#44ff44',
   blue: '#4444ff',
+  lightBlue: '#52C1FF',
 };
 
 export const boxShadows = {

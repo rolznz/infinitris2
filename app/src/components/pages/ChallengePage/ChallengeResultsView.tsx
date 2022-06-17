@@ -5,6 +5,7 @@ import {
 import useContinueButton from '@/components/hooks/useContinueButton';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import useTrue from '@/components/hooks/useTrue';
+import { WorldProgress } from '@/components/pages/ChallengePage/WorldProgress';
 import FlexBox from '@/components/ui/FlexBox';
 import { borderRadiuses, zIndexes } from '@/theme/theme';
 import Typography from '@mui/material/Typography';
@@ -68,6 +69,7 @@ export default function ChallengeResultsView({
   return (
     <FlexBox zIndex={zIndexes.above} width="100%" height="100%">
       <EndRoundDisplayOverlay>
+        <WorldProgress />
         <RoundWinnerDisplay
           characterSize={characterSize}
           winner={player}

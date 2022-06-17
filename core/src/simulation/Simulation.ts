@@ -26,6 +26,7 @@ import { hexToString } from '@models/util/hexToString';
 import { defaultLayoutSet, LayoutSet } from '@models/Layout';
 import { blockLayoutSets } from '@models/blockLayouts/blockLayoutSets';
 import AIPlayer from '@core/player/AIPlayer';
+import { simpleRandom } from '@models/util/simpleRandom';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -50,6 +51,7 @@ export default class Simulation implements ISimulation {
   private _lastStepTime = 0;
   private _round: IRound | undefined;
   private _layoutSet: LayoutSet | undefined;
+  private _botSeed: number | undefined;
 
   constructor(grid: Grid, settings: SimulationSettings = {}, isClient = false) {
     this._eventListeners = [];
@@ -63,6 +65,7 @@ export default class Simulation implements ISimulation {
       gameModeType: 'infinity',
       ...settings,
     };
+    this._botSeed = this._settings?.botSettings?.seed;
 
     this._layoutSet = this._settings.layoutSetId
       ? blockLayoutSets.find((set) => set.id === this._settings.layoutSetId)
@@ -586,17 +589,28 @@ export default class Simulation implements ISimulation {
               : PlayerStatus.ingame,
             character.name!,
             stringToHex(character.color!),
-            (this._settings?.botSettings.botReactionDelay || 20) + // TODO: consider removing bot parameters and retrieving from simulation
-              Math.floor(
-                Math.random() *
-                  (this._settings?.botSettings.botRandomReactionDelay || 20)
-              ),
+            this._generateBotReactionDelay(),
             character.patternFilename,
             character.id!.toString()
           )
         );
       }
     }
+  }
+  private _generateBotReactionDelay(): number {
+    const random =
+      this._botSeed !== undefined
+        ? simpleRandom(this._botSeed++)
+        : Math.random();
+
+    const botDelay =
+      (this._settings?.botSettings?.botReactionDelay || 20) +
+      Math.floor(
+        random * (this._settings?.botSettings?.botRandomReactionDelay || 20)
+      );
+
+    console.log('Calculated bot reaction delay: ' + botDelay);
+    return botDelay;
   }
 
   private _updatePlayer = (player: IPlayer) => {

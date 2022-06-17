@@ -196,13 +196,13 @@ function playMusic(
   if (fadeIn) {
     existingHowl.volume(0);
   } else {
-    existingHowl.volume(0.5);
+    existingHowl.volume(1);
   }
   existingHowl.loop(true);
   existingHowl.seek(0);
   existingHowl.play();
   if (fadeIn) {
-    existingHowl.fade(0, 0.5, musicFadeTimeMs);
+    existingHowl.fade(0, 1, musicFadeTimeMs);
   }
   return existingHowl;
 }

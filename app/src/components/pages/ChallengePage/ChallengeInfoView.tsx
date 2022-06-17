@@ -1,5 +1,6 @@
 import { EndRoundDisplayOverlay } from '@/components/game/EndRoundDisplay/EndRoundDisplay';
 import useContinueButton from '@/components/hooks/useContinueButton';
+import { GameModeDescription } from '@/components/ui/RoomCarousel/RoomCarouselSlide';
 import { borderRadiuses, zIndexes } from '@/theme/theme';
 import { Box, Typography } from '@mui/material';
 import { IChallenge } from 'infinitris2-models';
@@ -44,6 +45,14 @@ export default function ChallengeInfoView({
           <Typography variant="h6">
             {challenge.title || 'Untitled Challenge'}
           </Typography>
+          {challenge.simulationSettings?.gameModeType &&
+            challenge.simulationSettings?.gameModeType !== 'infinity' && (
+              <Typography variant="h6" mt={2}>
+                <GameModeDescription
+                  gameModeType={challenge.simulationSettings?.gameModeType}
+                />
+              </Typography>
+            )}
           {/* <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
           {translation?.description || challenge?.description || (
             <FormattedMessage

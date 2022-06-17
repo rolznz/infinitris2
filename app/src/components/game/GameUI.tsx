@@ -12,12 +12,14 @@ type GameUIProps = {
   challengeEditorEnabled?: boolean;
   showLeaderboard?: boolean;
   chatEnabled?: boolean;
+  showEndRoundDisplay?: boolean;
 };
 
 export function GameUI({
   challengeEditorEnabled,
   showLeaderboard = true,
   chatEnabled = true,
+  showEndRoundDisplay = true,
 }: GameUIProps) {
   console.log('Re-render game UI');
   return (
@@ -39,7 +41,7 @@ export function GameUI({
         {chatEnabled && !challengeEditorEnabled && <ChatButton />}
         {showLeaderboard && <Leaderboard />}
       </TopRightPanel>
-      <EndRoundDisplay />
+      {showEndRoundDisplay && <EndRoundDisplay />}
       <SpawnDelayDisplay />
     </FlexBox>
   );

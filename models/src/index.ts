@@ -75,6 +75,7 @@ export * from './IRoundEventListener';
 export * from './util/hexToRgb';
 export * from './util/rgbToHex';
 export * from './util/rotateColor';
+export * from './util/simpleRandom';
 export * from './UpdateServerRequest';
 export * from './CreateUserRequest';
 export * from './IPayment';

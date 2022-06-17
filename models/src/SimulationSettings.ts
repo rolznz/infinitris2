@@ -18,5 +18,6 @@ export type SimulationSettings = {
     numBots?: number;
     botReactionDelay?: number;
     botRandomReactionDelay?: number;
+    seed?: number;
   };
 };

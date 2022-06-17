@@ -89,7 +89,12 @@ export function LeaderboardEntryLine({
         </Typography>
         {entry.status !== PlayerStatus.ingame && (
           <Typography variant="body1" sx={statusTypographySx}>
-            {entry.status === PlayerStatus.knockedOut ? (
+            {entry.playerId === simulation?.round?.winner?.id ? (
+              <FormattedMessage
+                defaultMessage="Winner"
+                description="leaderboard entry winner status"
+              />
+            ) : entry.status === PlayerStatus.knockedOut ? (
               <FormattedMessage
                 defaultMessage="Knocked out"
                 description="leaderboard entry knocked out status"

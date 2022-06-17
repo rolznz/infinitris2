@@ -5,12 +5,14 @@ import {
   IChallengeClient,
   IChallenge,
   getChallengePath,
+  charactersPath,
+  ICharacter,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
 import React from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
-import { useDocument } from 'swr-firestore';
+import { useCollection, useDocument } from 'swr-firestore';
 import { IPlayer } from 'infinitris2-models';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
@@ -70,6 +72,12 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     ? JSON.parse(json as string)
     : syncedChallenge?.data();
 
+  const loadCharacters = !!challenge?.simulationSettings?.botSettings;
+  const allCharacters = useCollection<ICharacter>(
+    loadCharacters ? charactersPath : null
+  );
+  const hasLoadedCharacters = !loadCharacters || allCharacters?.data?.length;
+
   const launchChallenge = client?.launchChallenge;
   const restartClient = client?.restartClient;
   const [hasLaunched, setLaunched] = React.useState(false);
@@ -81,6 +89,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   );
 
   const [showChallengeInfo, setShowChallengeInfo] = React.useState(true);
+  const [hasRoundStarted, setRoundStarted] = React.useState(false);
   const [challengeAttempt, setChallengeAttempt] = React.useState<
     IIngameChallengeAttempt | undefined
   >(undefined);
@@ -88,6 +97,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const handleRetry = React.useCallback(() => {
     setChallengeAttempt(undefined);
     setShowChallengeInfo(true);
+    setRoundStarted(false);
     restartClient?.();
   }, [restartClient]);
 
@@ -139,7 +149,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       challenge &&
       player /*&& !requiresRedirect*/ &&
       launchChallenge &&
-      !hasLaunched
+      !hasLaunched &&
+      hasLoadedCharacters
     ) {
       setLaunched(true);
 
@@ -147,6 +158,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
         {
           onSimulationInit(simulation: ISimulation) {
             setSimulation(simulation);
+          },
+          onNextRound() {
+            setRoundStarted(true);
           },
         };
 
@@ -168,6 +182,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           preferredInputMethod,
           controls_keyboard,
           player: player as IPlayer, // FIXME: use a different interface
+          allCharacters: allCharacters?.data?.map((document) =>
+            document.data()
+          ),
           challengeEditorSettings: isTest
             ? {
                 isEditing: false,
@@ -212,24 +229,25 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     setSimulation,
     user.completedOfficialChallengeIds,
     challengeId,
+    allCharacters,
+    hasLoadedCharacters,
   ]);
 
   if (!hasLaunched || !challenge || !simulation) {
     return null;
   }
 
-  console.log(
-    'Render challenge page UI: ',
-    challengeAttempt,
-    isEditingChallenge
-  );
-
   return (
     <>
       <GameUI
         chatEnabled={false}
         challengeEditorEnabled={isTest}
-        showLeaderboard={false /* TODO: based on challenge settings */}
+        showLeaderboard={Boolean(
+          simulation?.round &&
+            (hasRoundStarted || simulation?.round.winner) &&
+            !showChallengeInfo
+        )}
+        showEndRoundDisplay={!showChallengeInfo && !challengeAttempt}
       />
       {!isEditingChallenge && (
         <ChallengeUI

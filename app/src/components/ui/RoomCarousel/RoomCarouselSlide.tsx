@@ -130,7 +130,7 @@ function GameModeIcon(props: { gameModeType: GameModeType }) {
   }
 }
 
-function GameModeDescription(props: { gameModeType: GameModeType }) {
+export function GameModeDescription(props: { gameModeType: GameModeType }) {
   switch (props.gameModeType) {
     case 'infinity':
       return (

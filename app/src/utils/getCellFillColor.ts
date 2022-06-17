@@ -32,6 +32,8 @@ export function getCellFillColor(cellType: ChallengeCellType): string {
     case ChallengeCellType.GestureRotateAnticlockwise:
     case ChallengeCellType.GestureDrop:
       return '#f0f';
+    case ChallengeCellType.Infection:
+      return '#a0a';
     default:
       return '#aaaaaa';
   }

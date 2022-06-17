@@ -4,6 +4,7 @@ import { colors, textShadows } from '@/theme/theme';
 import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
 import type { SxProps, Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
+import { WorldType } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
 
 const typographySx: SxProps<Theme> = {
@@ -13,8 +14,12 @@ const typographySx: SxProps<Theme> = {
   position: 'absolute',
 };
 
-export function WorldProgress() {
-  const incompleteChallenges = useIncompleteChallenges('grass');
+type WorldProgressProps = {
+  worldType: WorldType | undefined;
+};
+
+export function WorldProgress({ worldType }: WorldProgressProps) {
+  const incompleteChallenges = useIncompleteChallenges(worldType);
   const progress = incompleteChallenges?.isLoadingOfficialChallenges
     ? 0
     : ((5 - incompleteChallenges.incompleteChallenges?.length) / 5) * 100;

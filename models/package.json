@@ -1,7 +1,7 @@
 {
   "name": "infinitris2-models",
   "private": true,
-  "version": "0.1.398",
+  "version": "0.1.400",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,7 +19,8 @@
     "url": "https://github.com/rolznz/infinitris2/issues"
   },
   "scripts": {
-    "build": "mkdir -p dist && rm -r dist && ttsc && yarn version patch",
+    "clean-build": "mkdir -p dist && rm -r dist && yarn build",
+    "build": "ttsc && \\cp -r dist-temp dist && rm -r dist-temp && yarn version patch",
     "lint": "eslint --ext .js,.ts .",
     "test": "jest"
   },

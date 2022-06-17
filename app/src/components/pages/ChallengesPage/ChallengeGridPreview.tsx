@@ -1,21 +1,24 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { Typography } from '@mui/material';
-import { parseGrid, ChallengeCellType } from 'infinitris2-models';
+import { parseGrid, ChallengeCellType, IChallenge } from 'infinitris2-models';
 import React, { useEffect, useRef } from 'react';
 import { getCellFillColor } from '../../../utils/getCellFillColor';
 
 interface ChallengePreviewProps {
-  grid: string;
+  grid: IChallenge['grid'];
   width: number;
   height: number;
 }
 
 export default function ChallengeGridPreview({
-  grid,
+  grid: gridObject,
   width,
   height,
 }: ChallengePreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const grid =
+    (typeof gridObject === 'string' ? (gridObject as string) : undefined) ||
+    '0';
 
   useEffect(() => {
     const context = canvasRef.current!.getContext('2d')!;
@@ -54,16 +57,19 @@ export default function ChallengeGridPreview({
 }
 
 type FittedChallengeGridPreviewProps = {
-  grid: string;
+  grid: IChallenge['grid'];
   maxWidth: number;
   maxHeight: number;
 };
 
 export function FittedChallengeGridPreview({
-  grid,
+  grid: gridObject,
   maxWidth,
   maxHeight,
 }: FittedChallengeGridPreviewProps) {
+  const grid =
+    (typeof gridObject === 'string' ? (gridObject as string) : undefined) ||
+    '0';
   let challengeCells;
   try {
     challengeCells = parseGrid(grid);

@@ -37,7 +37,7 @@ export default class InfectionBehaviour implements ICellBehaviour {
             continue;
           }
           const cell =
-            this._grid.cells[this._cell.row + row][
+            this._grid.cells[this._cell.row + row]?.[
               (((this._cell.column + column) % this._grid.numColumns) +
                 this._grid.numColumns) %
                 this._grid.numColumns

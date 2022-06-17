@@ -21,12 +21,12 @@ import Typography from '@mui/material/Typography/Typography';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 
 type RoomCarouselProps = {
-  onPlay(): void;
+  onPlay(slideIndex: number): void;
   slides: RoomCarouselSlideProps[];
   secondaryIcon?: React.ReactNode;
   secondaryIconLink?: string;
   initialStep: number;
-  onChangeSlide(step: number): void;
+  onChangeSlide?(step: number): void;
   title: React.ReactNode;
 };
 
@@ -40,16 +40,25 @@ export function RoomCarousel({
   onChangeSlide,
 }: RoomCarouselProps) {
   const isLandscape = useIsLandscape();
+  const [selectedSlide, setSelectedSlide] = React.useState(initialStep);
   const carouselSlides = React.useMemo(
     () =>
       slides.map((slide) => <RoomCarouselSlide {...slide} key={slide.key} />),
     [slides]
   );
 
+  const handleChangeSlide = React.useCallback(
+    (slideIndex) => {
+      setSelectedSlide(slideIndex);
+      onChangeSlide?.(slideIndex);
+    },
+    [onChangeSlide, setSelectedSlide]
+  );
+
   const onSubmit = () => {
     playSound(SoundKey.click);
     launchFullscreen();
-    onPlay();
+    onPlay(selectedSlide);
   };
 
   return (
@@ -78,7 +87,7 @@ export function RoomCarousel({
             scaleTransform={false}
             innerArrows
             initialStep={initialStep}
-            onChange={onChangeSlide}
+            onChange={handleChangeSlide}
           />
         </div>
       }

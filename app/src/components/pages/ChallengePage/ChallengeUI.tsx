@@ -46,6 +46,7 @@ export function ChallengeUI({
         />
       ) : challengeAttempt?.status === 'success' ? (
         <ChallengeResultsView
+          challenge={challenge}
           attempt={challengeAttempt}
           challengeId={challengeId}
           isTest={isTest}

@@ -31,7 +31,7 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
         {isLocked && ' (LOCKED)'}
       </Typography>
       <ChallengeGridPreview
-        grid={challenge.data()!.grid || '0'}
+        grid={challenge.data()!.grid}
         width={100}
         height={100}
       />

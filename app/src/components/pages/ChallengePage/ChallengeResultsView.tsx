@@ -9,7 +9,11 @@ import { WorldProgress } from '@/components/pages/ChallengePage/WorldProgress';
 import FlexBox from '@/components/ui/FlexBox';
 import { borderRadiuses, zIndexes } from '@/theme/theme';
 import Typography from '@mui/material/Typography';
-import { IIngameChallengeAttempt, IPlayer } from 'infinitris2-models';
+import {
+  IChallenge,
+  IIngameChallengeAttempt,
+  IPlayer,
+} from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import useWindowSize from 'react-use/lib/useWindowSize';
@@ -19,6 +23,7 @@ import useWindowSize from 'react-use/lib/useWindowSize';
 export interface ChallengeResultsViewProps {
   attempt: IIngameChallengeAttempt;
   challengeId: string;
+  challenge: IChallenge;
   isTest: boolean;
   player: IPlayer;
   onContinue(): void;
@@ -28,6 +33,7 @@ export interface ChallengeResultsViewProps {
 export default function ChallengeResultsView({
   //challengeId,
   //isTest,
+  challenge,
   player,
   attempt,
   onContinue,
@@ -69,7 +75,7 @@ export default function ChallengeResultsView({
   return (
     <FlexBox zIndex={zIndexes.above} width="100%" height="100%">
       <EndRoundDisplayOverlay>
-        <WorldProgress />
+        <WorldProgress worldType={challenge.worldType} />
         <RoundWinnerDisplay
           characterSize={characterSize}
           winner={player}

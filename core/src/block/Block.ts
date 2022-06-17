@@ -358,7 +358,7 @@ export default class Block implements IBlock {
       // (e.g. for 180 degree rotation with up/down movement on an I block)
       if (
         !force &&
-        (drClamped === 0 || (drClamped === 2 && dy === 0)) &&
+        (drClamped === 0 || drClamped === 2 /* && dy === 0*/) &&
         dr !== 0
       ) {
         continue;

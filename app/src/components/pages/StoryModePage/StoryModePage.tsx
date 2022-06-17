@@ -6,29 +6,42 @@ import { RoomCarousel } from '@/components/ui/RoomCarousel/RoomCarousel';
 import { FormattedMessage } from 'react-intl';
 import React from 'react';
 import useOfficialChallenges from '@/components/hooks/useOfficialChallenges';
+import { useUser } from '@/components/hooks/useUser';
 
 export function StoryModePage() {
   const history = useHistory();
+  const completedOfficialChallengeIds = useUser().completedOfficialChallengeIds;
   const officialChallenges = useOfficialChallenges().data;
-  const [selectedSlide, setSelectedSlide] = React.useState(0);
 
   const slides: RoomCarouselSlideProps[] = React.useMemo(
     () =>
       officialChallenges?.map((challengeDoc) => ({
         key: challengeDoc.id,
-        customText: challengeDoc.data().title || 'Untitled',
+        customText:
+          (challengeDoc.data().worldType || 'grass') +
+            ' ' +
+            challengeDoc.data().title || 'Untitled',
         worldType: challengeDoc.data().worldType || 'grass',
         worldVariation: challengeDoc.data().worldVariation || '0',
       })) || [],
     [officialChallenges]
   );
 
-  const onSubmit = () => {
-    const challenge = officialChallenges?.[selectedSlide];
+  const onSubmit = (slideIndex: number) => {
+    const challenge = officialChallenges?.[slideIndex];
     if (challenge) {
       history.push(`${Routes.challenges}/${challenge.id}`);
     }
   };
+
+  if (!slides || !officialChallenges) {
+    return null;
+  }
+
+  const firstIncompletedChallengeIndex = officialChallenges?.findIndex(
+    (challenge) =>
+      (completedOfficialChallengeIds || []).indexOf(challenge.id) < 0
+  );
 
   // TODO: this should not be called "RoomCarousel"
   return (
@@ -43,10 +56,7 @@ export function StoryModePage() {
       //secondaryIconLink={Routes.singlePlayerOptions}
       onPlay={onSubmit}
       slides={slides}
-      initialStep={
-        0 // TODO: use first incompleted challenge
-      }
-      onChangeSlide={setSelectedSlide}
+      initialStep={firstIncompletedChallengeIndex || 0}
     />
   );
 }

@@ -29,7 +29,7 @@ export function GameUI({
       left={0}
       width="100%"
       height="100%"
-      zIndex={1}
+      zIndex={2}
       sx={{
         pointerEvents: 'none',
       }}

@@ -1,42 +1,42 @@
 import Layout, { LayoutSet } from '../Layout';
 
-const I: Layout = [
+export const I: Layout = [
   [0, 0, 1, 0],
   [0, 0, 1, 0],
   [0, 0, 1, 0],
   [0, 0, 1, 0],
 ];
 
-const J: Layout = [
+export const J: Layout = [
   [0, 1, 0],
   [0, 1, 0],
   [1, 1, 0],
 ];
 
-const L: Layout = [
+export const L: Layout = [
   [0, 1, 0],
   [0, 1, 0],
   [0, 1, 1],
 ];
 
-const O: Layout = [
+export const O: Layout = [
   [1, 1],
   [1, 1],
 ];
 
-const S: Layout = [
+export const S: Layout = [
   [0, 1, 1],
   [1, 1, 0],
   [0, 0, 0],
 ];
 
-const T: Layout = [
+export const T: Layout = [
   [0, 1, 0],
   [1, 1, 1],
   [0, 0, 0],
 ];
 
-const Z: Layout = [
+export const Z: Layout = [
   [1, 1, 0],
   [0, 1, 1],
   [0, 0, 0],

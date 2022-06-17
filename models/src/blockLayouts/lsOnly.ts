@@ -1,14 +1,9 @@
+import { L } from '@models/blockLayouts/Tetrominoes';
 import Layout, { LayoutSet } from '../Layout';
-
-const L: Layout = [
-  [0, 1, 0],
-  [0, 1, 0],
-  [0, 1, 1],
-];
 
 const lsOnly: LayoutSet = {
   id: 'lsOnly',
-  name: 'Ls only',
+  name: 'L shapes only',
   layouts: { L },
 };
 

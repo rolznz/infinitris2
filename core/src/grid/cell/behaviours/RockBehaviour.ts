@@ -88,4 +88,7 @@ export default class RockBehaviour implements ICellBehaviour {
   toChallengeCellType(): ChallengeCellType {
     throw new Error('Unsupported');
   }
+  getImageFilename() {
+    return 'rock1a';
+  }
 }

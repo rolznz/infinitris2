@@ -31,6 +31,7 @@ import createBehaviourFromChallengeCellType from '@core/grid/cell/behaviours/cre
 import { IChallengeEditor } from '@models/IChallengeEditor';
 import ICell from '@models/ICell';
 import { IChallengeEventListener } from '@models/IChallengeEventListener';
+import MinimalRenderer from '@src/rendering/renderers/minimal/MinimalRenderer';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
@@ -309,20 +310,23 @@ export default class ChallengeClient
 
   private async _create(challenge: IChallenge) {
     this._challenge = challenge;
-    this._renderer = new Infinitris2Renderer(
-      this._clientApiConfig,
-      this._preferredInputMethod,
-      this._launchOptions.controls_keyboard || DEFAULT_KEYBOARD_CONTROLS,
-      undefined,
-      challenge.worldType,
-      challenge.worldVariation,
-      undefined,
-      false,
-      this._launchOptions.challengeEditorSettings
-        ? 'editor'
-        : this._launchOptions.gridLineType,
-      !!this._launchOptions.challengeEditorSettings
-    );
+    this._renderer =
+      this._launchOptions.rendererType === 'minimal'
+        ? new MinimalRenderer(this._clientApiConfig)
+        : new Infinitris2Renderer(
+            this._clientApiConfig,
+            this._preferredInputMethod,
+            this._launchOptions.controls_keyboard || DEFAULT_KEYBOARD_CONTROLS,
+            undefined,
+            challenge.worldType,
+            challenge.worldVariation,
+            undefined,
+            false,
+            this._launchOptions.challengeEditorSettings
+              ? 'editor'
+              : this._launchOptions.gridLineType,
+            !!this._launchOptions.challengeEditorSettings
+          );
     if (this._editor) {
       this._editor.renderer = this._renderer;
     }

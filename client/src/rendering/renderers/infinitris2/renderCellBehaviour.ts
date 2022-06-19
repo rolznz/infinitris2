@@ -1,15 +1,47 @@
 import * as PIXI from 'pixi.js-legacy';
 import ICellBehaviour from '@models/ICellBehaviour';
 import CellType from '@models/CellType';
+import { imagesDirectory } from '@src/rendering/renderers';
+import { WorldVariation } from '@models/WorldType';
 
 export function renderCellBehaviour(
   behaviour: ICellBehaviour,
   isEmpty: boolean,
   graphics: PIXI.Graphics,
   cellSize: number,
-  challengeEditorEnabled = false
-) {
-  const color = behaviour.color;
+  challengeEditorEnabled = false,
+  worldVariation: WorldVariation = '0'
+): PIXI.Sprite | undefined {
+  if (!challengeEditorEnabled && behaviour.type === CellType.SpawnLocation) {
+    return undefined;
+  }
+  // TODO: use a sprite sheet instead of individual sprites
+  let filename: string | undefined;
+  try {
+    filename = `${imagesDirectory}/cells/grass/${
+      behaviour.getImageFilename?.() || behaviour.toChallengeCellType()
+    }${worldVariation !== '0' ? '_variation' + worldVariation : ''}.png`;
+  } catch (error) {}
+
+  if (!filename) {
+    return undefined;
+  }
+
+  const sprite = PIXI.Sprite.from(filename);
+  sprite.width = sprite.height = cellSize;
+  return sprite;
+}
+
+function getFilename(behaviour: ICellBehaviour) {
+  switch (behaviour.type) {
+    case CellType.Normal:
+      return 'normal';
+    case CellType.RockGenerator:
+    case CellType.Rock:
+      return '';
+  }
+}
+/*const color = behaviour.color;
   const opacity = 1;
 
   if (isEmpty) {
@@ -133,5 +165,4 @@ export function renderCellBehaviour(
     graphics.drawRect(0, 0, cellSize, cellSize);
     switch (behaviour.type) {
     }
-  }
-}
+  }*/

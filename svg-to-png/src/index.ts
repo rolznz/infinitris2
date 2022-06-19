@@ -8,7 +8,9 @@ const jpgExt = '.jpg';
 const chosenExt = process.env.EXTENSION || pngExt;
 
 const assetsDirectory =
-  chosenExt === pngExt ? '../client/www/images/worlds' : jpgExt;
+  chosenExt === pngExt
+    ? `../client/www/images/${process.env.ASSETS_DIRECTORY || 'worlds'}`
+    : '../app/src/components/ui/GameModePicker';
 
 const childAssetDirectories = fs
   .readdirSync(assetsDirectory)

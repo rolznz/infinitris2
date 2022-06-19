@@ -99,4 +99,18 @@ export default class LockBehaviour implements ICellBehaviour {
         throw new Error('Unsupported lock color: ' + this._color);
     }
   }
+  getImageFilename() {
+    switch (this._color) {
+      case lockColors.redColor:
+        return 'lock_red';
+      case lockColors.blueColor:
+        return 'lock_blue';
+      case lockColors.yellowColor:
+        return 'lock_yellow';
+      case lockColors.greenColor:
+        return 'lock_green';
+      default:
+        throw new Error('Unsupported lock color: ' + this._color);
+    }
+  }
 }

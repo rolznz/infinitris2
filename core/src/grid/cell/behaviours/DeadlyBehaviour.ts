@@ -43,4 +43,7 @@ export default class DeadlyBehaviour implements ICellBehaviour {
   toChallengeCellType() {
     return ChallengeCellType.Deadly;
   }
+  getImageFilename() {
+    return 'deadly';
+  }
 }

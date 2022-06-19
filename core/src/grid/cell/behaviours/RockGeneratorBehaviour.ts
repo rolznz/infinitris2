@@ -59,4 +59,7 @@ export default class RockGeneratorBehaviour implements ICellBehaviour {
   toChallengeCellType() {
     return ChallengeCellType.RockGenerator;
   }
+  getImageFilename() {
+    return 'rock-generator';
+  }
 }

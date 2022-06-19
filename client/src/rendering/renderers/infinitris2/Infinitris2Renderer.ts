@@ -1295,7 +1295,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
                 false,
                 block.player.color,
                 block.player.patternFilename,
-                connections
+                connections,
+                undefined,
+                block.player
               );
 
               pixiObject.cells[i].graphics.x =
@@ -1431,7 +1433,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
           color,
           patternFilename,
           connections,
-          behaviour
+          behaviour,
+          renderableCell.cell.player
         );
 
         const shadowX = shadowIndexWithDirection * this._gridWidth;
@@ -1461,22 +1464,34 @@ export default class Infinitris2Renderer extends BaseRenderer {
     color: number,
     patternFilename: string | undefined,
     connections: { row: number; column: number }[],
-    behaviour?: ICellBehaviour
+    behaviour?: ICellBehaviour,
+    player?: IPlayer
   ) {
     const { graphics } = renderableObject;
     let { patternSprite } = renderableObject;
     //graphics.cacheAsBitmap = false;
-    graphics.clear();
-    if (behaviour && behaviour?.type !== CellType.Normal) {
-      renderCellBehaviour(
-        behaviour,
-        isEmpty,
-        graphics,
-        this._cellSize,
-        this._challengeEditorEnabled
-      );
+    if (behaviour && !player /* && behaviour?.type !== CellType.Normal*/) {
+      if (!patternSprite || !patternSprite.visible) {
+        if (patternSprite && !patternSprite?.visible) {
+          patternSprite.destroy();
+          container.removeChild(patternSprite);
+        }
+        patternSprite = renderCellBehaviour(
+          behaviour,
+          isEmpty,
+          graphics,
+          this._cellSize,
+          this._challengeEditorEnabled,
+          this._worldVariation
+        );
+        if (patternSprite) {
+          container.addChild(patternSprite);
+          renderableObject.patternSprite = patternSprite;
+        }
+      }
       return;
     }
+    graphics.clear();
     if (isEmpty) {
       if (patternSprite) {
         patternSprite.visible = false;

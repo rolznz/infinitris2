@@ -56,7 +56,9 @@ export function StoryModePage() {
       //secondaryIconLink={Routes.singlePlayerOptions}
       onPlay={onSubmit}
       slides={slides}
-      initialStep={firstIncompletedChallengeIndex || 0}
+      initialStep={
+        firstIncompletedChallengeIndex >= 0 ? firstIncompletedChallengeIndex : 0
+      }
     />
   );
 }

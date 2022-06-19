@@ -75,4 +75,7 @@ export default class WaferBehaviour implements ICellBehaviour {
   shouldExplode() {
     return true;
   }
+  getImageFilename() {
+    return 'wafer';
+  }
 }

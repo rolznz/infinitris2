@@ -80,4 +80,7 @@ export default class InfectionBehaviour implements ICellBehaviour {
   toChallengeCellType() {
     return ChallengeCellType.Infection;
   }
+  getImageFilename() {
+    return 'virus';
+  }
 }

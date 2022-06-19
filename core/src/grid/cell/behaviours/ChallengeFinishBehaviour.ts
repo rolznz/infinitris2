@@ -32,4 +32,7 @@ export default class ChallengeFinishBehaviour implements ICellBehaviour {
   toChallengeCellType() {
     return ChallengeCellType.Finish;
   }
+  getImageFilename() {
+    return 'finish';
+  }
 }

@@ -33,4 +33,8 @@ export default class NormalCellBehaviour implements ICellBehaviour {
   toChallengeCellType(): ChallengeCellType {
     return ChallengeCellType.SpawnLocation;
   }
+
+  getImageFilename() {
+    return 'spawn';
+  }
 }

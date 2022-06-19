@@ -9,6 +9,7 @@ import { FormattedMessage } from 'react-intl';
 //import { useUser } from '../../../state/UserStore';
 import useTrue from '../../hooks/useTrue';
 import FlexBox from '../../ui/FlexBox';
+import finishLineImage from './assets/finish.svg';
 
 export interface ChallengeInfoViewProps {
   onReceivedInput(): void;
@@ -46,13 +47,29 @@ export default function ChallengeInfoView({
             {challenge.title || 'Untitled Challenge'}
           </Typography>
           {challenge.simulationSettings?.gameModeType &&
-            challenge.simulationSettings?.gameModeType !== 'infinity' && (
-              <Typography variant="h6" mt={2}>
-                <GameModeDescription
-                  gameModeType={challenge.simulationSettings?.gameModeType}
+          challenge.simulationSettings?.gameModeType !== 'infinity' ? (
+            <Typography variant="h6" mt={2}>
+              <GameModeDescription
+                gameModeType={challenge.simulationSettings?.gameModeType}
+              />
+            </Typography>
+          ) : (
+            <FlexBox
+              flexDirection="row"
+              gap={1}
+              justifyContent="center"
+              alignItems="center"
+              mt={2}
+            >
+              <Typography variant="h6">
+                <FormattedMessage
+                  defaultMessage="Get to the finish line"
+                  description="Get to the finish line challenge help info"
                 />
               </Typography>
-            )}
+              <img src={finishLineImage} alt="" width={30}></img>
+            </FlexBox>
+          )}
           {/* <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
           {translation?.description || challenge?.description || (
             <FormattedMessage

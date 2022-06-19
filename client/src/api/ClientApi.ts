@@ -50,6 +50,10 @@ export default class ClientApi implements IClientApi {
     const preferredInputMethod: InputMethod =
       (params.get('input') as InputMethod) || 'keyboard';
 
+    const rendererType = params.get('renderer') as RendererType;
+    const rendererQuality =
+      (params.get('rendererQuality') as RendererQuality) || 'high';
+
     if (params.has('single-player')) {
       const numBots = parseInt(params.get('numBots') || '0');
       const botReactionDelay = parseInt(params.get('botReactionDelay') || '20');
@@ -58,9 +62,7 @@ export default class ClientApi implements IClientApi {
       const worldType = (params.get('world') as WorldType) ?? undefined;
       const worldVariation =
         (params.get('worldVariation') as WorldVariation) || '0';
-      const rendererType = params.get('renderer') as RendererType;
-      const rendererQuality =
-        (params.get('rendererQuality') as RendererQuality) || 'high';
+
       const gameModeType = params.get('gameMode') as GameModeType;
       const simulationSettings: SimulationSettings = {
         gameModeType,
@@ -182,6 +184,8 @@ export default class ClientApi implements IClientApi {
           preferredInputMethod,
           controls_keyboard: controls,
           challengeEditorSettings: enableChallengeEditor ? {} : undefined,
+          rendererType,
+          rendererQuality,
         }
       );
     } else {

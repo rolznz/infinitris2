@@ -25,6 +25,9 @@ enum ChallengeCellType {
   GestureRotateAnticlockwise = '5',
   GestureDrop = '6',
 }
+if (Object.values(ChallengeCellType).some((v, i, a) => a.indexOf(v) !== i)) {
+  throw new Error('Duplicate challenge cell type value');
+}
 
 export default ChallengeCellType;
 

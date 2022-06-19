@@ -54,4 +54,18 @@ export default class KeyBehaviour implements ICellBehaviour {
         throw new Error('Unsupported key color: ' + this._color);
     }
   }
+  getImageFilename() {
+    switch (this._color) {
+      case keyColors.redColor:
+        return 'key_red';
+      case keyColors.blueColor:
+        return 'key_blue';
+      case keyColors.yellowColor:
+        return 'key_yellow';
+      case keyColors.greenColor:
+        return 'key_green';
+      default:
+        throw new Error('Unsupported key color: ' + this._color);
+    }
+  }
 }

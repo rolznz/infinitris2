@@ -42,4 +42,7 @@ export default class NormalCellBehaviour implements ICellBehaviour {
       return ChallengeCellType.Full;
     }
   }
+  getImageFilename() {
+    return 'fill';
+  }
 }

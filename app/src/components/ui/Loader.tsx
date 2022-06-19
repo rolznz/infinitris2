@@ -30,16 +30,14 @@ import { useUser } from '@/components/hooks/useUser';
 import { setUserMusicOn, setUserSfxOn } from '@/state/updateUser';
 import useAuthStore from '@/state/AuthStore';
 import usePrevious from 'react-use/lib/usePrevious';
-
-// const checkboxStyle: SxProps = {
-//   '& span': {
-//     margin: '-2px',
-//   },
-// };
+import shallow from 'zustand/shallow';
 
 export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const loaderStore = useLoaderStore();
-  const isLoggedIn = useAuthStore((store) => store.isLoggedIn);
+  const [isLoggedIn, authUserId] = useAuthStore(
+    (store) => [store.isLoggedIn, store.user?.uid],
+    shallow
+  );
   const prevIsLoggedIn = usePrevious(isLoggedIn);
   const user = useUser();
   const userExists = !!user?.id;
@@ -58,12 +56,14 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   // Wait for the user to load if they are logged in
   // this also ensures if the app thinks they were logged in but aren't anymore (for whatever reason), the step will be reversed
   useEffect(() => {
-    if (isLoggedIn && prevIsLoggedIn !== undefined) {
-      increaseSteps();
-    } else if (prevIsLoggedIn) {
-      increaseSteps(-1);
+    if (!authUserId) {
+      if (isLoggedIn && prevIsLoggedIn !== undefined) {
+        increaseSteps();
+      } else if (prevIsLoggedIn) {
+        increaseSteps(-1);
+      }
     }
-  }, [isLoggedIn, prevIsLoggedIn, increaseSteps]);
+  }, [isLoggedIn, prevIsLoggedIn, increaseSteps, authUserId]);
 
   useEffect(() => {
     if (userExists) {

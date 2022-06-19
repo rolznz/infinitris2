@@ -41,7 +41,7 @@ Please note that the deployment scripts are in the parent directory.
 
 `firebase functions:config:get`
 
-`firebase functions:config:set webhooks.key="SECRET KEY" webhooks.url="https://us-central1-APPNAME.cloudfunctions.net/webhooks" webhooks.lightning_api_url="https://legend.lnbits.com" webhooks.lightning_api_key="your api key" webhooks.email_user="test@email.com" webhooks.email_password="test"`
+`firebase functions:config:set webhooks.key="SECRET KEY" webhooks.url="https://us-central1-APPNAME.cloudfunctions.net/webhooks" webhooks.lightning_api_url="https://legend.lnbits.com" webhooks.lightning_api_key="your api key" webhooks.email_user="test@email.com" webhooks.email_password="test" webhooks.email_host="smtp.gmail.com"`
 
 ## Deploy firebase rules
 

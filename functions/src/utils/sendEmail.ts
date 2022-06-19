@@ -1,11 +1,12 @@
 import * as nodemailer from 'nodemailer';
 import * as functions from 'firebase-functions';
 
+const emailHost = functions.config().webhooks.email_host;
 const emailUser = functions.config().webhooks.email_user;
 const emailPassword = functions.config().webhooks.email_password;
 
 const transport = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
+  host: emailHost,
   port: 465,
   secure: true, // use SSL
   auth: {

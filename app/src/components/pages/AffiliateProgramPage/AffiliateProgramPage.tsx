@@ -14,7 +14,6 @@ import { Page } from '../../ui/Page';
 import { openLoginDialog } from '@/state/DialogStore';
 import { appName } from '@/utils/constants';
 import FlexBox from '../../ui/FlexBox';
-import { borderColorLight, boxShadows } from '@/theme/theme';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { AffiliatePageCharacter } from './AffiliatePageCharacter';
 
@@ -124,16 +123,12 @@ export default function AffiliateProgramPage() {
             paddingY={0.5}
             gap={0.5}
             flexDirection="row"
-            style={{
-              backgroundColor: borderColorLight,
-              boxShadow: boxShadows.small,
-            }}
             mb={1}
             mt={2}
           >
-            <Typography align="center" variant="h4">
+            <Typography align="center" variant="body2">
               <FormattedMessage
-                defaultMessage="Next Signup"
+                defaultMessage="Next Sign up:"
                 description="Affiliate Program Page - your next share"
               />
             </Typography>

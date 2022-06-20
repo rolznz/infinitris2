@@ -12,7 +12,7 @@ import { useDocument } from 'swr-firestore';
 export function useNetworkPlayerInfo(): Partial<NetworkPlayerInfo> | undefined {
   const isLoggedIn = useAuthStore((store) => store.isLoggedIn);
   const user = useUser();
-  const nickname = (user as LocalUser).nickname;
+  const nickname = user.readOnly?.nickname || (user as LocalUser).nickname;
   const characterId = user.selectedCharacterId || DEFAULT_CHARACTER_ID;
   const { data: character } = useDocument<ICharacter>(
     getCharacterPath(characterId)

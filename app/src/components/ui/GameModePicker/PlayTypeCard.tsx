@@ -6,25 +6,20 @@ import { Link as RouterLink } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
 import FlexBox from '../FlexBox';
 import { playSound, SoundKey } from '@/sound/SoundManager';
+import padlockLockedImage from '@/components/ui/Locks/padlock_locked.png';
 
 type PlayTypeCardProps = {
   image: string;
   link?: string;
   title: React.ReactNode;
-};
-
-const imageStyle: React.CSSProperties = {
-  width: '100%',
-  height: '100%',
-  objectFit: 'cover',
-  boxShadow: boxShadows.small,
-  borderRadius: borderRadiuses.base,
+  isLocked?: boolean;
 };
 
 export function PlayTypeCard({
   image,
   link = Routes.comingSoon,
   title,
+  isLocked,
 }: PlayTypeCardProps) {
   const isLandscape = useIsLandscape();
 
@@ -35,15 +30,40 @@ export function PlayTypeCard({
       marginTop: isLandscape ? '0%' : '2%',
       cursor: 'pointer',
       position: 'relative',
+      pointerEvents: isLocked ? 'none' : undefined,
     }),
-    [isLandscape]
+    [isLandscape, isLocked]
   );
   function onClick() {
     playSound(SoundKey.click);
   }
 
+  const imageStyle: React.CSSProperties = React.useMemo(
+    () => ({
+      width: '100%',
+      height: '100%',
+      objectFit: 'cover',
+      boxShadow: boxShadows.small,
+      borderRadius: borderRadiuses.base,
+      filter: isLocked ? 'grayscale(60%)' : undefined,
+    }),
+    [isLocked]
+  );
+
   return (
-    <RouterLink to={link} style={linkStyle} onClick={onClick}>
+    <RouterLink to={isLocked ? '#' : link} style={linkStyle} onClick={onClick}>
+      {isLocked && (
+        <FlexBox position="absolute" width="100%" height="100%">
+          <img
+            alt="locked"
+            style={{
+              zIndex: 1,
+            }}
+            src={padlockLockedImage}
+            width={'100px'}
+          />
+        </FlexBox>
+      )}
       <img src={image} alt="" style={imageStyle} />
       <FlexBox
         position="absolute"

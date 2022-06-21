@@ -6,6 +6,8 @@ import {
 } from '@/components/ui/Carousel';
 import FlexBox from '@/components/ui/FlexBox';
 import { Link as RouterLink } from 'react-router-dom';
+//app/src/components/ui/Locks/padlock_locked.svg
+import padlockLockedImage from './assets/padlock_locked.png';
 
 import Link from '@mui/material/Link';
 import SvgIcon from '@mui/material/SvgIcon';
@@ -41,7 +43,7 @@ export function RoomCarousel({
 }: RoomCarouselProps) {
   const isLandscape = useIsLandscape();
   const [selectedSlide, setSelectedSlide] = React.useState(initialStep);
-  const carouselSlides = React.useMemo(
+  const slideElements = React.useMemo(
     () =>
       slides.map((slide) => <RoomCarouselSlide {...slide} key={slide.key} />),
     [slides]
@@ -77,7 +79,7 @@ export function RoomCarousel({
           }}
         >
           <Carousel
-            slides={carouselSlides}
+            slides={slideElements}
             styles={fullScreenSwipeableViewsStyles}
             mobileStepperStyles={{
               position: 'absolute',
@@ -92,11 +94,20 @@ export function RoomCarousel({
         </div>
       }
     >
-      <PlayButton
-        onClick={onSubmit}
-        //isLoaded={true}
-        delayButtonVisibility={false}
-      />
+      {!slides[selectedSlide].isLocked ? (
+        <PlayButton
+          onClick={onSubmit}
+          //isLoaded={true}
+          delayButtonVisibility={false}
+        />
+      ) : (
+        <img
+          alt="locked"
+          src={padlockLockedImage}
+          width={'100px'}
+          style={{ zIndex: 1 }}
+        />
+      )}
       {secondaryIconLink && secondaryIcon && (
         <Link
           component={RouterLink}

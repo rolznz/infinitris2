@@ -1,13 +1,15 @@
 import { Box, IconButton, SvgIcon } from '@mui/material';
 
 import FlexBox from './FlexBox';
-import { ReactComponent as LeftIcon } from '@/icons/left.svg';
+import { ReactComponent as HomeIcon } from '@/icons/home.svg';
 import { playSound, SoundKey } from '@/sound/SoundManager';
 import { colors, dropShadows } from '@/theme/theme';
 import { exitFullscreen } from '@/utils/launchFullscreen';
 import { useIsBackButtonVisible } from '@/components/hooks/useIsBackButtonVisible';
+import { Link } from 'react-router-dom';
+import Routes from '@/models/Routes';
 
-export default function BackButton() {
+export default function HomeButton() {
   const isBackButtonVisible = useIsBackButtonVisible();
   if (!isBackButtonVisible) {
     return null;
@@ -24,24 +26,25 @@ export default function BackButton() {
       }}
     >
       <FlexBox margin={2} style={{ pointerEvents: 'all' }}>
-        <IconButton
-          style={{}}
-          onClick={() => {
-            exitFullscreen();
-            window.history.back();
-            playSound(SoundKey.click);
-          }}
-          size="large"
-        >
-          <SvgIcon
-            sx={{
-              filter: dropShadows.small,
-              color: colors.white,
+        <Link to={Routes.home}>
+          <IconButton
+            style={{}}
+            onClick={() => {
+              exitFullscreen();
+              playSound(SoundKey.click);
             }}
+            size="large"
           >
-            <LeftIcon />
-          </SvgIcon>
-        </IconButton>
+            <SvgIcon
+              sx={{
+                filter: dropShadows.small,
+                color: colors.white,
+              }}
+            >
+              <HomeIcon />
+            </SvgIcon>
+          </IconButton>
+        </Link>
       </FlexBox>
     </Box>
   );

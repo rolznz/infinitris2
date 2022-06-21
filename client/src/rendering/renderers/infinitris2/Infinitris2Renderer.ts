@@ -1489,6 +1489,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
           renderableObject.patternSprite = patternSprite;
         }
       }
+      if (patternSprite) {
+        patternSprite.width = patternSprite.height = this._cellSize;
+      }
       return;
     }
     graphics.clear();

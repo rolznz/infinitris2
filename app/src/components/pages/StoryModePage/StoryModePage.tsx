@@ -15,7 +15,7 @@ export function StoryModePage() {
 
   const slides: RoomCarouselSlideProps[] = React.useMemo(
     () =>
-      officialChallenges?.map((challengeDoc) => ({
+      officialChallenges?.map((challengeDoc, index) => ({
         key: challengeDoc.id,
         customText:
           (challengeDoc.data().worldType || 'grass') +
@@ -23,8 +23,9 @@ export function StoryModePage() {
             challengeDoc.data().title || 'Untitled',
         worldType: challengeDoc.data().worldType || 'grass',
         worldVariation: challengeDoc.data().worldVariation || '0',
+        isLocked: index > (completedOfficialChallengeIds?.length || 0),
       })) || [],
-    [officialChallenges]
+    [officialChallenges, completedOfficialChallengeIds]
   );
 
   const onSubmit = (slideIndex: number) => {

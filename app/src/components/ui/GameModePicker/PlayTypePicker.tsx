@@ -39,7 +39,8 @@ import { PlayTypeCard } from './PlayTypeCard';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import Routes from '@/models/Routes';
 import { FormattedMessage } from 'react-intl';
-import { WorldType } from 'infinitris2-models';
+import { WorldType, WorldTypeValues } from 'infinitris2-models';
+import { useUser } from '@/components/hooks/useUser';
 
 export const playTypePickerId = 'play-type-picker';
 
@@ -50,7 +51,15 @@ type GameModePickerProps = {
 export function PlayTypePicker({ display }: GameModePickerProps) {
   const isDarkMode = useDarkMode();
   const isLandscape = useIsLandscape();
-  const stage: WorldType = (process.env.FIXME as WorldType) || 'volcano';
+  const user = useUser();
+  const stage: WorldType =
+    WorldTypeValues[
+      (user.unlockedFeatures || ['grass']).filter(
+        (f) => WorldTypeValues.indexOf(f as WorldType) >= 0
+      ).length
+    ];
+  const nonStoryModeLocked = (user.unlockedFeatures || []).indexOf('space') < 0;
+
   return (
     <FlexBox
       pt={'1%'}
@@ -113,6 +122,7 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
           />
         }
         link={Routes.lobby}
+        isLocked={nonStoryModeLocked}
       />
       <PlayTypeCard
         link={Routes.challenges}
@@ -131,6 +141,7 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
             description="Game Mode Picker Card - Community Challenges"
           />
         }
+        isLocked={nonStoryModeLocked}
       />
       <PlayTypeCard
         image={
@@ -149,6 +160,7 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
           />
         }
         link={Routes.createChallenge}
+        isLocked={nonStoryModeLocked}
       />
       <PlayTypeCard
         image={
@@ -162,11 +174,12 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
         }
         title={
           <FormattedMessage
-            defaultMessage="Single Player"
-            description="Game Mode Picker Card - Single Player"
+            defaultMessage="Play Offline"
+            description="Game Mode Picker Card - Play Offline (Single Player)"
           />
         }
         link={Routes.singlePlayerGameModePicker}
+        isLocked={nonStoryModeLocked}
       />
       <PlayTypeCard
         link={Routes.market}
@@ -185,6 +198,7 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
             description="Game Mode Picker Card - Market"
           />
         }
+        isLocked={nonStoryModeLocked}
       />
     </FlexBox>
   );

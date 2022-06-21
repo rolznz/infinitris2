@@ -28,7 +28,7 @@ import AboutPage from '@/components/pages/AboutPage/AboutPage';
 import DonatePage from '@/components/pages/AboutPage/DonatePage';
 import MarketPage from '@/components/pages/MarketPage/MarketPage';
 import MarketCharacterPage from '@/components/pages/MarketPage/MarketCharacterPage';
-import BackButton from '@/components/ui/BackButton';
+import HomeButton from '@/components/ui/HomeButton';
 import useAffiliateLinkRef from '@/components/hooks/useAffiliateLinkRef';
 import { PwaPage } from '@/components/pages/PwaPage/PwaPage';
 import { HomePage } from '@/components/pages/HomePage/HomePage';
@@ -85,7 +85,7 @@ function RouterContents() {
   }, [location]);
   return (
     <>
-      <BackButton />
+      <HomeButton />
       <DialogManager />
       <OutsideGameElement>
         <HamburgerMenuButton />

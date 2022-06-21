@@ -39,7 +39,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     simulation: ISimulation,
     id: number,
     status: PlayerStatus,
-    nickname: string = 'Guest',
+    nickname: string = 'New Player',
     color: number = 0xf33821,
     patternFilename?: string,
     characterId?: string

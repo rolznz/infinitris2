@@ -33,6 +33,7 @@ export type RoomCarouselSlideProps = {
   numPlayers?: number;
   worldType?: WorldType;
   worldVariation?: WorldVariation;
+  isLocked?: boolean;
 };
 
 export function RoomCarouselSlide({

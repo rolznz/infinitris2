@@ -108,9 +108,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
 
   const player = useNetworkPlayerInfo();
 
-  const { incompleteChallenges } = useIncompleteChallenges(
-    challenge?.worldType
-  );
+  const { incompleteChallenges, isLoadingOfficialChallenges } =
+    useIncompleteChallenges(challenge?.worldType);
 
   const handleContinue = React.useCallback(() => {
     if (hasContinued) {
@@ -122,21 +121,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     } else if (incompleteChallenges.length) {
       history.push(`${Routes.challenges}/${incompleteChallenges[0].id}`);
     } else {
-      // TODO: show this as a page
-      // TODO: unlocked features should come from challenges?
-      if (challenge.worldType === 'grass') {
-        unlockFeature(user.unlockedFeatures, 'playTypePicker', 'volcano');
-      }
       history.push(Routes.home);
     }
-  }, [
-    hasContinued,
-    isTest,
-    incompleteChallenges,
-    history,
-    challenge?.worldType,
-    user?.unlockedFeatures,
-  ]);
+  }, [hasContinued, isTest, incompleteChallenges, history]);
 
   React.useEffect(() => {
     if (isTest && !isEditingChallenge) {
@@ -150,7 +137,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       player /*&& !requiresRedirect*/ &&
       launchChallenge &&
       !hasLaunched &&
-      hasLoadedCharacters
+      hasLoadedCharacters &&
+      !isLoadingOfficialChallenges
     ) {
       setLaunched(true);
 
@@ -170,6 +158,18 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           onAttempt(attempt: IIngameChallengeAttempt) {
             setChallengeAttempt(attempt);
             if (attempt.status === 'success' && challenge.isOfficial) {
+              unlockFeature(user.unlockedFeatures, 'playTypePicker');
+              if (
+                incompleteChallenges.length === 1 &&
+                incompleteChallenges[0].id === challengeId
+              ) {
+                // TODO: show this as a page
+                // TODO: unlocked features should come from challenges?
+                if (challenge.worldType === 'grass') {
+                  unlockFeature(user.unlockedFeatures, 'space');
+                }
+              }
+
               setTimeout(() => {
                 // delay completion for world progress effect
                 completeOfficialChallenge(
@@ -234,6 +234,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     challengeId,
     allCharacters,
     hasLoadedCharacters,
+    user.unlockedFeatures,
+    incompleteChallenges,
+    isLoadingOfficialChallenges,
   ]);
 
   if (!hasLaunched || !challenge || !simulation) {

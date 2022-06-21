@@ -28,7 +28,6 @@ export function renderCellBehaviour(
   }
 
   const sprite = PIXI.Sprite.from(filename);
-  sprite.width = sprite.height = cellSize;
   return sprite;
 }
 

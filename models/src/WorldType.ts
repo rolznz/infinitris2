@@ -1,3 +1,6 @@
+/**
+ * WorldTypeValues ordered based on appearance in story mode
+ */
 export const WorldTypeValues = ['grass', 'space', 'volcano', 'desert'] as const;
 export type WorldType = typeof WorldTypeValues[number];
 

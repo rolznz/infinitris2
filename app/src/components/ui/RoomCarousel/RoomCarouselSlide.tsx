@@ -44,7 +44,6 @@ export function RoomCarouselSlide({
   name,
   worldType,
   worldVariation,
-  isLocked,
 }: RoomCarouselSlideProps) {
   const isLandscape = useIsLandscape();
   return (
@@ -58,7 +57,6 @@ export function RoomCarouselSlide({
         backgroundRepeat: 'no-repeat',
         backgroundPositionY: '100%',
         backgroundPositionX: '22%',
-        filter: isLocked ? 'grayscale(80%)' : undefined,
       }}
       position="relative"
     >

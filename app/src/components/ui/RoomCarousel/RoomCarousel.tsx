@@ -11,7 +11,12 @@ import padlockLockedImage from './assets/padlock_locked.png';
 
 import Link from '@mui/material/Link';
 import SvgIcon from '@mui/material/SvgIcon';
-import { borderColor, borderRadiuses, boxShadows } from '@/theme/theme';
+import {
+  borderColor,
+  borderRadiuses,
+  boxShadows,
+  lockFilter,
+} from '@/theme/theme';
 import React from 'react';
 import { PlayButton } from '@/components/pages/HomePage/PlayButton';
 import { Page } from '@/components/ui/Page';
@@ -63,10 +68,13 @@ export function RoomCarousel({
     onPlay(selectedSlide);
   };
 
+  const isLocked = slides[selectedSlide]?.isLocked;
+
   return (
     <Page
       style={{
         justifyContent: 'center',
+        filter: isLocked ? lockFilter : undefined,
       }}
       background={
         <div
@@ -94,7 +102,7 @@ export function RoomCarousel({
         </div>
       }
     >
-      {!slides[selectedSlide].isLocked ? (
+      {!isLocked ? (
         <PlayButton
           onClick={onSubmit}
           //isLoaded={true}

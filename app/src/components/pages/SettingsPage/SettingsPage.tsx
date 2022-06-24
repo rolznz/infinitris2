@@ -32,6 +32,7 @@ import {
   setUserPreferredInputMethod,
   setUserRendererQuality,
   setUserRendererType,
+  clearProgress,
 } from '@/state/updateUser';
 import { useUser } from '@/components/hooks/useUser';
 import { getDefaultPreferredInputMethod } from '@/state/LocalUserStore';
@@ -255,7 +256,7 @@ export default function SettingsPage() {
               }
             />
           )}
-          {/*<SettingsRow
+          <SettingsRow
             left={
               <FormattedMessage
                 defaultMessage="Clear Progress"
@@ -265,7 +266,7 @@ export default function SettingsPage() {
             right={
               <Button
                 variant="contained"
-                color="secondary"
+                color="error"
                 onClick={() =>
                   window.confirm(
                     'Are you sure you wish to clear your progress?'
@@ -278,7 +279,7 @@ export default function SettingsPage() {
                 />
               </Button>
             }
-          />*/}
+          />
           {isPwa() && (
             <SettingsRow
               left={

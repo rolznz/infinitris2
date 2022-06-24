@@ -1,6 +1,6 @@
 import React from 'react';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
-import { borderRadiuses, boxShadows, colors } from '@/theme/theme';
+import { borderRadiuses, boxShadows, colors, lockFilter } from '@/theme/theme';
 import Routes from '@/models/Routes';
 import { Link as RouterLink } from 'react-router-dom';
 import Typography from '@mui/material/Typography';
@@ -31,6 +31,7 @@ export function PlayTypeCard({
       cursor: 'pointer',
       position: 'relative',
       pointerEvents: isLocked ? 'none' : undefined,
+      filter: isLocked ? lockFilter : undefined,
     }),
     [isLandscape, isLocked]
   );
@@ -45,9 +46,8 @@ export function PlayTypeCard({
       objectFit: 'cover',
       boxShadow: boxShadows.small,
       borderRadius: borderRadiuses.base,
-      filter: isLocked ? 'grayscale(80%)' : undefined,
     }),
-    [isLocked]
+    []
   );
 
   return (

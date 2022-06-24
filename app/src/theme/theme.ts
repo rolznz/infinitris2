@@ -28,6 +28,8 @@ export const borderColorLight = 'rgba(249, 248, 247, 0.1)';
 export const grey = '#A0997D';
 export const gold = '#D37953';
 
+export const lockFilter = 'brightness(1.125) grayscale(100%)';
+
 export const colors = {
   white: '#ECECED',
   black: '#000000',

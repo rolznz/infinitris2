@@ -70,6 +70,7 @@ type CarouselProps = {
   scaleTransform?: boolean;
   innerArrows?: boolean;
   initialStep?: number;
+  showArrows?: boolean;
   onChange?(step: number): void;
 };
 
@@ -79,6 +80,7 @@ export function Carousel({
   styles = coreSwipeableViewsStyles,
   blurEdges,
   scaleTransform = true,
+  showArrows = true,
   innerArrows,
   initialStep = 0,
   onChange,
@@ -135,7 +137,7 @@ export function Carousel({
           }}
         />
       )}
-      {isLandscape && (
+      {isLandscape && showArrows && pages.length > 1 && (
         <CarouselArrow
           icon={<LeftIcon />}
           sx={{
@@ -146,7 +148,7 @@ export function Carousel({
           enabled={activeStep > 0}
         />
       )}
-      {isLandscape && (
+      {isLandscape && showArrows && pages.length > 1 && (
         <CarouselArrow
           icon={<RightIcon />}
           sx={{

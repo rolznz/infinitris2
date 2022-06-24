@@ -168,7 +168,7 @@ export const resetControls = (inputMethod: AdjustableInputMethod) => {
   updateUser({ [`controls_${inputMethod}`]: DEFAULT_KEYBOARD_CONTROLS });
 };
 export const clearProgress = () => {
-  //updateUser({ completedChallengeIds: [], challengeAttempts: {} });
+  updateUser({ unlockedFeatures: [], completedOfficialChallengeIds: [] });
 };
 export const signOut = () => {
   useLocalUserStore.getState().signOutLocalUser();

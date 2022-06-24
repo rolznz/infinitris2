@@ -20,6 +20,7 @@ import Routes from '@/models/Routes';
 import { useUser } from '@/components/hooks/useUser';
 import useIncompleteChallenges from '@/components/hooks/useIncompleteChallenges';
 import { launchFullscreen } from '@/utils/launchFullscreen';
+import { Announcements } from '@/components/pages/HomePage/Announcements';
 
 function scrollPlayTypePickerIntoView() {
   const gameModePicker = document.getElementById(playTypePickerId);
@@ -43,10 +44,9 @@ const _HomePage = () => {
   );
   const history = useHistory();
   const user = useUser();
-  // TODO: only get when playTypePicker feature is locked
-  // TODO: only retrieve grass world challenges
-  const forceIntroWorld =
-    (user.unlockedFeatures || []).indexOf('playTypePicker') < 0;
+  const playTypePickerUnlocked =
+    (user.unlockedFeatures || []).indexOf('playTypePicker') >= 0;
+  const forceIntroWorld = !playTypePickerUnlocked;
 
   const { incompleteChallenges } = useIncompleteChallenges(
     forceIntroWorld ? 'grass' : undefined
@@ -79,6 +79,7 @@ const _HomePage = () => {
         <Helmet>
           <title>{appName}</title>
         </Helmet>
+        {playTypePickerUnlocked && <Announcements />}
         {!isLandscape && <Box mt="10vh" />}
         <Box height={isLandscape ? '30vh' : '20vh'}>
           <img

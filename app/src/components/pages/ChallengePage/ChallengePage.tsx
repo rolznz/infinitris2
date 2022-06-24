@@ -33,6 +33,7 @@ import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
 import { completeOfficialChallenge, unlockFeature } from '@/state/updateUser';
 import useIncompleteChallenges from '@/components/hooks/useIncompleteChallenges';
 import Routes from '@/models/Routes';
+import isMobile from '@/utils/isMobile';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -101,7 +102,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     restartClient?.();
   }, [restartClient]);
 
-  const { preferredInputMethod, controls_keyboard } = user;
+  const { controls_keyboard } = user;
+  const preferredInputMethod =
+    user.preferredInputMethod || (isMobile() ? 'touch' : 'keyboard');
 
   const isEditingChallenge =
     useChallengeEditorStore((store) => store.isEditing) && isTest;

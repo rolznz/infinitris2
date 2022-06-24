@@ -39,7 +39,7 @@ export function WorldProgress({ worldType }: WorldProgressProps) {
           style={{
             height: '40px',
             width: '600px',
-            maxWidth: '80%',
+            maxWidth: '70vw',
           }}
           variant="determinate"
           sx={{

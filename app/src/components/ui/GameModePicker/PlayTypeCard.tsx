@@ -45,7 +45,7 @@ export function PlayTypeCard({
       objectFit: 'cover',
       boxShadow: boxShadows.small,
       borderRadius: borderRadiuses.base,
-      filter: isLocked ? 'grayscale(60%)' : undefined,
+      filter: isLocked ? 'grayscale(80%)' : undefined,
     }),
     [isLocked]
   );

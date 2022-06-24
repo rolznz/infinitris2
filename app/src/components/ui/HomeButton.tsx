@@ -1,32 +1,30 @@
-import { Box, IconButton, SvgIcon } from '@mui/material';
+import { IconButton, SvgIcon, Tooltip } from '@mui/material';
 
 import FlexBox from './FlexBox';
 import { ReactComponent as HomeIcon } from '@/icons/home.svg';
 import { playSound, SoundKey } from '@/sound/SoundManager';
 import { colors, dropShadows } from '@/theme/theme';
 import { exitFullscreen } from '@/utils/launchFullscreen';
-import { useIsBackButtonVisible } from '@/components/hooks/useIsBackButtonVisible';
+import { useIsHomeButtonVisible } from '@/components/hooks/useIsHomeButtonVisible';
 import { Link } from 'react-router-dom';
 import Routes from '@/models/Routes';
+import { useIntl } from 'react-intl';
 
 export default function HomeButton() {
-  const isBackButtonVisible = useIsBackButtonVisible();
+  const intl = useIntl();
+  const isBackButtonVisible = useIsHomeButtonVisible();
   if (!isBackButtonVisible) {
     return null;
   }
   return (
-    <Box
-      zIndex="hamburgerButton"
-      sx={{
-        opacity: 1,
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        pointerEvents: 'none',
-      }}
-    >
-      <FlexBox margin={2} style={{ pointerEvents: 'all' }}>
-        <Link to={Routes.home}>
+    <FlexBox style={{ pointerEvents: 'all' }}>
+      <Link to={Routes.home}>
+        <Tooltip
+          title={intl.formatMessage({
+            defaultMessage: 'Home',
+            description: 'Home button tooltip',
+          })}
+        >
           <IconButton
             style={{}}
             onClick={() => {
@@ -44,8 +42,8 @@ export default function HomeButton() {
               <HomeIcon />
             </SvgIcon>
           </IconButton>
-        </Link>
-      </FlexBox>
-    </Box>
+        </Tooltip>
+      </Link>
+    </FlexBox>
   );
 }

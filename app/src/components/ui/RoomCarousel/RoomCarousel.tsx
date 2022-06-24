@@ -132,8 +132,8 @@ export function RoomCarousel({
         borderRadius={borderRadiuses.full}
         py={1}
         px={2}
-        top={isLandscape ? '7%' : '80px'}
-        left="3%"
+        top={70}
+        left={isLandscape ? 70 : 20}
       >
         <Typography variant="h6">{title}</Typography>
       </FlexBox>

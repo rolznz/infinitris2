@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import useSinglePlayerOptionsStore from '@/state/SinglePlayerOptionsStore';
 import Routes from '@/models/Routes';
 
-export function useIsBackButtonVisible() {
+export function useIsHomeButtonVisible() {
   //const isFullscreen = useIsFullscreen();
   const location = useLocation();
   const singlePlayerOptionsFormData = useSinglePlayerOptionsStore(

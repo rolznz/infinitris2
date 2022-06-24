@@ -1,6 +1,8 @@
 import ChallengeFailedView from '@/components/pages/ChallengePage/ChallengeFailedView';
 import ChallengeInfoView from '@/components/pages/ChallengePage/ChallengeInfoView';
 import ChallengeResultsView from '@/components/pages/ChallengePage/ChallengeResultsView';
+import { RestartButton } from '@/components/pages/ChallengePage/RestartButton';
+import { TopLeftPanelPortal } from '@/components/ui/TopLeftPanel';
 import {
   IChallenge,
   IIngameChallengeAttempt,
@@ -36,6 +38,11 @@ export function ChallengeUI({
   console.log('Render challenge UI: ', challengeAttempt, showChallengeInfo);
   return (
     <>
+      {!showChallengeInfo && !challengeAttempt && (
+        <TopLeftPanelPortal>
+          <RestartButton onClick={retryChallenge} />
+        </TopLeftPanelPortal>
+      )}
       {showChallengeInfo ? (
         <ChallengeInfoView
           challenge={challenge}

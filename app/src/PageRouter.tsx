@@ -38,6 +38,7 @@ import { SinglePlayerGameModePickerPage } from '@/components/pages/SinglePlayerP
 import { RoomInfoPage } from '@/components/pages/RoomInfoPage';
 import CoinsDisplay from '@/components/ui/CoinsDisplay';
 import { StoryModePage } from '@/components/pages/StoryModePage/StoryModePage';
+import { TopLeftPanel, TopLeftPanelPortal } from '@/components/ui/TopLeftPanel';
 
 const coinsDisplayPaths = [Routes.market, Routes.profile];
 
@@ -85,7 +86,9 @@ function RouterContents() {
   }, [location]);
   return (
     <>
-      <HomeButton />
+      <TopLeftPanel>
+        <HomeButton />
+      </TopLeftPanel>
       <DialogManager />
       <OutsideGameElement>
         <HamburgerMenuButton />
@@ -93,7 +96,9 @@ function RouterContents() {
       </OutsideGameElement>
       <Switch location={location}>
         <Route path={coinsDisplayPaths}>
-          <CoinsDisplay />
+          <TopLeftPanelPortal>
+            <CoinsDisplay />
+          </TopLeftPanelPortal>
         </Route>
       </Switch>
       <Switch location={location}>

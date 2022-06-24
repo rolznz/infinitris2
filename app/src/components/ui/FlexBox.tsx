@@ -1,7 +1,7 @@
 import { Box, BoxProps } from '@mui/material';
 import React from 'react';
 
-export default function FlexBox(props: BoxProps) {
+const FlexBox = React.forwardRef((props: BoxProps, ref) => {
   return (
     <Box
       display="flex"
@@ -9,8 +9,11 @@ export default function FlexBox(props: BoxProps) {
       justifyContent="center"
       alignItems="center"
       {...props}
+      ref={ref}
     >
       {props.children}
     </Box>
   );
-}
+});
+
+export default FlexBox;

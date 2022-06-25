@@ -23,7 +23,7 @@ export default function useIncompleteChallenges(
     useIncompleteChallengesOptions
   );
 
-  const isLoadingOfficialChallenges = !officialChallenges?.length;
+  const isLoadingOfficialChallenges = !officialChallenges?.length && worldType;
 
   const user = useUser();
   const incompleteChallenges = (

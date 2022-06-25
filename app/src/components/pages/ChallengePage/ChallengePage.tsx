@@ -13,7 +13,6 @@ import { useHistory, useParams } from 'react-router-dom';
 import React from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useCollection, useDocument } from 'swr-firestore';
-import { IPlayer } from 'infinitris2-models';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import { useUser } from '@/components/hooks/useUser';
@@ -112,7 +111,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const player = useNetworkPlayerInfo();
 
   const { incompleteChallenges, isLoadingOfficialChallenges } =
-    useIncompleteChallenges(challenge?.worldType);
+    useIncompleteChallenges(isTest ? undefined : challenge?.worldType);
 
   const handleContinue = React.useCallback(() => {
     if (hasContinued) {
@@ -187,7 +186,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           listeners: [...coreGameListeners, challengeSimulationEventListener],
           preferredInputMethod,
           controls_keyboard,
-          player: player as IPlayer, // FIXME: use a different interface
+          player,
           allCharacters: allCharacters?.data?.map((document) =>
             document.data()
           ),

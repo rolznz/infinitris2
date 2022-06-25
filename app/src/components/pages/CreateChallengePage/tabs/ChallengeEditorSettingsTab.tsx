@@ -12,9 +12,15 @@ import shallow from 'zustand/shallow';
 //import { ChallengeEditorJson } from '@/components/pages/CreateChallengePage/tabs/ChallengeEditorJson';
 
 export function ChallengeEditorSettingsTab() {
+  const [formKey, setFormKey] = React.useState(0);
   const [challenge] = useChallengeEditorStore(
     (store) => [store.challenge, store.setChallenge],
     shallow
+  );
+
+  const updateFormKey = React.useCallback(
+    () => setFormKey((current) => current + 1),
+    [setFormKey]
   );
 
   if (!challenge) {
@@ -23,7 +29,11 @@ export function ChallengeEditorSettingsTab() {
 
   return (
     <FlexBox width="100%" height="100%" justifyContent="flex-start">
-      <ChallengeEditorSettingsForm challenge={challenge} />
+      <ChallengeEditorSettingsForm
+        challenge={challenge}
+        updateFormKey={updateFormKey}
+        key={formKey.toString()}
+      />
 
       {/* <FormControl>
         <Input

@@ -28,6 +28,22 @@ import Select from '@mui/material/Select/Select';
 import MenuItem from '@mui/material/MenuItem';
 import shallow from 'zustand/shallow';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
+import { createNewChallenge } from '@/components/pages/CreateChallengePage/createNewChallenge';
+
+const exportChallenge = () => {
+  const challenge = useChallengeEditorStore.getState().challenge!;
+  const okExportProps: Partial<IChallenge> = {
+    grid: challenge.grid,
+    simulationSettings: challenge.simulationSettings,
+    worldType: challenge.worldType,
+    worldVariation: challenge.worldVariation,
+    title: challenge.title,
+    description: challenge.description,
+    finishCriteria: challenge.finishCriteria,
+    rewardCriteria: challenge.rewardCriteria,
+  };
+  window.prompt('Exported Challenge JSON', JSON.stringify(okExportProps));
+};
 
 const schema = yup.object({
   title: yup
@@ -44,10 +60,12 @@ type SettingsFormData = Pick<
 
 type ChallengeEditorSettingsFormProps = {
   challenge: IChallenge;
+  updateFormKey(): void;
 };
 
 export function ChallengeEditorSettingsForm({
   challenge,
+  updateFormKey,
 }: ChallengeEditorSettingsFormProps) {
   const setChallenge = useChallengeEditorStore((store) => store.setChallenge);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -94,6 +112,19 @@ export function ChallengeEditorSettingsForm({
       });
     }
   }, [setChallenge, title]);*/
+
+  const importChallenge = React.useCallback(() => {
+    const json = window.prompt('Enter challenge JSON');
+    if (!json) {
+      alert('Invalid JSON');
+      return;
+    }
+    const parsed = JSON.parse(json);
+    const importedChallenge = { ...createNewChallenge(), ...parsed };
+    console.log('IMPORTED CHALLENGE:', importedChallenge);
+    updateFormKey();
+    setChallenge(importedChallenge);
+  }, [setChallenge, updateFormKey]);
 
   const resetChallenge = React.useCallback(() => {
     if (window.confirm('Are you sure you wish to create a new challenge?')) {
@@ -233,7 +264,7 @@ export function ChallengeEditorSettingsForm({
           </FlexBox>
         </FlexBox>
       </form>
-      <FlexBox mt={4} flexDirection="row" gap={1}>
+      <FlexBox mt={4} flexDirection="row" flexWrap="wrap" gap={1}>
         <Button
           color="secondary"
           variant="contained"
@@ -252,6 +283,26 @@ export function ChallengeEditorSettingsForm({
             />
           </Button>
         </Link>
+        <Button
+          color="secondary"
+          variant="contained"
+          onClick={() => exportChallenge()}
+        >
+          <FormattedMessage
+            defaultMessage="Export Challenge"
+            description="Export challenge button text"
+          />
+        </Button>
+        <Button
+          color="secondary"
+          variant="contained"
+          onClick={() => importChallenge()}
+        >
+          <FormattedMessage
+            defaultMessage="Import Challenge"
+            description="Import challenge button text"
+          />
+        </Button>
       </FlexBox>
     </FlexBox>
   );

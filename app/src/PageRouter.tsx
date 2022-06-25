@@ -39,6 +39,8 @@ import { RoomInfoPage } from '@/components/pages/RoomInfoPage';
 import CoinsDisplay from '@/components/ui/CoinsDisplay';
 import { StoryModePage } from '@/components/pages/StoryModePage/StoryModePage';
 import { TopLeftPanel, TopLeftPanelPortal } from '@/components/ui/TopLeftPanel';
+import NavigationButton from '@/components/ui/BackButton';
+import useRouterStore from '@/state/RouterStore';
 
 const coinsDisplayPaths = [Routes.market, Routes.profile];
 
@@ -71,8 +73,10 @@ export default function PageRouter() {
 }
 
 let lastPopStateTime = 0;
+let hasNavigated = false;
 window.onpopstate = () => {
   lastPopStateTime = Date.now();
+  useRouterStore.getState().push(-1);
 };
 
 function RouterContents() {
@@ -82,12 +86,17 @@ function RouterContents() {
   React.useEffect(() => {
     if (Date.now() - lastPopStateTime > 1000) {
       window.scrollTo(0, 0);
+      if (hasNavigated) {
+        useRouterStore.getState().push();
+      }
+      hasNavigated = true;
     }
   }, [location]);
   return (
     <>
       <TopLeftPanel>
         <HomeButton />
+        <NavigationButton />
       </TopLeftPanel>
       <DialogManager />
       <OutsideGameElement>

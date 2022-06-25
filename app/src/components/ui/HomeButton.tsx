@@ -5,15 +5,22 @@ import { ReactComponent as HomeIcon } from '@/icons/home.svg';
 import { playSound, SoundKey } from '@/sound/SoundManager';
 import { colors, dropShadows } from '@/theme/theme';
 import { exitFullscreen } from '@/utils/launchFullscreen';
-import { useIsHomeButtonVisible } from '@/components/hooks/useIsHomeButtonVisible';
+import { useIsNavigationButtonVisible } from '@/components/hooks/useIsNavigationButtonVisible';
 import { Link } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import { useIntl } from 'react-intl';
+import useRouterStore from '@/state/RouterStore';
+
+const onClick = () => {
+  exitFullscreen();
+  playSound(SoundKey.click);
+};
 
 export default function HomeButton() {
   const intl = useIntl();
-  const isBackButtonVisible = useIsHomeButtonVisible();
-  if (!isBackButtonVisible) {
+  const isHome = useRouterStore((store) => store.length) === 0;
+  const isHomeButtonVisible = useIsNavigationButtonVisible() && isHome;
+  if (!isHomeButtonVisible) {
     return null;
   }
   return (
@@ -25,14 +32,7 @@ export default function HomeButton() {
             description: 'Home button tooltip',
           })}
         >
-          <IconButton
-            style={{}}
-            onClick={() => {
-              exitFullscreen();
-              playSound(SoundKey.click);
-            }}
-            size="large"
-          >
+          <IconButton onClick={onClick} size="large">
             <SvgIcon
               sx={{
                 filter: dropShadows.small,

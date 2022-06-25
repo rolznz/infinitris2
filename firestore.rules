@@ -152,7 +152,7 @@ service cloud.firestore {
       }
       allow create: if isValidChallenge() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.readOnly.coins > 0;
       allow update: if isValidChallenge() && (!resource.data.get('isPublished', false) || isAdmin());
-      allow delete: if false;
+      allow delete: if isAdmin();
       allow read: if true;
       
     }

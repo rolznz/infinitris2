@@ -129,6 +129,38 @@ describe('Challenges Rules', () => {
     ).toAllow();
   });
 
+  test('non-admin should deny deleting a challenge', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+      }
+    );
+
+    await expect(
+      db.doc(getChallengePath(dummyData.challengeId1)).delete()
+    ).toDeny();
+  });
+  test('admin should allow deleting a challenge', async () => {
+    const adminUser: IUser = {
+      ...dummyData.existingUser,
+      readOnly: {
+        ...dummyData.existingUser.readOnly,
+        isAdmin: true,
+      },
+    };
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: adminUser,
+        [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+      }
+    );
+
+    await expect(db.doc(dummyData.challenge1Path).delete()).toAllow();
+  });
+
   test('should allow updating an unpublished challenge', async () => {
     const { db } = await setup(
       { uid: dummyData.userId1 },

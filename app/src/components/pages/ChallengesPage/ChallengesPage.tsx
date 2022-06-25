@@ -1,12 +1,21 @@
-import { useCollection } from 'swr-firestore';
+import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 
 import FlexBox from '../../ui/FlexBox';
 import ChallengeCard from './ChallengeCard';
+import { where } from 'firebase/firestore';
+
+// TODO: support multiple filter types
+const challengesFilter: UseCollectionOptions = {
+  constraints: [where('isOfficial', '==', false)],
+};
 
 export function ChallengesPage() {
-  const { data: challenges } = useCollection<IChallenge>(challengesPath);
+  const { data: challenges } = useCollection<IChallenge>(
+    challengesPath,
+    challengesFilter
+  );
   return (
     <FlexBox flex={1} padding={10} flexWrap="wrap" flexDirection="row">
       {challenges

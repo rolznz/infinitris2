@@ -22,5 +22,6 @@ export function createNewChallenge(): IChallenge {
 X00X0XX0X
 FFFFFFFFF`.trim(),
     created: false,
+    isOfficial: false,
   };
 }

@@ -39,12 +39,6 @@ function deleteChallenge(challengeId: string) {
   deleteDoc(doc(getFirestore(), getChallengePath(challengeId)));
 }
 
-const cardSx: SxProps<Theme> = {
-  background: getBackground('grass', '0'),
-  borderRadius: borderRadiuses.base,
-  position: 'relative',
-  overflow: 'hidden',
-};
 const cardFooterSx: SxProps<Theme> = {
   background:
     'linear-gradient(180deg, rgba(0,0,0, 0.024) 0%, rgba(0, 0, 0, 0.8) 77.08%)',
@@ -64,6 +58,19 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
     launchFullscreen();
     playSound(SoundKey.click);
   }, []);
+
+  const cardSx: SxProps<Theme> = React.useMemo(
+    () => ({
+      background: getBackground(
+        challenge.data()!.worldType,
+        challenge.data()!.worldVariation
+      ),
+      borderRadius: borderRadiuses.base,
+      position: 'relative',
+      overflow: 'hidden',
+    }),
+    [challenge]
+  );
 
   const card = (
     <FlexBox sx={cardSx}>

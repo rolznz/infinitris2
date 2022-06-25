@@ -92,7 +92,7 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
             },
             body: JSON.stringify({
               email: email,
-              code: data.code,
+              code: data.code.toUpperCase(),
             }),
           }
         );

@@ -75,7 +75,9 @@ export default function ChallengeResultsView({
   return (
     <FlexBox zIndex={zIndexes.above} width="100%" height="100%">
       <EndRoundDisplayOverlay>
-        <WorldProgress worldType={challenge.worldType} />
+        {challenge.isOfficial && (
+          <WorldProgress worldType={challenge.worldType} />
+        )}
         <RoundWinnerDisplay
           characterSize={characterSize}
           winner={player}

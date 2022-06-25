@@ -1,9 +1,14 @@
 import { Link as RouterLink } from 'react-router-dom';
-import { getChallengePath, IChallenge } from 'infinitris2-models';
+import {
+  getChallengePath,
+  getVariationHueRotation,
+  IChallenge,
+  WorldType,
+  WorldVariation,
+  WorldVariationValues,
+} from 'infinitris2-models';
 import React from 'react';
 import Routes from '../../../models/Routes';
-import ChallengeGridPreview from './ChallengeGridPreview';
-import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import {
@@ -17,6 +22,14 @@ import { playSound, SoundKey } from '@/sound/SoundManager';
 import { useUser } from '@/components/hooks/useUser';
 import Button from '@mui/material/Button';
 import FlexBox from '@/components/ui/FlexBox';
+import { ChallengeGridPartialPreview } from '@/components/pages/ChallengesPage/ChallengeGridPartialPreview';
+import { SxProps, Theme } from '@mui/material/styles';
+import { borderRadiuses } from '@/theme/theme';
+
+import grassImageMobile from '@/components/ui/RoomCarousel/assets/carousel/grass_mobile.svg';
+import desertImageMobile from '@/components/ui/RoomCarousel/assets/carousel/desert_mobile.svg';
+import volcanoImageMobile from '@/components/ui/RoomCarousel/assets/carousel/volcano_mobile.svg';
+import spaceImageMobile from '@/components/ui/RoomCarousel/assets/carousel/space_mobile.svg';
 
 interface ChallengeCardProps {
   challenge: DocumentSnapshot<IChallenge>;
@@ -25,6 +38,21 @@ interface ChallengeCardProps {
 function deleteChallenge(challengeId: string) {
   deleteDoc(doc(getFirestore(), getChallengePath(challengeId)));
 }
+
+const cardSx: SxProps<Theme> = {
+  background: getBackground('grass', '0'),
+  borderRadius: borderRadiuses.base,
+  position: 'relative',
+  overflow: 'hidden',
+};
+const cardFooterSx: SxProps<Theme> = {
+  background:
+    'linear-gradient(180deg, rgba(0,0,0, 0.024) 0%, rgba(0, 0, 0, 0.8) 77.08%)',
+  position: 'absolute',
+  bottom: 0,
+  py: 2,
+  width: '100%',
+};
 
 export default function ChallengeCard({ challenge }: ChallengeCardProps) {
   //const user = useUser();
@@ -38,17 +66,15 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
   }, []);
 
   const card = (
-    <Card>
-      <Typography variant="body1">
-        {/*translation?.title || */ challenge.data()!.title}
-        {isLocked && ' (LOCKED)'}
-      </Typography>
-      <ChallengeGridPreview
-        grid={challenge.data()!.grid}
-        width={100}
-        height={100}
-      />
-    </Card>
+    <FlexBox sx={cardSx}>
+      <FlexBox sx={cardFooterSx}>
+        <Typography variant="body1">
+          {/*translation?.title || */ challenge.data()!.title}
+          {isLocked && ' (LOCKED)'}
+        </Typography>
+      </FlexBox>
+      <ChallengeGridPartialPreview grid={challenge.data()!.grid} />
+    </FlexBox>
   );
   const link = isLocked ? (
     card
@@ -80,9 +106,38 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
       >
         Delete
       </Button>
-      )
     </FlexBox>
   ) : (
     link
   );
+}
+
+function getBackground(
+  worldType: WorldType | undefined,
+  worldVariation: WorldVariation | undefined
+): string {
+  let image: string = grassImageMobile;
+  switch (worldType) {
+    case undefined:
+      break;
+    case 'grass':
+      break;
+    case 'desert':
+      image = desertImageMobile;
+      break;
+    case 'volcano':
+      image = volcanoImageMobile;
+      break;
+    case 'space':
+      image = spaceImageMobile;
+      break;
+    default:
+      throw new Error('Unsupported world type: ' + worldType);
+  }
+
+  const hueRotation = getVariationHueRotation(
+    WorldVariationValues.indexOf(worldVariation || '0')
+  );
+
+  return `url(${image}); filter: hue-rotate(${hueRotation}deg);`;
 }

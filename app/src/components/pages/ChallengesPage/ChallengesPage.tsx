@@ -5,6 +5,8 @@ import React from 'react';
 import FlexBox from '../../ui/FlexBox';
 import ChallengeCard from './ChallengeCard';
 import { where } from 'firebase/firestore';
+import { useIntl } from 'react-intl';
+import { Page } from '@/components/ui/Page';
 
 // TODO: support multiple filter types
 const challengesFilter: UseCollectionOptions = {
@@ -12,20 +14,33 @@ const challengesFilter: UseCollectionOptions = {
 };
 
 export function ChallengesPage() {
+  const intl = useIntl();
   const { data: challenges } = useCollection<IChallenge>(
     challengesPath,
     challengesFilter
   );
   return (
-    <FlexBox flex={1} padding={10} flexWrap="wrap" flexDirection="row">
-      {challenges
-        ?.filter((challenge) => challenge.data()!.isPublished)
-        .sort((a, b) => (b.data()!.priority || 0) - (a.data()!.priority || 0))
-        .map((challenge) => (
-          <FlexBox key={challenge.id} margin={4}>
-            <ChallengeCard challenge={challenge} />
-          </FlexBox>
-        ))}
-    </FlexBox>
+    <Page
+      title={intl.formatMessage({
+        defaultMessage: 'Community Challenges',
+        description: 'Community Challenges page title',
+      })}
+    >
+      <FlexBox
+        width="100%"
+        flexWrap="wrap"
+        flexDirection="row"
+        justifyContent="flex-start"
+      >
+        {challenges
+          ?.filter((challenge) => challenge.data()!.isPublished)
+          .sort((a, b) => (b.data()!.priority || 0) - (a.data()!.priority || 0))
+          .map((challenge) => (
+            <FlexBox key={challenge.id} margin={4}>
+              <ChallengeCard challenge={challenge} />
+            </FlexBox>
+          ))}
+      </FlexBox>
+    </Page>
   );
 }

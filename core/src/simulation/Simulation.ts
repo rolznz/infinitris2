@@ -28,6 +28,9 @@ import { blockLayoutSets } from '@models/blockLayouts/blockLayoutSets';
 import AIPlayer from '@core/player/AIPlayer';
 import { simpleRandom } from '@models/util/simpleRandom';
 import LayoutUtils from '@core/block/layout/LayoutUtils';
+import { IRotationSystem, RotationSystem } from '@models/IRotationSystem';
+import { InfinitrisRotationSystem } from '@core/block/rotation/infinitrisRotationSystem';
+import { BasicRotationSystem } from '@core/block/rotation/BasicRotationSystem';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -53,6 +56,7 @@ export default class Simulation implements ISimulation {
   private _round: IRound | undefined;
   private _layoutSet: LayoutSet | undefined;
   private _botSeed: number | undefined;
+  private _rotationSystem: IRotationSystem;
 
   constructor(grid: Grid, settings: SimulationSettings = {}, isClient = false) {
     this._eventListeners = [];
@@ -85,6 +89,9 @@ export default class Simulation implements ISimulation {
 
     this.addEventListener(this._gameMode);
     this._fpsCounter = new FpsCounter();
+    this._rotationSystem = this._createRotationSystem(
+      this._settings.rotationSystem || 'infinitris'
+    );
 
     if (this._gameMode.hasRounds) {
       this._round = new Round(this);
@@ -99,7 +106,20 @@ export default class Simulation implements ISimulation {
       case 'race':
         return new RaceGameMode(this);
       default:
-        throw new Error('Unknown game mode: ');
+        throw new Error('Unknown game mode: ' + gameModeType);
+    }
+  }
+
+  private _createRotationSystem(
+    rotationSystem: RotationSystem
+  ): IRotationSystem {
+    switch (rotationSystem) {
+      case 'infinitris':
+        return new InfinitrisRotationSystem();
+      case 'basic':
+        return new BasicRotationSystem();
+      default:
+        throw new Error('Unknown rotation system: ' + rotationSystem);
     }
   }
   onSimulationInit(): void {
@@ -107,6 +127,10 @@ export default class Simulation implements ISimulation {
   }
   onSimulationStep(): void {
     throw new Error('should never be called');
+  }
+
+  get rotationSystem(): IRotationSystem {
+    return this._rotationSystem;
   }
 
   get layoutSet(): LayoutSet {

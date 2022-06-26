@@ -89,6 +89,7 @@ export * from './IRenderer';
 export * from './Layout';
 export * from './blockLayouts/blockLayoutSets';
 export * from './IChallengeEventListener';
+export * from './IRotationSystem';
 
 export const NETWORK_VERSION = 2;
 

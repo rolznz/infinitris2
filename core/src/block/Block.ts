@@ -8,6 +8,8 @@ import { IPlayer } from '@models/IPlayer';
 import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
 import { checkMistake } from './checkMistake';
 import ISimulation from '@models/ISimulation';
+import { wrap } from '@core/utils/wrap';
+import { MovementAttempt } from '@models/IRotationSystem';
 
 type LoopCellEvent = (cell?: ICell) => void;
 
@@ -276,29 +278,6 @@ export default class Block implements IBlock {
       if (canMove && options && !options.allowMistakes) {
         options.isMistake = checkMistake(newCells, this._simulation);
       }
-
-      // if attempting to rotate but the result is a non-rotation movement in any direction (up to 2 cells), return false
-      /*if (dr !== 0) {
-        const gridNumColumns = this._simulation.grid.numColumns;
-        for (let x = -2; x <= 2; x++) {
-          for (let y = -2; y <= 2; y++) {
-            if (
-              newCells.findIndex(
-                (newCell) =>
-                  this._cells.findIndex(
-                    (currentCell) =>
-                      (((currentCell.column + x) % gridNumColumns) +
-                        gridNumColumns) %
-                        gridNumColumns ===
-                        newCell.column && currentCell.row + y === newCell.row
-                  ) < 0
-              ) < 0
-            ) {
-              canMove = false;
-            }
-          }
-        }
-      }*/
     } else {
       canMove = false;
     }
@@ -317,69 +296,36 @@ export default class Block implements IBlock {
    * @returns true if the block was moved.
    */
   move(dx: number, dy: number, dr: number, force: boolean = false): boolean {
-    const maxAttempts = !force && dr !== 0 ? 44 : 1;
-    let canMove = false;
-    for (let i = 0; i < maxAttempts; i++) {
-      let drClamped = force || dr !== 0 ? (((dr + i * dr) % 4) + 4) % 4 : 0;
-      if (!force && dr !== 0) {
-        // order to prioritize downward rotation:
-        // cycle 0 iteration 0-3: dx=0, dy=0
-        // cycle 1 iteration 4-7: dx=dr, dy=0
-        // cycle 2 iteration 8-11: dx=-dr, dy=0
-        // cycle 3 iteration 12-15: dx=0, dy=1
-        // cycle 4 iteration 16-19: dy=dr, dy=1
-        // cycle 5 iteration 20-23: dy=-dr, dy=1
-        // cycle 6 iteration 24-27: dx=0, dy=2
-        // cycle 7 iteration 28-31: dy=dr, dy=2
-        // cycle 8 iteration 32-35: dy=-dr, dy=2
-        // cycle 9 iteration 36-39: dy=0, dy=-1 - special case, allow Z/T blocks to rotate on a flat surface
-        // cycle 10 iteration 40-43: dy=0, dy=-2 - special case, allow I blocks to rotate on a flat surface
+    const attempts: MovementAttempt[] =
+      !force && !this.isDropping && dr !== 0
+        ? this._simulation.rotationSystem.getAttempts(this._layout, dx, dy, dr)
+        : [{ dx, dy, dr }];
 
-        const attemptCycles = Math.floor(i / 4);
-        dx =
-          attemptCycles === 1 || attemptCycles === 4 || attemptCycles === 7
-            ? dr
-            : attemptCycles === 2 || attemptCycles === 5 || attemptCycles === 8
-            ? -dr
-            : 0;
-        dy =
-          attemptCycles === 10
-            ? -2
-            : attemptCycles === 9
-            ? -1
-            : attemptCycles > 5
-            ? 2
-            : attemptCycles > 2
-            ? 1
-            : 0;
-      }
-      // don't allow movement without rotation and 180 degree rotations
-      // Note: has additional check in canMove to ensure rotation does not result in a simple movement
-      // (e.g. for 180 degree rotation with up/down movement on an I block)
-      if (
-        !force &&
-        (drClamped === 0 || drClamped === 2 /* && dy === 0*/) &&
-        dr !== 0
-      ) {
-        continue;
-      }
-      canMove = force || this.canMove(dx, dy, drClamped);
+    let canMove = false;
+    for (let i = 0; i < attempts.length; i++) {
+      canMove =
+        force || this.canMove(attempts[i].dx, attempts[i].dy, attempts[i].dr);
       if (canMove) {
-        this._column += dx;
-        this._row += dy;
-        this._rotation += drClamped;
+        this._column += attempts[i].dx;
+        this._row += attempts[i].dy;
+        this._rotation += attempts[i].dr;
         this._updateCells();
-        if (drClamped !== 0) {
+        if (attempts[i].dr !== 0) {
           this._layout = LayoutUtils.rotate(
             this._initialLayout,
             this._rotation
           );
         }
-        if (dy > 0) {
+        if (attempts[i].dy > 0) {
           this._resetFallTimer();
         }
         this._resetLockTimer();
-        this._eventListener?.onBlockMoved(this, dx, dy, dr);
+        this._eventListener?.onBlockMoved(
+          this,
+          attempts[i].dx,
+          attempts[i].dy,
+          attempts[i].dr
+        );
         break;
       }
     }

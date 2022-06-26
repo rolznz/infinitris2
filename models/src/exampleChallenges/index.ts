@@ -1,6 +1,8 @@
 import bugfix from '@models/exampleChallenges/bugfix';
+import { lRotations } from '@models/exampleChallenges/lRotations';
 import raceTest from '@models/exampleChallenges/raceTest';
 import rockTest from '@models/exampleChallenges/rockTest';
+import sBlock from '@models/exampleChallenges/sBlock';
 import { IChallenge } from '../IChallenge';
 import basicMovement from './basicMovement';
 import garbageCollection1 from './garbageCollection1';
@@ -26,5 +28,7 @@ export const exampleChallenges: { [key: string]: IChallenge } = {
   't-spins-1': tSpins1,
   'rock-test': rockTest,
   'race-1': raceTest,
+  'l-rotations': lRotations,
   bugfix: bugfix,
+  's-block': sBlock,
 };

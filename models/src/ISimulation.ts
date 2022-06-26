@@ -1,6 +1,7 @@
 import { GameModeEvent } from '@models/GameModeEvent';
 import { ICharacter } from '@models/ICharacter';
 import { IGameMode } from '@models/IGameMode';
+import { IRotationSystem } from '@models/IRotationSystem';
 import { IRound, NetworkRoundInfo } from '@models/IRound';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import Layout, { LayoutSet } from '@models/Layout';
@@ -32,6 +33,7 @@ export default interface ISimulation extends ISimulationEventListener {
   get layoutSet(): LayoutSet;
   get safeLayouts(): Layout[];
   get allLayouts(): Layout[];
+  get rotationSystem(): IRotationSystem;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;

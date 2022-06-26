@@ -46,7 +46,11 @@ export default function ScoreboardPage() {
               description="Scoreboard page register to appear message"
             />
           </Typography>
-          <Button color="primary" variant="contained" onClick={openLoginDialog}>
+          <Button
+            color="primary"
+            variant="contained"
+            onClick={() => openLoginDialog()}
+          >
             <FormattedMessage
               defaultMessage="Log in"
               description="User Profile Page - login button"

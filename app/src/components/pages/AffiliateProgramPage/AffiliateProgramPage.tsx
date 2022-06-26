@@ -101,7 +101,7 @@ export default function AffiliateProgramPage() {
             description="Affiliate Program page title - invite your friends logged out description"
             values={{
               login: (
-                <Link onClick={openLoginDialog}>
+                <Link onClick={() => openLoginDialog()}>
                   <FormattedMessage
                     defaultMessage="Log in"
                     description="Affiliate Program Page - login button"

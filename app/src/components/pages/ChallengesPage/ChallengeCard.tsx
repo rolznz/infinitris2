@@ -1,8 +1,10 @@
 import { Link as RouterLink } from 'react-router-dom';
 import {
   getChallengePath,
+  getScoreboardEntryPath,
   getVariationHueRotation,
   IChallenge,
+  IScoreboardEntry,
   WorldType,
   WorldVariation,
   WorldVariationValues,
@@ -30,6 +32,9 @@ import grassImageMobile from '@/components/ui/RoomCarousel/assets/carousel/grass
 import desertImageMobile from '@/components/ui/RoomCarousel/assets/carousel/desert_mobile.svg';
 import volcanoImageMobile from '@/components/ui/RoomCarousel/assets/carousel/volcano_mobile.svg';
 import spaceImageMobile from '@/components/ui/RoomCarousel/assets/carousel/space_mobile.svg';
+import StarRatingComponent from 'react-star-rating-component';
+import { useDocument } from 'swr-firestore';
+import { FormattedMessage } from 'react-intl';
 
 interface ChallengeCardProps {
   challenge: DocumentSnapshot<IChallenge>;
@@ -53,6 +58,11 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
   //const translation = challenge?.translations?.[user.locale];
   const isLocked = false; /*TODO: check unlocked features*/
   const user = useUser();
+  const { data: challengeOwnerScoreboardEntry } = useDocument<IScoreboardEntry>(
+    challenge?.data()?.userId
+      ? getScoreboardEntryPath(challenge!.data()!.userId!)
+      : null
+  );
 
   const onClick = React.useCallback(() => {
     launchFullscreen();
@@ -79,8 +89,24 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
           {/*translation?.title || */ challenge.data()!.title}
           {isLocked && ' (LOCKED)'}
         </Typography>
+        {challengeOwnerScoreboardEntry?.data()?.nickname && (
+          <Typography variant="caption">
+            <FormattedMessage
+              defaultMessage="By {nickname}"
+              description="challenge card by nickname"
+              values={{
+                nickname: challengeOwnerScoreboardEntry!.data()!.nickname,
+              }}
+            />
+          </Typography>
+        )}
       </FlexBox>
       <ChallengeGridPartialPreview grid={challenge.data()!.grid} />
+      <StarRatingComponent
+        name="challenge-score"
+        starCount={5}
+        value={challenge.data()?.readOnly?.rating || 0}
+      />
     </FlexBox>
   );
   const link = isLocked ? (

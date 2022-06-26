@@ -5,6 +5,7 @@ import {
 import useContinueButton from '@/components/hooks/useContinueButton';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import useTrue from '@/components/hooks/useTrue';
+import RateChallenge from '@/components/pages/ChallengePage/RateChallenge';
 import { WorldProgress } from '@/components/pages/ChallengePage/WorldProgress';
 import FlexBox from '@/components/ui/FlexBox';
 import { borderRadiuses, zIndexes } from '@/theme/theme';
@@ -31,8 +32,8 @@ export interface ChallengeResultsViewProps {
 }
 
 export default function ChallengeResultsView({
-  //challengeId,
-  //isTest,
+  challengeId,
+  isTest,
   challenge,
   player,
   attempt,
@@ -148,6 +149,9 @@ export default function ChallengeResultsView({
             {retryButton}
             {continueButton}
           </FlexBox>
+          {!isTest && !challenge.isOfficial && (
+            <RateChallenge challengeId={challengeId} />
+          )}
         </FlexBox>
       </EndRoundDisplayOverlay>
     </FlexBox>

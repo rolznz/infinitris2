@@ -7,16 +7,19 @@ export const dialogAnimationLength = 500;
 
 type DialogStore = {
   readonly dialogTypes: DialogType[];
-  open(dialogType?: DialogType): void;
+  readonly loginRedirectToProfile: boolean;
+  open(dialogType?: DialogType, loginRedirectToProfile?: boolean): void;
   close(): void;
 };
 
 const useDialogStore = create<DialogStore>((set, _get) => ({
+  loginRedirectToProfile: true,
   dialogTypes: [],
-  open: (dialogType: DialogType = 'login') => {
+  open: (dialogType: DialogType = 'login', loginRedirectToProfile = true) => {
     const executeOpen = () =>
       set((prevState) => ({
         dialogTypes: [...prevState.dialogTypes, dialogType],
+        loginRedirectToProfile,
       }));
     executeOpen();
     //setTimeout(executeOpen, currentDialogType ? dialogAnimationLength : 0);
@@ -32,7 +35,8 @@ const useDialogStore = create<DialogStore>((set, _get) => ({
 
 export default useDialogStore;
 
-export const openLoginDialog = () => useDialogStore.getState().open('login');
+export const openLoginDialog = (loginRedirectToProfile?: boolean) =>
+  useDialogStore.getState().open('login', loginRedirectToProfile);
 export const openCoinInfoDialog = () =>
   useDialogStore.getState().open('coinInfo');
 export const openImpactInfoDialog = () =>

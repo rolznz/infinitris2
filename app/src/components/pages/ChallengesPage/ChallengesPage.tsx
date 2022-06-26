@@ -4,13 +4,16 @@ import React from 'react';
 
 import FlexBox from '../../ui/FlexBox';
 import ChallengeCard from './ChallengeCard';
-import { where } from 'firebase/firestore';
+import { orderBy, where } from 'firebase/firestore';
 import { useIntl } from 'react-intl';
 import { Page } from '@/components/ui/Page';
 
 // TODO: support multiple filter types
 const challengesFilter: UseCollectionOptions = {
-  constraints: [where('isOfficial', '==', false)],
+  constraints: [
+    where('isOfficial', '==', false),
+    orderBy('readOnly.rating', 'desc'),
+  ],
 };
 
 export function ChallengesPage() {

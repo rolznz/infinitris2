@@ -1,7 +1,7 @@
 import FlexBox from '@/components/ui/FlexBox';
 import useAuthStore from '@/state/AuthStore';
 import { Typography } from '@mui/material';
-import { useDocument } from 'swr-firestore';
+import { useDocument, UseDocumentOptions } from 'swr-firestore';
 import {
   getChallengePath,
   getRatingPath,
@@ -12,10 +12,19 @@ import React, { useState } from 'react';
 import { FormattedMessage, IntlShape, useIntl } from 'react-intl';
 import StarRatingComponent from 'react-star-rating-component';
 import { toast } from 'react-toastify';
-import { DocumentSnapshot } from 'firebase/firestore';
+import {
+  doc,
+  DocumentSnapshot,
+  getFirestore,
+  setDoc,
+} from 'firebase/firestore';
+import { openLoginDialog } from '@/state/DialogStore';
+
+const useChallengeOptions: UseDocumentOptions = {
+  listen: true,
+};
 
 interface ChallengeRatingDisplayProps {
-  isTest: boolean;
   challengeId: string;
 }
 
@@ -26,51 +35,51 @@ async function addRating(
   challengeId: string,
   intl: IntlShape,
   userRating: DocumentSnapshot<IRating> | null | undefined
-) {
-  if (userRating?.exists) {
+): Promise<boolean> {
+  if (userRating?.exists()) {
     alert('You have already voted');
-    return;
+    return false;
   }
   // NB: when updating this list, also update firestore rules
-  const newRating: Omit<IRating, 'userId'> = {
+  const newRating: IRating = {
     value: nextValue,
     entityCollectionPath: 'challenges',
     entityId: challengeId,
     created: false,
+    userId,
   };
-  console.log('Adding rating', ratingPath, newRating);
-  toast(
-    intl.formatMessage({
-      defaultMessage: 'Thanks for rating!',
-      description: 'Thanks for rating toast message',
-    })
-  );
+  //console.log('Adding rating', ratingPath, newRating);
   try {
     // FIXME: save rating
-    //await set(ratingPath, newRating);
-    //await revalidateDocument(ratingPath); // TODO: why is this needed in order for the local cache to be updated?
-    // wait for the firebase onCreateRating function to run
-    await new Promise((resolve) => setTimeout(resolve, 3000));
-    //await revalidateDocument(getChallengePath(challengeId));
+    await setDoc(doc(getFirestore(), ratingPath), newRating);
     console.log('Vote sent');
+    toast(
+      intl.formatMessage({
+        defaultMessage: 'Thanks for rating!',
+        description: 'Thanks for rating toast message',
+      })
+    );
+    return true;
   } catch (e) {
     console.error(e);
     alert(`Failed to vote`);
+    return false;
   }
 }
 
 export default function RateChallenge({
-  isTest,
   challengeId,
 }: ChallengeRatingDisplayProps) {
   const intl = useIntl();
   const userId = useAuthStore().user?.uid;
   const [hoverRating, setHoverRating] = useState(0);
-  const [_isLoginModalOpen, setLoginModalOpen] = useState(false);
-  const [_guestRating, setGuestRating] = useState(0);
+  const [chosenRating, setChosenRating] = useState<number | undefined>(
+    undefined
+  );
 
   const { data: challenge } = useDocument<IChallenge>(
-    !isTest && challengeId ? getChallengePath(challengeId) : null
+    challengeId ? getChallengePath(challengeId) : null,
+    useChallengeOptions
   );
   const ratingPath = userId
     ? getRatingPath('challenges', challengeId, userId)
@@ -80,22 +89,26 @@ export default function RateChallenge({
   const numRatings = challenge?.data()?.readOnly?.numRatings || 0;
   const totalRating = challenge?.data()?.readOnly?.rating || 0;
   async function onStarClick(value: number) {
+    setChosenRating(value);
     if (userId && ratingPath) {
-      addRating(value, userId, ratingPath, challengeId, intl, userRating);
+      if (
+        !(await addRating(
+          value,
+          userId,
+          ratingPath,
+          challengeId,
+          intl,
+          userRating
+        ))
+      ) {
+        setChosenRating(undefined);
+      }
     } else {
-      setGuestRating(value);
-      setLoginModalOpen(true);
-    }
-  }
+      openLoginDialog(false);
 
-  // TODO: use openLoginDialog
-  return (
-    <FlexBox my={2}>
-      {/* <LoginDialog
-        isOpen={isLoginModalOpen}
-        onLogin={(newUserId) => {
-          // rating path and user ID cannot be used because are not set in the current component state (user just logged in)
-          addRating(
+      /**
+       * TODO: after login auto-add rating - need a react effect
+       * addRating(
             guestRating,
             newUserId,
             getRatingPath('challenges', challengeId, newUserId),
@@ -103,23 +116,25 @@ export default function RateChallenge({
             intl,
             userRating
           );
-        }}
-        onClose={() => {
-          setLoginModalOpen(false);
-        }}
-      /> */}
+       */
+    }
+  }
+
+  // TODO: use openLoginDialog
+  return (
+    <FlexBox my={2}>
       <Typography>
         <FormattedMessage
           defaultMessage="Rate this challenge"
           description="Give a rating for this challenge text"
         />
       </Typography>
-      <FlexBox style={{ fontSize: 96 }} mb={-2} mt={-3}>
+      <FlexBox style={{ fontSize: 36 }} mb={-1} mt={-1}>
         <StarRatingComponent
           name="challenge-score"
           editing={true}
           starCount={5}
-          value={userRating?.data()?.value ?? hoverRating}
+          value={chosenRating ?? userRating?.data()?.value ?? hoverRating}
           onStarClick={onStarClick}
           onStarHover={(value) => setHoverRating(value)}
           onStarHoverOut={() => setHoverRating(0)}

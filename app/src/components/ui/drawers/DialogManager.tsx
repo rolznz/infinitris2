@@ -18,16 +18,21 @@ import shallow from 'zustand/shallow';
 
 export function DialogManager() {
   const history = useHistory();
-  const [dialogTypes] = useDialogStore(
-    (dialogStore) => [dialogStore.dialogTypes],
+  const [dialogTypes, loginRedirectToProfile] = useDialogStore(
+    (dialogStore) => [
+      dialogStore.dialogTypes,
+      dialogStore.loginRedirectToProfile,
+    ],
     shallow
   );
 
   const currentDialogType = dialogTypes[dialogTypes.length - 1];
 
   const onLogin = React.useCallback(() => {
-    history.push(Routes.profile);
-  }, [history]);
+    if (loginRedirectToProfile) {
+      history.push(Routes.profile);
+    }
+  }, [history, loginRedirectToProfile]);
 
   return (
     <>

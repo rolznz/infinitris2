@@ -40,7 +40,11 @@ export default function ProfilePage() {
       background={<CharacterHabitatBackground character={character} />}
     >
       {!userId && (
-        <Button color="primary" variant="contained" onClick={openLoginDialog}>
+        <Button
+          color="primary"
+          variant="contained"
+          onClick={() => openLoginDialog()}
+        >
           <FormattedMessage
             defaultMessage="Log in"
             description="User Profile Page - login button"

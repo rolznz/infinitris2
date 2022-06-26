@@ -3,7 +3,7 @@ import { ICharacter } from '@models/ICharacter';
 import { IGameMode } from '@models/IGameMode';
 import { IRound, NetworkRoundInfo } from '@models/IRound';
 import ISimulationEventListener from '@models/ISimulationEventListener';
-import { LayoutSet } from '@models/Layout';
+import Layout, { LayoutSet } from '@models/Layout';
 import { SimulationSettings } from '@models/SimulationSettings';
 import IGrid from './IGrid';
 import { IPlayer } from './IPlayer';
@@ -30,6 +30,8 @@ export default interface ISimulation extends ISimulationEventListener {
   get isRunning(): boolean;
   get grid(): IGrid;
   get layoutSet(): LayoutSet;
+  get safeLayouts(): Layout[];
+  get allLayouts(): Layout[];
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;

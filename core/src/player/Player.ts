@@ -233,16 +233,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         return;
       }
 
-      const validLayouts = Object.entries(this._simulation.layoutSet.layouts)
-        .filter(
-          (entry) =>
-            (!simulationSettings.allowedBlockLayoutIds ||
-              simulationSettings.allowedBlockLayoutIds.indexOf(entry[0]) >=
-                0) &&
-            (!this._isFirstBlock || LayoutUtils.isSafeLayout(entry[1]))
-        )
-        .map((entry) => entry[1]);
+      const validLayouts = this._isFirstBlock
+        ? this._simulation.safeLayouts
+        : this._simulation.allLayouts;
 
+      // TODO: add "bag" of layouts rather than pure random
       const layout =
         //this._nextLayout ||
         validLayouts[Math.floor(Math.random() * validLayouts.length)];

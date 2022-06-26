@@ -23,10 +23,11 @@ import { ICharacter } from '@models/ICharacter';
 import { colors } from '@models/colors';
 import { stringToHex } from '@models/util/stringToHex';
 import { hexToString } from '@models/util/hexToString';
-import { defaultLayoutSet, LayoutSet } from '@models/Layout';
+import Layout, { defaultLayoutSet, LayoutSet } from '@models/Layout';
 import { blockLayoutSets } from '@models/blockLayouts/blockLayoutSets';
 import AIPlayer from '@core/player/AIPlayer';
 import { simpleRandom } from '@models/util/simpleRandom';
+import LayoutUtils from '@core/block/layout/LayoutUtils';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -110,6 +111,25 @@ export default class Simulation implements ISimulation {
 
   get layoutSet(): LayoutSet {
     return this._layoutSet || defaultLayoutSet;
+  }
+
+  get allLayouts(): Layout[] {
+    // TODO: cache
+    return Object.entries(this.layoutSet.layouts)
+      .filter(
+        (entry) =>
+          !this._settings.allowedBlockLayoutIds ||
+          this._settings.allowedBlockLayoutIds.indexOf(entry[0]) >= 0
+      )
+      .map((entry) => entry[1]);
+  }
+
+  get safeLayouts(): Layout[] {
+    // TODO: cache
+    const layoutValues = this.allLayouts;
+    const safeValues = layoutValues.filter((v) => LayoutUtils.isSafeLayout(v));
+
+    return safeValues.length ? safeValues : layoutValues;
   }
 
   get isPaused(): boolean {

@@ -2,10 +2,10 @@ import Layout from '@models/Layout';
 
 export interface IRotationSystem {
   getAttempts(
-    layout: Layout,
     dx: number,
     dy: number,
-    dr: number
+    dr: number,
+    rotateDown: boolean
   ): MovementAttempt[];
 }
 

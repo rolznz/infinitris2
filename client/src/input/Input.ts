@@ -3,6 +3,7 @@ import InputAction, {
   CustomizableInputAction,
   InputActionListener,
   InputActionWithData,
+  RotateActionWithData,
 } from '@models/InputAction';
 import IBlock from '@models/IBlock';
 import KeyboardInput from './KeyboardInput';
@@ -129,7 +130,9 @@ export default class Input {
           block?.move(
             0,
             0,
-            action.type === CustomizableInputAction.RotateClockwise ? 1 : -1
+            action.type === CustomizableInputAction.RotateClockwise ? 1 : -1,
+            false,
+            (action as RotateActionWithData).data.rotateDown
           );
           break;
       }

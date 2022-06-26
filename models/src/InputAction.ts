@@ -38,10 +38,18 @@ export type KeyPressActionWithData = {
   type: HardCodedInputAction.KeyDown;
   data: KeyboardEvent;
 };
+
+export type RotateActionWithData = {
+  type:
+    | CustomizableInputAction.RotateClockwise
+    | CustomizableInputAction.RotateAnticlockwise;
+  data: { rotateDown: boolean };
+};
 export type InputActionWithData =
   | MouseClickActionWithData
   | PointerDragActionWithData
   | KeyPressActionWithData
+  | RotateActionWithData
   | { type: InputAction };
 
 export default InputAction;

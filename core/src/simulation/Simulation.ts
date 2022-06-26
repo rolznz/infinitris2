@@ -49,6 +49,7 @@ export default class Simulation implements ISimulation {
   private _stepInterval?: ReturnType<typeof setTimeout>;
   private _settings: SimulationSettings;
   private _runningTime: number;
+  private _frameNumber: number;
   private _isNetworkClient: boolean;
   private _gameMode: IGameMode<unknown>;
   private _fpsCounter: FpsCounter;
@@ -62,6 +63,7 @@ export default class Simulation implements ISimulation {
     this._eventListeners = [];
     this._players = {};
     this._runningTime = 0;
+    this._frameNumber = 0;
     this._grid = grid;
     this._grid.addEventListener(this);
     this._settings = {
@@ -127,6 +129,10 @@ export default class Simulation implements ISimulation {
   }
   onSimulationStep(): void {
     throw new Error('should never be called');
+  }
+
+  get frameNumber(): number {
+    return this._frameNumber;
   }
 
   get rotationSystem(): IRotationSystem {
@@ -556,6 +562,7 @@ export default class Simulation implements ISimulation {
    * Execute a single simulation frame
    */
   public step() {
+    ++this._frameNumber;
     this._lastStepTime += FRAME_LENGTH;
     this._fpsCounter.step();
     Object.values(this._players).forEach(this._updatePlayer);

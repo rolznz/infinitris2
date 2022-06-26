@@ -42,7 +42,13 @@ export default interface IBlock {
     dr: number,
     options?: BlockCanMoveOptions
   ): boolean;
-  move(dx: number, dy: number, dr: number, force?: boolean): boolean;
+  move(
+    dx: number,
+    dy: number,
+    dr: number,
+    force?: boolean,
+    rotateDown?: boolean
+  ): boolean;
   drop(): void;
   cancelDrop(): void;
   slowDown(): void;

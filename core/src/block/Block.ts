@@ -292,13 +292,20 @@ export default class Block implements IBlock {
    * @param dy the delta of the x position (row).
    * @param dr the delta of the rotation.
    * @param force force the block to move, even if the destination is occupied.
+   * @param rotateDown prioritize downward movement when rotating
    *
    * @returns true if the block was moved.
    */
-  move(dx: number, dy: number, dr: number, force: boolean = false): boolean {
+  move(
+    dx: number,
+    dy: number,
+    dr: number,
+    force: boolean = false,
+    rotateDown: boolean = false
+  ): boolean {
     const attempts: MovementAttempt[] =
       !force && !this.isDropping && dr !== 0
-        ? this._simulation.rotationSystem.getAttempts(this._layout, dx, dy, dr)
+        ? this._simulation.rotationSystem.getAttempts(dx, dy, dr, rotateDown)
         : [{ dx, dy, dr }];
 
     let canMove = false;

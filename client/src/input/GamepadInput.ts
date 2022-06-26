@@ -1,5 +1,8 @@
 import ControlSettings from '@models/ControlSettings';
-import InputAction, { InputActionListener } from '@models/InputAction';
+import InputAction, {
+  CustomizableInputAction,
+  InputActionListener,
+} from '@models/InputAction';
 
 // TODO: make these customisable
 const repeatDelay = 500; //ms
@@ -72,7 +75,24 @@ export default class GamepadInput {
           fireAction = false;
         }
         if (fireAction) {
-          this._fireAction({ type: controlAction });
+          if (
+            controlAction === CustomizableInputAction.RotateClockwise ||
+            controlAction === CustomizableInputAction.RotateAnticlockwise
+          ) {
+            this._fireAction({
+              type: controlAction,
+              data: {
+                rotateDown:
+                  this._pressStates[
+                    this._controlEntries.findIndex(
+                      (entry) => entry[0] === CustomizableInputAction.MoveDown
+                    )
+                  ]?.isPressing,
+              },
+            });
+          } else {
+            this._fireAction({ type: controlAction });
+          }
           pressState.lastAction = time;
         }
       } else {

@@ -34,6 +34,7 @@ export default interface ISimulation extends ISimulationEventListener {
   get safeLayouts(): Layout[];
   get allLayouts(): Layout[];
   get rotationSystem(): IRotationSystem;
+  get frameNumber(): number;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;

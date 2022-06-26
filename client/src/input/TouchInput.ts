@@ -75,14 +75,19 @@ export default class TouchInput {
       totalPointerChangeX * totalPointerChangeX +
         totalPointerChangeY * totalPointerChangeY
     );
+    const rotateDown = this._pointerY > window.innerHeight / 2;
 
     if (pointerChangeDistance < this._rotateThreshold) {
       if (this._pointerX < document.body.clientWidth * 0.5) {
         this._fireAction({
           type: CustomizableInputAction.RotateAnticlockwise,
+          data: { rotateDown },
         });
       } else {
-        this._fireAction({ type: CustomizableInputAction.RotateClockwise });
+        this._fireAction({
+          type: CustomizableInputAction.RotateClockwise,
+          data: { rotateDown },
+        });
       }
     } else if (totalPointerChangeY < -this._movementThreshold) {
       this._fireAction({ type: CustomizableInputAction.Drop });

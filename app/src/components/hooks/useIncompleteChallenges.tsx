@@ -18,12 +18,13 @@ export default function useIncompleteChallenges(
     [worldType]
   );
 
-  const { data: officialChallenges } = useCollection<IChallenge>(
+  const { data: officialChallenges, isValidating } = useCollection<IChallenge>(
     worldType ? challengesPath : null,
     useIncompleteChallengesOptions
   );
 
-  const isLoadingOfficialChallenges = !officialChallenges?.length && worldType;
+  const isLoadingOfficialChallenges =
+    !officialChallenges?.length && isValidating;
 
   const user = useUser();
   const incompleteChallenges = (

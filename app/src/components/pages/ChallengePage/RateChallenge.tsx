@@ -123,23 +123,27 @@ export default function RateChallenge({
   // TODO: use openLoginDialog
   return (
     <FlexBox my={2}>
-      <Typography>
-        <FormattedMessage
-          defaultMessage="Rate this challenge"
-          description="Give a rating for this challenge text"
-        />
-      </Typography>
-      <FlexBox style={{ fontSize: 36 }} mb={-1} mt={-1}>
-        <StarRatingComponent
-          name="challenge-score"
-          editing={true}
-          starCount={5}
-          value={chosenRating ?? userRating?.data()?.value ?? hoverRating}
-          onStarClick={onStarClick}
-          onStarHover={(value) => setHoverRating(value)}
-          onStarHoverOut={() => setHoverRating(0)}
-        />
-      </FlexBox>
+      {challenge && challenge.data()!.userId !== userId && (
+        <>
+          <Typography>
+            <FormattedMessage
+              defaultMessage="Rate this challenge"
+              description="Give a rating for this challenge text"
+            />
+          </Typography>
+          <FlexBox style={{ fontSize: 36 }} mb={-1} mt={-1}>
+            <StarRatingComponent
+              name="challenge-score"
+              editing={true}
+              starCount={5}
+              value={chosenRating ?? userRating?.data()?.value ?? hoverRating}
+              onStarClick={onStarClick}
+              onStarHover={(value) => setHoverRating(value)}
+              onStarHoverOut={() => setHoverRating(0)}
+            />
+          </FlexBox>
+        </>
+      )}
       <Typography variant="caption">
         <FormattedMessage
           defaultMessage="Rated {totalRating} ({numRatings} votes)"

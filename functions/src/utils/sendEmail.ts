@@ -2,6 +2,7 @@ import * as nodemailer from 'nodemailer';
 import * as functions from 'firebase-functions';
 
 const emailHost = functions.config().webhooks.email_host;
+const emailAddress = functions.config().webhooks.email_address;
 const emailUser = functions.config().webhooks.email_user;
 const emailPassword = functions.config().webhooks.email_password;
 
@@ -20,6 +21,6 @@ export function sendEmail(to: string, subject: string, html: string) {
     to,
     subject,
     html,
-    from: `Infinitris <${emailUser}>`,
+    from: `Infinitris <${emailAddress}>`,
   });
 }

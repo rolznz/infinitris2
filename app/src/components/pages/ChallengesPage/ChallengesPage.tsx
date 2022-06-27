@@ -7,20 +7,34 @@ import ChallengeCard from './ChallengeCard';
 import { orderBy, where } from 'firebase/firestore';
 import { useIntl } from 'react-intl';
 import { Page } from '@/components/ui/Page';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import SvgIcon from '@mui/material/SvgIcon';
+import SortIcon from '@mui/icons-material/Sort';
 
-// TODO: support multiple filter types
-const challengesFilter: UseCollectionOptions = {
+const challengesRatingFilter: UseCollectionOptions = {
   constraints: [
     where('isOfficial', '==', false),
     orderBy('readOnly.rating', 'desc'),
   ],
 };
+const challengesDateFilter: UseCollectionOptions = {
+  constraints: [
+    where('isOfficial', '==', false),
+    orderBy('readOnly.createdTimestamp', 'desc'),
+  ],
+};
+
+const ChallengesPageFilterTypeValues = ['rating', 'date'] as const;
+type ChallengesPageFilterType = typeof ChallengesPageFilterTypeValues[number];
 
 export function ChallengesPage() {
   const intl = useIntl();
+  const [filter, setFilter] =
+    React.useState<ChallengesPageFilterType>('rating');
   const { data: challenges } = useCollection<IChallenge>(
     challengesPath,
-    challengesFilter
+    filter === 'rating' ? challengesRatingFilter : challengesDateFilter
   );
   return (
     <Page
@@ -29,6 +43,26 @@ export function ChallengesPage() {
         description: 'Community Challenges page title',
       })}
     >
+      <FlexBox flexDirection="row">
+        <SvgIcon fontSize="large" color="primary">
+          <SortIcon />
+        </SvgIcon>
+        <Select
+          variant="outlined"
+          disableUnderline
+          value={filter}
+          onChange={(event) => {
+            setFilter(event.target.value as ChallengesPageFilterType);
+          }}
+        >
+          {ChallengesPageFilterTypeValues.map((filterType) => (
+            <MenuItem key={filterType} value={filterType}>
+              {filterType}
+            </MenuItem>
+          ))}
+        </Select>
+      </FlexBox>
+
       <FlexBox
         width="100%"
         flexWrap="wrap"

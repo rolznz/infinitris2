@@ -10,6 +10,10 @@ import grassImage from './assets/illustration_storymode_grass.jpg';
 import grassImageDark from './assets/illustration_storymode_grass.jpg';
 import grassImagePortrait from './assets/illustration_storymode_grass_portrait.jpg';
 import grassImagePortraitDark from './assets/illustration_storymode_grass_portrait.jpg';
+import spaceImage from './assets/illustration_storymode_space.jpg';
+import spaceImageDark from './assets/illustration_storymode_space.jpg';
+import spaceImagePortrait from './assets/illustration_storymode_space_portrait.jpg';
+import spaceImagePortraitDark from './assets/illustration_storymode_space_portrait.jpg';
 import volcanicImage from './assets/illustration_storymode_volcanic.jpg';
 import volcanicImageDark from './assets/illustration_storymode_volcanic.jpg';
 import volcanicImagePortrait from './assets/illustration_storymode_volcanic_portrait.jpg';
@@ -78,22 +82,30 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
             ? isDarkMode
               ? stage === 'grass'
                 ? grassImageDark
+                : stage === 'space'
+                ? spaceImageDark
                 : stage === 'desert'
                 ? desertImageDark
                 : volcanicImageDark
               : stage === 'grass'
               ? grassImage
+              : stage === 'space'
+              ? spaceImage
               : stage === 'desert'
               ? desertImage
               : volcanicImage
             : isDarkMode
             ? stage === 'grass'
               ? grassImagePortraitDark
+              : stage === 'space'
+              ? spaceImagePortraitDark
               : stage === 'desert'
               ? desertImagePortraitDark
               : volcanicImagePortraitDark
             : stage === 'grass'
             ? grassImagePortrait
+            : stage === 'space'
+            ? spaceImagePortrait
             : stage === 'desert'
             ? desertImagePortrait
             : volcanicImagePortrait

@@ -1,22 +1,22 @@
 import Layout, { LayoutSet } from '../Layout';
 
 export const I: Layout = [
-  [0, 0, 1, 0],
-  [0, 0, 1, 0],
-  [0, 0, 1, 0],
-  [0, 0, 1, 0],
+  [0, 0, 0, 0],
+  [1, 1, 1, 1],
+  [0, 0, 0, 0],
+  [0, 0, 0, 0],
 ];
 
 export const J: Layout = [
-  [0, 1, 0],
-  [0, 1, 0],
-  [1, 1, 0],
+  [1, 0, 0],
+  [1, 1, 1],
+  [0, 0, 0],
 ];
 
 export const L: Layout = [
-  [0, 1, 0],
-  [0, 1, 0],
-  [0, 1, 1],
+  [0, 0, 1],
+  [1, 1, 1],
+  [0, 0, 0],
 ];
 
 export const O: Layout = [

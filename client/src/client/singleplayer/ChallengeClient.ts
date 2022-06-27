@@ -374,8 +374,13 @@ export default class ChallengeClient
       }
     }
 
+    const isClassicChallenge =
+      this._challenge.simulationSettings?.gameModeType ||
+      'infinity' === 'infinity';
+
     const simulation = (this._simulation = new Simulation(grid, {
-      preventTowers: false, // TODO: re-enable for some challenges
+      preventTowers: !isClassicChallenge,
+      saveSpawnPositionOnDeath: !isClassicChallenge || !spawnLocationCell,
       ...this._challenge.simulationSettings,
     }));
     simulation.addEventListener(this, this._renderer);

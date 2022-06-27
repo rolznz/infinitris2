@@ -10,6 +10,7 @@ export type SimulationSettings = {
   readonly mistakeDetection?: boolean;
   readonly calculateSpawnDelays?: boolean;
   readonly gameModeType?: GameModeType;
+  readonly saveSpawnPositionOnDeath?: boolean;
   readonly maxSpawnDelaySeconds?: number;
   readonly spawnDelayScoreGraceAmount?: number;
   readonly roundLength?: RoundLength;

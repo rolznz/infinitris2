@@ -363,6 +363,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._modifyScoreFromBlockPlacement(block, true);
     this._eventListeners.forEach((listener) => listener.onBlockDied(block));
     this.removeBlock();
+    if (this._simulation.settings.saveSpawnPositionOnDeath !== false) {
+      this._lastPlacementColumn = block.column;
+    }
   }
 
   /**

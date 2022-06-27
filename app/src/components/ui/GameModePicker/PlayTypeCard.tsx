@@ -13,6 +13,7 @@ type PlayTypeCardProps = {
   link?: string;
   title: React.ReactNode;
   isLocked?: boolean;
+  id?: string;
 };
 
 export function PlayTypeCard({
@@ -20,6 +21,7 @@ export function PlayTypeCard({
   link = Routes.comingSoon,
   title,
   isLocked,
+  id,
 }: PlayTypeCardProps) {
   const isLandscape = useIsLandscape();
 
@@ -51,7 +53,12 @@ export function PlayTypeCard({
   );
 
   return (
-    <RouterLink to={isLocked ? '#' : link} style={linkStyle} onClick={onClick}>
+    <RouterLink
+      to={isLocked ? '#' : link}
+      style={linkStyle}
+      onClick={onClick}
+      id={id}
+    >
       {isLocked && (
         <FlexBox position="absolute" width="100%" height="100%">
           <img

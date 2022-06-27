@@ -43,6 +43,7 @@ import { WorldType, WorldTypeValues } from 'infinitris2-models';
 import { useUser } from '@/components/hooks/useUser';
 
 export const playTypePickerId = 'play-type-picker';
+export const playTypePickerFirstCardId = 'play-type-picker-first-card';
 
 type GameModePickerProps = {
   display: 'flex' | 'none';
@@ -104,6 +105,7 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
           />
         }
         link={Routes.storyMode}
+        id={playTypePickerFirstCardId}
       />
       <PlayTypeCard
         image={

@@ -10,7 +10,10 @@ import { Helmet } from 'react-helmet';
 import { appName } from '@/utils/constants';
 import { PlayButton } from './PlayButton';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
-import { PlayTypePicker } from '@/components/ui/GameModePicker/PlayTypePicker';
+import {
+  PlayTypePicker,
+  playTypePickerFirstCardId,
+} from '@/components/ui/GameModePicker/PlayTypePicker';
 import shallow from 'zustand/shallow';
 
 import { playTypePickerId } from '@/components/ui/GameModePicker/PlayTypePicker';
@@ -33,6 +36,9 @@ function scrollPlayTypePickerIntoView() {
     block: 'nearest',
     inline: 'start',
   });
+  setTimeout(() => {
+    document.getElementById(playTypePickerFirstCardId)?.focus();
+  }, 1000);
 }
 
 const _HomePage = () => {

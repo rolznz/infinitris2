@@ -9,12 +9,26 @@ import { useIsNavigationButtonVisible } from '@/components/hooks/useIsNavigation
 import { useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 import useRouterStore from '@/state/RouterStore';
+import useReceivedInput from '@/components/hooks/useReceivedInput';
+import React from 'react';
 
 export default function BackButton() {
   const intl = useIntl();
   const history = useHistory();
   const isHome = useRouterStore((store) => store.length) === 0;
   const isBackButtonVisible = useIsNavigationButtonVisible() && !isHome;
+  const hasReceivedInput = useReceivedInput('b', false);
+  const onClick = React.useCallback(() => {
+    history.goBack();
+    playSound(SoundKey.click);
+  }, [history]);
+
+  React.useEffect(() => {
+    if (hasReceivedInput) {
+      onClick();
+    }
+  }, [hasReceivedInput, onClick]);
+
   if (!isBackButtonVisible) {
     return null;
   }
@@ -22,17 +36,11 @@ export default function BackButton() {
     <FlexBox style={{ pointerEvents: 'all' }}>
       <Tooltip
         title={intl.formatMessage({
-          defaultMessage: 'Back',
+          defaultMessage: 'Back (b)',
           description: 'Back button tooltip',
         })}
       >
-        <IconButton
-          onClick={() => {
-            history.goBack();
-            playSound(SoundKey.click);
-          }}
-          size="large"
-        >
+        <IconButton onClick={onClick} size="large">
           <SvgIcon
             sx={{
               filter: dropShadows.small,

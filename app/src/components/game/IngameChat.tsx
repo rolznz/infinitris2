@@ -1,6 +1,6 @@
 import FlexBox from '@/components/ui/FlexBox';
 import useIngameStore from '@/state/IngameStore';
-import { borderRadiuses } from '@/theme/theme';
+import { borderRadiuses, zIndexes } from '@/theme/theme';
 import isMobile from '@/utils/isMobile';
 import TextField from '@mui/material/TextField';
 import React from 'react';
@@ -36,7 +36,7 @@ export function IngameChat() {
       left={0}
       width="100%"
       height="100%"
-      sx={{ background: '#00000055' }}
+      sx={{ background: '#00000055', zIndex: zIndexes.above }}
     >
       <form
         action=""

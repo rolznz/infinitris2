@@ -18,6 +18,8 @@ let _gameTheme: Howl | undefined;
 let _sounds: Howl;
 let _sfxOn: boolean = false;
 let _musicOn: boolean = false;
+let _musicVolume: number = 1;
+let _sfxVolume: number = 1;
 
 type SoundPackName = '25Pi25' | 'sounds';
 const selectedSoundPackName: SoundPackName = '25Pi25';
@@ -133,7 +135,12 @@ export function playSound(key: SoundKey) {
       const offsetMs = entry[1];
       const source = _sfxContext.createBufferSource();
       source.buffer = _sfxAudioBuffer;
-      source.connect(_sfxContext.destination);
+      const gainNode = _sfxContext.createGain();
+      gainNode.gain.value = _sfxVolume;
+      gainNode.connect(_sfxContext.destination);
+      // now instead of connecting to aCtx.destination, connect to the gainNode
+      source.connect(gainNode);
+      //source.connect(_sfxContext.destination);
       source.start(undefined, startMs / 1000, offsetMs / 1000);
     }
   }
@@ -145,6 +152,14 @@ export function setSfxOn(sfxOn: boolean) {
 
 export function setMusicOn(musicOn: boolean) {
   _musicOn = !MUTE && musicOn;
+}
+
+export function setMusicVolume(musicVolume: number) {
+  _menuTheme?.volume(musicVolume);
+  _musicVolume = musicVolume;
+}
+export function setSfxVolume(sfxVolume: number) {
+  _sfxVolume = sfxVolume;
 }
 
 export function setMusicPlaying(playing: boolean) {
@@ -163,7 +178,7 @@ function fadeOutMusic(howl: Howl | undefined) {
   if (!howl) {
     return;
   }
-  howl.fade(0.5, 0, musicFadeTimeMs);
+  howl.fade(_musicVolume, 0, musicFadeTimeMs);
   setTimeout(() => {
     howl.loop(false); // stop repeat - safari/ios issue
     howl.stop(); // stop the song - fade does not work on safari/ios
@@ -196,13 +211,13 @@ function playMusic(
   if (fadeIn) {
     existingHowl.volume(0);
   } else {
-    existingHowl.volume(1);
+    existingHowl.volume(_musicVolume);
   }
   existingHowl.loop(true);
   existingHowl.seek(0);
   existingHowl.play();
   if (fadeIn) {
-    existingHowl.fade(0, 1, musicFadeTimeMs);
+    existingHowl.fade(0, _musicVolume, musicFadeTimeMs);
   }
   return existingHowl;
 }

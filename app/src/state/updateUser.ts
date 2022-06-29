@@ -182,6 +182,12 @@ export const setUserAppTheme = (appTheme: AppTheme) => {
 export const setUserMusicOn = (musicOn: boolean) => {
   updateUser({ musicOn });
 };
+export const setUserMusicVolume = (musicVolume: number) => {
+  updateUser({ musicVolume });
+};
+export const setUserSfxVolume = (sfxVolume: number) => {
+  updateUser({ sfxVolume });
+};
 export const setUserSfxOn = (sfxOn: boolean) => {
   updateUser({ sfxOn });
 };

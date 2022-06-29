@@ -1,6 +1,4 @@
-import { MenuItem, Select, Grid, Link, Button } from '@mui/material';
-
-import FlexBox from '../../ui/FlexBox';
+import { MenuItem, Select, Grid, Link, Button, Slider } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 import { defaultLocale, supportedLocales } from '../../../internationalization';
@@ -14,6 +12,8 @@ import {
   playSound,
   SoundKey,
   setMusicOn,
+  setMusicVolume,
+  setSfxVolume,
 } from '@/sound/SoundManager';
 import { Page } from '@/components/ui/Page';
 import MusicNoteIcon from '@mui/icons-material/MusicNote';
@@ -33,9 +33,15 @@ import {
   setUserRendererQuality,
   setUserRendererType,
   clearProgress,
+  setUserMusicVolume,
+  setUserSfxVolume,
 } from '@/state/updateUser';
 import { useUser } from '@/components/hooks/useUser';
 import { getDefaultPreferredInputMethod } from '@/state/LocalUserStore';
+
+import VolumeDownIcon from '@mui/icons-material/VolumeDown';
+import VolumeUpIcon from '@mui/icons-material/VolumeUp';
+import FlexBox from '../../ui/FlexBox';
 
 export function LanguagePicker() {
   const user = useUser();
@@ -162,7 +168,7 @@ export default function SettingsPage() {
             }
             right={
               <IconSwitch
-                checked={user.musicOn !== undefined ? user.musicOn : true}
+                checked={user.musicOn !== false}
                 icon={<MusicOffIcon />}
                 checkedIcon={<MusicNoteIcon />}
                 onChange={(event) => {
@@ -178,6 +184,42 @@ export default function SettingsPage() {
               />
             }
           />
+          {user.musicOn !== false && (
+            <SettingsRow
+              left={
+                <FormattedMessage
+                  defaultMessage="Music Volume"
+                  description="Settings Page Table - Music Volume"
+                />
+              }
+              right={
+                <FlexBox
+                  gap={2}
+                  flexDirection="row"
+                  alignItems="center"
+                  width={200}
+                >
+                  <VolumeDownIcon />
+                  <Slider
+                    aria-label="Volume"
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    value={
+                      user.musicVolume !== undefined ? user.musicVolume : 1
+                    }
+                    onChangeCommitted={(_, volume) => {
+                      setUserMusicVolume(volume as number);
+                    }}
+                    onChange={(_, volume) => {
+                      setMusicVolume(volume as number);
+                    }}
+                  />
+                  <VolumeUpIcon />
+                </FlexBox>
+              }
+            />
+          )}
           <SettingsRow
             left={
               <FormattedMessage
@@ -202,6 +244,41 @@ export default function SettingsPage() {
               />
             }
           />
+          {user.sfxOn !== false && (
+            <SettingsRow
+              left={
+                <FormattedMessage
+                  defaultMessage="SFX Volume"
+                  description="Settings Page Table - SFX Volume"
+                />
+              }
+              right={
+                <FlexBox
+                  gap={2}
+                  flexDirection="row"
+                  alignItems="center"
+                  width={200}
+                >
+                  <VolumeDownIcon />
+                  <Slider
+                    aria-label="Volume"
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    value={user.sfxVolume !== undefined ? user.sfxVolume : 1}
+                    onChangeCommitted={(_, volume) => {
+                      setUserSfxVolume(volume as number);
+                    }}
+                    onChange={(_, volume) => {
+                      setSfxVolume(volume as number);
+                      playSound(SoundKey.click);
+                    }}
+                  />
+                  <VolumeUpIcon />
+                </FlexBox>
+              }
+            />
+          )}
           <SettingsRow
             left={
               <FormattedMessage

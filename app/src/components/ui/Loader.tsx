@@ -16,7 +16,9 @@ import {
   playMenuTheme,
   playSound,
   setMusicOn,
+  setMusicVolume,
   setSfxOn,
+  setSfxVolume,
   SoundKey,
 } from '../../sound/SoundManager';
 import FlexBox from './FlexBox';
@@ -92,6 +94,9 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
       if (musicOn === false && sfxOn === false && !hasToggledSounds) {
         // no interaction needed since sound is muted
         clickStart(false);
+      } else {
+        setMusicVolume(user.musicVolume ?? 1);
+        setSfxVolume(user.sfxVolume ?? 1);
       }
       setHasToggledSounds(true);
     }
@@ -104,6 +109,8 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
     setHasToggledSounds,
     loaderStore.stepsCompleted,
     loaderStore.steps,
+    user.musicVolume,
+    user.sfxVolume,
   ]);
 
   useEffect(() => {

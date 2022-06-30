@@ -13,12 +13,34 @@ export default class RockBehaviour implements ICellBehaviour {
   private _nextRockTimer: number;
   private _offsetY: number;
   private _shouldExplode: boolean;
-  constructor(cell: ICell, grid: IGrid) {
+  private _imageFilename: string;
+  private _rockFallInterval: number;
+  constructor(
+    cell: ICell,
+    grid: IGrid,
+    imageFilename?: string,
+    speed?: number
+  ) {
     this._grid = grid;
     this._cell = cell;
     this._nextRockTimer = 0;
     this._offsetY = 0;
     this._shouldExplode = false;
+    this._rockFallInterval =
+      speed ||
+      Math.ceil(rockFallInterval + Math.random() * 0.25 * rockFallInterval);
+    const filenames = [
+      'rock1a',
+      'rock1b',
+      'rock2',
+      'rock3a',
+      'rock3b',
+      'rock4',
+      'rock5',
+      'rock6',
+    ];
+    this._imageFilename =
+      imageFilename || filenames[Math.floor(Math.random() * filenames.length)];
   }
 
   step(): void {
@@ -28,24 +50,33 @@ export default class RockBehaviour implements ICellBehaviour {
         block.die();
       }
       this._remove();
-    } else if (!belowCell || !belowCell.isPassable) {
+    } else if (
+      !belowCell ||
+      !belowCell.isPassable ||
+      !belowCell.behaviour.isReplaceable
+    ) {
       this._remove();
     }
 
-    if (this._nextRockTimer++ > rockFallInterval) {
-      this._nextRockTimer = 0;
+    if (++this._nextRockTimer > this._rockFallInterval) {
+      //this._nextRockTimer = 0;
       if (
         belowCell &&
         belowCell.isPassable &&
         belowCell.behaviour.isReplaceable
       ) {
-        belowCell.behaviour = new RockBehaviour(belowCell, this._grid);
+        belowCell.behaviour = new RockBehaviour(
+          belowCell,
+          this._grid,
+          this._imageFilename,
+          this._rockFallInterval
+        );
         this._remove(false);
       } else {
         this._remove();
       }
     }
-    this._offsetY = this._nextRockTimer / rockFallInterval;
+    this._offsetY = this._nextRockTimer / this._rockFallInterval;
   }
   private _remove(shouldExplode = true) {
     this._shouldExplode = shouldExplode;
@@ -89,6 +120,6 @@ export default class RockBehaviour implements ICellBehaviour {
     throw new Error('Unsupported');
   }
   getImageFilename() {
-    return 'rock1a';
+    return this._imageFilename;
   }
 }

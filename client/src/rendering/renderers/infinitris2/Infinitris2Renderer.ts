@@ -1647,12 +1647,15 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     const displayInvalidPlacement = isMistake || isTower;
     this._towerIndicator.update(
-      this._gridLines.y,
+      !this._hasScrollY ? this._gridLines.y : this._world.y,
       isTower,
       this._simulation.grid,
       this._cellSize
     );
-    this._lineClearingIndicator.update(this._gridLines.y, this._cellSize);
+    this._lineClearingIndicator.update(
+      !this._hasScrollY ? this._gridLines.y : this._world.y,
+      this._cellSize
+    );
 
     // render placement helper shadow - this could be done a lot more efficiently by rendering one line per column,
     // but for now it's easier to reuse the cell rendering code (for shadows)

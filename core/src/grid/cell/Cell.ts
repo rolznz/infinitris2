@@ -116,10 +116,14 @@ export default class Cell implements ICell {
     this._player = cell.player;
   }
   reset(): void {
+    this.makeEmpty();
+    this.behaviour = new NormalCellBehaviour(this);
+  }
+
+  makeEmpty(): void {
     this.isEmpty = true;
     this._player = undefined;
     this._wasPlayerRemoved = false;
-    this.behaviour = new NormalCellBehaviour(this);
   }
 
   addBlock(block: IBlock) {

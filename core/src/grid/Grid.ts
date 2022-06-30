@@ -142,10 +142,14 @@ export default class Grid implements IGrid {
               } else {
                 this._cells[r][c].reset();
               }
+            } else {
+              this._cells[r][c].makeEmpty();
             }
           } else {
             if (this._cells[r][c].behaviour.isReplaceable) {
               this._cells[r][c].reset();
+            } else {
+              this._cells[r][c].makeEmpty();
             }
           }
         }

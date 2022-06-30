@@ -31,6 +31,7 @@ export default interface ICell {
   step(): void;
   replaceWith(cell: ICell): void;
   reset(): void;
+  makeEmpty(): void;
   isConnectedTo(cell: ICell): boolean;
   place(player: IPlayer | undefined): void;
 }

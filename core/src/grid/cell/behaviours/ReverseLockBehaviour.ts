@@ -18,7 +18,7 @@ export default class LockBehaviour implements ICellBehaviour {
     this._grid = grid;
     this._cell = cell;
     this._color = color;
-    this._isLocked = true;
+    this._isLocked = false;
     this._alpha = 1;
     this._requiresRerender = false;
   }

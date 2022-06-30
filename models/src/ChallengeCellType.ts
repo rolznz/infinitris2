@@ -7,12 +7,16 @@ enum ChallengeCellType {
   Deadly = 'D',
   RedKey = 'R',
   RedLock = 'r',
+  ReverseRedLock = 'd',
   GreenKey = 'G',
   GreenLock = 'g',
+  ReverseGreenLock = 'n',
   BlueKey = 'B',
   BlueLock = 'b',
+  ReverseBlueLock = 'e',
   YellowKey = 'Y',
   YellowLock = 'y',
+  ReverseYellowLock = 'w',
   Finish = 'F',
   Wafer = 'W',
   Infection = 'I',
@@ -25,8 +29,13 @@ enum ChallengeCellType {
   GestureRotateAnticlockwise = '5',
   GestureDrop = '6',
 }
-if (Object.values(ChallengeCellType).some((v, i, a) => a.indexOf(v) !== i)) {
-  throw new Error('Duplicate challenge cell type value');
+const duplicateChallengeCellTypeValue = Object.values(ChallengeCellType).find(
+  (v, i, a) => a.indexOf(v) !== i
+);
+if (duplicateChallengeCellTypeValue) {
+  throw new Error(
+    'Duplicate challenge cell type value: ' + duplicateChallengeCellTypeValue
+  );
 }
 
 export default ChallengeCellType;
@@ -47,18 +56,26 @@ export function getChallengeCellTypeDescription(
       return 'Red Key';
     case ChallengeCellType.RedLock:
       return 'Red Lock';
+    case ChallengeCellType.ReverseRedLock:
+      return 'Reverse Red Lock';
     case ChallengeCellType.GreenKey:
       return 'Green Key';
     case ChallengeCellType.GreenLock:
       return 'Green Lock';
+    case ChallengeCellType.ReverseGreenLock:
+      return 'Reverse Green Lock';
     case ChallengeCellType.BlueKey:
       return 'Blue Key';
     case ChallengeCellType.BlueLock:
       return 'Blue Lock';
+    case ChallengeCellType.ReverseBlueLock:
+      return 'Reverse Blue Lock';
     case ChallengeCellType.YellowKey:
       return 'Yellow Key';
     case ChallengeCellType.YellowLock:
       return 'Yellow Lock';
+    case ChallengeCellType.ReverseYellowLock:
+      return 'Reverse Yellow Lock';
     case ChallengeCellType.Finish:
       return 'Finish';
     case ChallengeCellType.Wafer:

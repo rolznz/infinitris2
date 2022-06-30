@@ -1,10 +1,10 @@
 import { IChallenge } from '../IChallenge';
 import { exampleChallengeDefaultFields } from './exampleChallengeDefaultFields';
 
-const bugfix: IChallenge = {
+const reverseLocks: IChallenge = {
   ...exampleChallengeDefaultFields,
   isOfficial: true,
-  title: 'Bugfix',
+  title: 'Reverse Locks',
   description: '',
   locale: 'en',
   isMandatory: true,
@@ -23,21 +23,26 @@ const bugfix: IChallenge = {
     layoutSetId: 'lsOnly',
   },
   grid: `
-  00S000000X0s00000000
-000000000X0000000000
-000000000X0000000000
-000000000X00000L0000
-000000000X00000L000L
-000000000X00000L00LL
-XXSXXWWWWXXXXXXXXXXX
-000000WRWX0000000000
-000000WWWX0000000000
-000000000X0000000000
-000000000X0000000000
-00X000000X00XrrrrrX0
-00X000000X00X00000X0
-B0X000000X00XbbbbbX0
-XXXXXXXXXXXXXFFFFFXX
+  00000d000000000
+  00000d000000000
+  00000d000000000
+  00000d000000000
+  00000d000000000
+  0ggg0d000000000
+  0gBg0d000000000
+  0ggg0d000000000
+  00000d000000000
+  00000d000000000
+  00000d000000000
+  00000d000000000
+  00000d00000000R
+  00000d00000000X
+  rrrrrrrrrrrrrrr
+  000000000000000
+  000000000000000
+  000000G00000000
+  bbbbbbbbbbbbbbb
+  FFFFFFFFFFFFFFF
 
 
   
@@ -45,4 +50,4 @@ XXXXXXXXXXXXXFFFFFXX
   created: true,
 };
 
-export default bugfix;
+export default reverseLocks;

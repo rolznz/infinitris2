@@ -14,6 +14,7 @@ import RockGeneratorBehaviour from '@core/grid/cell/behaviours/RockGeneratorBeha
 import SpawnLocationCellBehaviour from '@core/grid/cell/behaviours/SpawnLocationCellBehaviour';
 import { CustomizableInputAction } from '@models/InputAction';
 import GestureBehaviour from '@core/grid/cell/behaviours/GestureBehaviour';
+import ReverseLockBehaviour from '@core/grid/cell/behaviours/ReverseLockBehaviour';
 
 export const keyColors = {
   redColor: 0xff0000,
@@ -55,18 +56,26 @@ function getBehaviour(
       return new KeyBehaviour(cell, keyColors.redColor);
     case ChallengeCellType.RedLock:
       return new LockBehaviour(cell, grid, lockColors.redColor);
+    case ChallengeCellType.ReverseRedLock:
+      return new ReverseLockBehaviour(cell, grid, lockColors.redColor);
     case ChallengeCellType.GreenKey:
       return new KeyBehaviour(cell, keyColors.greenColor);
     case ChallengeCellType.GreenLock:
       return new LockBehaviour(cell, grid, lockColors.greenColor);
+    case ChallengeCellType.ReverseGreenLock:
+      return new ReverseLockBehaviour(cell, grid, lockColors.greenColor);
     case ChallengeCellType.BlueKey:
       return new KeyBehaviour(cell, keyColors.blueColor);
     case ChallengeCellType.BlueLock:
       return new LockBehaviour(cell, grid, lockColors.blueColor);
+    case ChallengeCellType.ReverseBlueLock:
+      return new ReverseLockBehaviour(cell, grid, lockColors.blueColor);
     case ChallengeCellType.YellowKey:
       return new KeyBehaviour(cell, keyColors.yellowColor);
     case ChallengeCellType.YellowLock:
       return new LockBehaviour(cell, grid, lockColors.yellowColor);
+    case ChallengeCellType.ReverseYellowLock:
+      return new ReverseLockBehaviour(cell, grid, lockColors.yellowColor);
     case ChallengeCellType.Finish:
       return new ChallengeFinishBehaviour();
     case ChallengeCellType.Wafer:

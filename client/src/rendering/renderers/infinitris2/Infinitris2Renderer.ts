@@ -30,7 +30,10 @@ import { fontFamily } from '@models/ui';
 import { TowerIndicator } from '@src/rendering/renderers/infinitris2/TowerIndicator';
 import { LineClearingIndicator } from '@src/rendering/renderers/infinitris2/LineClearingIndicator';
 import { GameModeEvent } from '@models/GameModeEvent';
-import { renderCellBehaviour } from '@src/rendering/renderers/infinitris2/renderCellBehaviour';
+import {
+  getCellBehaviourImageFilename,
+  renderCellBehaviour,
+} from '@src/rendering/renderers/infinitris2/renderCellBehaviour';
 import RockBehaviour from '@core/grid/cell/behaviours/RockBehaviour';
 import { GestureIndicator } from '@src/rendering/renderers/infinitris2/GestureIndicator';
 
@@ -47,10 +50,7 @@ interface IBlockContainer {
   block: IRenderableEntity<{
     container: PIXI.Container;
     faceSprite: PIXI.Sprite | undefined;
-    cells: {
-      graphics: PIXI.Graphics;
-      patternSprite: PIXI.Sprite | undefined;
-    }[];
+    cells: RenderableCellObject[];
   }>;
 }
 
@@ -70,11 +70,13 @@ enum RenderCellType {
   PlacementHelper,
 }
 
-interface IRenderableCell
-  extends IRenderableEntity<{
-    graphics: PIXI.Graphics;
-    patternSprite: PIXI.Sprite | undefined;
-  }> {
+type RenderableCellObject = {
+  graphics: PIXI.Graphics;
+  patternSprite: PIXI.Sprite | undefined;
+  patternSpriteFilename: string | undefined;
+};
+
+interface IRenderableCell extends IRenderableEntity<RenderableCellObject> {
   cell: ICell;
 }
 interface IRenderablePlacementHelperCell
@@ -1336,9 +1338,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
           container,
           faceSprite: undefined,
           cells: block.cells.map((_) => {
-            const renderableObject = {
+            const renderableObject: RenderableCellObject = {
               graphics: new PIXI.Graphics(),
               patternSprite: undefined,
+              patternSpriteFilename: undefined,
             };
             container.addChild(renderableObject.graphics);
             return renderableObject;
@@ -1447,16 +1450,17 @@ export default class Infinitris2Renderer extends BaseRenderer {
       () => {
         const graphics = new PIXI.Graphics();
         renderableCell.container.addChild(graphics);
-        return { graphics, patternSprite: undefined };
+        return {
+          graphics,
+          patternSprite: undefined,
+          patternSpriteFilename: undefined,
+        };
       }
     );
   }
 
   private _renderCellInternal(
-    renderableObject: {
-      graphics: PIXI.Graphics;
-      patternSprite: PIXI.Sprite | undefined;
-    },
+    renderableObject: RenderableCellObject,
     container: PIXI.Container,
     row: number,
     column: number,
@@ -1468,25 +1472,37 @@ export default class Infinitris2Renderer extends BaseRenderer {
     player?: IPlayer
   ) {
     const { graphics } = renderableObject;
-    let { patternSprite } = renderableObject;
+    let { patternSprite, patternSpriteFilename } = renderableObject;
     //graphics.cacheAsBitmap = false;
     if (behaviour && !player /* && behaviour?.type !== CellType.Normal*/) {
-      if (!patternSprite || !patternSprite.visible) {
+      const oldPatternSpriteFilename = patternSpriteFilename;
+      const newPatternSpriteFilename = getCellBehaviourImageFilename(
+        behaviour,
+        this._worldVariation,
+        this._challengeEditorEnabled
+      );
+
+      if (
+        !patternSprite ||
+        !patternSprite.visible ||
+        oldPatternSpriteFilename !== newPatternSpriteFilename
+      ) {
         if (patternSprite && !patternSprite?.visible) {
           patternSprite.destroy();
           container.removeChild(patternSprite);
         }
         patternSprite = renderCellBehaviour(
-          behaviour,
-          isEmpty,
-          graphics,
-          this._cellSize,
-          this._challengeEditorEnabled,
-          this._worldVariation
+          newPatternSpriteFilename
+          // isEmpty,
+          // graphics,
+          // this._cellSize,
+          // this._challengeEditorEnabled,
+          // this._worldVariation
         );
         if (patternSprite) {
           container.addChild(patternSprite);
           renderableObject.patternSprite = patternSprite;
+          renderableObject.patternSpriteFilename = newPatternSpriteFilename;
         }
       }
       if (patternSprite) {
@@ -1516,6 +1532,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         patternSprite = PIXI.Sprite.from(patternTexture);
         container.addChild(patternSprite);
         renderableObject.patternSprite = patternSprite;
+        renderableObject.patternSpriteFilename = patternFilename;
       }
       patternSprite.visible = true;
       patternSprite.width = this._cellSize;

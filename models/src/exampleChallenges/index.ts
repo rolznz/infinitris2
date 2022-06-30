@@ -1,4 +1,4 @@
-import bugfix from '@models/exampleChallenges/bugfix';
+import reverseLocks from '@models/exampleChallenges/reverseLocks';
 import { lRotations } from '@models/exampleChallenges/lRotations';
 import raceTest from '@models/exampleChallenges/raceTest';
 import rockTest from '@models/exampleChallenges/rockTest';
@@ -29,6 +29,6 @@ export const exampleChallenges: { [key: string]: IChallenge } = {
   'rock-test': rockTest,
   'race-1': raceTest,
   'l-rotations': lRotations,
-  bugfix: bugfix,
+  'reverse-locks': reverseLocks,
   's-block': sBlock,
 };

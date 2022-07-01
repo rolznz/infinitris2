@@ -33,6 +33,7 @@ import { useUser } from '@/components/hooks/useUser';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { Typography } from '@mui/material';
+import { getLastCompletedGrid } from '@/components/pages/ChallengePage/ChallengePage';
 
 const exportChallenge = () => {
   const challenge = useChallengeEditorStore.getState().challenge!;
@@ -151,6 +152,12 @@ export function ChallengeEditorSettingsForm({
       }
       setIsLoading(true);
 
+      if (getLastCompletedGrid() !== challenge.grid) {
+        window.alert(
+          'Please test and complete the challenge first to ensure it is completable'
+        );
+        return;
+      }
       if (
         window.confirm(
           'Are you sure you wish to publish this challenge?\n\nPublished challenges cannot be edited.\n\nCost: 1 coin\n\nYour account will be topped back up to 3 coins every 24 hours.'

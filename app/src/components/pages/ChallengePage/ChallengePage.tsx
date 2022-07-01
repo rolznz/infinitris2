@@ -41,11 +41,16 @@ interface ChallengePageRouteParams {
 export const isTestChallenge = (challengeId?: string) => challengeId === 'test';
 
 let challengeClient: IChallengeClient | undefined;
+let lastCompletedGrid: IChallenge['grid'];
 
 export default function ChallengePage() {
   const { id } = useParams<ChallengePageRouteParams>();
   useReleaseClientOnExitPage(true);
   return <ChallengePageInternal key={id} challengeId={id!} />;
+}
+
+export function getLastCompletedGrid() {
+  return lastCompletedGrid;
 }
 
 type ChallengePageInternalProps = { challengeId: string };
@@ -159,6 +164,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
         {
           onAttempt(attempt: IIngameChallengeAttempt) {
             setChallengeAttempt(attempt);
+            if (attempt.status === 'success' && isTest) {
+              lastCompletedGrid = challenge.grid;
+            }
             if (attempt.status === 'success' && challenge.isOfficial) {
               unlockFeature(user.unlockedFeatures, 'playTypePicker');
               if (

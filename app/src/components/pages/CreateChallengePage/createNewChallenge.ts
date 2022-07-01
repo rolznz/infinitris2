@@ -5,7 +5,7 @@ export function createNewChallenge(): IChallenge {
     title: '',
     userId: '',
     grid: `
-000000000
+000s00000
 000000000
 000000000
 000000000

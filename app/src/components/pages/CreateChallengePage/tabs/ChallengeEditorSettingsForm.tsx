@@ -29,6 +29,10 @@ import MenuItem from '@mui/material/MenuItem';
 import shallow from 'zustand/shallow';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
 import { createNewChallenge } from '@/components/pages/CreateChallengePage/createNewChallenge';
+import { useUser } from '@/components/hooks/useUser';
+import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import { Typography } from '@mui/material';
 
 const exportChallenge = () => {
   const challenge = useChallengeEditorStore.getState().challenge!;
@@ -55,7 +59,12 @@ const schema = yup.object({
 
 type SettingsFormData = Pick<
   IChallenge,
-  'title' | 'simulationSettings' | 'worldType' | 'worldVariation'
+  | 'title'
+  | 'simulationSettings'
+  | 'worldType'
+  | 'worldVariation'
+  | 'isOfficial'
+  | 'priority'
 >;
 
 type ChallengeEditorSettingsFormProps = {
@@ -70,6 +79,7 @@ export function ChallengeEditorSettingsForm({
   const setChallenge = useChallengeEditorStore((store) => store.setChallenge);
   const [isLoading, setIsLoading] = React.useState(false);
   const userId = useAuthStore((store) => store.user?.uid);
+  const user = useUser();
   const intl = useIntl();
   const history = useHistory();
   const {
@@ -152,6 +162,7 @@ export function ChallengeEditorSettingsForm({
           userId,
           isPublished: true,
         };
+        console.log('Challenge to publish', challengeToPublish);
 
         const challengeId = uuidv4();
 
@@ -248,6 +259,39 @@ export function ChallengeEditorSettingsForm({
                 </FormControl>
               )}
             />
+            {user.readOnly?.isAdmin && (
+              <FlexBox my={2} border="1px solid red" p={2}>
+                <Typography>Admin Settings</Typography>
+                <Controller
+                  name="isOfficial"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={<Checkbox {...field} />}
+                      label={'Official (Story Mode)'}
+                    />
+                  )}
+                />
+                <Controller
+                  name="priority"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl variant="standard" fullWidth>
+                      <InputLabel>Priority (Story Mode)</InputLabel>
+                      <Input
+                        type="number"
+                        {...field}
+                        onChange={(event) =>
+                          field.onChange(parseInt(event.target.value))
+                        }
+                        defaultValue={0}
+                        fullWidth
+                      />
+                    </FormControl>
+                  )}
+                />
+              </FlexBox>
+            )}
           </FlexBox>
           <FlexBox mt={1}>
             <Button

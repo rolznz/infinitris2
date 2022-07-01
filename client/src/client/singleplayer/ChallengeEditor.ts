@@ -67,6 +67,7 @@ export class ChallengeEditor implements IChallengeEditor {
       this._client.restart();
     } else {
       this._saveGrid();
+      this._client.restart();
       this._simulation.startInterval();
     }
     this._eventListeners.forEach((eventListener) =>

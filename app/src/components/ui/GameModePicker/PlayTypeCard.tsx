@@ -34,6 +34,7 @@ export function PlayTypeCard({
       position: 'relative',
       pointerEvents: isLocked ? 'none' : undefined,
       filter: isLocked ? lockFilter : undefined,
+      borderRadius: borderRadiuses.base,
     }),
     [isLandscape, isLocked]
   );

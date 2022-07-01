@@ -1,17 +1,21 @@
-import { getDb, increment } from './firebase';
+import { getDb } from './firebase';
 import { IUser, objectToDotNotation, usersPath } from 'infinitris2-models';
 
 /**
- * Gives all users one credit
+ * Updates all users one credit for users with credits < 3
  * TODO: consider using a batched operation
  */
 export default async function scheduledCreditReward(): Promise<void> {
-  const querySnapshot = await getDb().collection(usersPath).get();
+  const minCoins = 3;
+  const querySnapshot = await getDb()
+    .collection(usersPath)
+    .where('readOnly.coins', '<', minCoins)
+    .get();
 
   const updateUser = objectToDotNotation<IUser>(
     {
       readOnly: {
-        coins: increment(1),
+        coins: minCoins,
       },
     },
     ['readOnly.coins']

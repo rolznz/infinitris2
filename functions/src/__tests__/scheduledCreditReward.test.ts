@@ -9,20 +9,33 @@ describe('Scheduled Credit Reward', () => {
     await teardown();
   });
 
-  test('users receive reward of 1 credit', async () => {
+  test('users top up to 3 credits', async () => {
     const { db } = await setup(
       undefined,
       {
-        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.user1Path]: {
+          ...dummyData.existingUser,
+          readOnly: {
+            ...dummyData.existingUser.readOnly,
+            coins: 2,
+          },
+        } as IUser,
+        [dummyData.user2Path]: {
+          ...dummyData.existingUser,
+          readOnly: {
+            ...dummyData.existingUser.readOnly,
+            coins: 4,
+          },
+        } as IUser,
       },
       false
     );
-    const coins = dummyData.existingUser.readOnly.coins;
 
     await scheduledCreditReward();
+    const user1 = (await db.doc(dummyData.user1Path).get()).data() as IUser;
+    const user2 = (await db.doc(dummyData.user2Path).get()).data() as IUser;
 
-    const user = (await db.doc(dummyData.user1Path).get()).data() as IUser;
-
-    expect(user.readOnly.coins).toEqual(coins + 1);
+    expect(user1.readOnly.coins).toEqual(3);
+    expect(user2.readOnly.coins).toEqual(4); // unchanged
   });
 });

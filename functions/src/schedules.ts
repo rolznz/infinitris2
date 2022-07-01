@@ -1,9 +1,9 @@
 import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
-// import scheduledCreditReward from './utils/scheduledCreditReward';
 import updateScoreboard from './utils/updateScoreboard';
+import scheduledCreditReward from './utils/scheduledCreditReward';
 
-/* export const onDailyCreditAwardSchedule = functions.pubsub
+export const onDailyCreditAwardSchedule = functions.pubsub
   .schedule('every 24 hours')
   .onRun(async (_context) => {
     try {
@@ -13,7 +13,7 @@ import updateScoreboard from './utils/updateScoreboard';
     }
 
     return null;
-  });*/
+  });
 
 export const onUpdateScoreboardSchedule = functions.pubsub
   .schedule('every 24 hours')

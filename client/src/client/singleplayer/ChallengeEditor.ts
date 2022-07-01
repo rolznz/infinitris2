@@ -1,4 +1,5 @@
 import createBehaviourFromChallengeCellType from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
+import CellType from '@models/CellType';
 import ChallengeCellType, {
   getChallengeCellTypeDescription,
 } from '@models/ChallengeCellType';
@@ -92,6 +93,12 @@ export class ChallengeEditor implements IChallengeEditor {
       const mouseClickAction = action as MouseClickActionWithData;
       if (mouseClickAction.data.cell) {
         if (mouseClickAction.data.button === 0) {
+          if (this._challengeCellType === ChallengeCellType.SpawnLocation) {
+            this._simulation.grid.reducedCells
+              .filter((cell) => cell.type === CellType.SpawnLocation)
+              .forEach((cell) => cell.reset());
+          }
+
           createBehaviourFromChallengeCellType(
             mouseClickAction.data.cell,
             this._simulation.grid,

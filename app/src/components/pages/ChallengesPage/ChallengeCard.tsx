@@ -46,7 +46,7 @@ function deleteChallenge(challengeId: string) {
 }
 
 const gridPreviewSx: SxProps<Theme> = {
-  opacity: 0.6,
+  //opacity: 0.6,
 };
 
 const cardFooterSx: SxProps<Theme> = {

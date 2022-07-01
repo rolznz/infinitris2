@@ -18,7 +18,7 @@ import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import FlexBox from '@/components/ui/FlexBox';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import useAuthStore from '@/state/AuthStore';
-import { showLoginPrompt } from '@/utils/showLoginMessage';
+import { showLoginPrompt } from '@/utils/showLoginPrompt';
 import { v4 as uuidv4 } from 'uuid';
 import { useHistory } from 'react-router-dom';
 import Routes from '@/models/Routes';
@@ -34,6 +34,7 @@ import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import { Typography } from '@mui/material';
 import { getLastCompletedGrid } from '@/components/pages/ChallengePage/ChallengePage';
+import { useSnackbar } from 'notistack';
 
 const exportChallenge = () => {
   const challenge = useChallengeEditorStore.getState().challenge!;
@@ -137,6 +138,8 @@ export function ChallengeEditorSettingsForm({
     setChallenge(importedChallenge);
   }, [setChallenge, updateFormKey]);
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const resetChallenge = React.useCallback(() => {
     if (window.confirm('Are you sure you wish to create a new challenge?')) {
       reset();
@@ -147,14 +150,15 @@ export function ChallengeEditorSettingsForm({
   const onSubmit = React.useCallback(
     async (data: SettingsFormData) => {
       if (!userId) {
-        showLoginPrompt(intl);
+        showLoginPrompt(enqueueSnackbar, intl);
         return;
       }
       setIsLoading(true);
 
       if (getLastCompletedGrid() !== challenge.grid) {
-        window.alert(
-          'Please test and complete the challenge first to ensure it is completable'
+        enqueueSnackbar(
+          'Please test and complete the challenge first to ensure it is completable',
+          { variant: 'error' }
         );
         return;
       }
@@ -190,7 +194,7 @@ export function ChallengeEditorSettingsForm({
 
       setIsLoading(false);
     },
-    [userId, intl, challenge, setChallenge, reset, history]
+    [userId, challenge, enqueueSnackbar, intl, setChallenge, reset, history]
   );
 
   return (

@@ -7,7 +7,6 @@ import { useDocument } from 'swr-firestore';
 import { getAffiliatePath, IAffiliate } from 'infinitris2-models';
 import useAuthStore from '../../../state/AuthStore';
 import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
-import { toast } from 'react-toastify';
 import ShareIcon from '@mui/icons-material/Share';
 import { useUser } from '@/components/hooks/useUser';
 import { Page } from '../../ui/Page';
@@ -18,12 +17,14 @@ import { CharacterImage } from '../Characters/CharacterImage';
 import { AffiliatePageCharacter } from './AffiliatePageCharacter';
 
 import friendImage from './assets/friend.svg';
+import { useSnackbar } from 'notistack';
 
 const characterSize = 185;
 
 export default function AffiliateProgramPage() {
   const intl = useIntl();
   const [, copy] = useCopyToClipboard();
+  const { enqueueSnackbar } = useSnackbar();
 
   const user = useUser();
   const userId = useAuthStore().user?.uid;
@@ -73,7 +74,7 @@ export default function AffiliateProgramPage() {
               } catch (error) {
                 console.error('Failed to use native share', error);
                 copy(affiliateLink);
-                toast(
+                enqueueSnackbar(
                   intl.formatMessage({
                     defaultMessage: 'Link copied to clipboard',
                     description:

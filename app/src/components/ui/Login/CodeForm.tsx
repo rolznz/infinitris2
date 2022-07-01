@@ -20,13 +20,13 @@ import {
   getUserPath,
   IConversion,
 } from 'infinitris2-models';
-import { toast } from 'react-toastify';
 import Link from '@mui/material/Link';
 import useLocalUserStore, {
   DEFAULT_CHARACTER_ID,
 } from '@/state/LocalUserStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
 import { purchaseCharacter, setNickname } from '@/state/updateUser';
+import { useSnackbar } from 'notistack';
 
 const codeSchema = yup
   .object({
@@ -78,6 +78,7 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
     resolver: yupResolver(codeSchema),
     mode: 'onChange',
   });
+  const { enqueueSnackbar } = useSnackbar();
 
   const onSubmit = React.useCallback(
     async (data: EnterCodeFormData) => {
@@ -126,11 +127,14 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
           }
 
           if (hasCreatedNewUser) {
-            toast(
+            enqueueSnackbar(
               intl.formatMessage({
                 defaultMessage: 'Your account is being created. Please wait...',
                 description: 'Your account is being created toast message',
-              })
+              }),
+              {
+                variant: 'info',
+              }
             );
             // sync guest settings into newly created account
             console.log('Syncing account settings');
@@ -169,23 +173,29 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
                 })
               );
             } catch (error) {
-              toast(
+              enqueueSnackbar(
                 intl.formatMessage({
                   defaultMessage: 'Failed to sync user settings',
                   description:
                     'Failed to sync user settings on register toast message',
-                })
+                }),
+                {
+                  variant: 'error',
+                }
               );
             }
 
             if (localUser.nickname) {
               if (!(await setNickname(localUser.nickname))) {
-                toast(
+                enqueueSnackbar(
                   intl.formatMessage({
                     defaultMessage: 'Failed to secure nickname.',
                     description:
                       'Failed to sync nickname on register toast message',
-                  })
+                  }),
+                  {
+                    variant: 'error',
+                  }
                 );
               }
             }
@@ -217,7 +227,7 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
             signoutLocalUser();
           }
 
-          toast(
+          enqueueSnackbar(
             intl.formatMessage({
               defaultMessage: 'Logged in successfully',
               description: 'Logged in successfully toast message',
@@ -251,6 +261,7 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
       hasCreatedNewUser,
       signoutLocalUser,
       localUser,
+      enqueueSnackbar,
     ]
   );
 

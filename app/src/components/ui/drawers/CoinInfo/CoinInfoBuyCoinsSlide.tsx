@@ -25,7 +25,8 @@ import { LightningQR } from '@/components/ui/LightningQR';
 import useAuthStore from '@/state/AuthStore';
 import { useDocument, UseDocumentOptions } from 'swr-firestore';
 import shallow from 'zustand/shallow';
-import { showLoginPrompt } from '@/utils/showLoginMessage';
+import { showLoginPrompt } from '@/utils/showLoginPrompt';
+import { useSnackbar } from 'notistack';
 
 const schema = yup
   .object({
@@ -67,13 +68,15 @@ export function CoinInfoBuyCoinsSlide() {
     mode: 'onChange',
   });
 
+  const { enqueueSnackbar } = useSnackbar();
+
   // force re-render on change
   const amount = watch('amount');
 
   const onSubmit = React.useCallback(
     async (data: BuyCoinsFormData) => {
       if (!authUserId || !authUserEmail) {
-        showLoginPrompt(intl);
+        showLoginPrompt(enqueueSnackbar, intl);
         return;
       }
       if (process.env.REACT_APP_API_URL) {
@@ -113,7 +116,7 @@ export function CoinInfoBuyCoinsSlide() {
         setIsLoading(false);
       }
     },
-    [authUserId, authUserEmail, intl]
+    [authUserId, authUserEmail, intl, enqueueSnackbar]
   );
 
   const coins = useUser().readOnly?.coins || 0;

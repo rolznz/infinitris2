@@ -11,7 +11,6 @@ import { Carousel } from '@/components/ui/Carousel';
 import { BlockPreview } from './BlockPreview';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { DEFAULT_CHARACTER_IDs, LocalUser } from '@/state/LocalUserStore';
-import { toast } from 'react-toastify';
 import {
   purchaseCharacter,
   localPurchaseFreeCharacter,
@@ -23,6 +22,7 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { CharacterHabitatBackground } from '@/components/ui/CharacterHabitatBackground';
 import { CharacterCoinStatChip } from '@/components/pages/Characters/CharacterStatChip';
+import { useSnackbar } from 'notistack';
 
 export default function MarketPage() {
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
@@ -31,6 +31,7 @@ export default function MarketPage() {
   const intl = useIntl();
   const user = useUser();
   const [isLoading, setIsLoading] = React.useState(false);
+  const { enqueueSnackbar } = useSnackbar();
 
   const pages: React.ReactNode[] = character
     ? [
@@ -79,7 +80,7 @@ export default function MarketPage() {
                   }
                   if (purchaseSucceeded) {
                     setSelectedCharacterId(id);
-                    toast(
+                    enqueueSnackbar(
                       intl.formatMessage({
                         defaultMessage: 'Character Purchased',
                         description: 'Character Purchased toast message',
@@ -87,12 +88,14 @@ export default function MarketPage() {
                     );
                   }
                 } else {
-                  toast(
+                  enqueueSnackbar(
                     intl.formatMessage({
                       defaultMessage: 'Not enough coins',
                       description: 'Not enough coins toast message',
                     }),
-                    {}
+                    {
+                      variant: 'error',
+                    }
                   );
                 }
                 setIsLoading(false);

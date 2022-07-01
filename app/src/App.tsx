@@ -9,9 +9,10 @@ import { useEffect } from 'react';
 import useDarkMode from '@/components/hooks/useDarkMode';
 import CssBaseline from '@mui/material/CssBaseline';
 import FlexBox from '@/components/ui/FlexBox';
-import { Toasts } from '@/components/ui/Toasts';
+import { SnackbarProvider } from 'notistack';
 import { darkTheme } from './theme/darkTheme';
 import { lightTheme } from './theme/lightTheme';
+import { fontFamily } from 'infinitris2-models';
 
 interface AppProps {}
 
@@ -34,8 +35,19 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={appTheme}>
             <FlexBox className="App" width="100%">
-              {children}
-              <Toasts />
+              <SnackbarProvider
+                maxSnack={3}
+                variant="success"
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'center',
+                }}
+                style={{
+                  fontFamily,
+                }}
+              >
+                {children}
+              </SnackbarProvider>
             </FlexBox>
           </ThemeProvider>
         </StyledEngineProvider>

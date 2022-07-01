@@ -11,7 +11,6 @@ import {
 import React, { useState } from 'react';
 import { FormattedMessage, IntlShape, useIntl } from 'react-intl';
 import StarRatingComponent from 'react-star-rating-component';
-import { toast } from 'react-toastify';
 import {
   doc,
   DocumentSnapshot,
@@ -19,6 +18,8 @@ import {
   setDoc,
 } from 'firebase/firestore';
 import { openLoginDialog } from '@/state/DialogStore';
+import { useSnackbar } from 'notistack';
+import { EnqueueSnackbarFunction } from '@/components/ui/Snackbar';
 
 const useChallengeOptions: UseDocumentOptions = {
   listen: true,
@@ -34,7 +35,8 @@ async function addRating(
   ratingPath: string,
   challengeId: string,
   intl: IntlShape,
-  userRating: DocumentSnapshot<IRating> | null | undefined
+  userRating: DocumentSnapshot<IRating> | null | undefined,
+  enqueueSnackbar: EnqueueSnackbarFunction
 ): Promise<boolean> {
   if (userRating?.exists()) {
     alert('You have already voted');
@@ -53,7 +55,7 @@ async function addRating(
     // FIXME: save rating
     await setDoc(doc(getFirestore(), ratingPath), newRating);
     console.log('Vote sent');
-    toast(
+    enqueueSnackbar(
       intl.formatMessage({
         defaultMessage: 'Thanks for rating!',
         description: 'Thanks for rating toast message',
@@ -71,6 +73,7 @@ export default function RateChallenge({
   challengeId,
 }: ChallengeRatingDisplayProps) {
   const intl = useIntl();
+  const { enqueueSnackbar } = useSnackbar();
   const userId = useAuthStore().user?.uid;
   const [hoverRating, setHoverRating] = useState(0);
   const [chosenRating, setChosenRating] = useState<number | undefined>(
@@ -98,7 +101,8 @@ export default function RateChallenge({
           ratingPath,
           challengeId,
           intl,
-          userRating
+          userRating,
+          enqueueSnackbar
         ))
       ) {
         setChosenRating(undefined);

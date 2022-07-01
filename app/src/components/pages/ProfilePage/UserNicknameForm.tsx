@@ -6,13 +6,13 @@ import React from 'react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Controller, useForm } from 'react-hook-form';
-import { toast } from 'react-toastify';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Input from '@mui/material/Input';
 import Button from '@mui/material/Button';
 import { useUser } from '@/components/hooks/useUser';
 import { LocalUser } from '@/state/LocalUserStore';
+import { useSnackbar } from 'notistack';
 
 const schema = yup
   .object({
@@ -32,23 +32,26 @@ export function UserNicknameForm() {
   const intl = useIntl();
   const [isLoading, setIsLoading] = React.useState(false);
   const user = useUser();
+  const { enqueueSnackbar } = useSnackbar();
 
   const onSubmit = React.useCallback(
     async (data: NicknameFormData) => {
       setIsLoading(true);
       if (!(await setNickname(data.nickname))) {
-        toast(
+        enqueueSnackbar(
           intl.formatMessage({
             defaultMessage:
               'Failed to set nickname. Nickname might already be in use.',
             description: 'Failed to set nickname toast message',
           }),
-          {}
+          {
+            variant: 'error',
+          }
         );
       }
       setIsLoading(false);
     },
-    [intl]
+    [enqueueSnackbar, intl]
   );
 
   const defaultNickname =

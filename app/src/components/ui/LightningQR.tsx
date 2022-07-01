@@ -4,10 +4,10 @@ import Link from '@mui/material/Link';
 import Typography from '@mui/material/Typography';
 import { useIntl } from 'react-intl';
 import QRCode from 'react-qr-code';
-import { toast } from 'react-toastify';
 import { useCopyToClipboard } from 'react-use';
 import { useTheme } from '@mui/material/styles';
 import isMobile from '@/utils/isMobile';
+import { useSnackbar } from 'notistack';
 
 type LightningQRProps = {
   value: string;
@@ -17,6 +17,7 @@ export function LightningQR({ value }: LightningQRProps) {
   const [, copy] = useCopyToClipboard();
   const intl = useIntl();
   const theme = useTheme();
+  const { enqueueSnackbar } = useSnackbar();
   return (
     <FlexBox>
       <QRCode
@@ -26,7 +27,7 @@ export function LightningQR({ value }: LightningQRProps) {
         bgColor={theme.palette.text.secondary}
         onClick={() => {
           copy(value);
-          toast(
+          enqueueSnackbar(
             intl.formatMessage({
               defaultMessage: 'Address copied to clipboard',
               description:

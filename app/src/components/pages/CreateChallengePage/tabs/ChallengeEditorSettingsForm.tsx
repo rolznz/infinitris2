@@ -143,7 +143,7 @@ export function ChallengeEditorSettingsForm({
 
       if (
         window.confirm(
-          'Are you sure you wish to publish this challenge?\n\nPublished challenges cannot be edited.\n\nCost: 1 coin'
+          'Are you sure you wish to publish this challenge?\n\nPublished challenges cannot be edited.\n\nCost: 1 coin\n\nYour account will be topped back up to 3 coins every 24 hours.'
         )
       ) {
         const challengeToPublish: IChallenge = {

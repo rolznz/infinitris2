@@ -32,9 +32,10 @@ import grassImageMobile from '@/components/ui/RoomCarousel/assets/carousel/grass
 import desertImageMobile from '@/components/ui/RoomCarousel/assets/carousel/desert_mobile.svg';
 import volcanoImageMobile from '@/components/ui/RoomCarousel/assets/carousel/volcano_mobile.svg';
 import spaceImageMobile from '@/components/ui/RoomCarousel/assets/carousel/space_mobile.svg';
-import StarRatingComponent from 'react-star-rating-component';
 import { useDocument } from 'swr-firestore';
-import { FormattedMessage } from 'react-intl';
+import { ReactComponent as PlayIcon } from '@/icons/play.svg';
+import { ReactComponent as StarIcon } from '@/icons/star.svg';
+import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 
 interface ChallengeCardProps {
   challenge: DocumentSnapshot<IChallenge>;
@@ -44,13 +45,18 @@ function deleteChallenge(challengeId: string) {
   deleteDoc(doc(getFirestore(), getChallengePath(challengeId)));
 }
 
+const gridPreviewSx: SxProps<Theme> = {
+  opacity: 0.6,
+};
+
 const cardFooterSx: SxProps<Theme> = {
   background:
-    'linear-gradient(180deg, rgba(0,0,0, 0.024) 0%, rgba(0, 0, 0, 0.8) 77.08%)',
+    'linear-gradient(180deg, rgba(0,0,0, 0) 0%, rgba(0,0,0, 0.2) 25%, rgba(0, 0, 0, 0.8) 77.08%)',
   position: 'absolute',
   bottom: 0,
   py: 2,
   width: '100%',
+  zIndex: 2,
 };
 
 export default function ChallengeCard({ challenge }: ChallengeCardProps) {
@@ -69,44 +75,65 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
     playSound(SoundKey.click);
   }, []);
 
-  const cardSx: SxProps<Theme> = React.useMemo(
+  const cardBgSx: SxProps<Theme> = React.useMemo(
     () => ({
       background: getBackground(
         challenge.data()!.worldType,
         challenge.data()!.worldVariation
       ),
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      width: '100%',
+      height: '100%',
+    }),
+    [challenge]
+  );
+  const cardSx: SxProps<Theme> = React.useMemo(
+    () => ({
       borderRadius: borderRadiuses.base,
       position: 'relative',
       overflow: 'hidden',
     }),
-    [challenge]
+    []
   );
 
   const card = (
     <FlexBox sx={cardSx}>
-      <FlexBox sx={cardFooterSx}>
-        <Typography variant="body1">
-          {/*translation?.title || */ challenge.data()!.title}
-          {isLocked && ' (LOCKED)'}
-        </Typography>
-        {challengeOwnerScoreboardEntry?.data()?.nickname && (
-          <Typography variant="caption">
-            <FormattedMessage
-              defaultMessage="By {nickname}"
-              description="challenge card by nickname"
-              values={{
-                nickname: challengeOwnerScoreboardEntry!.data()!.nickname,
-              }}
-            />
-          </Typography>
-        )}
+      <FlexBox sx={cardBgSx} />
+      <FlexBox zIndex={1} sx={gridPreviewSx}>
+        <ChallengeGridPartialPreview grid={challenge.data()!.grid} />
       </FlexBox>
-      <ChallengeGridPartialPreview grid={challenge.data()!.grid} />
-      <StarRatingComponent
-        name="challenge-score"
-        starCount={5}
-        value={challenge.data()?.readOnly?.rating || 0}
-      />
+      <FlexBox sx={cardFooterSx}>
+        <Typography variant="body1" mb={1}>
+          {/*translation?.title || */ challenge.data()!.title}
+          {/* {isLocked && ' (LOCKED)'} */}
+        </Typography>
+        <FlexBox flexDirection="row" gap={0.25}>
+          {challengeOwnerScoreboardEntry?.data()?.nickname && (
+            <Typography variant="body1" fontSize="12px">
+              {challengeOwnerScoreboardEntry!.data()!.nickname}
+            </Typography>
+          )}
+          <FlexBox width={10} />
+          <SvgIcon fontSize="small">
+            <StarIcon />
+          </SvgIcon>
+          <Typography variant="body1" fontSize="12px">
+            {(challenge.data()?.readOnly?.rating || 0).toFixed(1).toString()}
+          </Typography>
+          <FlexBox width={5} />
+          <SvgIcon fontSize="small">
+            <PlayIcon />
+          </SvgIcon>
+          <Typography variant="body1" fontSize="12px">
+            {challenge.data()?.readOnly?.numRatings || 0}
+          </Typography>
+        </FlexBox>
+      </FlexBox>
     </FlexBox>
   );
   const link = isLocked ? (

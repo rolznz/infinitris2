@@ -49,7 +49,7 @@ const schema = yup.object({
   title: yup
     .string()
     .optional()
-    .max(20)
+    .max(16)
     .matches(/^[a-z0-9 ]*$/),
 });
 

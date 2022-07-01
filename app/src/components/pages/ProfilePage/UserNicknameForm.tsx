@@ -19,7 +19,7 @@ const schema = yup
     nickname: yup
       .string()
       .min(2)
-      .max(15)
+      .max(10)
       .matches(/^[a-z0-9 ]+$/),
   })
   .required();

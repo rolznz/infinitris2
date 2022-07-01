@@ -244,7 +244,7 @@ service cloud.firestore {
         entityHasExpectedFields([]) &&
         isLoggedIn() &&
         nicknameId.size() > 1 &&
-        nicknameId.size() < 16 &&
+        nicknameId.size() <= 10 &&
         nicknameId.matches('[a-z0-9 ]+');
       allow update, delete: if false;
     }

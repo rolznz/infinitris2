@@ -16,7 +16,6 @@ export default class Cell implements ICell {
   private readonly _blocks: IBlock[];
   private readonly _eventListener?: ICellEventListener;
   private _player: IPlayer | undefined;
-  private _wasPlayerRemoved: boolean;
   constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
     this._row = row;
@@ -25,7 +24,6 @@ export default class Cell implements ICell {
     this._isEmpty = true;
     this._blocks = [];
     this._eventListener = grid;
-    this._wasPlayerRemoved = false;
   }
 
   get grid(): IGrid {
@@ -67,10 +65,6 @@ export default class Cell implements ICell {
     }
   }
 
-  get wasPlayerRemoved() {
-    return this._wasPlayerRemoved;
-  }
-
   get behaviour(): ICellBehaviour {
     return this._behaviour;
   }
@@ -96,13 +90,10 @@ export default class Cell implements ICell {
    * @param player if undefined, will fill the cell with a non-player filled cell behaviour
    */
   place(player: IPlayer | undefined) {
-    this.isEmpty = false;
     this._player = player;
+    this.isEmpty = false;
     if (this.behaviour.isReplaceable) {
       this.behaviour = new NormalCellBehaviour(this, player?.color);
-    }
-    if (!player) {
-      this._wasPlayerRemoved = true;
     }
   }
 
@@ -121,9 +112,8 @@ export default class Cell implements ICell {
   }
 
   makeEmpty(): void {
-    this.isEmpty = true;
     this._player = undefined;
-    this._wasPlayerRemoved = false;
+    this.isEmpty = true;
   }
 
   addBlock(block: IBlock) {

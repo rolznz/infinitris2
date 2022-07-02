@@ -102,6 +102,7 @@ export class Round implements IRound {
 
   end(winner: IPlayer | undefined) {
     console.log('END ROUND - winner = ' + winner?.nickname);
+    this._winner = winner;
     for (const player of this._simulation.players) {
       if (
         player.status === PlayerStatus.ingame /* && player !== this._winner*/
@@ -109,7 +110,6 @@ export class Round implements IRound {
         player.status = PlayerStatus.knockedOut;
       }
     }
-    this._winner = winner;
     this._isWaitingForNextRound = true;
     this.restartNextRoundTimer();
     this._eventListener.onEndRound(this._simulation);

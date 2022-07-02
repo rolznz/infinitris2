@@ -24,7 +24,6 @@ export default interface ICell {
   set behaviour(behaviour: ICellBehaviour);
   get blocks(): IBlock[];
   get player(): IPlayer | undefined;
-  get wasPlayerRemoved(): boolean;
   set player(player: IPlayer | undefined);
   addBlock(block: IBlock): void;
   removeBlock(block: IBlock): void;

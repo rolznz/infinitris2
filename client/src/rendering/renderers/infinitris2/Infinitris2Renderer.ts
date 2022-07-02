@@ -356,11 +356,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       if (cell.cell.behaviour.requiresRerender) {
         this._renderCell(cell.cell);
       }
-      cell.container.alpha = cell.cell.isEmpty
-        ? cell.cell.behaviour.alpha
-        : cell.cell.player || !cell.cell.wasPlayerRemoved
-        ? 1
-        : 0.5; // distinguish dead cells // TODO: find a better way to do this
+      cell.container.alpha = cell.cell.behaviour.alpha;
 
       // TODO: do not access cell type directly like this
       if (cell.cell.behaviour.type === CellType.Rock) {
@@ -1089,7 +1085,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._renderCells(this._simulation.grid.reducedCells);
   }
 
-  onGridReset(_grid: IGrid): void {}
+  onGridReset(_grid: IGrid): void {
+    this.rerenderGrid();
+  }
 
   // TODO: move to base renderer
   protected _resize = async () => {
@@ -1219,26 +1217,26 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
     const renderableCell: IRenderableCell = this._cells[cellIndex];
 
-    if (!cell.isEmpty || cell.behaviour.type !== CellType.Normal) {
-      renderableCell.container.x = this.getWrappedX(
-        renderableCell.cell.column * this._cellSize
-      );
-      renderableCell.container.y = renderableCell.cell.row * this._cellSize;
-      this._renderCellCopies(
-        renderableCell,
-        RenderCellType.Cell,
-        cell.color,
-        cell.player?.patternFilename,
-        cell.behaviour
-      );
-    } else {
+    renderableCell.container.x = this.getWrappedX(
+      renderableCell.cell.column * this._cellSize
+    );
+    renderableCell.container.y = renderableCell.cell.row * this._cellSize;
+    this._renderCellCopies(
+      renderableCell,
+      RenderCellType.Cell,
+      cell.color,
+      cell.player?.patternFilename,
+      cell.behaviour
+    );
+    //}
+    /*else {
       renderableCell.children.forEach((child) => {
         child.renderableObject.graphics?.clear();
         if (child.renderableObject.patternSprite) {
           child.renderableObject.patternSprite.visible = false;
         }
       });
-    }
+    }*/
   };
 
   private _renderBlock(block: IBlock) {
@@ -1471,34 +1469,32 @@ export default class Infinitris2Renderer extends BaseRenderer {
     behaviour?: ICellBehaviour,
     player?: IPlayer
   ) {
+    // TODO: reduce duplication managing and removing sprites, for behaviour/block based cells
     const { graphics } = renderableObject;
+    graphics.clear();
+
     let { patternSprite, patternSpriteFilename } = renderableObject;
-    //graphics.cacheAsBitmap = false;
-    if (behaviour && !player /* && behaviour?.type !== CellType.Normal*/) {
+    if (behaviour && !player) {
       const oldPatternSpriteFilename = patternSpriteFilename;
       const newPatternSpriteFilename = getCellBehaviourImageFilename(
         behaviour,
+        isEmpty,
         this._worldVariation,
         this._challengeEditorEnabled
       );
 
+      // FIXME: sprites are being destroyed and created every frame
       if (
-        !patternSprite ||
+        /*!patternSprite ||
         !patternSprite.visible ||
-        oldPatternSpriteFilename !== newPatternSpriteFilename
+        oldPatternSpriteFilename !== newPatternSpriteFilename*/ true
       ) {
-        if (patternSprite && !patternSprite?.visible) {
+        if (patternSprite /* && !patternSprite?.visible*/) {
           patternSprite.destroy();
           container.removeChild(patternSprite);
+          renderableObject.patternSprite = undefined;
         }
-        patternSprite = renderCellBehaviour(
-          newPatternSpriteFilename
-          // isEmpty,
-          // graphics,
-          // this._cellSize,
-          // this._challengeEditorEnabled,
-          // this._worldVariation
-        );
+        patternSprite = renderCellBehaviour(newPatternSpriteFilename);
         if (patternSprite) {
           container.addChild(patternSprite);
           renderableObject.patternSprite = patternSprite;
@@ -1510,10 +1506,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
       return;
     }
-    graphics.clear();
+
     if (isEmpty) {
       if (patternSprite) {
-        patternSprite.visible = false;
+        patternSprite.destroy();
+        container.removeChild(patternSprite);
+        renderableObject.patternSprite = undefined;
       }
       return;
     }
@@ -1524,8 +1522,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
             numPatternDivisions * (column % numPatternDivisions)
         ];
 
-      if (!patternSprite || patternSprite.texture !== patternTexture) {
+      if (
+        !patternSprite ||
+        patternSprite.texture !== patternTexture ||
+        patternFilename !== patternSpriteFilename
+      ) {
         if (patternSprite) {
+          patternSprite.destroy();
           container.removeChild(patternSprite);
         }
 

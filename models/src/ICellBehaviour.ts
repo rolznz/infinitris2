@@ -10,7 +10,7 @@ export default interface ICellBehaviour {
   clone(forCell: ICell): ICellBehaviour;
   toChallengeCellType(): ChallengeCellType;
   shouldExplode?(): boolean;
-  getImageFilename?(): string;
+  getImageFilename?(): string | undefined;
   color?: number;
   alpha: number;
   isPassable: boolean;

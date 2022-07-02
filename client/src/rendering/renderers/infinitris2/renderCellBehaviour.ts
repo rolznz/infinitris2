@@ -20,18 +20,20 @@ export function renderCellBehaviour(
 
 export function getCellBehaviourImageFilename(
   behaviour: ICellBehaviour,
+  isEmpty: boolean,
   worldVariation: WorldVariation = '0',
   challengeEditorEnabled = false
 ) {
+  // TODO: check challengeEditorEnabled in the behaviour rather than doing it here
   if (!challengeEditorEnabled && behaviour.type === CellType.SpawnLocation) {
     return undefined;
   }
   // TODO: use a sprite sheet instead of individual sprites
   let filename: string | undefined;
   try {
-    filename = `${imagesDirectory}/cells/grass/${
-      behaviour.getImageFilename?.() || behaviour.toChallengeCellType()
-    }${worldVariation !== '0' ? '_variation' + worldVariation : ''}.png`;
+    filename = `${imagesDirectory}/cells/grass/${behaviour.getImageFilename?.()}${
+      worldVariation !== '0' ? '_variation' + worldVariation : ''
+    }.png`;
   } catch (error) {}
 
   return filename;

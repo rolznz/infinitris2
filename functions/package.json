@@ -32,6 +32,7 @@
     "test:files:affiliateRules": "jest -- \"src/__tests__/affiliateRules.test.ts\"",
     "test:files:serverKeyRules": "jest -- \"src/__tests__/serverKeyRules.test.ts\"",
     "test:files:scheduledCreditReward": "jest -- \"src/__tests__/scheduledCreditReward.test.ts\"",
+    "test:files:updateScoreboard": "jest -- \"src/__tests__/updateScoreboard.test.ts\"",
     "test:files:updateNetworkImpact": "jest -- \"src/__tests__/updateNetworkImpact.test.ts\"",
     "test:files:updateUserRateLimit": "jest -- \"src/__tests__/updateUserRateLimit.test.ts\"",
     "test:files:donationsWebhook": "jest -- \"src/__tests__/donationsWebhook.test.ts\"",

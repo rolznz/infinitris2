@@ -266,5 +266,8 @@ service cloud.firestore {
     match /payments/{document=**} {
       allow get: if true;
     }
+    match /settings/{document=**} {
+      allow get: if true;
+    }
   }
 }

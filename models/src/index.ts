@@ -91,6 +91,7 @@ export * from './Layout';
 export * from './blockLayouts/blockLayoutSets';
 export * from './IChallengeEventListener';
 export * from './IRotationSystem';
+export * from './SettingsType';
 
 export const NETWORK_VERSION = 2;
 

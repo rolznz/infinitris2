@@ -2,15 +2,17 @@ import {
   IScoreboardEntry,
   IUser,
   getScoreboardEntryPath,
+  getSettingPath,
+  ScoreboardSettings,
 } from 'infinitris2-models';
-import { getDb } from './firebase';
+import { getCurrentTimestamp, getDb } from './firebase';
 import * as admin from 'firebase-admin';
 
 /**
  * Updates the public scoreboard
  */
 export default async function updateScoreboard() {
-  console.log('Updating scoreboard');
+  // console.log('Updating scoreboard');
   const users = await getDb().collection('users').get();
 
   const docs = users.docs
@@ -24,6 +26,12 @@ export default async function updateScoreboard() {
   for (let i = 0; i < docs.length; i++) {
     await updateUserScoreboardEntry(docs[i], i + 1);
   }
+
+  const settings: ScoreboardSettings = {
+    lastUpdatedTimestamp: getCurrentTimestamp(),
+  };
+
+  await getDb().doc(getSettingPath('scoreboard')).set(settings);
 }
 
 function updateUserScoreboardEntry(

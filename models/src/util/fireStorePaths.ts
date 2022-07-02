@@ -1,3 +1,5 @@
+import { SettingsKey } from '@models/SettingsType';
+
 export const nicknamesPath = 'nicknames';
 export const getNicknamePath = (nicknameId: string) =>
   getEntityPath(nicknamesPath, nicknameId);
@@ -28,6 +30,9 @@ export const getServerKeyPath = (serverKey: string) =>
 export const challengesPath = 'challenges';
 export const getChallengePath = (challengeId: string) =>
   getEntityPath(challengesPath, challengeId);
+export const settingsPath = 'settings';
+export const getSettingPath = (settingId: SettingsKey) =>
+  getEntityPath(settingsPath, settingId);
 export const challengeAttemptsPath = 'challengeAttempts';
 export const getChallengeAttemptPath = (challengeAttemptId: string) =>
   getEntityPath(challengeAttemptsPath, challengeAttemptId);
@@ -90,6 +95,7 @@ export type EntityCollectionPath =
   | typeof serverKeysPath
   | typeof paymentsPath
   | typeof loginCodesPath
+  | typeof settingsPath
   | typeof scoreboardEntriesPath;
 
 export function getEntityPath(

@@ -16,7 +16,7 @@ export const onDailyCreditAwardSchedule = functions.pubsub
   });
 
 export const onUpdateScoreboardSchedule = functions.pubsub
-  .schedule('every 24 hours')
+  .schedule('every 12 hours')
   .onRun(async (_context) => {
     try {
       await updateScoreboard();
@@ -26,7 +26,7 @@ export const onUpdateScoreboardSchedule = functions.pubsub
     return null;
   });
 
-export const onScheduledFirestoreExport = functions.pubsub
+export const onFirestoreExportSchedule = functions.pubsub
   .schedule('every 24 hours')
   .onRun((_context) => {
     return scheduledFirestoreExport();

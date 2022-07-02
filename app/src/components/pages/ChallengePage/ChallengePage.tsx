@@ -177,6 +177,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
                 // TODO: unlocked features should come from challenges?
                 if (challenge.worldType === 'grass') {
                   unlockFeature(user.unlockedFeatures, 'space');
+                } else if (challenge.worldType === 'space') {
+                  unlockFeature(user.unlockedFeatures, 'volcano');
                 }
               }
 

@@ -10,7 +10,7 @@ import { Page } from '@/components/ui/Page';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import SvgIcon from '@mui/material/SvgIcon';
-import SortIcon from '@mui/icons-material/Sort';
+import { ReactComponent as SortIcon } from '@/icons/sort.svg';
 
 const challengesRatingFilter: UseCollectionOptions = {
   constraints: [
@@ -44,7 +44,7 @@ export function ChallengesPage() {
       })}
     >
       <FlexBox flexDirection="row">
-        <SvgIcon fontSize="large" color="primary">
+        <SvgIcon color="primary">
           <SortIcon />
         </SvgIcon>
         <Select

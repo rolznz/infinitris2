@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 17.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" id="Layer_2" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
+<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="0" y1="12.0783" x2="23.5958" y2="12.0783">
+	<stop  offset="0" style="stop-color:#E9F4E7"/>
+	<stop  offset="0.1331" style="stop-color:#E5EFE2"/>
+	<stop  offset="0.2709" style="stop-color:#DFE6D8"/>
+	<stop  offset="0.4103" style="stop-color:#D5D8C9"/>
+	<stop  offset="0.5069" style="stop-color:#CCCCBA"/>
+	<stop  offset="0.6714" style="stop-color:#D7DBCC"/>
+	<stop  offset="0.8721" style="stop-color:#E1EADD"/>
+	<stop  offset="1" style="stop-color:#E6F1E5"/>
+</linearGradient>
+<polygon fill="url(#SVGID_1_)" points="20.493,13.242 23.596,11.62 20.859,10.348 23.018,8.192 19.827,7.767 21.206,5.037 
+	18.281,5.589 18.776,2.621 15.801,4.203 15.191,0.604 13.081,2.872 11.713,0.181 10.246,3.243 7.959,0.972 7.562,4.06 4.92,2.687 
+	5.449,5.684 2.117,5.193 3.664,7.974 0.6,8.456 3.021,10.761 0,12.314 2.923,13.698 0.701,15.885 3.794,16.32 2.442,19.045 
+	5.538,18.439 5.037,21.583 7.793,20.092 8.327,23.389 10.504,21.082 11.949,23.976 13.483,20.831 15.716,23.017 16.084,19.986 
+	18.892,21.42 18.34,18.413 21.433,18.892 19.988,16.249 23.12,15.778 "/>
+<radialGradient id="SVGID_2_" cx="11.9929" cy="12.0665" r="7.042" gradientUnits="userSpaceOnUse">
+	<stop  offset="0.621" style="stop-color:#000000"/>
+	<stop  offset="0.6763" style="stop-color:#000001;stop-opacity:0.8539"/>
+	<stop  offset="0.7264" style="stop-color:#000006;stop-opacity:0.7218"/>
+	<stop  offset="0.7745" style="stop-color:#000016;stop-opacity:0.595"/>
+	<stop  offset="0.8213" style="stop-color:#121729;stop-opacity:0.4715"/>
+	<stop  offset="0.8672" style="stop-color:#292C3E;stop-opacity:0.3504"/>
+	<stop  offset="0.9124" style="stop-color:#434559;stop-opacity:0.231"/>
+	<stop  offset="0.9563" style="stop-color:#64657C;stop-opacity:0.1153"/>
+	<stop  offset="1" style="stop-color:#8E8EAB;stop-opacity:0"/>
+</radialGradient>
+<ellipse fill="url(#SVGID_2_)" cx="11.993" cy="12.066" rx="7.1" ry="6.983"/>
+<g>
+	<polygon fill="#AE2025" points="15.265,0.405 15.622,2.593 14.986,3.741 14.582,3.741 13.676,2.142 	"/>
+	<polygon fill="#9D1F22" points="15.274,0.38 15.504,1.894 14.698,3.332 13.885,1.902 	"/>
+	<polygon fill="#921A23" points="13.934,1.852 14.929,3.741 14.582,3.741 13.666,2.144 	"/>
+	<path fill="#F9A91A" d="M11.137,6.512V4.865c0,0,0.005-0.142,0.128-0.12c0.123,0.022,1.428-0.002,1.428-0.002
+		S12.8,4.758,12.79,4.856s0.001,1.656,0.001,1.656H11.137z"/>
+	<path fill="#F99F3D" d="M12.38,4.743h0.313c0,0,0.107,0.015,0.098,0.113s0.001,1.656,0.001,1.656H12.38V4.743z"/>
+	<ellipse fill="#E0E1E0" cx="11.972" cy="12.099" rx="6.254" ry="6.151"/>
+	<ellipse fill="#989897" cx="11.972" cy="12.099" rx="5.429" ry="5.339"/>
+	<ellipse fill="#CCCBCB" cx="11.972" cy="12.099" rx="3.984" ry="3.918"/>
+	<path fill="#E09326" d="M8.899,3.741c0,0-0.375,0.202-0.375,0.651c0,0.316,0.152,0.455,0.246,0.518
+		c0.095,0.063,2.367,0.91,2.367,0.91V5.326c0,0-2.054-0.647-2.139-0.764C8.808,4.3,9.111,4.12,9.111,4.12L8.899,3.741"/>
+	<path fill="#E09326" d="M14.986,3.741c0,0,0.419,0.245,0.419,0.693c0,0.316-0.152,0.455-0.246,0.518
+		c-0.095,0.063-2.367,0.91-2.367,0.91V5.369c0,0,2.054-0.647,2.139-0.764c0.189-0.262-0.134-0.485-0.134-0.485l-0.214-0.379h0.346
+		H14.986z"/>
+	<polygon fill="#AE2025" points="7.881,0.81 10.219,3.127 11.707,0.018 13.099,2.729 13.667,2.141 14.796,4.12 9.111,4.12 
+		7.757,1.687 	"/>
+	<polygon fill="#9D1F22" points="10.202,3.098 11.71,0 13.091,2.729 13.366,2.465 14.202,3.931 9.446,3.973 7.838,1.102 
+		7.873,0.786 	"/>
+</g>
+</svg>

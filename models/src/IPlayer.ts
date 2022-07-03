@@ -46,7 +46,7 @@ export interface IPlayer {
 
   get isChatting(): boolean;
 
-  update(cells: ICell[][], settings: SimulationSettings): void;
+  update(): void;
   addEventListener(eventListener: IBlockEventListener): void;
   onLineClearCellReward(numRowsCleared: number): void;
   createBlock(

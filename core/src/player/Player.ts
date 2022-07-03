@@ -220,7 +220,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
    *
    * @param gridCells The cells within the grid.
    */
-  update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
+  update() {
     if (
       !this._block &&
       !this._simulation.isNetworkClient &&
@@ -237,32 +237,43 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         ? this._simulation.safeLayouts
         : this._simulation.allLayouts;
 
-      // TODO: add "bag" of layouts rather than pure random
-      const layout =
-        //this._nextLayout ||
-        validLayouts[Math.floor(Math.random() * validLayouts.length)];
+      // TODO: consider "bag" of layouts rather than pure random
+      let layoutsRemaining = validLayouts;
+      while (layoutsRemaining.length > 0) {
+        const layout =
+          //this._nextLayout ||
+          layoutsRemaining[Math.floor(Math.random() * layoutsRemaining.length)];
 
-      const row = this._spawnLocationCell?.row || 0;
-      const column = this._spawnLocationCell
-        ? this._spawnLocationCell.column
-        : this._lastPlacementColumn === undefined
-        ? simulationSettings.randomBlockPlacement !== false
-          ? Math.floor(Math.random() * gridCells[0].length)
-          : Math.floor((gridCells[0].length - layout[0].length) / 2)
-        : this._lastPlacementColumn;
+        this._tryCreateBlock(layout);
+        layoutsRemaining = layoutsRemaining.filter((v) => v !== layout);
+        if (this._block) {
+          break;
+        }
+      }
 
-      this.createBlock(
-        ++uniqueBlockId,
-        row,
-        column,
-        0,
-        Object.values(this._simulation.layoutSet.layouts).indexOf(layout)
-      );
       //this._nextLayout = undefined;
       //this._nextLayoutRotation = undefined;
     } else {
       this._block?.update();
     }
+  }
+  private _tryCreateBlock(layout: Layout) {
+    const row = this._spawnLocationCell?.row || 0;
+    const column = this._spawnLocationCell
+      ? this._spawnLocationCell.column
+      : this._lastPlacementColumn === undefined
+      ? this._simulation.settings.randomBlockPlacement !== false
+        ? Math.floor(Math.random() * this._simulation.grid.numColumns)
+        : Math.floor((this._simulation.grid.numColumns - layout[0].length) / 2)
+      : this._lastPlacementColumn;
+
+    this.createBlock(
+      ++uniqueBlockId,
+      row,
+      column,
+      0,
+      Object.values(this._simulation.layoutSet.layouts).indexOf(layout)
+    );
   }
 
   createBlock(

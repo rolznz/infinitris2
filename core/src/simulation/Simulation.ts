@@ -567,7 +567,7 @@ export default class Simulation implements ISimulation {
     ++this._frameNumber;
     this._lastStepTime += FRAME_LENGTH;
     this._fpsCounter.step();
-    Object.values(this._players).forEach(this._updatePlayer);
+    this.players.forEach(this._updatePlayer);
     this._grid.step(this._isNetworkClient);
     this._gameMode.step();
     this._round?.step();
@@ -667,7 +667,7 @@ export default class Simulation implements ISimulation {
   }
 
   private _updatePlayer = (player: IPlayer) => {
-    player.update(this._grid.cells, this._settings);
+    player.update();
   };
 
   private _checkUnplayableGrid() {

@@ -41,8 +41,8 @@ export default class AIPlayer extends Player {
     return true;
   }
 
-  update(gridCells: ICell[][], simulationSettings: SimulationSettings) {
-    super.update(gridCells, simulationSettings);
+  update() {
+    super.update();
 
     if (this._block && !this._block.isDropping) {
       if (this._nextReaction >= this._reactionDelay) {

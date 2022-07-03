@@ -83,8 +83,13 @@ export default class Block implements IBlock {
         }
       );
     }
+    let spawnPositionFree = force || this.canMove(0, 0, 0);
+    let hasPlacement =
+      force ||
+      this._simulation.settings.replaceUnplayableBlocks === false ||
+      this.hasPlacement();
 
-    if (force || (!otherBlockInArea && this.canMove(0, 0, 0))) {
+    if (force || (!otherBlockInArea && spawnPositionFree && hasPlacement)) {
       this._updateCells();
     } else {
       this._isAlive = false;

@@ -294,6 +294,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     if (newBlock.isAlive) {
       this._block = newBlock;
       this._isFirstBlock = false;
+      this.onBlockCreated(this._block);
     }
   }
 
@@ -353,7 +354,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
     this.removeBlock();
     this._spawnLocationCell = undefined;
-    this._lastPlacementColumn = block.column;
+    this.saveSpawnPosition(block);
   }
 
   /**
@@ -364,8 +365,12 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._eventListeners.forEach((listener) => listener.onBlockDied(block));
     this.removeBlock();
     if (this._simulation.settings.saveSpawnPositionOnDeath !== false) {
-      this._lastPlacementColumn = block.column;
+      this.saveSpawnPosition(block);
     }
+  }
+
+  saveSpawnPosition(block: IBlock) {
+    this._lastPlacementColumn = block.column;
   }
 
   /**

@@ -59,4 +59,5 @@ export interface IPlayer {
   ): void;
   destroy(): void;
   removeBlock(): void;
+  saveSpawnPosition(block: IBlock): void;
 }

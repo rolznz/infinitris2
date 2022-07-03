@@ -363,6 +363,7 @@ export default class Simulation implements ISimulation {
     this._eventListeners.forEach((listener) =>
       listener.onBlockCreated?.(block)
     );
+    this._checkUnplayableGrid();
   }
 
   /**
@@ -406,6 +407,7 @@ export default class Simulation implements ISimulation {
     this._eventListeners.forEach((listener) =>
       listener.onBlockDestroyed?.(block)
     );
+    this._checkUnplayableGrid();
   }
 
   /**
@@ -667,4 +669,38 @@ export default class Simulation implements ISimulation {
   private _updatePlayer = (player: IPlayer) => {
     player.update(this._grid.cells, this._settings);
   };
+
+  private _checkUnplayableGrid() {
+    if (
+      this._isNetworkClient ||
+      this._settings.replaceUnplayableBlocks === false
+    ) {
+      return;
+    }
+    const playersWithBlocks = this.nonSpectatorPlayers.filter(
+      (player) =>
+        player.block && !player.block.isDropping && player.block.isAlive
+    );
+    if (playersWithBlocks.length !== this.nonSpectatorPlayers.length) {
+      return;
+    }
+    const blocksWithPlacements = playersWithBlocks
+      .map((player) => player.block!)
+      .filter((block) => block.hasPlacement());
+    if (playersWithBlocks.length && !blocksWithPlacements.length) {
+      console.log(
+        'No placements: ' +
+          playersWithBlocks
+            .map(
+              (p) =>
+                Object.entries(this.layoutSet.layouts)[p.block!.layoutId][0]
+            )
+            .join(', ')
+      );
+      playersWithBlocks.forEach((player) => {
+        player.saveSpawnPosition(player.block!);
+        player.removeBlock();
+      });
+    }
+  }
 }

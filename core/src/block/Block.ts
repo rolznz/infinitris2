@@ -70,7 +70,7 @@ export default class Block implements IBlock {
     this._resetTimers();
 
     let otherBlockInArea = false;
-    if (!force) {
+    if (!force && this._simulation.settings.allowSpawnOnOtherBlocks === false) {
       this._loopCells(
         this._gridCells,
         this._column,
@@ -89,9 +89,6 @@ export default class Block implements IBlock {
     } else {
       this._isAlive = false;
       this._eventListener?.onBlockCreateFailed(this);
-    }
-    if (this._isAlive) {
-      this._eventListener?.onBlockCreated(this);
     }
   }
 
@@ -201,6 +198,7 @@ export default class Block implements IBlock {
   }
 
   destroy() {
+    this._isAlive = false;
     this._removeCells();
     this._eventListener?.onBlockDestroyed(this);
   }
@@ -242,7 +240,7 @@ export default class Block implements IBlock {
    * Determines whether the block can move to a new position.
    *
    * @param dx the delta of the x position (column).
-   * @param dy the delta of the x position (row).
+   * @param dy the delta of the y position (row).
    * @param dr the delta of the rotation.
    */
   canMove(
@@ -363,7 +361,7 @@ export default class Block implements IBlock {
    * The block's opacity will be transferred into the cells it currently occupies.
    */
   place() {
-    console.log('Placing block for player ' + this.player.id);
+    //console.log('Placing block for player ' + this.player.id);
     this._cells.forEach((cell) => {
       cell.place(this._player);
     });
@@ -508,5 +506,25 @@ export default class Block implements IBlock {
         }
       }
     }
+  }
+
+  hasPlacement() {
+    const canMoveOptions: BlockCanMoveOptions = {
+      allowMistakes: false,
+    };
+
+    for (let dr = 0; dr < 4; dr++) {
+      for (let dx = 0; dx < this._simulation.grid.numColumns; dx++) {
+        for (let dy = -this._row; dy < this._simulation.grid.numRows; dy++) {
+          if (
+            !this.canMove(dx, dy, dr, canMoveOptions) &&
+            !canMoveOptions.isMistake
+          ) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
   }
 }

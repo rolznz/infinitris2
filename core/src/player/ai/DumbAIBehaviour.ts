@@ -44,16 +44,9 @@ export class DumbAIBehaviour implements IAIBehaviour {
             break;
           }
         }
-        let bottomRow = 0;
-        for (const cell of canMoveOptions.cells || []) {
-          bottomRow = Math.max(bottomRow, cell.row);
-        }
+
         const score = this._calculateScore(block, dx, dy, dr, canMoveOptions);
-        if (
-          score > bestScore &&
-          !canMoveOptions.isMistake &&
-          !this._simulation.grid.isTower(bottomRow)
-        ) {
+        if (score > bestScore && !canMoveOptions.isMistake) {
           bestScore = score;
           bestColumnOffset = dx;
           bestRotationOffset = dr;

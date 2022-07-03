@@ -103,6 +103,7 @@ export default class Grid implements IGrid {
       return;
     }
     for (let i = 0; i < rowsToClear.length; i++) {
+      console.log('Clearing row ' + rowsToClear[i]);
       this._eventListeners.forEach((eventListener) =>
         eventListener.onLineClearing(rowsToClear[i])
       );

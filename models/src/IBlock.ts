@@ -35,6 +35,8 @@ export default interface IBlock {
   get bottomRow(): number;
   get topRow(): number;
   get id(): number;
+  get isAlive(): boolean;
+  hasPlacement(): boolean;
   update(): void;
   canMove(
     dx: number,

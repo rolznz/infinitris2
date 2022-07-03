@@ -23,4 +23,6 @@ export type SimulationSettings = {
     botRandomReactionDelay?: number;
     seed?: number;
   };
+  readonly allowSpawnOnOtherBlocks?: boolean; // if false, cannot spawn your block if someone else's block is in the way
+  readonly replaceUnplayableBlocks?: boolean;
 };

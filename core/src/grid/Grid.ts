@@ -97,13 +97,12 @@ export default class Grid implements IGrid {
       (row) =>
         row >= 0 &&
         row < this._cells.length &&
-        this._cells[row].findIndex((cell) => cell.isEmpty) < 0
+        !this._cells[row].some((cell) => cell.isEmpty)
     );
     if (!rowsToClear.length) {
       return;
     }
     for (let i = 0; i < rowsToClear.length; i++) {
-      console.log('Clearing row ' + rowsToClear[i]);
       this._eventListeners.forEach((eventListener) =>
         eventListener.onLineClearing(rowsToClear[i])
       );

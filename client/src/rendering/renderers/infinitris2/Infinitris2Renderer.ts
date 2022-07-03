@@ -300,6 +300,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
     }
 
+    this._lineClearingIndicator.update(
+      !this._hasScrollY ? this._gridLines.y : this._world.y,
+      this._cellSize
+    );
+
     if (this._displayFrameRate) {
       this._fpsText.scale.set(this._cellSize * 0.04);
       this._fpsText.x = this._app.renderer.width / 2;
@@ -1653,10 +1658,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
       !this._hasScrollY ? this._gridLines.y : this._world.y,
       isTower,
       this._simulation.grid,
-      this._cellSize
-    );
-    this._lineClearingIndicator.update(
-      !this._hasScrollY ? this._gridLines.y : this._world.y,
       this._cellSize
     );
 

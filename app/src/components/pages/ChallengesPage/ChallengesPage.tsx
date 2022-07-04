@@ -49,7 +49,6 @@ export function ChallengesPage() {
         </SvgIcon>
         <Select
           variant="outlined"
-          disableUnderline
           value={filter}
           onChange={(event) => {
             setFilter(event.target.value as ChallengesPageFilterType);
@@ -69,14 +68,11 @@ export function ChallengesPage() {
         flexDirection="row"
         justifyContent="flex-start"
       >
-        {challenges
-          ?.filter((challenge) => challenge.data()!.isPublished)
-          .sort((a, b) => (b.data()!.priority || 0) - (a.data()!.priority || 0))
-          .map((challenge) => (
-            <FlexBox key={challenge.id} margin={4}>
-              <ChallengeCard challenge={challenge} />
-            </FlexBox>
-          ))}
+        {challenges?.map((challenge) => (
+          <FlexBox key={challenge.id} margin={4}>
+            <ChallengeCard challenge={challenge} />
+          </FlexBox>
+        ))}
       </FlexBox>
     </Page>
   );

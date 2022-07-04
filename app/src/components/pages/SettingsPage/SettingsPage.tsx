@@ -47,7 +47,6 @@ export function LanguagePicker() {
   const user = useUser();
   return (
     <Select
-      disableUnderline
       value={user.locale || defaultLocale}
       onChange={(event) => {
         setUserLocale(event.target.value as string);
@@ -118,7 +117,6 @@ export default function SettingsPage() {
             }
             right={
               <Select
-                disableUnderline
                 value={user.rendererQuality || 'high'}
                 onChange={(event) =>
                   setUserRendererQuality(event.target.value as RendererQuality)
@@ -143,7 +141,6 @@ export default function SettingsPage() {
             }
             right={
               <Select
-                disableUnderline
                 value={user.rendererType || 'infinitris2'}
                 onChange={(event) =>
                   setUserRendererType(event.target.value as RendererType)
@@ -288,7 +285,6 @@ export default function SettingsPage() {
             }
             right={
               <Select
-                disableUnderline
                 value={
                   user.preferredInputMethod || getDefaultPreferredInputMethod()
                 }

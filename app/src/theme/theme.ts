@@ -42,6 +42,7 @@ export const boxShadows = {
   small: '0px 4px 4px rgba(0, 0, 0, 0.3)',
 };
 export const dropShadows = {
+  xs: 'drop-shadow(0px 2px 2px rgba(0, 0, 0, 0.4))',
   small: 'drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.4))',
   selected:
     'drop-shadow(0px 0px 3px rgba(255, 255, 255, 1)) drop-shadow(0px 0px 2px rgba(255, 255, 255, 1))',

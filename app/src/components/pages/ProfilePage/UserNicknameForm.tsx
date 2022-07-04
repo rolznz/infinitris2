@@ -1,6 +1,6 @@
 import FlexBox from '@/components/ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
-import { ReactComponent as TickIcon } from '@/icons/tick.svg';
+import { ReactComponent as VerifiedIcon } from '@/icons/verified.svg';
 import { setNickname } from '@/state/updateUser';
 import React from 'react';
 import * as yup from 'yup';
@@ -13,6 +13,8 @@ import Button from '@mui/material/Button';
 import { useUser } from '@/components/hooks/useUser';
 import { LocalUser } from '@/state/LocalUserStore';
 import { useSnackbar } from 'notistack';
+import InputAdornment from '@mui/material/InputAdornment';
+import { borderColorLight, borderRadiuses, dropShadows } from '@/theme/theme';
 
 const schema = yup
   .object({
@@ -73,7 +75,8 @@ export function UserNicknameForm() {
 
   const currentNicknameValue = watch('nickname');
   const isDirty =
-    currentNicknameValue !== defaultNickname && currentNicknameValue.length > 1;
+    currentNicknameValue !== defaultNickname &&
+    (currentNicknameValue.length > 1 || defaultNickname.length > 1);
 
   if (currentNicknameValue.toLowerCase() !== currentNicknameValue) {
     setValue('nickname', currentNicknameValue.toLowerCase(), {
@@ -81,8 +84,10 @@ export function UserNicknameForm() {
     });
   }
 
+  const hasAdornment = !isDirty && user.readOnly?.nickname;
+
   return (
-    <FlexBox position="relative" zIndex="above">
+    <FlexBox flexDirection="row" zIndex="above" gap={1}>
       <form onSubmit={handleSubmit(onSubmit)}>
         <FlexBox
           flexDirection="row"
@@ -90,28 +95,55 @@ export function UserNicknameForm() {
           alignItems="center"
           justifyContent="center"
         >
-          <Controller
-            name="nickname"
-            control={control}
-            render={({ field }) => (
-              <FormControl variant="standard" fullWidth>
-                <InputLabel>
-                  <FormattedMessage
-                    defaultMessage="Nickname"
-                    description="Nickname field label text"
-                  />
-                </InputLabel>
-                <Input {...field} fullWidth inputProps={{ maxLength: 15 }} />
-                {currentNicknameValue?.length > 1 && errors.nickname && (
-                  <p>
-                    {
-                      /*errors.nickname?.message*/ 'Pleace choose only letters, numbers and spaces.'
+          <FlexBox
+            width={
+              (currentNicknameValue.length + 1) * 15 +
+              (hasAdornment ? 25 : 0) +
+              35
+            }
+          >
+            <Controller
+              name="nickname"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard">
+                  <InputLabel>
+                    <FormattedMessage
+                      defaultMessage="Nickname"
+                      description="Nickname field label text"
+                    />
+                  </InputLabel>
+                  <Input
+                    {...field}
+                    inputProps={{ maxLength: 10 }}
+                    endAdornment={
+                      hasAdornment && (
+                        <InputAdornment position="end">
+                          <VerifiedIcon
+                            style={{ marginTop: -2, filter: dropShadows.xs }}
+                          />
+                        </InputAdornment>
+                      )
                     }
-                  </p>
-                )}
-              </FormControl>
-            )}
-          />
+                    sx={{
+                      backgroundColor: borderColorLight,
+                      px: 2,
+                      py: 0,
+                      borderRadius: borderRadiuses.full,
+                      fontSize: '28px',
+                    }}
+                  />
+                  {currentNicknameValue?.length > 1 && errors.nickname && (
+                    <p>
+                      {
+                        /*errors.nickname?.message*/ 'Pleace choose only letters, numbers and spaces.'
+                      }
+                    </p>
+                  )}
+                </FormControl>
+              )}
+            />
+          </FlexBox>
           {isDirty && (
             <Button
               type="submit"
@@ -127,12 +159,6 @@ export function UserNicknameForm() {
           )}
         </FlexBox>
       </form>
-
-      {!isDirty && user.readOnly?.nickname && (
-        <FlexBox position="absolute" right={0} flexDirection="row" gap={1}>
-          <TickIcon /> verified
-        </FlexBox>
-      )}
     </FlexBox>
   );
 }

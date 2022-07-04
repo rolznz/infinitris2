@@ -42,3 +42,11 @@ body > canvas {
   transform: scale(1);
   transition: transform 0.3s;
 }
+
+/* disable underlines */
+.MuiFilledInput-root:before,
+.MuiFilledInput-root:after,
+.MuiInput-root:before,
+.MuiInput-root:after {
+  content: none;
+}

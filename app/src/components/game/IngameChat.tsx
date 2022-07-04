@@ -69,7 +69,6 @@ export function IngameChat() {
             },
           }}
           InputProps={{
-            disableUnderline: true,
             style: {
               borderRadius: borderRadiuses.base,
               paddingTop: 0,

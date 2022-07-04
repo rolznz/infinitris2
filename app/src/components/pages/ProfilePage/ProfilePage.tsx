@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '@mui/material';
+import { Button, Link, SvgIcon, Typography } from '@mui/material';
 
 import FlexBox from '../../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -9,22 +9,43 @@ import { Page } from '../../ui/Page';
 import { openLoginDialog } from '@/state/DialogStore';
 import { ProfilePageCharacterCard } from './ProfilePageCharacterCard';
 import { CharacterHabitatBackground } from '@/components/ui/CharacterHabitatBackground';
-import { useDocument } from 'swr-firestore';
+import {
+  useCollection,
+  UseCollectionOptions,
+  useDocument,
+} from 'swr-firestore';
 import { useUser } from '@/components/hooks/useUser';
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
-import { getCharacterPath, ICharacter } from 'infinitris2-models';
+import {
+  challengesPath,
+  getCharacterPath,
+  IChallenge,
+  ICharacter,
+} from 'infinitris2-models';
 import { UserNicknameForm } from '@/components/pages/ProfilePage/UserNicknameForm';
+import { ReactComponent as PremiumPlayerIcon } from '@/icons/premium_player.svg';
+import { Link as RouterLink } from 'react-router-dom';
+import Routes from '@/models/Routes';
+import ChallengeCard from '@/components/pages/ChallengesPage/ChallengeCard';
+import { where } from 'firebase/firestore';
+import { borderColorLight, borderRadiuses } from '@/theme/theme';
 
 export default function ProfilePage() {
   const intl = useIntl();
   const userId = useAuthStore().user?.uid;
   const user = useUser();
-  /*const { data: userChallenges } = useCollection<IChallenge>(
+
+  const userChallengesFilter: UseCollectionOptions = React.useMemo(
+    () => ({
+      constraints: [where('userId', '==', userId)],
+    }),
+    [userId]
+  );
+
+  const { data: userChallenges } = useCollection<IChallenge>(
     userId ? challengesPath : null,
-    {MEMO
-      where: [['userId', '==', userId]],
-    }
-  );*/
+    userChallengesFilter
+  );
   const characterId = user.selectedCharacterId || DEFAULT_CHARACTER_ID;
   const { data: character } = useDocument<ICharacter>(
     getCharacterPath(characterId)
@@ -52,11 +73,56 @@ export default function ProfilePage() {
         </Button>
       )}
 
-      <FlexBox py={2}>
-        {/* force refresh on login/logout/signup */}
-        <UserNicknameForm key={user?.id + '-' + user?.readOnly?.nickname} />
-        <ProfilePageCharacterCard />
-      </FlexBox>
+      {/* force refresh on login/logout/signup */}
+      <UserNicknameForm key={user?.id + '-' + user?.readOnly?.nickname} />
+      {userId && (
+        <FlexBox py={2}>
+          <Link component={RouterLink} underline="none" to={Routes.premium}>
+            <FlexBox flexDirection="row" gap={1}>
+              <Typography sx={{ color: '#2196f3' }}>
+                <FormattedMessage
+                  defaultMessage="Premium Player"
+                  description="Premium Player text"
+                />
+              </Typography>
+              <FlexBox
+                sx={{ backgroundColor: borderColorLight }}
+                borderRadius={borderRadiuses.full}
+                p={0.5}
+              >
+                <SvgIcon fontSize="small">
+                  <PremiumPlayerIcon />
+                </SvgIcon>
+              </FlexBox>
+            </FlexBox>
+          </Link>
+        </FlexBox>
+      )}
+      <ProfilePageCharacterCard />
+
+      {userChallenges?.length && (
+        <FlexBox mt={2}>
+          <Typography align="center">
+            <FormattedMessage
+              defaultMessage="{count} challenges created"
+              description="Created challenges statistic"
+              values={{ count: userChallenges?.length || 0 }}
+            />
+          </Typography>
+          <FlexBox
+            width="100%"
+            flexWrap="wrap"
+            flexDirection="row"
+            justifyContent="flex-start"
+          >
+            {userChallenges.map((challenge) => (
+              <FlexBox key={challenge.id} margin={4}>
+                <ChallengeCard challenge={challenge} />
+              </FlexBox>
+            ))}
+          </FlexBox>
+        </FlexBox>
+      )}
 
       {/* <Typography align="center">
         <FormattedMessage

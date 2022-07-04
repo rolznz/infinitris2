@@ -100,7 +100,6 @@ export function ChallengeEditorCellTypePicker() {
   return (
     <Select
       variant="outlined"
-      disableUnderline
       value={challengeCellType}
       onChange={(event) => {
         editor.challengeCellType = event.target.value as ChallengeCellType;

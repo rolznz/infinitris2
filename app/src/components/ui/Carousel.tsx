@@ -43,7 +43,7 @@ export const narrowSwipeableViewsStyles: SwipeableViewsStyles = lodashMerge(
     },
   }
 );
-export const fullScreenSwipeableViewsStyles: SwipeableViewsStyles = lodashMerge(
+export const fullscreenSwipeableViewsStyles: SwipeableViewsStyles = lodashMerge(
   {},
   coreSwipeableViewsStyles,
   {
@@ -61,6 +61,12 @@ export const fullScreenSwipeableViewsStyles: SwipeableViewsStyles = lodashMerge(
     },
   }
 );
+
+export const fullscreenMobileStepperStyles: React.CSSProperties = {
+  position: 'absolute',
+  bottom: '5%',
+  width: '100vw',
+};
 
 type CarouselProps = {
   slides: React.ReactNode[];

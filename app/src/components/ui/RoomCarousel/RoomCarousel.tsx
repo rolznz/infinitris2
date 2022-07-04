@@ -2,7 +2,8 @@ import { playSound, SoundKey } from '@/sound/SoundManager';
 import { launchFullscreen } from '@/utils/launchFullscreen';
 import {
   Carousel,
-  fullScreenSwipeableViewsStyles,
+  fullscreenMobileStepperStyles,
+  fullscreenSwipeableViewsStyles,
 } from '@/components/ui/Carousel';
 import FlexBox from '@/components/ui/FlexBox';
 import { Link as RouterLink } from 'react-router-dom';
@@ -88,12 +89,8 @@ export function RoomCarousel({
         >
           <Carousel
             slides={slideElements}
-            styles={fullScreenSwipeableViewsStyles}
-            mobileStepperStyles={{
-              position: 'absolute',
-              bottom: '5%',
-              width: '100vw',
-            }}
+            styles={fullscreenSwipeableViewsStyles}
+            mobileStepperStyles={fullscreenMobileStepperStyles}
             scaleTransform={false}
             innerArrows
             initialStep={initialStep}

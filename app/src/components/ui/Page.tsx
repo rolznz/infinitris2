@@ -124,6 +124,7 @@ export function Page({
                 color={whiteTitle ? colors.white : undefined}
                 sx={{
                   textShadow: whiteTitle ? textShadows.small : undefined,
+                  zIndex: 1,
                 }}
               >
                 {props.title}

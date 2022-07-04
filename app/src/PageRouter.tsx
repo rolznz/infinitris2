@@ -41,6 +41,7 @@ import { StoryModePage } from '@/components/pages/StoryModePage/StoryModePage';
 import { TopLeftPanel, TopLeftPanelPortal } from '@/components/ui/TopLeftPanel';
 import NavigationButton from '@/components/ui/BackButton';
 import useRouterStore from '@/state/RouterStore';
+import { PremiumPage } from '@/components/pages/PremiumPage/PremiumPage';
 
 const coinsDisplayPaths = [Routes.market, Routes.profile];
 
@@ -157,6 +158,9 @@ function RouterContents() {
         </Route>
         <Route exact path={Routes.scoreboard}>
           <ScoreboardPage />
+        </Route>
+        <Route exact path={Routes.premium}>
+          <PremiumPage />
         </Route>
         <Route exact path={Routes.market} key="market">
           <MarketPage />

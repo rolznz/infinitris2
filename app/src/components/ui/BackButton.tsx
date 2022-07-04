@@ -9,7 +9,7 @@ import { useIsNavigationButtonVisible } from '@/components/hooks/useIsNavigation
 import { useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
 import useRouterStore from '@/state/RouterStore';
-import useReceivedInput from '@/components/hooks/useReceivedInput';
+//import useReceivedInput from '@/components/hooks/useReceivedInput';
 import React from 'react';
 
 export default function BackButton() {
@@ -17,17 +17,18 @@ export default function BackButton() {
   const history = useHistory();
   const isHome = useRouterStore((store) => store.length) === 0;
   const isBackButtonVisible = useIsNavigationButtonVisible() && !isHome;
-  const hasReceivedInput = useReceivedInput('b', false);
+  // FIXME: keyboard hotkey should only be enabled when ingame and not chatting
+  //const hasReceivedInput = useReceivedInput('b', false);
   const onClick = React.useCallback(() => {
     history.goBack();
     playSound(SoundKey.click);
   }, [history]);
 
-  React.useEffect(() => {
+  /*React.useEffect(() => {
     if (hasReceivedInput) {
       onClick();
     }
-  }, [hasReceivedInput, onClick]);
+  }, [hasReceivedInput, onClick]);*/
 
   if (!isBackButtonVisible) {
     return null;
@@ -36,7 +37,7 @@ export default function BackButton() {
     <FlexBox style={{ pointerEvents: 'all' }}>
       <Tooltip
         title={intl.formatMessage({
-          defaultMessage: 'Back (b)',
+          defaultMessage: 'Back' /* (b)*/,
           description: 'Back button tooltip',
         })}
       >

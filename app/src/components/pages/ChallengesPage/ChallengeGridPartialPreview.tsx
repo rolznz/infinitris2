@@ -112,21 +112,20 @@ export function ChallengeGridPartialPreview({
       }
       for (let r = 0; r < numRows; r++) {
         for (let c = 0; c < numColumns; c++) {
+          const sr =
+            spawnLocationCellPosition.row + r; /* - Math.floor(numRows / 4)*/
+
           const cellType =
-            cellTypes[
-              wrap(
-                spawnLocationCellPosition.row +
-                  r /* - Math.floor(numRows / 4)*/,
-                cellTypes.length
-              )
-            ][
-              wrap(
-                spawnLocationCellPosition.column +
-                  c -
-                  Math.floor(numColumns / 2),
-                cellTypes[0].length
-              )
-            ];
+            sr < cellTypes.length
+              ? cellTypes[wrap(sr, cellTypes.length)][
+                  wrap(
+                    spawnLocationCellPosition.column +
+                      c -
+                      Math.floor(numColumns / 2),
+                    cellTypes[0].length
+                  )
+                ]
+              : ChallengeCellType.Full;
           if (cellType !== ChallengeCellType.Empty) {
             const image = await getChallengeCellImage(cellType);
             if (image) {

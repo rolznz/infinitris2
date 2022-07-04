@@ -125,10 +125,12 @@ export function ChallengeEditorSettingsForm({
     }
   }, [setChallenge, title]);*/
 
+  const { enqueueSnackbar } = useSnackbar();
+
   const importChallenge = React.useCallback(() => {
     const json = window.prompt('Enter challenge JSON');
     if (!json) {
-      alert('Invalid JSON');
+      enqueueSnackbar('Invalid JSON', { variant: 'error' });
       return;
     }
     const parsed = JSON.parse(json);
@@ -136,9 +138,7 @@ export function ChallengeEditorSettingsForm({
     console.log('IMPORTED CHALLENGE:', importedChallenge);
     updateFormKey();
     setChallenge(importedChallenge);
-  }, [setChallenge, updateFormKey]);
-
-  const { enqueueSnackbar } = useSnackbar();
+  }, [setChallenge, updateFormKey, enqueueSnackbar]);
 
   const resetChallenge = React.useCallback(() => {
     if (window.confirm('Are you sure you wish to create a new challenge?')) {
@@ -185,10 +185,11 @@ export function ChallengeEditorSettingsForm({
 
           setChallenge(undefined);
           reset();
+          enqueueSnackbar('Challenge Published Successfully!');
           history.push(Routes.challenges);
         } catch (error) {
           console.error('Failed to publish challenge', error);
-          alert('Failed to publish challenge.');
+          enqueueSnackbar('Failed to publish challenge', { variant: 'error' });
         }
       }
 

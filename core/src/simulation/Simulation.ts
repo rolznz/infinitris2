@@ -501,6 +501,7 @@ export default class Simulation implements ISimulation {
    */
   onLinesCleared(rows: number[]): void {
     this._eventListeners.forEach((listener) => listener.onLinesCleared?.(rows));
+    this._checkUnplayableGrid();
   }
   /**
    * @inheritdoc

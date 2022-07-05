@@ -108,6 +108,10 @@ export function ChallengeEditorSettingsForm({
         ...challenge,
         ...watchedValues,
       });
+      console.log('Set challenge: ', {
+        ...challenge,
+        ...watchedValues,
+      });
     }
   }, [valuesSame, setChallenge, watchedValues, challenge]);
 
@@ -271,6 +275,24 @@ export function ChallengeEditorSettingsForm({
                 </FormControl>
               )}
             />
+            <Controller
+              name="simulationSettings.replaceUnplayableBlocks"
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      {...field}
+                      defaultChecked={
+                        challenge.simulationSettings?.replaceUnplayableBlocks
+                      }
+                    />
+                  }
+                  label={'Avoid Unplacable Blocks'}
+                />
+              )}
+            />
+
             {user.readOnly?.isAdmin && (
               <FlexBox my={2} border="1px solid red" p={2}>
                 <Typography>Admin Settings</Typography>

@@ -42,6 +42,10 @@ export default class Grid implements IGrid {
     return this._cells.length;
   }
 
+  get nextLinesToClear(): number[] {
+    return this._nextLinesToClear;
+  }
+
   get isEmpty(): boolean {
     return !this.reducedCells.some((cell) => !cell.isEmpty);
   }

@@ -93,7 +93,9 @@ export default class Block implements IBlock {
       this._updateCells();
     } else {
       this._isAlive = false;
-      this._eventListener?.onBlockCreateFailed(this);
+      // this is problematic because player attempts to create block for each layout
+      // onBlockCreateFailed is now handled at the player level
+      //this._eventListener?.onBlockCreateFailed(this);
     }
   }
 
@@ -521,11 +523,16 @@ export default class Block implements IBlock {
     for (let dr = 0; dr < 4; dr++) {
       for (let dx = 0; dx < this._simulation.grid.numColumns; dx++) {
         for (let dy = -this._row; dy < this._simulation.grid.numRows; dy++) {
-          if (
-            !this.canMove(dx, dy, dr, canMoveOptions) &&
-            !canMoveOptions.isMistake
-          ) {
-            return true;
+          if (!this.canMove(dx, dy, dr, canMoveOptions)) {
+            if (
+              !canMoveOptions.isMistake &&
+              canMoveOptions.cells &&
+              !canMoveOptions.cells.some((cell) => cell.row < 4) // leave top 4 rows free
+            ) {
+              return true;
+            } else {
+              break; // don't try below
+            }
           }
         }
       }

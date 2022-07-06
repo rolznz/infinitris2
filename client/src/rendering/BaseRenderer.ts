@@ -257,8 +257,9 @@ export abstract class BaseRenderer implements IRenderer {
     // figure out the floor beneath the block and clamp the camera
     // otherwise the camera will scroll down unnecessarily
     // TODO: this is not very smooth, it should probably be based on an average of cells around the block
+    // FIXME: visibility is really bad for some challenges. Disabled for now
     let unpassableCellHeight = this._gridHeight;
-    if (this._simulation?.followingPlayer?.block) {
+    /*if (this._simulation?.followingPlayer?.block) {
       let floorHeightBeneathBlock = this._simulation.grid.numRows - 1;
       for (let cell of this._simulation.followingPlayer.block.cells) {
         for (let row = cell.row; row < this._simulation.grid.numRows; row++) {
@@ -277,7 +278,7 @@ export abstract class BaseRenderer implements IRenderer {
           ),
           this._simulation.grid.numRows
         ) * this._cellSize;
-    }
+    }*/
 
     // clamp the camera to fit within the grid
     this._camera.clampY(

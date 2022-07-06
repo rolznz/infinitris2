@@ -8,7 +8,9 @@ import create from 'zustand';
 
 type ChallengeEditorStore = {
   challenge?: IChallenge;
+  challengeId?: string;
   setChallenge(challenge: IChallenge | undefined): void;
+  setChallengeId(challengeId: string | undefined): void;
   isEditing?: boolean;
   setIsEditing(isEditing: boolean): void;
   editor?: IChallengeEditor;
@@ -26,11 +28,18 @@ function loadExistingChallenge() {
     : undefined;
   return existingChallenge;
 }
+function loadExistingChallengeId() {
+  const existingChallengeId = localStorage.getItem(
+    localStorageKeys.challengeId
+  );
+  return existingChallengeId || undefined;
+}
 
 const useChallengeEditorStore = create<ChallengeEditorStore>((set) => ({
   isEditing: false,
   challengeCellType: ChallengeCellType.Full,
   challenge: loadExistingChallenge(),
+  challengeId: loadExistingChallengeId(),
   setChallenge: (challenge: IChallenge | undefined) =>
     set((_) => {
       if (challenge) {
@@ -42,6 +51,15 @@ const useChallengeEditorStore = create<ChallengeEditorStore>((set) => ({
         localStorage.removeItem(localStorageKeys.challenge);
       }
       return { challenge };
+    }),
+  setChallengeId: (challengeId: string | undefined) =>
+    set((_) => {
+      if (challengeId) {
+        localStorage.setItem(localStorageKeys.challengeId, challengeId);
+      } else {
+        localStorage.removeItem(localStorageKeys.challengeId);
+      }
+      return { challengeId };
     }),
   setIsEditing: (isEditing: boolean) => set((_) => ({ isEditing })),
   setEditor: (editor: IChallengeEditor | undefined) => set((_) => ({ editor })),

@@ -9,10 +9,11 @@ import useAuthStore from '../../../state/AuthStore';
 
 import FlexBox from '../../ui/FlexBox';
 import LoadingSpinner from '../../ui/LoadingSpinner';
-import ChallengeGridPreview from '../ChallengesPage/ChallengeGridPreview';
 import { DocumentSnapshot, where } from 'firebase/firestore';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import { createNewChallenge } from '@/components/pages/CreateChallengePage/createNewChallenge';
+import { ChallengeGridPartialPreview } from '@/components/pages/ChallengesPage/ChallengeGridPartialPreview';
+import { useUser } from '@/components/hooks/useUser';
 
 interface ChallengesRowProps {
   challenges: DocumentSnapshot<IChallenge>[] | null | undefined;
@@ -20,18 +21,24 @@ interface ChallengesRowProps {
 
 function ChallengesRow({ challenges }: ChallengesRowProps) {
   const history = useHistory();
+  const user = useUser();
   if (!challenges) {
     return null;
   }
-
+  const isAdmin = user.readOnly?.isAdmin;
   return (
     <FlexBox flex={1} padding={4} flexWrap="wrap" flexDirection="row">
       {challenges.map((challenge) => (
         <FlexBox key={challenge.id} margin={4}>
           <Card
             onClick={() => {
+              let editExisting =
+                isAdmin && window.confirm('Edit existing challenge?');
+              useChallengeEditorStore
+                .getState()
+                .setChallengeId(editExisting ? challenge.id : undefined);
               useChallengeEditorStore.getState().setChallenge({
-                ...createNewChallenge(),
+                ...(editExisting ? ({} as IChallenge) : createNewChallenge()),
                 grid: challenge.data()!.grid,
                 title: challenge.data()!.title,
                 worldType: challenge.data()!.worldType,
@@ -43,10 +50,9 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
             }}
           >
             <Typography>{challenge.data()!.title}</Typography>
-            <ChallengeGridPreview
+            <ChallengeGridPartialPreview
               grid={challenge.data()!.grid}
-              width={100}
-              height={100}
+              allRows
             />
           </Card>
         </FlexBox>

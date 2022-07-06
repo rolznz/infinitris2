@@ -9,6 +9,7 @@ import { getCellFillColor } from '../../../utils/getCellFillColor';
 
 interface ChallengePreviewProps {
   grid: IChallenge['grid'];
+  allRows?: boolean;
 }
 
 const imageCache = {} as Record<ChallengeCellType, HTMLImageElement>;
@@ -77,13 +78,20 @@ async function loadImage(
 
 export function ChallengeGridPartialPreview({
   grid: gridObject,
+  allRows,
 }: ChallengePreviewProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const grid =
     (typeof gridObject === 'string' ? (gridObject as string) : undefined) ||
     '0';
-  const numRows = 16; //cellTypes.length;
-  const numColumns = 12; //cellTypes[0].length;
+  let cellTypes: ChallengeCellType[][];
+  try {
+    cellTypes = parseGrid(grid);
+  } catch (error) {
+    cellTypes = [[ChallengeCellType.Full]];
+  }
+  const numRows = allRows ? cellTypes.length : 16; //cellTypes.length;
+  const numColumns = Math.round(numRows * (3 / 4)); //cellTypes[0].length;
   const width = 200;
   const height = width * (numRows / numColumns);
 
@@ -91,12 +99,7 @@ export function ChallengeGridPartialPreview({
     (async () => {
       const context = canvasRef.current!.getContext('2d')!;
       context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-      let cellTypes: ChallengeCellType[][];
-      try {
-        cellTypes = parseGrid(grid);
-      } catch (error) {
-        return;
-      }
+
       const cellWidth = context.canvas.width / numColumns;
       const cellHeight = context.canvas.height / numRows;
       const spawnLocationCellPosition = { row: 0, column: 0 };
@@ -149,7 +152,7 @@ export function ChallengeGridPartialPreview({
         }
       }
     })();
-  }, [grid, width, height]);
+  }, [grid, width, height, numColumns, numRows, cellTypes]);
 
   return <canvas ref={canvasRef} width={width + 'px'} height={height + 'px'} />;
 }

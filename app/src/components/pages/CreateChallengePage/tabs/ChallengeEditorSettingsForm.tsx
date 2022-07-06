@@ -78,7 +78,11 @@ export function ChallengeEditorSettingsForm({
   challenge,
   updateFormKey,
 }: ChallengeEditorSettingsFormProps) {
-  const setChallenge = useChallengeEditorStore((store) => store.setChallenge);
+  const [setChallenge, setChallengeId, existingChallengeId] =
+    useChallengeEditorStore(
+      (store) => [store.setChallenge, store.setChallengeId, store.challengeId],
+      shallow
+    );
   const [isLoading, setIsLoading] = React.useState(false);
   const userId = useAuthStore((store) => store.user?.uid);
   const user = useUser();
@@ -151,8 +155,9 @@ export function ChallengeEditorSettingsForm({
     if (window.confirm('Are you sure you wish to create a new challenge?')) {
       reset();
       setChallenge(undefined);
+      setChallengeId(undefined);
     }
-  }, [reset, setChallenge]);
+  }, [reset, setChallenge, setChallengeId]);
 
   const onSubmit = React.useCallback(
     async (data: SettingsFormData) => {
@@ -180,17 +185,19 @@ export function ChallengeEditorSettingsForm({
           userId,
           isPublished: true,
         };
-        console.log('Challenge to publish', challengeToPublish);
 
-        const challengeId = uuidv4();
+        const challengeId = existingChallengeId || uuidv4();
+        console.log('Challenge to publish', challengeToPublish, challengeId);
 
         try {
           await setDoc(
             doc(getFirestore(), getChallengePath(challengeId)),
-            removeUndefinedValues(challengeToPublish)
+            removeUndefinedValues(challengeToPublish),
+            { merge: true }
           );
 
           setChallenge(undefined);
+          setChallengeId(undefined);
           reset();
           enqueueSnackbar('Challenge Published Successfully!');
           history.push(Routes.challenges);
@@ -205,17 +212,24 @@ export function ChallengeEditorSettingsForm({
     [
       userId,
       challenge,
+      skipCompleteChallenge,
       enqueueSnackbar,
       intl,
+      existingChallengeId,
       setChallenge,
+      setChallengeId,
       reset,
       history,
-      skipCompleteChallenge,
     ]
   );
 
   return (
     <FlexBox>
+      {existingChallengeId && (
+        <Typography color="red">
+          WARNING: You are updating an existing challenge
+        </Typography>
+      )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <FlexBox>
           <FlexBox justifyContent="flex-start" alignItems="flex-start" mb={2}>

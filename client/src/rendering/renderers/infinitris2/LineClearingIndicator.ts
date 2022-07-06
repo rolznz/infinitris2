@@ -29,6 +29,11 @@ export class LineClearingIndicator {
     }
   }
 
+  create() {
+    // reset so lines will be re-added on next render
+    this._lines.length = 0;
+  }
+
   render(
     numRows: number,
     cellSize: number,

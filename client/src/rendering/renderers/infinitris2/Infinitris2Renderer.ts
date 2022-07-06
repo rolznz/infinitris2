@@ -479,6 +479,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._app.stage.addChild(this._world);
 
     this._towerIndicator.create();
+    this._lineClearingIndicator.create();
 
     // TODO: support chat as well
     if (this._useFallbackUI) {

@@ -687,7 +687,9 @@ export default class Simulation implements ISimulation {
     }
     const blocksWithPlacements = playersWithBlocks
       .map((player) => player.block!)
-      .filter((block) => block.hasPlacement());
+      .filter(
+        (block) => block.spawnedFromSpawnLocationCell || block.hasPlacement()
+      );
     if (playersWithBlocks.length && !blocksWithPlacements.length) {
       console.log(
         'No placements: ' +

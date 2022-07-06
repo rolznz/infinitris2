@@ -381,7 +381,7 @@ export default class ChallengeClient
     const simulation = (this._simulation = new Simulation(grid, {
       preventTowers: !isClassicChallenge,
       saveSpawnPositionOnDeath: !isClassicChallenge || !spawnLocationCell,
-      replaceUnplayableBlocks: !isClassicChallenge,
+      // replaceUnplayableBlocks: !isClassicChallenge, // this is always on now (better gameplay experience and confusing setting for users)
       ...this._challenge.simulationSettings,
     }));
     simulation.addEventListener(this, this._renderer);

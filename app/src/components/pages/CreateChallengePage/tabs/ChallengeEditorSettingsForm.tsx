@@ -82,6 +82,7 @@ export function ChallengeEditorSettingsForm({
   const [isLoading, setIsLoading] = React.useState(false);
   const userId = useAuthStore((store) => store.user?.uid);
   const user = useUser();
+  const isAdmin = user.readOnly?.isAdmin;
   const intl = useIntl();
   const history = useHistory();
   const {
@@ -97,6 +98,8 @@ export function ChallengeEditorSettingsForm({
     mode: 'onChange',
   });
 
+  const [skipCompleteChallenge, setSkipCompleteChallenge] =
+    React.useState(false);
   const watchedValues = watch();
   const valuesSame = shallow(challenge, {
     ...challenge,
@@ -159,7 +162,7 @@ export function ChallengeEditorSettingsForm({
       }
       setIsLoading(true);
 
-      if (getLastCompletedGrid() !== challenge.grid) {
+      if (getLastCompletedGrid() !== challenge.grid && !skipCompleteChallenge) {
         enqueueSnackbar(
           'Please test and complete the challenge first to ensure it is completable',
           { variant: 'error' }
@@ -199,7 +202,16 @@ export function ChallengeEditorSettingsForm({
 
       setIsLoading(false);
     },
-    [userId, challenge, enqueueSnackbar, intl, setChallenge, reset, history]
+    [
+      userId,
+      challenge,
+      enqueueSnackbar,
+      intl,
+      setChallenge,
+      reset,
+      history,
+      skipCompleteChallenge,
+    ]
   );
 
   return (
@@ -275,27 +287,21 @@ export function ChallengeEditorSettingsForm({
                 </FormControl>
               )}
             />
-            <Controller
-              name="simulationSettings.replaceUnplayableBlocks"
-              control={control}
-              render={({ field }) => (
+
+            {isAdmin && (
+              <FlexBox my={2} border="1px solid red" p={2}>
+                <Typography>Admin Settings</Typography>
                 <FormControlLabel
                   control={
                     <Checkbox
-                      {...field}
-                      defaultChecked={
-                        challenge.simulationSettings?.replaceUnplayableBlocks
+                      checked={skipCompleteChallenge}
+                      onChange={(event) =>
+                        setSkipCompleteChallenge(event.target.checked)
                       }
                     />
                   }
-                  label={'Avoid Unplacable Blocks'}
+                  label={'skip complete challenge check'}
                 />
-              )}
-            />
-
-            {user.readOnly?.isAdmin && (
-              <FlexBox my={2} border="1px solid red" p={2}>
-                <Typography>Admin Settings</Typography>
                 <Controller
                   name="isOfficial"
                   control={control}

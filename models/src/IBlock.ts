@@ -36,6 +36,7 @@ export default interface IBlock {
   get topRow(): number;
   get id(): number;
   get isAlive(): boolean;
+  get spawnedFromSpawnLocationCell(): boolean;
   hasPlacement(): boolean;
   update(): void;
   canMove(

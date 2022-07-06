@@ -36,6 +36,7 @@ export default class Block implements IBlock {
   private _simulation: ISimulation;
   private _layoutId: number;
   private _id: number;
+  private _spawnedFromSpawnLocationCell: boolean;
 
   constructor(
     id: number,
@@ -47,7 +48,8 @@ export default class Block implements IBlock {
     rotation: number,
     simulation: ISimulation,
     eventListener?: IBlockEventListener,
-    force = false
+    force = false,
+    hasSpawnLocationCell = false
   ) {
     this._id = id;
     this._player = player;
@@ -67,6 +69,7 @@ export default class Block implements IBlock {
     this._isAlive = true;
     this._simulation = simulation;
     this._gridCells = simulation.grid.cells;
+    this._spawnedFromSpawnLocationCell = hasSpawnLocationCell;
     this._resetTimers();
 
     let otherBlockInArea = false;
@@ -86,6 +89,7 @@ export default class Block implements IBlock {
     let spawnPositionFree = force || this.canMove(0, 0, 0);
     let hasPlacement =
       force ||
+      hasSpawnLocationCell ||
       this._simulation.settings.replaceUnplayableBlocks === false ||
       this.hasPlacement();
 
@@ -97,6 +101,10 @@ export default class Block implements IBlock {
       // onBlockCreateFailed is now handled at the player level
       //this._eventListener?.onBlockCreateFailed(this);
     }
+  }
+
+  get spawnedFromSpawnLocationCell(): boolean {
+    return this._spawnedFromSpawnLocationCell;
   }
 
   get id(): number {

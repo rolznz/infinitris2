@@ -251,6 +251,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         lastAttemptedBlock = this._tryCreateBlock(layout);
         layoutsRemaining = layoutsRemaining.filter((v) => v !== layout);
         if (this._block) {
+          console.log('Spawn succeeded: ' + layoutsRemaining.length);
           break;
         }
       }
@@ -283,7 +284,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       row,
       column,
       0,
-      Object.values(this._simulation.layoutSet.layouts).indexOf(layout)
+      Object.values(this._simulation.layoutSet.layouts).indexOf(layout),
+      false,
+      !!this._spawnLocationCell
     );
   }
 
@@ -293,7 +296,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     column: number,
     rotation: number,
     layoutIndex: number,
-    force: boolean = false
+    force = false,
+    hasSpawnLocationCell = false
   ): IBlock {
     const layouts = Object.values(this._simulation.layoutSet.layouts);
     const newBlock = new Block(
@@ -306,7 +310,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       rotation,
       this._simulation,
       this,
-      force
+      force,
+      hasSpawnLocationCell
     );
     /*console.log(
       'Block created for player ' + this._id,

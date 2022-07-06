@@ -123,14 +123,20 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       return;
     }
     setContinued(true);
-    if (isTest) {
+    if (isTest || !challenge.isOfficial) {
       history.goBack();
     } else if (incompleteChallenges.length) {
       history.push(`${Routes.challenges}/${incompleteChallenges[0].id}`);
     } else {
       history.push(Routes.home);
     }
-  }, [hasContinued, isTest, incompleteChallenges, history]);
+  }, [
+    hasContinued,
+    isTest,
+    challenge.isOfficial,
+    incompleteChallenges,
+    history,
+  ]);
 
   React.useEffect(() => {
     if (isTest && !isEditingChallenge) {

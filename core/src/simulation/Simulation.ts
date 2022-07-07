@@ -678,29 +678,34 @@ export default class Simulation implements ISimulation {
     ) {
       return;
     }
-    const playersWithBlocks = this.nonSpectatorPlayers.filter(
+    const playersWithReplacableBlocks = this.nonSpectatorPlayers.filter(
       (player) =>
-        player.block && !player.block.isDropping && player.block.isAlive
+        player.block &&
+        !player.block.isDropping &&
+        player.block.isAlive &&
+        player.block.hadPlacementAtSpawn
     );
-    if (playersWithBlocks.length !== this.nonSpectatorPlayers.length) {
+    if (
+      playersWithReplacableBlocks.length !== this.nonSpectatorPlayers.length
+    ) {
       return;
     }
-    const blocksWithPlacements = playersWithBlocks
+    const blocksWithPlacements = playersWithReplacableBlocks
       .map((player) => player.block!)
       .filter(
         (block) => block.spawnedFromSpawnLocationCell || block.hasPlacement()
       );
-    if (playersWithBlocks.length && !blocksWithPlacements.length) {
+    if (playersWithReplacableBlocks.length && !blocksWithPlacements.length) {
       console.log(
         'No placements: ' +
-          playersWithBlocks
+          playersWithReplacableBlocks
             .map(
               (p) =>
                 Object.entries(this.layoutSet.layouts)[p.block!.layoutId][0]
             )
             .join(', ')
       );
-      playersWithBlocks.forEach((player) => {
+      playersWithReplacableBlocks.forEach((player) => {
         player.saveSpawnPosition(player.block!);
         player.removeBlock();
       });

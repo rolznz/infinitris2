@@ -15,6 +15,7 @@ import tSpins1 from './tSpins';
 import waferTest from './waferTest';
 import wrapTest from './wrapTest';
 import longWayDown from '@models/exampleChallenges/longWayDown';
+import timeTrial2 from '@models/exampleChallenges/timeTrial2';
 
 export const exampleChallenges: { [key: string]: IChallenge } = {
   'keys-and-locks-1': keysAndLocks1,
@@ -33,4 +34,5 @@ export const exampleChallenges: { [key: string]: IChallenge } = {
   'reverse-locks': reverseLocks,
   's-block': sBlock,
   'long-way-down': longWayDown,
+  'time-trail-2': timeTrial2,
 };

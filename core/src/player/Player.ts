@@ -237,22 +237,40 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         ? this._simulation.safeLayouts
         : this._simulation.allLayouts;
 
-      // TODO: consider "bag" of layouts rather than pure random
-      let layoutsRemaining = validLayouts;
       let lastAttemptedBlock: IBlock | undefined;
-      while (layoutsRemaining.length > 0) {
-        const layout =
-          //this._nextLayout ||
-          layoutsRemaining[Math.floor(Math.random() * layoutsRemaining.length)];
 
-        console.log(
-          'Trying spawn - layouts remaining: ' + layoutsRemaining.length
-        );
-        lastAttemptedBlock = this._tryCreateBlock(layout);
-        layoutsRemaining = layoutsRemaining.filter((v) => v !== layout);
+      // first try to get a block that can actually be placed
+      // if no lines are being cleared and we can't find any blocks that might be placable, fallback to a random block
+      const checkPlacementAttempts = this._simulation.grid.nextLinesToClear
+        .length
+        ? [true]
+        : [true, false];
+      for (const checkPlacement of checkPlacementAttempts) {
         if (this._block) {
-          console.log('Spawn succeeded: ' + layoutsRemaining.length);
           break;
+        }
+        // TODO: consider "bag" of layouts rather than pure random
+        let layoutsRemaining = validLayouts;
+
+        while (layoutsRemaining.length > 0) {
+          const layout =
+            //this._nextLayout ||
+            layoutsRemaining[
+              Math.floor(Math.random() * layoutsRemaining.length)
+            ];
+
+          console.log(
+            'Trying spawn - layouts remaining: ' +
+              layoutsRemaining.length +
+              ' check placement: ' +
+              checkPlacement
+          );
+          lastAttemptedBlock = this._tryCreateBlock(layout, checkPlacement);
+          if (this._block) {
+            console.log('Spawn succeeded: ' + layoutsRemaining.length);
+            break;
+          }
+          layoutsRemaining = layoutsRemaining.filter((v) => v !== layout);
         }
       }
       if (
@@ -269,7 +287,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       this._block?.update();
     }
   }
-  private _tryCreateBlock(layout: Layout) {
+  private _tryCreateBlock(layout: Layout, checkPlacement: boolean) {
     const row = this._spawnLocationCell?.row || 0;
     const column = this._spawnLocationCell
       ? this._spawnLocationCell.column
@@ -286,7 +304,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       0,
       Object.values(this._simulation.layoutSet.layouts).indexOf(layout),
       false,
-      !!this._spawnLocationCell
+      !!this._spawnLocationCell,
+      checkPlacement
     );
   }
 
@@ -297,7 +316,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     rotation: number,
     layoutIndex: number,
     force = false,
-    hasSpawnLocationCell = false
+    hasSpawnLocationCell = false,
+    checkPlacement = false
   ): IBlock {
     const layouts = Object.values(this._simulation.layoutSet.layouts);
     const newBlock = new Block(
@@ -311,7 +331,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       this._simulation,
       this,
       force,
-      hasSpawnLocationCell
+      hasSpawnLocationCell,
+      checkPlacement
     );
     /*console.log(
       'Block created for player ' + this._id,

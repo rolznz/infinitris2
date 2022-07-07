@@ -37,6 +37,7 @@ export default class Block implements IBlock {
   private _layoutId: number;
   private _id: number;
   private _spawnedFromSpawnLocationCell: boolean;
+  private _hadPlacementAtSpawn: boolean;
 
   constructor(
     id: number,
@@ -49,7 +50,8 @@ export default class Block implements IBlock {
     simulation: ISimulation,
     eventListener?: IBlockEventListener,
     force = false,
-    hasSpawnLocationCell = false
+    hasSpawnLocationCell = false,
+    checkPlacement = true
   ) {
     this._id = id;
     this._player = player;
@@ -91,7 +93,14 @@ export default class Block implements IBlock {
       force ||
       hasSpawnLocationCell ||
       this._simulation.settings.replaceUnplayableBlocks === false ||
-      this.hasPlacement();
+      !checkPlacement;
+
+    if (checkPlacement && !hasPlacement) {
+      hasPlacement = this.hasPlacement(checkPlacement);
+      this._hadPlacementAtSpawn = hasPlacement;
+    } else {
+      this._hadPlacementAtSpawn = false;
+    }
 
     if (force || (!otherBlockInArea && spawnPositionFree && hasPlacement)) {
       this._updateCells();
@@ -101,6 +110,10 @@ export default class Block implements IBlock {
       // onBlockCreateFailed is now handled at the player level
       //this._eventListener?.onBlockCreateFailed(this);
     }
+  }
+
+  get hadPlacementAtSpawn(): boolean {
+    return this._hadPlacementAtSpawn;
   }
 
   get spawnedFromSpawnLocationCell(): boolean {
@@ -523,7 +536,10 @@ export default class Block implements IBlock {
     }
   }
 
-  hasPlacement() {
+  /**
+   * This function is not perfect - it does not do any pathfinding nor understand different cell types
+   */
+  hasPlacement(avoidTopRows = true) {
     const canMoveOptions: BlockCanMoveOptions = {
       allowMistakes: false,
     };
@@ -535,7 +551,8 @@ export default class Block implements IBlock {
             if (
               !canMoveOptions.isMistake &&
               canMoveOptions.cells &&
-              !canMoveOptions.cells.some((cell) => cell.row < 4) // leave top 4 rows free
+              (!avoidTopRows ||
+                !canMoveOptions.cells.some((cell) => cell.row < 4)) // leave top 4 rows free
             ) {
               return true;
             } else {

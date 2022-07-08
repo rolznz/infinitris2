@@ -56,9 +56,10 @@ export default class Room implements Partial<ISimulationEventListener> {
     this._charactersPool = characters;
     this._roomInfo = roomInfo;
     this._sendMessage = sendMessage;
-    this._simulation = new Simulation(new Grid(50, 16), {
-      gameModeType: roomInfo.gameModeType,
-    });
+    this._simulation = new Simulation(
+      new Grid(50, 16),
+      roomInfo.simulationSettings || { gameModeType: roomInfo.gameModeType }
+    );
     this._simulation.addEventListener(this);
     this._simulation.init();
     //this._simulation.startInterval();

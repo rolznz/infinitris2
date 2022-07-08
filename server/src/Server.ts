@@ -203,7 +203,8 @@ export default class Server implements IServerSocketEventListener {
             created: true,
             maxPlayers: 12,
             name: room.info.name,
-            gameModeType: room.info.gameModeType,
+            gameModeType:
+              room.simulation.settings.gameModeType || room.info.gameModeType, // TODO: remove
             numPlayers: room.simulation.players.length,
             numHumans: room.simulation.humanPlayers.length,
             numBots: room.simulation.players.filter((player) => player.isBot)
@@ -215,6 +216,7 @@ export default class Server implements IServerSocketEventListener {
             serverId,
             worldType: room.info.worldType,
             worldVariation: room.info.worldVariation,
+            simulationSettings: room.info.simulationSettings,
           };
         }),
       serverKey,

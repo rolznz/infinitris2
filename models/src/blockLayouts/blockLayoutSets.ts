@@ -1,6 +1,7 @@
 import longsOnly from '@models/blockLayouts/longsOnly';
 import lsOnly from '@models/blockLayouts/lsOnly';
 import osOnly from '@models/blockLayouts/osOnly';
+import pentominoes from '@models/blockLayouts/Pentominoes';
 import sShapesOnly from '@models/blockLayouts/sShapesOnly';
 import tetrominoes from '@models/blockLayouts/Tetrominoes';
 import trominoes from '@models/blockLayouts/Trominoes';
@@ -15,4 +16,5 @@ export const blockLayoutSets: LayoutSet[] = [
   sShapesOnly,
   longsOnly,
   trominoes,
+  pentominoes,
 ];

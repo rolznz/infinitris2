@@ -34,6 +34,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _status: PlayerStatus;
   private _lastStatusChangeTime: number;
   private _spawnLocationCell: ICell | undefined;
+  private _layoutBag: Layout[];
 
   constructor(
     simulation: ISimulation,
@@ -67,6 +68,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._isChatting = false;
     this._patternFilename = patternFilename;
     this._characterId = characterId;
+    this._layoutBag = [];
     this.addEventListener(simulation);
     this._calculateSpawnDelay();
     this._eventListeners.forEach((listener) => listener.onPlayerCreated(this));
@@ -240,17 +242,16 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       let lastAttemptedBlock: IBlock | undefined;
 
       // first try to get a block that can actually be placed
-      // if no lines are being cleared and we can't find any blocks that might be placable, fallback to a random block
+      // iteration 1: check blocks from bag which are placable
+      // iteration 2: reset bag, check blocks which are placable
+      // iteration 3: if no lines are being cleared and we can't find any blocks that might be placable, fallback to a random block
       const checkPlacementAttempts = this._simulation.grid.nextLinesToClear
         .length
-        ? [true]
-        : [true, false];
+        ? [true, true]
+        : [true, true, false];
       for (const checkPlacement of checkPlacementAttempts) {
-        if (this._block) {
-          break;
-        }
         // TODO: consider "bag" of layouts rather than pure random
-        let layoutsRemaining = validLayouts;
+        let layoutsRemaining = this._layoutBag;
 
         while (layoutsRemaining.length > 0) {
           const layout =
@@ -267,18 +268,31 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
           );
           lastAttemptedBlock = this._tryCreateBlock(layout, checkPlacement);
           if (this._block) {
-            console.log('Spawn succeeded: ' + layoutsRemaining.length);
+            console.log('Spawn succeeded. Bag size: ' + this._layoutBag.length);
             break;
           }
           layoutsRemaining = layoutsRemaining.filter((v) => v !== layout);
         }
+        if (this._block) {
+          break;
+        }
+        // reset to check all layouts first
+        console.log('Reset bag');
+        this._layoutBag = validLayouts.slice();
       }
       if (
         !this._block &&
         lastAttemptedBlock &&
-        !this._simulation.grid.nextLinesToClear.length
+        !this._simulation.grid.nextLinesToClear.length &&
+        this._layoutBag.length === validLayouts.length
       ) {
         this.onBlockCreateFailed(lastAttemptedBlock);
+      }
+
+      if (this._block) {
+        this._layoutBag = this._layoutBag.filter(
+          (layout) => layout !== this._block!.layout
+        );
       }
 
       //this._nextLayout = undefined;

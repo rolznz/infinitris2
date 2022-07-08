@@ -17,6 +17,7 @@ import {
   Switch,
 } from '@mui/material';
 import {
+  blockLayoutSets,
   GameModeTypeValues,
   RoundLengthValues,
   WorldTypeValues,
@@ -213,6 +214,22 @@ export function SinglePlayerOptionsPage() {
                 )}
               />
             )}
+            <Controller
+              name="simulationSettings.layoutSetId"
+              control={control}
+              render={({ field }) => (
+                <FormControl variant="standard" fullWidth>
+                  <InputLabel>Layout Set</InputLabel>
+                  <Select {...field}>
+                    {blockLayoutSets.map((set) => (
+                      <MenuItem key={set.id} value={set.id}>
+                        {set.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            />
           </FlexBox>
           <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
             <Controller

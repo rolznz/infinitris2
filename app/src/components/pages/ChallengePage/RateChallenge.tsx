@@ -17,9 +17,9 @@ import {
   getFirestore,
   setDoc,
 } from 'firebase/firestore';
-import { openLoginDialog } from '@/state/DialogStore';
 import { useSnackbar } from 'notistack';
 import { EnqueueSnackbarFunction } from '@/components/ui/Snackbar';
+import { showLoginPrompt } from '@/utils/showLoginPrompt';
 
 const useChallengeOptions: UseDocumentOptions = {
   listen: true,
@@ -108,23 +108,10 @@ export default function RateChallenge({
         setChosenRating(undefined);
       }
     } else {
-      openLoginDialog(false);
-
-      /**
-       * TODO: after login auto-add rating - need a react effect
-       * addRating(
-            guestRating,
-            newUserId,
-            getRatingPath('challenges', challengeId, newUserId),
-            challengeId,
-            intl,
-            userRating
-          );
-       */
+      showLoginPrompt(enqueueSnackbar, intl);
     }
   }
 
-  // TODO: use openLoginDialog
   return (
     <FlexBox my={2}>
       {challenge && challenge.data()!.userId !== userId && (

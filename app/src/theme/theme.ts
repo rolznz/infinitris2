@@ -21,6 +21,8 @@ declare module '@mui/material/styles/createPalette' {
   }
 }
 
+export const keepUnderlineClassName = 'keep-underline';
+
 // TODO: move these into objects
 export const borderColorDark = 'rgba(249, 248, 247, 0.5)';
 export const borderColor = 'rgba(249, 248, 247, 0.3)';
@@ -36,6 +38,8 @@ export const colors = {
   green: '#44ff44',
   blue: '#4444ff',
   lightBlue: '#52C1FF',
+  premium: '#2196f3',
+  guest: '#AAAAAA',
 };
 
 export const boxShadows = {

@@ -19,7 +19,7 @@ import { ReactComponent as ScoreboardIcon } from '@/icons/scoreboard.svg';
 import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
 import { ReactComponent as AboutIcon } from '@/icons/about.svg';
 import { ReactComponent as LogoutIcon } from '@/icons/logout.svg';
-import { ReactComponent as LoginIcon } from '@/icons/login.svg';
+import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { FormattedMessage } from 'react-intl';
 import Routes from '@/models/Routes';
@@ -29,9 +29,9 @@ import FlexBox from '../FlexBox';
 import logoImage from './assets/logo.png';
 import useAuthStore from '@/state/AuthStore';
 import { donationTarget, useDonations } from '@/components/hooks/useDonations';
-import { colors, zIndexes } from '@/theme/theme';
-import { openLoginDialog } from '@/state/DialogStore';
+import { colors, dropShadows, zIndexes } from '@/theme/theme';
 import { signOut } from '@/state/updateUser';
+import { appName } from '@/utils/constants';
 
 type HamburgerMenuProps = {
   isOpen: boolean;
@@ -129,19 +129,21 @@ export default function HamburgerMenu({ isOpen, close }: HamburgerMenuProps) {
               icon={<LogoutIcon />}
               text={
                 <FormattedMessage
-                  defaultMessage="Logout"
+                  defaultMessage="Log Out"
                   description="Hamburger menu - Logout item"
                 />
               }
             />
           ) : (
             <HamburgerListItem
-              onClick={openLoginDialog}
-              icon={<LoginIcon />}
+              to={Routes.premium}
+              icon={<ImpactIcon filter={dropShadows.small} />}
+              premium
               text={
                 <FormattedMessage
-                  defaultMessage="Login"
-                  description="Hamburger menu - Login item"
+                  defaultMessage="{appName} Premium"
+                  description="Hamburger menu - Infinitris Premium item"
+                  values={{ appName }}
                 />
               }
             />

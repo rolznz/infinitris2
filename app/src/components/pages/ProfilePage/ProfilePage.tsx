@@ -1,12 +1,11 @@
 import React from 'react';
-import { Button, Link, SvgIcon, Typography } from '@mui/material';
+import { Link, SvgIcon, Typography } from '@mui/material';
 
 import FlexBox from '../../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 import useAuthStore from '../../../state/AuthStore';
 import { Page } from '../../ui/Page';
-import { openLoginDialog } from '@/state/DialogStore';
 import { ProfilePageCharacterCard } from './ProfilePageCharacterCard';
 import { CharacterHabitatBackground } from '@/components/ui/CharacterHabitatBackground';
 import {
@@ -24,11 +23,12 @@ import {
 } from 'infinitris2-models';
 import { UserNicknameForm } from '@/components/pages/ProfilePage/UserNicknameForm';
 import { ReactComponent as PremiumPlayerIcon } from '@/icons/premium_player.svg';
+import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import ChallengeCard from '@/components/pages/ChallengesPage/ChallengeCard';
 import { where } from 'firebase/firestore';
-import { borderColorLight, borderRadiuses } from '@/theme/theme';
+import { borderColorLight, borderRadiuses, colors } from '@/theme/theme';
 
 export default function ProfilePage() {
   const intl = useIntl();
@@ -60,44 +60,36 @@ export default function ProfilePage() {
       whiteTitle
       background={<CharacterHabitatBackground character={character} />}
     >
-      {!userId && (
-        <Button
-          color="primary"
-          variant="contained"
-          onClick={() => openLoginDialog()}
-        >
-          <FormattedMessage
-            defaultMessage="Log in"
-            description="User Profile Page - login button"
-          />
-        </Button>
-      )}
-
       {/* force refresh on login/logout/signup */}
       <UserNicknameForm key={user?.id + '-' + user?.readOnly?.nickname} />
-      {userId && (
-        <FlexBox py={2}>
-          <Link component={RouterLink} underline="none" to={Routes.premium}>
-            <FlexBox flexDirection="row" gap={1}>
-              <Typography sx={{ color: '#2196f3' }}>
+      <FlexBox py={2}>
+        <Link component={RouterLink} underline="none" to={Routes.premium}>
+          <FlexBox flexDirection="row" gap={1}>
+            <Typography sx={{ color: userId ? colors.premium : colors.guest }}>
+              {userId ? (
                 <FormattedMessage
                   defaultMessage="Premium Player"
                   description="Premium Player text"
                 />
-              </Typography>
-              <FlexBox
-                sx={{ backgroundColor: borderColorLight }}
-                borderRadius={borderRadiuses.full}
-                p={0.5}
-              >
-                <SvgIcon fontSize="small">
-                  <PremiumPlayerIcon />
-                </SvgIcon>
-              </FlexBox>
+              ) : (
+                <FormattedMessage
+                  defaultMessage="Free Player"
+                  description="Free Player text"
+                />
+              )}
+            </Typography>
+            <FlexBox
+              sx={{ backgroundColor: borderColorLight }}
+              borderRadius={borderRadiuses.full}
+              p={0.5}
+            >
+              <SvgIcon fontSize="small">
+                {userId ? <PremiumPlayerIcon /> : <ImpactIcon />}
+              </SvgIcon>
             </FlexBox>
-          </Link>
-        </FlexBox>
-      )}
+          </FlexBox>
+        </Link>
+      </FlexBox>
       <ProfilePageCharacterCard />
 
       {userChallenges?.length && (

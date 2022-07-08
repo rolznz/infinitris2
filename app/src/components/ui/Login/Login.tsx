@@ -7,8 +7,8 @@ import { EmailForm } from '@/components/ui/Login/EmailForm';
 import useLoginStore from '@/state/LoginStore';
 import shallow from 'zustand/shallow';
 import { PaymentStep } from '@/components/ui/Login/PaymentStep';
-import { NewUserStep } from '@/components/ui/Login/NewUserStep';
 import React from 'react';
+import { borderRadiuses, zIndexes } from '@/theme/theme';
 
 export interface LoginProps {
   onLogin?(userId: string): void;
@@ -16,13 +16,8 @@ export interface LoginProps {
 }
 
 export default function Login({ onLogin, onClose }: LoginProps) {
-  const [isLoading, invoice, codeSent, isViewingBenefits] = useLoginStore(
-    (store) => [
-      store.isLoading,
-      store.invoice,
-      store.codeSent,
-      store.viewingBenefits,
-    ],
+  const [isLoading, invoice, codeSent] = useLoginStore(
+    (store) => [store.isLoading, store.invoice, store.codeSent],
     shallow
   );
 
@@ -35,44 +30,39 @@ export default function Login({ onLogin, onClose }: LoginProps) {
   );
 
   return (
-    <FlexBox flex={1} pt={8} px={8}>
-      <Typography variant="h5" align="center">
-        {isViewingBenefits ? (
-          <FormattedMessage
-            defaultMessage="Infinitris Premium"
-            description="Login page create new account (Infinitris Premium)"
-          />
-        ) : codeSent ? (
-          <FormattedMessage
-            defaultMessage="Email Verification"
-            description="Login page Email Verification"
-          />
-        ) : invoice ? (
-          <FormattedMessage
-            defaultMessage="Payment"
-            description="Login page pay invoice"
-          />
-        ) : (
-          <FormattedMessage
-            defaultMessage="Login"
-            description="Login page title"
-          />
-        )}
-      </Typography>
+    <FlexBox flex={1} zIndex={zIndexes.above} p={1}>
+      <FlexBox
+        px={4}
+        py={1}
+        bgcolor="background.paper"
+        borderRadius={borderRadiuses.base}
+      >
+        <Typography variant="h5" align="center">
+          {codeSent ? (
+            <FormattedMessage
+              defaultMessage="Email Verification"
+              description="Login page Email Verification"
+            />
+          ) : invoice ? (
+            <FormattedMessage
+              defaultMessage="Payment"
+              description="Login page pay invoice"
+            />
+          ) : null}
+        </Typography>
 
-      {isLoading ? (
-        <FlexBox flex={1} py={4}>
-          <LoadingSpinner />
-        </FlexBox>
-      ) : codeSent ? (
-        <CodeForm onSuccess={handleSuccess} />
-      ) : isViewingBenefits ? (
-        <NewUserStep />
-      ) : invoice ? (
-        <PaymentStep />
-      ) : (
-        <EmailForm />
-      )}
+        {isLoading ? (
+          <FlexBox flex={1} py={4}>
+            <LoadingSpinner />
+          </FlexBox>
+        ) : codeSent ? (
+          <CodeForm onSuccess={handleSuccess} />
+        ) : invoice ? (
+          <PaymentStep />
+        ) : (
+          <EmailForm />
+        )}
+      </FlexBox>
     </FlexBox>
   );
 }

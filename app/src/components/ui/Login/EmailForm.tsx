@@ -11,6 +11,7 @@ import Button from '@mui/material/Button';
 import useLoginStore from '@/state/LoginStore';
 import shallow from 'zustand/shallow';
 import { CreateUserResponse } from 'infinitris2-models';
+import { keepUnderlineClassName } from '@/theme/theme';
 
 const schema = yup
   .object({
@@ -23,26 +24,18 @@ type LoginFormData = {
 };
 
 export function EmailForm() {
-  const [
-    setIsLoading,
-    setCodeSent,
-    setViewingBenefits,
-    setPaymentId,
-    setInvoice,
-    setEmail,
-    email,
-  ] = useLoginStore(
-    (store) => [
-      store.setIsLoading,
-      store.setCodeSent,
-      store.setViewingBenefits,
-      store.setPaymentId,
-      store.setInvoice,
-      store.setEmail,
-      store.email,
-    ],
-    shallow
-  );
+  const [setIsLoading, setCodeSent, setPaymentId, setInvoice, setEmail, email] =
+    useLoginStore(
+      (store) => [
+        store.setIsLoading,
+        store.setCodeSent,
+        store.setPaymentId,
+        store.setInvoice,
+        store.setEmail,
+        store.email,
+      ],
+      shallow
+    );
   const [formData, setFormData] = React.useState<LoginFormData>({
     email,
   });
@@ -79,13 +72,6 @@ export function EmailForm() {
         } else if (loginResponse.status === 429) {
           alert('Please try again in a minute.');
         } else if (loginResponse.status === 404) {
-          setViewingBenefits(true);
-          // TODO: move this to a new page and show benefits of logging in
-          // TODO: affiliate conversion must be moved to after first login
-          /*
-          //const userPath = getUserPath(result.user.uid);
-            
-            */
           const createUserResponse = (await (
             await fetch(`${process.env.REACT_APP_API_URL}/v1/users`, {
               method: 'POST',
@@ -115,14 +101,7 @@ export function EmailForm() {
         setIsLoading(false);
       }
     },
-    [
-      setEmail,
-      setIsLoading,
-      setCodeSent,
-      setViewingBenefits,
-      setPaymentId,
-      setInvoice,
-    ]
+    [setEmail, setIsLoading, setCodeSent, setPaymentId, setInvoice]
   );
 
   return (
@@ -135,7 +114,12 @@ export function EmailForm() {
             render={({ field }) => (
               <FormControl variant="standard" fullWidth>
                 <InputLabel>Email</InputLabel>
-                <Input {...field} autoFocus fullWidth />
+                <Input
+                  {...field}
+                  autoFocus
+                  fullWidth
+                  className={keepUnderlineClassName}
+                />
                 <p>{errors.email?.message}</p>
               </FormControl>
             )}

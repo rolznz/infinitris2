@@ -1,5 +1,4 @@
-import React from 'react';
-import { Box, Button, Link, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 
@@ -10,7 +9,6 @@ import useCopyToClipboard from 'react-use/lib/useCopyToClipboard';
 import ShareIcon from '@mui/icons-material/Share';
 import { useUser } from '@/components/hooks/useUser';
 import { Page } from '../../ui/Page';
-import { openLoginDialog } from '@/state/DialogStore';
 import { appName } from '@/utils/constants';
 import FlexBox from '../../ui/FlexBox';
 import { CharacterImage } from '../Characters/CharacterImage';
@@ -18,6 +16,7 @@ import { AffiliatePageCharacter } from './AffiliatePageCharacter';
 
 import friendImage from './assets/friend.svg';
 import { useSnackbar } from 'notistack';
+import { PremiumLink } from '@/components/ui/PremiumLink';
 
 const characterSize = 185;
 
@@ -98,17 +97,10 @@ export default function AffiliateProgramPage() {
       {!userId ? (
         <Typography textAlign="center" mt={4} variant="caption">
           <FormattedMessage
-            defaultMessage="{login} to earn impact points and coins when your friends sign up."
+            defaultMessage="Get {premiumLink} to earn impact points and coins when your friends sign up."
             description="Affiliate Program page title - invite your friends logged out description"
             values={{
-              login: (
-                <Link onClick={() => openLoginDialog()}>
-                  <FormattedMessage
-                    defaultMessage="Log in"
-                    description="Affiliate Program Page - login button"
-                  />
-                </Link>
-              ),
+              premiumLink: <PremiumLink />,
             }}
           />
         </Typography>

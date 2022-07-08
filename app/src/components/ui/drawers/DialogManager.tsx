@@ -1,4 +1,3 @@
-import Login from '@/components/ui/Login/Login';
 import useDialogStore, {
   closeDialog,
   dialogAnimationLength,
@@ -11,28 +10,23 @@ import { ImpactInfoDrawerContent } from './ImpactInfo/ImpactInfoDrawerContent';
 import { ReactComponent as CrossIcon } from '@/icons/x.svg';
 import { ReactComponent as BackIcon } from '@/icons/left.svg';
 import FlexBox from '../FlexBox';
-import { useHistory } from 'react-router-dom';
-import Routes from '@/models/Routes';
 import { borderColorDark } from '@/theme/theme';
 import shallow from 'zustand/shallow';
 
 export function DialogManager() {
-  const history = useHistory();
-  const [dialogTypes, loginRedirectToProfile] = useDialogStore(
-    (dialogStore) => [
-      dialogStore.dialogTypes,
-      dialogStore.loginRedirectToProfile,
-    ],
+  //const history = useHistory();
+  const [dialogTypes] = useDialogStore(
+    (dialogStore) => [dialogStore.dialogTypes],
     shallow
   );
 
   const currentDialogType = dialogTypes[dialogTypes.length - 1];
 
-  const onLogin = React.useCallback(() => {
-    if (loginRedirectToProfile) {
-      history.push(Routes.profile);
-    }
-  }, [history, loginRedirectToProfile]);
+  // const onLogin = React.useCallback(() => {
+  //   if (loginRedirectToProfile) {
+  //     history.push(Routes.profile);
+  //   }
+  // }, [history, loginRedirectToProfile]);
 
   return (
     <>
@@ -45,9 +39,6 @@ export function DialogManager() {
           exit: dialogAnimationLength,
         }}
       >
-        {currentDialogType === 'login' && (
-          <Login onClose={closeDialog} onLogin={onLogin} />
-        )}
         {currentDialogType === 'coinInfo' && <CoinInfoDrawerContent />}
         {currentDialogType === 'impactInfo' && <ImpactInfoDrawerContent />}
         {currentDialogType && (

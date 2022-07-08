@@ -1,6 +1,6 @@
 import React from 'react';
-import { Button, Typography } from '@mui/material';
-
+import { SvgIcon, Typography } from '@mui/material';
+import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
 import FlexBox from '../../ui/FlexBox';
 import { FormattedMessage, useIntl } from 'react-intl';
 import {
@@ -18,10 +18,10 @@ import {
 import { Page } from '../../ui/Page';
 import { ScoreboardCard } from './ScoreboardCard';
 import { orderBy } from 'firebase/firestore';
-import { openLoginDialog } from '@/state/DialogStore';
 import useAuthStore from '@/state/AuthStore';
 import { intervalToDuration } from 'date-fns';
 import useInterval from 'react-use/lib/useInterval';
+import { PremiumLink } from '@/components/ui/PremiumLink';
 
 const scoreboardCollectionOptions: UseCollectionOptions = {
   constraints: [orderBy('placing', 'asc')],
@@ -68,23 +68,17 @@ export default function ScoreboardPage() {
         </Typography>
       )}
       {!userId && (
-        <FlexBox>
-          <Typography variant="body1" align="center">
+        <FlexBox flexDirection="row" gap={1}>
+          <SvgIcon fontSize="small">
+            <ImpactIcon />
+          </SvgIcon>
+          <Typography variant="body1" align="center" mt={1}>
             <FormattedMessage
-              defaultMessage="Register to appear here"
-              description="Scoreboard page register to appear message"
+              defaultMessage="{premiumLink} players appear here"
+              description="Scoreboard premium players appear here message"
+              values={{ premiumLink: <PremiumLink /> }}
             />
           </Typography>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={() => openLoginDialog()}
-          >
-            <FormattedMessage
-              defaultMessage="Log in"
-              description="User Profile Page - login button"
-            />
-          </Button>
         </FlexBox>
       )}
       {scoreboardEntries && (

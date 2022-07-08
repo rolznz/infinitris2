@@ -1,7 +1,6 @@
-import useLoginStore from '@/state/LoginStore';
 import create from 'zustand';
 
-export type DialogType = 'login' | 'coinInfo' | 'impactInfo';
+export type DialogType = 'coinInfo' | 'impactInfo';
 
 export const dialogAnimationLength = 500;
 
@@ -15,7 +14,7 @@ type DialogStore = {
 const useDialogStore = create<DialogStore>((set, _get) => ({
   loginRedirectToProfile: true,
   dialogTypes: [],
-  open: (dialogType: DialogType = 'login', loginRedirectToProfile = true) => {
+  open: (dialogType: DialogType, loginRedirectToProfile = true) => {
     const executeOpen = () =>
       set((prevState) => ({
         dialogTypes: [...prevState.dialogTypes, dialogType],
@@ -35,16 +34,10 @@ const useDialogStore = create<DialogStore>((set, _get) => ({
 
 export default useDialogStore;
 
-export const openLoginDialog = (loginRedirectToProfile?: boolean) =>
-  useDialogStore.getState().open('login', loginRedirectToProfile);
 export const openCoinInfoDialog = () =>
   useDialogStore.getState().open('coinInfo');
 export const openImpactInfoDialog = () =>
   useDialogStore.getState().open('impactInfo');
 export const closeDialog = () => {
-  const currentDialogTypes = useDialogStore.getState().dialogTypes;
-  if (currentDialogTypes[currentDialogTypes.length - 1] === 'login') {
-    useLoginStore.getState().reset();
-  }
   useDialogStore.getState().close();
 };

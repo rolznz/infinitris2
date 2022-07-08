@@ -14,7 +14,12 @@ import { useUser } from '@/components/hooks/useUser';
 import { LocalUser } from '@/state/LocalUserStore';
 import { useSnackbar } from 'notistack';
 import InputAdornment from '@mui/material/InputAdornment';
-import { borderColorLight, borderRadiuses, dropShadows } from '@/theme/theme';
+import {
+  borderColorLight,
+  borderRadiuses,
+  colors,
+  dropShadows,
+} from '@/theme/theme';
 
 const schema = yup
   .object({
@@ -97,9 +102,11 @@ export function UserNicknameForm() {
         >
           <FlexBox
             width={
-              (currentNicknameValue.length + 1) * 15 +
-              (hasAdornment ? 25 : 0) +
-              35
+              currentNicknameValue.length > 1
+                ? (currentNicknameValue.length + 1) * 14 +
+                  (hasAdornment ? 40 : 0) +
+                  35
+                : 200
             }
           >
             <Controller
@@ -107,7 +114,11 @@ export function UserNicknameForm() {
               control={control}
               render={({ field }) => (
                 <FormControl variant="standard">
-                  <InputLabel>
+                  <InputLabel
+                    sx={
+                      currentNicknameValue.length < 2 ? { ml: 2, mt: 1.5 } : {}
+                    }
+                  >
                     <FormattedMessage
                       defaultMessage="Nickname"
                       description="Nickname field label text"
@@ -131,6 +142,7 @@ export function UserNicknameForm() {
                       py: 0,
                       borderRadius: borderRadiuses.full,
                       fontSize: '28px',
+                      color: colors.white,
                     }}
                   />
                   {currentNicknameValue?.length > 1 && errors.nickname && (

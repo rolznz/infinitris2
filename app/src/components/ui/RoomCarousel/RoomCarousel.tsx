@@ -25,8 +25,7 @@ import {
   RoomCarouselSlide,
   RoomCarouselSlideProps,
 } from '@/components/ui/RoomCarousel/RoomCarouselSlide';
-import Typography from '@mui/material/Typography/Typography';
-import { useIsLandscape } from '@/components/hooks/useIsLandscape';
+import { FullPageCarouselTitle } from '@/components/ui/FullPageCarouselTitle';
 
 type RoomCarouselProps = {
   onPlay(slideIndex: number): void;
@@ -47,7 +46,6 @@ export function RoomCarousel({
   onPlay,
   onChangeSlide,
 }: RoomCarouselProps) {
-  const isLandscape = useIsLandscape();
   const [selectedSlide, setSelectedSlide] = React.useState(initialStep);
   const slideElements = React.useMemo(
     () =>
@@ -123,17 +121,7 @@ export function RoomCarousel({
           <SecondaryIconButton>{secondaryIcon}</SecondaryIconButton>
         </Link>
       )}
-      <FlexBox
-        position="absolute"
-        sx={{ backgroundColor: '#0C0D0D44' }}
-        borderRadius={borderRadiuses.full}
-        py={1}
-        px={2}
-        top={70}
-        left={isLandscape ? 70 : 20}
-      >
-        <Typography variant="h6">{title}</Typography>
-      </FlexBox>
+      <FullPageCarouselTitle>{title}</FullPageCarouselTitle>
     </Page>
   );
 }

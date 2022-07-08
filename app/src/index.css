@@ -44,9 +44,9 @@ body > canvas {
 }
 
 /* disable underlines */
-.MuiFilledInput-root:before,
-.MuiFilledInput-root:after,
-.MuiInput-root:before,
-.MuiInput-root:after {
+.MuiFilledInput-root:before:not(.keep-underline),
+.MuiFilledInput-root:after:not(.keep-underline),
+.MuiInput-root:before:not(.keep-underline),
+.MuiInput-root:after:not(.keep-underline) {
   content: none;
 }

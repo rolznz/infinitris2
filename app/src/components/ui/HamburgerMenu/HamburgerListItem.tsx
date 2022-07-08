@@ -1,9 +1,11 @@
+import { colors } from '@/theme/theme';
 import {
   Link,
   ListItem,
   ListItemIcon,
   SvgIcon,
   ListItemText,
+  Typography,
 } from '@mui/material';
 
 import React from 'react';
@@ -13,6 +15,7 @@ type HamburgerListItemProps = {
   to?: string;
   icon: React.ReactNode;
   text: React.ReactNode;
+  premium?: boolean;
   onClick?(): void;
 };
 
@@ -20,6 +23,7 @@ export default function HamburgerListItem({
   to,
   text,
   icon,
+  premium,
   onClick,
 }: HamburgerListItemProps) {
   return (
@@ -44,11 +48,14 @@ export default function HamburgerListItem({
           </SvgIcon>
         </ListItemIcon>
         <ListItemText
-          primary={text}
-          sx={{
-            color: 'text.primary',
-            textTransform: 'lowercase',
-          }}
+          primary={
+            <Typography
+              sx={{ color: premium ? colors.premium : 'text.primary' }}
+            >
+              {text}
+            </Typography>
+          }
+          disableTypography
         />
       </ListItem>
     </Link>

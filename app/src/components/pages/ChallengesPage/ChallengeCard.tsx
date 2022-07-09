@@ -33,7 +33,7 @@ import desertImageMobile from '@/components/ui/RoomCarousel/assets/carousel/dese
 import volcanoImageMobile from '@/components/ui/RoomCarousel/assets/carousel/volcano_mobile.svg';
 import spaceImageMobile from '@/components/ui/RoomCarousel/assets/carousel/space_mobile.svg';
 import { useDocument } from 'swr-firestore';
-import { ReactComponent as PlayIcon } from '@/icons/play.svg';
+import { ReactComponent as TimesRatedIcon } from '@/icons/times_rated.svg';
 import { ReactComponent as StarIcon } from '@/icons/star.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 
@@ -127,7 +127,7 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
           </Typography>
           <FlexBox width={5} />
           <SvgIcon fontSize="small">
-            <PlayIcon />
+            <TimesRatedIcon />
           </SvgIcon>
           <Typography variant="body1" fontSize="12px">
             {challenge.data()?.readOnly?.numRatings || 0}

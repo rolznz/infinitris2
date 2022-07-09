@@ -19,7 +19,7 @@ import Link from '@mui/material/Link';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import IconButton from '@mui/material/IconButton';
-import SaveIcon from '@mui/icons-material/Save';
+import { ReactComponent as SettingsIcon } from '@/icons/settings.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 
 export function ChallengeEditorTopRightPanelContents() {
@@ -51,7 +51,7 @@ function ChallengeEditorSettingsButton() {
     <Link component={RouterLink} to={Routes.createChallenge}>
       <IconButton>
         <SvgIcon color="primary">
-          <SaveIcon />
+          <SettingsIcon />
         </SvgIcon>
       </IconButton>
     </Link>

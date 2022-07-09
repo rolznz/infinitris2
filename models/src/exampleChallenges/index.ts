@@ -16,6 +16,7 @@ import waferTest from './waferTest';
 import wrapTest from './wrapTest';
 import longWayDown from '@models/exampleChallenges/longWayDown';
 import timeTrial2 from '@models/exampleChallenges/timeTrial2';
+import pentominoesTest from '@models/exampleChallenges/pentominoesTest';
 
 export const exampleChallenges: { [key: string]: IChallenge } = {
   'keys-and-locks-1': keysAndLocks1,
@@ -35,4 +36,5 @@ export const exampleChallenges: { [key: string]: IChallenge } = {
   's-block': sBlock,
   'long-way-down': longWayDown,
   'time-trail-2': timeTrial2,
+  pentominoes: pentominoesTest,
 };

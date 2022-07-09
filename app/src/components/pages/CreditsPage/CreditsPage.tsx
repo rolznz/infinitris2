@@ -86,10 +86,10 @@ export function CreditsPage() {
       <Box mt={2} />
       <Typography variant="body2" align="center">
         AL Kong, Rob Hayes, Zorg, Sven Obermaier, Natalia Golovacheva, Jono
-        Burch, Charles Liu, Nick van der Vis, Seth Reid, Eugene van Staden,
-        Linda Pettigrew, Mitchel Roy, Niamh Fitzgerald, Tim Bewick, Michał
-        Marcinkowski, Saintpoida, Jonathan Derrough, Andy Brennenstuhl, Bruno
-        Finger, Aaike Van Roekeghem, Tae Kasidit
+        Burch, Charles Liu, Nick van der Vis, Koishi, Nust Ered, Seth Reid,
+        Eugene van Staden, Linda Pettigrew, Mitchel Roy, Niamh Fitzgerald, Tim
+        Bewick, Michał Marcinkowski, Saintpoida, Jonathan Derrough, Andy
+        Brennenstuhl, Bruno Finger, Aaike Van Roekeghem, Tae Kasidit
       </Typography>
 
       <Box mt={10} />

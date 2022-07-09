@@ -261,14 +261,28 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
             ];
 
           console.log(
-            'Trying spawn - layouts remaining: ' +
+            'Trying spawn',
+            Object.entries(this._simulation.layoutSet.layouts).find(
+              (entry) => entry[1] === layout
+            )?.[0],
+            'layouts remaining: ' +
               layoutsRemaining.length +
               ' check placement: ' +
               checkPlacement
           );
           lastAttemptedBlock = this._tryCreateBlock(layout, checkPlacement);
           if (this._block) {
-            console.log('Spawn succeeded. Bag size: ' + this._layoutBag.length);
+            console.log(
+              'Spawn succeeded. Bag size: ' + this._layoutBag.length,
+              this._layoutBag
+                .map(
+                  (l) =>
+                    Object.entries(this._simulation.layoutSet.layouts).find(
+                      (entry) => entry[1] === l
+                    )?.[0]
+                )
+                .join(', ')
+            );
             break;
           }
           layoutsRemaining = layoutsRemaining.filter((v) => v !== layout);
@@ -318,7 +332,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       0,
       Object.values(this._simulation.layoutSet.layouts).indexOf(layout),
       false,
-      !!this._spawnLocationCell,
       checkPlacement
     );
   }
@@ -330,7 +343,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     rotation: number,
     layoutIndex: number,
     force = false,
-    hasSpawnLocationCell = false,
     checkPlacement = false
   ): IBlock {
     const layouts = Object.values(this._simulation.layoutSet.layouts);
@@ -345,7 +357,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       this._simulation,
       this,
       force,
-      hasSpawnLocationCell,
       checkPlacement
     );
     /*console.log(

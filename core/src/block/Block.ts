@@ -36,7 +36,6 @@ export default class Block implements IBlock {
   private _simulation: ISimulation;
   private _layoutId: number;
   private _id: number;
-  private _spawnedFromSpawnLocationCell: boolean;
   private _hadPlacementAtSpawn: boolean;
 
   constructor(
@@ -50,7 +49,6 @@ export default class Block implements IBlock {
     simulation: ISimulation,
     eventListener?: IBlockEventListener,
     force = false,
-    hasSpawnLocationCell = false,
     checkPlacement = true
   ) {
     this._id = id;
@@ -71,7 +69,6 @@ export default class Block implements IBlock {
     this._isAlive = true;
     this._simulation = simulation;
     this._gridCells = simulation.grid.cells;
-    this._spawnedFromSpawnLocationCell = hasSpawnLocationCell;
     this._resetTimers();
 
     let otherBlockInArea = false;
@@ -91,7 +88,7 @@ export default class Block implements IBlock {
     let spawnPositionFree = force || this.canMove(0, 0, 0);
     let hasPlacement =
       force ||
-      hasSpawnLocationCell ||
+      //hasSpawnLocationCell ||
       this._simulation.settings.replaceUnplayableBlocks === false ||
       !checkPlacement;
 
@@ -114,10 +111,6 @@ export default class Block implements IBlock {
 
   get hadPlacementAtSpawn(): boolean {
     return this._hadPlacementAtSpawn;
-  }
-
-  get spawnedFromSpawnLocationCell(): boolean {
-    return this._spawnedFromSpawnLocationCell;
   }
 
   get id(): number {
@@ -293,8 +286,9 @@ export default class Block implements IBlock {
             newCells.push(cell);
           }
           canMove =
-            Boolean(canMove && cell && cell.isPassable) ||
-            Boolean(this.isDropping && cell?.isPassableWhileDropping);
+            canMove &&
+            (Boolean(cell && cell.isPassable) ||
+              Boolean(this.isDropping && cell?.isPassableWhileDropping));
         }
       );
 
@@ -537,7 +531,8 @@ export default class Block implements IBlock {
   }
 
   /**
-   * This function is not perfect - it does not do any pathfinding nor understand different cell types
+   * This function is not intended to be perfect - it does not do any pathfinding nor understand different cell types
+   * to know if a block is placable or not.
    */
   hasPlacement(avoidTopRows = true) {
     const canMoveOptions: BlockCanMoveOptions = {
@@ -547,17 +542,23 @@ export default class Block implements IBlock {
     for (let dr = 0; dr < 4; dr++) {
       for (let dx = 0; dx < this._simulation.grid.numColumns; dx++) {
         for (let dy = -this._row; dy < this._simulation.grid.numRows; dy++) {
-          if (!this.canMove(dx, dy, dr, canMoveOptions)) {
-            if (
-              !canMoveOptions.isMistake &&
-              canMoveOptions.cells &&
-              (!avoidTopRows ||
-                !canMoveOptions.cells.some((cell) => cell.row < 4)) // leave top 4 rows free
-            ) {
-              return true;
-            } else {
-              break; // don't try below
-            }
+          const canMove = this.canMove(dx, dy, dr, canMoveOptions);
+          if (
+            canMove &&
+            !canMoveOptions.isMistake &&
+            canMoveOptions.cells &&
+            canMoveOptions.cells.some(
+              (cell) =>
+                cell.row === this._simulation.grid.numRows - 1 ||
+                !this._simulation.grid.cells[cell.row + 1][cell.column]
+                  .isPassable
+            ) &&
+            (!avoidTopRows ||
+              !canMoveOptions.cells.some((cell) => cell.row < 4)) // leave top 4 rows free
+          ) {
+            return true;
+          } else if (!canMove) {
+            break; // don't try below
           }
         }
       }

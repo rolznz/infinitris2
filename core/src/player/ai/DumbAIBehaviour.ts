@@ -27,6 +27,7 @@ export class DumbAIBehaviour implements IAIBehaviour {
     const gridCells = this._simulation.grid.cells;
     const maxAttempts = Math.min(17, gridCells[0].length); //current column + 8 on each side (or grid width if smaller)
 
+    // TODO: this needs fixing, see Block.hasPlacement
     for (let i = 0; i < maxAttempts; i++) {
       // check closest columns first (0, 1, -1, 2, -2, 3, -3...)
       let half = Math.floor((i + 1) / 2);

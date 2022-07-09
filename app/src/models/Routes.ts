@@ -17,7 +17,7 @@ enum Routes {
   controlSettings = '/settings/controls',
   challenges = '/challenges',
   createChallenge = '/challenge-maker',
-  loadChallenge = '/create/challenge/load',
+  newChallenge = '/new-challenge',
   challengeRequired = '/challenge-required',
   scoreboard = '/scoreboard',
   allSet = '/all-set',

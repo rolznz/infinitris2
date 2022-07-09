@@ -113,7 +113,7 @@ export default function Header() {
           <Link
             component={RouterLink}
             underline="none"
-            to={Routes.loadChallenge}
+            to={Routes.newChallenge}
           >
             <IconButton size="large">
               <FolderIcon />

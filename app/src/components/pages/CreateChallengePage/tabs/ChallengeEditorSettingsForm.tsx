@@ -67,6 +67,7 @@ type SettingsFormData = Pick<
   | 'worldVariation'
   | 'isOfficial'
   | 'priority'
+  | 'isTemplate'
 >;
 
 type ChallengeEditorSettingsFormProps = {
@@ -179,12 +180,20 @@ export function ChallengeEditorSettingsForm({
           'Are you sure you wish to publish this challenge?\n\nPublished challenges cannot be edited.\n\nCost: 1 coin\n\nYour account will be topped back up to 3 coins every 24 hours.'
         )
       ) {
-        const challengeToPublish: IChallenge = {
+        let challengeToPublish: IChallenge = {
           ...challenge,
           title: data.title,
           userId,
           isPublished: true,
         };
+        if (challengeToPublish.isTemplate) {
+          challengeToPublish = {
+            ...challengeToPublish,
+            // remove official flag to not show up in either story mode or community challenges
+            // TODO: this feels a bit hacky, maybe story mode challenges should have an isStoryMode property
+            isOfficial: undefined,
+          };
+        }
 
         const challengeId = existingChallengeId || uuidv4();
         console.log('Challenge to publish', challengeToPublish, challengeId);
@@ -317,6 +326,16 @@ export function ChallengeEditorSettingsForm({
                   label={'skip complete challenge check'}
                 />
                 <Controller
+                  name="isTemplate"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={<Checkbox {...field} />}
+                      label={'Save as Template'}
+                    />
+                  )}
+                />
+                <Controller
                   name="isOfficial"
                   control={control}
                   render={({ field }) => (
@@ -373,7 +392,7 @@ export function ChallengeEditorSettingsForm({
             description="Reset challenge button text"
           />
         </Button>
-        <Link component={RouterLink} to={Routes.loadChallenge}>
+        <Link component={RouterLink} to={Routes.newChallenge}>
           <Button color="secondary" variant="contained">
             <FormattedMessage
               defaultMessage="Load Challenge"

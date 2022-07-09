@@ -112,6 +112,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
 
   const isEditingChallenge =
     useChallengeEditorStore((store) => store.isEditing) && isTest;
+  const setIsEditingChallenge = useChallengeEditorStore(
+    (store) => store.setIsEditing
+  );
 
   const player = useNetworkPlayerInfo();
 
@@ -137,6 +140,12 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     incompleteChallenges,
     history,
   ]);
+
+  React.useEffect(() => {
+    if (isTest) {
+      setIsEditingChallenge(false);
+    }
+  }, [isTest, setIsEditingChallenge]);
 
   React.useEffect(() => {
     if (isTest && !isEditingChallenge) {

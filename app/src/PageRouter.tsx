@@ -2,10 +2,10 @@ import React from 'react';
 import { Route, Switch, BrowserRouter, useLocation } from 'react-router-dom';
 // import AllSetPage from '@/components/pages/AllSetPage';
 import { CreateChallengePage } from '@/components/pages/CreateChallengePage/CreateChallengePage';
-import { LoadChallengePage } from '@/components/pages/CreateChallengePage/LoadChallengePage';
+import { LoadChallengePage } from '@/components/pages/CreateChallengePage/NewChallengePage';
 import LobbyPage from '@/components/pages/LobbyPage/LobbyPage';
 import LoginPage from '@/components/pages/LoginPage';
-import { NotFoundPage } from '@/components/pages/NotFoundPage';
+import { NotFoundPage } from '@/components/pages/NotFoundPage/NotFoundPage';
 import ProfilePage from '@/components/pages/ProfilePage/ProfilePage';
 import RoomPage from '@/components/pages/RoomPage';
 import ControlSettingsPage from '@/components/pages/SettingsPage/ControlSettingsPage';
@@ -189,7 +189,7 @@ function RouterContents() {
         <Route exact path={Routes.createChallenge}>
           <CreateChallengePage />
         </Route>
-        <Route exact path={Routes.loadChallenge}>
+        <Route exact path={Routes.newChallenge}>
           <LoadChallengePage />
         </Route>
         <Route path={`${Routes.challenges}/:id`}>

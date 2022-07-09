@@ -11,11 +11,11 @@ import Tab from '@mui/material/Tab';
 import { FormattedMessage } from 'react-intl';
 import Typography from '@mui/material/Typography/Typography';
 
-type ChallengeEditorTab = 'info' | 'grid' | 'json';
+type ChallengeEditorTab = 'info' | 'grid';
 
 export function CreateChallengeHeader() {
   const [availableBlocksTab, setAvailableBlocksTab] =
-    React.useState<ChallengeEditorTab>('grid');
+    React.useState<ChallengeEditorTab>('info');
 
   const isLandscape = useIsLandscape();
 

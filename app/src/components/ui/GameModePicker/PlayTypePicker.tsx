@@ -45,6 +45,8 @@ import Routes from '@/models/Routes';
 import { FormattedMessage } from 'react-intl';
 import { WorldType, WorldTypeValues } from 'infinitris2-models';
 import { useUser } from '@/components/hooks/useUser';
+import useChallengeEditorStore from '@/state/ChallengeEditorStore';
+import { getChallengeTestUrl } from '@/utils/getChallengeTestUrl';
 
 export const playTypePickerId = 'play-type-picker';
 export const playTypePickerFirstCardId = 'play-type-picker-first-card';
@@ -64,6 +66,10 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
       ).length
     ];
   const nonStoryModeLocked = (user.unlockedFeatures || []).indexOf('space') < 0;
+  const challenge = useChallengeEditorStore((store) => store.challenge);
+  const challengeUrl = challenge
+    ? getChallengeTestUrl(challenge)
+    : Routes.newChallenge;
 
   return (
     <FlexBox
@@ -173,7 +179,7 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
             description="Game Mode Picker Card - Challenge Maker"
           />
         }
-        link={Routes.createChallenge}
+        link={challengeUrl}
         isLocked={nonStoryModeLocked}
       />
       <PlayTypeCard

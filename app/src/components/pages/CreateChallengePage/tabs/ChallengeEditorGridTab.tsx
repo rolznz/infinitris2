@@ -7,9 +7,8 @@ import useWindowSize from 'react-use/lib/useWindowSize';
 import { FittedChallengeGridPreview } from '../../ChallengesPage/ChallengeGridPreview';
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
-import Routes from '@/models/Routes';
-import stableStringify from '@/utils/stableStringify';
 import { boxShadows } from '@/theme/theme';
+import { getChallengeTestUrl } from '@/utils/getChallengeTestUrl';
 
 export function ChallengeEditorGridTab() {
   const windowSize = useWindowSize();
@@ -32,9 +31,7 @@ export function ChallengeEditorGridTab() {
           <Link
             component={RouterLink}
             underline="none"
-            to={`${Routes.challenges}/test?json=${encodeURIComponent(
-              stableStringify(challenge)
-            )}`}
+            to={getChallengeTestUrl(challenge)}
             mb={1}
             onClick={() => {
               useChallengeEditorStore.getState().setIsEditing(false);

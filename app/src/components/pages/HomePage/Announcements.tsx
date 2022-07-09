@@ -11,7 +11,7 @@ export function Announcements() {
   const slides = [
     ...(process.env.REACT_APP_DISCORD_LINK
       ? [
-          <Link href="https://discord.gg/q6avMW4gbp">
+          <Link href="https://discord.gg/q6avMW4gbp" key="discord">
             <FlexBox
               bgcolor="background.paper"
               flexDirection="row"

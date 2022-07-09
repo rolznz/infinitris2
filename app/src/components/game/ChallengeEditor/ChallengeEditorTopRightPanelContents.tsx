@@ -15,6 +15,12 @@ import {
 } from 'infinitris2-models';
 import MenuItem from '@mui/material/MenuItem/MenuItem';
 import { getChallengeCellTypeDescription } from 'infinitris2-models';
+import Link from '@mui/material/Link';
+import { Link as RouterLink } from 'react-router-dom';
+import Routes from '@/models/Routes';
+import IconButton from '@mui/material/IconButton';
+import SaveIcon from '@mui/icons-material/Save';
+import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 
 export function ChallengeEditorTopRightPanelContents() {
   return (
@@ -27,6 +33,7 @@ export function ChallengeEditorTopRightPanelContents() {
       p={spacing.small}
       sx={{ pointerEvents: 'all' }}
     >
+      <ChallengeEditorSettingsButton />
       <ChallengeEditorGridSize />
       <ChallengeEditorCellTypePicker />
       <ChallengeEditorToggle />
@@ -34,7 +41,24 @@ export function ChallengeEditorTopRightPanelContents() {
   );
 }
 
-export function ChallengeEditorToggle() {
+function ChallengeEditorSettingsButton() {
+  const isEditing = useChallengeEditorStore((store) => store.isEditing);
+  if (!isEditing) {
+    return null;
+  }
+
+  return (
+    <Link component={RouterLink} to={Routes.createChallenge}>
+      <IconButton>
+        <SvgIcon color="primary">
+          <SaveIcon />
+        </SvgIcon>
+      </IconButton>
+    </Link>
+  );
+}
+
+function ChallengeEditorToggle() {
   const [isEditing] = useChallengeEditorStore(
     (store) => [store.isEditing],
     shallow
@@ -54,7 +78,7 @@ export function ChallengeEditorToggle() {
   );
 }
 
-export function ChallengeEditorGridSize() {
+function ChallengeEditorGridSize() {
   const isEditing = useChallengeEditorStore((store) => store.isEditing);
   const simulation = useIngameStore((store) => store.simulation);
   if (!simulation || !isEditing) {
@@ -88,7 +112,7 @@ export function ChallengeEditorGridSize() {
   );
 }
 
-export function ChallengeEditorCellTypePicker() {
+function ChallengeEditorCellTypePicker() {
   const isEditing = useChallengeEditorStore((store) => store.isEditing);
   const editor = useChallengeEditorStore((store) => store.editor);
   const challengeCellType = useChallengeEditorStore(

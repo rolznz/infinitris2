@@ -40,7 +40,9 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
               useChallengeEditorStore.getState().setChallenge({
                 ...(editExisting ? ({} as IChallenge) : createNewChallenge()),
                 grid: challenge.data()!.grid,
-                title: challenge.data()!.title,
+                title: challenge.data()?.isTemplate
+                  ? undefined
+                  : challenge.data()!.title,
                 worldType: challenge.data()!.worldType,
                 worldVariation: challenge.data()!.worldVariation,
                 simulationSettings: challenge.data()!.simulationSettings,

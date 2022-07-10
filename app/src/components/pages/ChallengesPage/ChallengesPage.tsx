@@ -37,7 +37,7 @@ const challengesDateFilter: UseCollectionOptions = {
 const ChallengesPageFilterTypeValues = [
   'popularity',
   'rating',
-  'date',
+  'latest',
 ] as const;
 type ChallengesPageFilterType = typeof ChallengesPageFilterTypeValues[number];
 
@@ -49,7 +49,7 @@ export function ChallengesPage() {
     challengesPath,
     filter === 'popularity'
       ? challengesPopularityFilter
-      : 'rating'
+      : filter === 'rating'
       ? challengesRatingFilter
       : challengesDateFilter
   );
@@ -59,6 +59,7 @@ export function ChallengesPage() {
         defaultMessage: 'Community Challenges',
         description: 'Community Challenges page title',
       })}
+      key={filter}
     >
       <FlexBox flexDirection="row">
         <SvgIcon color="primary">

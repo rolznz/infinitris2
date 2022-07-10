@@ -93,7 +93,7 @@ export default class Block implements IBlock {
       !checkPlacement;
 
     if (checkPlacement && !hasPlacement) {
-      hasPlacement = this.hasPlacement(checkPlacement);
+      hasPlacement = this.hasPlacement();
       this._hadPlacementAtSpawn = hasPlacement;
     } else {
       this._hadPlacementAtSpawn = false;
@@ -534,7 +534,7 @@ export default class Block implements IBlock {
    * This function is not intended to be perfect - it does not do any pathfinding nor understand different cell types
    * to know if a block is placable or not.
    */
-  hasPlacement(avoidTopRows = true) {
+  hasPlacement() {
     const canMoveOptions: BlockCanMoveOptions = {
       allowMistakes: false,
     };
@@ -552,9 +552,9 @@ export default class Block implements IBlock {
                 cell.row === this._simulation.grid.numRows - 1 ||
                 !this._simulation.grid.cells[cell.row + 1][cell.column]
                   .isPassable
-            ) &&
-            (!avoidTopRows ||
-              !canMoveOptions.cells.some((cell) => cell.row < 4)) // leave top 4 rows free
+            ) // &&
+            //(!avoidTopRows ||
+            //!canMoveOptions.cells.some((cell) => cell.row < 4)) // leave top 4 rows free
           ) {
             return true;
           } else if (!canMove) {

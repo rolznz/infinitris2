@@ -198,6 +198,15 @@ export function CoinInfoBuyCoinsSlide() {
                       </FormControl>
                     )}
                   />
+                  {amount && (
+                    <Typography variant="body1" mb={1}>
+                      <FormattedMessage
+                        defaultMessage="Price: {satsPrice} sats"
+                        description="Coin info buy slide - price"
+                        values={{ satsPrice: amount * 10 }}
+                      />
+                    </Typography>
+                  )}
                   <Button
                     type="submit"
                     color="primary"

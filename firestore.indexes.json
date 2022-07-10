@@ -25,6 +25,28 @@
         {
           "fieldPath": "readOnly.rating",
           "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "readOnly.numRatings",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "challenges",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isOfficial",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "readOnly.numRatings",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "readOnly.rating",
+          "order": "DESCENDING"
         }
       ]
     },

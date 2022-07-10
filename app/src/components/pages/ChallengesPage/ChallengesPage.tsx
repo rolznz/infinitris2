@@ -12,10 +12,19 @@ import MenuItem from '@mui/material/MenuItem';
 import SvgIcon from '@mui/material/SvgIcon';
 import { ReactComponent as SortIcon } from '@/icons/sort.svg';
 
+const challengesPopularityFilter: UseCollectionOptions = {
+  constraints: [
+    where('isOfficial', '==', false),
+    orderBy('readOnly.numRatings', 'desc'),
+    orderBy('readOnly.rating', 'desc'),
+  ],
+};
+
 const challengesRatingFilter: UseCollectionOptions = {
   constraints: [
     where('isOfficial', '==', false),
     orderBy('readOnly.rating', 'desc'),
+    orderBy('readOnly.numRatings', 'desc'),
   ],
 };
 const challengesDateFilter: UseCollectionOptions = {
@@ -25,16 +34,24 @@ const challengesDateFilter: UseCollectionOptions = {
   ],
 };
 
-const ChallengesPageFilterTypeValues = ['rating', 'date'] as const;
+const ChallengesPageFilterTypeValues = [
+  'popularity',
+  'rating',
+  'date',
+] as const;
 type ChallengesPageFilterType = typeof ChallengesPageFilterTypeValues[number];
 
 export function ChallengesPage() {
   const intl = useIntl();
   const [filter, setFilter] =
-    React.useState<ChallengesPageFilterType>('rating');
+    React.useState<ChallengesPageFilterType>('popularity');
   const { data: challenges } = useCollection<IChallenge>(
     challengesPath,
-    filter === 'rating' ? challengesRatingFilter : challengesDateFilter
+    filter === 'popularity'
+      ? challengesPopularityFilter
+      : 'rating'
+      ? challengesRatingFilter
+      : challengesDateFilter
   );
   return (
     <Page

@@ -64,12 +64,12 @@ async function loadImage(
   if (imageCache[cellType]) {
     return imageCache[cellType];
   }
-  console.log('Loading image: ' + filename);
+  //console.log('Loading image: ' + filename);
   return new Promise((resolve) => {
     const img = new Image(); // Create new img element
     img.addEventListener('load', function () {
       imageCache[cellType] = img;
-      console.log('Loaded ' + filename);
+      //console.log('Loaded ' + filename);
       resolve(img);
     });
     img.src = `/client/images/cells/grass/${filename}.png`;

@@ -59,7 +59,6 @@ export function ChallengesPage() {
         defaultMessage: 'Community Challenges',
         description: 'Community Challenges page title',
       })}
-      key={filter}
     >
       <FlexBox flexDirection="row">
         <SvgIcon color="primary">

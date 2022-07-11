@@ -81,7 +81,7 @@ export function RoomCarouselSlide({
         height="30%"
         sx={{
           background:
-            'linear-gradient(180deg, rgba(0,0,0, 0.024) 0%, rgba(0, 0, 0, 0.8) 100%)',
+            'linear-gradient(180deg, rgba(0,0,0, 0.0) 0%, rgba(0,0,0, 0.1) 20%, rgba(0, 0, 0, 0.8) 100%)',
         }}
       />
       <FlexBox

@@ -19,6 +19,7 @@ import {
   borderRadiuses,
   colors,
   dropShadows,
+  lockFilter,
 } from '@/theme/theme';
 
 const schema = yup
@@ -103,9 +104,7 @@ export function UserNicknameForm() {
           <FlexBox
             width={
               currentNicknameValue.length > 1
-                ? (currentNicknameValue.length + 1) * 14 +
-                  (hasAdornment ? 40 : 0) +
-                  35
+                ? (currentNicknameValue.length + 1) * 14 + 75
                 : 200
             }
           >
@@ -128,13 +127,23 @@ export function UserNicknameForm() {
                     {...field}
                     inputProps={{ maxLength: 10 }}
                     endAdornment={
-                      hasAdornment && (
-                        <InputAdornment position="end">
-                          <VerifiedIcon
-                            style={{ marginTop: -2, filter: dropShadows.xs }}
-                          />
-                        </InputAdornment>
-                      )
+                      <InputAdornment
+                        position="end"
+                        sx={{ cursor: 'pointer' }}
+                        onClick={() =>
+                          alert(
+                            'Premium players can secure a nickname. Once secured, this tick will turn blue.'
+                          )
+                        }
+                      >
+                        <VerifiedIcon
+                          style={{
+                            marginTop: -2,
+                            filter: hasAdornment ? dropShadows.xs : lockFilter,
+                            opacity: hasAdornment ? undefined : 0.2,
+                          }}
+                        />
+                      </InputAdornment>
                     }
                     sx={{
                       backgroundColor: borderColorLight,

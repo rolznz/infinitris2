@@ -1,4 +1,4 @@
-import { Card, Typography } from '@mui/material';
+import { Button, Card, Link, Typography } from '@mui/material';
 import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
@@ -14,6 +14,8 @@ import { ChallengeGridPartialPreview } from '@/components/pages/ChallengesPage/C
 import { useUser } from '@/components/hooks/useUser';
 import { Page } from '@/components/ui/Page';
 import { getChallengeTestUrl } from '@/utils/getChallengeTestUrl';
+import { Link as RouterLink } from 'react-router-dom';
+import Routes from '@/models/Routes';
 
 interface ChallengesRowProps {
   challenges: DocumentSnapshot<IChallenge>[] | undefined;
@@ -77,6 +79,7 @@ const allChallengesFilter: UseCollectionOptions = {
 
 export function LoadChallengePage() {
   const userId = useAuthStore().user?.uid;
+  const challenge = useChallengeEditorStore((store) => store.challenge);
   const useUserChallengesOptions: UseCollectionOptions = React.useMemo(
     () => ({
       constraints: [where('userId', '==', userId)],
@@ -105,6 +108,22 @@ export function LoadChallengePage() {
         description: 'New Challenge page title',
       })}
     >
+      {challenge && (
+        <FlexBox mb={4}>
+          <Typography align="center">
+            <FormattedMessage
+              defaultMessage="Resume Challenge"
+              description="Challenges Page - Resume challenge"
+            />
+          </Typography>
+          <Link component={RouterLink} to={Routes.createChallenge}>
+            <Button size="large" variant="contained">
+              <FormattedMessage defaultMessage="Resume" description="Resume" />
+            </Button>
+          </Link>
+        </FlexBox>
+      )}
+
       <Typography align="center">
         <FormattedMessage
           defaultMessage="Official Templates"

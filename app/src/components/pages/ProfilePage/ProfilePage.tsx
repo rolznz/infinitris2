@@ -73,8 +73,8 @@ export default function ProfilePage() {
                 />
               ) : (
                 <FormattedMessage
-                  defaultMessage="Free Player"
-                  description="Free Player text"
+                  defaultMessage="Guest"
+                  description="Guest text"
                 />
               )}
             </Typography>

@@ -35,6 +35,10 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import { Typography } from '@mui/material';
 import { getLastCompletedGrid } from '@/components/pages/ChallengePage/ChallengePage';
 import { useSnackbar } from 'notistack';
+import {
+  ChallengesPageSortType,
+  challengesPageSortParam,
+} from '@/components/pages/ChallengesPage/ChallengesPage';
 
 const exportChallenge = () => {
   const challenge = useChallengeEditorStore.getState().challenge!;
@@ -209,7 +213,10 @@ export function ChallengeEditorSettingsForm({
           setChallengeId(undefined);
           reset();
           enqueueSnackbar('Challenge Published Successfully!');
-          history.push(Routes.challenges);
+          const sortLatest: ChallengesPageSortType = 'latest';
+          history.push(
+            `${Routes.challenges}?${challengesPageSortParam}=${sortLatest}`
+          );
         } catch (error) {
           console.error('Failed to publish challenge', error);
           enqueueSnackbar('Failed to publish challenge', { variant: 'error' });

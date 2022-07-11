@@ -102,7 +102,6 @@ function RouterContents() {
       <DialogManager />
       <OutsideGameElement>
         <HamburgerMenuButton />
-        {/*<Header />*/}
       </OutsideGameElement>
       <Switch location={location}>
         <Route path={coinsDisplayPaths}>

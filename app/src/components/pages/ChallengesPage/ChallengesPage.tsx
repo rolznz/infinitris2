@@ -11,6 +11,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import SvgIcon from '@mui/material/SvgIcon';
 import { ReactComponent as SortIcon } from '@/icons/sort.svg';
+import useSearchParam from 'react-use/lib/useSearchParam';
 
 const challengesPopularityFilter: UseCollectionOptions = {
   constraints: [
@@ -34,17 +35,25 @@ const challengesDateFilter: UseCollectionOptions = {
   ],
 };
 
-const ChallengesPageFilterTypeValues = [
+const ChallengesPageSortTypeValues = [
   'popularity',
   'rating',
   'latest',
 ] as const;
-type ChallengesPageFilterType = typeof ChallengesPageFilterTypeValues[number];
+export type ChallengesPageSortType =
+  typeof ChallengesPageSortTypeValues[number];
+export const challengesPageSortParam = 'sort';
 
 export function ChallengesPage() {
   const intl = useIntl();
-  const [filter, setFilter] =
-    React.useState<ChallengesPageFilterType>('popularity');
+  const sortParam = useSearchParam(
+    challengesPageSortParam
+  ) as ChallengesPageSortType;
+  const [filter, setFilter] = React.useState<ChallengesPageSortType>(
+    sortParam && ChallengesPageSortTypeValues.indexOf(sortParam) > -1
+      ? sortParam
+      : 'popularity'
+  );
   const { data: challenges } = useCollection<IChallenge>(
     challengesPath,
     filter === 'popularity'
@@ -68,10 +77,10 @@ export function ChallengesPage() {
           variant="outlined"
           value={filter}
           onChange={(event) => {
-            setFilter(event.target.value as ChallengesPageFilterType);
+            setFilter(event.target.value as ChallengesPageSortType);
           }}
         >
-          {ChallengesPageFilterTypeValues.map((filterType) => (
+          {ChallengesPageSortTypeValues.map((filterType) => (
             <MenuItem key={filterType} value={filterType}>
               {filterType}
             </MenuItem>

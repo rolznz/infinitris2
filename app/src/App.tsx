@@ -13,6 +13,7 @@ import { SnackbarProvider } from 'notistack';
 import { darkTheme } from './theme/darkTheme';
 import { lightTheme } from './theme/lightTheme';
 import { fontFamily } from 'infinitris2-models';
+import { borderRadiuses } from '@/theme/theme';
 
 interface AppProps {}
 
@@ -44,6 +45,7 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
                 }}
                 style={{
                   fontFamily,
+                  borderRadius: borderRadiuses.full,
                 }}
               >
                 {children}

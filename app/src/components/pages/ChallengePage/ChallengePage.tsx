@@ -136,7 +136,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   }, [
     hasContinued,
     isTest,
-    challenge.isOfficial,
+    challenge?.isOfficial,
     incompleteChallenges,
     history,
   ]);

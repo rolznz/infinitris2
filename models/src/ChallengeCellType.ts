@@ -28,6 +28,7 @@ enum ChallengeCellType {
   GestureRotateClockwise = '4',
   GestureRotateAnticlockwise = '5',
   GestureDrop = '6',
+  Checkpoint = 'C',
 }
 const duplicateChallengeCellTypeValue = Object.values(ChallengeCellType).find(
   (v, i, a) => a.indexOf(v) !== i
@@ -98,6 +99,8 @@ export function getChallengeCellTypeDescription(
       return 'Gesture RotateAnticlockwise';
     case ChallengeCellType.GestureDrop:
       return 'Gesture Drop';
+    case ChallengeCellType.Checkpoint:
+      return 'Checkpoint';
   }
 }
 

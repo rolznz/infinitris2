@@ -34,6 +34,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _status: PlayerStatus;
   private _lastStatusChangeTime: number;
   private _spawnLocationCell: ICell | undefined;
+  private _checkpointCell: ICell | undefined;
   private _layoutBag: Layout[];
 
   constructor(
@@ -149,6 +150,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
   set spawnLocationCell(cell: ICell | undefined) {
     this._spawnLocationCell = cell;
+  }
+  set checkpointCell(cell: ICell | undefined) {
+    this._checkpointCell = cell;
   }
 
   set status(status: PlayerStatus) {
@@ -316,8 +320,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     }
   }
   private _tryCreateBlock(layout: Layout, checkPlacement: boolean) {
-    const row = this._spawnLocationCell?.row || 0;
-    const column = this._spawnLocationCell
+    const row = this._checkpointCell?.row ?? this._spawnLocationCell?.row ?? 0;
+    const column = this._checkpointCell
+      ? this._checkpointCell.column
+      : this._spawnLocationCell
       ? this._spawnLocationCell.column
       : this._lastPlacementColumn === undefined
       ? this._simulation.settings.randomBlockPlacement !== false

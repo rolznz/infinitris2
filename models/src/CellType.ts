@@ -12,6 +12,7 @@ enum CellType {
   SpawnLocation = 'SpawnLocation',
   Gesture = 'Gesture',
   ReverseLock = 'ReverseLock',
+  Checkpoint = 'Checkpoint',
   // Water/Liquid?
 }
 

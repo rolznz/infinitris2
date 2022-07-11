@@ -32,6 +32,7 @@ export interface IPlayer {
   get isNetworked(): boolean;
   get status(): PlayerStatus;
   set spawnLocationCell(cell: ICell | undefined);
+  set checkpointCell(cell: ICell | undefined);
 
   get block(): IBlock | undefined;
   get score(): number;

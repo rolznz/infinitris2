@@ -15,6 +15,7 @@ import SpawnLocationCellBehaviour from '@core/grid/cell/behaviours/SpawnLocation
 import { CustomizableInputAction } from '@models/InputAction';
 import GestureBehaviour from '@core/grid/cell/behaviours/GestureBehaviour';
 import ReverseLockBehaviour from '@core/grid/cell/behaviours/ReverseLockBehaviour';
+import CheckpointBehaviour from '@core/grid/cell/behaviours/CheckpointBehaviour';
 
 export const keyColors = {
   redColor: 0xff0000,
@@ -96,5 +97,7 @@ function getBehaviour(
       return new GestureBehaviour(CustomizableInputAction.RotateAnticlockwise);
     case ChallengeCellType.GestureDrop:
       return new GestureBehaviour(CustomizableInputAction.Drop);
+    case ChallengeCellType.Checkpoint:
+      return new CheckpointBehaviour(cell);
   }
 }

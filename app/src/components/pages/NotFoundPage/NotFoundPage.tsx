@@ -22,8 +22,8 @@ export function NotFoundPage() {
             background: `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%), url(${image})`,
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
-            backgroundPositionY: '100%',
-            backgroundPositionX: '22%',
+            backgroundPositionY: '0%',
+            backgroundPositionX: 'center',
           }}
           position="absolute"
           top={0}

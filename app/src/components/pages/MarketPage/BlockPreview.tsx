@@ -14,6 +14,7 @@ export function BlockPreview({ character }: BlockPreviewProps) {
   const size =
     (Math.min(windowSize.width, windowSize.height) - windowSize.width * 0.27) /
     5;
+  const borderRadius = borderRadiuses.base;
 
   return (
     <FlexBox
@@ -22,7 +23,7 @@ export function BlockPreview({ character }: BlockPreviewProps) {
       height={size * 4}
       style={{
         backgroundColor: character.data()!.color,
-        borderRadius: borderRadiuses.lg,
+        borderRadius,
       }}
     >
       <div
@@ -37,7 +38,7 @@ export function BlockPreview({ character }: BlockPreviewProps) {
             character.data()!.color
           )}`,
           boxShadow: boxShadows.small,
-          borderRadius: borderRadiuses.lg,
+          borderRadius,
         }}
       />
       <div
@@ -54,7 +55,7 @@ export function BlockPreview({ character }: BlockPreviewProps) {
           backgroundSize: 256,
           pointerEvents: 'none',
           boxShadow: boxShadows.small,
-          borderRadius: borderRadiuses.lg,
+          borderRadius,
         }}
       />
       <div

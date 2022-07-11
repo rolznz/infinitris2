@@ -113,6 +113,10 @@ export function ChallengeGridPartialPreview({
           }
         }
       }
+      if (spawnLocationCellPosition.row + numRows > cellTypes.length) {
+        spawnLocationCellPosition.row = Math.max(cellTypes.length - numRows, 0);
+      }
+
       for (let r = 0; r < numRows; r++) {
         for (let c = 0; c < numColumns; c++) {
           const sr =

@@ -17,5 +17,4 @@ export default interface ICellBehaviour {
   isPassableWhileDropping?: boolean;
   isReplaceable: boolean;
   type: CellType;
-  requiresRerender?: boolean;
 }

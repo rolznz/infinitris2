@@ -357,16 +357,19 @@ export default class Infinitris2Renderer extends BaseRenderer {
       );
     }
 
-    Object.values(this._cells).forEach((cell) => {
-      if (cell.cell.behaviour.requiresRerender) {
-        this._renderCell(cell.cell);
+    this._simulation.grid.reducedCells.forEach((cell) => {
+      if (cell.requiresRerender) {
+        this._renderCell(cell);
+        cell.requiresRerender = false;
       }
-      cell.container.alpha = cell.cell.behaviour.alpha;
+      const renderableCell = this._getRenderableCell(cell);
+      renderableCell.container.alpha = cell.behaviour.alpha;
 
       // TODO: do not access cell type directly like this
-      if (cell.cell.behaviour.type === CellType.Rock) {
-        cell.container.y =
-          (cell.cell.row + (cell.cell.behaviour as RockBehaviour).offsetY) *
+      // TODO: allow both offset and rotation
+      if (cell.behaviour.type === CellType.Rock) {
+        renderableCell.container.y =
+          (cell.row + (cell.behaviour as RockBehaviour).offsetY) *
           this._cellSize;
       }
     });
@@ -851,18 +854,18 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (previousBehaviour.shouldExplode?.()) {
       this._explodeCell(cell, previousBehaviour.color);
     }
-    this._renderCellAndNeighbours(cell);
+    this._markCellAndNeighboursForRerender(cell);
   }
 
   onCellIsEmptyChanged(cell: ICell) {
-    this._renderCellAndNeighbours(cell);
+    this._markCellAndNeighboursForRerender(cell);
   }
 
   onPlayerHealthChanged(player: IPlayer, amount: number): void {}
   onPlayerScoreChanged(player: IPlayer, amount: number): void {}
   onGameModeEvent(event: GameModeEvent): void {}
 
-  private _renderCellAndNeighbours(cell: ICell) {
+  private _markCellAndNeighboursForRerender(cell: ICell) {
     for (let r = -1; r <= 1; r++) {
       for (let c = -1; c <= 1; c++) {
         const neighbour =
@@ -870,7 +873,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
             wrap(cell.column + c, this._simulation!.grid.numColumns)
           ];
         if (neighbour) {
-          this._renderCell(neighbour);
+          neighbour.requiresRerender = true;
         }
       }
     }
@@ -1204,12 +1207,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
   };
 
   private _renderCells(cells: ICell[]) {
-    cells.forEach((cell) => this._renderCell(cell));
+    cells.forEach((cell) => (cell.requiresRerender = true));
   }
 
-  private _renderCell = (cell: ICell) => {
+  private _getRenderableCell(cell: ICell): IRenderableCell {
     if (!this._simulation) {
-      return;
+      throw new Error('No simulation');
     }
     const cellIndex = cell.row * this._simulation.grid.numColumns + cell.column;
     if (!this._cells[cellIndex]) {
@@ -1222,6 +1225,14 @@ export default class Infinitris2Renderer extends BaseRenderer {
       };
     }
     const renderableCell: IRenderableCell = this._cells[cellIndex];
+    return renderableCell;
+  }
+
+  private _renderCell = (cell: ICell) => {
+    if (!this._simulation) {
+      return;
+    }
+    const renderableCell = this._getRenderableCell(cell);
 
     renderableCell.container.x = this.getWrappedX(
       renderableCell.cell.column * this._cellSize

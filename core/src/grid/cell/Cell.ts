@@ -16,6 +16,7 @@ export default class Cell implements ICell {
   private readonly _blocks: IBlock[];
   private readonly _eventListener?: ICellEventListener;
   private _player: IPlayer | undefined;
+  private _requiresRerender;
   constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
     this._row = row;
@@ -24,6 +25,7 @@ export default class Cell implements ICell {
     this._isEmpty = true;
     this._blocks = [];
     this._eventListener = grid;
+    this._requiresRerender = false;
   }
 
   get grid(): IGrid {
@@ -43,6 +45,13 @@ export default class Cell implements ICell {
     return this._blocks.length
       ? this._blocks[0].player.color
       : this._behaviour?.color || 0xffffff;
+  }
+
+  get requiresRerender(): boolean {
+    return this._requiresRerender;
+  }
+  set requiresRerender(requiresRerender: boolean) {
+    this._requiresRerender = requiresRerender;
   }
 
   get isPassable(): boolean {

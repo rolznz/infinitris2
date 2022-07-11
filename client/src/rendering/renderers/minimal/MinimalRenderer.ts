@@ -104,9 +104,11 @@ export default class MinimalRenderer extends BaseRenderer {
       }
     }
 
+    // FIXME: use simulation cells (see Infinitris2Renderer)
     Object.values(this._cells).forEach((cell) => {
-      if (cell.cell.behaviour.requiresRerender) {
+      if (cell.cell.requiresRerender) {
         this._renderCell(cell.cell);
+        cell.cell.requiresRerender = false;
       }
       cell.container.alpha = cell.cell.isEmpty ? cell.cell.behaviour.alpha : 1;
     });

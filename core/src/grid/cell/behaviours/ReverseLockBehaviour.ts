@@ -12,7 +12,6 @@ export default class LockBehaviour implements ICellBehaviour {
   private _color: number;
   private _isLocked: boolean;
   private _alpha: number;
-  private _requiresRerender: boolean;
   private _grid: IGrid;
   constructor(cell: ICell, grid: IGrid, color: number) {
     this._grid = grid;
@@ -20,7 +19,6 @@ export default class LockBehaviour implements ICellBehaviour {
     this._color = color;
     this._isLocked = false;
     this._alpha = 1;
-    this._requiresRerender = false;
   }
 
   step(): void {
@@ -37,10 +35,9 @@ export default class LockBehaviour implements ICellBehaviour {
         other.blocks.length === 0
     );
 
-    // TODO: is there a better way to do this?
-    // cells are only currently rendered (full re-render) initially and on block placement and line clear.
-    // NB: cells can change opacity, color etc without a full re-render.
-    this._requiresRerender = this._isLocked !== wasLocked;
+    if (this._isLocked !== wasLocked) {
+      this._cell.requiresRerender = true;
+    }
   }
 
   get color(): number {
@@ -69,10 +66,6 @@ export default class LockBehaviour implements ICellBehaviour {
 
   get type(): CellType {
     return CellType.Lock;
-  }
-
-  get requiresRerender(): boolean {
-    return this._requiresRerender;
   }
 
   toChallengeCellType() {

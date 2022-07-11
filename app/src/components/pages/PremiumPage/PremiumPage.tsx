@@ -31,6 +31,7 @@ export function PremiumPage() {
         <Button
           color="primary"
           variant="contained"
+          size="large"
           onClick={() => setGetPremium(true)}
           sx={{
             position: 'absolute',

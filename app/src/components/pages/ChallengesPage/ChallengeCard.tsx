@@ -107,8 +107,8 @@ export default function ChallengeCard({ challenge }: ChallengeCardProps) {
       <FlexBox zIndex={1} sx={gridPreviewSx}>
         <ChallengeGridPartialPreview grid={challenge.data()!.grid} />
       </FlexBox>
-      <FlexBox sx={cardFooterSx}>
-        <Typography variant="body1" mb={1}>
+      <FlexBox sx={cardFooterSx} alignItems="flex-start" px={1}>
+        <Typography variant="body1" fontSize="20px" mb={1}>
           {/*translation?.title || */ challenge.data()!.title}
           {/* {isLocked && ' (LOCKED)'} */}
         </Typography>

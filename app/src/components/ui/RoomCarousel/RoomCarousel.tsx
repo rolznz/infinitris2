@@ -98,11 +98,13 @@ export function RoomCarousel({
       }
     >
       {!isLocked ? (
-        <PlayButton
-          onClick={onSubmit}
-          //isLoaded={true}
-          delayButtonVisibility={false}
-        />
+        slides.length ? (
+          <PlayButton
+            onClick={onSubmit}
+            //isLoaded={true}
+            delayButtonVisibility={false}
+          />
+        ) : null
       ) : (
         <img
           alt="locked"

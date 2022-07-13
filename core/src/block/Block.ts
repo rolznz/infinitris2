@@ -220,7 +220,7 @@ export default class Block implements IBlock {
 
   destroy() {
     this._isAlive = false;
-    this._removeCells();
+    this._removeCells(this._cells);
     this._eventListener?.onBlockDestroyed(this);
   }
 
@@ -447,20 +447,37 @@ export default class Block implements IBlock {
     }
   }
 
-  private _removeCells() {
-    this._cells.forEach((cell) => cell.removeBlock(this));
-    this._cells.length = 0;
+  private _removeCells(cells: ICell[]) {
+    for (const cell of cells) {
+      const index = this._cells.indexOf(cell);
+      if (index < 0) {
+        throw new Error(
+          'Cell does not exist in block: ' + cell.row + ',' + cell.column
+        );
+      }
+      cell.removeBlock(this);
+      this._cells.splice(index, 1);
+    }
   }
 
   private _updateCells() {
-    this._removeCells();
+    const newCells: ICell[] = [];
+    const addCell = (cell: ICell | undefined) => {
+      if (!cell) {
+        throw new Error('Cannot add undefined cell to block');
+      }
+      newCells.push(cell);
+    };
+
     this._loopCells(
       this._simulation.grid.cells,
       this._column,
       this._row,
       this._rotation,
-      this._addCell
+      addCell
     );
+    this._removeCells(this._cells.filter((cell) => newCells.indexOf(cell) < 0));
+    this._addCells(newCells.filter((cell) => this._cells.indexOf(cell) < 0));
   }
 
   private _resetTimers() {
@@ -491,12 +508,17 @@ export default class Block implements IBlock {
     this._lockTimer = this._isDropping ? this._slowdownAmount * 3 : 45;
   }
 
-  private _addCell = (cell?: ICell) => {
-    if (!cell) {
-      throw new Error('Cannot add an undefined cell to a block');
+  private _addCells = (cells: ICell[]) => {
+    for (const cell of cells) {
+      if (!cell) {
+        throw new Error('Cannot add an undefined cell to a block');
+      }
+      if (this._cells.indexOf(cell) > -1) {
+        throw new Error('Cannot add cell to block twice');
+      }
+      this._cells.push(cell);
+      cell.addBlock(this);
     }
-    this._cells.push(cell);
-    cell.addBlock(this);
   };
 
   private _loopCells(

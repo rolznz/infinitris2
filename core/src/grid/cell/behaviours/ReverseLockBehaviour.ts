@@ -6,6 +6,7 @@ import IGrid from '@models/IGrid';
 import { lockColors } from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
 import ChallengeCellType from '@models/ChallengeCellType';
 import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
+import SwitchBehaviour from '@core/grid/cell/behaviours/SwitchBehaviour';
 
 export default class LockBehaviour implements ICellBehaviour {
   private _cell: ICell;
@@ -29,10 +30,10 @@ export default class LockBehaviour implements ICellBehaviour {
     const wasLocked = this._isLocked;
     this._isLocked = !this._grid.reducedCells.some(
       (other) =>
-        other.type === CellType.Key &&
-        (<KeyBehaviour>other.behaviour).color === this._color &&
-        other.isEmpty &&
-        other.blocks.length === 0
+        other.behaviour.color === this._color &&
+        (other.type === CellType.Key ||
+          (other.type === CellType.Switch &&
+            !(<SwitchBehaviour>other.behaviour).isOn))
     );
 
     if (this._isLocked !== wasLocked) {

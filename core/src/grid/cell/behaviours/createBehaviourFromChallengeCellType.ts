@@ -16,7 +16,9 @@ import { CustomizableInputAction } from '@models/InputAction';
 import GestureBehaviour from '@core/grid/cell/behaviours/GestureBehaviour';
 import ReverseLockBehaviour from '@core/grid/cell/behaviours/ReverseLockBehaviour';
 import CheckpointBehaviour from '@core/grid/cell/behaviours/CheckpointBehaviour';
+import SwitchBehaviour from '@core/grid/cell/behaviours/SwitchBehaviour';
 
+// currently keyColors must match lock colors and switch colors for behaviour to work (direct color match)
 export const keyColors = {
   redColor: 0xff0000,
   blueColor: 0x0000ff,
@@ -24,6 +26,7 @@ export const keyColors = {
   yellowColor: 0xffff00,
 };
 export const lockColors = keyColors;
+export const switchColors = keyColors;
 
 export default function createBehaviourFromChallengeCellType(
   cell: ICell,
@@ -55,24 +58,32 @@ function getBehaviour(
     // TODO: find way to reduce duplication
     case ChallengeCellType.RedKey:
       return new KeyBehaviour(cell, keyColors.redColor);
+    case ChallengeCellType.RedSwitch:
+      return new SwitchBehaviour(cell, switchColors.redColor);
     case ChallengeCellType.RedLock:
       return new LockBehaviour(cell, grid, lockColors.redColor);
     case ChallengeCellType.ReverseRedLock:
       return new ReverseLockBehaviour(cell, grid, lockColors.redColor);
     case ChallengeCellType.GreenKey:
       return new KeyBehaviour(cell, keyColors.greenColor);
+    case ChallengeCellType.GreenSwitch:
+      return new SwitchBehaviour(cell, switchColors.greenColor);
     case ChallengeCellType.GreenLock:
       return new LockBehaviour(cell, grid, lockColors.greenColor);
     case ChallengeCellType.ReverseGreenLock:
       return new ReverseLockBehaviour(cell, grid, lockColors.greenColor);
     case ChallengeCellType.BlueKey:
       return new KeyBehaviour(cell, keyColors.blueColor);
+    case ChallengeCellType.BlueSwitch:
+      return new SwitchBehaviour(cell, switchColors.blueColor);
     case ChallengeCellType.BlueLock:
       return new LockBehaviour(cell, grid, lockColors.blueColor);
     case ChallengeCellType.ReverseBlueLock:
       return new ReverseLockBehaviour(cell, grid, lockColors.blueColor);
     case ChallengeCellType.YellowKey:
       return new KeyBehaviour(cell, keyColors.yellowColor);
+    case ChallengeCellType.YellowSwitch:
+      return new SwitchBehaviour(cell, switchColors.yellowColor);
     case ChallengeCellType.YellowLock:
       return new LockBehaviour(cell, grid, lockColors.yellowColor);
     case ChallengeCellType.ReverseYellowLock:

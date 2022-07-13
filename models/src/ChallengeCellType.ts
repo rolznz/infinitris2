@@ -1,5 +1,3 @@
-import { assertUnreachable } from '@models/util/assertUnreachable';
-
 enum ChallengeCellType {
   Empty = '0',
   Full = 'X',
@@ -8,15 +6,19 @@ enum ChallengeCellType {
   RedKey = 'R',
   RedLock = 'r',
   ReverseRedLock = 'd',
+  RedSwitch = 'h',
   GreenKey = 'G',
   GreenLock = 'g',
   ReverseGreenLock = 'n',
+  GreenSwitch = 'H',
   BlueKey = 'B',
   BlueLock = 'b',
   ReverseBlueLock = 'e',
+  BlueSwitch = 'c',
   YellowKey = 'Y',
   YellowLock = 'y',
   ReverseYellowLock = 'w',
+  YellowSwitch = 't',
   Finish = 'F',
   Wafer = 'W',
   Infection = 'I',
@@ -59,24 +61,32 @@ export function getChallengeCellTypeDescription(
       return 'Red Lock';
     case ChallengeCellType.ReverseRedLock:
       return 'Reverse Red Lock';
+    case ChallengeCellType.RedSwitch:
+      return 'Red Switch';
     case ChallengeCellType.GreenKey:
       return 'Green Key';
     case ChallengeCellType.GreenLock:
       return 'Green Lock';
     case ChallengeCellType.ReverseGreenLock:
       return 'Reverse Green Lock';
+    case ChallengeCellType.GreenSwitch:
+      return 'Green Switch';
     case ChallengeCellType.BlueKey:
       return 'Blue Key';
     case ChallengeCellType.BlueLock:
       return 'Blue Lock';
     case ChallengeCellType.ReverseBlueLock:
       return 'Reverse Blue Lock';
+    case ChallengeCellType.BlueSwitch:
+      return 'Blue Switch';
     case ChallengeCellType.YellowKey:
       return 'Yellow Key';
     case ChallengeCellType.YellowLock:
       return 'Yellow Lock';
     case ChallengeCellType.ReverseYellowLock:
       return 'Reverse Yellow Lock';
+    case ChallengeCellType.YellowSwitch:
+      return 'Yellow Switch';
     case ChallengeCellType.Finish:
       return 'Finish';
     case ChallengeCellType.Wafer:

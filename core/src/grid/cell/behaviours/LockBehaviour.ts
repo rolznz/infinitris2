@@ -6,6 +6,7 @@ import IGrid from '@models/IGrid';
 import { lockColors } from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
 import ChallengeCellType from '@models/ChallengeCellType';
 import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
+import SwitchBehaviour from '@core/grid/cell/behaviours/SwitchBehaviour';
 
 export default class LockBehaviour implements ICellBehaviour {
   private _cell: ICell;
@@ -28,10 +29,6 @@ export default class LockBehaviour implements ICellBehaviour {
       this._alpha = Math.min(this._alpha + 0.05, 1);
     } else {
       this._alpha = Math.max(this._alpha - 0.05, 0.0);
-      if (this._alpha < 0.01) {
-        this._cell.behaviour = new NormalCellBehaviour(this._cell);
-        this._cell.isEmpty = true;
-      }
     }
   }
 
@@ -39,8 +36,10 @@ export default class LockBehaviour implements ICellBehaviour {
     const wasLocked = this._isLocked;
     this._isLocked = this._grid.reducedCells.some(
       (other) =>
-        other.type === CellType.Key &&
-        (<KeyBehaviour>other.behaviour).color === this._color
+        other.behaviour.color === this._color &&
+        (other.type === CellType.Key ||
+          (other.type === CellType.Switch &&
+            !(<SwitchBehaviour>other.behaviour).isOn))
     );
 
     // TODO: is there a better way to do this?

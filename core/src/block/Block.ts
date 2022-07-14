@@ -32,7 +32,6 @@ export default class Block implements IBlock {
   private _isAlive: boolean;
   private _cancelDrop: boolean;
   private _slowdownAmount: number;
-  private _gridCells: ICell[][];
   private _simulation: ISimulation;
   private _layoutId: number;
   private _id: number;
@@ -68,13 +67,20 @@ export default class Block implements IBlock {
     this._slowdownAmount = 0;
     this._isAlive = true;
     this._simulation = simulation;
-    this._gridCells = simulation.grid.cells;
     this._resetTimers();
+
+    // spawn as high as possible, for layouts that have blank rows (like the long tetromino)
+    for (let i = 0; i < this._layout.length; i++) {
+      if (this._layout[i].some((column) => column !== 0)) {
+        break;
+      }
+      --this._row;
+    }
 
     let otherBlockInArea = false;
     if (!force && this._simulation.settings.allowSpawnOnOtherBlocks === false) {
       this._loopCells(
-        this._gridCells,
+        this._simulation.grid.cells,
         this._column,
         this._row,
         this._rotation,

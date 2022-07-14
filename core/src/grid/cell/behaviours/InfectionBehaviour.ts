@@ -42,7 +42,7 @@ export default class InfectionBehaviour implements ICellBehaviour {
                 this._grid.numColumns) %
                 this._grid.numColumns
             ];
-          if (cell && cell.isPassable && cell.behaviour.isReplaceable) {
+          if (cell && cell.isPassable /* && cell.behaviour.isReplaceable*/) {
             cell.behaviour = new InfectionBehaviour(cell, this._grid);
           }
         }

@@ -52,4 +52,23 @@ export default class GestureBehaviour implements ICellBehaviour {
         throw new Error('Unsupported input action: ' + this._inputAction);
     }
   }
+  getImageFilename(): string {
+    const prefix = 'gesture_';
+    switch (this._inputAction) {
+      case CustomizableInputAction.MoveLeft:
+        return prefix + 'left';
+      case CustomizableInputAction.MoveRight:
+        return prefix + 'right';
+      case CustomizableInputAction.MoveDown:
+        return prefix + 'down';
+      case CustomizableInputAction.RotateClockwise:
+        return prefix + 'rotate_clockwise';
+      case CustomizableInputAction.RotateAnticlockwise:
+        return prefix + 'rotate_anticlockwise';
+      case CustomizableInputAction.Drop:
+        return prefix + 'drop';
+      default:
+        throw new Error('Unsupported input action: ' + this._inputAction);
+    }
+  }
 }

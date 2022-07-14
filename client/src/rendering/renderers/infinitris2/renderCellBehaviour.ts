@@ -25,7 +25,11 @@ export function getCellBehaviourImageFilename(
   challengeEditorEnabled = false
 ) {
   // TODO: check challengeEditorEnabled in the behaviour rather than doing it here
-  if (!challengeEditorEnabled && behaviour.type === CellType.SpawnLocation) {
+  if (
+    !challengeEditorEnabled &&
+    (behaviour.type === CellType.SpawnLocation ||
+      behaviour.type === CellType.Gesture)
+  ) {
     return undefined;
   }
   // TODO: use a sprite sheet instead of individual sprites

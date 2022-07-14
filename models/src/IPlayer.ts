@@ -33,6 +33,7 @@ export interface IPlayer {
   get status(): PlayerStatus;
   set spawnLocationCell(cell: ICell | undefined);
   set checkpointCell(cell: ICell | undefined);
+  get checkpointCell(): ICell | undefined;
 
   get block(): IBlock | undefined;
   get score(): number;

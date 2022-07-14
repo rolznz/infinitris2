@@ -154,6 +154,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   set checkpointCell(cell: ICell | undefined) {
     this._checkpointCell = cell;
   }
+  get checkpointCell(): ICell | undefined {
+    return this._checkpointCell;
+  }
 
   set status(status: PlayerStatus) {
     this._status = status;

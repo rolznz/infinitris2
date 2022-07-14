@@ -3,7 +3,7 @@ import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 
 import FlexBox from '../../ui/FlexBox';
-import ChallengeCard from './ChallengeCard';
+import { CommunityChallengeCard } from './ChallengeCard';
 import { orderBy, where } from 'firebase/firestore';
 import { useIntl } from 'react-intl';
 import { Page } from '@/components/ui/Page';
@@ -93,11 +93,11 @@ export function ChallengesPage() {
         flexWrap="wrap"
         flexDirection="row"
         justifyContent="flex-start"
+        gap={4}
+        pt={2}
       >
         {challenges?.map((challenge) => (
-          <FlexBox key={challenge.id} margin={4}>
-            <ChallengeCard challenge={challenge} />
-          </FlexBox>
+          <CommunityChallengeCard challenge={challenge} key={challenge.id} />
         ))}
       </FlexBox>
     </Page>

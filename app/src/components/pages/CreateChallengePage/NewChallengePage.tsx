@@ -1,4 +1,4 @@
-import { Button, Card, Link, Typography } from '@mui/material';
+import { Button, Link, Typography } from '@mui/material';
 import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
@@ -10,12 +10,12 @@ import FlexBox from '../../ui/FlexBox';
 import { DocumentSnapshot, where } from 'firebase/firestore';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import { createNewChallenge } from '@/components/pages/CreateChallengePage/createNewChallenge';
-import { ChallengeGridPartialPreview } from '@/components/pages/ChallengesPage/ChallengeGridPartialPreview';
 import { useUser } from '@/components/hooks/useUser';
 import { Page } from '@/components/ui/Page';
 import { getChallengeTestUrl } from '@/utils/getChallengeTestUrl';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
+import ChallengeCard from '@/components/pages/ChallengesPage/ChallengeCard';
 
 interface ChallengesRowProps {
   challenges: DocumentSnapshot<IChallenge>[] | undefined;
@@ -29,41 +29,35 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
   }
   const isAdmin = user.readOnly?.isAdmin;
   return (
-    <FlexBox flex={1} padding={4} flexWrap="wrap" flexDirection="row">
+    <FlexBox flexWrap="wrap" flexDirection="row" gap={4} pt={2} pb={4}>
       {challenges.map((challenge) => (
-        <FlexBox key={challenge.id} margin={4}>
-          <Card
-            onClick={() => {
-              let editExisting =
-                isAdmin && window.confirm('Edit existing challenge?');
-              useChallengeEditorStore
-                .getState()
-                .setChallengeId(editExisting ? challenge.id : undefined);
-              useChallengeEditorStore.getState().setChallenge({
-                ...(editExisting ? ({} as IChallenge) : createNewChallenge()),
-                grid: challenge.data()!.grid,
-                title: challenge.data()?.isTemplate
+        <ChallengeCard
+          key={challenge.id}
+          challenge={challenge}
+          onClick={() => {
+            let editExisting =
+              isAdmin && window.confirm('Edit existing challenge?');
+            useChallengeEditorStore
+              .getState()
+              .setChallengeId(editExisting ? challenge.id : undefined);
+            useChallengeEditorStore.getState().setChallenge({
+              ...(editExisting ? ({} as IChallenge) : createNewChallenge()),
+              grid: challenge.data()!.grid,
+              title:
+                !editExisting && challenge.data()?.isTemplate
                   ? undefined
                   : challenge.data()!.title,
-                worldType: challenge.data()!.worldType,
-                worldVariation: challenge.data()!.worldVariation,
-                simulationSettings: challenge.data()!.simulationSettings,
-                // TODO: add other writable settings here (linked with form options)
-              });
-              history.push(
-                getChallengeTestUrl(
-                  useChallengeEditorStore.getState().challenge!
-                )
-              );
-            }}
-          >
-            <Typography>{challenge.data()!.title}</Typography>
-            <ChallengeGridPartialPreview
-              grid={challenge.data()!.grid}
-              allRows
-            />
-          </Card>
-        </FlexBox>
+              worldType: challenge.data()!.worldType,
+              worldVariation: challenge.data()!.worldVariation,
+              simulationSettings: challenge.data()!.simulationSettings,
+              isTemplate: challenge.data()?.isTemplate,
+              // TODO: add other writable settings here (linked with form options)
+            });
+            history.push(
+              getChallengeTestUrl(useChallengeEditorStore.getState().challenge!)
+            );
+          }}
+        />
       ))}
     </FlexBox>
   );

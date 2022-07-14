@@ -215,7 +215,9 @@ export function ChallengeEditorSettingsForm({
           enqueueSnackbar('Challenge Published Successfully!');
           const sortLatest: ChallengesPageSortType = 'latest';
           history.push(
-            `${Routes.challenges}?${challengesPageSortParam}=${sortLatest}`
+            challenge.isTemplate || challenge.isOfficial
+              ? Routes.newChallenge
+              : `${Routes.challenges}?${challengesPageSortParam}=${sortLatest}`
           );
         } catch (error) {
           console.error('Failed to publish challenge', error);
@@ -337,7 +339,12 @@ export function ChallengeEditorSettingsForm({
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      control={<Checkbox {...field} />}
+                      control={
+                        <Checkbox
+                          {...field}
+                          defaultChecked={!!challenge.isTemplate}
+                        />
+                      }
                       label={'Save as Template'}
                     />
                   )}
@@ -347,7 +354,12 @@ export function ChallengeEditorSettingsForm({
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
-                      control={<Checkbox {...field} />}
+                      control={
+                        <Checkbox
+                          {...field}
+                          defaultChecked={!!challenge.isOfficial}
+                        />
+                      }
                       label={'Official (Story Mode)'}
                     />
                   )}
@@ -364,7 +376,7 @@ export function ChallengeEditorSettingsForm({
                         onChange={(event) =>
                           field.onChange(parseInt(event.target.value))
                         }
-                        defaultValue={0}
+                        defaultValue={challenge.priority || 0}
                         fullWidth
                       />
                     </FormControl>

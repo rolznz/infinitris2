@@ -126,4 +126,8 @@ export default class RockBehaviour implements ICellBehaviour {
   getImageFilename() {
     return this._imageFilename;
   }
+
+  get rotation(): number {
+    return this._rotation;
+  }
 }

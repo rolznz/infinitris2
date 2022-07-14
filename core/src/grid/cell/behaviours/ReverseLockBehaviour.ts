@@ -8,7 +8,8 @@ import ChallengeCellType from '@models/ChallengeCellType';
 import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
 import SwitchBehaviour from '@core/grid/cell/behaviours/SwitchBehaviour';
 
-export default class LockBehaviour implements ICellBehaviour {
+// TODO: reduce duplication between reverse and normal locks
+export default class ReverseLockBehaviour implements ICellBehaviour {
   private _cell: ICell;
   private _color: number;
   private _isLocked: boolean;
@@ -50,7 +51,7 @@ export default class LockBehaviour implements ICellBehaviour {
   }
 
   clone(forCell: ICell): ICellBehaviour {
-    return new LockBehaviour(forCell, this._grid, this._color);
+    return new ReverseLockBehaviour(forCell, this._grid, this._color);
   }
 
   get alpha(): number {
@@ -67,6 +68,10 @@ export default class LockBehaviour implements ICellBehaviour {
 
   get type(): CellType {
     return CellType.Lock;
+  }
+
+  get rotation(): number {
+    return Math.PI;
   }
 
   toChallengeCellType() {

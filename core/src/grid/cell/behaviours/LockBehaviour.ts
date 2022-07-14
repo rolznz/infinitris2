@@ -8,6 +8,7 @@ import ChallengeCellType from '@models/ChallengeCellType';
 import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
 import SwitchBehaviour from '@core/grid/cell/behaviours/SwitchBehaviour';
 
+// TODO: reduce duplication between reverse and normal locks
 export default class LockBehaviour implements ICellBehaviour {
   private _cell: ICell;
   private _color: number;
@@ -24,12 +25,6 @@ export default class LockBehaviour implements ICellBehaviour {
 
   step(): void {
     this._checkLocked();
-
-    if (this._isLocked) {
-      this._alpha = Math.min(this._alpha + 0.05, 1);
-    } else {
-      this._alpha = Math.max(this._alpha - 0.05, 0.0);
-    }
   }
 
   private _checkLocked() {
@@ -93,15 +88,16 @@ export default class LockBehaviour implements ICellBehaviour {
     }
   }
   getImageFilename() {
+    const prefix = !this._isLocked ? 'reverse_' : '';
     switch (this._color) {
       case lockColors.redColor:
-        return 'lock_red';
+        return prefix + 'lock_red';
       case lockColors.blueColor:
-        return 'lock_blue';
+        return prefix + 'lock_blue';
       case lockColors.yellowColor:
-        return 'lock_yellow';
+        return prefix + 'lock_yellow';
       case lockColors.greenColor:
-        return 'lock_green';
+        return prefix + 'lock_green';
       default:
         throw new Error('Unsupported lock color: ' + this._color);
     }

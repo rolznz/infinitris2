@@ -470,7 +470,7 @@ export function CreateChallengePage() {
   React.useEffect(() => {
     if (!challengeExists) {
       //useChallengeEditorStore.getState().setChallenge(createNewChallenge());
-      history.push(Routes.newChallenge);
+      history.replace(Routes.newChallenge);
     }
   }, [challengeExists, history]);
 

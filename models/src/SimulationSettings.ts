@@ -13,6 +13,7 @@ export type SimulationSettings = {
   readonly saveSpawnPositionOnDeath?: boolean;
   readonly maxSpawnDelaySeconds?: number;
   readonly spawnDelayScoreGraceAmount?: number;
+  readonly spawnDelayMaxScore?: number;
   readonly roundLength?: RoundLength;
   readonly instantDrops?: boolean;
   readonly layoutSetId?: string; // TODO: add better typings - should be one of blockLayoutSets[x].id

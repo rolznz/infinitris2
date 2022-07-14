@@ -492,7 +492,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       const scoreGraceAmount =
         this._simulation.settings.spawnDelayScoreGraceAmount ?? 250;
       const getScoreWithGrace = (score: number) =>
-        Math.max(score - scoreGraceAmount, 0);
+        Math.min(
+          Math.max(score - scoreGraceAmount, 0),
+          this._simulation.settings.spawnDelayMaxScore ?? 1000
+        );
 
       const scoreDiffWithGrace =
         getScoreWithGrace(highestPlayerScore) - getScoreWithGrace(this._score);

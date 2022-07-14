@@ -31,7 +31,7 @@ export function ChallengeEditorGridTab() {
           <Link
             component={RouterLink}
             underline="none"
-            to={getChallengeTestUrl(challenge)}
+            to={getChallengeTestUrl()}
             mb={1}
             onClick={() => {
               useChallengeEditorStore.getState().setIsEditing(false);

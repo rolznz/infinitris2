@@ -11,7 +11,6 @@ import {
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
 import React from 'react';
-import useSearchParam from 'react-use/lib/useSearchParam';
 import { useCollection, useDocument } from 'swr-firestore';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
@@ -60,8 +59,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const client = appStore.clientApi;
   const user = useUser();
 
-  const json = useSearchParam('json');
-
   const isTest = isTestChallenge(challengeId);
   console.log('isTest', isTest);
 
@@ -73,8 +70,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const { data: syncedChallenge } = useDocument<IChallenge>(
     !isTest ? getChallengePath(challengeId) : null
   );
-  const challenge: IChallenge = isTest
-    ? JSON.parse(json as string)
+  const challenge: IChallenge | undefined = isTest
+    ? useChallengeEditorStore.getState().challenge
     : syncedChallenge?.data();
 
   const loadCharacters = !!challenge?.simulationSettings?.botSettings;
@@ -126,7 +123,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       return;
     }
     setContinued(true);
-    if (isTest || !challenge.isOfficial) {
+    if (isTest || !challenge?.isOfficial) {
       history.goBack();
     } else if (incompleteChallenges.length) {
       history.replace(`${Routes.challenges}/${incompleteChallenges[0].id}`);

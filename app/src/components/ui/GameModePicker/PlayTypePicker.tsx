@@ -67,9 +67,7 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
     ];
   const nonStoryModeLocked = (user.unlockedFeatures || []).indexOf('space') < 0;
   const challenge = useChallengeEditorStore((store) => store.challenge);
-  const challengeUrl = challenge
-    ? getChallengeTestUrl(challenge)
-    : Routes.newChallenge;
+  const challengeUrl = challenge ? getChallengeTestUrl() : Routes.newChallenge;
 
   return (
     <FlexBox

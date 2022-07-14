@@ -55,9 +55,7 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
               priority: challenge.data()?.priority,
               // TODO: add other writable settings here (linked with form options)
             });
-            history.push(
-              getChallengeTestUrl(useChallengeEditorStore.getState().challenge!)
-            );
+            history.push(getChallengeTestUrl());
           }}
         />
       ))}

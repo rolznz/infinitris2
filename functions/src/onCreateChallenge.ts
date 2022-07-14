@@ -7,6 +7,7 @@ import {
 } from 'infinitris2-models';
 import { getDb, increment } from './utils/firebase';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
+import { postSimpleWebhook } from './utils/postSimpleWebhook';
 
 export const onCreateChallenge = functions.firestore
   .document('challenges/{challengeId}')
@@ -47,6 +48,19 @@ export const onCreateChallenge = functions.firestore
           },
           created: true,
         } as Pick<IChallenge, 'readOnly' | 'created'>);
+
+      if (!challenge.isOfficial && !challenge.isTemplate) {
+        const user = await userDocRef.get();
+        const userData = user.data() as IUser;
+        await postSimpleWebhook(
+          'New challenge published: ' +
+            (challenge.title ?? 'Unnamed') +
+            ' by ' +
+            (userData.readOnly?.nickname ?? 'Unknown') +
+            '\n\n' +
+            `https://infinitris.net/challenges/${snapshot.ref.id}`
+        );
+      }
     } catch (error) {
       console.error(error);
     }

@@ -14,6 +14,6 @@ export default interface IRoom extends IEntity {
   maxPlayers: number;
   worldType?: WorldType;
   worldVariation?: WorldVariation;
-  simulationSettings: SimulationSettings;
+  simulationSettings?: SimulationSettings;
   gameModeType: GameModeType; // TODO: remove
 }

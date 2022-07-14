@@ -40,7 +40,7 @@ export function ImpactInfoIncreaseImpactSlide2() {
           <Link
             component={RouterLink}
             underline="none"
-            to={Routes.createChallenge}
+            to={Routes.newChallenge}
             onClick={closeDialog}
           >
             <Button color="primary" variant="contained" size="large">

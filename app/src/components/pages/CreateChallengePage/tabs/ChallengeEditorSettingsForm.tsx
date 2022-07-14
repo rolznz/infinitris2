@@ -371,12 +371,11 @@ export function ChallengeEditorSettingsForm({
                     <FormControl variant="standard" fullWidth>
                       <InputLabel>Priority (Story Mode)</InputLabel>
                       <Input
-                        type="number"
                         {...field}
                         onChange={(event) =>
                           field.onChange(parseInt(event.target.value))
                         }
-                        defaultValue={challenge.priority || 0}
+                        defaultValue={(challenge.priority ?? 0).toString()}
                         fullWidth
                       />
                     </FormControl>

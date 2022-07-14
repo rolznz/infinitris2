@@ -51,6 +51,8 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
               worldVariation: challenge.data()!.worldVariation,
               simulationSettings: challenge.data()!.simulationSettings,
               isTemplate: challenge.data()?.isTemplate,
+              isOfficial: challenge.data()?.isOfficial,
+              priority: challenge.data()?.priority,
               // TODO: add other writable settings here (linked with form options)
             });
             history.push(

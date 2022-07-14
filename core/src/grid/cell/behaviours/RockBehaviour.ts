@@ -15,16 +15,19 @@ export default class RockBehaviour implements ICellBehaviour {
   private _shouldExplode: boolean;
   private _imageFilename: string;
   private _rockFallInterval: number;
+  private _rotation: number;
   constructor(
     cell: ICell,
     grid: IGrid,
     imageFilename?: string,
-    speed?: number
+    speed?: number,
+    rotation?: number
   ) {
     this._grid = grid;
     this._cell = cell;
     this._nextRockTimer = 0;
     this._offsetY = 0;
+    this._rotation = rotation ?? Math.random() * Math.PI * 2;
     this._shouldExplode = false;
     this._rockFallInterval =
       speed ||
@@ -69,7 +72,8 @@ export default class RockBehaviour implements ICellBehaviour {
           belowCell,
           this._grid,
           this._imageFilename,
-          this._rockFallInterval
+          this._rockFallInterval,
+          this._rotation
         );
         this._remove(false);
       } else {

@@ -364,7 +364,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
       const renderableCell = this._getRenderableCell(cell);
       renderableCell.container.alpha = cell.behaviour.alpha;
-
+      renderableCell.container.rotation = cell.behaviour.rotation || 0;
       // TODO: do not access cell type directly like this
       // TODO: allow both offset and rotation
       if (cell.behaviour.type === CellType.Rock) {

@@ -69,12 +69,14 @@ export default class Block implements IBlock {
     this._simulation = simulation;
     this._resetTimers();
 
-    // spawn as high as possible, for layouts that have blank rows (like the long tetromino)
-    for (let i = 0; i < this._layout.length; i++) {
-      if (this._layout[i].some((column) => column !== 0)) {
-        break;
+    if (!force) {
+      // spawn as high as possible, for layouts that have blank rows (like the long tetromino)
+      for (let i = 0; i < this._layout.length; i++) {
+        if (this._layout[i].some((column) => column !== 0)) {
+          break;
+        }
+        --this._row;
       }
-      --this._row;
     }
 
     let otherBlockInArea = false;

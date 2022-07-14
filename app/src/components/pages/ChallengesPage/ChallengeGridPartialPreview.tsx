@@ -46,12 +46,38 @@ async function getChallengeCellImage(
       return loadImage(cellType, 'reverse_lock_green');
     case ChallengeCellType.ReverseYellowLock:
       return loadImage(cellType, 'reverse_lock_yellow');
+    case ChallengeCellType.RedSwitch:
+      return loadImage(cellType, 'switch_red_on');
+    case ChallengeCellType.BlueSwitch:
+      return loadImage(cellType, 'switch_blue_on');
+    case ChallengeCellType.GreenSwitch:
+      return loadImage(cellType, 'switch_green_on');
+    case ChallengeCellType.YellowSwitch:
+      return loadImage(cellType, 'switch_yellow_on');
+    case ChallengeCellType.Checkpoint:
+      return loadImage(cellType, 'checkpoint');
     case ChallengeCellType.SpawnLocation:
       return loadImage(cellType, 'spawn');
     case ChallengeCellType.Finish:
       return loadImage(cellType, 'finish');
     case ChallengeCellType.Infection:
       return loadImage(cellType, 'virus');
+    case ChallengeCellType.Wafer:
+      return loadImage(cellType, 'wafer');
+    case ChallengeCellType.Deadly:
+      return loadImage(cellType, 'deadly');
+    case ChallengeCellType.GestureMoveLeft:
+      return loadImage(cellType, 'gesture_left');
+    case ChallengeCellType.GestureMoveRight:
+      return loadImage(cellType, 'gesture_right');
+    case ChallengeCellType.GestureMoveDown:
+      return loadImage(cellType, 'gesture_down');
+    case ChallengeCellType.GestureDrop:
+      return loadImage(cellType, 'gesture_drop');
+    case ChallengeCellType.GestureRotateClockwise:
+      return loadImage(cellType, 'gesture_rotate_clockwise');
+    case ChallengeCellType.GestureRotateAnticlockwise:
+      return loadImage(cellType, 'gesture_rotate_anticlockwise');
     default:
       return undefined;
   }

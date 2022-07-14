@@ -364,9 +364,15 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
       const renderableCell = this._getRenderableCell(cell);
       renderableCell.container.alpha = cell.behaviour.alpha;
-      renderableCell.container.rotation = cell.behaviour.rotation || 0;
+
+      // rotate non-player cell sprites around center (requires rotating each individually to support shadow and wrap rendering)
+      renderableCell.children.forEach((child) => {
+        if (child.renderableObject.patternSprite) {
+          const rotation = !cell.player ? cell.behaviour.rotation || 0 : 0;
+          child.renderableObject.patternSprite.rotation = rotation;
+        }
+      });
       // TODO: do not access cell type directly like this
-      // TODO: allow both offset and rotation
       if (cell.behaviour.type === CellType.Rock) {
         renderableCell.container.y =
           (cell.row + (cell.behaviour as RockBehaviour).offsetY) *
@@ -1238,13 +1244,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       renderableCell.cell.column * this._cellSize
     );
     renderableCell.container.y = renderableCell.cell.row * this._cellSize;
-    this._renderCellCopies(
-      renderableCell,
-      RenderCellType.Cell,
-      cell.color,
-      cell.player?.patternFilename,
-      cell.behaviour
-    );
+    this._renderCellCopies(renderableCell, cell);
     //}
     /*else {
       renderableCell.children.forEach((child) => {
@@ -1364,15 +1364,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
         };
       }
     );
-
-    /*blockContainer.cells.forEach((cell) => {
-      this._renderCellCopies(
-        cell,
-        RenderCellType.Block,
-        block.player.color,
-        block.player.patternFilename
-      );
-    });*/
   }
 
   private _renderParticle(particle: IParticle, color: number) {
@@ -1405,16 +1396,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
     );
   }
 
-  private _renderCellCopies(
-    renderableCell: IRenderableCell,
-    renderCellType: RenderCellType,
-    color: number,
-    patternFilename: string | undefined,
-    behaviour?: ICellBehaviour
-  ) {
+  private _renderCellCopies(renderableCell: IRenderableCell, cell: ICell) {
     if (!this._simulation) {
       return;
     }
+    const color: number = cell.color;
+    const patternFilename: string | undefined = cell.player?.patternFilename;
+    const behaviour: ICellBehaviour = cell.behaviour;
     this.renderCopies(
       renderableCell,
       1,
@@ -1460,6 +1448,14 @@ export default class Infinitris2Renderer extends BaseRenderer {
         child.renderableObject.graphics.x = shadowX;
         if (child.renderableObject.patternSprite) {
           child.renderableObject.patternSprite.x = shadowX;
+        }
+        if (!renderableCell.cell.player) {
+          // make non-player sprites to rotate around center
+          if (child.renderableObject.patternSprite) {
+            child.renderableObject.patternSprite.anchor.set(0.5, 0.5);
+            child.renderableObject.patternSprite.x += this._cellSize * 0.5;
+            child.renderableObject.patternSprite.y += this._cellSize * 0.5;
+          }
         }
       },
       () => {
@@ -1702,13 +1698,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
         renderableCell.container.x = cell.column * cellSize;
         renderableCell.container.y = y * cellSize;
         renderableCell.container.zIndex = -1000;
-        /*this._renderCellCopies(
-          renderableCell,
-          RenderCellType.PlacementHelper,
-          isTower ? 0.66 : 0.33,
-          isTower ? 0xff0000 : block.player.color,
-          isTower
-        );*/
         const opacity = displayInvalidPlacement ? 0.5 : 0.33;
         const isCause =
           isTower || y > highestPlacementRow - cellDistanceFromLowestRow;

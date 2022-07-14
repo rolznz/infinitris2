@@ -129,9 +129,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     if (isTest || !challenge.isOfficial) {
       history.goBack();
     } else if (incompleteChallenges.length) {
-      history.push(`${Routes.challenges}/${incompleteChallenges[0].id}`);
+      history.replace(`${Routes.challenges}/${incompleteChallenges[0].id}`);
     } else {
-      history.push(Routes.home);
+      history.replace(Routes.home);
     }
   }, [
     hasContinued,

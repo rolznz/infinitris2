@@ -331,6 +331,10 @@ export default class Block implements IBlock {
     force: boolean = false,
     rotateDown: boolean = false
   ): boolean {
+    // force downward rotations when above the grid (e.g. long block on spawn), otherwise can't rotate
+    if (!force && this._row < 0) {
+      rotateDown = true;
+    }
     const attempts: MovementAttempt[] =
       !force && !this.isDropping && dr !== 0
         ? this._simulation.rotationSystem.getAttempts(dx, dy, dr, rotateDown)

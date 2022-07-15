@@ -13,28 +13,6 @@ import SvgIcon from '@mui/material/SvgIcon';
 import { ReactComponent as SortIcon } from '@/icons/sort.svg';
 import useSearchParam from 'react-use/lib/useSearchParam';
 
-const challengesPopularityFilter: UseCollectionOptions = {
-  constraints: [
-    where('isOfficial', '==', false),
-    orderBy('readOnly.numRatings', 'desc'),
-    orderBy('readOnly.rating', 'desc'),
-  ],
-};
-
-const challengesRatingFilter: UseCollectionOptions = {
-  constraints: [
-    where('isOfficial', '==', false),
-    orderBy('readOnly.rating', 'desc'),
-    orderBy('readOnly.numRatings', 'desc'),
-  ],
-};
-const challengesDateFilter: UseCollectionOptions = {
-  constraints: [
-    where('isOfficial', '==', false),
-    orderBy('readOnly.createdTimestamp', 'desc'),
-  ],
-};
-
 const ChallengesPageSortTypeValues = [
   'popularity',
   'rating',
@@ -43,17 +21,55 @@ const ChallengesPageSortTypeValues = [
 export type ChallengesPageSortType =
   typeof ChallengesPageSortTypeValues[number];
 export const challengesPageSortParam = 'sort';
+export const challengesPageListenParam = 'listen';
 
 export function ChallengesPage() {
   const intl = useIntl();
   const sortParam = useSearchParam(
     challengesPageSortParam
   ) as ChallengesPageSortType;
+  const listen = useSearchParam(challengesPageListenParam) === 'true';
+
   const [filter, setFilter] = React.useState<ChallengesPageSortType>(
     sortParam && ChallengesPageSortTypeValues.indexOf(sortParam) > -1
       ? sortParam
       : 'popularity'
   );
+
+  const challengesPopularityFilter: UseCollectionOptions = React.useMemo(
+    () => ({
+      constraints: [
+        where('isOfficial', '==', false),
+        orderBy('readOnly.numRatings', 'desc'),
+        orderBy('readOnly.rating', 'desc'),
+      ],
+      listen,
+    }),
+    [listen]
+  );
+
+  const challengesRatingFilter: UseCollectionOptions = React.useMemo(
+    () => ({
+      constraints: [
+        where('isOfficial', '==', false),
+        orderBy('readOnly.rating', 'desc'),
+        orderBy('readOnly.numRatings', 'desc'),
+      ],
+      listen,
+    }),
+    [listen]
+  );
+  const challengesDateFilter: UseCollectionOptions = React.useMemo(
+    () => ({
+      constraints: [
+        where('isOfficial', '==', false),
+        orderBy('readOnly.createdTimestamp', 'desc'),
+      ],
+      listen,
+    }),
+    [listen]
+  );
+
   const { data: challenges } = useCollection<IChallenge>(
     challengesPath,
     filter === 'popularity'

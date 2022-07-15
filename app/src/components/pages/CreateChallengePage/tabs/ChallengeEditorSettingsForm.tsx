@@ -38,6 +38,7 @@ import { useSnackbar } from 'notistack';
 import {
   ChallengesPageSortType,
   challengesPageSortParam,
+  challengesPageListenParam,
 } from '@/components/pages/ChallengesPage/ChallengesPage';
 
 const exportChallenge = () => {
@@ -217,7 +218,7 @@ export function ChallengeEditorSettingsForm({
           history.push(
             challenge.isTemplate || challenge.isOfficial
               ? Routes.newChallenge
-              : `${Routes.challenges}?${challengesPageSortParam}=${sortLatest}`
+              : `${Routes.challenges}?${challengesPageSortParam}=${sortLatest}&${challengesPageListenParam}=true`
           );
         } catch (error) {
           console.error('Failed to publish challenge', error);

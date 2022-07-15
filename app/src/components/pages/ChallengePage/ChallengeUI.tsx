@@ -19,6 +19,7 @@ type ChallengeUIProps = {
   setShowChallengeInfo(showChallengeInfo: boolean): void;
   retryChallenge(): void;
   onContinue(): void;
+  viewReplay(): void;
   isTest: boolean;
   player: IPlayer;
 };
@@ -33,6 +34,7 @@ export function ChallengeUI({
   player,
   onContinue,
   retryChallenge,
+  viewReplay,
   setShowChallengeInfo,
 }: ChallengeUIProps) {
   console.log('Render challenge UI: ', challengeAttempt, showChallengeInfo);
@@ -61,6 +63,7 @@ export function ChallengeUI({
           //status={challengeClient.getChallengeAttempt()}
           onContinue={onContinue}
           onRetry={retryChallenge}
+          onViewReplay={viewReplay}
         />
       ) : challengeAttempt?.status === 'failed' ? (
         <ChallengeFailedView onReceivedInput={retryChallenge} />

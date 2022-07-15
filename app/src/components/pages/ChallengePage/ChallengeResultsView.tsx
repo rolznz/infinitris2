@@ -29,6 +29,7 @@ export interface ChallengeResultsViewProps {
   player: IPlayer;
   onContinue(): void;
   onRetry(): void;
+  onViewReplay(): void;
 }
 
 export default function ChallengeResultsView({
@@ -39,6 +40,7 @@ export default function ChallengeResultsView({
   attempt,
   onContinue,
   onRetry,
+  onViewReplay,
 }: ChallengeResultsViewProps) {
   //const user = useUser();
   console.log('Render challenge results view');
@@ -57,7 +59,17 @@ export default function ChallengeResultsView({
     true,
     'secondary'
   );
+  /*const [hasReceivedViewReplayInput, viewReplayButton] = useContinueButton(
+    'v',
+    <FormattedMessage
+      defaultMessage="View replay"
+      description="View replay button text"
+    />,
+    true,
+    'secondary'
+  );*/
   useTrue(hasReceivedRetryInput, onRetry);
+  //useTrue(hasReceivedViewReplayInput, onViewReplay);
   const windowSize = useWindowSize();
   const characterSize = Math.min(
     windowSize.width * 0.55,
@@ -148,6 +160,7 @@ export default function ChallengeResultsView({
           >
             {retryButton}
             {continueButton}
+            {/*viewReplayButton*/}
           </FlexBox>
           {!isTest && !challenge.isOfficial && (
             <RateChallenge challengeId={challengeId} />

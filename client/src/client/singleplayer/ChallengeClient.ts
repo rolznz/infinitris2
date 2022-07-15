@@ -7,7 +7,6 @@ import IBlock from '@models/IBlock';
 import IChallengeClient from '@models/IChallengeClient';
 import { InputMethod } from '@models/InputMethod';
 import { IChallenge } from '@models/IChallenge';
-import ISimulation from '@models/ISimulation';
 import Simulation from '@core/simulation/Simulation';
 import ChallengeCompletionStats from '@models/ChallengeCompletionStats';
 import ChallengeCellType from '@models/ChallengeCellType';
@@ -15,14 +14,14 @@ import ControlSettings, {
   DEFAULT_KEYBOARD_CONTROLS,
 } from '@models/ControlSettings';
 import parseGrid from '@models/util/parseGrid';
-import tetrominoes from '@models/blockLayouts/Tetrominoes';
 import { PlayerStatus } from '@models/IPlayer';
 import {
+  ChallengeAttemptRecording,
   ChallengeStatusCode,
   IIngameChallengeAttempt,
 } from '@models/IChallengeAttempt';
 import ChallengeRewardCriteria from '@models/ChallengeRewardCriteria';
-import { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
+import { ChallengeLaunchOptions, ClientApiConfig } from '@models/IClientApi';
 import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import Infinitris2Renderer from '@src/rendering/renderers/infinitris2/Infinitris2Renderer';
@@ -32,11 +31,13 @@ import { IChallengeEditor } from '@models/IChallengeEditor';
 import ICell from '@models/ICell';
 import { IChallengeEventListener } from '@models/IChallengeEventListener';
 import MinimalRenderer from '@src/rendering/renderers/minimal/MinimalRenderer';
+import { ChallengeAttemptRecorder } from '@src/client/singleplayer/ChallengeAttemptRecorder';
+import { ChallengeAttemptRecordPlayer } from '@src/client/singleplayer/ChallengeAttemptRecordPlayer';
 
 // TODO: enable support for multiplayer challenges (challenges)
 // this client should be replaced with a single player / network client that supports a challenge
 export default class ChallengeClient
-  extends BaseClient
+  extends BaseClient<ChallengeLaunchOptions>
   implements IChallengeClient, Partial<ISimulationEventListener>
 {
   // FIXME: restructure to not require definite assignment
@@ -48,20 +49,25 @@ export default class ChallengeClient
   private _numLinesCleared!: number;
   private _blockCreateFailed!: boolean;
   private _blockDied!: boolean;
-  private _controls?: ControlSettings;
+  //private _controls?: ControlSettings;
   private _editor?: IChallengeEditor;
   private _listener: IChallengeEventListener;
+  private _recorder: ChallengeAttemptRecorder;
+  private _recordPlayer: ChallengeAttemptRecordPlayer;
+  private _recording: ChallengeAttemptRecording | undefined;
 
   constructor(
     clientApiConfig: ClientApiConfig,
     challenge: IChallenge,
     listener: IChallengeEventListener,
-    options: LaunchOptions
+    options: ChallengeLaunchOptions
   ) {
     super(clientApiConfig, options);
     this._preferredInputMethod = options.preferredInputMethod;
     this._listener = listener;
-    this._controls = options.controls_keyboard;
+    //this._controls = options.controls_keyboard;
+    this._recorder = new ChallengeAttemptRecorder();
+    this._recordPlayer = new ChallengeAttemptRecordPlayer();
     if (options.challengeEditorSettings) {
       this._editor = new ChallengeEditor(
         this,
@@ -69,6 +75,7 @@ export default class ChallengeClient
         options.challengeEditorSettings.isEditing
       );
     }
+    this._recording = options.recording;
     this._create(challenge);
   }
   get challenge(): IChallenge {
@@ -77,9 +84,19 @@ export default class ChallengeClient
   get editor(): IChallengeEditor | undefined {
     return this._editor;
   }
+  set recording(recording: ChallengeAttemptRecording | undefined) {
+    this._recording = recording;
+  }
 
   onSimulationStep() {
     this._checkChallengeStatus();
+    if (this._simulation.followingPlayer) {
+      if (this._recording) {
+        this._recordPlayer.step();
+      } else {
+        this._recorder.record(this._simulation.followingPlayer.firedActions);
+      }
+    }
   }
   onBlockMoved() {
     this._checkChallengeStatus();
@@ -87,8 +104,8 @@ export default class ChallengeClient
   private _checkChallengeStatus() {
     const attempt = this.getChallengeAttempt();
     if (attempt.status !== 'pending') {
-      this._listener.onAttempt(attempt);
       this._simulation.stopInterval();
+      this._listener.onAttempt(attempt);
       if (attempt.status === 'failed') {
         // TODO: consider replacing with challenge failed dialog or make it a parameter
         /*setTimeout(() => {
@@ -305,6 +322,7 @@ export default class ChallengeClient
       medalIndex,
       stats,
       userId: null as unknown as string,
+      recording: this._recorder.recording,
     };
   }
 
@@ -340,6 +358,7 @@ export default class ChallengeClient
     this._numLinesCleared = 0;
     this._blockCreateFailed = false;
     this._blockDied = false;
+    this._recorder.reset();
 
     const cellTypes: ChallengeCellType[][] = [];
     let grid: Grid;
@@ -428,6 +447,11 @@ export default class ChallengeClient
     if (this._editor) {
       this._editor.simulation = simulation;
       this._input.addListener(this._editor.inputActionListener);
+    }
+
+    if (this._recording) {
+      this._recordPlayer.reset(player, this._recording);
+      this._recordPlayer.step(); // record player needs to be one step ahead of the simulation
     }
 
     if (!this._editor || !this._editor.isEditing) {

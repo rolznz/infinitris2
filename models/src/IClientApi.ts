@@ -13,6 +13,7 @@ import { ICharacter } from '@models/ICharacter';
 import { GridLineType } from '@models/IGrid';
 import { IChallengeEditorEventListener } from '@models/IChallengeEditor';
 import { IChallengeEventListener } from '@models/IChallengeEventListener';
+import { ChallengeAttemptRecording } from '@models/IChallengeAttempt';
 
 export type LaunchOptions = WithControls & {
   listeners?: Partial<ISimulationEventListener>[];
@@ -32,10 +33,14 @@ export type LaunchOptions = WithControls & {
   isDemo?: boolean;
   allCharacters?: ICharacter[];
   gridLineType?: GridLineType;
+};
+
+export type ChallengeLaunchOptions = LaunchOptions & {
   challengeEditorSettings?: {
     isEditing?: boolean;
     listeners?: Partial<IChallengeEditorEventListener>[];
   };
+  recording?: ChallengeAttemptRecording;
 };
 
 export type ClientApiConfig = {

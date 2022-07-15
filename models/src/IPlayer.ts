@@ -1,7 +1,7 @@
-import { IBlock } from '.';
+import IBlock from '@models/IBlock';
+import { InputActionWithData } from '@models/InputAction';
 import IBlockEventListener from './IBlockEventListener';
 import ICell from './ICell';
-import { SimulationSettings } from './SimulationSettings';
 
 export enum PlayerStatus {
   ingame,
@@ -44,6 +44,7 @@ export interface IPlayer {
   set estimatedSpawnDelay(estimatedSpawnDelay: number);
   set status(status: PlayerStatus);
   get lastStatusChangeTime(): number;
+  get firedActions(): InputActionWithData[];
   toggleChat(cancel?: boolean): void;
 
   get isChatting(): boolean;
@@ -62,4 +63,5 @@ export interface IPlayer {
   destroy(): void;
   removeBlock(): void;
   saveSpawnPosition(block: IBlock): void;
+  fireActionNextFrame(action: InputActionWithData): void;
 }

@@ -18,6 +18,7 @@ import longWayDown from '@models/exampleChallenges/longWayDown';
 import timeTrial2 from '@models/exampleChallenges/timeTrial2';
 import pentominoesTest from '@models/exampleChallenges/pentominoesTest';
 import pentominoesTest2 from '@models/exampleChallenges/pentominoesTest2';
+import easyChallenge from '@models/exampleChallenges/easyChallenge';
 
 export const exampleChallenges: { [key: string]: IChallenge } = {
   'keys-and-locks-1': keysAndLocks1,
@@ -39,4 +40,5 @@ export const exampleChallenges: { [key: string]: IChallenge } = {
   'time-trail-2': timeTrial2,
   pentominoes: pentominoesTest,
   'pentominoes-2': pentominoesTest2,
+  easy: easyChallenge,
 };

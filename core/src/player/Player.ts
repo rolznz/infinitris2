@@ -1,17 +1,16 @@
 import Block, { MAX_SCORE } from '../block/Block';
-import Cell from '../grid/cell/Cell';
 import Layout from '@models/Layout';
 import IBlockEventListener from '@models/IBlockEventListener';
-import { SimulationSettings } from '@models/SimulationSettings';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
-import IGrid from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
-import { FRAME_LENGTH } from '@core/simulation/Simulation';
-import { checkMistake } from '@core/block/checkMistake';
-import LayoutUtils from '@core/block/layout/LayoutUtils';
 import { IPlayerEventListener } from '@models/IPlayerEventListener';
+import {
+  CustomizableInputAction,
+  InputActionWithData,
+  RotateActionWithData,
+} from '@models/InputAction';
 
 let uniqueBlockId = 0;
 export default abstract class Player implements IPlayer, IBlockEventListener {
@@ -36,6 +35,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _spawnLocationCell: ICell | undefined;
   private _checkpointCell: ICell | undefined;
   private _layoutBag: Layout[];
+  private _actionsToFire: InputActionWithData[];
+  private _firedActions: InputActionWithData[];
 
   constructor(
     simulation: ISimulation,
@@ -70,6 +71,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._patternFilename = patternFilename;
     this._characterId = characterId;
     this._layoutBag = [];
+    this._actionsToFire = [];
+    this._firedActions = [];
     this.addEventListener(simulation);
     this._calculateSpawnDelay();
     this._eventListeners.forEach((listener) => listener.onPlayerCreated(this));
@@ -138,6 +141,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._eventListeners.forEach((listener) =>
       listener.onPlayerSpawnDelayChanged(this)
     );
+  }
+
+  get firedActions(): InputActionWithData[] {
+    return this._firedActions;
   }
 
   /*set nextLayout(nextLayout: Layout | undefined) {
@@ -319,6 +326,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       //this._nextLayout = undefined;
       //this._nextLayoutRotation = undefined;
     } else {
+      this._fireActions();
       this._block?.update();
     }
   }
@@ -527,6 +535,48 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
           3
         )
       );
+    }
+  }
+
+  fireActionNextFrame(action: InputActionWithData): void {
+    this._actionsToFire.push(action);
+  }
+  private _fireActions() {
+    for (const action of this._actionsToFire) {
+      this._fireAction(action);
+    }
+    this._firedActions = this._actionsToFire.slice();
+    this._actionsToFire.length = 0;
+  }
+  private _fireAction(action: InputActionWithData) {
+    const block = this._block;
+    switch (action.type) {
+      case CustomizableInputAction.MoveLeft:
+      case CustomizableInputAction.MoveRight:
+      case CustomizableInputAction.MoveDown:
+        block?.move(
+          action.type === CustomizableInputAction.MoveLeft
+            ? -1
+            : action.type === CustomizableInputAction.MoveRight
+            ? 1
+            : 0,
+          action.type === CustomizableInputAction.MoveDown ? 1 : 0,
+          0
+        );
+        break;
+      case CustomizableInputAction.Drop:
+        block?.drop();
+        break;
+      case CustomizableInputAction.RotateClockwise:
+      case CustomizableInputAction.RotateAnticlockwise:
+        block?.move(
+          0,
+          0,
+          action.type === CustomizableInputAction.RotateClockwise ? 1 : -1,
+          false,
+          (action as RotateActionWithData).data.rotateDown
+        );
+        break;
     }
   }
 }

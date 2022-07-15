@@ -96,7 +96,7 @@ export default class Input {
     ) {
       return;
     }
-    const block: IBlock | undefined = this._player.block;
+
     switch (action.type) {
       case CustomizableInputAction.Esc:
         this._player.cancelChat();
@@ -108,34 +108,7 @@ export default class Input {
         break;
     }
     if (this._simulation.isRunning) {
-      switch (action.type) {
-        case CustomizableInputAction.MoveLeft:
-        case CustomizableInputAction.MoveRight:
-        case CustomizableInputAction.MoveDown:
-          block?.move(
-            action.type === CustomizableInputAction.MoveLeft
-              ? -1
-              : action.type === CustomizableInputAction.MoveRight
-              ? 1
-              : 0,
-            action.type === CustomizableInputAction.MoveDown ? 1 : 0,
-            0
-          );
-          break;
-        case CustomizableInputAction.Drop:
-          block?.drop();
-          break;
-        case CustomizableInputAction.RotateClockwise:
-        case CustomizableInputAction.RotateAnticlockwise:
-          block?.move(
-            0,
-            0,
-            action.type === CustomizableInputAction.RotateClockwise ? 1 : -1,
-            false,
-            (action as RotateActionWithData).data.rotateDown
-          );
-          break;
-      }
+      this._player.fireActionNextFrame(action);
     }
 
     this._actionListeners.forEach((listener) => listener(action));

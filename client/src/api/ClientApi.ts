@@ -1,4 +1,8 @@
-import IClientApi, { ClientApiConfig, LaunchOptions } from '@models/IClientApi';
+import IClientApi, {
+  ChallengeLaunchOptions,
+  ClientApiConfig,
+  LaunchOptions,
+} from '@models/IClientApi';
 import IClient from '@models/IClient';
 import NetworkClient from '../client/NetworkClient';
 import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
@@ -18,6 +22,7 @@ import { stringToHex } from '@models/util/stringToHex';
 import { WorldType, WorldVariation } from '@models/WorldType';
 import { RendererQuality } from '@models/RendererQuality';
 import { IChallengeEventListener } from '@models/IChallengeEventListener';
+import { ChallengeAttemptRecording } from '@models/IChallengeAttempt';
 
 export default class ClientApi implements IClientApi {
   private _client?: IClient;
@@ -143,6 +148,7 @@ export default class ClientApi implements IClientApi {
       });
     } else if (params.has('challengeId')) {
       const challengeId = params.get('challengeId')!;
+      const replayOnFinish: boolean = params.get('replayOnFinish') === 'true';
       const enableChallengeEditor = challengeId === 'new';
       const challenge: IChallenge =
         challengeId === 'new'
@@ -167,9 +173,16 @@ export default class ClientApi implements IClientApi {
       if (!challenge) {
         throw new Error('Could not find challenge matching ID: ' + challengeId);
       }
-      this.launchChallenge(
+      const challengeClient = this.launchChallenge(
         challenge,
-        { onAttempt: () => {} },
+        {
+          onAttempt: (attempt) => {
+            if (attempt.status === 'success' && replayOnFinish) {
+              challengeClient.recording = attempt.recording;
+              challengeClient.restart();
+            }
+          },
+        },
         {
           useFallbackUI: true,
           listeners: [
@@ -209,7 +222,7 @@ export default class ClientApi implements IClientApi {
   launchChallenge = (
     challenge: IChallenge,
     listener: IChallengeEventListener,
-    options: LaunchOptions
+    options: ChallengeLaunchOptions
   ) => {
     this.releaseClient();
     const challengeClient = new ChallengeClient(

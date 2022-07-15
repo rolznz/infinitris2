@@ -103,6 +103,12 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     restartClient?.();
   }, [restartClient]);
 
+  const viewReplay = React.useCallback(() => {
+    if (challengeAttempt) {
+      alert('TODO view replay');
+    }
+  }, [challengeAttempt]);
+
   const { controls_keyboard } = user;
   const preferredInputMethod =
     user.preferredInputMethod || (isMobile() ? 'touch' : 'keyboard');
@@ -289,6 +295,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           player={simulation.humanPlayers[0]}
           setShowChallengeInfo={setShowChallengeInfo}
           retryChallenge={handleRetry}
+          viewReplay={viewReplay}
           isTest={isTest}
           onContinue={handleContinue}
         />

@@ -50,8 +50,11 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
               worldType: challenge.data()!.worldType,
               worldVariation: challenge.data()!.worldVariation,
               simulationSettings: challenge.data()!.simulationSettings,
-              isTemplate: challenge.data()?.isTemplate && isAdmin,
-              isOfficial: challenge.data()?.isOfficial && isAdmin,
+              isTemplate:
+                challenge.data()?.isTemplate && isAdmin && editExisting,
+              isOfficial: Boolean(
+                challenge.data()?.isOfficial && isAdmin && editExisting
+              ),
               priority: challenge.data()?.priority,
               // TODO: add other writable settings here (linked with form options)
             });

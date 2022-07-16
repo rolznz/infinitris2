@@ -1100,6 +1100,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._renderCells(this._simulation.grid.reducedCells);
   }
 
+  reset() {
+    super.reset();
+    this.rerenderGrid();
+  }
+
   onGridReset(_grid: IGrid): void {
     this.rerenderGrid();
   }

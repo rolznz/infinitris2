@@ -76,6 +76,7 @@ export * from './util/hexToRgb';
 export * from './util/rgbToHex';
 export * from './util/rotateColor';
 export * from './util/simpleRandom';
+export * from './util/simpleStringHash';
 export * from './util/wrap';
 export * from './UpdateServerRequest';
 export * from './CreateUserRequest';

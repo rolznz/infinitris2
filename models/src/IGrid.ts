@@ -11,13 +11,14 @@ export type NetworkGridInfo = {
 };
 
 export default interface IGrid extends ICellEventListener {
-  isTower(row: number): boolean;
   get isEmpty(): boolean;
   get reducedCells(): ICell[];
   get cells(): ICell[][];
   get numRows(): number;
   get numColumns(): number;
   get nextLinesToClear(): number[];
+  nextRandom(key: string): number;
+  isTower(row: number): boolean;
   getNeighbour(cell: ICell, dx: number, dy: number): ICell | undefined;
   removePlayer(player: IPlayer): void;
   reset(): void;

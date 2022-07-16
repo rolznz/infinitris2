@@ -10,4 +10,5 @@ export default interface IChallengeClient {
   get challenge(): IChallenge;
   get editor(): IChallengeEditor | undefined;
   set recording(recording: ChallengeAttemptRecording | undefined);
+  get recording(): ChallengeAttemptRecording | undefined;
 }

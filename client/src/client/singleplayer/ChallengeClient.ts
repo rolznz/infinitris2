@@ -87,15 +87,20 @@ export default class ChallengeClient
   set recording(recording: ChallengeAttemptRecording | undefined) {
     this._recording = recording;
   }
+  get recording(): ChallengeAttemptRecording | undefined {
+    return this._recording;
+  }
+
+  onSimulationPreStep() {
+    if (this._recording) {
+      this._recordPlayer.step();
+    }
+  }
 
   onSimulationStep() {
     this._checkChallengeStatus();
-    if (this._simulation.followingPlayer) {
-      if (this._recording) {
-        this._recordPlayer.step();
-      } else {
-        this._recorder.record(this._simulation.followingPlayer.firedActions);
-      }
+    if (this._simulation.followingPlayer && !this._recording) {
+      this._recorder.record(this._simulation.followingPlayer.firedActions);
     }
   }
   onBlockMoved() {
@@ -104,14 +109,16 @@ export default class ChallengeClient
   private _checkChallengeStatus() {
     const attempt = this.getChallengeAttempt();
     if (attempt.status !== 'pending') {
-      this._simulation.stopInterval();
-      this._listener.onAttempt(attempt);
-      if (attempt.status === 'failed') {
-        // TODO: consider replacing with challenge failed dialog or make it a parameter
-        /*setTimeout(() => {
-          this.restart();
-          this._simulation.startInterval();
-        }, 1000);*/
+      if (this._simulation.isRunning) {
+        this._simulation.stopInterval();
+        this._listener.onAttempt(attempt);
+        if (attempt.status === 'failed') {
+          // TODO: consider replacing with challenge failed dialog or make it a parameter
+          /*setTimeout(() => {
+            this.restart();
+            this._simulation.startInterval();
+          }, 1000);*/
+        }
       }
     }
   }
@@ -358,7 +365,6 @@ export default class ChallengeClient
     this._numLinesCleared = 0;
     this._blockCreateFailed = false;
     this._blockDied = false;
-    this._recorder.reset();
 
     const cellTypes: ChallengeCellType[][] = [];
     let grid: Grid;
@@ -397,17 +403,23 @@ export default class ChallengeClient
       this._challenge.simulationSettings?.gameModeType ||
       'infinity' === 'infinity';
 
-    const simulation = (this._simulation = new Simulation(grid, {
-      preventTowers: !isClassicChallenge,
-      saveSpawnPositionOnDeath: !isClassicChallenge || !spawnLocationCell,
-      // replaceUnplayableBlocks: !isClassicChallenge, // this is always on now (better gameplay experience and confusing setting for users)
-      ...this._challenge.simulationSettings,
-    }));
+    const simulation = (this._simulation = new Simulation(
+      grid,
+      {
+        preventTowers: !isClassicChallenge,
+        saveSpawnPositionOnDeath: !isClassicChallenge || !spawnLocationCell,
+        // replaceUnplayableBlocks: !isClassicChallenge, // this is always on now (better gameplay experience and confusing setting for users)
+        ...this._challenge.simulationSettings,
+      },
+      undefined,
+      this._recording?.simulationRootSeed
+    ));
     simulation.addEventListener(this, this._renderer);
     if (this._launchOptions.listeners) {
       simulation.addEventListener(...this._launchOptions.listeners);
     }
     simulation.init();
+    this._recorder.reset(simulation);
     const playerId = 0;
     const player = new ControllablePlayer(
       simulation,
@@ -451,7 +463,7 @@ export default class ChallengeClient
 
     if (this._recording) {
       this._recordPlayer.reset(player, this._recording);
-      this._recordPlayer.step(); // record player needs to be one step ahead of the simulation
+      this._input.playerActionsEnabled = false;
     }
 
     if (!this._editor || !this._editor.isEditing) {

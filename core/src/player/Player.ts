@@ -271,7 +271,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
           const layout =
             //this._nextLayout ||
             layoutsRemaining[
-              Math.floor(Math.random() * layoutsRemaining.length)
+              Math.floor(
+                this._simulation.nextRandom('nextLayout') *
+                  layoutsRemaining.length
+              )
             ];
 
           console.log(
@@ -326,9 +329,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       //this._nextLayout = undefined;
       //this._nextLayoutRotation = undefined;
     } else {
-      this._fireActions();
       this._block?.update();
     }
+    this._fireActions();
   }
   private _tryCreateBlock(layout: Layout, checkPlacement: boolean) {
     const row = this._checkpointCell?.row ?? this._spawnLocationCell?.row ?? 0;
@@ -338,7 +341,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       ? this._spawnLocationCell.column
       : this._lastPlacementColumn === undefined
       ? this._simulation.settings.randomBlockPlacement !== false
-        ? Math.floor(Math.random() * this._simulation.grid.numColumns)
+        ? Math.floor(
+            this._simulation.nextRandom('randomSpawnColumn') *
+              this._simulation.grid.numColumns
+          )
         : Math.floor((this._simulation.grid.numColumns - layout[0].length) / 2)
       : this._lastPlacementColumn;
 

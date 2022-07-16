@@ -4,6 +4,7 @@ import ICell from '@models/ICell';
 import IGrid from '@models/IGrid';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { IPlayer } from '@models/IPlayer';
+import { KeyedRandom } from '@core/simulation/KeyedRandom';
 
 export default class Grid implements IGrid {
   private _cells: ICell[][];
@@ -12,6 +13,7 @@ export default class Grid implements IGrid {
   private _cachedNumNonEmptyCells = 0;
   private _nextLinesToClear: number[];
   private _nextLineClearTime: number;
+  private _random: KeyedRandom;
 
   constructor(
     numColumns: number = 60,
@@ -27,6 +29,7 @@ export default class Grid implements IGrid {
     this.resize(numRows, numColumns);
     this._nextLineClearTime = 0;
     this._nextLinesToClear = [];
+    this._random = new KeyedRandom(0);
   }
 
   get cells(): ICell[][] {
@@ -48,6 +51,14 @@ export default class Grid implements IGrid {
 
   get isEmpty(): boolean {
     return !this.reducedCells.some((cell) => !cell.isEmpty);
+  }
+
+  setRandom(random: KeyedRandom) {
+    this._random = random;
+  }
+
+  nextRandom(key: string): number {
+    return this._random.next(key);
   }
 
   /**

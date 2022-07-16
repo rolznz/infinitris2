@@ -14,7 +14,11 @@ export default class RockGeneratorBehaviour implements ICellBehaviour {
   constructor(cell: ICell, grid: IGrid) {
     this._grid = grid;
     this._cell = cell;
-    this._nextRockTimer = -Math.floor(Math.random() * rockFallInterval * 0.15);
+    this._nextRockTimer = -Math.floor(
+      this._grid.nextRandom('rockGeneratorNextRockTimer') *
+        rockFallInterval *
+        0.15
+    );
   }
 
   step(): void {

@@ -35,6 +35,7 @@ export default interface ISimulation extends ISimulationEventListener {
   get allLayouts(): Layout[];
   get rotationSystem(): IRotationSystem;
   get frameNumber(): number;
+  get rootSeed(): number;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;
@@ -58,4 +59,5 @@ export default interface ISimulation extends ISimulationEventListener {
     isBot: boolean,
     desiredCharacterId?: string
   ): Partial<ICharacter>;
+  nextRandom(key: string): number;
 }

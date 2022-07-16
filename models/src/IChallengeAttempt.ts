@@ -15,7 +15,8 @@ export type ChallengeAttemptFrame = {
 
 export type ChallengeAttemptRecording = {
   frames: ChallengeAttemptFrame[];
-  seed: number;
+  simulationRootSeed: number;
+  clientVersion: string;
   // version: ChallengeAttemptRecordingVersion;
 };
 

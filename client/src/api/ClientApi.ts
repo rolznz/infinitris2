@@ -177,9 +177,16 @@ export default class ClientApi implements IClientApi {
         challenge,
         {
           onAttempt: (attempt) => {
-            if (attempt.status === 'success' && replayOnFinish) {
+            if (
+              attempt.status === 'success' &&
+              replayOnFinish &&
+              !challengeClient.recording
+            ) {
               challengeClient.recording = attempt.recording;
-              challengeClient.restart();
+              setTimeout(() => {
+                alert('RESTART');
+                challengeClient.restart();
+              }, 100);
             }
           },
         },

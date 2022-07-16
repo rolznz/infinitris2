@@ -15,6 +15,10 @@ export default interface ISimulationEventListener
   onSimulationInit(simulation: ISimulation): void;
 
   /**
+   * Fired before each single simulation step/frame (optimally 60 times per second).
+   */
+  onSimulationPreStep(simulation: ISimulation): void;
+  /**
    * Fired after each single simulation step/frame (optimally 60 times per second).
    */
   onSimulationStep(simulation: ISimulation): void;

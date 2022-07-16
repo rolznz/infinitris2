@@ -34,7 +34,9 @@ export default class AIPlayer extends Player {
       characterId
     );
     this._behaviour = new DumbAIBehaviour(simulation);
-    this._reactionDelay = reflexDelay || 5 + Math.floor(Math.random() * 40);
+    this._reactionDelay =
+      reflexDelay ||
+      5 + Math.floor(simulation.nextRandom('botReactionDelay') * 40);
   }
 
   get isBot(): boolean {

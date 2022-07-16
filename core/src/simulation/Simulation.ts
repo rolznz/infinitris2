@@ -31,6 +31,7 @@ import LayoutUtils from '@core/block/layout/LayoutUtils';
 import { IRotationSystem, RotationSystem } from '@models/IRotationSystem';
 import { InfinitrisRotationSystem } from '@core/block/rotation/infinitrisRotationSystem';
 import { BasicRotationSystem } from '@core/block/rotation/BasicRotationSystem';
+import { KeyedRandom } from '@core/simulation/KeyedRandom';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -58,13 +59,24 @@ export default class Simulation implements ISimulation {
   private _layoutSet: LayoutSet | undefined;
   private _botSeed: number | undefined;
   private _rotationSystem: IRotationSystem;
+  private _rootSeed: number;
+  private _random: KeyedRandom;
 
-  constructor(grid: Grid, settings: SimulationSettings = {}, isClient = false) {
+  constructor(
+    grid: Grid,
+    settings: SimulationSettings = {},
+    isClient = false,
+    rootSeed = Math.floor(Math.random() * 21000000)
+  ) {
     this._eventListeners = [];
+    this._rootSeed = rootSeed;
+    console.log('Simulation root seed: ', rootSeed);
+    this._random = new KeyedRandom(rootSeed);
     this._players = {};
     this._runningTime = 0;
     this._frameNumber = 0;
     this._grid = grid;
+    this._grid.setRandom(this._random);
     this._grid.addEventListener(this);
     this._settings = {
       gravityEnabled: true,
@@ -72,7 +84,7 @@ export default class Simulation implements ISimulation {
       gameModeType: 'infinity',
       ...settings,
     };
-    this._botSeed = this._settings?.botSettings?.seed;
+    this._botSeed = this._settings?.botSettings?.seed ?? this._rootSeed;
 
     this._layoutSet = this._settings.layoutSetId
       ? blockLayoutSets.find((set) => set.id === this._settings.layoutSetId)
@@ -99,36 +111,19 @@ export default class Simulation implements ISimulation {
       this._round = new Round(this);
     }
   }
-  private _createGameMode(gameModeType: GameModeType): IGameMode<unknown> {
-    switch (gameModeType) {
-      case 'infinity':
-        return new InfinityGameMode(this);
-      case 'conquest':
-        return new ConquestGameMode(this);
-      case 'race':
-        return new RaceGameMode(this);
-      default:
-        throw new Error('Unknown game mode: ' + gameModeType);
-    }
-  }
 
-  private _createRotationSystem(
-    rotationSystem: RotationSystem
-  ): IRotationSystem {
-    switch (rotationSystem) {
-      case 'infinitris':
-        return new InfinitrisRotationSystem();
-      case 'basic':
-        return new BasicRotationSystem();
-      default:
-        throw new Error('Unknown rotation system: ' + rotationSystem);
-    }
-  }
   onSimulationInit(): void {
+    throw new Error('should never be called');
+  }
+  onSimulationPreStep(): void {
     throw new Error('should never be called');
   }
   onSimulationStep(): void {
     throw new Error('should never be called');
+  }
+
+  get rootSeed(): number {
+    return this._rootSeed;
   }
 
   get frameNumber(): number {
@@ -231,6 +226,10 @@ export default class Simulation implements ISimulation {
 
   get shouldNewPlayerSpectate(): boolean {
     return !!this._round;
+  }
+
+  nextRandom(key: string): number {
+    return this._random.next(key);
   }
 
   getFreePlayerId(): number {
@@ -548,6 +547,32 @@ export default class Simulation implements ISimulation {
     );
   }
 
+  private _createGameMode(gameModeType: GameModeType): IGameMode<unknown> {
+    switch (gameModeType) {
+      case 'infinity':
+        return new InfinityGameMode(this);
+      case 'conquest':
+        return new ConquestGameMode(this);
+      case 'race':
+        return new RaceGameMode(this);
+      default:
+        throw new Error('Unknown game mode: ' + gameModeType);
+    }
+  }
+
+  private _createRotationSystem(
+    rotationSystem: RotationSystem
+  ): IRotationSystem {
+    switch (rotationSystem) {
+      case 'infinitris':
+        return new InfinitrisRotationSystem();
+      case 'basic':
+        return new BasicRotationSystem();
+      default:
+        throw new Error('Unknown rotation system: ' + rotationSystem);
+    }
+  }
+
   private _onInterval = () => {
     // TODO: rather than looping and executing multiple times to hit 60fps, it would be better to process
     // based on the delta since the last frame (like the renderer/camera is doing)
@@ -568,11 +593,15 @@ export default class Simulation implements ISimulation {
     ++this._frameNumber;
     this._lastStepTime += FRAME_LENGTH;
     this._fpsCounter.step();
+    this._eventListeners.forEach((listener) =>
+      listener.onSimulationPreStep?.(this)
+    );
     this.players.forEach(this._updatePlayer);
     this._grid.step(this._isNetworkClient);
     this._gameMode.step();
     this._round?.step();
     this._runningTime += FRAME_LENGTH;
+
     this._eventListeners.forEach((listener) =>
       listener.onSimulationStep?.(this)
     );
@@ -598,7 +627,10 @@ export default class Simulation implements ISimulation {
         freeCharacters.find(
           (character) =>
             desiredCharacterId && character.id.toString() === desiredCharacterId
-        ) || freeCharacters[Math.floor(Math.random() * freeCharacters.length)]
+        ) ||
+        freeCharacters[
+          Math.floor(this.nextRandom('freeCharacter') * freeCharacters.length)
+        ]
       );
     } else {
       let freeColors = colors
@@ -614,7 +646,9 @@ export default class Simulation implements ISimulation {
       return {
         id: 0,
         color: hexToString(
-          freeColors[Math.floor(Math.random() * freeColors.length)]
+          freeColors[
+            Math.floor(this.nextRandom('freeColor') * freeColors.length)
+          ]
         ),
         name: `${isBot ? 'Bot' : 'Player'} ${playerId}`,
       };
@@ -655,7 +689,7 @@ export default class Simulation implements ISimulation {
     const random =
       this._botSeed !== undefined
         ? simpleRandom(this._botSeed++)
-        : Math.random();
+        : this.nextRandom('generateBotReactionDelay');
 
     const botDelay =
       (this._settings?.botSettings?.botReactionDelay || 20) +

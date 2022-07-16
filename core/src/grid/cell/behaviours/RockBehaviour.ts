@@ -27,11 +27,15 @@ export default class RockBehaviour implements ICellBehaviour {
     this._cell = cell;
     this._nextRockTimer = 0;
     this._offsetY = 0;
-    this._rotation = rotation ?? Math.random() * Math.PI * 2;
+    this._rotation =
+      rotation ?? this._grid.nextRandom('rockRotation') * Math.PI * 2;
     this._shouldExplode = false;
     this._rockFallInterval =
       speed ||
-      Math.ceil(rockFallInterval + Math.random() * 0.25 * rockFallInterval);
+      Math.ceil(
+        rockFallInterval +
+          this._grid.nextRandom('rockFallInterval') * 0.25 * rockFallInterval
+      );
     const filenames = [
       'rock1a',
       'rock1b',

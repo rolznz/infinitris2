@@ -29,6 +29,7 @@ export default class Input {
   private _challengeEditorEnabled: boolean;
   private _simulation: ISimulation;
   private _chatEnabled: boolean;
+  private _playerActionsEnabled: boolean;
 
   constructor(
     simulation: ISimulation,
@@ -48,6 +49,7 @@ export default class Input {
     this._keyboardInput = new KeyboardInput(this._fireAction, this._controls);
     this._touchInput = new TouchInput(this._fireAction);
     this._challengeEditorEnabled = challengeEditorEnabled;
+    this._playerActionsEnabled = true;
     if (gamepadControls) {
       this._gamepadInput = new GamepadInput(this._fireAction, gamepadControls);
     }
@@ -58,6 +60,12 @@ export default class Input {
 
   get controls(): ControlSettings {
     return this._controls;
+  }
+  get playerActionsEnabled(): boolean {
+    return this._playerActionsEnabled;
+  }
+  set playerActionsEnabled(isEnabled: boolean) {
+    this._playerActionsEnabled = isEnabled;
   }
 
   addListener(listener: InputActionListener) {
@@ -107,7 +115,7 @@ export default class Input {
         }
         break;
     }
-    if (this._simulation.isRunning) {
+    if (this._simulation.isRunning && this._playerActionsEnabled) {
       this._player.fireActionNextFrame(action);
     }
 

@@ -21,8 +21,12 @@ export class ChallengeAttemptRecorder {
   get recording(): ChallengeAttemptRecording {
     return this._recording;
   }
-  reset() {
-    this._recording = { frames: [] };
+  reset(simulation: ISimulation) {
+    this._recording = {
+      frames: [],
+      simulationRootSeed: simulation.rootSeed,
+      clientVersion: __VERSION__,
+    };
   }
   record(actions: InputActionWithData[]) {
     this._recording.frames.push({

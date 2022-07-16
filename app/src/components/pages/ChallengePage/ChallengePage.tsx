@@ -40,6 +40,7 @@ interface ChallengePageRouteParams {
 export const isTestChallenge = (challengeId?: string) => challengeId === 'test';
 
 let challengeClient: IChallengeClient | undefined;
+let recordedChallengeAttempt: IIngameChallengeAttempt | undefined;
 let lastCompletedGrid: IChallenge['grid'];
 
 export default function ChallengePage() {
@@ -105,9 +106,12 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
 
   const viewReplay = React.useCallback(() => {
     if (challengeAttempt) {
-      alert('TODO view replay');
+      // TODO: setViewingReplay(true)
+      recordedChallengeAttempt = challengeAttempt;
+      challengeClient!.recording = challengeAttempt.recording;
+      handleRetry();
     }
-  }, [challengeAttempt]);
+  }, [challengeAttempt, handleRetry]);
 
   const { controls_keyboard } = user;
   const preferredInputMethod =
@@ -181,7 +185,15 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
         challenge,
         {
           onAttempt(attempt: IIngameChallengeAttempt) {
-            setChallengeAttempt(attempt);
+            if (!challengeClient?.recording) {
+              setChallengeAttempt(attempt);
+            } else {
+              // re-set old challenge attempt so that the page re-renders
+              setChallengeAttempt(recordedChallengeAttempt);
+            }
+            recordedChallengeAttempt = undefined;
+            // remove old recording (it has finished playing)
+            challengeClient!.recording = undefined;
             if (attempt.status === 'success' && isTest) {
               lastCompletedGrid = challenge.grid;
             }

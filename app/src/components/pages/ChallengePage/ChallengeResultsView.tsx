@@ -59,7 +59,7 @@ export default function ChallengeResultsView({
     true,
     'secondary'
   );
-  /*const [hasReceivedViewReplayInput, viewReplayButton] = useContinueButton(
+  const [hasReceivedViewReplayInput, viewReplayButton] = useContinueButton(
     'v',
     <FormattedMessage
       defaultMessage="View replay"
@@ -67,9 +67,9 @@ export default function ChallengeResultsView({
     />,
     true,
     'secondary'
-  );*/
+  );
   useTrue(hasReceivedRetryInput, onRetry);
-  //useTrue(hasReceivedViewReplayInput, onViewReplay);
+  useTrue(hasReceivedViewReplayInput, onViewReplay);
   const windowSize = useWindowSize();
   const characterSize = Math.min(
     windowSize.width * 0.55,
@@ -160,7 +160,7 @@ export default function ChallengeResultsView({
           >
             {retryButton}
             {continueButton}
-            {/*viewReplayButton*/}
+            {viewReplayButton}
           </FlexBox>
           {!isTest && !challenge.isOfficial && (
             <RateChallenge challengeId={challengeId} />

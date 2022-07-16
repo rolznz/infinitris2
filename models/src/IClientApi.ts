@@ -55,7 +55,7 @@ export default interface IClientApi {
   launchChallenge(
     challenge: IChallenge,
     listener: IChallengeEventListener,
-    options: LaunchOptions
+    options: ChallengeLaunchOptions
   ): IChallengeClient;
   restartClient(): void; // TODO: remove
   launchNetworkClient(url: string, options: LaunchOptions): void;

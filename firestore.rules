@@ -130,7 +130,7 @@ service cloud.firestore {
           getProperty('worldType', 'grass') in ['grass', 'desert', 'volcano', 'space'] &&
           getProperty('worldVariation', '0') in ['0', '1', '2', '3', '4', '5'] &&
           simulationSettings is map &&
-          simulationSettings.keys().hasOnly(['layoutSetId', 'gravityEnabled', 'replaceUnplayableBlocks']) &&
+          simulationSettings.keys().hasOnly(['layoutSetId', 'gravityEnabled', 'replaceUnplayableBlocks', 'allowedBlockLayoutIds']) &&
           simulationSettings.get('gravityEnabled', false) is bool &&
           simulationSettings.get('replaceUnplayableBlocks', false) is bool &&
           simulationSettings.get('layoutSetId', '') is string && simulationSettings.get('layoutSetId', '').size() < 100 &&
@@ -164,17 +164,22 @@ service cloud.firestore {
         return
           isLoggedIn() &&
           baseRequestValid() &&
-          entityHasExpectedFields(['challengeId', 'status', 'medalIndex', 'stats']) &&
+          entityHasExpectedFields(['challengeId', 'status', 'medalIndex', 'stats', 'clientVersion', 'recording']) &&
           challenge != null &&
           challenge.data.isPublished &&
-          request.resource.data.status in ['success', 'failed'] &&
+          request.resource.data.status == 'success' &&
+          request.resource.data.get('clientVersion', '') is string &&
+          request.resource.data.get('recording', {}) is map &&
+          request.resource.data.get('recording', {}).keys().hasOnly(['frames', 'simulationRootSeed']) &&
+          request.resource.data.get('recording', {}).get('simulationRootSeed', 0) is number &&
+          request.resource.data.get('recording', {}).get('frames', []) is list &&
           request.resource.data.medalIndex is number && request.resource.data.medalIndex > 0 && request.resource.data.medalIndex < 4 &&
           request.resource.data.stats is map && request.resource.data.stats.keys().hasOnly(['linesCleared', 'blocksPlaced', 'timeTakenMs']) &&
           request.resource.data.stats.linesCleared is number &&
           request.resource.data.stats.blocksPlaced is number &&
           request.resource.data.stats.timeTakenMs is number;
       }
-      allow read: if false;
+      allow read: if true;
       allow delete: if false;
       allow create: if isValidChallengeAttempt();
       allow update: if false;

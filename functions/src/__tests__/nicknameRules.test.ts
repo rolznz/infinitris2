@@ -16,7 +16,7 @@ describe('Nickname Rules', () => {
       }
     );
 
-    const validNicknames = ['big ben 123', 'al', 'a'.repeat(15)];
+    const validNicknames = ['big ben 12', 'al', 'a'.repeat(10)];
 
     for (const nicknameId of validNicknames) {
       await expect(

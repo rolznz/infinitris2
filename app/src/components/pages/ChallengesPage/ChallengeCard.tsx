@@ -85,6 +85,7 @@ export default function ChallengeCard({
   //const user = useUser();
   //const translation = challenge?.translations?.[user.locale];
   const user = useUser();
+  // FIXME: this is very inefficient. Challenges should be updated to include creator nickname
   const { data: challengeOwnerScoreboardEntry } = useDocument<IScoreboardEntry>(
     challenge?.data()?.userId
       ? getScoreboardEntryPath(challenge!.data()!.userId!)

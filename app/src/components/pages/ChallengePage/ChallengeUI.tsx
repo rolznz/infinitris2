@@ -48,6 +48,7 @@ export function ChallengeUI({
       {showChallengeInfo ? (
         <ChallengeInfoView
           challenge={challenge}
+          challengeId={challengeId}
           onReceivedInput={() => {
             simulation.startInterval();
             setShowChallengeInfo(false);

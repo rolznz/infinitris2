@@ -17,8 +17,10 @@ export class ChallengeAttemptRecordPlayer {
       return;
     }
     const frame = this._recording.frames[this._frame++];
-    for (const action of frame.actions) {
-      this._player.fireActionNextFrame(action);
+    if (frame.actions) {
+      for (const action of frame.actions) {
+        this._player.fireActionNextFrame(action);
+      }
     }
   }
 }

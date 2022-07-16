@@ -323,12 +323,10 @@ export default class ChallengeClient
         }
       : undefined;
 
-    // TODO:
     return {
       status,
       medalIndex,
       stats,
-      userId: null as unknown as string,
       recording: this._recorder.recording,
     };
   }

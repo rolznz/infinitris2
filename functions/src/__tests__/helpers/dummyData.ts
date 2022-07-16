@@ -30,6 +30,7 @@ import {
   getRoomId,
   ICharacter,
   getCharacterPath,
+  CustomizableInputAction,
 } from 'infinitris2-models';
 
 const createdTimestamp: Timestamp = {
@@ -261,6 +262,20 @@ const creatableChallengeAttempt: Creatable<IChallengeAttempt> = {
   },
   created: false,
   userId: userId1,
+  clientVersion: 'unknown',
+  recording: {
+    simulationRootSeed: 123,
+    frames: [
+      {
+        actions: [
+          {
+            type: CustomizableInputAction.RotateClockwise,
+            data: { rotateDown: true },
+          },
+        ],
+      },
+    ],
+  },
 };
 
 // TODO: rename userId1 to user1Id etc

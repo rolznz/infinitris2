@@ -25,15 +25,15 @@ export class ChallengeAttemptRecorder {
     this._recording = {
       frames: [],
       simulationRootSeed: simulation.rootSeed,
-      clientVersion: __VERSION__,
     };
   }
   record(actions: InputActionWithData[]) {
+    const validActions = actions.filter(
+      (action) =>
+        recordableActions.indexOf(action.type as CustomizableInputAction) > -1
+    );
     this._recording.frames.push({
-      actions: actions.filter(
-        (action) =>
-          recordableActions.indexOf(action.type as CustomizableInputAction) > -1
-      ),
+      actions: validActions.length ? validActions : undefined, // firestore does not support empty arrays :/
     });
   }
 }

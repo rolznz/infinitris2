@@ -28,6 +28,7 @@
     "firebase:deploy:functions:onUpdateEntity": "firebase --config firebase.functions-deploy.json deploy --only functions:onUpdateEntity",
     "firebase:deploy:functions:rateLimiters": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateEntity,functions:onUpdateEntity",
     "firebase:deploy:functions:onCreateChallenge": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateChallenge",
+    "firebase:deploy:functions:onCreateChallengeAttempt": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateChallengeAttempt",
     "firebase:deploy:functions:onCreatePurchase": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreatePurchase",
     "firebase:deploy:functions:webhooks": "firebase --config firebase.functions-deploy.json deploy --only functions:webhooks",
     "firebase:deploy:functions:onUpdateScoreboardSchedule": "firebase --config firebase.functions-deploy.json deploy --only functions:onUpdateScoreboardSchedule",

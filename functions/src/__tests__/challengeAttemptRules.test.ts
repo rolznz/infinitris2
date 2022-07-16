@@ -27,6 +27,25 @@ describe('Challenge Attempt Rules', () => {
     ).toAllow();
   });
 
+  test('should deny creating a challenge attempt for another user', async () => {
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: dummyData.existingUser,
+        [dummyData.challenge1Path]: dummyData.existingPublishedChallenge,
+      }
+    );
+
+    const challengeAttempt: IChallengeAttempt = {
+      ...dummyData.creatableChallengeAttempt,
+      userId: dummyData.userId2,
+    };
+
+    await expect(
+      db.doc(dummyData.challengeAttempt1Path).set(challengeAttempt)
+    ).toDeny();
+  });
+
   test('should deny creating a challenge attempt for an unpublished challenge', async () => {
     const { db } = await setup(
       { uid: dummyData.userId1 },

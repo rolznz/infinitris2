@@ -1,22 +1,20 @@
 import { InputActionWithData } from '@models/InputAction';
+import { PartialBy } from '@models/typescriptHelpers';
 import ChallengeCompletionStats from './ChallengeCompletionStats';
 import IEntity, { IEntityReadOnlyProperties } from './IEntity';
 
 export type ChallengeStatusCode = 'pending' | 'success' | 'failed';
 
 export interface IChallengeAttemptReadOnlyProperties
-  extends IEntityReadOnlyProperties {
-  userId: string;
-}
+  extends IEntityReadOnlyProperties {}
 
 export type ChallengeAttemptFrame = {
-  actions: InputActionWithData[];
+  actions: InputActionWithData[] | undefined;
 };
 
 export type ChallengeAttemptRecording = {
   frames: ChallengeAttemptFrame[];
   simulationRootSeed: number;
-  clientVersion: string;
   // version: ChallengeAttemptRecordingVersion;
 };
 
@@ -24,12 +22,16 @@ export interface IChallengeAttempt extends IEntity {
   readonly readOnly?: IChallengeAttemptReadOnlyProperties;
   status: ChallengeStatusCode;
   medalIndex: number; // 1 = bronze, 2 = silver, 3 = gold
-  stats?: ChallengeCompletionStats;
+  stats: ChallengeCompletionStats;
   challengeId: string;
   recording: ChallengeAttemptRecording;
+  clientVersion: string;
 }
 
-export type IIngameChallengeAttempt = Omit<
-  IChallengeAttempt,
-  'challengeId' | 'created'
+export type IIngameChallengeAttempt = PartialBy<
+  Omit<
+    IChallengeAttempt,
+    'challengeId' | 'created' | 'clientVersion' | 'userId'
+  >,
+  'stats'
 >;

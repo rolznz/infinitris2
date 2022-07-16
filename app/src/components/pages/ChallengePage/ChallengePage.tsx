@@ -32,6 +32,11 @@ import { completeOfficialChallenge, unlockFeature } from '@/state/updateUser';
 import useIncompleteChallenges from '@/components/hooks/useIncompleteChallenges';
 import Routes from '@/models/Routes';
 import isMobile from '@/utils/isMobile';
+import { IChallengeAttempt } from 'infinitris2-models';
+import { addDoc, collection, getFirestore } from 'firebase/firestore';
+import { challengeAttemptsPath } from 'infinitris2-models';
+import useAuthStore from '@/state/AuthStore';
+import removeUndefinedValues from '@/utils/removeUndefinedValues';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -53,12 +58,45 @@ export function getLastCompletedGrid() {
   return lastCompletedGrid;
 }
 
+async function saveChallengeAttempt(
+  challengeId: string,
+  userId: string,
+  ingameChallengeAttempt: IIngameChallengeAttempt,
+  clientVersion: string
+) {
+  if (!ingameChallengeAttempt.stats) {
+    throw new Error('Challenge attempt should have stats set');
+  }
+  if (ingameChallengeAttempt.status !== 'success') {
+    throw new Error('Challenge attempt should have success status set');
+  }
+  const challengeAttempt: IChallengeAttempt = {
+    ...ingameChallengeAttempt,
+    created: false,
+    challengeId,
+    userId,
+    stats: ingameChallengeAttempt.stats,
+    clientVersion,
+  };
+
+  try {
+    await addDoc(
+      collection(getFirestore(), challengeAttemptsPath),
+      removeUndefinedValues(challengeAttempt)
+    );
+  } catch (error) {
+    console.error('Failed to save challenge attempt', error);
+  }
+}
+
 type ChallengePageInternalProps = { challengeId: string };
 
 function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const appStore = useAppStore();
   const client = appStore.clientApi;
+  const clientVersion = appStore.clientApi?.getVersion();
   const user = useUser();
+  const userId = useAuthStore((store) => store.user?.uid);
 
   const isTest = isTestChallenge(challengeId);
   console.log('isTest', isTest);
@@ -162,6 +200,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
 
   React.useEffect(() => {
     if (
+      clientVersion &&
       challenge &&
       player /*&& !requiresRedirect*/ &&
       launchChallenge &&
@@ -187,8 +226,16 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           onAttempt(attempt: IIngameChallengeAttempt) {
             if (!challengeClient?.recording) {
               setChallengeAttempt(attempt);
+              if (userId) {
+                saveChallengeAttempt(
+                  challengeId,
+                  userId,
+                  attempt,
+                  clientVersion
+                );
+              }
             } else {
-              // re-set old challenge attempt so that the page re-renders
+              // re-set old challenge attempt
               setChallengeAttempt(recordedChallengeAttempt);
             }
             recordedChallengeAttempt = undefined;
@@ -279,6 +326,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     user.unlockedFeatures,
     incompleteChallenges,
     isLoadingOfficialChallenges,
+    userId,
+    clientVersion,
   ]);
 
   if (!hasLaunched || !challenge || !simulation) {

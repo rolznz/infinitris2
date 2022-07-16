@@ -1,5 +1,6 @@
 import { EndRoundDisplayOverlay } from '@/components/game/EndRoundDisplay/EndRoundDisplay';
 import useContinueButton from '@/components/hooks/useContinueButton';
+import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
 import { GameModeDescription } from '@/components/ui/RoomCarousel/RoomCarouselSlide';
 import { borderRadiuses, zIndexes } from '@/theme/theme';
 import { Box, Typography } from '@mui/material';
@@ -14,11 +15,13 @@ import finishLineImage from './assets/finish.svg';
 export interface ChallengeInfoViewProps {
   onReceivedInput(): void;
   challenge: IChallenge;
+  challengeId: string | undefined;
 }
 
 export default function ChallengeInfoView({
   onReceivedInput,
   challenge,
+  challengeId,
 }: ChallengeInfoViewProps) {
   //const user = useUser();
   const [hasReceivedInput, continueButton] = useContinueButton(
@@ -89,6 +92,12 @@ export default function ChallengeInfoView({
             }}
           />
           </Typography>*/}
+          {challengeId &&
+            !challenge.isOfficial &&
+            !challenge.isTemplate &&
+            challenge.isPublished && (
+              <ChallengeTopAttempts challengeId={challengeId} />
+            )}
         </FlexBox>
       </EndRoundDisplayOverlay>
     </FlexBox>

@@ -55,6 +55,7 @@ export default class ChallengeClient
   private _recorder: ChallengeAttemptRecorder;
   private _recordPlayer: ChallengeAttemptRecordPlayer;
   private _recording: ChallengeAttemptRecording | undefined;
+  private _currentAttempt: IIngameChallengeAttempt | undefined;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -102,24 +103,25 @@ export default class ChallengeClient
     if (this._simulation.followingPlayer && !this._recording) {
       this._recorder.record(this._simulation.followingPlayer.firedActions);
     }
+    if (
+      this._currentAttempt &&
+      this._currentAttempt.status !== 'pending' &&
+      this._simulation.isRunning
+    ) {
+      this._simulation.stopInterval();
+      this._listener.onAttempt(this._currentAttempt);
+    }
   }
   onBlockMoved() {
     this._checkChallengeStatus();
   }
   private _checkChallengeStatus() {
-    const attempt = this.getChallengeAttempt();
-    if (attempt.status !== 'pending') {
-      if (this._simulation.isRunning) {
-        this._simulation.stopInterval();
-        this._listener.onAttempt(attempt);
-        if (attempt.status === 'failed') {
-          // TODO: consider replacing with challenge failed dialog or make it a parameter
-          /*setTimeout(() => {
-            this.restart();
-            this._simulation.startInterval();
-          }, 1000);*/
-        }
-      }
+    if (
+      !this._currentAttempt ||
+      (this._currentAttempt.status !== 'failed' &&
+        this._currentAttempt.status !== 'success')
+    ) {
+      this._currentAttempt = this.getChallengeAttempt();
     }
   }
 
@@ -168,6 +170,7 @@ export default class ChallengeClient
       return;
     }
     this._simulation.destroy();
+    this._currentAttempt = undefined;
     // TODO: shouldn't have to destroy the input each time
     this._input?.destroy();
   }

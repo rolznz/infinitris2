@@ -40,6 +40,17 @@ async function addRating(
 ): Promise<boolean> {
   if (userRating?.exists()) {
     alert('You have already voted');
+    enqueueSnackbar(
+      intl.formatMessage(
+        {
+          defaultMessage: 'You have already voted',
+          description: 'You have already voted toast message',
+        },
+        {
+          variant: 'warning',
+        }
+      )
+    );
     return false;
   }
   // NB: when updating this list, also update firestore rules
@@ -64,7 +75,17 @@ async function addRating(
     return true;
   } catch (e) {
     console.error(e);
-    alert(`Failed to vote`);
+    enqueueSnackbar(
+      intl.formatMessage(
+        {
+          defaultMessage: 'Something went wrong. Please try again',
+          description: 'Failed to vote toast message',
+        },
+        {
+          variant: 'error',
+        }
+      )
+    );
     return false;
   }
 }

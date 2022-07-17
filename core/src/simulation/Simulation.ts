@@ -61,6 +61,7 @@ export default class Simulation implements ISimulation {
   private _rotationSystem: IRotationSystem;
   private _rootSeed: number;
   private _random: KeyedRandom;
+  private _isAlive: boolean;
 
   constructor(
     grid: Grid,
@@ -68,6 +69,7 @@ export default class Simulation implements ISimulation {
     isClient = false,
     rootSeed = Math.floor(Math.random() * 21000000)
   ) {
+    this._isAlive = true;
     this._eventListeners = [];
     this._rootSeed = rootSeed;
     console.log('Simulation root seed: ', rootSeed);
@@ -120,6 +122,12 @@ export default class Simulation implements ISimulation {
   }
   onSimulationStep(): void {
     throw new Error('should never be called');
+  }
+
+  destroy() {
+    this.stopInterval();
+    this._eventListeners.length = 0;
+    this._isAlive = false;
   }
 
   get rootSeed(): number {
@@ -273,6 +281,9 @@ export default class Simulation implements ISimulation {
    * @param grid The grid to run the simulation on.
    */
   startInterval() {
+    if (!this._isAlive) {
+      throw new Error('Destroyed simulation cannot be restarted');
+    }
     if (!this._stepInterval) {
       this._lastStepTime = Date.now();
       // interval set at 1ms and handled in onInterval (iOS low battery forces <= 30fps)

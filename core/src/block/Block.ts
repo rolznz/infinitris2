@@ -228,7 +228,7 @@ export default class Block implements IBlock {
 
   destroy() {
     this._isAlive = false;
-    this._removeCells(this._cells);
+    this._removeCells(this._cells.slice());
     this._eventListener?.onBlockDestroyed(this);
   }
 

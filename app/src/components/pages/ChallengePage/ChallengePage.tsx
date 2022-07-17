@@ -19,7 +19,6 @@ import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 import { GameUI } from '@/components/game/GameUI';
 import useIngameStore from '@/state/IngameStore';
-import shallow from 'zustand/shallow';
 import {
   playGameMusic,
   worldVariationToTrackNumber,
@@ -94,7 +93,8 @@ type ChallengePageInternalProps = { challengeId: string };
 function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const appStore = useAppStore();
   const client = appStore.clientApi;
-  const clientVersion = appStore.clientApi?.getVersion();
+  const clientVersion = client?.getVersion();
+  const restartClient = client?.restartClient;
   const user = useUser();
   const userId = useAuthStore((store) => store.user?.uid);
 
@@ -120,36 +120,65 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const hasLoadedCharacters = !loadCharacters || allCharacters?.data?.length;
 
   const launchChallenge = client?.launchChallenge;
-  const restartClient = client?.restartClient;
   const [hasLaunched, setLaunched] = React.useState(false);
   const [hasContinued, setContinued] = React.useState(false);
+  const [isViewingReplay, setViewingReplay] = React.useState(false);
 
-  const [simulation, setSimulation] = useIngameStore(
-    (store) => [store.simulation, store.setSimulation],
-    shallow
-  );
+  // const [simulation, setSimulation] = useIngameStore(
+  //   (store) => [store.simulation, store.setSimulation],
+  //   shallow
+  // );
 
-  const [showChallengeInfo, setShowChallengeInfo] = React.useState(true);
+  const [showChallengeInfo, setShowChallengeInfo] = React.useState(false);
   const [hasRoundStarted, setRoundStarted] = React.useState(false);
   const [challengeAttempt, setChallengeAttempt] = React.useState<
     IIngameChallengeAttempt | undefined
   >(undefined);
 
-  const handleRetry = React.useCallback(() => {
-    setChallengeAttempt(undefined);
-    setShowChallengeInfo(true);
-    setRoundStarted(false);
-    restartClient?.();
-  }, [restartClient]);
+  const startChallenge = React.useCallback(() => {
+    const simulation = useIngameStore.getState().simulation;
+    if (simulation) {
+      simulation.startInterval();
+      setShowChallengeInfo(false);
+    }
+  }, []);
+  const simulation = useIngameStore((store) => store.simulation);
+
+  const handleRetry = React.useCallback(
+    (isPlayingRecording: boolean) => {
+      setViewingReplay(isPlayingRecording);
+      if (!isPlayingRecording) {
+        recordedChallengeAttempt = undefined;
+        challengeClient!.recording = undefined;
+      }
+      useIngameStore.getState().setSimulation(undefined);
+      setChallengeAttempt(undefined);
+      setRoundStarted(false);
+      restartClient!();
+    },
+    [restartClient]
+  );
+
+  const retryChallenge = React.useCallback(() => {
+    handleRetry(false);
+  }, [handleRetry]);
 
   const viewReplay = React.useCallback(() => {
     if (challengeAttempt) {
-      // TODO: setViewingReplay(true)
       recordedChallengeAttempt = challengeAttempt;
       challengeClient!.recording = challengeAttempt.recording;
-      handleRetry();
+      handleRetry(true);
     }
   }, [challengeAttempt, handleRetry]);
+
+  const viewOtherReplay = React.useCallback(
+    (otherAttempt: IChallengeAttempt) => {
+      // TODO: setViewingReplay(true)
+      challengeClient!.recording = otherAttempt.recording;
+      handleRetry(true);
+    },
+    [handleRetry]
+  );
 
   const { controls_keyboard } = user;
   const preferredInputMethod =
@@ -193,10 +222,10 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   }, [isTest, setIsEditingChallenge]);
 
   React.useEffect(() => {
-    if (isTest && !isEditingChallenge) {
+    if (!isEditingChallenge && simulation) {
       setShowChallengeInfo(true);
     }
-  }, [isTest, isEditingChallenge, setShowChallengeInfo]);
+  }, [isEditingChallenge, setShowChallengeInfo, simulation]);
 
   React.useEffect(() => {
     if (
@@ -213,7 +242,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       const challengeSimulationEventListener: Partial<ISimulationEventListener> =
         {
           onSimulationInit(simulation: ISimulation) {
-            setSimulation(simulation);
+            useIngameStore.getState().setSimulation(simulation);
           },
           onNextRound() {
             setRoundStarted(true);
@@ -226,7 +255,13 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           onAttempt(attempt: IIngameChallengeAttempt) {
             if (!challengeClient?.recording) {
               setChallengeAttempt(attempt);
-              if (userId) {
+              if (
+                userId &&
+                !challenge.isOfficial &&
+                !challenge.isTemplate &&
+                challenge.isPublished &&
+                attempt.status === 'success'
+              ) {
                 saveChallengeAttempt(
                   challengeId,
                   userId,
@@ -234,39 +269,42 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
                   clientVersion
                 );
               }
-            } else {
-              // re-set old challenge attempt
-              setChallengeAttempt(recordedChallengeAttempt);
-            }
-            recordedChallengeAttempt = undefined;
-            // remove old recording (it has finished playing)
-            challengeClient!.recording = undefined;
-            if (attempt.status === 'success' && isTest) {
-              lastCompletedGrid = challenge.grid;
-            }
-            if (attempt.status === 'success' && challenge.isOfficial) {
-              unlockFeature(user.unlockedFeatures, 'playTypePicker');
-              if (
-                incompleteChallenges.length === 1 &&
-                incompleteChallenges[0].id === challengeId
-              ) {
-                // TODO: show this as a page
-                // TODO: unlocked features should come from challenges?
-                if (challenge.worldType === 'grass') {
-                  unlockFeature(user.unlockedFeatures, 'space');
-                } else if (challenge.worldType === 'space') {
-                  unlockFeature(user.unlockedFeatures, 'volcano');
-                }
+              if (attempt.status === 'success' && isTest) {
+                lastCompletedGrid = challenge.grid;
               }
+              if (attempt.status === 'success' && challenge.isOfficial) {
+                unlockFeature(user.unlockedFeatures, 'playTypePicker');
+                if (
+                  incompleteChallenges.length === 1 &&
+                  incompleteChallenges[0].id === challengeId
+                ) {
+                  // TODO: show this as a page
+                  // TODO: unlocked features should come from challenges?
+                  if (challenge.worldType === 'grass') {
+                    unlockFeature(user.unlockedFeatures, 'space');
+                  } else if (challenge.worldType === 'space') {
+                    unlockFeature(user.unlockedFeatures, 'volcano');
+                  }
+                }
 
-              setTimeout(() => {
-                // delay completion for world progress effect
-                completeOfficialChallenge(
-                  user.completedOfficialChallengeIds,
-                  challengeId
-                );
-              }, 500);
+                setTimeout(() => {
+                  // delay completion for world progress effect
+                  completeOfficialChallenge(
+                    user.completedOfficialChallengeIds,
+                    challengeId
+                  );
+                }, 500);
+              }
+            } else {
+              if (recordedChallengeAttempt) {
+                // re-set old challenge attempt
+                setChallengeAttempt(recordedChallengeAttempt);
+              } else {
+                // remove other player's challenge attempt and do full reset
+                handleRetry(false);
+              }
             }
+            setViewingReplay(false);
           },
         },
         {
@@ -318,7 +356,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     controls_keyboard,
     player,
     isTest,
-    setSimulation,
     user.completedOfficialChallengeIds,
     challengeId,
     allCharacters,
@@ -328,6 +365,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     isLoadingOfficialChallenges,
     userId,
     clientVersion,
+    handleRetry,
   ]);
 
   if (!hasLaunched || !challenge || !simulation) {
@@ -349,14 +387,15 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       {!isEditingChallenge && (
         <ChallengeUI
           showChallengeInfo={showChallengeInfo}
-          simulation={simulation}
+          isViewingReplay={isViewingReplay}
+          startChallenge={startChallenge}
           challengeAttempt={challengeAttempt}
           challenge={challenge}
           challengeId={challengeId}
-          player={simulation.humanPlayers[0]}
-          setShowChallengeInfo={setShowChallengeInfo}
-          retryChallenge={handleRetry}
+          player={simulation?.humanPlayers[0]}
+          retryChallenge={retryChallenge}
           viewReplay={viewReplay}
+          viewOtherReplay={viewOtherReplay}
           isTest={isTest}
           onContinue={handleContinue}
         />

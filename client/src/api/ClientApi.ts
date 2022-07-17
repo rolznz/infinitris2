@@ -184,7 +184,6 @@ export default class ClientApi implements IClientApi {
             ) {
               challengeClient.recording = attempt.recording;
               setTimeout(() => {
-                alert('RESTART');
                 challengeClient.restart();
               }, 100);
             }

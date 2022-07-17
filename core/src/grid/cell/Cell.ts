@@ -25,7 +25,7 @@ export default class Cell implements ICell {
     this._isEmpty = true;
     this._blocks = [];
     this._eventListener = grid;
-    this._requiresRerender = false;
+    this._requiresRerender = true;
   }
 
   get grid(): IGrid {

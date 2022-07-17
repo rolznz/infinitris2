@@ -140,8 +140,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _autoQualityAdjust = false;
   private _renderFpsFrames: number[];
   private _isDemo: boolean;
-  private _gridLineType: GridLineType | undefined;
-  private _challengeEditorEnabled: boolean;
   private _challengeEditorGuide: IRenderableEntity<PIXI.Graphics> | undefined;
   private _gestureIndicator: GestureIndicator;
 
@@ -154,8 +152,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     worldVariation: WorldVariation = '0',
     useFallbackUI = false,
     isDemo = false,
-    gridLineType?: GridLineType,
-    challengeEditorEnabled = false
+    gridLineType?: GridLineType
   ) {
     super(clientApiConfig, undefined, rendererQuality, isDemo);
     this._preferredInputMethod = preferredInputMethod;
@@ -164,7 +161,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._worldVariation = worldVariation;
     this._isDemo = isDemo;
     this._gridLineType = gridLineType;
-    this._challengeEditorEnabled = challengeEditorEnabled;
     this._gestureIndicator = new GestureIndicator(
       this._app,
       this._preferredInputMethod,
@@ -517,6 +513,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (this._challengeEditorGuide) {
       this._world.addChild(this._challengeEditorGuide.container);
     }
+    this._resize();
   }
 
   onGridResize() {
@@ -1098,11 +1095,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     this._renderCells(this._simulation.grid.reducedCells);
-  }
-
-  reset() {
-    super.reset();
-    this.rerenderGrid();
   }
 
   onGridReset(_grid: IGrid): void {

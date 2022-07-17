@@ -36,6 +36,7 @@ export default interface ISimulation extends ISimulationEventListener {
   get rotationSystem(): IRotationSystem;
   get frameNumber(): number;
   get rootSeed(): number;
+  destroy(): void;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;

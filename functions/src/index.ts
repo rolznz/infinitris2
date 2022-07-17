@@ -2,6 +2,7 @@ export * from './onCreateEntity';
 export * from './onUpdateEntity';
 export * from './onCreateAuthUser';
 export * from './onCreateChallenge';
+export * from './onCreateChallengeAttempt';
 export * from './onCreateRating';
 export * from './onCreateConversion';
 export * from './onCreateNickname';

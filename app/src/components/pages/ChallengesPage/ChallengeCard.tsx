@@ -35,6 +35,7 @@ import spaceImageMobile from '@/components/ui/RoomCarousel/assets/carousel/space
 import { useDocument } from 'swr-firestore';
 import { ReactComponent as TimesRatedIcon } from '@/icons/times_rated.svg';
 import { ReactComponent as StarIcon } from '@/icons/star.svg';
+import { ReactComponent as PlayIcon } from '@/icons/play.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 
 interface ChallengeCardProps {
@@ -149,6 +150,13 @@ export default function ChallengeCard({
             </SvgIcon>
             <Typography variant="body1" fontSize="12px">
               {challenge.data()?.readOnly?.numRatings || 0}
+            </Typography>
+            <FlexBox width={5} />
+            <SvgIcon fontSize="small">
+              <PlayIcon />
+            </SvgIcon>
+            <Typography variant="body1" fontSize="12px">
+              {(challenge.data()?.readOnly?.numAttempts || 0).toString()}
             </Typography>
           </FlexBox>
         </FlexBox>

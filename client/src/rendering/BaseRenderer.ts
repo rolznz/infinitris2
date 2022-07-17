@@ -4,7 +4,7 @@ import ControlSettings from '@models/ControlSettings';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
-import IGrid from '@models/IGrid';
+import IGrid, { GridLineType } from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import Camera from '@src/rendering/Camera';
 import { IRenderer, ParticleType } from '@models/IRenderer';
@@ -52,6 +52,8 @@ export abstract class BaseRenderer implements IRenderer {
   protected _floorHeight: number;
   protected _clientApiConfig: ClientApiConfig;
   protected _rendererQuality: RendererQuality | undefined;
+  protected _challengeEditorEnabled: boolean;
+  protected _gridLineType: GridLineType | undefined;
   private _startedTicker: boolean;
 
   constructor(
@@ -60,6 +62,7 @@ export abstract class BaseRenderer implements IRenderer {
     rendererQuality?: RendererQuality,
     isDemo = false
   ) {
+    this._challengeEditorEnabled = false;
     this._startedTicker = false;
     this._clientApiConfig = clientApiConfig;
     this._camera = new Camera(isDemo);
@@ -114,6 +117,14 @@ export abstract class BaseRenderer implements IRenderer {
 
   get camera(): Camera {
     return this._camera;
+  }
+
+  set challengeEditorEnabled(challengeEditorEnabled: boolean) {
+    this._challengeEditorEnabled = challengeEditorEnabled;
+  }
+
+  set gridLineType(gridLineType: GridLineType | undefined) {
+    this._gridLineType = gridLineType;
   }
 
   abstract create(): void;
@@ -217,10 +228,6 @@ export abstract class BaseRenderer implements IRenderer {
       }
     }
     return x;
-  }
-
-  reset() {
-    this._resize();
   }
 
   tick() {

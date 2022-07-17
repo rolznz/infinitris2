@@ -6,36 +6,39 @@ import { TopLeftPanelPortal } from '@/components/ui/TopLeftPanel';
 import {
   IChallenge,
   IIngameChallengeAttempt,
-  ISimulation,
   IPlayer,
+  IChallengeAttempt,
 } from 'infinitris2-models';
+import React from 'react';
 
 type ChallengeUIProps = {
   showChallengeInfo: boolean;
-  simulation: ISimulation;
   challengeAttempt: IIngameChallengeAttempt | undefined;
   challenge: IChallenge;
   challengeId: string;
-  setShowChallengeInfo(showChallengeInfo: boolean): void;
   retryChallenge(): void;
   onContinue(): void;
   viewReplay(): void;
+  startChallenge(): void;
+  viewOtherReplay(attempt: IChallengeAttempt): void;
   isTest: boolean;
   player: IPlayer;
+  isViewingReplay: boolean;
 };
 
 export function ChallengeUI({
   isTest,
   showChallengeInfo,
-  simulation,
   challengeAttempt,
   challenge,
   challengeId,
   player,
+  isViewingReplay,
   onContinue,
   retryChallenge,
   viewReplay,
-  setShowChallengeInfo,
+  viewOtherReplay,
+  startChallenge,
 }: ChallengeUIProps) {
   console.log('Render challenge UI: ', challengeAttempt, showChallengeInfo);
   return (
@@ -49,10 +52,9 @@ export function ChallengeUI({
         <ChallengeInfoView
           challenge={challenge}
           challengeId={challengeId}
-          onReceivedInput={() => {
-            simulation.startInterval();
-            setShowChallengeInfo(false);
-          }}
+          viewOtherReplay={viewOtherReplay}
+          onReceivedInput={startChallenge}
+          isViewingReplay={isViewingReplay}
         />
       ) : challengeAttempt?.status === 'success' ? (
         <ChallengeResultsView

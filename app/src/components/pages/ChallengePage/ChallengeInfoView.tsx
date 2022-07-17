@@ -4,7 +4,7 @@ import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/Challenge
 import { GameModeDescription } from '@/components/ui/RoomCarousel/RoomCarouselSlide';
 import { borderRadiuses, zIndexes } from '@/theme/theme';
 import { Box, Typography } from '@mui/material';
-import { IChallenge } from 'infinitris2-models';
+import { IChallenge, IChallengeAttempt } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 //import { useUser } from '../../../state/UserStore';
@@ -16,20 +16,31 @@ export interface ChallengeInfoViewProps {
   onReceivedInput(): void;
   challenge: IChallenge;
   challengeId: string | undefined;
+  viewOtherReplay(attempt: IChallengeAttempt): void;
+  isViewingReplay: boolean;
 }
 
 export default function ChallengeInfoView({
   onReceivedInput,
+  viewOtherReplay,
+  isViewingReplay,
   challenge,
   challengeId,
 }: ChallengeInfoViewProps) {
   //const user = useUser();
   const [hasReceivedInput, continueButton] = useContinueButton(
     undefined,
-    <FormattedMessage
-      defaultMessage="Play"
-      description="Challenge Info Play button text"
-    />
+    isViewingReplay ? (
+      <FormattedMessage
+        defaultMessage="View Replay"
+        description="Challenge info - Start replay button text"
+      />
+    ) : (
+      <FormattedMessage
+        defaultMessage="Play"
+        description="Challenge Info Play button text"
+      />
+    )
   );
 
   useTrue(hasReceivedInput, onReceivedInput);
@@ -49,30 +60,31 @@ export default function ChallengeInfoView({
           <Typography variant="h6">
             {challenge.title || 'Untitled Challenge'}
           </Typography>
-          {challenge.simulationSettings?.gameModeType &&
-          challenge.simulationSettings?.gameModeType !== 'infinity' ? (
-            <Typography variant="h6" mt={2}>
-              <GameModeDescription
-                gameModeType={challenge.simulationSettings?.gameModeType}
-              />
-            </Typography>
-          ) : (
-            <FlexBox
-              flexDirection="row"
-              gap={1}
-              justifyContent="center"
-              alignItems="center"
-              mt={2}
-            >
-              <Typography variant="h6">
-                <FormattedMessage
-                  defaultMessage="Get to the finish line"
-                  description="Get to the finish line challenge help info"
+          {!isViewingReplay &&
+            (challenge.simulationSettings?.gameModeType &&
+            challenge.simulationSettings?.gameModeType !== 'infinity' ? (
+              <Typography variant="h6" mt={2}>
+                <GameModeDescription
+                  gameModeType={challenge.simulationSettings?.gameModeType}
                 />
               </Typography>
-              <img src={finishLineImage} alt="" width={30}></img>
-            </FlexBox>
-          )}
+            ) : (
+              <FlexBox
+                flexDirection="row"
+                gap={1}
+                justifyContent="center"
+                alignItems="center"
+                mt={2}
+              >
+                <Typography variant="h6">
+                  <FormattedMessage
+                    defaultMessage="Get to the finish line"
+                    description="Get to the finish line challenge help info"
+                  />
+                </Typography>
+                <img src={finishLineImage} alt="" width={30}></img>
+              </FlexBox>
+            ))}
           {/* <Typography variant="body1" style={{ whiteSpace: 'pre-wrap' }}>
           {translation?.description || challenge?.description || (
             <FormattedMessage
@@ -93,10 +105,14 @@ export default function ChallengeInfoView({
           />
           </Typography>*/}
           {challengeId &&
+            !isViewingReplay &&
             !challenge.isOfficial &&
             !challenge.isTemplate &&
             challenge.isPublished && (
-              <ChallengeTopAttempts challengeId={challengeId} />
+              <ChallengeTopAttempts
+                challengeId={challengeId}
+                viewReplay={viewOtherReplay}
+              />
             )}
         </FlexBox>
       </EndRoundDisplayOverlay>

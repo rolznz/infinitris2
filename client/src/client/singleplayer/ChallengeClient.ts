@@ -167,7 +167,7 @@ export default class ChallengeClient
     if (!this._simulation) {
       return;
     }
-    this._simulation.stopInterval();
+    this._simulation.destroy();
     // TODO: shouldn't have to destroy the input each time
     this._input?.destroy();
   }
@@ -178,7 +178,6 @@ export default class ChallengeClient
   restart() {
     this._destroyTempObjects();
     this._createTempObjects();
-    this._renderer.reset();
   }
 
   getChallengeAttempt(): IIngameChallengeAttempt {
@@ -344,11 +343,7 @@ export default class ChallengeClient
             challenge.worldType,
             challenge.worldVariation,
             undefined,
-            false,
-            this._launchOptions.challengeEditorSettings
-              ? 'editor'
-              : this._launchOptions.gridLineType,
-            !!this._launchOptions.challengeEditorSettings
+            false
           );
     if (this._editor) {
       this._editor.renderer = this._renderer;
@@ -400,6 +395,11 @@ export default class ChallengeClient
     const isClassicChallenge =
       this._challenge.simulationSettings?.gameModeType ||
       'infinity' === 'infinity';
+
+    this._renderer.challengeEditorEnabled = this._editor?.isEditing || false;
+    this._renderer.gridLineType = this._editor?.isEditing
+      ? 'editor'
+      : this._launchOptions.gridLineType;
 
     const simulation = (this._simulation = new Simulation(
       grid,

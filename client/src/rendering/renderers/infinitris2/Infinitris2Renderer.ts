@@ -218,16 +218,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     await this._gestureIndicator.loadImages();
 
-    if (this._challengeEditorEnabled) {
-      this._challengeEditorGuide = {
-        container: new PIXI.Container(),
-        children: [],
-      };
-      (
-        this._challengeEditorGuide.container as any as Wrappable
-      ).ignoreVisibility = true;
-    }
-
     this._app.view.style.visibility = 'hidden';
     document.body.appendChild(this._app.view);
   }
@@ -510,7 +500,16 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._app.stage.addChild(this._fpsText);
 
     this._gestureIndicator.addChildren();
-    if (this._challengeEditorGuide) {
+
+    if (this._challengeEditorEnabled) {
+      this._challengeEditorGuide = {
+        container: new PIXI.Container(),
+        children: [],
+      };
+      (
+        this._challengeEditorGuide.container as any as Wrappable
+      ).ignoreVisibility = true;
+      this._challengeEditorGuide.container.zIndex = 10000;
       this._world.addChild(this._challengeEditorGuide.container);
     }
     this._resize();
@@ -523,6 +522,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
     this._cells = {};
     this._resize();*/
+    this._resize();
   }
 
   /**

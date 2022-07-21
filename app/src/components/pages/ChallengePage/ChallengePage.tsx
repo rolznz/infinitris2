@@ -7,6 +7,7 @@ import {
   getChallengePath,
   charactersPath,
   ICharacter,
+  IScoreboardEntry,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
@@ -123,6 +124,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const [hasLaunched, setLaunched] = React.useState(false);
   const [hasContinued, setContinued] = React.useState(false);
   const [isViewingReplay, setViewingReplay] = React.useState(false);
+  const [replayScoreboardEntry, setReplayScoreboardEntry] = React.useState<
+    IScoreboardEntry | undefined
+  >(undefined);
 
   // const [simulation, setSimulation] = useIngameStore(
   //   (store) => [store.simulation, store.setSimulation],
@@ -165,6 +169,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
 
   const viewReplay = React.useCallback(() => {
     if (challengeAttempt) {
+      setReplayScoreboardEntry(undefined);
       recordedChallengeAttempt = challengeAttempt;
       challengeClient!.recording = challengeAttempt.recording;
       handleRetry(true);
@@ -172,7 +177,11 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   }, [challengeAttempt, handleRetry]);
 
   const viewOtherReplay = React.useCallback(
-    (otherAttempt: IChallengeAttempt) => {
+    (
+      otherAttempt: IChallengeAttempt,
+      scoreboardEntry: IScoreboardEntry | undefined
+    ) => {
+      setReplayScoreboardEntry(scoreboardEntry);
       // TODO: setViewingReplay(true)
       challengeClient!.recording = otherAttempt.recording;
       handleRetry(true);
@@ -257,7 +266,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
               setChallengeAttempt(attempt);
               if (
                 userId &&
-                !challenge.isOfficial &&
                 !challenge.isTemplate &&
                 challenge.isPublished &&
                 attempt.status === 'success'
@@ -393,6 +401,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           challenge={challenge}
           challengeId={challengeId}
           player={simulation?.humanPlayers[0]}
+          replayScoreboardEntry={replayScoreboardEntry}
           retryChallenge={retryChallenge}
           viewReplay={viewReplay}
           viewOtherReplay={viewOtherReplay}

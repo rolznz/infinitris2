@@ -10,18 +10,20 @@ interface ContinueButtonProps {
   hotkey: string;
   color?: 'primary' | 'secondary';
   message?: React.ReactNode;
+  size?: 'large' | undefined;
 }
 
 export default function ContinueButton({
   onClick,
   hotkey,
   message,
+  size,
   color = 'primary',
 }: ContinueButtonProps) {
   const user = useUser();
   return (
     <FlexBox>
-      <Button variant="contained" color={color} onClick={onClick}>
+      <Button variant="contained" color={color} onClick={onClick} size={size}>
         {message || (
           <FormattedMessage
             defaultMessage="Continue"

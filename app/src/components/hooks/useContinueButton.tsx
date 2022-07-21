@@ -7,7 +7,8 @@ export default function useContinueButton(
   hotkey = 'Enter',
   message?: React.ReactNode,
   hasDelay: boolean = false,
-  color: 'primary' | 'secondary' = 'primary'
+  color: 'primary' | 'secondary' = 'primary',
+  size?: 'large' | undefined
 ): [boolean, React.ReactNode] {
   const hasReceivedInput = useReceivedInput(hotkey, hasDelay);
   const [hasPressedButton, setHasPressedButton] = useState(false);
@@ -17,6 +18,7 @@ export default function useContinueButton(
       message={message}
       onClick={() => setHasPressedButton(true)}
       color={color}
+      size={size}
     />
   );
   return [hasReceivedInput || hasPressedButton, button];

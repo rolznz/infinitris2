@@ -110,7 +110,6 @@ export function ChallengesPage() {
         width="100%"
         flexWrap="wrap"
         flexDirection="row"
-        justifyContent="flex-start"
         gap={isLandscape ? 4 : 2}
         pt={2}
       >

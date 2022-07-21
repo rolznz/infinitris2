@@ -1,10 +1,15 @@
 import { EndRoundDisplayOverlay } from '@/components/game/EndRoundDisplay/EndRoundDisplay';
 import useContinueButton from '@/components/hooks/useContinueButton';
 import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
+import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 import { GameModeDescription } from '@/components/ui/RoomCarousel/RoomCarouselSlide';
 import { borderRadiuses, zIndexes } from '@/theme/theme';
 import { Box, Typography } from '@mui/material';
-import { IChallenge, IChallengeAttempt } from 'infinitris2-models';
+import {
+  IChallenge,
+  IChallengeAttempt,
+  IScoreboardEntry,
+} from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 //import { useUser } from '../../../state/UserStore';
@@ -16,8 +21,12 @@ export interface ChallengeInfoViewProps {
   onReceivedInput(): void;
   challenge: IChallenge;
   challengeId: string | undefined;
-  viewOtherReplay(attempt: IChallengeAttempt): void;
+  viewOtherReplay(
+    attempt: IChallengeAttempt,
+    scoreboardEntry: IScoreboardEntry | undefined
+  ): void;
   isViewingReplay: boolean;
+  replayScoreboardEntry: IScoreboardEntry | undefined;
 }
 
 export default function ChallengeInfoView({
@@ -26,6 +35,7 @@ export default function ChallengeInfoView({
   isViewingReplay,
   challenge,
   challengeId,
+  replayScoreboardEntry,
 }: ChallengeInfoViewProps) {
   //const user = useUser();
   const [hasReceivedInput, continueButton] = useContinueButton(
@@ -40,7 +50,10 @@ export default function ChallengeInfoView({
         defaultMessage="Play"
         description="Challenge Info Play button text"
       />
-    )
+    ),
+    undefined,
+    undefined,
+    'large'
   );
 
   useTrue(hasReceivedInput, onReceivedInput);
@@ -93,6 +106,24 @@ export default function ChallengeInfoView({
             />
           )}
         </Typography> */}
+          {isViewingReplay && replayScoreboardEntry && (
+            <FlexBox flexDirection="row" gap={0}>
+              <Typography variant="body2">
+                <FormattedMessage
+                  defaultMessage="Replay by {playerName}"
+                  description="Challenge info - replay by playername"
+                  values={{
+                    playerName:
+                      replayScoreboardEntry?.nickname || 'Unnamed Player',
+                  }}
+                />
+              </Typography>
+              <CharacterImage
+                characterId={replayScoreboardEntry?.characterId || '0'}
+                width={32}
+              />
+            </FlexBox>
+          )}
           <Box pt={2}>{continueButton}</Box>
           {/*<Typography variant="caption">
           <FormattedMessage
@@ -106,7 +137,6 @@ export default function ChallengeInfoView({
           </Typography>*/}
           {challengeId &&
             !isViewingReplay &&
-            !challenge.isOfficial &&
             !challenge.isTemplate &&
             challenge.isPublished && (
               <ChallengeTopAttempts

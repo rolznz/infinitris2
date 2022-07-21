@@ -17,16 +17,22 @@ import {
   useDocument,
 } from 'swr-firestore';
 import { ReactComponent as PlayIcon } from '@/icons/play.svg';
+import useAuthStore from '@/state/AuthStore';
+import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 
 type ChallengeTopAttemptsProps = {
   challengeId: string;
-  viewReplay(attempt: IChallengeAttempt): void;
+  viewReplay(
+    attempt: IChallengeAttempt,
+    scoreboardEntry: IScoreboardEntry | undefined
+  ): void;
 };
 
 export function ChallengeTopAttempts({
   challengeId,
   viewReplay,
 }: ChallengeTopAttemptsProps) {
+  const userId = useAuthStore((store) => store.user?.uid);
   const useCollectionOptions: UseCollectionOptions = React.useMemo(
     () => ({
       constraints: [
@@ -42,27 +48,39 @@ export function ChallengeTopAttempts({
     challengeAttemptsPath,
     useCollectionOptions
   );
-  if (!attemptDocs?.length) {
-    return null;
-  }
   return (
-    <FlexBox pt={2}>
+    <FlexBox pt={4}>
       <Typography variant="h2" textAlign="center">
         <FormattedMessage
           defaultMessage="Top Plays"
           description="Top challenge attempts"
         />
       </Typography>
+      {!userId && (
+        <Typography variant="caption" textAlign="center">
+          <FormattedMessage
+            defaultMessage="Get Infinitris Premium to appear here"
+            description="Top challenge attempts"
+          />
+        </Typography>
+      )}
       <FlexBox pt={2}>
-        {attemptDocs
-          ? attemptDocs.map((attempt) => (
-              <ChallengeTopAttempt
-                key={attempt.id}
-                attempt={attempt.data()}
-                viewReplay={viewReplay}
-              />
-            ))
-          : 'Noone has completed this challenge yet'}
+        {attemptDocs?.length ? (
+          attemptDocs.map((attempt) => (
+            <ChallengeTopAttempt
+              key={attempt.id}
+              attempt={attempt.data()}
+              viewReplay={viewReplay}
+            />
+          ))
+        ) : (
+          <Typography variant="body2" textAlign="center">
+            <FormattedMessage
+              defaultMessage="Noone has completed this challenge yet :-("
+              description="Top Plays - no completions"
+            />
+          </Typography>
+        )}
       </FlexBox>
     </FlexBox>
   );
@@ -77,17 +95,21 @@ function ChallengeTopAttempt({
   viewReplay,
 }: ChallengeTopAttemptProps) {
   // FIXME: this is very inefficient. Challenges should be updated to include creator nickname
-  const { data: challengeOwnerScoreboardEntry } = useDocument<IScoreboardEntry>(
+  const { data: scoreboardEntry } = useDocument<IScoreboardEntry>(
     getScoreboardEntryPath(attempt.userId)
   );
   const viewReplayForThisAttempt = React.useCallback(
-    () => viewReplay(attempt),
-    [viewReplay, attempt]
+    () => viewReplay(attempt, scoreboardEntry?.data()),
+    [viewReplay, attempt, scoreboardEntry]
   );
   return (
     <FlexBox flexDirection="row" gap={1} bgcolor="background.paper">
+      <CharacterImage
+        characterId={scoreboardEntry?.data()?.characterId || '0'}
+        width={32}
+      />
       <Typography variant="body1">
-        {challengeOwnerScoreboardEntry?.data()?.nickname}
+        {scoreboardEntry?.data()?.nickname}
       </Typography>
       <Typography variant="body2">
         {(attempt.stats.timeTakenMs / 1000).toFixed(2)}s

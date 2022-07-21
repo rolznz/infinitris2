@@ -92,6 +92,10 @@ export default class ChallengeClient
     return this._recording;
   }
 
+  get launchOptions(): ChallengeLaunchOptions {
+    return this._launchOptions;
+  }
+
   onSimulationPreStep() {
     if (this._recording) {
       this._recordPlayer.step();

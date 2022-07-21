@@ -8,6 +8,7 @@ import {
   charactersPath,
   ICharacter,
   IScoreboardEntry,
+  stringToHex,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
@@ -114,7 +115,10 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     ? useChallengeEditorStore.getState().challenge
     : syncedChallenge?.data();
 
-  const loadCharacters = !!challenge?.simulationSettings?.botSettings;
+  // TODO: this is needed for both bots and replays
+  // but we don't necessarily need all characters
+  // it would be more efficient to store redundant data on the replay itself (character ID, color, patternFilename, player nickname)
+  const loadCharacters = true; //!!challenge?.simulationSettings?.botSettings;
   const allCharacters = useCollection<ICharacter>(
     loadCharacters ? charactersPath : null
   );
@@ -147,6 +151,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     }
   }, []);
   const simulation = useIngameStore((store) => store.simulation);
+  const player = useNetworkPlayerInfo();
 
   const handleRetry = React.useCallback(
     (isPlayingRecording: boolean) => {
@@ -154,13 +159,17 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       if (!isPlayingRecording) {
         recordedChallengeAttempt = undefined;
         challengeClient!.recording = undefined;
+        challengeClient!.launchOptions.player = {
+          ...challengeClient!.launchOptions.player,
+          ...player,
+        };
       }
       useIngameStore.getState().setSimulation(undefined);
       setChallengeAttempt(undefined);
       setRoundStarted(false);
       restartClient!();
     },
-    [restartClient]
+    [restartClient, player]
   );
 
   const retryChallenge = React.useCallback(() => {
@@ -182,11 +191,24 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       scoreboardEntry: IScoreboardEntry | undefined
     ) => {
       setReplayScoreboardEntry(scoreboardEntry);
-      // TODO: setViewingReplay(true)
       challengeClient!.recording = otherAttempt.recording;
+      const replayScoreboardEntryCharacter: ICharacter | undefined =
+        scoreboardEntry &&
+        allCharacters.data
+          ?.find((doc) => doc.id === scoreboardEntry?.characterId)
+          ?.data();
+      challengeClient!.launchOptions.player = {
+        ...challengeClient!.launchOptions.player,
+        characterId: scoreboardEntry?.characterId || '0',
+        nickname: scoreboardEntry?.nickname || 'Unknown Player',
+        color: replayScoreboardEntryCharacter?.color
+          ? stringToHex(replayScoreboardEntryCharacter?.color)
+          : undefined,
+        patternFilename: replayScoreboardEntryCharacter?.patternFilename,
+      };
       handleRetry(true);
     },
-    [handleRetry]
+    [allCharacters.data, handleRetry]
   );
 
   const { controls_keyboard } = user;
@@ -198,8 +220,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const setIsEditingChallenge = useChallengeEditorStore(
     (store) => store.setIsEditing
   );
-
-  const player = useNetworkPlayerInfo();
 
   const { incompleteChallenges, isLoadingOfficialChallenges } =
     useIncompleteChallenges(isTest ? undefined : challenge?.worldType);

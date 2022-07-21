@@ -30,7 +30,7 @@ service cloud.firestore {
     }
     function userIdFieldValid() {
       return
-        authMatchesUser(request.resource.data.userId) &&
+        (authMatchesUser(request.resource.data.userId) || isAdmin()) &&
         (resource == null || (resource != null && request.resource.data.userId == resource.data.userId));
     }
     function readOnlyFieldsUntouched() {

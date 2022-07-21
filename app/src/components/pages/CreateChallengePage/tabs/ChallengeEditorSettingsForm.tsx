@@ -188,9 +188,15 @@ export function ChallengeEditorSettingsForm({
         let challengeToPublish: IChallenge = {
           ...challenge,
           title: data.title,
-          userId,
           isPublished: true,
         };
+        if (!existingChallengeId) {
+          // only set the user ID for new challenges
+          challengeToPublish = {
+            ...challengeToPublish,
+            userId,
+          };
+        }
         if (challengeToPublish.isTemplate) {
           challengeToPublish = {
             ...challengeToPublish,

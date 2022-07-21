@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import {
   GameModeType,
   getVariationHueRotation,
+  IChallenge,
   WorldType,
   WorldVariation,
   WorldVariationValues,
@@ -24,31 +25,36 @@ import RunCircleIcon from '@mui/icons-material/RunCircle';
 import { FormattedMessage } from 'react-intl';
 import { textShadows } from '@/theme/theme';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
+import { ChallengeGridPartialPreview } from '@/components/pages/ChallengesPage/ChallengeGridPartialPreview';
+import { useWindowSize } from 'react-use';
 
 export type RoomCarouselSlideProps = {
   gameModeType?: GameModeType;
   customText?: React.ReactNode;
-  key: string;
   name?: string;
   numPlayers?: number;
   worldType?: WorldType;
   worldVariation?: WorldVariation;
   isLocked?: boolean;
+  grid?: IChallenge['grid'];
+  id: string;
 };
 
 export function RoomCarouselSlide({
   numPlayers,
   gameModeType,
   customText,
-  key,
   name,
   worldType,
   worldVariation,
+  grid,
+  id,
 }: RoomCarouselSlideProps) {
   const isLandscape = useIsLandscape();
+  const windowSize = useWindowSize();
   return (
     <FlexBox
-      key={key}
+      key={id}
       width="100vw"
       height="100vh"
       sx={{
@@ -60,6 +66,23 @@ export function RoomCarouselSlide({
       }}
       position="relative"
     >
+      {grid && typeof grid === 'string' && (
+        <FlexBox
+          position="absolute"
+          width="100vw"
+          height="100vh"
+          top={0}
+          left={0}
+          overflow="hidden"
+        >
+          <ChallengeGridPartialPreview
+            grid={grid}
+            aspectRatio={windowSize.width / windowSize.height}
+            numRows={isLandscape ? 16 : 24}
+            width={windowSize.width}
+          />
+        </FlexBox>
+      )}
       {name && (
         <FlexBox
           position="absolute"

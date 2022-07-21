@@ -12,6 +12,7 @@ import MenuItem from '@mui/material/MenuItem';
 import SvgIcon from '@mui/material/SvgIcon';
 import { ReactComponent as SortIcon } from '@/icons/sort.svg';
 import useSearchParam from 'react-use/lib/useSearchParam';
+import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 
 const ChallengesPageSortTypeValues = [
   'popularity',
@@ -29,6 +30,7 @@ export function ChallengesPage() {
     challengesPageSortParam
   ) as ChallengesPageSortType;
   const listen = useSearchParam(challengesPageListenParam) === 'true';
+  const isLandscape = useIsLandscape();
 
   const [filter, setFilter] = React.useState<ChallengesPageSortType>(
     sortParam && ChallengesPageSortTypeValues.indexOf(sortParam) > -1
@@ -109,7 +111,7 @@ export function ChallengesPage() {
         flexWrap="wrap"
         flexDirection="row"
         justifyContent="flex-start"
-        gap={4}
+        gap={isLandscape ? 4 : 2}
         pt={2}
       >
         {challenges?.map((challenge) => (

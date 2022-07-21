@@ -1,27 +1,14 @@
-import { useCollection, UseCollectionOptions } from 'swr-firestore';
-import { challengesPath, IChallenge, WorldType } from 'infinitris2-models';
-import { where } from 'firebase/firestore';
+import { WorldType } from 'infinitris2-models';
 import { useUser } from '@/components/hooks/useUser';
-import React from 'react';
-//import { useUser } from '../../state/UserStore';
+import useOfficialChallenges, {
+  getChallengePriority,
+} from '@/components/hooks/useOfficialChallenges';
 
 export default function useIncompleteChallenges(
   worldType: WorldType | undefined
 ) {
-  const useIncompleteChallengesOptions: UseCollectionOptions = React.useMemo(
-    () => ({
-      constraints: [
-        where('isOfficial', '==', true) /*, orderBy('priority', 'desc')*/,
-        where('worldType', '==', worldType), // TODO: accept as argument
-      ],
-    }),
-    [worldType]
-  );
-
-  const { data: officialChallenges, isValidating } = useCollection<IChallenge>(
-    worldType ? challengesPath : null,
-    useIncompleteChallengesOptions
-  );
+  const { data: officialChallenges, isValidating } =
+    useOfficialChallenges(worldType);
 
   const isLoadingOfficialChallenges =
     !officialChallenges?.length && isValidating;
@@ -32,6 +19,8 @@ export default function useIncompleteChallenges(
       (challenge) =>
         (user.completedOfficialChallengeIds || []).indexOf(challenge.id) < 0
     ) || []
-  ).sort((a, b) => (b.data()!.priority || 0) - (a.data()!.priority || 0));
+  ).sort(
+    (a, b) => getChallengePriority(b.data()!) - getChallengePriority(a.data()!)
+  );
   return { incompleteChallenges, isLoadingOfficialChallenges };
 }

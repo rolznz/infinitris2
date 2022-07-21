@@ -122,7 +122,7 @@ export function SinglePlayerOptionsPage() {
         <FlexBox position="fixed" top={0} zIndex="below" sx={{ opacity: 0.75 }}>
           <RoomCarouselSlide
             gameModeType={formData.simulationSettings.gameModeType!}
-            key={'custom'}
+            id={'custom'}
             worldType={formData.worldType}
             worldVariation={formData.worldVariation}
           />

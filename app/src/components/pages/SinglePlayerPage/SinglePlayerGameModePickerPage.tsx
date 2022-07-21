@@ -27,14 +27,14 @@ export function SinglePlayerGameModePickerPage() {
     return !advancedOptionsChanged
       ? GameModeTypeValues.map((gameModeType) => ({
           gameModeType,
-          key: gameModeType,
+          id: gameModeType,
           worldType: getWorldType(gameModeType),
           worldVariation: '0',
         }))
       : [
           {
             gameModeType: formData.simulationSettings.gameModeType!,
-            key: JSON.stringify(formData),
+            id: JSON.stringify(formData),
             worldType: formData.worldType,
             worldVariation: formData.worldVariation,
           },

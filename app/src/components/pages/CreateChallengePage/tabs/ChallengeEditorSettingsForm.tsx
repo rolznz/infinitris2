@@ -371,23 +371,6 @@ export function ChallengeEditorSettingsForm({
                     />
                   )}
                 />
-                <Controller
-                  name="priority"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControl variant="standard" fullWidth>
-                      <InputLabel>Priority (Story Mode)</InputLabel>
-                      <Input
-                        {...field}
-                        onChange={(event) =>
-                          field.onChange(parseInt(event.target.value))
-                        }
-                        defaultValue={(challenge.priority ?? 0).toString()}
-                        fullWidth
-                      />
-                    </FormControl>
-                  )}
-                />
               </FlexBox>
             )}
           </FlexBox>

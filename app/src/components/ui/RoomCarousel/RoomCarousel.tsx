@@ -49,7 +49,7 @@ export function RoomCarousel({
   const [selectedSlide, setSelectedSlide] = React.useState(initialStep);
   const slideElements = React.useMemo(
     () =>
-      slides.map((slide) => <RoomCarouselSlide {...slide} key={slide.key} />),
+      slides.map((slide) => <RoomCarouselSlide {...slide} key={slide.id} />),
     [slides]
   );
 

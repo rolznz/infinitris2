@@ -55,7 +55,6 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
               isOfficial: Boolean(
                 challenge.data()?.isOfficial && isAdmin && editExisting
               ),
-              priority: challenge.data()?.priority,
               // TODO: add other writable settings here (linked with form options)
             });
             history.push(getChallengeTestUrl());

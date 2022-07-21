@@ -1,3 +1,4 @@
+import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import {
   parseGrid,
   ChallengeCellType,
@@ -10,6 +11,9 @@ import { getCellFillColor } from '../../../utils/getCellFillColor';
 interface ChallengePreviewProps {
   grid: IChallenge['grid'];
   allRows?: boolean;
+  width?: number;
+  numRows?: number;
+  aspectRatio?: number;
 }
 
 const imageCache = {} as Record<ChallengeCellType, HTMLImageElement>;
@@ -105,7 +109,12 @@ async function loadImage(
 export function ChallengeGridPartialPreview({
   grid: gridObject,
   allRows,
+  width,
+  numRows = 16,
+  aspectRatio = 3 / 4,
 }: ChallengePreviewProps) {
+  const isLandscape = useIsLandscape();
+  width = width || (isLandscape ? 200 : 165);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const grid =
     (typeof gridObject === 'string' ? (gridObject as string) : undefined) ||
@@ -116,9 +125,9 @@ export function ChallengeGridPartialPreview({
   } catch (error) {
     cellTypes = [[ChallengeCellType.Full]];
   }
-  const numRows = allRows ? cellTypes.length : 16; //cellTypes.length;
-  const numColumns = Math.round(numRows * (3 / 4)); //cellTypes[0].length;
-  const width = 200;
+  numRows = allRows ? cellTypes.length : numRows;
+
+  const numColumns = Math.round(numRows * aspectRatio); //cellTypes[0].length;
   const height = width * (numRows / numColumns);
 
   useEffect(() => {

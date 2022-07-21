@@ -1,5 +1,4 @@
 import FlexBox from '@/components/ui/FlexBox';
-import IconButton from '@mui/material/IconButton';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import Typography from '@mui/material/Typography';
 import { limit, orderBy, where } from 'firebase/firestore';
@@ -16,9 +15,12 @@ import {
   UseCollectionOptions,
   useDocument,
 } from 'swr-firestore';
-import { ReactComponent as PlayIcon } from '@/icons/play.svg';
+import { ReactComponent as StopwatchIcon } from '@/icons/stopwatch.svg';
 import useAuthStore from '@/state/AuthStore';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
+import { SxProps } from '@mui/material';
+import { borderRadiuses, boxShadows } from '@/theme/theme';
+import { PlacingStar } from '@/components/pages/Characters/PlacingStar';
 
 type ChallengeTopAttemptsProps = {
   challengeId: string;
@@ -48,9 +50,12 @@ export function ChallengeTopAttempts({
     challengeAttemptsPath,
     useCollectionOptions
   );
+  if (!attemptDocs) {
+    return null;
+  }
   return (
     <FlexBox pt={4}>
-      <Typography variant="h2" textAlign="center">
+      <Typography variant="h4" textAlign="center">
         <FormattedMessage
           defaultMessage="Top Plays"
           description="Top challenge attempts"
@@ -64,11 +69,12 @@ export function ChallengeTopAttempts({
           />
         </Typography>
       )}
-      <FlexBox pt={2}>
+      <FlexBox gap={1}>
         {attemptDocs?.length ? (
-          attemptDocs.map((attempt) => (
+          attemptDocs.map((attempt, index) => (
             <ChallengeTopAttempt
               key={attempt.id}
+              placing={index + 1}
               attempt={attempt.data()}
               viewReplay={viewReplay}
             />
@@ -86,11 +92,22 @@ export function ChallengeTopAttempts({
   );
 }
 
+const attemptSx: SxProps = {
+  cursor: 'pointer',
+  boxShadow: boxShadows.small,
+  pl: 1,
+  pr: 2,
+  py: 0,
+  borderRadius: borderRadiuses.base,
+};
+
 type ChallengeTopAttemptProps = {
   attempt: IChallengeAttempt;
+  placing: number;
 } & Pick<ChallengeTopAttemptsProps, 'viewReplay'>;
 
 function ChallengeTopAttempt({
+  placing,
   attempt,
   viewReplay,
 }: ChallengeTopAttemptProps) {
@@ -103,22 +120,35 @@ function ChallengeTopAttempt({
     [viewReplay, attempt, scoreboardEntry]
   );
   return (
-    <FlexBox flexDirection="row" gap={1} bgcolor="background.paper">
-      <CharacterImage
-        characterId={scoreboardEntry?.data()?.characterId || '0'}
-        width={32}
-      />
-      <Typography variant="body1">
-        {scoreboardEntry?.data()?.nickname}
-      </Typography>
-      <Typography variant="body2">
-        {(attempt.stats.timeTakenMs / 1000).toFixed(2)}s
-      </Typography>
-      <IconButton onClick={viewReplayForThisAttempt}>
-        <SvgIcon color="primary">
-          <PlayIcon />
+    <FlexBox
+      flexDirection="row"
+      gap={1}
+      onClick={viewReplayForThisAttempt}
+      sx={attemptSx}
+    >
+      <FlexBox
+        flexDirection="row"
+        position="relative"
+        width={150}
+        justifyContent="flex-start"
+      >
+        <CharacterImage
+          characterId={scoreboardEntry?.data()?.characterId || '0'}
+          width={64}
+        />
+        <PlacingStar placing={placing} offset={12} scale={0.5} />
+        <Typography variant="body1">
+          {scoreboardEntry?.data()?.nickname}
+        </Typography>
+      </FlexBox>
+      <FlexBox flexDirection="row" width={70}>
+        <SvgIcon color="primary" sx={{ mt: -0.5 }}>
+          <StopwatchIcon />
         </SvgIcon>
-      </IconButton>
+        <Typography variant="body2">
+          {(attempt.stats.timeTakenMs / 1000).toFixed(2)}s
+        </Typography>
+      </FlexBox>
     </FlexBox>
   );
 }

@@ -296,7 +296,15 @@ export default class Block implements IBlock {
           canMove =
             canMove &&
             (Boolean(cell && cell.isPassable) ||
-              Boolean(this.isDropping && cell?.isPassableWhileDropping));
+              Boolean(this._isDropping && cell?.isPassableWhileDropping) ||
+              Boolean(
+                this._isDropping &&
+                  options?.isForgiving &&
+                  cell?.player !== this._player &&
+                  cell?.wasRecentlyPlaced(
+                    this._simulation.settings.forgivingPlacementTime ?? 1000 //ms
+                  )
+              ));
         }
       );
 
@@ -321,6 +329,7 @@ export default class Block implements IBlock {
    * @param dr the delta of the rotation.
    * @param force force the block to move, even if the destination is occupied.
    * @param rotateDown prioritize downward movement when rotating
+   * @param isForgiving if true, allow the block to pass through recently placed cells
    *
    * @returns true if the block was moved.
    */
@@ -329,7 +338,8 @@ export default class Block implements IBlock {
     dy: number,
     dr: number,
     force: boolean = false,
-    rotateDown: boolean = false
+    rotateDown: boolean = false,
+    isForgiving: boolean = false
   ): boolean {
     // force downward rotations when above the grid (e.g. long block on spawn), otherwise can't rotate
     if (!force && this._row < 0) {
@@ -343,7 +353,11 @@ export default class Block implements IBlock {
     let canMove = false;
     for (let i = 0; i < attempts.length; i++) {
       canMove =
-        force || this.canMove(attempts[i].dx, attempts[i].dy, attempts[i].dr);
+        force ||
+        this.canMove(attempts[i].dx, attempts[i].dy, attempts[i].dr, {
+          allowMistakes: true,
+          isForgiving,
+        });
       if (canMove) {
         this._column += attempts[i].dx;
         this._row += attempts[i].dy;
@@ -377,10 +391,10 @@ export default class Block implements IBlock {
    * If the block is obstructed, decrease its lock timer. Otherwise,
    * reset its movement timers.
    *
-   * @param gridCells
+   * @param isForgiving if true, allow the block to pass through recently placed cells
    */
-  fall(): boolean {
-    const fell = this.move(0, 1, 0);
+  fall(isForgiving = false): boolean {
+    const fell = this.move(0, 1, 0, undefined, undefined, isForgiving);
     if (!fell) {
       this._lockTimer--;
     } else {
@@ -431,17 +445,24 @@ export default class Block implements IBlock {
       }
       let removed = false;
       if (!this._simulation.isNetworkClient && !fell && this.isReadyToLock) {
-        if (
+        const isMistake =
           (this._simulation.settings.preventTowers !== false &&
             this._simulation.grid.isTower(this.bottomRow)) ||
           (this._simulation.settings.mistakeDetection !== false &&
-            checkMistake(this._cells, this._simulation))
-        ) {
-          this.die();
-        } else {
-          this.place();
+            checkMistake(this._cells, this._simulation));
+
+        if (isMistake && this._isDropping) {
+          // try forgiving placement - can overwrite any cells that were placed in the last X ms
+          fell = this.fall(true);
         }
-        removed = true;
+        if (!fell) {
+          if (isMistake) {
+            this.die();
+          } else {
+            this.place();
+          }
+          removed = true;
+        }
       }
       const slowDown = this._slowdownAmount > 0;
       if (slowDown) {

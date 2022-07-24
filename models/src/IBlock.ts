@@ -7,6 +7,7 @@ export type BlockCanMoveOptions = {
   allowMistakes: boolean;
   isMistake?: boolean;
   cells?: ICell[];
+  isForgiving?: boolean;
 };
 
 export type NetworkBlockInfo = {

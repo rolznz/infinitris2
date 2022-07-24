@@ -27,6 +27,7 @@ export default interface ICell {
   set player(player: IPlayer | undefined);
   get requiresRerender(): boolean;
   set requiresRerender(requiresRerender: boolean);
+  wasRecentlyPlaced(recentPlacementTimeout: number): boolean;
   addBlock(block: IBlock): void;
   removeBlock(block: IBlock): void;
   step(): void;

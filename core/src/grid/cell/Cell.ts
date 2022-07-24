@@ -17,6 +17,7 @@ export default class Cell implements ICell {
   private readonly _eventListener?: ICellEventListener;
   private _player: IPlayer | undefined;
   private _requiresRerender;
+  private _playerPlacementTime: number;
   constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
     this._row = row;
@@ -26,6 +27,7 @@ export default class Cell implements ICell {
     this._blocks = [];
     this._eventListener = grid;
     this._requiresRerender = true;
+    this._playerPlacementTime = 0;
   }
 
   get grid(): IGrid {
@@ -74,6 +76,10 @@ export default class Cell implements ICell {
     }
   }
 
+  wasRecentlyPlaced(recentPlacementTimeout: number): boolean {
+    return Date.now() - this._playerPlacementTime < recentPlacementTimeout;
+  }
+
   get behaviour(): ICellBehaviour {
     return this._behaviour;
   }
@@ -103,6 +109,9 @@ export default class Cell implements ICell {
     this.isEmpty = false;
     if (this.behaviour.isReplaceable) {
       this.behaviour = new NormalCellBehaviour(this, player?.color);
+    }
+    if (player) {
+      this._playerPlacementTime = Date.now();
     }
   }
 

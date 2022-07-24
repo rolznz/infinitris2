@@ -26,4 +26,5 @@ export type SimulationSettings = {
   };
   readonly allowSpawnOnOtherBlocks?: boolean; // if false, cannot spawn your block if someone else's block is in the way
   readonly replaceUnplayableBlocks?: boolean;
+  readonly forgivingPlacementTime?: number; // allows blocks from multiple players to be placed in the same position
 };

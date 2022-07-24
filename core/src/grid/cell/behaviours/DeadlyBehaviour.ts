@@ -6,11 +6,14 @@ import IBlock from '@models/IBlock';
 
 export default class DeadlyBehaviour implements ICellBehaviour {
   private _cell: ICell;
+  private _rotation: number;
   constructor(cell: ICell) {
     this._cell = cell;
+    this._rotation = Math.random() * Math.PI * 2;
   }
   step(): void {
     this._cell.blocks.forEach((block) => block.die());
+    this._rotation += 0.01;
   }
 
   onAddBlock(block: IBlock) {
@@ -35,6 +38,10 @@ export default class DeadlyBehaviour implements ICellBehaviour {
 
   clone(forCell: ICell): ICellBehaviour {
     return new DeadlyBehaviour(forCell);
+  }
+
+  get rotation() {
+    return this._rotation;
   }
 
   get type(): CellType {

@@ -320,6 +320,7 @@ export default class Simulation implements ISimulation {
       throw new Error('Player already exists: ' + player.id);
     }
     this._players[player.id] = player;
+    this.onPlayerCreated(player);
   }
 
   followPlayer(player: IPlayer) {

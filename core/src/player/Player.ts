@@ -81,7 +81,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._isNicknameVerified = isNicknameVerified || false;
     this.addEventListener(simulation);
     this._calculateSpawnDelay();
-    this._eventListeners.forEach((listener) => listener.onPlayerCreated(this));
   }
 
   get id(): number {

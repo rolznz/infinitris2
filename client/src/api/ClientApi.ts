@@ -94,6 +94,7 @@ export default class ClientApi implements IClientApi {
         player: {
           characterId: '487',
           patternFilename: 'pattern_3.png',
+          isNicknameVerified: true,
         },
         listeners: [
           {
@@ -129,6 +130,8 @@ export default class ClientApi implements IClientApi {
           patternFilename: 'pattern_5.png',
           nickname: 'Me',
           color: stringToHex(colors[5].hex),
+          isNicknameVerified: true,
+          isPremium: true,
         },
         socketListener: {
           onConnect: (socket) => {

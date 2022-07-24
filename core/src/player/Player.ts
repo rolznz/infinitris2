@@ -37,6 +37,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _layoutBag: Layout[];
   private _actionsToFire: InputActionWithData[];
   private _firedActions: InputActionWithData[];
+  private _isPremium: boolean;
+  private _isNicknameVerified: boolean;
 
   constructor(
     simulation: ISimulation,
@@ -45,7 +47,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     nickname: string = 'New Player',
     color: number = 0xf33821,
     patternFilename?: string,
-    characterId?: string
+    characterId?: string,
+    isPremium?: boolean,
+    isNicknameVerified?: boolean
   ) {
     console.log(
       'Creating player ' + id,
@@ -73,6 +77,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._layoutBag = [];
     this._actionsToFire = [];
     this._firedActions = [];
+    this._isPremium = isPremium || false;
+    this._isNicknameVerified = isNicknameVerified || false;
     this.addEventListener(simulation);
     this._calculateSpawnDelay();
     this._eventListeners.forEach((listener) => listener.onPlayerCreated(this));
@@ -114,6 +120,12 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
   get isBot(): boolean {
     return false;
+  }
+  get isPremium(): boolean {
+    return this._isPremium;
+  }
+  get isNicknameVerified(): boolean {
+    return this._isNicknameVerified;
   }
 
   get patternFilename(): string | undefined {

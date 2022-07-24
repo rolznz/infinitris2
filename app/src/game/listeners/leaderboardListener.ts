@@ -22,6 +22,8 @@ function _updateLeaderboard() {
       characterId: player.characterId,
       score: player.score,
       status: player.status,
+      isPremium: player.isPremium,
+      isNicknameVerified: player.isNicknameVerified,
     })) || [];
 
   leaderboardEntries.sort((a, b) => {

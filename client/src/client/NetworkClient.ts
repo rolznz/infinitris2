@@ -148,7 +148,9 @@ export default class NetworkClient
               playerInfo.nickname,
               playerInfo.color,
               playerInfo.patternFilename,
-              playerInfo.characterId
+              playerInfo.characterId,
+              playerInfo.isPremium,
+              playerInfo.isNicknameVerified
             );
             humanPlayer.estimatedSpawnDelay =
               joinResponseData.estimatedSpawnDelay;
@@ -301,7 +303,9 @@ export default class NetworkClient
       playerInfo.nickname,
       playerInfo.color,
       playerInfo.patternFilename,
-      playerInfo.characterId
+      playerInfo.characterId,
+      playerInfo.isPremium,
+      playerInfo.isNicknameVerified
     );
   }
 

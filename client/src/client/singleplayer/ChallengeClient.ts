@@ -435,7 +435,9 @@ export default class ChallengeClient
       this._launchOptions.player?.nickname,
       this._launchOptions.player?.color,
       this._launchOptions.player?.patternFilename,
-      this._launchOptions.player?.characterId
+      this._launchOptions.player?.characterId,
+      this._launchOptions.player?.isPremium,
+      this._launchOptions.player?.isNicknameVerified
     );
     if (spawnLocationCell) {
       player.spawnLocationCell = spawnLocationCell;

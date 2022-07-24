@@ -18,6 +18,8 @@ export type LeaderboardEntry = {
   isBot: boolean;
   score: number;
   status: PlayerStatus;
+  isPremium: boolean;
+  isNicknameVerified: boolean;
 };
 
 type IngameStore = {

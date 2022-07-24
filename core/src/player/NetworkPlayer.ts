@@ -14,7 +14,9 @@ export default class NetworkPlayer extends Player {
     nickname: string | undefined,
     color: number | undefined,
     patternFilename?: string,
-    characterId?: string
+    characterId?: string,
+    isPremium?: boolean,
+    isNicknameVerified?: boolean
   ) {
     super(
       simulation,
@@ -23,7 +25,9 @@ export default class NetworkPlayer extends Player {
       nickname,
       color,
       patternFilename,
-      characterId
+      characterId,
+      isPremium,
+      isNicknameVerified
     );
     this._socketId = socketId;
     this._isBot = isBot;

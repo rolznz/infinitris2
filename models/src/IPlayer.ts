@@ -19,6 +19,8 @@ export type NetworkPlayerInfo = {
   readonly health: number;
   readonly status: PlayerStatus;
   readonly isBot: boolean;
+  readonly isPremium: boolean;
+  readonly isNicknameVerified: boolean;
 };
 
 export interface IPlayer {
@@ -30,6 +32,8 @@ export interface IPlayer {
   get isControllable(): boolean;
   get isBot(): boolean;
   get isNetworked(): boolean;
+  get isPremium(): boolean;
+  get isNicknameVerified(): boolean;
   get status(): PlayerStatus;
   set spawnLocationCell(cell: ICell | undefined);
   set checkpointCell(cell: ICell | undefined);

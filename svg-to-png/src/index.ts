@@ -12,10 +12,13 @@ const assetsDirectory =
     ? `../client/www/images/${process.env.ASSETS_DIRECTORY || 'worlds'}`
     : '../app/src/components/ui/GameModePicker';
 
-const childAssetDirectories = fs
-  .readdirSync(assetsDirectory)
-  .map((filename) => `${assetsDirectory}/${filename}`)
-  .filter((path) => fs.lstatSync(path).isDirectory());
+const childAssetDirectories =
+  process.env.READ_CHILD_DIRECTORIES !== 'false'
+    ? fs
+        .readdirSync(assetsDirectory)
+        .map((filename) => `${assetsDirectory}/${filename}`)
+        .filter((path) => fs.lstatSync(path).isDirectory())
+    : [assetsDirectory];
 
 for (const assetDirectory of childAssetDirectories) {
   if (

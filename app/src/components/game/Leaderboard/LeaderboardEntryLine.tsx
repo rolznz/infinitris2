@@ -9,6 +9,7 @@ import useIngameStore, { LeaderboardEntry } from '@/state/IngameStore';
 import { ReactComponent as ConquestIcon } from '@/icons/conquest.svg';
 import { ReactComponent as ScoreIcon } from '@/icons/score.svg';
 import { ReactComponent as BotIcon } from '@/icons/bot.svg';
+import { ReactComponent as VerifiedIcon } from '@/icons/verified.svg';
 import SvgIcon from '@mui/material/SvgIcon';
 import { PlayerStatus } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
@@ -71,22 +72,29 @@ export function LeaderboardEntryLine({
       </FlexBox>
       <CharacterImage characterId={entry.characterId || '0'} width={64} />
       <FlexBox flex={1} alignItems="flex-start">
-        <Typography
-          flex={1}
-          variant="body1"
-          sx={nameTypographySx}
-          maxWidth={0.9}
-          textOverflow="ellipsis"
-          overflow="hidden"
-          whiteSpace="nowrap"
-        >
+        <FlexBox flexDirection="row" gap={0.5}>
+          <Typography
+            flex={1}
+            variant="body1"
+            sx={nameTypographySx}
+            maxWidth={0.9}
+            textOverflow="ellipsis"
+            overflow="hidden"
+            whiteSpace="nowrap"
+          >
+            {entry.nickname}
+          </Typography>
           {entry.isBot && (
             <SvgIcon fontSize="small" color="secondary">
               <BotIcon />
             </SvgIcon>
           )}
-          {entry.nickname}
-        </Typography>
+          {entry.isNicknameVerified && (
+            <SvgIcon fontSize="small" color="secondary">
+              <VerifiedIcon />
+            </SvgIcon>
+          )}
+        </FlexBox>
         {entry.status !== PlayerStatus.ingame && (
           <Typography variant="body1" sx={statusTypographySx}>
             {entry.playerId === simulation?.round?.winner?.id ? (

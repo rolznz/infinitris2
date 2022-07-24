@@ -39,6 +39,8 @@ import { GestureIndicator } from '@src/rendering/renderers/infinitris2/GestureIn
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
+const botIconUrl = `${imagesDirectory}/nickname/bot.png`;
+const nicknameVerifiedIconUrl = `${imagesDirectory}/nickname/verified.png`;
 
 const particleDivisions = 4;
 const numPatternDivisions = 4;
@@ -60,7 +62,10 @@ interface IPlayerContainer {
     outer: PIXI.Sprite;
     inner: PIXI.Sprite;
   }>;
-  nicknameText: IRenderableEntity<PIXI.Text>;
+  nicknameText: IRenderableEntity<{
+    text: PIXI.Text;
+    icon?: PIXI.Sprite;
+  }>;
   container: PIXI.Container;
 }
 
@@ -134,6 +139,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _oldOverflowStyle: string;
   private _displayFrameRate = false;
   private _gameModeRenderer: IGameModeRenderer | undefined;
+  private _botIconTexture!: PIXI.Texture;
+  private _nicknameVerifiedIconTexture!: PIXI.Texture;
   private _healthbarOuterTexture!: PIXI.Texture;
   private _healthbarInnerTexture!: PIXI.Texture;
   private _useFallbackUI: boolean;
@@ -208,10 +215,14 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     this._app.loader.add(healthbarOuterUrl);
     this._app.loader.add(healthbarInnerUrl);
-    await new Promise((resolve) => this._app.loader.load(resolve));
 
     this._healthbarOuterTexture = PIXI.Texture.from(healthbarOuterUrl);
     this._healthbarInnerTexture = PIXI.Texture.from(healthbarInnerUrl);
+    this._botIconTexture = PIXI.Texture.from(botIconUrl);
+    this._nicknameVerifiedIconTexture = PIXI.Texture.from(
+      nicknameVerifiedIconUrl
+    );
+    await new Promise((resolve) => this._app.loader.load(resolve));
 
     this._worldBackground.createImages();
     this._gridFloor.createImages();
@@ -773,9 +784,17 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this.renderCopies(
         playerContainer.nicknameText,
         1,
-        (text, shadowIndexWithDirection) => {
+        (renderableObject, shadowIndexWithDirection) => {
           const shadowX = shadowIndexWithDirection * this._gridWidth;
-          text.x = shadowX;
+          renderableObject.text.x = shadowX;
+          if (renderableObject.icon) {
+            renderableObject.icon.x =
+              shadowX +
+              Math.pow(renderableObject.text.text.length, 1.15) *
+                this._cellSize *
+                0.1 +
+              this._cellSize * 0.75;
+          }
         },
         () => {
           const text = new PIXI.Text(player.nickname, {
@@ -792,14 +811,26 @@ export default class Infinitris2Renderer extends BaseRenderer {
           });
 
           //text.cacheAsBitmap = true;
-          text.anchor.set(0.5, 0);
+          text.anchor.set(0.5, 0.5);
           playerContainer.nicknameText.container.addChild(text);
-          return text;
+          let icon: PIXI.Sprite | undefined;
+
+          if (player.isBot) {
+            icon = PIXI.Sprite.from(this._botIconTexture);
+          } else if (player.isNicknameVerified) {
+            icon = PIXI.Sprite.from(this._nicknameVerifiedIconTexture);
+          }
+          if (icon) {
+            icon.anchor.set(0, 0.5);
+            playerContainer.nicknameText.container.addChild(icon);
+          }
+          return { text, icon };
         }
       );
-      playerContainer.nicknameText.children.forEach((child) =>
-        child.renderableObject.scale.set(this._cellSize * 0.03)
-      );
+      playerContainer.nicknameText.children.forEach((child) => {
+        child.renderableObject.text.scale.set(this._cellSize * 0.03);
+        child.renderableObject.icon?.scale.set(this._cellSize * 0.03);
+      });
     }
     if (this._simulation!.gameMode.hasHealthbars) {
       this.renderCopies(

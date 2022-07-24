@@ -30,5 +30,7 @@ export function useNetworkPlayerInfo(): Partial<NetworkPlayerInfo> | undefined {
         : undefined,
     patternFilename: character.data()?.patternFilename,
     characterId,
+    isPremium: isLoggedIn,
+    isNicknameVerified: !!user.readOnly?.nickname?.length,
   };
 }

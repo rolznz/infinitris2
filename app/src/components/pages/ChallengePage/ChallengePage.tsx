@@ -205,6 +205,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           ? stringToHex(replayScoreboardEntryCharacter?.color)
           : undefined,
         patternFilename: replayScoreboardEntryCharacter?.patternFilename,
+        isPremium: true,
+        isNicknameVerified: !!scoreboardEntry?.nickname?.length,
       };
       handleRetry(true);
     },

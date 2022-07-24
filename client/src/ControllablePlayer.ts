@@ -10,7 +10,9 @@ export default class ControllablePlayer extends Player {
     nickname?: string,
     color?: number,
     patternFilename?: string,
-    characterId?: string
+    characterId?: string,
+    isPremium?: boolean,
+    isNicknameVerified?: boolean
   ) {
     super(
       simulation,
@@ -19,7 +21,9 @@ export default class ControllablePlayer extends Player {
       nickname,
       color,
       patternFilename,
-      characterId
+      characterId,
+      isPremium,
+      isNicknameVerified
     );
   }
 

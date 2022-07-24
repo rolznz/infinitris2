@@ -105,7 +105,9 @@ export default class SinglePlayerClient
       options.player?.nickname,
       options.player?.color,
       options.player?.patternFilename,
-      options.player?.characterId
+      options.player?.characterId,
+      options.player?.isPremium,
+      options.player?.isNicknameVerified
     );
     this._simulation.addPlayer(player);
     this._simulation.followPlayer(player);

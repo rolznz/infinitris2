@@ -118,7 +118,9 @@ export default class Room implements Partial<ISimulationEventListener> {
       playerNickname,
       stringToHex(character.color!),
       character.patternFilename!,
-      character.id!.toString()
+      character.id!.toString(),
+      playerInfo?.isPremium, // TODO: verify using JWT
+      playerInfo?.isNicknameVerified // TODO: verify using JWT
     );
 
     this._simulation.addPlayer(newPlayer);
@@ -488,5 +490,7 @@ function createPlayerInfo(player: IPlayer): NetworkPlayerInfo {
     patternFilename: player.patternFilename,
     health: player.health,
     isBot: player.isBot,
+    isNicknameVerified: player.isNicknameVerified,
+    isPremium: player.isPremium,
   };
 }

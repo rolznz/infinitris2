@@ -17,8 +17,36 @@ import FlexBox from '@/components/ui/FlexBox';
 
 const titles = [
   <FormattedMessage
+    defaultMessage="Save your Progress"
+    description="Account benefits text - save progress"
+  />,
+  <FormattedMessage
     defaultMessage="Earn Coins!"
     description="Account benefits text - earn coins"
+  />,
+  <FormattedMessage
+    defaultMessage="Compete in Community Challenges"
+    description="Account benefits text - compete in community challenges"
+  />,
+  <FormattedMessage
+    defaultMessage="Verified Status"
+    description="Account benefits text - verified status"
+  />,
+  <FormattedMessage
+    defaultMessage="Rate Community Challenges"
+    description="Account benefits text - rate community challenges"
+  />,
+  <FormattedMessage
+    defaultMessage="Create Community Challenges"
+    description="Account benefits text - create community challenges"
+  />,
+  <FormattedMessage
+    defaultMessage="Earn Impact Points"
+    description="Account benefits text - earn impact"
+  />,
+  <FormattedMessage
+    defaultMessage="Appear on the Scoreboard"
+    description="Account benefits text - scoreboard"
   />,
   <FormattedMessage
     defaultMessage="Coming Soon!"
@@ -27,8 +55,36 @@ const titles = [
 ];
 const subtitles = [
   <FormattedMessage
+    defaultMessage="Save your Story Mode progress, Community Challenge plays and personal settings"
+    description="Account benefits subtext - save progress"
+  />,
+  <FormattedMessage
     defaultMessage="Purchase Unique Characters"
     description="Account benefits subtext - earn coins"
+  />,
+  <FormattedMessage
+    defaultMessage="Attempt for a top 3 placing and save your replay for all to see"
+    description="Account benefits subtext - compete in community challenges"
+  />,
+  <FormattedMessage
+    defaultMessage="Secure a unique nickname and display your premium status ingame"
+    description="Account benefits subtext - verified status"
+  />,
+  <FormattedMessage
+    defaultMessage="Power to choose the top community challenges"
+    description="Account benefits subtext - rate community challenges"
+  />,
+  <FormattedMessage
+    defaultMessage="Create and share your own challenges"
+    description="Account benefits subtext - create community challenges"
+  />,
+  <FormattedMessage
+    defaultMessage="Collect points showing your positive impact to the game and community"
+    description="Account benefits subtext - earn impact"
+  />,
+  <FormattedMessage
+    defaultMessage="Compete to be the player with the highest impact"
+    description="Account benefits subtext - scoreboard"
   />,
   <FormattedMessage
     defaultMessage="New Features Coming Soon. Stay tuned!"
@@ -41,8 +97,28 @@ export function PremiumCarousel() {
   const images: string[] = React.useMemo(
     () =>
       isLandscape
-        ? [coinsImage, comingSoonImage]
-        : [coinsImageMobile, comingSoonImageMobile],
+        ? [
+            coinsImage,
+            comingSoonImage,
+            comingSoonImage,
+            comingSoonImage,
+            comingSoonImage,
+            comingSoonImage,
+            comingSoonImage,
+            comingSoonImage,
+            comingSoonImage,
+          ]
+        : [
+            coinsImageMobile,
+            comingSoonImageMobile,
+            comingSoonImageMobile,
+            comingSoonImageMobile,
+            comingSoonImageMobile,
+            comingSoonImageMobile,
+            comingSoonImageMobile,
+            comingSoonImageMobile,
+            comingSoonImageMobile,
+          ],
     [isLandscape]
   );
 
@@ -50,7 +126,7 @@ export function PremiumCarousel() {
     () =>
       images.map((image, i) => (
         <FlexBox
-          key={image}
+          key={i}
           width="100vw"
           height="100vh"
           sx={{
@@ -107,14 +183,7 @@ export function PremiumCarousel() {
 /*
 Original benefits
 - Save your progress
- <SignupBenefit
-    text={
-      <FormattedMessage
-        defaultMessage="Earn coins"
-        description="Account benefits text - earn coins"
-      />
-    }
-  />,
+ 
   <SignupBenefit
     text={
       <FormattedMessage

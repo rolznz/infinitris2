@@ -34,6 +34,18 @@ const titleSx: SxProps = {
   textShadow: textShadows.base,
 };
 
+function splitTitle(title: string) {
+  let split = title.split(' ');
+  while (split.length > 2) {
+    let newSplit: string[] = [];
+    for (let i = 0; i < split.length; i += 2) {
+      newSplit.push((split[i] + ' ' + split[i + 1] ?? '').trim());
+    }
+    split = newSplit;
+  }
+  return split;
+}
+
 export default function ChallengeInfoView({
   onReceivedInput,
   viewOtherReplay,
@@ -57,6 +69,9 @@ export default function ChallengeInfoView({
 
   useTrue(hasReceivedInput, onReceivedInput);
   //const translation = challenge?.translations?.[user.locale];
+  const challengeTitle = challenge.isOfficial
+    ? getOfficialChallengeTitle(challenge)
+    : challenge.title || 'Untitled';
 
   return (
     <FlexBox zIndex={zIndexes.above} width="100%" height="100%">
@@ -91,29 +106,25 @@ export default function ChallengeInfoView({
                   )}
                 </Typography>
               </FlexBox>
-              <FlexBox position="absolute" top={isMobile() ? '27vh' : '23vh'}>
+              <FlexBox
+                position="absolute"
+                top={isMobile() ? '27vh' : '23vh'}
+                height="15vh"
+              >
                 <Typography
                   variant="h1"
                   fontSize="8vh"
                   textAlign="center"
                   sx={titleSx}
                 >
-                  {challenge.isOfficial ? (
-                    isMobile() ? (
-                      getOfficialChallengeTitle(challenge)
-                    ) : (
-                      <>
-                        {getOfficialChallengeTitle(challenge).split(' ')[0]}
-                        <br />
-                        {getOfficialChallengeTitle(challenge)
-                          .split(' ')
-                          .slice(2)
-                          .join(' ')}
-                      </>
-                    )
-                  ) : (
-                    challenge.title || 'Untitled Challenge'
-                  )}
+                  {isMobile()
+                    ? challengeTitle
+                    : splitTitle(challengeTitle).map((part, index) => (
+                        <React.Fragment key={index}>
+                          {part}
+                          <br />
+                        </React.Fragment>
+                      ))}
                 </Typography>
               </FlexBox>
               <FlexBox

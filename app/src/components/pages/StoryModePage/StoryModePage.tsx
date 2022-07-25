@@ -77,9 +77,7 @@ export function getOfficialChallengeTitle(challenge: IChallenge): string {
   const stageNumber = WorldVariationValues.indexOf(worldVariation) + 1;
 
   return (
-    (challenge.worldType || 'grass') +
-    ' STAGE ' +
-    romanizeChallengeStage(stageNumber)
+    (challenge.worldType || 'grass') + ' ' + romanizeChallengeStage(stageNumber)
   );
 }
 

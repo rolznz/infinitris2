@@ -1,5 +1,6 @@
 import ChallengeFailedView from '@/components/pages/ChallengePage/ChallengeFailedView';
 import ChallengeInfoView from '@/components/pages/ChallengePage/ChallengeInfoView';
+import ChallengeReplayView from '@/components/pages/ChallengePage/ChallengeReplayView';
 import ChallengeResultsView from '@/components/pages/ChallengePage/ChallengeResultsView';
 import { RestartButton } from '@/components/pages/ChallengePage/RestartButton';
 import { TopLeftPanelPortal } from '@/components/ui/TopLeftPanel';
@@ -55,14 +56,20 @@ export function ChallengeUI({
         </TopLeftPanelPortal>
       )}
       {showChallengeInfo ? (
-        <ChallengeInfoView
-          challenge={challenge}
-          challengeId={challengeId}
-          viewOtherReplay={viewOtherReplay}
-          onReceivedInput={startChallenge}
-          isViewingReplay={isViewingReplay}
-          replayScoreboardEntry={replayScoreboardEntry}
-        />
+        isViewingReplay ? (
+          <ChallengeReplayView
+            challenge={challenge}
+            onReceivedInput={startChallenge}
+            replayScoreboardEntry={replayScoreboardEntry}
+          />
+        ) : (
+          <ChallengeInfoView
+            challenge={challenge}
+            challengeId={challengeId}
+            viewOtherReplay={viewOtherReplay}
+            onReceivedInput={startChallenge}
+          />
+        )
       ) : challengeAttempt?.status === 'success' ? (
         <ChallengeResultsView
           challenge={challenge}

@@ -72,7 +72,7 @@ export function StoryModePage() {
     />
   );
 }
-function getOfficialChallengeTitle(challenge: IChallenge): any {
+export function getOfficialChallengeTitle(challenge: IChallenge): string {
   const worldVariation = challenge.worldVariation || '0';
   const stageNumber = WorldVariationValues.indexOf(worldVariation) + 1;
 

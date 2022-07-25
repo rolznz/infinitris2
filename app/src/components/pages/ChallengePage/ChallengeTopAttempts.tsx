@@ -40,7 +40,7 @@ export function ChallengeTopAttempts({
       constraints: [
         where('challengeId', '==', challengeId),
         orderBy('stats.timeTakenMs', 'asc'),
-        limit(5),
+        limit(3),
       ],
     }),
     [challengeId]
@@ -55,12 +55,12 @@ export function ChallengeTopAttempts({
   }
   return (
     <FlexBox pt={4}>
-      <Typography variant="h4" textAlign="center">
+      {/*<Typography variant="h4" textAlign="center">
         <FormattedMessage
           defaultMessage="Top Plays"
           description="Top challenge attempts"
         />
-      </Typography>
+  </Typography>*/}
       {!userId && (
         <Typography variant="caption" textAlign="center">
           <FormattedMessage
@@ -69,7 +69,7 @@ export function ChallengeTopAttempts({
           />
         </Typography>
       )}
-      <FlexBox gap={1}>
+      <FlexBox flexDirection="row" gap={1} flexWrap="wrap">
         {attemptDocs?.length ? (
           attemptDocs.map((attempt, index) => (
             <ChallengeTopAttempt
@@ -95,9 +95,7 @@ export function ChallengeTopAttempts({
 const attemptSx: SxProps = {
   cursor: 'pointer',
   boxShadow: boxShadows.small,
-  pl: 1,
-  pr: 2,
-  py: 0,
+  p: 0.5,
   borderRadius: borderRadiuses.base,
 };
 
@@ -120,34 +118,26 @@ function ChallengeTopAttempt({
     [viewReplay, attempt, scoreboardEntry]
   );
   return (
-    <FlexBox
-      flexDirection="row"
-      gap={1}
-      onClick={viewReplayForThisAttempt}
-      sx={attemptSx}
-    >
-      <FlexBox
-        flexDirection="row"
-        position="relative"
-        width={150}
-        justifyContent="flex-start"
-      >
+    <FlexBox onClick={viewReplayForThisAttempt} sx={attemptSx}>
+      <FlexBox position="relative" justifyContent="flex-start" mb={-1}>
         <CharacterImage
           characterId={scoreboardEntry?.data()?.characterId || '0'}
           width={64}
         />
         <PlacingStar placing={placing} offset={12} scale={0.5} />
-        <Typography variant="body1">
-          {scoreboardEntry?.data()?.nickname}
-        </Typography>
       </FlexBox>
-      <FlexBox flexDirection="row" width={70}>
-        <SvgIcon color="primary" sx={{ mt: -0.5 }}>
-          <StopwatchIcon />
-        </SvgIcon>
-        <Typography variant="body2">
-          {(attempt.stats.timeTakenMs / 1000).toFixed(2)}s
-        </Typography>
+      <FlexBox width={70} justifyContent="flex-start">
+        <FlexBox flexDirection="row">
+          <SvgIcon color="primary" sx={{ mt: -0.5 }}>
+            <StopwatchIcon />
+          </SvgIcon>
+          <Typography variant="body2">
+            {(attempt.stats.timeTakenMs / 1000).toFixed(2)}s
+          </Typography>
+        </FlexBox>
+        {/*<Typography variant="body1">
+          {scoreboardEntry?.data()?.nickname}
+  </Typography>*/}
       </FlexBox>
     </FlexBox>
   );

@@ -5,6 +5,7 @@ import FlexBox from '@/components/ui/FlexBox';
 import isMobile from '@/utils/isMobile';
 import Button from '@mui/material/Button';
 import { SxProps } from '@mui/material/styles';
+import { Typography } from '@mui/material';
 
 interface ContinueButtonProps {
   onClick(): void;
@@ -39,16 +40,26 @@ export default function ContinueButton({
         size={size}
         sx={sx}
       >
-        {message || (
-          <FormattedMessage
-            defaultMessage="Continue"
-            description="Continue button text"
-          />
-        )}
-        {!isMobile() &&
-          (user.preferredInputMethod || 'keyboard') === 'keyboard' && (
-            <>&nbsp; ({hotkey})</>
-          )}
+        <FlexBox px={2} py={1}>
+          <Typography
+            fontSize={fontSize || (size === 'large' ? '24px' : '16px')}
+          >
+            {message || (
+              <FormattedMessage
+                defaultMessage="Continue"
+                description="Continue button text"
+              />
+            )}
+          </Typography>
+          {!isMobile() &&
+            (user.preferredInputMethod || 'keyboard') === 'keyboard' && (
+              <>
+                <Typography fontSize={'12px'} lineHeight={'6px'}>
+                  ({hotkey})
+                </Typography>
+              </>
+            )}
+        </FlexBox>
       </Button>
     </FlexBox>
   );

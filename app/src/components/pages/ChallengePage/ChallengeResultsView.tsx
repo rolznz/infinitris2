@@ -18,6 +18,8 @@ import {
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import { ReactComponent as StopwatchIcon } from '@/icons/stopwatch.svg';
+import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 //import ChallengeMedalDisplay from './ChallengeMedalDisplay';
 //import RateChallenge from './RateChallenge';
 
@@ -47,7 +49,9 @@ export default function ChallengeResultsView({
   const [hasReceivedContinueInput, continueButton] = useContinueButton(
     undefined,
     undefined,
-    true
+    true,
+    undefined,
+    'large'
   );
   useTrue(hasReceivedContinueInput, onContinue);
   const [hasReceivedRetryInput, retryButton] = useContinueButton(
@@ -110,17 +114,21 @@ export default function ChallengeResultsView({
           mt={isLandscape ? characterSize * 0.02 : characterSize * 0.005}
           zIndex={zIndexes.above}
         >
-          {/* TODO: extract to a list of statistics, will this work with react-i18n? */}
-          <Typography variant="h6">
-            <FormattedMessage
-              defaultMessage="Time taken: {timeTakenMs} seconds"
-              description="Time taken to complete challenge"
-              values={{
-                timeTakenMs: (attempt.stats!.timeTakenMs / 1000).toFixed(2),
-              }}
-            />
-          </Typography>
-          <Typography variant="h6">
+          <FlexBox flexDirection="row" gap={1}>
+            <SvgIcon fontSize="large" sx={{ mt: -1 }}>
+              <StopwatchIcon />
+            </SvgIcon>
+            <Typography variant="h6">
+              <FormattedMessage
+                defaultMessage="{timeTakenMs} seconds"
+                description="Time taken to complete challenge"
+                values={{
+                  timeTakenMs: (attempt.stats!.timeTakenMs / 1000).toFixed(2),
+                }}
+              />
+            </Typography>
+          </FlexBox>
+          {/*<Typography variant="h6">
             <FormattedMessage
               defaultMessage="Blocks placed: {blocksPlaced}"
               description="Number of blocks placed in challenge"
@@ -137,7 +145,7 @@ export default function ChallengeResultsView({
                 linesCleared: attempt.stats!.linesCleared,
               }}
             />
-          </Typography>
+            </Typography>*/}
           {/* TODO: efficiency rating e.g. not leaving gaps */}
           {/* <Typography variant="caption">
           <FormattedMessage

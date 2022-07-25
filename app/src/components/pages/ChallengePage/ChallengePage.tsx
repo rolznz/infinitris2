@@ -131,6 +131,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const [replayScoreboardEntry, setReplayScoreboardEntry] = React.useState<
     IScoreboardEntry | undefined
   >(undefined);
+  const [replayAttempt, setReplayAttempt] = React.useState<
+    IChallengeAttempt | undefined
+  >(undefined);
 
   // const [simulation, setSimulation] = useIngameStore(
   //   (store) => [store.simulation, store.setSimulation],
@@ -191,6 +194,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       scoreboardEntry: IScoreboardEntry | undefined
     ) => {
       setReplayScoreboardEntry(scoreboardEntry);
+      setReplayAttempt(otherAttempt);
       challengeClient!.recording = otherAttempt.recording;
       const replayScoreboardEntryCharacter: ICharacter | undefined =
         scoreboardEntry &&
@@ -418,6 +422,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
         <ChallengeUI
           showChallengeInfo={showChallengeInfo}
           isViewingReplay={isViewingReplay}
+          replayAttempt={replayAttempt}
           startChallenge={startChallenge}
           challengeAttempt={challengeAttempt}
           challenge={challenge}

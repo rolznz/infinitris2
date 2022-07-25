@@ -140,7 +140,7 @@ export default function ChallengeInfoView({
                     />
                   )}
               </FlexBox>
-              <FlexBox position="absolute" bottom="3.5vh">
+              <FlexBox position="absolute" bottom="2vh">
                 {continueButton}
               </FlexBox>
             </>

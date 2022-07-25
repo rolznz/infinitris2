@@ -30,6 +30,7 @@ type ChallengeUIProps = {
   player: IPlayer;
   isViewingReplay: boolean;
   replayScoreboardEntry: IScoreboardEntry | undefined;
+  replayAttempt: IChallengeAttempt | undefined;
 };
 
 export function ChallengeUI({
@@ -41,6 +42,7 @@ export function ChallengeUI({
   player,
   isViewingReplay,
   replayScoreboardEntry,
+  replayAttempt,
   onContinue,
   retryChallenge,
   viewReplay,
@@ -61,6 +63,7 @@ export function ChallengeUI({
             challenge={challenge}
             onReceivedInput={startChallenge}
             replayScoreboardEntry={replayScoreboardEntry}
+            replayAttempt={replayAttempt!}
           />
         ) : (
           <ChallengeInfoView

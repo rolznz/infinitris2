@@ -16,11 +16,18 @@ import {
   useDocument,
 } from 'swr-firestore';
 import { ReactComponent as StopwatchIcon } from '@/icons/stopwatch.svg';
+import { ReactComponent as PlayIcon } from '@/icons/play.svg';
 import useAuthStore from '@/state/AuthStore';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 import { SxProps } from '@mui/material';
-import { borderRadiuses, boxShadows } from '@/theme/theme';
+import {
+  borderRadiuses,
+  boxShadows,
+  dropShadows,
+  zIndexes,
+} from '@/theme/theme';
 import { PlacingStar } from '@/components/pages/Characters/PlacingStar';
+import isMobile from '@/utils/isMobile';
 
 type ChallengeTopAttemptsProps = {
   challengeId: string;
@@ -118,13 +125,33 @@ function ChallengeTopAttempt({
     [viewReplay, attempt, scoreboardEntry]
   );
   return (
-    <FlexBox onClick={viewReplayForThisAttempt} sx={attemptSx}>
+    <FlexBox
+      position="relative"
+      onClick={viewReplayForThisAttempt}
+      sx={attemptSx}
+    >
+      <FlexBox
+        position="absolute"
+        top={0}
+        right={0}
+        pt={0.75}
+        pr={0.5}
+        zIndex={zIndexes.above}
+      >
+        <SvgIcon color="primary" filter={dropShadows.xs}>
+          <PlayIcon />
+        </SvgIcon>
+      </FlexBox>
       <FlexBox position="relative" justifyContent="flex-start" mb={-1}>
         <CharacterImage
           characterId={scoreboardEntry?.data()?.characterId || '0'}
-          width={64}
+          width={isMobile() ? 64 : 96}
         />
-        <PlacingStar placing={placing} offset={12} scale={0.5} />
+        <PlacingStar
+          placing={placing}
+          offset={isMobile() ? 12 : 16}
+          scale={isMobile() ? 0.5 : 0.75}
+        />
       </FlexBox>
       <FlexBox width={70} justifyContent="flex-start">
         <FlexBox flexDirection="row">

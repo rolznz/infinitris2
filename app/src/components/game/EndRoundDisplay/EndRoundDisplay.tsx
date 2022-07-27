@@ -12,6 +12,7 @@ import { textShadows } from '@/theme/theme';
 import { hexToString, IPlayer } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
 import ChallengeMedalDisplay from '@/components/pages/ChallengePage/ChallengeMedalDisplay';
+import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 
 const bgSx: SxProps<Theme> = {
   background: 'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%)',
@@ -84,7 +85,7 @@ export function RoundWinnerDisplay({
       <img alt="" src={starImage} height={starSize} />
       <FlexBox position="absolute">
         <CharacterImage
-          characterId={winner.characterId || '0'}
+          characterId={winner.characterId || DEFAULT_CHARACTER_ID}
           width={characterSize}
         />
         {medalIndex === undefined && (
@@ -177,7 +178,7 @@ export function NextRoundIndicator() {
         {simulation.nonSpectatorPlayers.map((player) => (
           <CharacterImage
             key={player.id}
-            characterId={player.characterId || '0'}
+            characterId={player.characterId || DEFAULT_CHARACTER_ID}
             width={32}
             hasShadow={player.isControllable}
           />

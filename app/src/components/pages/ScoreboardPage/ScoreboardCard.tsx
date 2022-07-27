@@ -13,6 +13,7 @@ import { characterTileContentPortion } from '../MarketPage/MarketPageCharacterTi
 import { zIndexes } from '@/theme/theme';
 import Routes from '@/models/Routes';
 import useAuthStore from '@/state/AuthStore';
+import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 
 export type ScoreboardCardProps = {
   entry: DocumentSnapshot<IScoreboardEntry>;
@@ -25,7 +26,7 @@ export function ScoreboardCard({ entry, placing }: ScoreboardCardProps) {
   const isSmallScreen = useMediaQuery(`(max-width:600px)`);
   const width = isSmallScreen ? 220 : 250;
   const starOffset = isSmallScreen ? 50 : 60;
-  const characterId = entry.data()?.characterId || '0';
+  const characterId = entry.data()?.characterId || DEFAULT_CHARACTER_ID;
   const isMe = useAuthStore().user?.uid === entry.id;
 
   return (

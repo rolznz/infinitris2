@@ -38,6 +38,7 @@ import { addDoc, collection, getFirestore } from 'firebase/firestore';
 import { challengeAttemptsPath } from 'infinitris2-models';
 import useAuthStore from '@/state/AuthStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
+import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -203,7 +204,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           ?.data();
       challengeClient!.launchOptions.player = {
         ...challengeClient!.launchOptions.player,
-        characterId: scoreboardEntry?.characterId || '0',
+        characterId: scoreboardEntry?.characterId || DEFAULT_CHARACTER_ID,
         nickname: scoreboardEntry?.nickname || 'Unknown Player',
         color: replayScoreboardEntryCharacter?.color
           ? stringToHex(replayScoreboardEntryCharacter?.color)

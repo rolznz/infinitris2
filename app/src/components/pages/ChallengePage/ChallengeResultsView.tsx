@@ -95,6 +95,7 @@ export default function ChallengeResultsView({
         {challenge.isOfficial && (
           <WorldProgress worldType={challenge.worldType} />
         )}
+        <FlexBox pt={4} />
         <RoundWinnerDisplay
           characterSize={characterSize}
           winner={player}

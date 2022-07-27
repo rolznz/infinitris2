@@ -13,6 +13,7 @@ import { ReactComponent as VerifiedIcon } from '@/icons/verified.svg';
 import SvgIcon from '@mui/material/SvgIcon';
 import { PlayerStatus } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
+import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 
 type LeaderboardEntryLineProps = {
   entry: LeaderboardEntry;
@@ -70,7 +71,10 @@ export function LeaderboardEntryLine({
           scale={0.7}
         />
       </FlexBox>
-      <CharacterImage characterId={entry.characterId || '0'} width={64} />
+      <CharacterImage
+        characterId={entry.characterId || DEFAULT_CHARACTER_ID}
+        width={64}
+      />
       <FlexBox flex={1} alignItems="flex-start">
         <FlexBox flexDirection="row" gap={0.5}>
           <Typography

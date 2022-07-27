@@ -4,10 +4,22 @@
 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
 <g>
-	<path fill="#FDFDFE" d="M14.566,17.091H9.493c-1.478,0-2.676,1.198-2.676,2.677v2.869c1.624,0.638,3.384,0.998,5.224,0.992
+	<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="6.8164" y1="20.3601" x2="17.2422" y2="20.3601">
+		<stop  offset="0" style="stop-color:#6DCFF6"/>
+		<stop  offset="0.4292" style="stop-color:#B6E4FA"/>
+		<stop  offset="0.8109" style="stop-color:#E9F6FE"/>
+		<stop  offset="1" style="stop-color:#FFFFFF"/>
+	</linearGradient>
+	<path fill="url(#SVGID_1_)" d="M14.566,17.091H9.493c-1.478,0-2.676,1.198-2.676,2.677v2.869c1.624,0.638,3.384,0.998,5.224,0.992
 		c1.836-0.006,3.587-0.371,5.202-1.011v-2.85C17.242,18.29,16.044,17.091,14.566,17.091z"/>
-	<path fill="#FDFDFE" d="M21.18,9.823c0-0.821-1.153-2.037-2.078-2.037h-0.118c-0.7-1.464-2.655-3.033-4.288-3.033h-2.333V3.502
-		c0.746-0.128,1.317-0.768,1.325-1.552c0.01-0.874-0.709-1.596-1.589-1.596c-0.874,0-1.582,0.695-1.593,1.563
+	<linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="3.1257" y1="8.407" x2="21.1984" y2="8.407">
+		<stop  offset="0" style="stop-color:#6DCFF6"/>
+		<stop  offset="0.4292" style="stop-color:#B6E4FA"/>
+		<stop  offset="0.8109" style="stop-color:#E9F6FE"/>
+		<stop  offset="1" style="stop-color:#FFFFFF"/>
+	</linearGradient>
+	<path fill="url(#SVGID_2_)" d="M21.18,9.823c0-0.821-1.153-2.037-2.078-2.037h-0.118c-0.7-1.464-2.655-3.033-4.288-3.033h-2.333
+		V3.502c0.746-0.128,1.317-0.768,1.325-1.552c0.01-0.874-0.709-1.596-1.589-1.596c-0.874,0-1.582,0.695-1.593,1.563
 		c-0.01,0.815,0.599,1.489,1.384,1.591v1.246H9.745c-1.664,0-3.822,1.628-4.543,3.115C4.29,7.956,3.126,9.099,3.126,9.889
 		l0.018,1.711c0,0.821,1.12,2.157,2.168,2.138h0.205c0.843,1.379,2.574,2.749,4.228,2.722h4.951c1.791-0.027,3.41-1.408,4.157-2.788
 		h0.249c1.12-0.019,2.096-1.317,2.096-2.138L21.18,9.823z M9.582,10.995c-0.492-0.003-0.889-0.411-0.883-0.905

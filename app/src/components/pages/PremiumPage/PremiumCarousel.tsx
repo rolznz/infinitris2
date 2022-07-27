@@ -8,6 +8,10 @@ import React from 'react';
 
 import coinsImage from './assets/earn_coins.svg';
 import coinsImageMobile from './assets/earn_coins_mobile.svg';
+import saveProgressImage from './assets/save_progress.svg';
+import saveProgressImageMobile from './assets/save_progress_mobile.svg';
+import rateChallengesImage from './assets/rate_challenges.svg';
+import rateChallengesImageMobile from './assets/rate_challenges_mobile.svg';
 import comingSoonImage from './assets/coming_soon.svg';
 import comingSoonImageMobile from './assets/coming_soon_mobile.svg';
 import { FormattedMessage } from 'react-intl';
@@ -29,12 +33,12 @@ const titles = [
     description="Account benefits text - compete in community challenges"
   />,
   <FormattedMessage
-    defaultMessage="Verified Status"
-    description="Account benefits text - verified status"
-  />,
-  <FormattedMessage
     defaultMessage="Rate Community Challenges"
     description="Account benefits text - rate community challenges"
+  />,
+  <FormattedMessage
+    defaultMessage="Verified Status"
+    description="Account benefits text - verified status"
   />,
   <FormattedMessage
     defaultMessage="Create Community Challenges"
@@ -59,7 +63,7 @@ const subtitles = [
     description="Account benefits subtext - save progress"
   />,
   <FormattedMessage
-    defaultMessage="Purchase Unique Characters"
+    defaultMessage="Use your coins to purchase unique characters and stand out from other players"
     description="Account benefits subtext - earn coins"
   />,
   <FormattedMessage
@@ -67,12 +71,12 @@ const subtitles = [
     description="Account benefits subtext - compete in community challenges"
   />,
   <FormattedMessage
-    defaultMessage="Secure a unique nickname and display your premium status ingame"
-    description="Account benefits subtext - verified status"
-  />,
-  <FormattedMessage
     defaultMessage="Power to choose the top community challenges"
     description="Account benefits subtext - rate community challenges"
+  />,
+  <FormattedMessage
+    defaultMessage="Secure a unique nickname and display your premium status ingame"
+    description="Account benefits subtext - verified status"
   />,
   <FormattedMessage
     defaultMessage="Create and share your own challenges"
@@ -98,10 +102,10 @@ export function PremiumCarousel() {
     () =>
       isLandscape
         ? [
+            saveProgressImage,
             coinsImage,
             comingSoonImage,
-            comingSoonImage,
-            comingSoonImage,
+            rateChallengesImage,
             comingSoonImage,
             comingSoonImage,
             comingSoonImage,
@@ -109,10 +113,10 @@ export function PremiumCarousel() {
             comingSoonImage,
           ]
         : [
+            saveProgressImageMobile,
             coinsImageMobile,
             comingSoonImageMobile,
-            comingSoonImageMobile,
-            comingSoonImageMobile,
+            rateChallengesImageMobile,
             comingSoonImageMobile,
             comingSoonImageMobile,
             comingSoonImageMobile,

@@ -76,7 +76,7 @@ export function ChallengeTopAttempts({
           />
         </Typography>
       )}
-      <FlexBox flexDirection="row" gap={1} flexWrap="wrap">
+      <FlexBox flexDirection="row" gap={2} flexWrap="wrap">
         {attemptDocs?.length ? (
           attemptDocs.map((attempt, index) => (
             <ChallengeTopAttempt

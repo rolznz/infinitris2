@@ -77,7 +77,11 @@ export default function ChallengeInfoView({
   return (
     <FlexBox zIndex={zIndexes.above} width="100%" height="100%">
       <EndRoundDisplayOverlay>
-        <FlexBox zIndex={zIndexes.above} position="relative" height="80vh">
+        <FlexBox
+          zIndex={zIndexes.above}
+          position="relative"
+          height={isMobile() ? '90vh' : '80vh'}
+        >
           <img
             alt=""
             src={
@@ -134,7 +138,7 @@ export default function ChallengeInfoView({
               </FlexBox>
               <FlexBox
                 position="absolute"
-                bottom={isMobile() ? '18vh' : '20vh'}
+                bottom={isMobile() ? '28vh' : '24vh'}
               >
                 {challengeId &&
                   !challenge.isTemplate &&
@@ -145,7 +149,7 @@ export default function ChallengeInfoView({
                     />
                   )}
               </FlexBox>
-              <FlexBox position="absolute" bottom="2vh">
+              <FlexBox position="absolute" bottom={isMobile() ? '3vh' : '2vh'}>
                 {continueButton}
               </FlexBox>
             </>

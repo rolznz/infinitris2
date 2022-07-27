@@ -19,6 +19,7 @@ import useTrue from '../../hooks/useTrue';
 import FlexBox from '../../ui/FlexBox';
 //import finishLineImage from './assets/finish.svg';
 import grassScrollImage from './assets/scroll_grass.svg';
+import desertScrollImage from './assets/scroll_desert.svg';
 
 export interface ChallengeInfoViewProps {
   onReceivedInput(): void;
@@ -79,7 +80,11 @@ export default function ChallengeInfoView({
         <FlexBox zIndex={zIndexes.above} position="relative" height="80vh">
           <img
             alt=""
-            src={grassScrollImage}
+            src={
+              challenge.worldType === 'desert'
+                ? desertScrollImage
+                : grassScrollImage
+            }
             height="100%"
             onLoad={() => setScrollLoaded(true)}
           />

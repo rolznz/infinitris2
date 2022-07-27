@@ -40,7 +40,7 @@ function splitTitle(title: string) {
   while (split.length > 2) {
     let newSplit: string[] = [];
     for (let i = 0; i < split.length; i += 2) {
-      newSplit.push((split[i] + ' ' + split[i + 1] ?? '').trim());
+      newSplit.push((split[i] + ' ' + (split[i + 1] ?? '')).trim());
     }
     split = newSplit;
   }

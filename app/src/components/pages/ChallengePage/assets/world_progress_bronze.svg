@@ -3,12 +3,12 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
 <svg version="1.1" id="Layer_3" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 width="24px" height="24px" viewBox="0 0 24 24" enable-background="new 0 0 24 24" xml:space="preserve">
-<linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="6.348273e-10" y1="12.1568" x2="23.5958" y2="12.1568">
+<linearGradient id="SVGID_WPB_1_" gradientUnits="userSpaceOnUse" x1="6.348273e-10" y1="12.1568" x2="23.5958" y2="12.1568">
 	<stop  offset="0" style="stop-color:#FFE1BA"/>
 	<stop  offset="0.5008" style="stop-color:#F7A561"/>
 	<stop  offset="1" style="stop-color:#FED6AE"/>
 </linearGradient>
-<polygon fill="url(#SVGID_1_)" points="20.493,13.321 23.596,11.698 20.859,10.426 23.018,8.271 19.827,7.845 21.206,5.116 
+<polygon fill="url(#SVGID_WPB_1_)" points="20.493,13.321 23.596,11.698 20.859,10.426 23.018,8.271 19.827,7.845 21.206,5.116 
 	18.281,5.667 18.776,2.699 15.801,4.282 15.191,0.682 13.081,2.951 11.713,0.259 10.246,3.321 7.959,1.051 7.562,4.139 4.92,2.765 
 	5.449,5.763 2.117,5.271 3.664,8.053 0.6,8.535 3.021,10.84 0,12.393 2.923,13.776 0.701,15.964 3.794,16.398 2.442,19.124 
 	5.538,18.518 5.037,21.662 7.793,20.171 8.327,23.467 10.504,21.16 11.949,24.055 13.483,20.909 15.716,23.096 16.084,20.064 

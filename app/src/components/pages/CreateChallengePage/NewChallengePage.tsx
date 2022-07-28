@@ -16,6 +16,7 @@ import { getChallengeTestUrl } from '@/utils/getChallengeTestUrl';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import ChallengeCard from '@/components/pages/ChallengesPage/ChallengeCard';
+import challengecreatorImage from '@components/ui/GameModePicker/assets/illustration_challengecreator.jpg';
 
 interface ChallengesRowProps {
   challenges: DocumentSnapshot<IChallenge>[] | undefined;
@@ -104,23 +105,36 @@ export function LoadChallengePage() {
         description: 'New Challenge page title',
       })}
     >
-      {challenge && (
-        <FlexBox mb={4}>
-          <Typography align="center">
+      <img alt="" src={challengecreatorImage} height="300px" />
+      <FlexBox my={2}>
+        {challenge ? (
+          <>
+            <Typography align="center">
+              <FormattedMessage
+                defaultMessage="Resume Challenge"
+                description="New Challenge Page - Resume challenge"
+              />
+            </Typography>
+            <Link component={RouterLink} to={Routes.createChallenge}>
+              <Button size="large" variant="contained">
+                <FormattedMessage
+                  defaultMessage="Resume"
+                  description="Resume"
+                />
+              </Button>
+            </Link>
+          </>
+        ) : (
+          <Typography variant="body2" align="center">
             <FormattedMessage
-              defaultMessage="Resume Challenge"
-              description="Challenges Page - Resume challenge"
+              defaultMessage="Select one of the templates below to begin creating your challenge"
+              description="New Challenge Page - Select a template to begin"
             />
           </Typography>
-          <Link component={RouterLink} to={Routes.createChallenge}>
-            <Button size="large" variant="contained">
-              <FormattedMessage defaultMessage="Resume" description="Resume" />
-            </Button>
-          </Link>
-        </FlexBox>
-      )}
+        )}
+      </FlexBox>
 
-      <Typography align="center">
+      <Typography align="center" variant="h2">
         <FormattedMessage
           defaultMessage="Official Templates"
           description="Challenges Page - Official Templates"
@@ -131,8 +145,7 @@ export function LoadChallengePage() {
 
       {userChallenges?.length && (
         <>
-          {' '}
-          <Typography align="center">
+          <Typography align="center" variant="h2">
             <FormattedMessage
               defaultMessage="Your Published Challenges"
               description="Challenges Page - Your Published Challenges section title"
@@ -142,7 +155,7 @@ export function LoadChallengePage() {
         </>
       )}
 
-      <Typography align="center">
+      <Typography align="center" variant="h2">
         <FormattedMessage
           defaultMessage="Community Published Challenges"
           description="Challenges Page - Community Published Challenges section title"

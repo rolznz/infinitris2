@@ -36,7 +36,7 @@ export function Leaderboard() {
     <FlexBox
       sx={sx}
       p={2}
-      width={300}
+      width={330}
       onClick={toggleIsOpen}
       zIndex="hamburgerButton"
     >

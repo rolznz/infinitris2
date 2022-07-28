@@ -119,7 +119,6 @@ export function WorldProgress({ worldType }: WorldProgressProps) {
               boxShadow: 'none',
               '.MuiLinearProgress-barColorPrimary': {
                 background: 'linear-gradient(270deg, #F08200 0%, #D2AA19 100%)',
-                borderRadius: progress === 5 ? borderRadiuses.full : undefined,
               },
               '&.MuiLinearProgress-root': {
                 background: 'transparent',

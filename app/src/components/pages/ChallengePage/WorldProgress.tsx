@@ -5,6 +5,7 @@ import FlexBox from '@/components/ui/FlexBox';
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 import {
   borderRadiuses,
+  boxShadows,
   colors,
   dropShadows,
   textShadows,
@@ -84,27 +85,49 @@ export function WorldProgress({ worldType }: WorldProgressProps) {
           />
         </FlexBox>
         {medals}
-        <LinearProgress
-          value={progressPercentage}
-          style={{
-            height: '40px',
-            width: '500px',
-            maxWidth: '70vw',
-          }}
-          variant="determinate"
-          sx={{
-            border: 'none',
-            borderRadius: borderRadiuses.full,
-            '.MuiLinearProgress-barColorPrimary': {
-              background: 'linear-gradient(270deg, #F08200 0%, #D2AA19 100%)',
-              borderRadius: progress === 5 ? borderRadiuses.full : undefined,
-            },
-            '&.MuiLinearProgress-root': {
-              background: 'linear-gradient(270deg, #0F1529 1.31%, #0C2F40 50%)',
+        <FlexBox position="relative">
+          <FlexBox
+            position="absolute"
+            top={0}
+            left={0}
+            width="100%"
+            height="100%"
+            pr="2px"
+          >
+            <FlexBox
+              width="100%"
+              height="100%"
+              sx={{
+                background:
+                  'linear-gradient(270deg, #0F1529 1.31%, #0C2F40 50%)',
+                borderRadius: borderRadiuses.full,
+                boxShadow: boxShadows.small,
+              }}
+            ></FlexBox>
+          </FlexBox>
+          <LinearProgress
+            value={progressPercentage}
+            style={{
+              height: '40px',
+              width: '500px',
+              maxWidth: '70vw',
+            }}
+            variant="determinate"
+            sx={{
+              border: 'none',
               borderRadius: borderRadiuses.full,
-            },
-          }}
-        />
+              boxShadow: 'none',
+              '.MuiLinearProgress-barColorPrimary': {
+                background: 'linear-gradient(270deg, #F08200 0%, #D2AA19 100%)',
+                borderRadius: progress === 5 ? borderRadiuses.full : undefined,
+              },
+              '&.MuiLinearProgress-root': {
+                background: 'transparent',
+                borderRadius: borderRadiuses.full,
+              },
+            }}
+          />
+        </FlexBox>
         <Typography variant="body1" sx={typographySx}>
           <FormattedMessage
             defaultMessage="World Progress"

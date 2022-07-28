@@ -19,7 +19,7 @@ export function Announcements() {
               gap={1}
               py={0}
               px={4}
-              borderRadius={borderRadiuses.base}
+              borderRadius={borderRadiuses.full}
             >
               <DiscordIcon width={32} />
               <Typography>

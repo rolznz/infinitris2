@@ -311,7 +311,7 @@ export const coreThemeOptions: ThemeOptions = {
           '.MuiTouchRipple-root': {
             width: '100%',
             height: '100%',
-            borderRadius: 32,
+            borderRadius: borderRadiuses.full,
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
@@ -324,7 +324,7 @@ export const coreThemeOptions: ThemeOptions = {
           },
         },
         contained: {
-          borderRadius: 32,
+          borderRadius: borderRadiuses.full,
           paddingTop: 0,
           paddingBottom: 0,
           textTransform: 'lowercase',
@@ -333,7 +333,7 @@ export const coreThemeOptions: ThemeOptions = {
           backgroundClip: 'padding-box',
         },
         outlined: {
-          borderRadius: 32,
+          borderRadius: borderRadiuses.full,
           paddingTop: 0,
           paddingBottom: 0,
           textTransform: 'lowercase',

@@ -1428,7 +1428,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
-    const color: number = cell.color;
+    const color: number = cell.player?.color ?? cell.color;
     const patternFilename: string | undefined = cell.player?.patternFilename;
     const behaviour: ICellBehaviour = cell.behaviour;
     this.renderCopies(

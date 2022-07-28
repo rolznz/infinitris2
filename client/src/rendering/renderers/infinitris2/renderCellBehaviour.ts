@@ -35,8 +35,12 @@ export function getCellBehaviourImageFilename(
   // TODO: use a sprite sheet instead of individual sprites
   let filename: string | undefined;
   try {
-    filename = `${imagesDirectory}/cells/grass/${behaviour.getImageFilename?.()}${
-      worldVariation !== '0' ? '_variation' + worldVariation : ''
+    filename = `${imagesDirectory}/cells/${
+      behaviour.hasWorldImage?.() ? 'grass/' : ''
+    }${behaviour.getImageFilename?.()}${
+      worldVariation !== '0' && behaviour.hasWorldVariationImage?.()
+        ? '_variation' + worldVariation
+        : ''
     }.png`;
   } catch (error) {}
 

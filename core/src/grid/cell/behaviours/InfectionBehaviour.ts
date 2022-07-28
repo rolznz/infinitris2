@@ -83,4 +83,10 @@ export default class InfectionBehaviour implements ICellBehaviour {
   getImageFilename() {
     return 'virus';
   }
+  hasWorldImage() {
+    return true;
+  }
+  hasWorldVariationImage() {
+    return true;
+  }
 }

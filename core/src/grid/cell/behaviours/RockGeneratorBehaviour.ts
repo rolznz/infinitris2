@@ -66,4 +66,10 @@ export default class RockGeneratorBehaviour implements ICellBehaviour {
   getImageFilename() {
     return 'rock-generator';
   }
+  hasWorldImage() {
+    return true;
+  }
+  hasWorldVariationImage() {
+    return true;
+  }
 }

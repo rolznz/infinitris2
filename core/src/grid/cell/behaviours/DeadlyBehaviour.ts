@@ -53,4 +53,10 @@ export default class DeadlyBehaviour implements ICellBehaviour {
   getImageFilename() {
     return 'deadly';
   }
+  hasWorldImage() {
+    return true;
+  }
+  hasWorldVariationImage() {
+    return true;
+  }
 }

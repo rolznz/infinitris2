@@ -102,6 +102,10 @@ async function loadImage(
       //console.log('Loaded ' + filename);
       resolve(img);
     });
+    img.addEventListener('error', function () {
+      // fallback to non-world image (temporary hack, challenge previews should not be generated client-side)
+      img.src = `/client/images/cells/${filename}.png`;
+    });
     img.src = `/client/images/cells/grass/${filename}.png`;
   });
 }

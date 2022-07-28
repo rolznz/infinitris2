@@ -11,6 +11,8 @@ export default interface ICellBehaviour {
   toChallengeCellType(): ChallengeCellType;
   shouldExplode?(): boolean;
   getImageFilename?(): string | undefined;
+  hasWorldImage?(): boolean;
+  hasWorldVariationImage?(): boolean;
   color?: number;
   alpha: number;
   isPassable: boolean;

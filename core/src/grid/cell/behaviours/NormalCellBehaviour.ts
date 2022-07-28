@@ -48,4 +48,10 @@ export default class NormalCellBehaviour implements ICellBehaviour {
     }
     return 'fill';
   }
+  hasWorldImage() {
+    return true;
+  }
+  hasWorldVariationImage() {
+    return true;
+  }
 }

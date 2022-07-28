@@ -134,4 +134,10 @@ export default class RockBehaviour implements ICellBehaviour {
   get rotation(): number {
     return this._rotation;
   }
+  hasWorldImage() {
+    return true;
+  }
+  hasWorldVariationImage() {
+    return true;
+  }
 }

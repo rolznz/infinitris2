@@ -13,6 +13,8 @@ import { hexToString, IPlayer } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
 import ChallengeMedalDisplay from '@/components/pages/ChallengePage/ChallengeMedalDisplay';
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
+import useContinueButton from '@/components/hooks/useContinueButton';
+import useTrue from '@/components/hooks/useTrue';
 
 const bgSx: SxProps<Theme> = {
   background: 'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%)',
@@ -28,7 +30,11 @@ export function EndRoundDisplayOverlay({
   );
 }
 
-export function EndRoundDisplay() {
+type EndRoundDisplayProps = {
+  allowSkipCountdown?: boolean;
+};
+
+export function EndRoundDisplay({ allowSkipCountdown }: EndRoundDisplayProps) {
   console.log('Re-render end round display');
   const simulation = useIngameStore((store) => store.simulation);
   const endRoundDisplayOpen = useIngameStore(
@@ -51,7 +57,7 @@ export function EndRoundDisplay() {
       {winner && (
         <RoundWinnerDisplay winner={winner} characterSize={characterSize} />
       )}
-      <NextRoundIndicator />
+      <NextRoundIndicator allowSkipCountdown={allowSkipCountdown} />
     </EndRoundDisplayOverlay>
   );
 }
@@ -127,13 +133,35 @@ export function RoundWinnerDisplay({
   );
 }
 
-export function NextRoundIndicator() {
+type NextRoundIndicatorProps = {
+  allowSkipCountdown?: boolean;
+};
+
+function skipCountdown() {
+  useIngameStore.getState().simulation?.round?.start();
+}
+
+export function NextRoundIndicator({
+  allowSkipCountdown,
+}: NextRoundIndicatorProps) {
   console.log('Re-render next round indicator');
   const simulation = useIngameStore((store) => store.simulation);
   const [renderId, setRenderId] = React.useState(0);
   const conditionsAreMet = useIngameStore(
     (store) => store.roundConditionsAreMet
   );
+  const [hasReceivedInput, skipCountdownButton] = useContinueButton(
+    undefined,
+    <FormattedMessage
+      defaultMessage="Skip Countdown"
+      description="Skip Countdown button text"
+    />,
+    undefined,
+    undefined
+  );
+
+  useTrue(Boolean(hasReceivedInput && allowSkipCountdown), skipCountdown);
+
   React.useEffect(() => {
     if (conditionsAreMet) {
       setTimeout(() => setRenderId((state) => state + 1), 1000);
@@ -184,6 +212,10 @@ export function NextRoundIndicator() {
           />
         ))}
       </FlexBox>
+
+      {conditionsAreMet && allowSkipCountdown && (
+        <FlexBox mt={4}>{skipCountdownButton}</FlexBox>
+      )}
     </FlexBox>
   );
 }

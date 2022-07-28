@@ -64,7 +64,7 @@ export function WorldProgress({ worldType }: WorldProgressProps) {
   return (
     <FlexBox
       position="absolute"
-      top={40}
+      top={120}
       zIndex={1}
       justifyContent="center"
       alignItems="center"
@@ -97,9 +97,12 @@ export function WorldProgress({ worldType }: WorldProgressProps) {
             borderRadius: borderRadiuses.full,
             '.MuiLinearProgress-barColorPrimary': {
               background: 'linear-gradient(270deg, #F08200 0%, #D2AA19 100%)',
+              borderRadius: progress === 5 ? borderRadiuses.full : undefined,
+              width: 'calc(100% + 1px)', // hacky fix for background of root component slightly showing through
             },
             '&.MuiLinearProgress-root': {
               background: 'linear-gradient(270deg, #0F1529 1.31%, #0C2F40 50%)',
+              borderRadius: borderRadiuses.full,
             },
           }}
         />

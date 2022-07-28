@@ -133,7 +133,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     IScoreboardEntry | undefined
   >(undefined);
   const [replayAttempt, setReplayAttempt] = React.useState<
-    IChallengeAttempt | undefined
+    IChallengeAttempt | IIngameChallengeAttempt | undefined
   >(undefined);
 
   // const [simulation, setSimulation] = useIngameStore(
@@ -185,6 +185,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       setReplayScoreboardEntry(undefined);
       recordedChallengeAttempt = challengeAttempt;
       challengeClient!.recording = challengeAttempt.recording;
+      setReplayAttempt(challengeAttempt);
       handleRetry(true);
     }
   }, [challengeAttempt, handleRetry]);
@@ -418,6 +419,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
             !showChallengeInfo
         )}
         showEndRoundDisplay={!showChallengeInfo && !challengeAttempt}
+        allowSkipCountdown
       />
       {!isEditingChallenge && (
         <ChallengeUI

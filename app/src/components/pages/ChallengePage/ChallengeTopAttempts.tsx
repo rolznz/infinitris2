@@ -5,6 +5,7 @@ import { limit, orderBy, where } from 'firebase/firestore';
 import {
   challengeAttemptsPath,
   getScoreboardEntryPath,
+  IChallenge,
   IChallengeAttempt,
   IScoreboardEntry,
 } from 'infinitris2-models';
@@ -31,13 +32,25 @@ import isMobile from '@/utils/isMobile';
 
 type ChallengeTopAttemptsProps = {
   challengeId: string;
+  challenge: IChallenge;
   viewReplay(
     attempt: IChallengeAttempt,
     scoreboardEntry: IScoreboardEntry | undefined
   ): void;
 };
 
-export function ChallengeTopAttempts({
+export function ChallengeTopAttempts(props: ChallengeTopAttemptsProps) {
+  if (
+    props.challengeId &&
+    props.challenge &&
+    !props.challenge.isTemplate &&
+    props.challenge.isPublished
+  ) {
+    return <ChallengeTopAttemptsInternal {...props} />;
+  }
+  return null;
+}
+function ChallengeTopAttemptsInternal({
   challengeId,
   viewReplay,
 }: ChallengeTopAttemptsProps) {

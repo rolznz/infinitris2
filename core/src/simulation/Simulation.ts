@@ -356,6 +356,7 @@ export default class Simulation implements ISimulation {
   }
 
   onNextRound(simulation: ISimulation): void {
+    this._runningTime = 0;
     this._eventListeners.forEach((listener) => listener.onNextRound?.(this));
   }
   onEndRound(simulation: ISimulation): void {

@@ -21,7 +21,7 @@ export interface ChallengeReplayViewProps {
   onReceivedInput(): void;
   challenge: IChallenge;
   replayScoreboardEntry: IScoreboardEntry | undefined;
-  replayAttempt: IIngameChallengeAttempt;
+  replayAttempt: IIngameChallengeAttempt | undefined;
 }
 
 export default function ChallengeReplayView({
@@ -65,17 +65,19 @@ export default function ChallengeReplayView({
             <SvgIcon fontSize="large" sx={{ mt: -1 }}>
               <StopwatchIcon />
             </SvgIcon>
-            <Typography variant="h6">
-              <FormattedMessage
-                defaultMessage="{timeTakenMs} seconds"
-                description="Replay time taken"
-                values={{
-                  timeTakenMs: (
-                    replayAttempt.stats!.timeTakenMs / 1000
-                  ).toFixed(2),
-                }}
-              />
-            </Typography>
+            {replayAttempt && (
+              <Typography variant="h6">
+                <FormattedMessage
+                  defaultMessage="{timeTakenMs} seconds"
+                  description="Replay time taken"
+                  values={{
+                    timeTakenMs: (
+                      replayAttempt.stats!.timeTakenMs / 1000
+                    ).toFixed(2),
+                  }}
+                />
+              </Typography>
+            )}
           </FlexBox>
           {replayScoreboardEntry && (
             <FlexBox gap={1}>

@@ -12,14 +12,17 @@ import { borderRadiuses, zIndexes } from '@/theme/theme';
 import Typography from '@mui/material/Typography';
 import {
   IChallenge,
+  IChallengeAttempt,
   IIngameChallengeAttempt,
   IPlayer,
+  IScoreboardEntry,
 } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import useWindowSize from 'react-use/lib/useWindowSize';
 import { ReactComponent as StopwatchIcon } from '@/icons/stopwatch.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
+import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
 //import ChallengeMedalDisplay from './ChallengeMedalDisplay';
 //import RateChallenge from './RateChallenge';
 
@@ -32,6 +35,10 @@ export interface ChallengeResultsViewProps {
   onContinue(): void;
   onRetry(): void;
   onViewReplay(): void;
+  viewOtherReplay(
+    attempt: IChallengeAttempt,
+    scoreboardEntry: IScoreboardEntry | undefined
+  ): void;
 }
 
 export default function ChallengeResultsView({
@@ -43,6 +50,7 @@ export default function ChallengeResultsView({
   onContinue,
   onRetry,
   onViewReplay,
+  viewOtherReplay,
 }: ChallengeResultsViewProps) {
   //const user = useUser();
   console.log('Render challenge results view');
@@ -80,7 +88,13 @@ export default function ChallengeResultsView({
     windowSize.height * 0.45
   );
   const isLandscape = useIsLandscape();
+  const [showWinnerDisplay, setShowWinnerDisplay] = React.useState(true);
 
+  React.useEffect(() => {
+    setTimeout(() => {
+      setShowWinnerDisplay(false);
+    }, 2000);
+  }, []);
   // TODO: add keyboard shortcuts / improve accessibility
   /*const [hasReceivedRetryInput] = useReceivedInput('r', true);
   useTrue(hasReceivedRetryInput, onRetry);
@@ -92,44 +106,50 @@ export default function ChallengeResultsView({
   return (
     <FlexBox zIndex={zIndexes.above} width="100%" height="100%">
       <EndRoundDisplayOverlay>
-        {challenge.isOfficial && (
-          <WorldProgress worldType={challenge.worldType} />
-        )}
-        <FlexBox pt={4} />
-        <RoundWinnerDisplay
-          characterSize={characterSize}
-          winner={player}
-          message={
-            <FormattedMessage
-              defaultMessage="Challenge Completed!"
-              description="Challenge completed heading"
+        {showWinnerDisplay && (
+          <>
+            <RoundWinnerDisplay
+              characterSize={characterSize}
+              winner={player}
+              message={
+                <FormattedMessage
+                  defaultMessage="Challenge Completed!"
+                  description="Challenge completed heading"
+                />
+              }
+              medalIndex={attempt.medalIndex}
             />
-          }
-          medalIndex={attempt.medalIndex}
-        />
-        <FlexBox
-          color="primary.main"
-          //bgcolor="background.paper"
-          //padding={4}
-          borderRadius={borderRadiuses.base}
-          mt={isLandscape ? characterSize * 0.02 : characterSize * 0.005}
-          zIndex={zIndexes.above}
-        >
-          <FlexBox flexDirection="row" gap={1}>
-            <SvgIcon fontSize="large" sx={{ mt: -1 }}>
-              <StopwatchIcon />
-            </SvgIcon>
-            <Typography variant="h6">
-              <FormattedMessage
-                defaultMessage="{timeTakenMs} seconds"
-                description="Time taken to complete challenge"
-                values={{
-                  timeTakenMs: (attempt.stats!.timeTakenMs / 1000).toFixed(2),
-                }}
-              />
-            </Typography>
-          </FlexBox>
-          {/*<Typography variant="h6">
+            <FlexBox flexDirection="row" gap={1} mt={8}>
+              <SvgIcon fontSize="large" sx={{ mt: -1 }}>
+                <StopwatchIcon />
+              </SvgIcon>
+              <Typography variant="h6">
+                <FormattedMessage
+                  defaultMessage="{timeTakenMs} seconds"
+                  description="Time taken to complete challenge"
+                  values={{
+                    timeTakenMs: (attempt.stats!.timeTakenMs / 1000).toFixed(2),
+                  }}
+                />
+              </Typography>
+            </FlexBox>
+          </>
+        )}
+
+        {!showWinnerDisplay && (
+          <>
+            {challenge.isOfficial && !showWinnerDisplay && (
+              <WorldProgress worldType={challenge.worldType} />
+            )}
+            <FlexBox
+              color="primary.main"
+              //bgcolor="background.paper"
+              //padding={4}
+              borderRadius={borderRadiuses.base}
+              mt={isLandscape ? characterSize * 0.02 : characterSize * 0.005}
+              zIndex={zIndexes.above}
+            >
+              {/*<Typography variant="h6">
             <FormattedMessage
               defaultMessage="Blocks placed: {blocksPlaced}"
               description="Number of blocks placed in challenge"
@@ -147,8 +167,8 @@ export default function ChallengeResultsView({
               }}
             />
             </Typography>*/}
-          {/* TODO: efficiency rating e.g. not leaving gaps */}
-          {/* <Typography variant="caption">
+              {/* TODO: efficiency rating e.g. not leaving gaps */}
+              {/* <Typography variant="caption">
           <FormattedMessage
             defaultMessage="Attempt: #{attemptCount}"
             description="Number of times the user has attempted this challenge"
@@ -159,22 +179,29 @@ export default function ChallengeResultsView({
             }
           />
         </Typography> */}
-          {/*<RateChallenge isTest={isTest} challengeId={challengeId} />*/}
-          <FlexBox
-            pt={2}
-            width="100%"
-            flexDirection="row"
-            justifyContent="space-between"
-            gap={1}
-          >
-            {retryButton}
-            {continueButton}
-            {viewReplayButton}
-          </FlexBox>
-          {!isTest && !challenge.isOfficial && (
-            <RateChallenge challengeId={challengeId} />
-          )}
-        </FlexBox>
+              {/*<RateChallenge isTest={isTest} challengeId={challengeId} />*/}
+              <FlexBox
+                pt={2}
+                width="100%"
+                flexDirection="row"
+                justifyContent="space-between"
+                gap={1}
+              >
+                {retryButton}
+                {continueButton}
+                {viewReplayButton}
+              </FlexBox>
+              {!isTest && !challenge.isOfficial && (
+                <RateChallenge challengeId={challengeId} />
+              )}
+            </FlexBox>
+            <ChallengeTopAttempts
+              challengeId={challengeId}
+              challenge={challenge}
+              viewReplay={viewOtherReplay}
+            />
+          </>
+        )}
       </EndRoundDisplayOverlay>
     </FlexBox>
   );

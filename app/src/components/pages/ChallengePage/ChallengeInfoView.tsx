@@ -24,7 +24,7 @@ import desertScrollImage from './assets/scroll_desert.svg';
 export interface ChallengeInfoViewProps {
   onReceivedInput(): void;
   challenge: IChallenge;
-  challengeId: string | undefined;
+  challengeId: string;
   viewOtherReplay(
     attempt: IChallengeAttempt,
     scoreboardEntry: IScoreboardEntry | undefined
@@ -140,14 +140,11 @@ export default function ChallengeInfoView({
                 position="absolute"
                 bottom={isMobile() ? '28vh' : '24vh'}
               >
-                {challengeId &&
-                  !challenge.isTemplate &&
-                  challenge.isPublished && (
-                    <ChallengeTopAttempts
-                      challengeId={challengeId}
-                      viewReplay={viewOtherReplay}
-                    />
-                  )}
+                <ChallengeTopAttempts
+                  challengeId={challengeId}
+                  challenge={challenge}
+                  viewReplay={viewOtherReplay}
+                />
               </FlexBox>
               <FlexBox position="absolute" bottom={isMobile() ? '3vh' : '2vh'}>
                 {continueButton}

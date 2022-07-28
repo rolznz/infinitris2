@@ -13,6 +13,7 @@ type GameUIProps = {
   showLeaderboard?: boolean;
   chatEnabled?: boolean;
   showEndRoundDisplay?: boolean;
+  allowSkipCountdown?: boolean;
 };
 
 export function GameUI({
@@ -20,6 +21,7 @@ export function GameUI({
   showLeaderboard = true,
   chatEnabled = true,
   showEndRoundDisplay = true,
+  allowSkipCountdown,
 }: GameUIProps) {
   console.log('Re-render game UI');
   return (
@@ -41,7 +43,9 @@ export function GameUI({
         {chatEnabled && !challengeEditorEnabled && <ChatButton />}
         {showLeaderboard && <Leaderboard />}
       </TopRightPanel>
-      {showEndRoundDisplay && <EndRoundDisplay />}
+      {showEndRoundDisplay && (
+        <EndRoundDisplay allowSkipCountdown={allowSkipCountdown} />
+      )}
       <SpawnDelayDisplay />
     </FlexBox>
   );

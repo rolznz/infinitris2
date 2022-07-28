@@ -119,7 +119,7 @@ export function UserNicknameForm() {
                     }
                   >
                     <FormattedMessage
-                      defaultMessage="Nickname"
+                      defaultMessage="Choose Nickname"
                       description="Nickname field label text"
                     />
                   </InputLabel>
@@ -127,23 +127,27 @@ export function UserNicknameForm() {
                     {...field}
                     inputProps={{ maxLength: 10 }}
                     endAdornment={
-                      <InputAdornment
-                        position="end"
-                        sx={{ cursor: 'pointer' }}
-                        onClick={() =>
-                          alert(
-                            'Premium players can secure a nickname. Once secured, this tick will turn blue.'
-                          )
-                        }
-                      >
-                        <VerifiedIcon
-                          style={{
-                            marginTop: -2,
-                            filter: hasAdornment ? dropShadows.xs : lockFilter,
-                            opacity: hasAdornment ? undefined : 0.2,
-                          }}
-                        />
-                      </InputAdornment>
+                      currentNicknameValue.length > 1 ? (
+                        <InputAdornment
+                          position="end"
+                          sx={{ cursor: 'pointer' }}
+                          onClick={() =>
+                            alert(
+                              'Premium players can secure a nickname. Once secured, this tick will turn blue.'
+                            )
+                          }
+                        >
+                          <VerifiedIcon
+                            style={{
+                              marginTop: -2,
+                              filter: hasAdornment
+                                ? dropShadows.xs
+                                : lockFilter,
+                              opacity: hasAdornment ? undefined : 0.2,
+                            }}
+                          />
+                        </InputAdornment>
+                      ) : undefined
                     }
                     sx={{
                       backgroundColor: borderColorLight,

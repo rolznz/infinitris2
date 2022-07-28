@@ -9,5 +9,5 @@ Example commands
 - GENERATE_VARIATIONS=false yarn start
 - FILE_FILTER=rock2 yarn start
 - DIR_FILTER=desert yarn start
-- ASSETS_DIRECTORY=cells yarn start
+- ASSETS_DIRECTORY=cells OUTPUT_SIZE=64 yarn start
 - ASSETS_DIRECTORY=nickname READ_CHILD_DIRECTORIES=false GENERATE_VARIATIONS=false yarn start

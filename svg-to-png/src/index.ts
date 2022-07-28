@@ -43,7 +43,11 @@ for (const assetDirectory of childAssetDirectories) {
       }
       const withoutExt = filename.substring(0, filename.length - 4);
       const outputFilename = withoutExt + chosenExt;
-      await sharp(getPath(filename)).toFile(getPath(outputFilename));
+      const sharpImage = sharp(getPath(filename));
+      if (process.env.OUTPUT_SIZE) {
+        sharpImage.resize(parseInt(process.env.OUTPUT_SIZE));
+      }
+      await sharpImage.toFile(getPath(outputFilename));
       // generate alternate hues
       if (process.env.GENERATE_VARIATIONS !== 'false' && chosenExt === pngExt) {
         for (let variation = 1; variation < 6; variation++) {

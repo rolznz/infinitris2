@@ -116,12 +116,17 @@ export function RoomCarouselSlide({
         //zIndex="above"
       >
         <FlexBox flexDirection="row" gap={1}>
+          {customText && (
+            <Typography variant="h1" mr={2}>
+              {customText}
+            </Typography>
+          )}
           {gameModeType && (
             <SvgIcon color="primary">
               <GameModeIcon gameModeType={gameModeType} />
             </SvgIcon>
           )}
-          <Typography variant="h1">{gameModeType || customText}</Typography>
+          <Typography variant="h1">{gameModeType}</Typography>
           {numPlayers !== undefined && (
             <FlexBox flexDirection="row">
               <SvgIcon color="primary">

@@ -26,14 +26,18 @@ export function StoryModePage() {
 
   const slides: RoomCarouselSlideProps[] = React.useMemo(
     () =>
-      sortedOfficialChallenges?.map((challengeDoc, index) => ({
-        id: challengeDoc.id,
-        customText: getOfficialChallengeTitle(challengeDoc.data()),
-        worldType: challengeDoc.data().worldType || 'grass',
-        worldVariation: challengeDoc.data().worldVariation || '0',
-        isLocked: index > (completedOfficialChallengeIds?.length || 0),
-        grid: challengeDoc.data().grid,
-      })) || [],
+      sortedOfficialChallenges?.map(
+        (challengeDoc, index) =>
+          ({
+            id: challengeDoc.id,
+            customText: getOfficialChallengeTitle(challengeDoc.data()),
+            worldType: challengeDoc.data().worldType || 'grass',
+            worldVariation: challengeDoc.data().worldVariation || '0',
+            isLocked: index > (completedOfficialChallengeIds?.length || 0),
+            grid: challengeDoc.data().grid,
+            gameModeType: challengeDoc.data().simulationSettings?.gameModeType,
+          } as RoomCarouselSlideProps)
+      ) || [],
     [sortedOfficialChallenges, completedOfficialChallengeIds]
   );
 

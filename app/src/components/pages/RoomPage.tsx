@@ -5,8 +5,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import { Box, IconButton, Link, Typography } from '@mui/material';
 import useRoomStore from '../../state/RoomStore';
 import SignalCellularConnectedNoInternet0BarIcon from '@mui/icons-material/SignalCellularConnectedNoInternet0Bar';
-import HomeIcon from '@mui/icons-material/Home';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import { ReactComponent as HomeIcon } from '@/icons/home.svg';
+import { ReactComponent as RefreshIcon } from '@/icons/refresh.svg';
 import {
   ClientMessageType,
   getRoomPath,

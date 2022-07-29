@@ -5,8 +5,13 @@ import { IngameChat } from '@/components/game/IngameChat';
 import { Leaderboard } from '@/components/game/Leaderboard/Leaderboard';
 import { MessageLog } from '@/components/game/MessageLog';
 import { SpawnDelayDisplay } from '@/components/game/SpawnDelayDisplay';
+import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import FlexBox from '@/components/ui/FlexBox';
+import Typography from '@mui/material/Typography';
 import React from 'react';
+import { FormattedMessage } from 'react-intl';
+import { ReactComponent as RefreshIcon } from '@/icons/refresh.svg';
+import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 
 type GameUIProps = {
   challengeEditorEnabled?: boolean;
@@ -47,6 +52,7 @@ export function GameUI({
         <EndRoundDisplay allowSkipCountdown={allowSkipCountdown} />
       )}
       <SpawnDelayDisplay />
+      <MobileRotateDevice />
     </FlexBox>
   );
 }
@@ -72,4 +78,39 @@ function TopRightPanel(props: React.PropsWithChildren<{}>) {
       {props.children}
     </FlexBox>
   );
+}
+
+function MobileRotateDevice() {
+  const isLandscape = useIsLandscape();
+  if (!isLandscape) {
+    return (
+      <FlexBox
+        zIndex={999999999999999999}
+        width="100vw"
+        height="100vh"
+        px={8}
+        bgcolor="background.paper"
+      >
+        <Typography variant="h1">
+          <FormattedMessage
+            defaultMessage="Rotate Device"
+            description="Mobile Rotate Device title"
+          />
+        </Typography>
+        <FlexBox py={2}>
+          <SvgIcon color="primary" fontSize="large">
+            <RefreshIcon />
+          </SvgIcon>
+        </FlexBox>
+        <Typography variant="body2" textAlign="center">
+          <FormattedMessage
+            defaultMessage="Please unlock device rotation and rotate your device to continue"
+            description="Mobile Rotate Device title"
+          />
+        </Typography>
+      </FlexBox>
+    );
+  } else {
+    return null;
+  }
 }

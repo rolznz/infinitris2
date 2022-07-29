@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import RefreshIcon from '@mui/icons-material/Refresh';
+import { ReactComponent as RefreshIcon } from '@/icons/refresh.svg';
 import { RoomCarousel } from '@/components/ui/RoomCarousel/RoomCarousel';
 import { ReactComponent as InfoIcon } from '@/icons/i.svg';
 import Routes from '@/models/Routes';
@@ -9,6 +9,7 @@ import { useHistory } from 'react-router-dom';
 import IconButton from '@mui/material/IconButton';
 import { useLobbyServers } from '@/components/hooks/useLobbyServers';
 import useLatest from 'react-use/lib/useLatest';
+import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 
 let cachedRoomId: string | undefined;
 
@@ -59,7 +60,9 @@ export default function LobbyPage() {
           values={{
             refreshButton: (
               <IconButton onClick={refresh}>
-                <RefreshIcon fontSize="small" color="primary" />
+                <SvgIcon color="primary" fontSize="small">
+                  <RefreshIcon />
+                </SvgIcon>
               </IconButton>
             ),
           }}

@@ -1,6 +1,7 @@
 import fs from 'fs';
 import sharp from 'sharp';
 import jimp from 'jimp';
+import { getVariationHueRotation } from 'infinitris2-models';
 
 const pngExt = '.png';
 const jpgExt = '.jpg';
@@ -68,10 +69,7 @@ async function colorSpin(
   outputFilename: string,
   index: number
 ) {
-  const hueVariation =
-    index === 0 ? 0 : Math.ceil(index / 2) * (index % 2 === 1 ? 1 : -1);
-  const hueRotation =
-    hueVariation * (index < 3 ? 22.5 : index < 4 ? 45 + 22.5 : 90);
+  const hueRotation = getVariationHueRotation(index);
 
   // Reading Image
   const image = await jimp.read(inputFilename);

@@ -29,6 +29,7 @@
     "@typescript-eslint/parser": "^4.22.0",
     "eslint": "^7.6.0",
     "eslint-plugin-import": "^2.22.0",
+    "infinitris2-models": "^0.1",
     "jimp": "^0.16.1",
     "sharp": "^0.29.1",
     "ts-node": "^10.2.1",

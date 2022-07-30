@@ -15,6 +15,7 @@ import ChallengeMedalDisplay from '@/components/pages/ChallengePage/ChallengeMed
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 import useContinueButton from '@/components/hooks/useContinueButton';
 import useTrue from '@/components/hooks/useTrue';
+import { GameModeDescription } from '@/components/ui/RoomCarousel/RoomCarouselSlide';
 
 const bgSx: SxProps<Theme> = {
   background: 'linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%)',
@@ -216,6 +217,15 @@ export function NextRoundIndicator({
       {conditionsAreMet && allowSkipCountdown && (
         <FlexBox mt={4}>{skipCountdownButton}</FlexBox>
       )}
+
+      {simulation?.settings.gameModeType &&
+        simulation.settings.gameModeType !== 'infinity' && (
+          <Typography variant="body2" mt={2}>
+            <GameModeDescription
+              gameModeType={simulation?.settings.gameModeType}
+            />
+          </Typography>
+        )}
     </FlexBox>
   );
 }

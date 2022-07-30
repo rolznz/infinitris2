@@ -37,7 +37,7 @@ describe('Challenge Attempt Hooks', () => {
       await db.doc(dummyData.challengeAttempt1Path).get()
     ).data() as IChallengeAttempt;
     expect(challengeAttempt.created).toBe(true);
-    expect(challengeAttempt.readOnly!.userId).toBe(dummyData.userId1);
+    expect(challengeAttempt.userId).toBe(dummyData.userId1);
     expect(
       challengeAttempt.readOnly!.createdTimestamp!.seconds
     ).toBeGreaterThan(firestore.Timestamp.now().seconds - 5);

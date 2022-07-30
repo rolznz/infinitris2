@@ -5,6 +5,7 @@ import {
   IUser,
   objectToDotNotation,
 } from 'infinitris2-models';
+import { createChallengePreviewImages } from './utils/createChallengePreviewImages';
 import { getDb, increment } from './utils/firebase';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
 import { postSimpleWebhook } from './utils/postSimpleWebhook';
@@ -61,6 +62,7 @@ export const onCreateChallenge = functions.firestore
             `https://infinitris.net/challenges/${snapshot.ref.id}`
         );
       }
+      await createChallengePreviewImages(snapshot.ref.id, challenge);
     } catch (error) {
       console.error(error);
     }

@@ -55,7 +55,6 @@ function getBehaviour(
       return new LaserBehaviour(cell);
     case ChallengeCellType.Deadly:
       return new DeadlyBehaviour(cell);
-    // TODO: find way to reduce duplication
     case ChallengeCellType.RedKey:
       return new KeyBehaviour(cell, keyColors.redColor);
     case ChallengeCellType.RedSwitch:

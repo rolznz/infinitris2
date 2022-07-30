@@ -19,6 +19,7 @@ import { firestore } from 'firebase-admin';
 jest.mock('../../utils/firebase');
 jest.mock('../../utils/sendEmail');
 jest.mock('../../utils/postSimpleWebhook');
+jest.mock('../../utils/createChallengePreviewImages');
 
 const getAppMock = firebaseUtils.getApp as jest.MockedFunction<
   typeof firebaseUtils.getApp

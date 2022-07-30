@@ -11,6 +11,7 @@ module.exports = {
     'plugin:import/typescript',
     'google',
     'plugin:jest/recommended',
+    'prettier',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -24,17 +25,17 @@ module.exports = {
   ],
   plugins: ['@typescript-eslint', 'import'],
   rules: {
-    'quotes': ['error', 'single', 'avoid-escape'],
-    'indent': ['error', 2, { 'SwitchCase': 1 }],
-    'max-len': ['error', { code: 120 }],
-    'object-curly-spacing': ['error', 'always'],
-    'space-before-function-paren': [
+    // 'quotes': ['error', 'single', 'avoid-escape'],
+    // 'indent': ['error', 2, { 'SwitchCase': 1 }],
+    // 'max-len': ['error', { code: 80 }],
+    // 'object-curly-spacing': ['error', 'always'],
+    /* 'space-before-function-paren': [
       'error',
       { anonymous: 'always', named: 'never', asyncArrow: 'always' },
-    ],
+    ],*/
     'valid-jsdoc': ['off'],
     'require-jsdoc': ['off'],
-    'semi': 'off',
+    // 'semi': 'off',
     '@typescript-eslint/semi': ['error'],
   },
 };

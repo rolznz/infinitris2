@@ -1,12 +1,17 @@
 import { getApp, getDb } from './utils/firebase';
 import { readdirSync, readFileSync } from 'fs';
+import * as functions from 'firebase-functions';
 
 const inputDir = '../character-generator/out';
 const patternsDir = `${inputDir}/patterns`;
 const definitionsDirectory = `${inputDir}/definitions`;
+const bucketName = functions.config().webhooks.images_bucket;
+if (!bucketName) {
+  throw new Error('No images_bucket set');
+}
 
 const uploadFile = (src: string, destination: string) =>
-  getApp().storage().bucket('infinitris2-images').upload(src, {
+  getApp().storage().bucket(bucketName).upload(src, {
     destination,
     public: true,
   });

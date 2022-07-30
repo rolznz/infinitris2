@@ -2,12 +2,8 @@ import { Link as RouterLink } from 'react-router-dom';
 import {
   getChallengePath,
   getScoreboardEntryPath,
-  getVariationHueRotation,
   IChallenge,
   IScoreboardEntry,
-  WorldType,
-  WorldVariation,
-  WorldVariationValues,
 } from 'infinitris2-models';
 import React from 'react';
 import Routes from '../../../models/Routes';
@@ -24,14 +20,9 @@ import { playSound, SoundKey } from '@/sound/SoundManager';
 import { useUser } from '@/components/hooks/useUser';
 import Button from '@mui/material/Button';
 import FlexBox from '@/components/ui/FlexBox';
-import { ChallengeGridPartialPreview } from '@/components/pages/ChallengesPage/ChallengeGridPartialPreview';
 import { SxProps, Theme } from '@mui/material/styles';
 import { borderRadiuses } from '@/theme/theme';
 
-import grassImageMobile from '@/components/ui/RoomCarousel/assets/carousel/grass_mobile.svg';
-import desertImageMobile from '@/components/ui/RoomCarousel/assets/carousel/desert_mobile.svg';
-import volcanoImageMobile from '@/components/ui/RoomCarousel/assets/carousel/volcano_mobile.svg';
-import spaceImageMobile from '@/components/ui/RoomCarousel/assets/carousel/space_mobile.svg';
 import { useDocument } from 'swr-firestore';
 import { ReactComponent as TimesRatedIcon } from '@/icons/times_rated.svg';
 import { ReactComponent as StarIcon } from '@/icons/star.svg';
@@ -93,23 +84,6 @@ export default function ChallengeCard({
       : null
   );
 
-  const cardBgSx: SxProps<Theme> = React.useMemo(
-    () => ({
-      background: getBackground(
-        challenge.data()!.worldType,
-        challenge.data()!.worldVariation
-      ),
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      width: '100%',
-      height: '100%',
-    }),
-    [challenge]
-  );
   const cardSx: SxProps<Theme> = React.useMemo(
     () => ({
       borderRadius: borderRadiuses.base,
@@ -119,12 +93,22 @@ export default function ChallengeCard({
     []
   );
 
+  // FIXME: hardcoded width(200px)/height(267px), fallback image should come from challenge (base64 preview)
   return (
     <FlexBox>
       <FlexBox sx={cardSx} onClick={onClick}>
-        <FlexBox sx={cardBgSx} />
-        <FlexBox zIndex={1} sx={gridPreviewSx}>
-          <ChallengeGridPartialPreview grid={challenge.data()!.grid} />
+        <FlexBox
+          zIndex={1}
+          sx={gridPreviewSx}
+          width="200px"
+          height="267px"
+          bgcolor="black"
+        >
+          <img
+            alt=""
+            src={`${process.env.REACT_APP_IMAGES_ROOT_URL}/challenges/${challenge.id}/card.png`}
+            width="200px"
+          />
         </FlexBox>
         <FlexBox sx={cardFooterSx} alignItems="flex-start" px={1}>
           <Typography variant="body1" fontSize="20px" mb={1}>
@@ -181,34 +165,4 @@ export default function ChallengeCard({
       )}
     </FlexBox>
   );
-}
-
-function getBackground(
-  worldType: WorldType | undefined,
-  worldVariation: WorldVariation | undefined
-): string {
-  let image: string = grassImageMobile;
-  switch (worldType) {
-    case undefined:
-      break;
-    case 'grass':
-      break;
-    case 'desert':
-      image = desertImageMobile;
-      break;
-    case 'volcano':
-      image = volcanoImageMobile;
-      break;
-    case 'space':
-      image = spaceImageMobile;
-      break;
-    default:
-      throw new Error('Unsupported world type: ' + worldType);
-  }
-
-  const hueRotation = getVariationHueRotation(
-    WorldVariationValues.indexOf(worldVariation || '0')
-  );
-
-  return `url(${image}); filter: hue-rotate(${hueRotation}deg);`;
 }

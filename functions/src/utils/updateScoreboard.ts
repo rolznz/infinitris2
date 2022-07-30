@@ -4,6 +4,7 @@ import {
   getScoreboardEntryPath,
   getSettingPath,
   ScoreboardSettings,
+  usersPath,
 } from 'infinitris2-models';
 import { getCurrentTimestamp, getDb } from './firebase';
 import * as admin from 'firebase-admin';
@@ -13,7 +14,7 @@ import * as admin from 'firebase-admin';
  */
 export default async function updateScoreboard() {
   // console.log('Updating scoreboard');
-  const users = await getDb().collection('users').get();
+  const users = await getDb().collection(usersPath).get();
 
   const docs = users.docs
     .filter((entry) => !!(entry.data() as IUser).readOnly.nickname)

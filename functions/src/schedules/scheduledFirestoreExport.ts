@@ -2,8 +2,8 @@ import * as functions from 'firebase-functions';
 import * as admin from 'firebase-admin';
 
 export function scheduledFirestoreExport() {
-  const bucket = functions.config().webhooks.export_bucket;
-  if (!bucket) {
+  const bucketUrl = functions.config().webhooks.export_bucket;
+  if (!bucketUrl) {
     console.warn('No export bucket URL set, backup not executed');
     return;
   }
@@ -19,7 +19,7 @@ export function scheduledFirestoreExport() {
   return client
     .exportDocuments({
       name: databaseName,
-      outputUriPrefix: bucket,
+      outputUriPrefix: bucketUrl,
       // Leave collectionIds empty to export all collections
       // or set to a list of collection IDs to export,
       // collectionIds: ['users', 'posts']

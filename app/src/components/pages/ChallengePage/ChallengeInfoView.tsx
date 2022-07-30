@@ -2,15 +2,16 @@ import { EndRoundDisplayOverlay } from '@/components/game/EndRoundDisplay/EndRou
 import useContinueButton from '@/components/hooks/useContinueButton';
 import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
 import { getOfficialChallengeTitle } from '@/components/pages/StoryModePage/StoryModePage';
-//import { GameModeDescription } from '@/components/ui/RoomCarousel/RoomCarouselSlide';
 import { textShadows, zIndexes } from '@/theme/theme';
 import isMobile from '@/utils/isMobile';
 import { SxProps } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import {
+  getVariationHueRotation,
   IChallenge,
   IChallengeAttempt,
   IScoreboardEntry,
+  WorldVariationValues,
 } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -67,6 +68,9 @@ export default function ChallengeInfoView({
     'large',
     '4vh'
   );
+  const hueRotation = getVariationHueRotation(
+    WorldVariationValues.indexOf(challenge.worldVariation || '0')
+  );
 
   useTrue(hasReceivedInput, onReceivedInput);
   //const translation = challenge?.translations?.[user.locale];
@@ -91,6 +95,7 @@ export default function ChallengeInfoView({
             }
             height="100%"
             onLoad={() => setScrollLoaded(true)}
+            style={{ filter: `hue-rotate(${hueRotation}deg)` }}
           />
           {scrollLoaded && (
             <>

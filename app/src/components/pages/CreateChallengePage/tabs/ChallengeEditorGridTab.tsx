@@ -4,11 +4,11 @@ import Button from '@mui/material/Button';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import { FittedChallengeGridPreview } from '../../ChallengesPage/ChallengeGridPreview';
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import { boxShadows } from '@/theme/theme';
 import { getChallengeTestUrl } from '@/utils/getChallengeTestUrl';
+import { ChallengeGridPartialPreview } from '@/components/pages/ChallengesPage/ChallengeGridPartialPreview';
 
 export function ChallengeEditorGridTab() {
   const windowSize = useWindowSize();
@@ -21,10 +21,10 @@ export function ChallengeEditorGridTab() {
     <FlexBox width="100%" justifyContent="flex-start">
       <FlexBox>
         <FlexBox sx={{ opacity: 0.6 }}>
-          <FittedChallengeGridPreview
+          <ChallengeGridPartialPreview
             grid={challenge.grid}
-            maxWidth={windowSize.width * 0.9}
-            maxHeight={windowSize.height * 0.8}
+            width={windowSize.width * 0.8}
+            aspectRatio={windowSize.width / windowSize.height}
           />
         </FlexBox>
         <FlexBox position="absolute">

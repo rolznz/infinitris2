@@ -5,7 +5,7 @@ import React from 'react';
 import FlexBox from '../../ui/FlexBox';
 import { CommunityChallengeCard } from './ChallengeCard';
 import { orderBy, where } from 'firebase/firestore';
-import { useIntl } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { Page } from '@/components/ui/Page';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
@@ -15,7 +15,8 @@ import useSearchParam from 'react-use/lib/useSearchParam';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 
 const ChallengesPageSortTypeValues = [
-  'popularity',
+  'mostPlays',
+  'mostRatings',
   'rating',
   'latest',
 ] as const;
@@ -35,10 +36,21 @@ export function ChallengesPage() {
   const [filter, setFilter] = React.useState<ChallengesPageSortType>(
     sortParam && ChallengesPageSortTypeValues.indexOf(sortParam) > -1
       ? sortParam
-      : 'popularity'
+      : 'mostPlays'
   );
 
-  const challengesPopularityFilter: UseCollectionOptions = React.useMemo(
+  const challengesMostPlaysFilter: UseCollectionOptions = React.useMemo(
+    () => ({
+      constraints: [
+        where('isOfficial', '==', false),
+        orderBy('readOnly.numAttempts', 'desc'),
+      ],
+      listen,
+    }),
+    [listen]
+  );
+
+  const challengesMostRatingsFilter: UseCollectionOptions = React.useMemo(
     () => ({
       constraints: [
         where('isOfficial', '==', false),
@@ -74,8 +86,10 @@ export function ChallengesPage() {
 
   const { data: challenges } = useCollection<IChallenge>(
     challengesPath,
-    filter === 'popularity'
-      ? challengesPopularityFilter
+    filter === 'mostPlays'
+      ? challengesMostPlaysFilter
+      : filter === 'mostRatings'
+      ? challengesMostRatingsFilter
       : filter === 'rating'
       ? challengesRatingFilter
       : challengesDateFilter
@@ -100,7 +114,27 @@ export function ChallengesPage() {
         >
           {ChallengesPageSortTypeValues.map((filterType) => (
             <MenuItem key={filterType} value={filterType}>
-              {filterType}
+              {filterType === 'mostPlays' ? (
+                <FormattedMessage
+                  defaultMessage="Most Plays"
+                  description="Challenges Page Most plays filter"
+                />
+              ) : filterType === 'mostRatings' ? (
+                <FormattedMessage
+                  defaultMessage="Most Ratings"
+                  description="Challenges Page Most ratings filter"
+                />
+              ) : filterType === 'latest' ? (
+                <FormattedMessage
+                  defaultMessage="Latest"
+                  description="Challenges Page Latest filter"
+                />
+              ) : (
+                <FormattedMessage
+                  defaultMessage="Highest Rated"
+                  description="Challenges Page Highest Rated filter"
+                />
+              )}
             </MenuItem>
           ))}
         </Select>

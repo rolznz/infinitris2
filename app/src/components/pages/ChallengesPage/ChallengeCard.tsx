@@ -23,6 +23,7 @@ import { ReactComponent as StarIcon } from '@/icons/star.svg';
 import { ReactComponent as PlayIcon } from '@/icons/play.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import { ProgressiveImage } from '@/components/ui/ProgressiveImage';
+import isMobile from '@/utils/isMobile';
 
 interface ChallengeCardProps {
   challenge: DocumentSnapshot<IChallenge>;
@@ -46,6 +47,9 @@ const cardFooterSx: SxProps<Theme> = {
   width: '100%',
   zIndex: 2,
 };
+
+export const challengeCardWidth = isMobile() ? 150 : 200;
+export const challengeCardHeight = Math.floor(challengeCardWidth * (4 / 3));
 
 export function CommunityChallengeCard({ challenge }: ChallengeCardProps) {
   const onClick = React.useCallback(() => {
@@ -83,22 +87,19 @@ export default function ChallengeCard({
     []
   );
 
-  // FIXME: hardcoded width(200px)/height(266px)
-  const cardWidth = 200;
-  const cardHeight = Math.floor(cardWidth * (4 / 3));
   return (
     <FlexBox>
       <FlexBox sx={cardSx} onClick={onClick}>
         <FlexBox
           zIndex={1}
           sx={gridPreviewSx}
-          width={cardWidth + 'px'}
-          height={cardHeight + 'px'}
+          width={challengeCardWidth + 'px'}
+          height={challengeCardHeight + 'px'}
           bgcolor="black"
         >
           <ProgressiveImage
-            width={cardWidth}
-            height={cardHeight}
+            width={challengeCardWidth}
+            height={challengeCardHeight}
             thumbnail={challenge.data()?.readOnly?.thumbnail}
             url={`${process.env.REACT_APP_IMAGES_ROOT_URL}/challenges/${challenge.id}/card.jpg`}
             blur={false}

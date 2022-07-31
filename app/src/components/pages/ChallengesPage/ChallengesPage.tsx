@@ -1,10 +1,19 @@
-import { useCollection, UseCollectionOptions } from 'swr-firestore';
+import { UseCollectionOptions } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 
 import FlexBox from '../../ui/FlexBox';
-import { CommunityChallengeCard } from './ChallengeCard';
-import { orderBy, where } from 'firebase/firestore';
+import {
+  challengeCardHeight,
+  challengeCardWidth,
+  CommunityChallengeCard,
+} from './ChallengeCard';
+import {
+  DocumentSnapshot,
+  orderBy,
+  QueryDocumentSnapshot,
+  where,
+} from 'firebase/firestore';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { Page } from '@/components/ui/Page';
 import Select from '@mui/material/Select';
@@ -12,7 +21,10 @@ import MenuItem from '@mui/material/MenuItem';
 import SvgIcon from '@mui/material/SvgIcon';
 import { ReactComponent as SortIcon } from '@/icons/sort.svg';
 import useSearchParam from 'react-use/lib/useSearchParam';
+//import { useIsLandscape } from '@/components/hooks/useIsLandscape';
+import { InfiniteLoader } from '@/components/ui/InfiniteLoader';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
+import useWindowSize from 'react-use/lib/useWindowSize';
 
 const ChallengesPageSortTypeValues = [
   'mostPlays',
@@ -25,19 +37,27 @@ export type ChallengesPageSortType =
 export const challengesPageSortParam = 'sort';
 export const challengesPageListenParam = 'listen';
 
-export function ChallengesPage() {
-  const intl = useIntl();
-  const sortParam = useSearchParam(
-    challengesPageSortParam
-  ) as ChallengesPageSortType;
-  const listen = useSearchParam(challengesPageListenParam) === 'true';
-  const isLandscape = useIsLandscape();
+const cachedChallenges: Record<
+  ChallengesPageSortType,
+  QueryDocumentSnapshot<IChallenge>[]
+> = {
+  mostPlays: [],
+  mostRatings: [],
+  rating: [],
+  latest: [],
+};
 
-  const [filter, setFilter] = React.useState<ChallengesPageSortType>(
-    sortParam && ChallengesPageSortTypeValues.indexOf(sortParam) > -1
-      ? sortParam
-      : 'mostPlays'
-  );
+function ChallengesPageChallengeList({
+  sortType,
+}: {
+  sortType: ChallengesPageSortType;
+}) {
+  const [challenges, setChallenges] = React.useState<
+    QueryDocumentSnapshot<IChallenge>[]
+  >(cachedChallenges[sortType]);
+
+  // TODO: remove listen param and wait for challenge to be created before navigating
+  const listen = useSearchParam(challengesPageListenParam) === 'true';
 
   const challengesMostPlaysFilter: UseCollectionOptions = React.useMemo(
     () => ({
@@ -84,16 +104,66 @@ export function ChallengesPage() {
     [listen]
   );
 
-  const { data: challenges } = useCollection<IChallenge>(
-    challengesPath,
-    filter === 'mostPlays'
-      ? challengesMostPlaysFilter
-      : filter === 'mostRatings'
-      ? challengesMostRatingsFilter
-      : filter === 'rating'
-      ? challengesRatingFilter
-      : challengesDateFilter
+  const onNewItemsLoaded = React.useCallback(
+    (newItems: QueryDocumentSnapshot<IChallenge>[]) => {
+      cachedChallenges[sortType] = cachedChallenges[sortType].concat(newItems);
+      setChallenges(cachedChallenges[sortType]);
+      console.log('Loaded', cachedChallenges[sortType].length, 'challenges');
+    },
+    [sortType]
   );
+
+  const renderItem = React.useCallback<
+    (challenge: DocumentSnapshot<IChallenge>) => React.ReactNode
+  >((challenge) => {
+    return <CommunityChallengeCard challenge={challenge} key={challenge.id} />;
+  }, []);
+
+  const isLandscape = useIsLandscape();
+  const windowSize = useWindowSize();
+  const gap = isLandscape ? 4 : 2;
+
+  return (
+    <InfiniteLoader<IChallenge>
+      items={challenges}
+      onNewItemsLoaded={onNewItemsLoaded}
+      renderItem={renderItem}
+      itemWidth={challengeCardWidth}
+      itemHeight={challengeCardHeight}
+      numColumns={
+        isLandscape ? Math.floor(windowSize.width / (200 + gap * 2)) : 2
+      }
+      gap={gap}
+      collectionPath={challengesPath}
+      useCollectionOptions={
+        sortType === 'mostPlays'
+          ? challengesMostPlaysFilter
+          : sortType === 'mostRatings'
+          ? challengesMostRatingsFilter
+          : sortType === 'rating'
+          ? challengesRatingFilter
+          : challengesDateFilter
+      }
+      justifyContent="center"
+    />
+  );
+}
+
+export function ChallengesPage() {
+  const intl = useIntl();
+
+  const sortParam = useSearchParam(
+    challengesPageSortParam
+  ) as ChallengesPageSortType;
+
+  const [sortType, setSortType] = React.useState<ChallengesPageSortType>(
+    sortParam && ChallengesPageSortTypeValues.indexOf(sortParam) > -1
+      ? sortParam
+      : 'mostRatings'
+  );
+
+  //const isLandscape = useIsLandscape();
+
   return (
     <Page
       title={intl.formatMessage({
@@ -101,15 +171,15 @@ export function ChallengesPage() {
         description: 'Community Challenges page title',
       })}
     >
-      <FlexBox flexDirection="row">
+      <FlexBox flexDirection="row" mb={2}>
         <SvgIcon color="primary">
           <SortIcon />
         </SvgIcon>
         <Select
           variant="outlined"
-          value={filter}
+          value={sortType}
           onChange={(event) => {
-            setFilter(event.target.value as ChallengesPageSortType);
+            setSortType(event.target.value as ChallengesPageSortType);
           }}
         >
           {ChallengesPageSortTypeValues.map((filterType) => (
@@ -140,17 +210,12 @@ export function ChallengesPage() {
         </Select>
       </FlexBox>
 
-      <FlexBox
-        width="100%"
-        flexWrap="wrap"
-        flexDirection="row"
-        gap={isLandscape ? 4 : 2}
-        pt={2}
-      >
-        {challenges?.map((challenge) => (
-          <CommunityChallengeCard challenge={challenge} key={challenge.id} />
-        ))}
-      </FlexBox>
+      {/* use a unique list for each sort type */}
+      {ChallengesPageSortTypeValues.map((value) =>
+        sortType === value ? (
+          <ChallengesPageChallengeList key={sortType} sortType={sortType} />
+        ) : null
+      )}
     </Page>
   );
 }

@@ -1,4 +1,3 @@
-import FlexBox from '@/components/ui/FlexBox';
 import {
   DEFAULT_CHARACTER_ID,
   DEFAULT_CHARACTER_IDs,
@@ -8,17 +7,16 @@ import { useUser } from '@/components/hooks/useUser';
 import {
   QueryDocumentSnapshot,
   orderBy,
-  startAfter,
-  limit,
   where,
+  DocumentSnapshot,
 } from 'firebase/firestore';
 import { ICharacter, charactersPath } from 'infinitris2-models';
 import React from 'react';
-import { useInView } from 'react-intersection-observer';
 import useWindowSize from 'react-use/lib/useWindowSize';
-import { useCollection, UseCollectionOptions } from 'swr-firestore';
+import { UseCollectionOptions } from 'swr-firestore';
 import { CharacterTile } from './MarketPageCharacterTile';
 import useAuthStore from '@/state/AuthStore';
+import { InfiniteLoader } from '@/components/ui/InfiniteLoader';
 
 const cachedCharacters: Record<
   MarketPageCharacterListFilter,
@@ -46,14 +44,13 @@ export function MarketPageCharacterList({
   filter,
 }: MarketPageCharacterListProps) {
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
-  const [loadMore, setLoadMore] = React.useState(
-    cachedCharacters[filter].length === 0
-  );
+
+  const [characters, setCharacters] = React.useState<
+    QueryDocumentSnapshot<ICharacter>[]
+  >(cachedCharacters[filter]);
   const windowWidth = useWindowSize().width;
   const columns = Math.max(3, Math.min(8, Math.floor(windowWidth / 150)));
-  const fetchLimit = columns * 4;
-  const lastCharacter =
-    cachedCharacters[filter][cachedCharacters[filter].length - 1];
+
   const size = window.innerWidth / (columns * (columns > 3 ? 1.2 : 1.1));
 
   const user = useUser();
@@ -86,102 +83,55 @@ export function MarketPageCharacterList({
                 ? [where('price', '>', 400)]
                 : [orderBy('price')]),
             ]),
-        ...(lastCharacter ? [startAfter(lastCharacter)] : []),
-        limit(fetchLimit),
       ],
     }),
-    [fetchLimit, filter, lastCharacter, myCharacterIds]
+    [filter, myCharacterIds]
   );
 
-  // TODO: useCollection purchases for my-blocks
-  const { data: characters } = useCollection<ICharacter>(
-    loadMore ? charactersPath : null,
-    useCharactersOptions
-  );
-
-  React.useEffect(() => {
-    if (characters?.length) {
+  const onNewItemsLoaded = React.useCallback(
+    (newItems: QueryDocumentSnapshot<ICharacter>[]) => {
       cachedCharacters[filter] = cachedCharacters[filter].concat(
-        characters.filter(
+        newItems.filter(
           (character) =>
             filter === 'my-blocks' || myCharacterIds.indexOf(character.id) < 0
         )
       );
+      setCharacters(cachedCharacters[filter]);
       console.log('Loaded', cachedCharacters[filter].length, 'characters');
-      setLoadMore(false);
-    }
-  }, [characters, filter, myCharacterIds]);
-
-  const onCharacterInView = React.useCallback(
-    (index) => {
-      if (index > cachedCharacters[filter].length - columns * 2) {
-        setLoadMore(true);
-      }
     },
-    [setLoadMore, columns, filter]
+    [filter, myCharacterIds]
   );
 
   const characterBlockHeight = size + 50 + size * 0.1;
 
+  const renderItem = React.useCallback<
+    (character: DocumentSnapshot<ICharacter>) => React.ReactNode
+  >(
+    (character) => {
+      return (
+        <CharacterTile
+          character={character}
+          size={size}
+          isPurchased={filter === 'my-blocks'}
+          isSelected={character.id === myCharacterId}
+        />
+      );
+    },
+    [filter, myCharacterId, size]
+  );
+
   return (
-    <FlexBox
-      width="100%"
-      flexDirection="row"
-      flexWrap="wrap"
-      justifyContent="flex-start"
-      alignItems="flex-start"
-      mt={0}
+    <InfiniteLoader<ICharacter>
+      items={characters}
+      onNewItemsLoaded={onNewItemsLoaded}
+      itemKey={(item) => item.id + '-' + (item.id === myCharacterId)}
+      renderItem={renderItem}
       minHeight={filter === 'my-blocks' ? characterBlockHeight : '100vh'}
-    >
-      {cachedCharacters[filter].map((character, index) => (
-        <Intersection
-          key={character.id + '-' + (character.id === myCharacterId)}
-          width={size}
-          height={characterBlockHeight}
-          index={index}
-          onInView={onCharacterInView}
-        >
-          <CharacterTile
-            character={character}
-            size={size}
-            isPurchased={filter === 'my-blocks'}
-            isSelected={character.id === myCharacterId}
-          />
-        </Intersection>
-      ))}
-    </FlexBox>
+      itemWidth={size}
+      itemHeight={characterBlockHeight}
+      numColumns={columns}
+      collectionPath={charactersPath}
+      useCollectionOptions={useCharactersOptions}
+    />
   );
 }
-
-const _Intersection = ({
-  children,
-  width,
-  height,
-  index,
-  onInView,
-}: React.PropsWithChildren<{
-  width: number;
-  height: number;
-  index: number;
-  onInView: (index: number) => void;
-}>) => {
-  const { ref, inView } = useInView({ threshold: 0, rootMargin: '500px' });
-  React.useEffect(() => {
-    if (inView) {
-      onInView(index);
-    }
-  }, [inView, onInView, index]);
-
-  const style = React.useMemo(
-    () => ({ width, height, overflow: 'hidden' }),
-    [width, height]
-  );
-
-  return (
-    <div ref={ref} style={style}>
-      {inView && children}
-    </div>
-  );
-};
-
-const Intersection = React.memo(_Intersection, () => true);

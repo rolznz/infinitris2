@@ -17,6 +17,10 @@ export interface IChallengeReadOnlyProperties
   extends IEntityReadOnlyProperties,
     IRateable {
   readonly numAttempts: number;
+  readonly thumbnail?: string;
+  readonly user?: {
+    nickname: string;
+  };
 }
 
 export type CreatableChallenge = Creatable<IChallenge>;

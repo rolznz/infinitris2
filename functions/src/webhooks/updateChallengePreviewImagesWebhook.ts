@@ -3,7 +3,15 @@ import { Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
 import { createChallengePreviewImages } from '../utils/createChallengePreviewImages';
-import { challengesPath, IChallenge } from 'infinitris2-models';
+import {
+  challengesPath,
+  getChallengePath,
+  getUserPath,
+  IChallenge,
+  IUser,
+  objectToDotNotation,
+  RecursiveKeyOf,
+} from 'infinitris2-models';
 import { getDb } from '../utils/firebase';
 
 export const updateChallengePreviewImagesWebhook = async (
@@ -19,15 +27,46 @@ export const updateChallengePreviewImagesWebhook = async (
     }
 
     const challenges = await getDb().collection(challengesPath).get();
+
+    let thumbnailsGenerated = 0;
+    let nicknamesGenerated = 0;
+    const startTime = Date.now();
     for (const challengeDoc of challenges.docs) {
-      await createChallengePreviewImages(
-        challengeDoc.id,
-        challengeDoc.data() as IChallenge
-      );
+      const challenge = challengeDoc.data() as IChallenge;
+      if (!challenge.readOnly?.thumbnail) {
+        await createChallengePreviewImages(challengeDoc.id, challenge);
+        ++thumbnailsGenerated;
+        if (Date.now() - startTime > 30000) {
+          break;
+        }
+      }
+      if (!challenge.readOnly?.user?.nickname) {
+        const userDocRef = getDb().doc(getUserPath(challenge.userId));
+        const user = await userDocRef.get();
+        const userData = user.data() as IUser;
+        if (userData?.readOnly?.nickname) {
+          const updateChallenge = objectToDotNotation<IChallenge>(
+            {
+              readOnly: {
+                user: {
+                  nickname: userData.readOnly.nickname,
+                },
+              },
+            },
+            ['readOnly.user.nickname' as RecursiveKeyOf<Required<IChallenge>>]
+          );
+          await getDb()
+            .doc(getChallengePath(challengeDoc.id))
+            .update(updateChallenge);
+          ++nicknamesGenerated;
+          if (Date.now() - startTime > 30000) {
+            break;
+          }
+        }
+      }
     }
 
-    res.status(StatusCodes.NO_CONTENT);
-    return res.send();
+    return res.json({ thumbnailsGenerated, nicknamesGenerated });
   } catch (error) {
     console.error(error);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);

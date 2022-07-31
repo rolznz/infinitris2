@@ -1,5 +1,6 @@
+import { ProgressiveImage } from '@/components/ui/ProgressiveImage';
 import { dropShadows } from '@/theme/theme';
-import { Box, SxProps, Theme } from '@mui/material';
+import { SxProps, Theme } from '@mui/material';
 import React from 'react';
 
 type CharacterImageProps = {
@@ -10,18 +11,6 @@ type CharacterImageProps = {
   strongShadow?: boolean;
 };
 
-// TODO: extract to progressive image component
-const imageStyle: React.CSSProperties = {
-  width: '100%',
-  height: '100%',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  pointerEvents: 'none',
-};
-
-const placeholderImageStyle = { ...imageStyle, filter: 'blur(8px)' };
-
 function _CharacterImage({
   characterId,
   width,
@@ -29,7 +18,6 @@ function _CharacterImage({
   hasShadow,
   strongShadow,
 }: CharacterImageProps) {
-  const [isLoaded, setLoaded] = React.useState(false);
   const sx: SxProps<Theme> = React.useMemo(
     () => ({
       filter: strongShadow
@@ -41,32 +29,14 @@ function _CharacterImage({
     [hasShadow, strongShadow]
   );
   return (
-    <Box
-      width={width + 'px'}
-      height={width + 'px'}
-      position="relative"
-      flexShrink={0}
+    <ProgressiveImage
+      width={width}
+      height={width}
       sx={sx}
-    >
-      {!isLoaded && (
-        <img
-          src={
-            thumbnail
-              ? `data:image/png;base64,${thumbnail}`
-              : `${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/${characterId}_thumbnail.png`
-          }
-          style={placeholderImageStyle}
-          alt=""
-        />
-      )}
-
-      <img
-        src={`${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/${characterId}.png`}
-        style={imageStyle}
-        alt=""
-        onLoad={() => setLoaded(true)}
-      />
-    </Box>
+      thumbnail={thumbnail ? `data:image/png;base64,${thumbnail}` : undefined}
+      thumbnailFallbackUrl={`${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/${characterId}_thumbnail.png`}
+      url={`${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/${characterId}.png`}
+    />
   );
 }
 

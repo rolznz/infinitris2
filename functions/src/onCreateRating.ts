@@ -37,11 +37,11 @@ export const onCreateRating = functions.firestore
         ['readOnly.numRatings', 'readOnly.summedRating', 'readOnly.rating']
       );
 
-      challengeDocRef.update(updateChallenge);
+      await challengeDocRef.update(updateChallenge);
 
       if (rating.value > 2) {
         // only reward positive ratings
-        updateNetworkImpact(challenge.userId, userId);
+        await updateNetworkImpact(challenge.userId, userId);
       }
 
       // apply update using current database instance

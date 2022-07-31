@@ -35,6 +35,9 @@ export const onCreateChallenge = functions.firestore
 
       await userDocRef.update(updateUser);
 
+      const user = await userDocRef.get();
+      const userData = user.data() as IUser;
+
       // apply update using current database instance
       await getDb()
         .doc(snapshot.ref.path)
@@ -46,13 +49,14 @@ export const onCreateChallenge = functions.firestore
             rating: 0,
             summedRating: 0,
             numAttempts: 0,
+            user: {
+              nickname: userData.readOnly?.nickname,
+            },
           },
           created: true,
         } as Pick<IChallenge, 'readOnly' | 'created'>);
 
       if (!challenge.isOfficial && !challenge.isTemplate) {
-        const user = await userDocRef.get();
-        const userData = user.data() as IUser;
         await postSimpleWebhook(
           'New challenge published: ' +
             (challenge.title ?? 'Unnamed') +

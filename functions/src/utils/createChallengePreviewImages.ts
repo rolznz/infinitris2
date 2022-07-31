@@ -1,7 +1,9 @@
 import {
   ChallengeCellType,
+  getChallengePath,
   getVariationHueRotation,
   IChallenge,
+  objectToDotNotation,
   parseGrid,
   WorldType,
   WorldVariation,
@@ -10,7 +12,7 @@ import {
 } from 'infinitris2-models';
 import * as Jimp from 'jimp';
 import * as functions from 'firebase-functions';
-import { getApp } from './firebase';
+import { getApp, getDb } from './firebase';
 
 const clientImagesDirectory = 'https://infinitris.net/client/images';
 const clientChallengePreviewBackgroundImagesDirectory = `${clientImagesDirectory}/challenge-previews`;
@@ -20,6 +22,7 @@ export function createChallengePreviewImages(
   challengeId: string,
   challenge: IChallenge
 ) {
+  console.log('Generating challenge preview images', challengeId);
   // TODO: multiple variations (card, landscape full, portrait full)
   // only the card should have the BG set
 
@@ -47,9 +50,24 @@ async function createChallengePreviewImage(
     image = image.color([{ apply: 'hue', params: [hueRotation] }]);
   }
   image = await placeCells(image, challengeId, challenge, aspectRatio);
-  const buffer = await image.getBufferAsync(Jimp.MIME_PNG);
+  const buffer = await image.getBufferAsync(Jimp.MIME_JPEG);
 
-  await uploadImage(buffer, `challenges/${challengeId}/card.png`);
+  const thumbnailSize = 64;
+  const thumbnail = await image
+    .resize(thumbnailSize, Math.floor(thumbnailSize * (1 / aspectRatio)))
+    .getBase64Async(Jimp.MIME_JPEG);
+
+  await uploadImage(buffer, `challenges/${challengeId}/card.jpg`);
+
+  const updateChallenge = objectToDotNotation<IChallenge>(
+    {
+      readOnly: {
+        thumbnail,
+      },
+    },
+    ['readOnly.thumbnail']
+  );
+  await getDb().doc(getChallengePath(challengeId)).update(updateChallenge);
 }
 function cropImage(image: Jimp, aspectRatio: number): Jimp {
   const width = image.getWidth();

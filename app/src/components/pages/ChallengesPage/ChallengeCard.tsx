@@ -1,10 +1,5 @@
 import { Link as RouterLink } from 'react-router-dom';
-import {
-  getChallengePath,
-  getScoreboardEntryPath,
-  IChallenge,
-  IScoreboardEntry,
-} from 'infinitris2-models';
+import { getChallengePath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 import Routes from '../../../models/Routes';
 import Typography from '@mui/material/Typography';
@@ -23,11 +18,11 @@ import FlexBox from '@/components/ui/FlexBox';
 import { SxProps, Theme } from '@mui/material/styles';
 import { borderRadiuses } from '@/theme/theme';
 
-import { useDocument } from 'swr-firestore';
 import { ReactComponent as TimesRatedIcon } from '@/icons/times_rated.svg';
 import { ReactComponent as StarIcon } from '@/icons/star.svg';
 import { ReactComponent as PlayIcon } from '@/icons/play.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
+import { ProgressiveImage } from '@/components/ui/ProgressiveImage';
 
 interface ChallengeCardProps {
   challenge: DocumentSnapshot<IChallenge>;
@@ -77,69 +72,65 @@ export default function ChallengeCard({
   //const user = useUser();
   //const translation = challenge?.translations?.[user.locale];
   const user = useUser();
-  // FIXME: this is very inefficient. Challenges should be updated to include creator nickname
-  const { data: challengeOwnerScoreboardEntry } = useDocument<IScoreboardEntry>(
-    challenge?.data()?.userId
-      ? getScoreboardEntryPath(challenge!.data()!.userId!)
-      : null
-  );
 
   const cardSx: SxProps<Theme> = React.useMemo(
     () => ({
       borderRadius: borderRadiuses.base,
       position: 'relative',
       overflow: 'hidden',
+      cursor: 'pointer',
     }),
     []
   );
 
-  // FIXME: hardcoded width(200px)/height(267px), fallback image should come from challenge (base64 preview)
+  // FIXME: hardcoded width(200px)/height(266px)
+  const cardWidth = 200;
+  const cardHeight = Math.floor(cardWidth * (4 / 3));
   return (
     <FlexBox>
       <FlexBox sx={cardSx} onClick={onClick}>
         <FlexBox
           zIndex={1}
           sx={gridPreviewSx}
-          width="200px"
-          height="267px"
+          width={cardWidth + 'px'}
+          height={cardHeight + 'px'}
           bgcolor="black"
         >
-          <img
-            alt=""
-            src={`${process.env.REACT_APP_IMAGES_ROOT_URL}/challenges/${challenge.id}/card.png`}
-            width="200px"
+          <ProgressiveImage
+            width={cardWidth}
+            height={cardHeight}
+            thumbnail={challenge.data()?.readOnly?.thumbnail}
+            url={`${process.env.REACT_APP_IMAGES_ROOT_URL}/challenges/${challenge.id}/card.jpg`}
+            blur={false}
           />
         </FlexBox>
         <FlexBox sx={cardFooterSx} alignItems="flex-start" px={1}>
-          <Typography variant="body1" fontSize="20px" mb={1}>
+          <Typography variant="body1" fontSize="20px">
             {/*translation?.title || */ challenge.data()!.title}
             {/* {isLocked && ' (LOCKED)'} */}
           </Typography>
-          <FlexBox flexDirection="row" gap={0.25}>
-            {challengeOwnerScoreboardEntry?.data()?.nickname && (
-              <Typography variant="body1" fontSize="12px">
-                {challengeOwnerScoreboardEntry!.data()!.nickname}
-              </Typography>
-            )}
-            <FlexBox width={10} />
+          <Typography variant="body1" fontSize="12px">
+            By {challenge.data()?.readOnly?.user?.nickname || 'Unknown'}
+          </Typography>
+          <FlexBox flexDirection="row" gap={0.25} mt={0.5} width="100%">
             <SvgIcon fontSize="small">
               <StarIcon />
             </SvgIcon>
-            <Typography variant="body1" fontSize="12px">
+            <Typography variant="body1" fontSize="14px">
               {(challenge.data()?.readOnly?.rating || 0).toFixed(1).toString()}
             </Typography>
             <FlexBox width={5} />
             <SvgIcon fontSize="small">
               <TimesRatedIcon />
             </SvgIcon>
-            <Typography variant="body1" fontSize="12px">
+            <Typography variant="body1" fontSize="14px">
               {challenge.data()?.readOnly?.numRatings || 0}
             </Typography>
             <FlexBox width={5} />
             <SvgIcon fontSize="small">
               <PlayIcon />
             </SvgIcon>
-            <Typography variant="body1" fontSize="12px">
+            <Typography variant="body1" fontSize="14px">
               {(challenge.data()?.readOnly?.numAttempts || 0).toString()}
             </Typography>
           </FlexBox>

@@ -36,7 +36,6 @@ export function InfiniteLoader<T>({
   const onInView = React.useCallback(
     (index: number) => {
       if (index > items.length - numColumns) {
-        console.log('INVIEW ' + index);
         setLoadMore(true);
       }
     },

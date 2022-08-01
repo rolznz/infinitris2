@@ -1,4 +1,5 @@
 import { InputActionWithData } from '@models/InputAction';
+import IUser from '@models/IUser';
 import { PartialBy } from '@models/typescriptHelpers';
 import ChallengeCompletionStats from './ChallengeCompletionStats';
 import IEntity, { IEntityReadOnlyProperties } from './IEntity';
@@ -6,7 +7,10 @@ import IEntity, { IEntityReadOnlyProperties } from './IEntity';
 export type ChallengeStatusCode = 'pending' | 'success' | 'failed';
 
 export interface IChallengeAttemptReadOnlyProperties
-  extends IEntityReadOnlyProperties {}
+  extends IEntityReadOnlyProperties {
+  user?: Pick<IUser['readOnly'], 'nickname'> &
+    Pick<IUser, 'selectedCharacterId'>;
+}
 
 export type ChallengeAttemptFrame = {
   actions: InputActionWithData[] | undefined;

@@ -10,7 +10,6 @@ import {
   getVariationHueRotation,
   IChallenge,
   IChallengeAttempt,
-  IScoreboardEntry,
   WorldVariationValues,
 } from 'infinitris2-models';
 import React from 'react';
@@ -26,10 +25,7 @@ export interface ChallengeInfoViewProps {
   onReceivedInput(): void;
   challenge: IChallenge;
   challengeId: string;
-  viewOtherReplay(
-    attempt: IChallengeAttempt,
-    scoreboardEntry: IScoreboardEntry | undefined
-  ): void;
+  viewOtherReplay(attempt: IChallengeAttempt): void;
 }
 
 const titleSx: SxProps = {

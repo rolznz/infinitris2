@@ -6,6 +6,7 @@ import {
   IChallengeAttempt,
   IUser,
   objectToDotNotation,
+  removeUndefinedValues,
 } from 'infinitris2-models';
 import { getDb, increment } from './utils/firebase';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
@@ -34,16 +35,26 @@ export const onCreateChallengeAttempt = functions.firestore
       );
       await challengeRef.update(updateChallenge);
 
+      const userDocRef = getDb().doc(getUserPath(userId));
+      const userDoc = await userDocRef.get();
+      const userData = userDoc.data() as IUser;
+
       // apply update using current database instance
       await getDb()
         .doc(snapshot.ref.path)
-        .update({
-          readOnly: {
-            ...getDefaultEntityReadOnlyProperties(),
-            userId,
-          },
-          created: true,
-        } as Pick<IChallengeAttempt, 'readOnly' | 'created'>);
+        .update(
+          removeUndefinedValues({
+            readOnly: {
+              ...getDefaultEntityReadOnlyProperties(),
+              userId,
+              user: {
+                nickname: userData.readOnly?.nickname,
+                selectedCharacterId: userData.selectedCharacterId,
+              },
+            },
+            created: true,
+          } as Pick<IChallengeAttempt, 'readOnly' | 'created'>)
+        );
 
       const topAttempts = await getDb()
         .collection('challengeAttempts')
@@ -56,9 +67,6 @@ export const onCreateChallengeAttempt = functions.firestore
         (topAttempts.docs[0].id === snapshot.id &&
           (topAttempts.docs[1].data() as IChallengeAttempt).userId !== userId)
       ) {
-        const userDocRef = getDb().doc(getUserPath(userId));
-        const userDoc = await userDocRef.get();
-        const userData = userDoc.data() as IUser;
         const challengeDoc = await challengeRef.get();
         const challengeData = challengeDoc.data() as IChallenge;
         postSimpleWebhook(

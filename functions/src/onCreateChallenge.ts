@@ -1,4 +1,5 @@
 import * as functions from 'firebase-functions';
+import { removeUndefinedValues } from 'infinitris2-models';
 import {
   getUserPath,
   IChallenge,
@@ -41,20 +42,22 @@ export const onCreateChallenge = functions.firestore
       // apply update using current database instance
       await getDb()
         .doc(snapshot.ref.path)
-        .update({
-          readOnly: {
-            ...getDefaultEntityReadOnlyProperties(),
-            userId,
-            numRatings: 0,
-            rating: 0,
-            summedRating: 0,
-            numAttempts: 0,
-            user: {
-              nickname: userData.readOnly?.nickname,
+        .update(
+          removeUndefinedValues({
+            readOnly: {
+              ...getDefaultEntityReadOnlyProperties(),
+              userId,
+              numRatings: 0,
+              rating: 0,
+              summedRating: 0,
+              numAttempts: 0,
+              user: {
+                nickname: userData.readOnly?.nickname,
+              },
             },
-          },
-          created: true,
-        } as Pick<IChallenge, 'readOnly' | 'created'>);
+            created: true,
+          } as Pick<IChallenge, 'readOnly' | 'created'>)
+        );
 
       if (!challenge.isOfficial && !challenge.isTemplate) {
         await postSimpleWebhook(

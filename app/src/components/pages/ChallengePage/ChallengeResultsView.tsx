@@ -15,7 +15,6 @@ import {
   IChallengeAttempt,
   IIngameChallengeAttempt,
   IPlayer,
-  IScoreboardEntry,
 } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -35,10 +34,7 @@ export interface ChallengeResultsViewProps {
   onContinue(): void;
   onRetry(): void;
   onViewReplay(): void;
-  viewOtherReplay(
-    attempt: IChallengeAttempt,
-    scoreboardEntry: IScoreboardEntry | undefined
-  ): void;
+  viewOtherReplay(attempt: IChallengeAttempt): void;
 }
 
 export default function ChallengeResultsView({

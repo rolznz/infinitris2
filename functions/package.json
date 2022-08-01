@@ -6,7 +6,7 @@
     "build": "tsc",
     "build-webpack": "yarn lint && webpack",
     "serve": "firebase functions:config:get > .runtimeconfig.json && yarn build && firebase emulators:start --only firestore,functions,auth,pubsub",
-    "serve:functions": "firebase functions:config:get > .runtimeconfig.json && yarn build && firebase emulators:start --only functions",
+    "serve:functions": "FUNCTIONS_EMULATOR_TIMEOUT_SECONDS=600 firebase functions:config:get > .runtimeconfig.json && yarn build && firebase emulators:start --only functions",
     "shell": "yarn build && firebase functions:shell",
     "start": "yarn shell",
     "deploy:characters": "GOOGLE_APPLICATION_CREDENTIALS=\"infinitris2-admin-service-key.json\" ts-node src/character-uploader.ts",

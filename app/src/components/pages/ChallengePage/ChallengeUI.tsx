@@ -9,7 +9,6 @@ import {
   IIngameChallengeAttempt,
   IPlayer,
   IChallengeAttempt,
-  IScoreboardEntry,
 } from 'infinitris2-models';
 import React from 'react';
 
@@ -22,14 +21,10 @@ type ChallengeUIProps = {
   onContinue(): void;
   viewReplay(): void;
   startChallenge(): void;
-  viewOtherReplay(
-    attempt: IChallengeAttempt,
-    scoreboardEntry: IScoreboardEntry | undefined
-  ): void;
+  viewOtherReplay(attempt: IChallengeAttempt): void;
   isTest: boolean;
   player: IPlayer;
   isViewingReplay: boolean;
-  replayScoreboardEntry: IScoreboardEntry | undefined;
   replayAttempt: IChallengeAttempt | IIngameChallengeAttempt | undefined;
 };
 
@@ -41,7 +36,6 @@ export function ChallengeUI({
   challengeId,
   player,
   isViewingReplay,
-  replayScoreboardEntry,
   replayAttempt,
   onContinue,
   retryChallenge,
@@ -62,7 +56,6 @@ export function ChallengeUI({
           <ChallengeReplayView
             challenge={challenge}
             onReceivedInput={startChallenge}
-            replayScoreboardEntry={replayScoreboardEntry}
             replayAttempt={replayAttempt}
           />
         ) : (

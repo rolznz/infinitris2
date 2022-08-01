@@ -7,7 +7,6 @@ import {
   getChallengePath,
   charactersPath,
   ICharacter,
-  IScoreboardEntry,
   stringToHex,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
@@ -129,9 +128,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const [hasLaunched, setLaunched] = React.useState(false);
   const [hasContinued, setContinued] = React.useState(false);
   const [isViewingReplay, setViewingReplay] = React.useState(false);
-  const [replayScoreboardEntry, setReplayScoreboardEntry] = React.useState<
-    IScoreboardEntry | undefined
-  >(undefined);
   const [replayAttempt, setReplayAttempt] = React.useState<
     IChallengeAttempt | IIngameChallengeAttempt | undefined
   >(undefined);
@@ -182,7 +178,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
 
   const viewReplay = React.useCallback(() => {
     if (challengeAttempt) {
-      setReplayScoreboardEntry(undefined);
       recordedChallengeAttempt = challengeAttempt;
       challengeClient!.recording = challengeAttempt.recording;
       setReplayAttempt(challengeAttempt);
@@ -191,28 +186,26 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   }, [challengeAttempt, handleRetry]);
 
   const viewOtherReplay = React.useCallback(
-    (
-      otherAttempt: IChallengeAttempt,
-      scoreboardEntry: IScoreboardEntry | undefined
-    ) => {
-      setReplayScoreboardEntry(scoreboardEntry);
+    (otherAttempt: IChallengeAttempt) => {
       setReplayAttempt(otherAttempt);
       challengeClient!.recording = otherAttempt.recording;
-      const replayScoreboardEntryCharacter: ICharacter | undefined =
-        scoreboardEntry &&
-        allCharacters.data
-          ?.find((doc) => doc.id === scoreboardEntry?.characterId)
-          ?.data();
+      const replayCharacter: ICharacter | undefined = allCharacters.data
+        ?.find(
+          (doc) => doc.id === otherAttempt.readOnly?.user?.selectedCharacterId
+        )
+        ?.data();
       challengeClient!.launchOptions.player = {
         ...challengeClient!.launchOptions.player,
-        characterId: scoreboardEntry?.characterId || DEFAULT_CHARACTER_ID,
-        nickname: scoreboardEntry?.nickname || 'Unknown Player',
-        color: replayScoreboardEntryCharacter?.color
-          ? stringToHex(replayScoreboardEntryCharacter?.color)
+        characterId:
+          otherAttempt.readOnly?.user?.selectedCharacterId ||
+          DEFAULT_CHARACTER_ID,
+        nickname: otherAttempt.readOnly?.user?.nickname || 'Unknown Player',
+        color: replayCharacter?.color
+          ? stringToHex(replayCharacter?.color)
           : undefined,
-        patternFilename: replayScoreboardEntryCharacter?.patternFilename,
+        patternFilename: replayCharacter?.patternFilename,
         isPremium: true,
-        isNicknameVerified: !!scoreboardEntry?.nickname?.length,
+        isNicknameVerified: !!otherAttempt.readOnly?.user?.nickname?.length,
       };
       handleRetry(true);
     },
@@ -432,7 +425,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           challenge={challenge}
           challengeId={challengeId}
           player={simulation?.humanPlayers[0]}
-          replayScoreboardEntry={replayScoreboardEntry}
           retryChallenge={retryChallenge}
           viewReplay={viewReplay}
           viewOtherReplay={viewOtherReplay}

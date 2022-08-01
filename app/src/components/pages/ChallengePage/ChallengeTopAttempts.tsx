@@ -4,18 +4,12 @@ import Typography from '@mui/material/Typography';
 import { limit, orderBy, where } from 'firebase/firestore';
 import {
   challengeAttemptsPath,
-  getScoreboardEntryPath,
   IChallenge,
   IChallengeAttempt,
-  IScoreboardEntry,
 } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-import {
-  useCollection,
-  UseCollectionOptions,
-  useDocument,
-} from 'swr-firestore';
+import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { ReactComponent as StopwatchIcon } from '@/icons/stopwatch.svg';
 import { ReactComponent as PlayIcon } from '@/icons/play.svg';
 import useAuthStore from '@/state/AuthStore';
@@ -25,18 +19,21 @@ import {
   borderRadiuses,
   boxShadows,
   dropShadows,
+  textShadows,
   zIndexes,
 } from '@/theme/theme';
 import { PlacingStar } from '@/components/pages/Characters/PlacingStar';
 import isMobile from '@/utils/isMobile';
+import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 
 type ChallengeTopAttemptsProps = {
   challengeId: string;
   challenge: IChallenge;
-  viewReplay(
-    attempt: IChallengeAttempt,
-    scoreboardEntry: IScoreboardEntry | undefined
-  ): void;
+  viewReplay(attempt: IChallengeAttempt): void;
+};
+
+const noLimitSx: SxProps = {
+  overflowX: 'auto',
 };
 
 export function ChallengeTopAttempts(props: ChallengeTopAttemptsProps) {
@@ -52,18 +49,24 @@ export function ChallengeTopAttempts(props: ChallengeTopAttemptsProps) {
 }
 function ChallengeTopAttemptsInternal({
   challengeId,
+  challenge,
   viewReplay,
 }: ChallengeTopAttemptsProps) {
   const userId = useAuthStore((store) => store.user?.uid);
+  const [hasLimit, setHasLimit] = React.useState(true);
+  const toggleLimit = React.useCallback(
+    () => setHasLimit((hasLimit) => !hasLimit),
+    []
+  );
   const useCollectionOptions: UseCollectionOptions = React.useMemo(
     () => ({
       constraints: [
         where('challengeId', '==', challengeId),
         orderBy('stats.timeTakenMs', 'asc'),
-        limit(3),
+        ...(hasLimit ? [limit(3)] : []),
       ],
     }),
-    [challengeId]
+    [challengeId, hasLimit]
   );
 
   const { data: attemptDocs } = useCollection<IChallengeAttempt>(
@@ -89,16 +92,42 @@ function ChallengeTopAttemptsInternal({
           />
         </Typography>
       )}
-      <FlexBox flexDirection="row" gap={2} flexWrap="wrap">
+      <FlexBox
+        flexDirection="row"
+        gap={2}
+        p={2}
+        maxWidth={500}
+        flexWrap="nowrap"
+        justifyContent={hasLimit ? undefined : 'flex-start'}
+        sx={hasLimit ? undefined : noLimitSx}
+      >
         {attemptDocs?.length ? (
-          attemptDocs.map((attempt, index) => (
-            <ChallengeTopAttempt
-              key={attempt.id}
-              placing={index + 1}
-              attempt={attempt.data()}
-              viewReplay={viewReplay}
-            />
-          ))
+          <>
+            {attemptDocs.map((attempt, index) => (
+              <ChallengeTopAttempt
+                key={attempt.id}
+                placing={index + 1}
+                attempt={attempt.data()}
+                viewReplay={viewReplay}
+              />
+            ))}
+            {hasLimit &&
+              challenge.readOnly?.numAttempts &&
+              challenge.readOnly.numAttempts > 3 && (
+                <FlexBox sx={attemptSx} onClick={toggleLimit}>
+                  <FlexBox p={2}>
+                    <Typography
+                      variant="h6"
+                      textAlign="center"
+                      sx={{ textShadow: textShadows.base }}
+                    >
+                      {'+'}
+                      {challenge.readOnly.numAttempts - 3}
+                    </Typography>
+                  </FlexBox>
+                </FlexBox>
+              )}
+          </>
         ) : (
           <Typography variant="body2" textAlign="center">
             <FormattedMessage
@@ -129,13 +158,9 @@ function ChallengeTopAttempt({
   attempt,
   viewReplay,
 }: ChallengeTopAttemptProps) {
-  // FIXME: this is very inefficient. Challenges should be updated to include creator nickname
-  const { data: scoreboardEntry } = useDocument<IScoreboardEntry>(
-    getScoreboardEntryPath(attempt.userId)
-  );
   const viewReplayForThisAttempt = React.useCallback(
-    () => viewReplay(attempt, scoreboardEntry?.data()),
-    [viewReplay, attempt, scoreboardEntry]
+    () => viewReplay(attempt),
+    [viewReplay, attempt]
   );
   return (
     <FlexBox
@@ -157,7 +182,9 @@ function ChallengeTopAttempt({
       </FlexBox>
       <FlexBox position="relative" justifyContent="flex-start" mb={-1}>
         <CharacterImage
-          characterId={scoreboardEntry?.data()?.characterId || '0'}
+          characterId={
+            attempt?.readOnly?.user?.selectedCharacterId || DEFAULT_CHARACTER_ID
+          }
           width={isMobile() ? 64 : 96}
         />
         <PlacingStar

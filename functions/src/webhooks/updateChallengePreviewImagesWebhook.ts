@@ -10,7 +10,6 @@ import {
   IChallenge,
   IUser,
   objectToDotNotation,
-  RecursiveKeyOf,
 } from 'infinitris2-models';
 import { getDb } from '../utils/firebase';
 
@@ -53,7 +52,7 @@ export const updateChallengePreviewImagesWebhook = async (
                 },
               },
             },
-            ['readOnly.user.nickname' as RecursiveKeyOf<Required<IChallenge>>]
+            ['readOnly.user.nickname']
           );
           await getDb()
             .doc(getChallengePath(challengeDoc.id))

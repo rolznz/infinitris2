@@ -7,6 +7,7 @@ import IEntity, {
   Updatable,
 } from './IEntity';
 import { WorldType, WorldVariation } from '@models/WorldType';
+import IUser from '@models/IUser';
 
 export interface IRateable {
   readonly numRatings: number;
@@ -18,9 +19,7 @@ export interface IChallengeReadOnlyProperties
     IRateable {
   readonly numAttempts: number;
   readonly thumbnail?: string;
-  readonly user?: {
-    nickname: string;
-  };
+  readonly user?: Pick<IUser['readOnly'], 'nickname'>;
 }
 
 export type CreatableChallenge = Creatable<IChallenge>;

@@ -10,6 +10,7 @@ import { buyCoinsWebhook } from './buyCoinsWebhook';
 import { publicDataWebhook } from './publicDataWebhook';
 import { testWebhook } from './testWebhook';
 import { updateChallengePreviewImagesWebhook } from './updateChallengePreviewImagesWebhook';
+import { updateChallengeAttemptsWebhook } from './updateChallengeAttemptsWebhook';
 
 const corsHandler = cors({ origin: true });
 
@@ -31,6 +32,8 @@ app.post(
   '/v1/update-challenge-preview-images',
   updateChallengePreviewImagesWebhook
 );
+// TODO: remove - too slow to execute on all challenges
+app.post('/v1/update-challenge-attempts', updateChallengeAttemptsWebhook);
 
 // expose for testing only
 export const webhooksExpressApp = app;

@@ -3,12 +3,7 @@ import useContinueButton from '@/components/hooks/useContinueButton';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 import { getOfficialChallengeTitle } from '@/components/pages/StoryModePage/StoryModePage';
 import { borderRadiuses, zIndexes } from '@/theme/theme';
-import { Box, Typography } from '@mui/material';
-import {
-  IChallenge,
-  IIngameChallengeAttempt,
-  IScoreboardEntry,
-} from 'infinitris2-models';
+import { IChallenge, IIngameChallengeAttempt } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 //import { useUser } from '../../../state/UserStore';
@@ -16,18 +11,17 @@ import useTrue from '../../hooks/useTrue';
 import FlexBox from '../../ui/FlexBox';
 import { ReactComponent as StopwatchIcon } from '@/icons/stopwatch.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
+import Typography from '@mui/material/Typography';
 
 export interface ChallengeReplayViewProps {
   onReceivedInput(): void;
   challenge: IChallenge;
-  replayScoreboardEntry: IScoreboardEntry | undefined;
   replayAttempt: IIngameChallengeAttempt | undefined;
 }
 
 export default function ChallengeReplayView({
   onReceivedInput,
   challenge,
-  replayScoreboardEntry,
   replayAttempt,
 }: ChallengeReplayViewProps) {
   //const user = useUser();
@@ -79,11 +73,13 @@ export default function ChallengeReplayView({
               </Typography>
             )}
           </FlexBox>
-          {replayScoreboardEntry && (
+          {replayAttempt && (
             <FlexBox gap={1}>
               <FlexBox my={-2}>
                 <CharacterImage
-                  characterId={replayScoreboardEntry?.characterId || '0'}
+                  characterId={
+                    replayAttempt.readOnly?.user?.selectedCharacterId || '0'
+                  }
                   width={128}
                 />
               </FlexBox>
@@ -93,14 +89,15 @@ export default function ChallengeReplayView({
                   description="Challenge info - replay by"
                   values={{
                     nickname:
-                      replayScoreboardEntry?.nickname || 'Unnamed Player',
+                      replayAttempt.readOnly?.user?.nickname ||
+                      'Unnamed Player',
                   }}
                 />
               </Typography>
             </FlexBox>
           )}
 
-          <Box pt={2}>{continueButton}</Box>
+          <FlexBox pt={2}>{continueButton}</FlexBox>
         </FlexBox>
       </EndRoundDisplayOverlay>
     </FlexBox>

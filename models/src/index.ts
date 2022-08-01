@@ -78,6 +78,7 @@ export * from './util/rotateColor';
 export * from './util/simpleRandom';
 export * from './util/simpleStringHash';
 export * from './util/wrap';
+export * from './util/removeUndefinedValues';
 export * from './UpdateServerRequest';
 export * from './CreateUserRequest';
 export * from './IPayment';

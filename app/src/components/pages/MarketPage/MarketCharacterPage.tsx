@@ -86,6 +86,16 @@ export default function MarketPage() {
                         description: 'Character Purchased toast message',
                       })
                     );
+                  } else {
+                    enqueueSnackbar(
+                      intl.formatMessage({
+                        defaultMessage: 'Purchase failed. Please try again.',
+                        description: 'Purchase failed toast message',
+                      }),
+                      {
+                        variant: 'error',
+                      }
+                    );
                   }
                 } else {
                   enqueueSnackbar(

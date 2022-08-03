@@ -9,11 +9,11 @@ import { useEffect } from 'react';
 import useDarkMode from '@/components/hooks/useDarkMode';
 import CssBaseline from '@mui/material/CssBaseline';
 import FlexBox from '@/components/ui/FlexBox';
-import { SnackbarProvider } from 'notistack';
 import { darkTheme } from './theme/darkTheme';
 import { lightTheme } from './theme/lightTheme';
-import { fontFamily } from 'infinitris2-models';
-import { borderRadiuses } from '@/theme/theme';
+
+import { RateLimitDetector } from '@/components/RateLimitDetector';
+import { CustomSnackbarProvider } from '@/components/ui/CustomSnackbarProvider';
 
 interface AppProps {}
 
@@ -29,6 +29,8 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
     setAppTheme({ ...nextTheme });
   }, [nextTheme]);
 
+  console.log('Render app');
+
   return (
     <>
       <CssBaseline />
@@ -36,20 +38,10 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
         <StyledEngineProvider injectFirst>
           <ThemeProvider theme={appTheme}>
             <FlexBox className="App" width="100%">
-              <SnackbarProvider
-                maxSnack={3}
-                variant="success"
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'center',
-                }}
-                style={{
-                  fontFamily,
-                  borderRadius: borderRadiuses.full,
-                }}
-              >
+              <CustomSnackbarProvider>
+                <RateLimitDetector />
                 {children}
-              </SnackbarProvider>
+              </CustomSnackbarProvider>
             </FlexBox>
           </ThemeProvider>
         </StyledEngineProvider>

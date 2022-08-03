@@ -78,14 +78,13 @@ export async function purchaseCharacter(characterId: string): Promise<boolean> {
     entityId: characterId,
     userId: authStoreUserId,
   };
+  const purchaseId = getPurchasePath(
+    'characters',
+    characterId,
+    authStoreUserId
+  );
   try {
-    await setDoc(
-      doc(
-        getFirestore(),
-        getPurchasePath('characters', characterId, authStoreUserId)
-      ),
-      purchase
-    );
+    await setDoc(doc(getFirestore(), purchaseId), purchase);
     return true;
   } catch (error) {
     console.error('Failed to purchase character', error);

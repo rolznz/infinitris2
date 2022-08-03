@@ -41,7 +41,7 @@ service cloud.firestore {
     }
     function rateLimitHit() {
       let user = get(/databases/$(database)/documents/users/$(request.auth.uid));
-      return user.data.readOnly.writeRate > 1 && request.time.seconds() - user.data.readOnly.lastWriteTimestamp.seconds() <= user.data.readOnly.writeRate * 5;
+      return user.data.readOnly.writeRate > 1 && request.time.toMillis() - user.data.readOnly.lastWriteTimestamp.toMillis() <= user.data.readOnly.writeRate * 5000;
     }
 
     function baseRequestValid() {

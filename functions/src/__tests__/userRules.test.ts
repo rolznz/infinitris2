@@ -239,10 +239,10 @@ describe('Users Rules', () => {
       ...dummyData.existingUser,
       readOnly: {
         ...dummyData.existingUser.readOnly,
-        // user should not be able to write until more than 1.2 * 5 seconds has passed since the last write
-        writeRate: 1.2,
+        // user should not be able to write until more than 2 * 5 seconds has passed since the last write
+        writeRate: 2.0,
         lastWriteTimestamp: firestore.Timestamp.fromMillis(
-          firestore.Timestamp.now().toMillis() - 1.3 * 5000
+          firestore.Timestamp.now().toMillis() - 2.0 * 5000
         ),
       },
     };
@@ -257,6 +257,32 @@ describe('Users Rules', () => {
     await expect(
       db.doc(dummyData.user1Path).update(dummyData.updatableUser)
     ).toAllow();
+  });
+
+  test('should deny updating an entity when write rate has been hit and last write was not old enough', async () => {
+    const existingUser: IUser = {
+      ...dummyData.existingUser,
+      readOnly: {
+        ...dummyData.existingUser.readOnly,
+        // user should not be able to write until more than 2 * 5 seconds has passed since the last write
+        // note: some time passes from now until the update call happens below, so it's not 100% accurate
+        writeRate: 2.0,
+        lastWriteTimestamp: firestore.Timestamp.fromMillis(
+          firestore.Timestamp.now().toMillis() - 1.9 * 5000
+        ),
+      },
+    };
+
+    const { db } = await setup(
+      { uid: dummyData.userId1 },
+      {
+        [dummyData.user1Path]: existingUser,
+      }
+    );
+
+    await expect(
+      db.doc(dummyData.user1Path).update(dummyData.updatableUser)
+    ).toDeny();
   });
 
   test('should not allow updating an entity when rate limit has been hit', async () => {

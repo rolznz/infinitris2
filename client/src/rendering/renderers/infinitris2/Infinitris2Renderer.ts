@@ -46,6 +46,13 @@ const particleDivisions = 4;
 const numPatternDivisions = 4;
 let averageRenderFps: number = 0;
 
+export type CellConnection = {
+  row: number;
+  column: number;
+  dx: number;
+  dy: number;
+};
+
 interface IBlockContainer {
   originalBlock: IBlock;
 
@@ -1320,12 +1327,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
         let i = 0;
         for (let r = 0; r < block.initialLayout.length; r++) {
           for (let c = 0; c < block.initialLayout.length; c++) {
-            const connections: { row: number; column: number }[] = [];
+            const connections: CellConnection[] = [];
             for (let dy = -1; dy <= 1; dy++) {
               for (let dx = -1; dx <= 1; dx++) {
                 if (dy !== 0 || dx !== 0) {
                   if (block.initialLayout[r + dy]?.[c + dx]) {
-                    connections.push({ column: c + dx, row: r + dy });
+                    connections.push({ column: c + dx, row: r + dy, dx, dy });
                   }
                 }
               }
@@ -1439,7 +1446,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           return;
         }
 
-        const connections: { row: number; column: number }[] = [];
+        const connections: CellConnection[] = [];
         for (let r = -1; r <= 1; r++) {
           for (let c = -1; c <= 1; c++) {
             if (r !== 0 || c !== 0) {
@@ -1452,6 +1459,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
                 connections.push({
                   column: neighbour.column,
                   row: neighbour.row,
+                  dx: c,
+                  dy: r,
                 });
               }
             }
@@ -1506,7 +1515,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     isEmpty: boolean,
     color: number,
     patternFilename: string | undefined,
-    connections: { row: number; column: number }[],
+    connections: CellConnection[],
     behaviour?: ICellBehaviour,
     player?: IPlayer
   ) {
@@ -1516,10 +1525,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     let { patternSprite, patternSpriteFilename } = renderableObject;
     if (behaviour && !player) {
-      const oldPatternSpriteFilename = patternSpriteFilename;
+      //const oldPatternSpriteFilename = patternSpriteFilename;
       const newPatternSpriteFilename = getCellBehaviourImageFilename(
         behaviour,
-        isEmpty,
+        this._worldType,
         this._worldVariation,
         this._challengeEditorEnabled
       );
@@ -1535,7 +1544,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
           container.removeChild(patternSprite);
           renderableObject.patternSprite = undefined;
         }
-        patternSprite = renderCellBehaviour(newPatternSpriteFilename);
+        patternSprite = renderCellBehaviour(
+          newPatternSpriteFilename,
+          connections,
+          behaviour
+        );
         if (patternSprite) {
           container.addChild(patternSprite);
           renderableObject.patternSprite = patternSprite;

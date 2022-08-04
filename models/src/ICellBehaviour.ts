@@ -13,6 +13,7 @@ export default interface ICellBehaviour {
   getImageFilename?(): string | undefined;
   hasWorldImage?(): boolean;
   hasWorldVariationImage?(): boolean;
+  hasTileset?(): boolean;
   color?: number;
   alpha: number;
   isPassable: boolean;

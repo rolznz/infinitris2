@@ -54,4 +54,7 @@ export default class NormalCellBehaviour implements ICellBehaviour {
   hasWorldVariationImage() {
     return true;
   }
+  hasTileset() {
+    return true;
+  }
 }

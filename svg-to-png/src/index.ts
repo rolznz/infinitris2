@@ -46,7 +46,11 @@ for (const assetDirectory of childAssetDirectories) {
       const outputFilename = withoutExt + chosenExt;
       const sharpImage = sharp(getPath(filename));
       if (process.env.OUTPUT_SIZE) {
-        sharpImage.resize(parseInt(process.env.OUTPUT_SIZE));
+        // TODO: consider tilesets that aren't 7x7 tiles
+        sharpImage.resize(
+          parseInt(process.env.OUTPUT_SIZE) *
+            (withoutExt.indexOf('tileset') > 0 ? 7 : 1)
+        );
       }
       await sharpImage.toFile(getPath(outputFilename));
       // generate alternate hues

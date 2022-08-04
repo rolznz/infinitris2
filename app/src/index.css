@@ -50,3 +50,13 @@ body > canvas {
 :not(.keep-underline).MuiInput-root:after {
   content: none;
 }
+
+/* Custom scrollbar - webkit only */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+  background-color: #004;
+}
+::-webkit-scrollbar-thumb {
+  background: #fff4;
+}

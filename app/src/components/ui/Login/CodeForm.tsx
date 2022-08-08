@@ -153,6 +153,11 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
                 preferredInputMethod,
                 completedOfficialChallengeIds,
                 unlockedFeatures,
+                blockShadowType,
+                gridLineType,
+                showFaces,
+                showNicknames,
+                showPatterns,
               } = localUser;
               await updateDoc(
                 doc(getFirestore(), getUserPath(credential.user.uid)),
@@ -170,6 +175,11 @@ export function CodeForm({ onSuccess }: CodeFormProps) {
                   preferredInputMethod,
                   completedOfficialChallengeIds,
                   unlockedFeatures,
+                  blockShadowType,
+                  gridLineType,
+                  showFaces,
+                  showNicknames,
+                  showPatterns,
                 })
               );
             } catch (error) {

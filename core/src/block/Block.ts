@@ -266,6 +266,22 @@ export default class Block implements IBlock {
   }
 
   /**
+   * Returns the lowest possible placement cells
+   */
+  getPlacementCells() {
+    let cells = this._cells;
+    let options: BlockCanMoveOptions = {
+      allowMistakes: false,
+    };
+    for (let y = 0; ; y++) {
+      if (!this.canMove(0, y, 0, options) || !options.cells) {
+        return cells;
+      }
+      cells = options.cells;
+    }
+  }
+
+  /**
    * Determines whether the block can move to a new position.
    *
    * @param dx the delta of the x position (column).

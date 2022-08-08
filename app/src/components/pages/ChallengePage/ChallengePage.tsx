@@ -15,7 +15,7 @@ import React from 'react';
 import { useCollection, useDocument } from 'swr-firestore';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
-import { useUser } from '@/components/hooks/useUser';
+import { useUser, useUserRendererSettings } from '@/components/hooks/useUser';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 import { GameUI } from '@/components/game/GameUI';
@@ -98,6 +98,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const clientVersion = client?.getVersion();
   const restartClient = client?.restartClient;
   const user = useUser();
+  const rendererSettings = useUserRendererSettings(user);
   const userId = useAuthStore((store) => store.user?.uid);
 
   const isTest = isTestChallenge(challengeId);
@@ -106,7 +107,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const history = useHistory();
   usePwaRedirect();
   useReleaseClientOnExitPage(false);
-  //const requiresRedirect = useForcedRedirect(true, challengeId, !isTest);
 
   const { data: syncedChallenge } = useDocument<IChallenge>(
     !isTest ? getChallengePath(challengeId) : null
@@ -342,6 +342,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           preferredInputMethod,
           controls_keyboard,
           player,
+          rendererSettings,
           allCharacters: allCharacters?.data?.map((document) =>
             document.data()
           ),
@@ -396,6 +397,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     userId,
     clientVersion,
     handleRetry,
+    rendererSettings,
   ]);
 
   if (!hasLaunched || !challenge || !simulation) {

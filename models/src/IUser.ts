@@ -6,6 +6,8 @@ import { AppTheme } from './AppTheme';
 import { RendererQuality } from './RendererQuality';
 import { RendererType } from './RendererType';
 import { WorldType } from '@models/WorldType';
+import { BlockShadowType, GridLineType } from '@models/IGrid';
+import { RendererSettings } from '@models/IClientApi';
 
 export interface IUserReadOnlyProperties extends IEntityReadOnlyProperties {
   readonly coins: number;
@@ -29,7 +31,7 @@ export interface WithControls {
 
 export type UnlockableFeature = 'playTypePicker' | WorldType;
 
-export default interface IUser extends IEntity, WithControls {
+export default interface IUser extends IEntity, WithControls, RendererSettings {
   readonly readOnly: IUserReadOnlyProperties;
   readonly locale?: string;
   readonly preferredInputMethod?: InputMethod;
@@ -38,8 +40,6 @@ export default interface IUser extends IEntity, WithControls {
   readonly sfxOn?: boolean;
   readonly musicVolume?: number;
   readonly sfxVolume?: number;
-  readonly rendererQuality?: RendererQuality;
-  readonly rendererType?: RendererType;
   readonly selectedCharacterId?: string;
   readonly unlockedFeatures?: UnlockableFeature[];
   readonly completedOfficialChallengeIds?: string[];

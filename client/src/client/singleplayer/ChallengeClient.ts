@@ -340,7 +340,7 @@ export default class ChallengeClient
   private async _create(challenge: IChallenge) {
     this._challenge = challenge;
     this._renderer =
-      this._launchOptions.rendererType === 'minimal'
+      this._launchOptions.rendererSettings?.rendererType === 'minimal'
         ? new MinimalRenderer(this._clientApiConfig)
         : new Infinitris2Renderer(
             this._clientApiConfig,
@@ -350,7 +350,12 @@ export default class ChallengeClient
             challenge.worldType,
             challenge.worldVariation,
             undefined,
-            false
+            false,
+            this._launchOptions.rendererSettings?.gridLineType,
+            this._launchOptions.rendererSettings?.blockShadowType,
+            this._launchOptions.rendererSettings?.showFaces,
+            this._launchOptions.rendererSettings?.showPatterns,
+            this._launchOptions.rendererSettings?.showNicknames
           );
     if (this._editor) {
       this._editor.renderer = this._renderer;
@@ -406,7 +411,7 @@ export default class ChallengeClient
     this._renderer.challengeEditorEnabled = this._editor?.isEditing || false;
     this._renderer.gridLineType = this._editor?.isEditing
       ? 'editor'
-      : this._launchOptions.gridLineType;
+      : this._launchOptions.rendererSettings?.gridLineType;
 
     const simulation = (this._simulation = new Simulation(
       grid,

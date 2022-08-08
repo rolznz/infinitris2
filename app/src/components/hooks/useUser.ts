@@ -1,9 +1,10 @@
 import { useDocument, UseDocumentOptions } from 'swr-firestore';
-import { getUserPath, IUser } from 'infinitris2-models';
+import { getUserPath, IUser, RendererSettings } from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
 import useLocalUserStore, {
   LocalUserWithoutUserProps,
 } from '../../state/LocalUserStore';
+import React from 'react';
 
 type CombinedUser = LocalUserWithoutUserProps & IUser & { id?: string };
 
@@ -25,4 +26,38 @@ export function useUser(): CombinedUser {
     id: user?.id,
     ...(user?.data() || ({} as IUser)),
   };
+}
+
+export function useUserRendererSettings(user: CombinedUser): RendererSettings {
+  const {
+    rendererQuality,
+    rendererType,
+    gridLineType,
+    blockShadowType,
+    showFaces,
+    showPatterns,
+    showNicknames,
+  } = user;
+
+  const rendererSettings: RendererSettings = React.useMemo(
+    () => ({
+      rendererQuality,
+      rendererType,
+      gridLineType,
+      blockShadowType,
+      showFaces,
+      showPatterns,
+      showNicknames,
+    }),
+    [
+      blockShadowType,
+      gridLineType,
+      rendererQuality,
+      rendererType,
+      showFaces,
+      showNicknames,
+      showPatterns,
+    ]
+  );
+  return rendererSettings;
 }

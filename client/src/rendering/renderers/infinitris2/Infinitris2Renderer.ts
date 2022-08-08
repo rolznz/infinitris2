@@ -13,7 +13,7 @@ import { GridFloor } from './GridFloor';
 import { FallbackLeaderboard } from './FallbackLeaderboard';
 import { SpawnDelayIndicator } from './SpawnDelayIndicator';
 //import { ScoreChangeIndicator } from './ScoreChangeIndicator';
-import IGrid, { GridLineType } from '@models/IGrid';
+import IGrid, { GridLineType, BlockShadowType } from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import { RendererQuality } from '@models/RendererQuality';
@@ -36,6 +36,7 @@ import {
 } from '@src/rendering/renderers/infinitris2/renderCellBehaviour';
 import RockBehaviour from '@core/grid/cell/behaviours/RockBehaviour';
 import { GestureIndicator } from '@src/rendering/renderers/infinitris2/GestureIndicator';
+import { checkMistake } from '@core/block/checkMistake';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -156,6 +157,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _isDemo: boolean;
   private _challengeEditorGuide: IRenderableEntity<PIXI.Graphics> | undefined;
   private _gestureIndicator: GestureIndicator;
+  private _blockShadowType: BlockShadowType;
+  private _showFaces: boolean;
+  private _showPatterns: boolean;
+  private _showNicknames: boolean;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -166,7 +171,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
     worldVariation: WorldVariation = '0',
     useFallbackUI = false,
     isDemo = false,
-    gridLineType?: GridLineType
+    gridLineType?: GridLineType,
+    blockShadowType: BlockShadowType = 'full',
+    showFaces = true,
+    showPatterns = true,
+    showNicknames = true
   ) {
     super(clientApiConfig, undefined, rendererQuality, isDemo);
     this._preferredInputMethod = preferredInputMethod;
@@ -175,12 +184,16 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._worldVariation = worldVariation;
     this._isDemo = isDemo;
     this._gridLineType = gridLineType;
+    this._showFaces = showFaces;
+    this._showPatterns = showPatterns;
+    this._showNicknames = showNicknames;
     this._gestureIndicator = new GestureIndicator(
       this._app,
       this._preferredInputMethod,
       controls
     );
 
+    this._blockShadowType = blockShadowType;
     this._oldOverflowStyle = document.body.style.overflow;
 
     document.body.style.overflow = 'none';
@@ -738,7 +751,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._players[player.id] = playerContainer;
     this._renderPlayer(player);
 
-    if (player.characterId) {
+    if (player.characterId && this._showFaces) {
       const faceUrl = this._getFaceUrl(player.characterId);
       if (!this._app.loader.resources[faceUrl]) {
         this._app.loader.add(faceUrl, () => {
@@ -748,7 +761,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         });
       }
     }
-    if (player.patternFilename) {
+    if (player.patternFilename && this._showPatterns) {
       const patternImageUrl = this._getPatternUrl(player.patternFilename);
       if (!this._app.loader.resources[patternImageUrl]) {
         this._app.loader.add(patternImageUrl, () => {
@@ -787,7 +800,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!playerContainer) {
       return;
     }
-    if (!this._isDemo) {
+    if (!this._isDemo && this._showNicknames) {
       this.renderCopies(
         playerContainer.nicknameText,
         1,
@@ -1663,12 +1676,25 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     const cellSize = this._cellSize;
-    const lowestCells = block.cells.filter(
-      (cell) =>
-        !block.cells.find(
-          (other) => other.column === cell.column && other.row > cell.row
-        )
-    );
+    const lowestCells = block.cells
+      .filter(
+        (cell) =>
+          !block.cells.find(
+            (other) =>
+              other.column === cell.column && other.row === cell.row + 1
+          )
+      )
+      // for the pentomino U shape (rotated as a C), only the top cell should be taken
+      // XX <---
+      // X
+      // XX
+      .filter(
+        (lowestCell, _, array) =>
+          !array.some(
+            (other) =>
+              other.column === lowestCell.column && other.row < lowestCell.row
+          )
+      );
 
     this._placementHelperShadowCells.forEach((shadow) => {
       shadow.children.forEach((child) => child.renderableObject.clear());
@@ -1689,14 +1715,24 @@ export default class Infinitris2Renderer extends BaseRenderer {
         }
       }
     }
+    // TODO: block.getPlacementCells() allows a different type of placement shadow rendering (just the final placement location)
+    const blockPlacementCells = block.getPlacementCells();
+    console.log(
+      'Placement cells: ' +
+        blockPlacementCells.map((c) => c.row + ', ' + c.column).join('   ')
+    );
+    const highestBlockPlacementCellRow = blockPlacementCells.find(
+      (c, i, a) => !a.some((o) => o.row < c.row)
+    )!.row;
     const isMistake =
       this._simulation.settings.mistakeDetection !== false &&
-      lowestCells.some((cell) => {
+      checkMistake(blockPlacementCells, this._simulation);
+    /*lowestCells.some((cell) => {
         const cellDistanceFromLowestRow = lowestBlockRow - cell.row;
         return this._simulation!.grid.cells[
           highestPlacementRow - cellDistanceFromLowestRow + 1
         ]?.[cell.column].isPassable;
-      });
+      });*/
 
     const isTower =
       this._simulation.settings.preventTowers !== false &&
@@ -1713,15 +1749,18 @@ export default class Infinitris2Renderer extends BaseRenderer {
     // render placement helper shadow - this could be done a lot more efficiently by rendering one line per column,
     // but for now it's easier to reuse the cell rendering code (for shadows)
     let cellIndex = 0;
-    lowestCells.forEach((cell, index) => {
-      const cellDistanceFromLowestRow = lowestBlockRow - cell.row;
+    lowestCells.forEach((lowestCell, index) => {
+      const cellDistanceFromLowestRow = lowestBlockRow - lowestCell.row;
       for (
-        let y = cell.row + 1;
-        //y <= highestPlacementRow - cellDistanceFromLowestRow;
+        let y =
+          this._blockShadowType === 'placement'
+            ? highestBlockPlacementCellRow
+            : lowestCell.row + 1;
         y < this._simulation!.grid.numRows;
         y++
       ) {
-        if (!this._simulation!.grid.cells[y][cell.column].isPassable) {
+        const cell = this._simulation!.grid.cells[y][lowestCell.column];
+        if (!cell.isPassable) {
           break;
         }
         let renderableCell: IRenderablePlacementHelperCell;
@@ -1729,65 +1768,74 @@ export default class Infinitris2Renderer extends BaseRenderer {
           renderableCell = this._placementHelperShadowCells[cellIndex];
         } else {
           renderableCell = {
-            cell,
+            cell: lowestCell,
             children: [],
             container: new PIXI.Container(),
           };
           this._world.addChild(renderableCell.container);
           this._placementHelperShadowCells.push(renderableCell);
         }
-        renderableCell.container.x = cell.column * cellSize;
+        renderableCell.container.x = lowestCell.column * cellSize;
         renderableCell.container.y = y * cellSize;
         renderableCell.container.zIndex = -1000;
         const opacity = displayInvalidPlacement ? 0.5 : 0.33;
         const isCause =
-          isTower || y > highestPlacementRow - cellDistanceFromLowestRow;
+          displayInvalidPlacement &&
+          (isTower ||
+            (y > highestPlacementRow - cellDistanceFromLowestRow &&
+              blockPlacementCells.indexOf(cell) < 0));
         const color = displayInvalidPlacement ? 0xff0000 : block.player.color;
-        this.renderCopies(
-          renderableCell,
-          opacity,
-          (graphics, shadowIndexWithDirection) => {
-            if (!this._simulation) {
-              return;
-            }
-            const shadowX = shadowIndexWithDirection * this._gridWidth;
-            graphics.x = shadowX;
-
-            graphics.clear();
-            const cellSize = this._cellSize;
-            // TODO: extract rendering of different behaviours
-            graphics.beginFill(color, Math.min(opacity, 1));
-            if (displayInvalidPlacement) {
-              if (!isCause) {
-                graphics.drawRect(
-                  cellSize * 0.1,
-                  cellSize * 0.1,
-                  cellSize * 0.8,
-                  cellSize * 0.8
-                );
-              } else {
-                /*graphics.drawRect(
-                  cellSize * 0.3,
-                  cellSize * 0.3,
-                  cellSize * 0.4,
-                  cellSize * 0.4
-                );*/
-                graphics.lineStyle(cellSize * 0.1, color, opacity);
-                graphics.moveTo(cellSize * 0.3, cellSize * 0.3);
-                graphics.lineTo(cellSize * 0.7, cellSize * 0.7);
-                graphics.moveTo(cellSize * 0.7, cellSize * 0.3);
-                graphics.lineTo(cellSize * 0.3, cellSize * 0.7);
+        if (
+          this._blockShadowType === 'full' ||
+          isCause ||
+          blockPlacementCells.indexOf(cell) >= 0
+        ) {
+          this.renderCopies(
+            renderableCell,
+            opacity,
+            (graphics, shadowIndexWithDirection) => {
+              if (!this._simulation) {
+                return;
               }
-            } else {
-              graphics.drawRect(0, 0, cellSize, cellSize);
+              const shadowX = shadowIndexWithDirection * this._gridWidth;
+              graphics.x = shadowX;
+
+              graphics.clear();
+              const cellSize = this._cellSize;
+              // TODO: extract rendering of different behaviours
+              graphics.beginFill(color, Math.min(opacity, 1));
+              if (displayInvalidPlacement) {
+                if (!isCause) {
+                  graphics.drawRect(
+                    cellSize * 0.1,
+                    cellSize * 0.1,
+                    cellSize * 0.8,
+                    cellSize * 0.8
+                  );
+                } else {
+                  /*graphics.drawRect(
+                    cellSize * 0.3,
+                    cellSize * 0.3,
+                    cellSize * 0.4,
+                    cellSize * 0.4
+                  );*/
+                  graphics.lineStyle(cellSize * 0.1, color, opacity);
+                  graphics.moveTo(cellSize * 0.3, cellSize * 0.3);
+                  graphics.lineTo(cellSize * 0.7, cellSize * 0.7);
+                  graphics.moveTo(cellSize * 0.7, cellSize * 0.3);
+                  graphics.lineTo(cellSize * 0.3, cellSize * 0.7);
+                }
+              } else {
+                graphics.drawRect(0, 0, cellSize, cellSize);
+              }
+            },
+            () => {
+              const graphics = new PIXI.Graphics();
+              renderableCell.container.addChild(graphics);
+              return graphics;
             }
-          },
-          () => {
-            const graphics = new PIXI.Graphics();
-            renderableCell.container.addChild(graphics);
-            return graphics;
-          }
-        );
+          );
+        }
 
         cellIndex++;
       }

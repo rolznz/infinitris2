@@ -80,7 +80,13 @@ export default class NetworkClient
       undefined,
       this._launchOptions.worldType,
       this._launchOptions.worldVariation,
-      this._launchOptions.useFallbackUI
+      this._launchOptions.useFallbackUI,
+      false,
+      this._launchOptions.rendererSettings?.gridLineType,
+      this._launchOptions.rendererSettings?.blockShadowType,
+      this._launchOptions.rendererSettings?.showFaces,
+      this._launchOptions.rendererSettings?.showPatterns,
+      this._launchOptions.rendererSettings?.showNicknames
     );
     await this._renderer.create();
     await this._tryJoinRoom();

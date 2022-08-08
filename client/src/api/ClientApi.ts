@@ -60,6 +60,7 @@ export default class ClientApi implements IClientApi {
       (params.get('rendererQuality') as RendererQuality) || 'high';
 
     if (params.has('single-player')) {
+      const layoutSetId = params.get('layout') || undefined;
       const numBots = parseInt(params.get('numBots') || '0');
       const botReactionDelay = parseInt(params.get('botReactionDelay') || '20');
       const spectate = params.get('spectate') === 'true';
@@ -75,6 +76,7 @@ export default class ClientApi implements IClientApi {
           numBots,
           botReactionDelay,
         },
+        layoutSetId,
       };
 
       const gridNumColumns: number | undefined =
@@ -83,14 +85,16 @@ export default class ClientApi implements IClientApi {
       this.launchSinglePlayer({
         controls_keyboard: controls,
         spectate,
-        rendererType,
+        rendererSettings: {
+          rendererType,
+          rendererQuality,
+        },
         simulationSettings,
         worldType,
         worldVariation,
         useFallbackUI: !isDemo,
         gridNumColumns,
         isDemo,
-        rendererQuality,
         player: {
           characterId: '487',
           patternFilename: 'pattern_3.png',
@@ -206,8 +210,10 @@ export default class ClientApi implements IClientApi {
           preferredInputMethod,
           controls_keyboard: controls,
           challengeEditorSettings: enableChallengeEditor ? {} : undefined,
-          rendererType,
-          rendererQuality,
+          rendererSettings: {
+            rendererType,
+            rendererQuality,
+          },
         }
       );
     } else {

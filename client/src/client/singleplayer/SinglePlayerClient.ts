@@ -60,17 +60,22 @@ export default class SinglePlayerClient
 
   private async _create(options: LaunchOptions) {
     this._renderer =
-      options.rendererType === 'minimal'
+      options.rendererSettings?.rendererType === 'minimal'
         ? new MinimalRenderer(this._clientApiConfig)
         : new Infinitris2Renderer(
             this._clientApiConfig,
             undefined,
             this._launchOptions.controls_keyboard || DEFAULT_KEYBOARD_CONTROLS,
-            options.rendererQuality,
+            options.rendererSettings?.rendererQuality,
             options.worldType,
             options.worldVariation,
             options.useFallbackUI,
-            options.isDemo
+            options.isDemo,
+            options.rendererSettings?.gridLineType,
+            options.rendererSettings?.blockShadowType,
+            options.rendererSettings?.showFaces,
+            options.rendererSettings?.showPatterns,
+            options.rendererSettings?.showNicknames
           );
     await this._renderer.create();
 

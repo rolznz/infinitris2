@@ -2,7 +2,17 @@ import ICellEventListener from '@models/ICellEventListener';
 import { IPlayer } from '@models/IPlayer';
 import ICell, { NetworkCellInfo } from './ICell';
 
-export type GridLineType = 'none' | 'inverted' | 'classic' | 'dots' | 'editor';
+export const GridLineTypeValues = [
+  'none',
+  'inverted',
+  'classic',
+  'dots',
+  'editor',
+] as const;
+export type GridLineType = typeof GridLineTypeValues[number];
+
+export const BlockShadowTypeValues = ['full', 'placement'] as const;
+export type BlockShadowType = typeof BlockShadowTypeValues[number];
 
 export type NetworkGridInfo = {
   readonly numRows: number;

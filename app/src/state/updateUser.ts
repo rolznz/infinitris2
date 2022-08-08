@@ -22,6 +22,7 @@ import useAuthStore from './AuthStore';
 import useLocalUserStore, { LocalUser } from './LocalUserStore';
 import { getAuth, signOut as signOutAuthUser } from 'firebase/auth';
 import { doc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
+import { BlockShadowType, GridLineType } from 'infinitris2-models/dist/IGrid';
 
 const updateFirestoreDoc = (userId: string, data: Partial<IUser>) =>
   updateDoc(doc(getFirestore(), getUserPath(userId)), data);
@@ -195,4 +196,22 @@ export const setUserRendererQuality = (rendererQuality: RendererQuality) => {
 };
 export const setUserRendererType = (rendererType: RendererType) => {
   updateUser({ rendererType });
+};
+
+export const setUserGridLineType = (gridLineType: GridLineType) => {
+  updateUser({ gridLineType });
+};
+
+export const setUserBlockShadowType = (blockShadowType: BlockShadowType) => {
+  updateUser({ blockShadowType });
+};
+
+export const setUserShowFaces = (showFaces: boolean) => {
+  updateUser({ showFaces });
+};
+export const setUserShowPatterns = (showPatterns: boolean) => {
+  updateUser({ showPatterns });
+};
+export const setUserShowNicknames = (showNicknames: boolean) => {
+  updateUser({ showNicknames });
 };

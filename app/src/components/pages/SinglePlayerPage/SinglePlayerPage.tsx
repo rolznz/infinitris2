@@ -12,12 +12,13 @@ import {
   ISimulation,
   charactersPath,
   WorldVariation,
+  RendererSettings,
 } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useCollection } from 'swr-firestore';
 import useAppStore from '@/state/AppStore';
-import { useUser } from '@/components/hooks/useUser';
+import { useUser, useUserRendererSettings } from '@/components/hooks/useUser';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
 import {
   playGameMusic,
@@ -42,8 +43,9 @@ export function launchSinglePlayer(history: ReturnType<typeof useHistory>) {
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
-  const { controls_keyboard, controls_gamepad, rendererQuality, rendererType } =
-    useUser();
+  const user = useUser();
+  const { controls_keyboard, controls_gamepad } = user;
+  const rendererSettings: RendererSettings = useUserRendererSettings(user);
 
   usePwaRedirect();
   //const requiresRedirect = useForcedRedirect();
@@ -86,8 +88,7 @@ export default function SinglePlayerPage() {
         controls_gamepad,
         gridNumRows,
         gridNumColumns,
-        rendererQuality,
-        rendererType,
+        rendererSettings,
         spectate,
         isDemo,
         simulationSettings,
@@ -130,8 +131,6 @@ export default function SinglePlayerPage() {
     client,
     gridNumRows,
     gridNumColumns,
-    rendererQuality,
-    rendererType,
     spectate,
     worldType,
     worldVariation,
@@ -140,6 +139,7 @@ export default function SinglePlayerPage() {
     allCharacters.data,
     isDemo,
     player,
+    rendererSettings,
   ]);
 
   return isDemo ? null : <GameUI />;

@@ -35,6 +35,11 @@ import {
   clearProgress,
   setUserMusicVolume,
   setUserSfxVolume,
+  setUserGridLineType,
+  setUserBlockShadowType,
+  setUserShowFaces,
+  setUserShowPatterns,
+  setUserShowNicknames,
 } from '@/state/updateUser';
 import { useUser } from '@/components/hooks/useUser';
 import { getDefaultPreferredInputMethod } from '@/state/LocalUserStore';
@@ -42,6 +47,12 @@ import { getDefaultPreferredInputMethod } from '@/state/LocalUserStore';
 import VolumeDownIcon from '@mui/icons-material/VolumeDown';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import FlexBox from '../../ui/FlexBox';
+import {
+  BlockShadowType,
+  BlockShadowTypeValues,
+  GridLineType,
+  GridLineTypeValues,
+} from 'infinitris2-models/dist/IGrid';
 
 export function LanguagePicker() {
   const user = useUser();
@@ -154,6 +165,100 @@ export default function SettingsPage() {
                   )
                 )}
               </Select>
+            }
+          />
+          <SettingsRow
+            left={
+              <FormattedMessage
+                defaultMessage="Grid Type"
+                description="Settings Page Table - Grid Type column"
+              />
+            }
+            right={
+              <Select
+                value={user.gridLineType || 'none'}
+                onChange={(event) =>
+                  setUserGridLineType(event.target.value as GridLineType)
+                }
+              >
+                {GridLineTypeValues.filter((value) => value !== 'editor').map(
+                  (lineType) => (
+                    <MenuItem key={lineType} value={lineType}>
+                      {lineType.toUpperCase()}
+                    </MenuItem>
+                  )
+                )}
+              </Select>
+            }
+          />
+          <SettingsRow
+            left={
+              <FormattedMessage
+                defaultMessage="Block Shadow Type"
+                description="Settings Page Table - Block Shadow Type column"
+              />
+            }
+            right={
+              <Select
+                value={user.blockShadowType || 'full'}
+                onChange={(event) =>
+                  setUserBlockShadowType(event.target.value as BlockShadowType)
+                }
+              >
+                {BlockShadowTypeValues.map((blockShadowType) => (
+                  <MenuItem key={blockShadowType} value={blockShadowType}>
+                    {blockShadowType.toUpperCase()}
+                  </MenuItem>
+                ))}
+              </Select>
+            }
+          />
+          <SettingsRow
+            left={
+              <FormattedMessage
+                defaultMessage="Show Faces"
+                description="Settings Page Table - Show Faces"
+              />
+            }
+            right={
+              <IconSwitch
+                checked={user.showFaces !== false}
+                onChange={(event) => {
+                  setUserShowFaces(event.target.checked);
+                }}
+              />
+            }
+          />
+          <SettingsRow
+            left={
+              <FormattedMessage
+                defaultMessage="Show Patterns"
+                description="Settings Page Table - Show Patterns"
+              />
+            }
+            right={
+              <IconSwitch
+                checked={user.showPatterns !== false}
+                onChange={(event) => {
+                  setUserShowPatterns(event.target.checked);
+                }}
+              />
+            }
+          />
+          <SettingsRow
+            left={
+              <FormattedMessage
+                defaultMessage="Show Nicknames"
+                description="Settings Page Table - Show Nicknames"
+              />
+            }
+            right={
+              <IconSwitch
+                checked={user.showNicknames !== false}
+                onChange={(event) => {
+                  setUserShowNicknames(event.target.checked);
+                }}
+              />
             }
           />
           <SettingsRow

@@ -59,4 +59,5 @@ export default interface IBlock {
   place(): void;
   die(): void;
   destroy(): void;
+  getPlacementCells(): ICell[];
 }

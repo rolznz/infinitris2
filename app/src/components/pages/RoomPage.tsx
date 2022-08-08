@@ -25,7 +25,7 @@ import {
   reservedPlayerIds,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
-import { useUser } from '../hooks/useUser';
+import { useUser, useUserRendererSettings } from '../hooks/useUser';
 import LoadingSpinner from '../ui/LoadingSpinner';
 import { useDocument } from 'swr-firestore';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
@@ -112,7 +112,7 @@ export default function RoomPage() {
   const player = useNetworkPlayerInfo();
 
   const user = useUser();
-  //const requiresRedirect = useForcedRedirect();
+  const rendererSettings = useUserRendererSettings(user);
   const controls_keyboard = user.controls_keyboard;
   const controls_gamepad = user.controls_gamepad;
 
@@ -140,6 +140,7 @@ export default function RoomPage() {
       controls_gamepad,
       worldType: room.data()!.worldType,
       worldVariation: room.data()!.worldVariation,
+      rendererSettings,
       player,
       roomIndex: room.data()!.roomIndex,
       listeners: [
@@ -173,7 +174,6 @@ export default function RoomPage() {
     serverUrl,
     client,
     setConnected,
-    //requiresRedirect,
     hasLaunched,
     setLaunched,
     controls_keyboard,
@@ -181,6 +181,7 @@ export default function RoomPage() {
     hasLoaded,
     player,
     room,
+    rendererSettings,
   ]);
 
   useEffect(() => {

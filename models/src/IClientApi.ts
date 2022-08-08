@@ -10,21 +10,30 @@ import { WorldType, WorldVariation } from '@models/WorldType';
 import { WithControls } from '@models/IUser';
 import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
 import { ICharacter } from '@models/ICharacter';
-import { GridLineType } from '@models/IGrid';
+import { BlockShadowType, GridLineType } from '@models/IGrid';
 import { IChallengeEditorEventListener } from '@models/IChallengeEditor';
 import { IChallengeEventListener } from '@models/IChallengeEventListener';
 import { ChallengeAttemptRecording } from '@models/IChallengeAttempt';
+
+export type RendererSettings = {
+  rendererType?: RendererType;
+  rendererQuality?: RendererQuality;
+  blockShadowType?: BlockShadowType;
+  gridLineType?: GridLineType;
+  showFaces?: boolean;
+  showPatterns?: boolean;
+  showNicknames?: boolean;
+};
 
 export type LaunchOptions = WithControls & {
   listeners?: Partial<ISimulationEventListener>[];
   socketListener?: IClientSocketEventListener;
   preferredInputMethod?: InputMethod;
   player?: Partial<NetworkPlayerInfo>;
-  rendererType?: RendererType;
+  rendererSettings?: RendererSettings;
   gridNumRows?: number;
   gridNumColumns?: number;
   simulationSettings?: SimulationSettings;
-  rendererQuality?: RendererQuality;
   spectate?: boolean;
   worldType?: WorldType;
   worldVariation?: WorldVariation;
@@ -32,7 +41,6 @@ export type LaunchOptions = WithControls & {
   useFallbackUI?: boolean;
   isDemo?: boolean;
   allCharacters?: ICharacter[];
-  gridLineType?: GridLineType;
 };
 
 export type ChallengeLaunchOptions = LaunchOptions & {

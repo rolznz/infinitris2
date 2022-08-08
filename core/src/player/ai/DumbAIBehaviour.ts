@@ -7,10 +7,8 @@ import { AIAction, IAIBehaviour } from './IAIBehaviour';
 // Inspired by Timur Bakibayev's article https://levelup.gitconnected.com/tetris-ai-in-python-bd194d6326ae
 // Cons:
 // - inefficient algorithm (brute force checks every single rotation and column to find the best)
-// - cannot slip into gaps (no pathfinding)
-// - unaware of walls - the AI may try to get past it and get stuck
+// - unaware of walls - the AI may try to get past it and get stuck, and does not know how to climb
 // - unaware of other players' movement
-// - unaware of days / grid collapse
 export class DumbAIBehaviour implements IAIBehaviour {
   private _simulation: ISimulation;
   private _allowMistakes: boolean;
@@ -25,37 +23,57 @@ export class DumbAIBehaviour implements IAIBehaviour {
     let bestColumnOffset = 0;
     let bestScore = 0;
     const gridCells = this._simulation.grid.cells;
-    const maxAttempts = Math.min(17, gridCells[0].length); //current column + 8 on each side (or grid width if smaller)
+    const maxAttempts = gridCells[0].length; //Math.min(17, gridCells[0].length); //current column + 8 on each side (or grid width if smaller)
 
-    // TODO: this needs fixing, see Block.hasPlacement
     for (let i = 0; i < maxAttempts; i++) {
       // check closest columns first (0, 1, -1, 2, -2, 3, -3...)
       let half = Math.floor((i + 1) / 2);
       let dx = i > 0 ? (i % 2 == 1 ? half : -half) : 0;
       for (let dr = 0; dr < 4; dr++) {
-        let hit = false;
-        let dy = block.layout.length;
+        let isValidPlacement = false;
+        let dy = 0;
         const canMoveOptions: BlockCanMoveOptions = {
           allowMistakes: this._allowMistakes,
         };
 
         for (; dy < gridCells.length; dy++) {
-          if (!block.canMove(dx, dy, dr, canMoveOptions)) {
-            hit = true;
+          const canMove = block.canMove(dx, dy, dr, canMoveOptions);
+          if (
+            canMove &&
+            canMoveOptions.cells &&
+            canMoveOptions.cells.some(
+              (cell) =>
+                cell.row === this._simulation.grid.numRows - 1 ||
+                !this._simulation.grid.cells[cell.row + 1][cell.column]
+                  .isPassable
+            ) &&
+            (!canMoveOptions.isMistake || this._allowMistakes)
+          ) {
+            isValidPlacement = true;
+            break;
+          } else if (!canMove) {
             break;
           }
         }
 
         const score = this._calculateScore(block, dx, dy, dr, canMoveOptions);
-        if (score > bestScore && !canMoveOptions.isMistake) {
+        if (isValidPlacement && score > bestScore) {
           bestScore = score;
           bestColumnOffset = dx;
           bestRotationOffset = dr;
         }
       }
     }
+    if (bestScore === 0) {
+      return {
+        dx: 0,
+        dy: 0,
+        dr: 0,
+        drop: false,
+      };
+    }
 
-    if (bestRotationOffset != 0) {
+    if (bestRotationOffset !== 0) {
       return {
         dy: 0,
         dx: 0,

@@ -316,14 +316,10 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
                   }
                 }
 
-                setTimeout(() => {
-                  // delay completion for world progress effect
-                  // NB: must be bigger than ResultsView showWinnerDisplay timeout
-                  completeOfficialChallenge(
-                    user.completedOfficialChallengeIds,
-                    challengeId
-                  );
-                }, 3000);
+                completeOfficialChallenge(
+                  user.completedOfficialChallengeIds,
+                  challengeId
+                );
               }
             } else {
               if (recordedChallengeAttempt) {

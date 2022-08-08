@@ -84,14 +84,6 @@ function ChallengeTopAttemptsInternal({
           description="Top challenge attempts"
         />
   </Typography>*/}
-      {!userId && (
-        <Typography variant="caption" textAlign="center">
-          <FormattedMessage
-            defaultMessage="Get Infinitris Premium to appear here"
-            description="Top challenge attempts"
-          />
-        </Typography>
-      )}
       <FlexBox
         flexDirection="row"
         gap={2}
@@ -137,6 +129,14 @@ function ChallengeTopAttemptsInternal({
           </Typography>
         )}
       </FlexBox>
+      {!userId && (
+        <Typography variant="caption" textAlign="center" mt={1} mb={-3}>
+          <FormattedMessage
+            defaultMessage="Get Infinitris Premium to appear here"
+            description="Top challenge attempts"
+          />
+        </Typography>
+      )}
     </FlexBox>
   );
 }

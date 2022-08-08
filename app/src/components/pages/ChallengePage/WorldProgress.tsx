@@ -14,6 +14,7 @@ import LinearProgress from '@mui/material/LinearProgress/LinearProgress';
 import type { SxProps, Theme } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { WorldType } from 'infinitris2-models';
+import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { ReactComponent as GoldMedal } from './assets/world_progress_gold.svg';
 import { ReactComponent as IncompleteMedal } from './assets/world_progress_incomplete.svg';
@@ -38,10 +39,19 @@ const medalProps: React.SVGProps<SVGSVGElement> = {
 export function WorldProgress({ worldType }: WorldProgressProps) {
   const incompleteChallenges = useIncompleteChallenges(worldType);
   const user = useUser();
-  const progress = incompleteChallenges?.isLoadingOfficialChallenges
-    ? 0
-    : 5 - incompleteChallenges.incompleteChallenges?.length;
+  const [showAnimation, setShowAnimation] = React.useState(true);
+  const progress = Math.max(
+    0,
+    (incompleteChallenges?.isLoadingOfficialChallenges
+      ? 0
+      : 5 - incompleteChallenges.incompleteChallenges?.length) -
+      (showAnimation ? 1 : 0)
+  );
   const progressPercentage = (progress / 5) * 100;
+
+  React.useEffect(() => {
+    setTimeout(() => setShowAnimation(false), 1000);
+  }, []);
 
   const medals = [0, 1, 2, 3, 4].map((value) => (
     <FlexBox

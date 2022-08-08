@@ -20,6 +20,7 @@ import FlexBox from '../../ui/FlexBox';
 //import finishLineImage from './assets/finish.svg';
 import grassScrollImage from './assets/scroll_grass.svg';
 import desertScrollImage from './assets/scroll_desert.svg';
+import spaceScrollImage from './assets/scroll_space.svg';
 
 export interface ChallengeInfoViewProps {
   onReceivedInput(): void;
@@ -85,7 +86,9 @@ export default function ChallengeInfoView({
           <img
             alt=""
             src={
-              challenge.worldType === 'desert'
+              challenge.worldType === 'space'
+                ? spaceScrollImage
+                : challenge.worldType === 'desert'
                 ? desertScrollImage
                 : grassScrollImage
             }
@@ -147,7 +150,7 @@ export default function ChallengeInfoView({
                   viewReplay={viewOtherReplay}
                 />
               </FlexBox>
-              <FlexBox position="absolute" bottom={isMobile() ? '3vh' : '2vh'}>
+              <FlexBox position="absolute" bottom={isMobile() ? '3vh' : '6vh'}>
                 {continueButton}
               </FlexBox>
             </>

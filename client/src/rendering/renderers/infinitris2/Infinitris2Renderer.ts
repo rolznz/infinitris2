@@ -871,7 +871,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
           for (const image of [pixiObject.outer, pixiObject.inner]) {
             image.x = shadowX - pixiObject.outer.width * 0.5;
-            image.anchor.set(0, 0.75);
+            image.anchor.set(0, -1);
           }
         },
         () => {

@@ -28,6 +28,7 @@ export default function ContinueButton({
   const sx: SxProps = React.useMemo(
     () => ({
       fontSize,
+      pointerEvents: 'all',
     }),
     [fontSize]
   );

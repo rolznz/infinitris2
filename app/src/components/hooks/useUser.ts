@@ -1,5 +1,5 @@
 import { useDocument, UseDocumentOptions } from 'swr-firestore';
-import { getUserPath, IUser, RendererSettings } from 'infinitris2-models';
+import { getUserPath, IUser, LaunchOptions } from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
 import useLocalUserStore, {
   LocalUserWithoutUserProps,
@@ -28,7 +28,15 @@ export function useUser(): CombinedUser {
   };
 }
 
-export function useUserRendererSettings(user: CombinedUser): RendererSettings {
+export function useUserLaunchOptions(
+  user: CombinedUser
+): Pick<
+  LaunchOptions,
+  | 'rendererSettings'
+  | 'useCustomRepeat'
+  | 'customRepeatInitialDelay'
+  | 'customRepeatRate'
+> {
   const {
     rendererQuality,
     rendererType,
@@ -37,17 +45,29 @@ export function useUserRendererSettings(user: CombinedUser): RendererSettings {
     showFaces,
     showPatterns,
     showNicknames,
+    controls_keyboard,
+    controls_gamepad,
+    useCustomRepeat,
+    customRepeatInitialDelay,
+    customRepeatRate,
   } = user;
 
-  const rendererSettings: RendererSettings = React.useMemo(
+  const launchOptions = React.useMemo(
     () => ({
-      rendererQuality,
-      rendererType,
-      gridLineType,
-      blockShadowType,
-      showFaces,
-      showPatterns,
-      showNicknames,
+      rendererSettings: {
+        rendererQuality,
+        rendererType,
+        gridLineType,
+        blockShadowType,
+        showFaces,
+        showPatterns,
+        showNicknames,
+      },
+      controls_keyboard,
+      controls_gamepad,
+      useCustomRepeat,
+      customRepeatInitialDelay,
+      customRepeatRate,
     }),
     [
       blockShadowType,
@@ -57,7 +77,12 @@ export function useUserRendererSettings(user: CombinedUser): RendererSettings {
       showFaces,
       showNicknames,
       showPatterns,
+      controls_keyboard,
+      controls_gamepad,
+      useCustomRepeat,
+      customRepeatInitialDelay,
+      customRepeatRate,
     ]
   );
-  return rendererSettings;
+  return launchOptions;
 }

@@ -168,7 +168,15 @@ export default class NetworkClient
               this._renderer.screenPositionToCell,
               humanPlayer,
               this._launchOptions?.controls_keyboard,
-              this._launchOptions?.controls_gamepad
+              this._launchOptions?.controls_gamepad,
+              undefined,
+              undefined,
+              this._launchOptions?.useCustomRepeat
+                ? this._launchOptions.customRepeatInitialDelay
+                : undefined,
+              this._launchOptions?.useCustomRepeat
+                ? this._launchOptions.customRepeatRate
+                : undefined
             );
           } else {
             const otherPlayer = this._createNetworkPlayer(playerInfo);

@@ -15,7 +15,7 @@ import React from 'react';
 import { useCollection, useDocument } from 'swr-firestore';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
-import { useUser, useUserRendererSettings } from '@/components/hooks/useUser';
+import { useUser, useUserLaunchOptions } from '@/components/hooks/useUser';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 import { GameUI } from '@/components/game/GameUI';
@@ -101,7 +101,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const clientVersion = client?.getVersion();
   const restartClient = client?.restartClient;
   const user = useUser();
-  const rendererSettings = useUserRendererSettings(user);
+  const userLaunchOptions = useUserLaunchOptions(user);
   const userId = useAuthStore((store) => store.user?.uid);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -216,7 +216,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     [allCharacters.data, handleRetry]
   );
 
-  const { controls_keyboard } = user;
   const preferredInputMethod =
     user.preferredInputMethod || (isMobile() ? 'touch' : 'keyboard');
 
@@ -347,11 +346,10 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           },
         },
         {
+          ...userLaunchOptions,
           listeners: [...coreGameListeners, challengeSimulationEventListener],
           preferredInputMethod,
-          controls_keyboard,
           player,
-          rendererSettings,
           allCharacters: allCharacters?.data?.map((document) =>
             document.data()
           ),
@@ -393,7 +391,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     hasLaunched,
     preferredInputMethod,
     launchChallenge,
-    controls_keyboard,
     player,
     isTest,
     user.completedOfficialChallengeIds,
@@ -406,7 +403,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     userId,
     clientVersion,
     handleRetry,
-    rendererSettings,
+    userLaunchOptions,
     enqueueSnackbar,
   ]);
 

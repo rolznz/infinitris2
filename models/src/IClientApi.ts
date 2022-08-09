@@ -7,7 +7,7 @@ import { RendererType } from './RendererType';
 import { SimulationSettings } from './SimulationSettings';
 import { RendererQuality } from './RendererQuality';
 import { WorldType, WorldVariation } from '@models/WorldType';
-import { WithControls } from '@models/IUser';
+import { CustomDAS, WithControls } from '@models/IUser';
 import { IClientSocketEventListener } from '@models/networking/client/IClientSocketEventListener';
 import { ICharacter } from '@models/ICharacter';
 import { BlockShadowType, GridLineType } from '@models/IGrid';
@@ -25,23 +25,24 @@ export type RendererSettings = {
   showNicknames?: boolean;
 };
 
-export type LaunchOptions = WithControls & {
-  listeners?: Partial<ISimulationEventListener>[];
-  socketListener?: IClientSocketEventListener;
-  preferredInputMethod?: InputMethod;
-  player?: Partial<NetworkPlayerInfo>;
-  rendererSettings?: RendererSettings;
-  gridNumRows?: number;
-  gridNumColumns?: number;
-  simulationSettings?: SimulationSettings;
-  spectate?: boolean;
-  worldType?: WorldType;
-  worldVariation?: WorldVariation;
-  roomIndex?: number;
-  useFallbackUI?: boolean;
-  isDemo?: boolean;
-  allCharacters?: ICharacter[];
-};
+export type LaunchOptions = WithControls &
+  CustomDAS & {
+    listeners?: Partial<ISimulationEventListener>[];
+    socketListener?: IClientSocketEventListener;
+    preferredInputMethod?: InputMethod;
+    player?: Partial<NetworkPlayerInfo>;
+    rendererSettings?: RendererSettings;
+    gridNumRows?: number;
+    gridNumColumns?: number;
+    simulationSettings?: SimulationSettings;
+    spectate?: boolean;
+    worldType?: WorldType;
+    worldVariation?: WorldVariation;
+    roomIndex?: number;
+    useFallbackUI?: boolean;
+    isDemo?: boolean;
+    allCharacters?: ICharacter[];
+  };
 
 export type ChallengeLaunchOptions = LaunchOptions & {
   challengeEditorSettings?: {

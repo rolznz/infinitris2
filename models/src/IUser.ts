@@ -31,7 +31,17 @@ export interface WithControls {
 
 export type UnlockableFeature = 'playTypePicker' | WorldType;
 
-export default interface IUser extends IEntity, WithControls, RendererSettings {
+export type CustomDAS = {
+  readonly useCustomRepeat?: boolean;
+  readonly customRepeatInitialDelay?: number;
+  readonly customRepeatRate?: number;
+};
+
+export default interface IUser
+  extends IEntity,
+    WithControls,
+    RendererSettings,
+    CustomDAS {
   readonly readOnly: IUserReadOnlyProperties;
   readonly locale?: string;
   readonly preferredInputMethod?: InputMethod;
@@ -44,3 +54,7 @@ export default interface IUser extends IEntity, WithControls, RendererSettings {
   readonly unlockedFeatures?: UnlockableFeature[];
   readonly completedOfficialChallengeIds?: string[];
 }
+
+// defaults for custom DAS and gamepad input
+export const defaultKeyRepeatInitialDelay = 500;
+export const defaultKeyRepeatRate = 40;

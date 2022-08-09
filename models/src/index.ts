@@ -95,6 +95,7 @@ export * from './IChallengeEventListener';
 export * from './IRotationSystem';
 export * from './SettingsType';
 export * from './IClientApi';
+export * from './IGrid';
 
 export const NETWORK_VERSION = 2;
 

@@ -1,11 +1,28 @@
-import { MenuItem, Select, Grid, Link, Button, Slider } from '@mui/material';
+import {
+  MenuItem,
+  Select,
+  Grid,
+  Link,
+  Button,
+  Slider,
+  TextField,
+} from '@mui/material';
 
 import { FormattedMessage, useIntl } from 'react-intl';
 import { defaultLocale, supportedLocales } from '../../../internationalization';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import SettingsRow from './SettingsRow';
-import { InputMethod, RendererQuality, RendererType } from 'infinitris2-models';
+import {
+  BlockShadowType,
+  BlockShadowTypeValues,
+  defaultKeyRepeatRate,
+  GridLineType,
+  GridLineTypeValues,
+  InputMethod,
+  RendererQuality,
+  RendererType,
+} from 'infinitris2-models';
 import {
   setMusicPlaying,
   setSfxOn,
@@ -40,6 +57,9 @@ import {
   setUserShowFaces,
   setUserShowPatterns,
   setUserShowNicknames,
+  setUserUseCustomRepeat,
+  setUserCustomRepeatInitialDelay,
+  setUserCustomRepeatRate,
 } from '@/state/updateUser';
 import { useUser } from '@/components/hooks/useUser';
 import { getDefaultPreferredInputMethod } from '@/state/LocalUserStore';
@@ -47,12 +67,7 @@ import { getDefaultPreferredInputMethod } from '@/state/LocalUserStore';
 import VolumeDownIcon from '@mui/icons-material/VolumeDown';
 import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import FlexBox from '../../ui/FlexBox';
-import {
-  BlockShadowType,
-  BlockShadowTypeValues,
-  GridLineType,
-  GridLineTypeValues,
-} from 'infinitris2-models/dist/IGrid';
+import { defaultKeyRepeatInitialDelay } from 'infinitris2-models';
 
 export function LanguagePicker() {
   const user = useUser();
@@ -405,9 +420,7 @@ export default function SettingsPage() {
               </Select>
             }
           />
-          {(!user.preferredInputMethod ||
-            user.preferredInputMethod === 'keyboard' ||
-            user.preferredInputMethod === 'gamepad') && (
+          {user.preferredInputMethod !== 'touch' && (
             <SettingsRow
               left={
                 <FormattedMessage
@@ -431,6 +444,67 @@ export default function SettingsPage() {
                     />
                   </Button>
                 </Link>
+              }
+            />
+          )}
+          {user.preferredInputMethod !== 'touch' && (
+            <SettingsRow
+              left={
+                <FormattedMessage
+                  defaultMessage="Custom DAS"
+                  description="Settings Page Table - Custom DAS left column"
+                />
+              }
+              right={
+                <IconSwitch
+                  checked={user.useCustomRepeat === true}
+                  onChange={(event) => {
+                    setUserUseCustomRepeat(event.target.checked);
+                  }}
+                />
+              }
+            />
+          )}
+          {user.useCustomRepeat === true && (
+            <SettingsRow
+              left={
+                <FormattedMessage
+                  defaultMessage="Custom DAS - Initial Repeat Delay (ms)"
+                  description="Settings Page Table - Custom DAS Initial Repeat left column"
+                />
+              }
+              right={
+                <TextField
+                  defaultValue={(
+                    user.customRepeatInitialDelay ||
+                    defaultKeyRepeatInitialDelay
+                  ).toString()}
+                  onChange={(event) => {
+                    setUserCustomRepeatInitialDelay(
+                      parseInt(event.target.value)
+                    );
+                  }}
+                />
+              }
+            />
+          )}
+          {user.useCustomRepeat === true && (
+            <SettingsRow
+              left={
+                <FormattedMessage
+                  defaultMessage="Custom DAS - Repeat Rate (ms)"
+                  description="Settings Page Table - Custom DAS Repeat Rate left column"
+                />
+              }
+              right={
+                <TextField
+                  defaultValue={(
+                    user.customRepeatRate || defaultKeyRepeatRate
+                  ).toString()}
+                  onChange={(event) => {
+                    setUserCustomRepeatRate(parseInt(event.target.value));
+                  }}
+                />
               }
             />
           )}

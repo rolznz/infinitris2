@@ -4,26 +4,68 @@ import {
   HardCodedInputAction,
   InputActionListener,
 } from '@models/InputAction';
+import {
+  defaultKeyRepeatInitialDelay,
+  defaultKeyRepeatRate,
+} from '@models/IUser';
+import { ButtonPressState } from '@src/input/GamepadInput';
 
-let pressedKeys: { [key: string]: boolean };
 export default class KeyboardInput {
   private _controls: ControlSettings;
   private _fireAction: InputActionListener;
+  private _customRepeatInitialDelay: number | undefined;
+  private _customRepeatRate: number | undefined;
+  private _useCustomDAS: boolean;
+  private _destroyed: boolean;
+  private _pressedKeys: {
+    [key: string]: Omit<ButtonPressState, 'isPressing'> & {
+      event: KeyboardEvent | undefined;
+    };
+  };
 
-  constructor(fireAction: InputActionListener, controls: ControlSettings) {
+  constructor(
+    fireAction: InputActionListener,
+    controls: ControlSettings,
+    customRepeatInitialDelay: number | undefined,
+    customRepeatRate: number | undefined
+  ) {
+    this._destroyed = false;
     this._controls = controls;
     this._fireAction = fireAction;
-    pressedKeys = {};
+    this._customRepeatInitialDelay = customRepeatInitialDelay;
+    this._customRepeatRate = customRepeatRate;
+    this._pressedKeys = {};
     document.addEventListener('keydown', this._onKeyDown);
     document.addEventListener('keyup', this._onKeyUp);
+    this._useCustomDAS =
+      this._customRepeatInitialDelay !== undefined ||
+      this._customRepeatRate !== undefined;
+    if (this._useCustomDAS) {
+      requestAnimationFrame(this._onAnimationFrame);
+    }
   }
   destroy() {
     document.removeEventListener('keydown', this._onKeyDown);
     document.removeEventListener('keyup', this._onKeyUp);
+    this._destroyed = true;
   }
 
   private _onKeyDown = (event: KeyboardEvent) => {
-    pressedKeys[event.key] = true;
+    this._onKeyDownInternal(event);
+  };
+
+  private _onKeyDownInternal(event: KeyboardEvent, isRepeat = false) {
+    const now = Date.now();
+    if (!this._pressedKeys[event.key] || !this._pressedKeys[event.key].event) {
+      this._pressedKeys[event.key] = {
+        hasRepeated: false,
+        lastAction: now,
+        event,
+      };
+    } else if (!isRepeat && this._useCustomDAS) {
+      return; // cancel OS-defined repeat rate
+    }
+
     if (event.key === this._controls[CustomizableInputAction.Esc]) {
       this._fireAction({ type: CustomizableInputAction.Esc });
     } else if (event.key === this._controls[CustomizableInputAction.Chat]) {
@@ -55,14 +97,42 @@ export default class KeyboardInput {
         type: action,
         data: {
           rotateDown:
-            pressedKeys[this._controls[CustomizableInputAction.MoveDown]],
+            !!this._pressedKeys[
+              this._controls[CustomizableInputAction.MoveDown]
+            ]?.event,
         },
       });
     }
     this._fireAction({ type: HardCodedInputAction.KeyDown, data: event });
-  };
+  }
 
   private _onKeyUp = (event: KeyboardEvent) => {
-    pressedKeys[event.key] = false;
+    this._pressedKeys[event.key] = {
+      hasRepeated: false,
+      lastAction: 0,
+      event: undefined,
+    };
+  };
+
+  private _onAnimationFrame = () => {
+    if (this._destroyed) {
+      return;
+    }
+    requestAnimationFrame(this._onAnimationFrame);
+
+    const now = Date.now();
+    for (const pressState of Object.values(this._pressedKeys)) {
+      if (pressState.event) {
+        const delay = pressState.hasRepeated
+          ? this._customRepeatRate ?? defaultKeyRepeatRate
+          : this._customRepeatInitialDelay ?? defaultKeyRepeatInitialDelay;
+
+        if (now - pressState.lastAction > delay) {
+          this._onKeyDownInternal(pressState.event, true);
+          pressState.hasRepeated = true;
+          pressState.lastAction = now;
+        }
+      }
+    }
   };
 }

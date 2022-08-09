@@ -559,8 +559,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._actionsToFire.push(action);
   }
   private _fireActions() {
-    for (const action of this._actionsToFire) {
-      this._fireAction(action);
+    if (this._block) {
+      for (const action of this._actionsToFire) {
+        this._fireAction(action);
+      }
     }
     this._firedActions = this._actionsToFire.slice();
     this._actionsToFire.length = 0;

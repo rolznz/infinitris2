@@ -74,9 +74,12 @@ service cloud.firestore {
       function isValidUser() {
         return
           baseRequestValid() &&
-          entityHasExpectedFields(['controls_keyboard', 'controls_gamepad', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality', 'selectedCharacterId', 'unlockedFeatures', 'completedOfficialChallengeIds','gridLineType', 'blockShadowType', 'showNicknames', 'showPatterns', 'showFaces']) &&
+          entityHasExpectedFields(['controls_keyboard', 'controls_gamepad', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality', 'selectedCharacterId', 'unlockedFeatures', 'completedOfficialChallengeIds','gridLineType', 'blockShadowType', 'showNicknames', 'showPatterns', 'showFaces', 'useCustomRepeat', 'customRepeatInitialDelay', 'customRepeatRate']) &&
           getProperty('unlockedFeatures', []) is list &&
           getProperty('completedOfficialChallengeIds', []) is list &&
+          getProperty('useCustomRepeat', false) is bool &&
+          getProperty('customRepeatRate', 0) is number &&
+          getProperty('customRepeatInitialDelay', 0) is number &&
           getProperty('musicOn', false) is bool &&
           getProperty('musicVolume', 0) is number &&
           getProperty('sfxOn', false) is bool &&

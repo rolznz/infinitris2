@@ -16,13 +16,14 @@ import {
   getPurchasePath,
   IPurchase,
   UnlockableFeature,
+  GridLineType,
+  BlockShadowType,
 } from 'infinitris2-models';
 import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
 import useLocalUserStore, { LocalUser } from './LocalUserStore';
 import { getAuth, signOut as signOutAuthUser } from 'firebase/auth';
 import { doc, getFirestore, setDoc, updateDoc } from 'firebase/firestore';
-import { BlockShadowType, GridLineType } from 'infinitris2-models/dist/IGrid';
 
 const updateFirestoreDoc = (userId: string, data: Partial<IUser>) =>
   updateDoc(doc(getFirestore(), getUserPath(userId)), data);
@@ -214,4 +215,15 @@ export const setUserShowPatterns = (showPatterns: boolean) => {
 };
 export const setUserShowNicknames = (showNicknames: boolean) => {
   updateUser({ showNicknames });
+};
+export const setUserUseCustomRepeat = (useCustomRepeat: boolean) => {
+  updateUser({ useCustomRepeat });
+};
+export const setUserCustomRepeatInitialDelay = (
+  customRepeatInitialDelay: number
+) => {
+  updateUser({ customRepeatInitialDelay });
+};
+export const setUserCustomRepeatRate = (customRepeatRate: number) => {
+  updateUser({ customRepeatRate });
 };

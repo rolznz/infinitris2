@@ -465,7 +465,13 @@ export default class ChallengeClient
       this._launchOptions.controls_keyboard,
       this._launchOptions.controls_gamepad,
       !!this._launchOptions.challengeEditorSettings,
-      false
+      false,
+      this._launchOptions?.useCustomRepeat
+        ? this._launchOptions.customRepeatInitialDelay
+        : undefined,
+      this._launchOptions?.useCustomRepeat
+        ? this._launchOptions.customRepeatRate
+        : undefined
     );
     //this._renderer.virtualKeyboardControls = this._input.controls;
     if (this._editor) {

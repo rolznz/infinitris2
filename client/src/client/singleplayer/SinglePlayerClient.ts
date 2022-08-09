@@ -122,7 +122,15 @@ export default class SinglePlayerClient
       this._renderer.screenPositionToCell,
       player,
       options.controls_keyboard,
-      options.controls_gamepad
+      options.controls_gamepad,
+      undefined,
+      undefined,
+      this._launchOptions?.useCustomRepeat
+        ? this._launchOptions.customRepeatInitialDelay
+        : undefined,
+      this._launchOptions?.useCustomRepeat
+        ? this._launchOptions.customRepeatRate
+        : undefined
     );
     this._simulation.addBots(this._launchOptions.allCharacters);
 

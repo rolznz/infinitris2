@@ -1,7 +1,7 @@
 {
   "name": "infinitris2-models",
   "private": true,
-  "version": "0.1.441",
+  "version": "0.1.446",
   "description": "",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

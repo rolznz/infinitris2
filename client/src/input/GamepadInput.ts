@@ -3,12 +3,12 @@ import InputAction, {
   CustomizableInputAction,
   InputActionListener,
 } from '@models/InputAction';
+import {
+  defaultKeyRepeatInitialDelay,
+  defaultKeyRepeatRate,
+} from '@models/IUser';
 
-// TODO: make these customisable
-const repeatDelay = 500; //ms
-const repeatRate = 40;
-
-type ButtonPressState = {
+export type ButtonPressState = {
   lastAction: number;
   hasRepeated: boolean;
   isPressing: boolean;
@@ -19,8 +19,17 @@ export default class GamepadInput {
   private _controlEntries: [InputAction, string][];
   private _fireAction: InputActionListener;
   private _pressStates: ButtonPressState[];
+  private _customRepeatInitialDelay: number;
+  private _customRepeatRate: number;
+  private _destroyed: boolean;
 
-  constructor(fireAction: InputActionListener, controls: ControlSettings) {
+  constructor(
+    fireAction: InputActionListener,
+    controls: ControlSettings,
+    customRepeatInitialDelay: number | undefined,
+    customRepeatRate: number | undefined
+  ) {
+    this._destroyed = false;
     this._controls = controls;
     this._controlEntries = Object.entries(
       controls
@@ -28,14 +37,22 @@ export default class GamepadInput {
     this._fireAction = fireAction;
     this._pressStates = [];
     requestAnimationFrame(this._onAnimationFrame);
+    this._customRepeatInitialDelay =
+      customRepeatInitialDelay || defaultKeyRepeatInitialDelay;
+    this._customRepeatRate = customRepeatRate || defaultKeyRepeatRate;
   }
 
   get controls(): ControlSettings {
     return this._controls;
   }
-  destroy() {}
+  destroy() {
+    this._destroyed = true;
+  }
 
   private _onAnimationFrame = () => {
+    if (this._destroyed) {
+      return;
+    }
     requestAnimationFrame(this._onAnimationFrame);
     const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
     const gamepad = gamepads?.[0];
@@ -64,7 +81,9 @@ export default class GamepadInput {
           ) < 0.1)
       ) {
         let fireAction = true;
-        let delay = pressState.hasRepeated ? repeatRate : repeatDelay;
+        const delay = pressState.hasRepeated
+          ? this._customRepeatRate
+          : this._customRepeatInitialDelay;
         const time = Date.now();
         if (!pressState.isPressing) {
           pressState.isPressing = true;

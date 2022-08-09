@@ -39,19 +39,31 @@ export default class Input {
     keyboardControls: ControlSettings = DEFAULT_KEYBOARD_CONTROLS,
     gamepadControls?: ControlSettings,
     challengeEditorEnabled = false,
-    chatEnabled = true
+    chatEnabled = true,
+    customRepeatInitialDelay?: number,
+    customRepeatRate?: number
   ) {
     this._chatEnabled = chatEnabled;
     this._simulation = simulation;
     this._player = player;
     this._controls = { ...DEFAULT_KEYBOARD_CONTROLS, ...keyboardControls }; // ensure newly added controls use default keys
     this._actionListeners = [onInputAction];
-    this._keyboardInput = new KeyboardInput(this._fireAction, this._controls);
+    this._keyboardInput = new KeyboardInput(
+      this._fireAction,
+      this._controls,
+      customRepeatInitialDelay,
+      customRepeatRate
+    );
     this._touchInput = new TouchInput(this._fireAction);
     this._challengeEditorEnabled = challengeEditorEnabled;
     this._playerActionsEnabled = true;
     if (gamepadControls) {
-      this._gamepadInput = new GamepadInput(this._fireAction, gamepadControls);
+      this._gamepadInput = new GamepadInput(
+        this._fireAction,
+        gamepadControls,
+        customRepeatInitialDelay,
+        customRepeatRate
+      );
     }
     if (this._challengeEditorEnabled) {
       this._mouseInput = new MouseInput(this._fireAction, screenPositionToCell);

@@ -38,6 +38,7 @@ import { challengeAttemptsPath } from 'infinitris2-models';
 import useAuthStore from '@/state/AuthStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
+import { useSnackbar } from 'notistack';
 
 interface ChallengePageRouteParams {
   id: string;
@@ -64,7 +65,7 @@ async function saveChallengeAttempt(
   userId: string,
   ingameChallengeAttempt: IIngameChallengeAttempt,
   clientVersion: string
-) {
+): Promise<boolean> {
   if (!ingameChallengeAttempt.stats) {
     throw new Error('Challenge attempt should have stats set');
   }
@@ -85,8 +86,10 @@ async function saveChallengeAttempt(
       collection(getFirestore(), challengeAttemptsPath),
       removeUndefinedValues(challengeAttempt)
     );
+    return true;
   } catch (error) {
     console.error('Failed to save challenge attempt', error);
+    return false;
   }
 }
 
@@ -100,6 +103,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const user = useUser();
   const rendererSettings = useUserRendererSettings(user);
   const userId = useAuthStore((store) => store.user?.uid);
+  const { enqueueSnackbar } = useSnackbar();
 
   const isTest = isTestChallenge(challengeId);
   console.log('isTest', isTest);
@@ -291,12 +295,21 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
                 challenge.isPublished &&
                 attempt.status === 'success'
               ) {
-                saveChallengeAttempt(
-                  challengeId,
-                  userId,
-                  attempt,
-                  clientVersion
-                );
+                (async () => {
+                  const result = await saveChallengeAttempt(
+                    challengeId,
+                    userId,
+                    attempt,
+                    clientVersion
+                  );
+                  if (result) {
+                    enqueueSnackbar('Recording saved');
+                  } else {
+                    enqueueSnackbar('Failed to save recording', {
+                      variant: 'error',
+                    });
+                  }
+                })();
               }
               if (attempt.status === 'success' && isTest) {
                 lastCompletedGrid = challenge.grid;
@@ -394,6 +407,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     clientVersion,
     handleRetry,
     rendererSettings,
+    enqueueSnackbar,
   ]);
 
   if (!hasLaunched || !challenge || !simulation) {

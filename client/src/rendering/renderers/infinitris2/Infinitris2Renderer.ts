@@ -161,6 +161,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _showFaces: boolean;
   private _showPatterns: boolean;
   private _showNicknames: boolean;
+  private _numPaddingRows: number;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -193,6 +194,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       controls
     );
 
+    this._numPaddingRows = 0;
     this._blockShadowType = blockShadowType;
     this._oldOverflowStyle = document.body.style.overflow;
 
@@ -1146,6 +1148,21 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     this._renderCells(this._simulation.grid.reducedCells);
+    this._renderTopPadding();
+  }
+
+  private _renderTopPadding() {
+    if (!this._simulation) {
+      return;
+    }
+    // extend top row to top of the screen
+    for (const cell of this._simulation.grid.cells[0]) {
+      if (!cell.isEmpty && !cell.player) {
+        for (let y = 1; y <= this._numPaddingRows; y++) {
+          this._renderCell(cell, -y);
+        }
+      }
+    }
   }
 
   onGridReset(_grid: IGrid): void {
@@ -1158,6 +1175,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     super._resize();
+    this._numPaddingRows = Math.max(
+      Math.ceil((this._appHeight - this._gridHeight) / this._cellSize),
+      0
+    );
 
     this._gridLines.render(
       this._gridWidth,
@@ -1264,11 +1285,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
     cells.forEach((cell) => (cell.requiresRerender = true));
   }
 
-  private _getRenderableCell(cell: ICell): IRenderableCell {
+  private _getRenderableCell(cell: ICell, rowOffset = 0): IRenderableCell {
     if (!this._simulation) {
       throw new Error('No simulation');
     }
-    const cellIndex = cell.row * this._simulation.grid.numColumns + cell.column;
+    const cellIndex =
+      (cell.row + rowOffset) * this._simulation.grid.numColumns + cell.column;
     if (!this._cells[cellIndex]) {
       const cellContainer = new PIXI.Container();
       this._world.addChild(cellContainer);
@@ -1282,17 +1304,18 @@ export default class Infinitris2Renderer extends BaseRenderer {
     return renderableCell;
   }
 
-  private _renderCell = (cell: ICell) => {
+  private _renderCell = (cell: ICell, rowOffset = 0) => {
     if (!this._simulation) {
       return;
     }
-    const renderableCell = this._getRenderableCell(cell);
+    const renderableCell = this._getRenderableCell(cell, rowOffset);
 
     renderableCell.container.x = this.getWrappedX(
       renderableCell.cell.column * this._cellSize
     );
-    renderableCell.container.y = renderableCell.cell.row * this._cellSize;
-    this._renderCellCopies(renderableCell, cell);
+    renderableCell.container.y =
+      (renderableCell.cell.row + rowOffset) * this._cellSize;
+    this._renderCellCopies(renderableCell, cell, rowOffset);
     //}
     /*else {
       renderableCell.children.forEach((child) => {
@@ -1444,7 +1467,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
     );
   }
 
-  private _renderCellCopies(renderableCell: IRenderableCell, cell: ICell) {
+  private _renderCellCopies(
+    renderableCell: IRenderableCell,
+    cell: ICell,
+    rowOffset = 0
+  ) {
     if (!this._simulation) {
       return;
     }
@@ -1468,10 +1495,17 @@ export default class Infinitris2Renderer extends BaseRenderer {
                 c,
                 r
               );
-              if (neighbour?.isConnectedTo(renderableCell.cell)) {
+              if (
+                neighbour?.isConnectedTo(renderableCell.cell) ||
+                (r === -1 && cell.row === 0 && this._numPaddingRows > 0) ||
+                (r === 1 &&
+                  cell.row === 0 &&
+                  rowOffset !== 0 &&
+                  this._numPaddingRows > 0)
+              ) {
                 connections.push({
-                  column: neighbour.column,
-                  row: neighbour.row,
+                  column: neighbour?.column ?? 0,
+                  row: neighbour?.row ?? r,
                   dx: c,
                   dy: r,
                 });
@@ -1717,10 +1751,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
     // TODO: block.getPlacementCells() allows a different type of placement shadow rendering (just the final placement location)
     const blockPlacementCells = block.getPlacementCells();
-    console.log(
-      'Placement cells: ' +
-        blockPlacementCells.map((c) => c.row + ', ' + c.column).join('   ')
-    );
     const highestBlockPlacementCellRow = blockPlacementCells.find(
       (c, i, a) => !a.some((o) => o.row < c.row)
     )!.row;

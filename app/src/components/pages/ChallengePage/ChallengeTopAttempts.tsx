@@ -65,6 +65,7 @@ function ChallengeTopAttemptsInternal({
         orderBy('stats.timeTakenMs', 'asc'),
         ...(hasLimit ? [limit(3)] : []),
       ],
+      listen: hasLimit,
     }),
     [challengeId, hasLimit]
   );

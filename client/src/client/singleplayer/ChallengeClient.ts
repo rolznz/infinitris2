@@ -97,14 +97,20 @@ export default class ChallengeClient
   }
 
   onSimulationPreStep() {
-    if (this._recording) {
+    // TODO: shouldn't the simulation be paused while waiting for the next round?
+    if (this._recording && !this._simulation?.round?.isWaitingForNextRound) {
       this._recordPlayer.step();
     }
   }
 
   onSimulationStep() {
     this._checkChallengeStatus();
-    if (this._simulation.followingPlayer && !this._recording) {
+    // TODO: shouldn't the simulation be paused while waiting for the next round?
+    if (
+      this._simulation.followingPlayer &&
+      !this._recording &&
+      !this._simulation?.round?.isWaitingForNextRound
+    ) {
       this._recorder.record(this._simulation.followingPlayer.firedActions);
     }
     if (

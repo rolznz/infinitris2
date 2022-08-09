@@ -133,7 +133,11 @@ export default function ChallengeResultsView({
         )}
 
         {!showWinnerDisplay && (
-          <>
+          <FlexBox
+            bgcolor="background.paper"
+            p={4}
+            borderRadius={borderRadiuses.base}
+          >
             {challenge.isOfficial && !showWinnerDisplay && (
               <WorldProgress worldType={challenge.worldType} />
             )}
@@ -145,37 +149,6 @@ export default function ChallengeResultsView({
               mt={isLandscape ? characterSize * 0.02 : characterSize * 0.005}
               zIndex={zIndexes.above}
             >
-              {/*<Typography variant="h6">
-            <FormattedMessage
-              defaultMessage="Blocks placed: {blocksPlaced}"
-              description="Number of blocks placed in challenge"
-              values={{
-                blocksPlaced: attempt.stats!.blocksPlaced,
-              }}
-            />
-          </Typography>
-          <Typography variant="h6">
-            <FormattedMessage
-              defaultMessage="Lines cleared: {linesCleared}"
-              description="Number of lines cleared in challenge"
-              values={{
-                linesCleared: attempt.stats!.linesCleared,
-              }}
-            />
-            </Typography>*/}
-              {/* TODO: efficiency rating e.g. not leaving gaps */}
-              {/* <Typography variant="caption">
-          <FormattedMessage
-            defaultMessage="Attempt: #{attemptCount}"
-            description="Number of times the user has attempted this challenge"
-            values={
-              {
-                //attemptCount: user.challengeAttempts[challengeId]?.length || 1,
-              }
-            }
-          />
-        </Typography> */}
-              {/*<RateChallenge isTest={isTest} challengeId={challengeId} />*/}
               <FlexBox
                 pt={2}
                 width="100%"
@@ -196,9 +169,41 @@ export default function ChallengeResultsView({
               challenge={challenge}
               viewReplay={viewOtherReplay}
             />
-          </>
+          </FlexBox>
         )}
       </EndRoundDisplayOverlay>
     </FlexBox>
   );
 }
+
+/*<Typography variant="h6">
+            <FormattedMessage
+              defaultMessage="Blocks placed: {blocksPlaced}"
+              description="Number of blocks placed in challenge"
+              values={{
+                blocksPlaced: attempt.stats!.blocksPlaced,
+              }}
+            />
+          </Typography>
+          <Typography variant="h6">
+            <FormattedMessage
+              defaultMessage="Lines cleared: {linesCleared}"
+              description="Number of lines cleared in challenge"
+              values={{
+                linesCleared: attempt.stats!.linesCleared,
+              }}
+            />
+            </Typography>*/
+/* TODO: efficiency rating e.g. not leaving gaps */
+/* <Typography variant="caption">
+          <FormattedMessage
+            defaultMessage="Attempt: #{attemptCount}"
+            description="Number of times the user has attempted this challenge"
+            values={
+              {
+                //attemptCount: user.challengeAttempts[challengeId]?.length || 1,
+              }
+            }
+          />
+        </Typography> */
+/*<RateChallenge isTest={isTest} challengeId={challengeId} />*/

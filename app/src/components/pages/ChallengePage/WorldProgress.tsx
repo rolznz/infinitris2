@@ -74,8 +74,6 @@ export function WorldProgress({ worldType }: WorldProgressProps) {
 
   return (
     <FlexBox
-      position="absolute"
-      top={120}
       zIndex={1}
       justifyContent="center"
       alignItems="center"

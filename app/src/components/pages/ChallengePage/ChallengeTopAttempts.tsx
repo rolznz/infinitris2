@@ -105,7 +105,7 @@ function ChallengeTopAttemptsInternal({
               />
             ))}
             {hasLimit &&
-              challenge.readOnly?.numAttempts &&
+              !!challenge.readOnly?.numAttempts &&
               challenge.readOnly.numAttempts > 3 && (
                 <FlexBox sx={attemptSx} onClick={toggleLimit}>
                   <FlexBox p={2}>

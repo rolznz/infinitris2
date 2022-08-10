@@ -362,6 +362,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
                       useChallengeEditorStore
                         .getState()
                         .setIsEditing(editor.isEditing);
+                      useChallengeEditorStore
+                        .getState()
+                        .setChallengeCellType(editor.challengeCellType);
                     },
                     onSaveGrid: (_editor: IChallengeEditor, grid: string) => {
                       useChallengeEditorStore.getState().setChallenge({

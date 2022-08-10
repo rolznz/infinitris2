@@ -96,6 +96,18 @@ const subtitles = [
   />,
 ];
 
+const titleColors = [
+  '#FFA9D2',
+  '#FF447C',
+  '#FFA800',
+  '#FFE600',
+  '#FFA800',
+  '#FFA800',
+  '#FFA800',
+  '#FFA800',
+  '#FFA800',
+];
+
 export function PremiumCarousel() {
   const isLandscape = useIsLandscape();
   const images: string[] = React.useMemo(
@@ -149,7 +161,7 @@ export function PremiumCarousel() {
             maxWidth="70%"
             alignItems="flex-start"
           >
-            <Typography variant="h1" color={colors.premium}>
+            <Typography variant="h1" color={titleColors[i]}>
               {titles[i]}
             </Typography>
             <Typography variant="h6" color={colors.white}>

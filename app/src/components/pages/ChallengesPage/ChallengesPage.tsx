@@ -35,7 +35,6 @@ const ChallengesPageSortTypeValues = [
 export type ChallengesPageSortType =
   typeof ChallengesPageSortTypeValues[number];
 export const challengesPageSortParam = 'sort';
-export const challengesPageListenParam = 'listen';
 
 const cachedChallenges: Record<
   ChallengesPageSortType,
@@ -57,7 +56,6 @@ function ChallengesPageChallengeList({
   >(cachedChallenges[sortType]);
 
   // TODO: remove listen param and wait for challenge to be created before navigating
-  const listen = useSearchParam(challengesPageListenParam) === 'true';
 
   const challengesMostPlaysFilter: UseCollectionOptions = React.useMemo(
     () => ({
@@ -65,9 +63,8 @@ function ChallengesPageChallengeList({
         where('isOfficial', '==', false),
         orderBy('readOnly.numAttempts', 'desc'),
       ],
-      listen,
     }),
-    [listen]
+    []
   );
 
   const challengesMostRatingsFilter: UseCollectionOptions = React.useMemo(
@@ -77,9 +74,8 @@ function ChallengesPageChallengeList({
         orderBy('readOnly.numRatings', 'desc'),
         orderBy('readOnly.rating', 'desc'),
       ],
-      listen,
     }),
-    [listen]
+    []
   );
 
   const challengesRatingFilter: UseCollectionOptions = React.useMemo(
@@ -89,9 +85,8 @@ function ChallengesPageChallengeList({
         orderBy('readOnly.rating', 'desc'),
         orderBy('readOnly.numRatings', 'desc'),
       ],
-      listen,
     }),
-    [listen]
+    []
   );
   const challengesDateFilter: UseCollectionOptions = React.useMemo(
     () => ({
@@ -99,9 +94,8 @@ function ChallengesPageChallengeList({
         where('isOfficial', '==', false),
         orderBy('readOnly.createdTimestamp', 'desc'),
       ],
-      listen,
     }),
-    [listen]
+    []
   );
 
   const onNewItemsLoaded = React.useCallback(

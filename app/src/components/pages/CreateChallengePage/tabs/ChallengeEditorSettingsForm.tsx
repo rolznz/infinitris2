@@ -38,8 +38,9 @@ import { useSnackbar } from 'notistack';
 import {
   ChallengesPageSortType,
   challengesPageSortParam,
-  challengesPageListenParam,
 } from '@/components/pages/ChallengesPage/ChallengesPage';
+import { useDocument, UseDocumentOptions } from 'swr-firestore';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const exportChallenge = () => {
   const challenge = useChallengeEditorStore.getState().challenge!;
@@ -80,6 +81,10 @@ type ChallengeEditorSettingsFormProps = {
   updateFormKey(): void;
 };
 
+const usePublishedChallengeSettings: UseDocumentOptions = {
+  listen: true,
+};
+
 export function ChallengeEditorSettingsForm({
   challenge,
   updateFormKey,
@@ -90,11 +95,20 @@ export function ChallengeEditorSettingsForm({
       shallow
     );
   const [isLoading, setIsLoading] = React.useState(false);
+  const [challengeIdToPublish, setChallengeIdToPublish] = React.useState<
+    string | undefined
+  >(undefined);
+  const { data: publishedChallenge } = useDocument<IChallenge>(
+    challengeIdToPublish ? getChallengePath(challengeIdToPublish) : null,
+    usePublishedChallengeSettings
+  );
+  const challengeHasBeenCreated = publishedChallenge?.data?.()?.created;
   const userId = useAuthStore((store) => store.user?.uid);
   const user = useUser();
   const isAdmin = user.readOnly?.isAdmin;
   const intl = useIntl();
   const history = useHistory();
+  const { enqueueSnackbar } = useSnackbar();
   const {
     control,
     handleSubmit,
@@ -128,6 +142,33 @@ export function ChallengeEditorSettingsForm({
     }
   }, [valuesSame, setChallenge, watchedValues, challenge]);
 
+  React.useEffect(() => {
+    if (challengeIdToPublish && challengeHasBeenCreated) {
+      setChallengeIdToPublish(undefined);
+      setChallenge(undefined);
+      setChallengeId(undefined);
+      setIsLoading(false);
+      reset();
+      enqueueSnackbar('Challenge Published Successfully!');
+      const sortLatest: ChallengesPageSortType = 'latest';
+      history.push(
+        challenge.isTemplate || challenge.isOfficial
+          ? Routes.newChallenge
+          : `${Routes.challenges}?${challengesPageSortParam}=${sortLatest}`
+      );
+    }
+  }, [
+    setChallenge,
+    reset,
+    history,
+    setChallengeId,
+    challengeIdToPublish,
+    challengeHasBeenCreated,
+    enqueueSnackbar,
+    challenge.isTemplate,
+    challenge.isOfficial,
+  ]);
+
   const { title } = watch();
   if (title && title.toLowerCase() !== title) {
     setValue('title', title.toLowerCase(), { shouldValidate: true });
@@ -141,8 +182,6 @@ export function ChallengeEditorSettingsForm({
       });
     }
   }, [setChallenge, title]);*/
-
-  const { enqueueSnackbar } = useSnackbar();
 
   const importChallenge = React.useCallback(() => {
     const json = window.prompt('Enter challenge JSON');
@@ -216,23 +255,13 @@ export function ChallengeEditorSettingsForm({
             { merge: true }
           );
 
-          setChallenge(undefined);
-          setChallengeId(undefined);
-          reset();
-          enqueueSnackbar('Challenge Published Successfully!');
-          const sortLatest: ChallengesPageSortType = 'latest';
-          history.push(
-            challenge.isTemplate || challenge.isOfficial
-              ? Routes.newChallenge
-              : `${Routes.challenges}?${challengesPageSortParam}=${sortLatest}&${challengesPageListenParam}=true`
-          );
+          setChallengeIdToPublish(challengeId);
         } catch (error) {
           console.error('Failed to publish challenge', error);
           enqueueSnackbar('Failed to publish challenge', { variant: 'error' });
+          setIsLoading(false);
         }
       }
-
-      setIsLoading(false);
     },
     [
       userId,
@@ -241,10 +270,6 @@ export function ChallengeEditorSettingsForm({
       enqueueSnackbar,
       intl,
       existingChallengeId,
-      setChallenge,
-      setChallengeId,
-      reset,
-      history,
     ]
   );
 
@@ -386,6 +411,7 @@ export function ChallengeEditorSettingsForm({
                 description="Publish challenge button text"
               />
             </Button>
+            {isLoading && <LoadingSpinner />}
           </FlexBox>
         </FlexBox>
       </form>

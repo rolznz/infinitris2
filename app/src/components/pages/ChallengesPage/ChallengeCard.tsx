@@ -126,9 +126,8 @@ export default function ChallengeCard({
           <FlexBox
             sx={cardHeaderSx}
             justifyContent="flex-start"
-            px={0.5}
+            px={1}
             flexDirection="row"
-            gap={1}
             borderRadius={borderRadiuses.full}
             boxShadow={boxShadows.small}
           >
@@ -141,13 +140,19 @@ export default function ChallengeCard({
                   's'
                 }
               >
-                <FlexBox key={attempt.id} position="relative">
+                <FlexBox
+                  key={attempt.id}
+                  position="relative"
+                  mx={-0.5}
+                  my={-0.25}
+                >
                   <CharacterImage
                     characterId={
                       attempt.readOnly?.user?.selectedCharacterId ||
                       DEFAULT_CHARACTER_ID
                     }
                     width={48}
+                    thumbnailOnly
                   />
                   <PlacingStar
                     offset={10}

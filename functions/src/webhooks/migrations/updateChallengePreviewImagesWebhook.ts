@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import { Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
-import { createChallengePreviewImages } from '../utils/createChallengePreviewImages';
+import { createChallengePreviewImages } from '../../utils/createChallengePreviewImages';
 import {
   challengesPath,
   getChallengePath,
@@ -11,7 +11,7 @@ import {
   IUser,
   objectToDotNotation,
 } from 'infinitris2-models';
-import { getDb } from '../utils/firebase';
+import { getDb } from '../../utils/firebase';
 
 export const updateChallengePreviewImagesWebhook = async (
   req: Request,

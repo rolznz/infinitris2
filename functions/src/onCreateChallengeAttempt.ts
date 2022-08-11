@@ -151,7 +151,7 @@ async function updatePlayerTopChallengeAttempt(
   }
 }
 
-async function updateChallengeTopAttempts(
+export async function updateChallengeTopAttempts(
   challengeId: string,
   challengeRef: FirestoreDocRef
 ) {

@@ -9,8 +9,10 @@ import * as cors from 'cors';
 import { buyCoinsWebhook } from './buyCoinsWebhook';
 import { publicDataWebhook } from './publicDataWebhook';
 import { testWebhook } from './testWebhook';
-import { updateChallengePreviewImagesWebhook } from './updateChallengePreviewImagesWebhook';
-import { updateChallengeAttemptsWebhook } from './updateChallengeAttemptsWebhook';
+import { updateChallengePreviewImagesWebhook } from './migrations/updateChallengePreviewImagesWebhook';
+import { updateChallengeAttemptTopPlayerAttemptsWebhook } from './migrations/updateChallengeAttemptTopPlayerAttemptsWebhook';
+import { updateChallengeTopAttemptsWebhook } from './migrations/updateChallengeTopAttemptsWebhook';
+import { updateChallengeAttemptUserDataWebhook } from './migrations/updateChallengeAttemptUserDataWebhook';
 
 const corsHandler = cors({ origin: true });
 
@@ -27,13 +29,27 @@ app.patch('/v1/servers/:serverId', updateServerWebhook);
 app.get('/v1/public/:collectionId', publicDataWebhook);
 
 app.post('/v1/test', testWebhook);
-// TODO: remove - too slow to execute on all challenges
+
+// //////////////////////////////////////////////////////////
+// MIGRATIONS - note: may take a long time to run
+// //////////////////////////////////////////////////////////
 app.post(
-  '/v1/update-challenge-preview-images',
+  '/v1/migrations/challenges/preview-images',
   updateChallengePreviewImagesWebhook
 );
-// TODO: remove - too slow to execute on all challenges
-app.post('/v1/update-challenge-attempts', updateChallengeAttemptsWebhook);
+app.post(
+  '/v1/migrations/challenges/top-attempts',
+  updateChallengeTopAttemptsWebhook
+);
+app.post(
+  '/v1/migrations/challenge-attempts/user-data',
+  updateChallengeAttemptUserDataWebhook
+);
+app.post(
+  '/v1/migrations/challenge-attempts/top-player-attempts',
+  updateChallengeAttemptTopPlayerAttemptsWebhook
+);
+// //////////////////////////////////////////////////////////
 
 // expose for testing only
 export const webhooksExpressApp = app;

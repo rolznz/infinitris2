@@ -10,9 +10,9 @@ import {
   objectToDotNotation,
   usersPath,
 } from 'infinitris2-models';
-import { getDb } from '../utils/firebase';
+import { getDb } from '../../utils/firebase';
 
-export const updateChallengeAttemptsWebhook = async (
+export const updateChallengeAttemptUserDataWebhook = async (
   req: Request,
   res: Response
 ) => {

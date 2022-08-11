@@ -215,7 +215,13 @@ const purchase1: IPurchase = {
 };
 
 const challengeAttemptId1 = 'challenge-attempt-1';
+const challengeAttemptId2 = 'challenge-attempt-2';
+const challengeAttemptId3 = 'challenge-attempt-3';
+const challengeAttemptId4 = 'challenge-attempt-4';
 const challengeAttempt1Path = getChallengeAttemptPath(challengeAttemptId1);
+const challengeAttempt2Path = getChallengeAttemptPath(challengeAttemptId2);
+const challengeAttempt3Path = getChallengeAttemptPath(challengeAttemptId3);
+const challengeAttempt4Path = getChallengeAttemptPath(challengeAttemptId4);
 
 const server1Id = 'server-1';
 const server1Path = getServerPath(server1Id);
@@ -317,7 +323,13 @@ const dummyData = {
   purchase1,
   creatableChallengeAttempt,
   challengeAttemptId1,
+  challengeAttemptId2,
+  challengeAttemptId3,
+  challengeAttemptId4,
   challengeAttempt1Path,
+  challengeAttempt2Path,
+  challengeAttempt3Path,
+  challengeAttempt4Path,
   serverKey1Path,
   serverKey1,
   server1Id,

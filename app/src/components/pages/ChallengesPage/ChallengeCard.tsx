@@ -16,7 +16,7 @@ import { useUser } from '@/components/hooks/useUser';
 import Button from '@mui/material/Button';
 import FlexBox from '@/components/ui/FlexBox';
 import { SxProps, Theme } from '@mui/material/styles';
-import { borderRadiuses } from '@/theme/theme';
+import { borderRadiuses, boxShadows } from '@/theme/theme';
 
 import { ReactComponent as TimesRatedIcon } from '@/icons/times_rated.svg';
 import { ReactComponent as StarIcon } from '@/icons/star.svg';
@@ -24,6 +24,10 @@ import { ReactComponent as PlayIcon } from '@/icons/play.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import { ProgressiveImage } from '@/components/ui/ProgressiveImage';
 import isMobile from '@/utils/isMobile';
+import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
+import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
+import { PlacingStar } from '@/components/pages/Characters/PlacingStar';
+import { Tooltip } from '@mui/material';
 
 interface ChallengeCardProps {
   challenge: DocumentSnapshot<IChallenge>;
@@ -45,6 +49,10 @@ const cardFooterSx: SxProps<Theme> = {
   bottom: 0,
   py: 2,
   width: '100%',
+  zIndex: 2,
+};
+
+const cardHeaderSx: SxProps<Theme> = {
   zIndex: 2,
 };
 
@@ -104,6 +112,53 @@ export default function ChallengeCard({
             url={`${process.env.REACT_APP_IMAGES_ROOT_URL}/challenges/${challenge.id}/card.jpg`}
             blur={false}
           />
+        </FlexBox>
+        <FlexBox
+          sx={cardHeaderSx}
+          justifyContent="flex-start"
+          flexDirection="row"
+          position="absolute"
+          top={0}
+          mt={1}
+          ml={2}
+          width="100%"
+        >
+          <FlexBox
+            sx={cardHeaderSx}
+            justifyContent="flex-start"
+            px={0.5}
+            flexDirection="row"
+            gap={1}
+            borderRadius={borderRadiuses.full}
+            boxShadow={boxShadows.small}
+          >
+            {challenge.data()?.readOnly?.topAttempts?.map((attempt, index) => (
+              <Tooltip
+                title={
+                  (attempt.readOnly?.user?.nickname ?? 'Unknown Player') +
+                  ' - ' +
+                  (attempt.stats.timeTakenMs / 1000).toFixed(2) +
+                  's'
+                }
+              >
+                <FlexBox key={attempt.id} position="relative">
+                  <CharacterImage
+                    characterId={
+                      attempt.readOnly?.user?.selectedCharacterId ||
+                      DEFAULT_CHARACTER_ID
+                    }
+                    width={48}
+                  />
+                  <PlacingStar
+                    offset={10}
+                    scale={0.35}
+                    placing={index + 1}
+                    numberOnly
+                  />
+                </FlexBox>
+              </Tooltip>
+            ))}
+          </FlexBox>
         </FlexBox>
         <FlexBox sx={cardFooterSx} alignItems="flex-start" px={1}>
           <Typography variant="body1" fontSize="20px">

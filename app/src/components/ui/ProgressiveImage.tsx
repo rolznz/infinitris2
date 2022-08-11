@@ -20,6 +20,7 @@ type ProgressiveImageProps = {
   height?: number;
   sx?: SxProps<Theme>;
   blur?: boolean;
+  thumbnailOnly?: boolean;
 };
 
 export function ProgressiveImage({
@@ -29,7 +30,8 @@ export function ProgressiveImage({
   thumbnailFallbackUrl,
   width,
   height,
-  blur = true,
+  thumbnailOnly = false,
+  blur = !thumbnailOnly,
 }: ProgressiveImageProps) {
   const [isLoaded, setLoaded] = React.useState(false);
   height = height || width;
@@ -50,7 +52,14 @@ export function ProgressiveImage({
         />
       )}
 
-      <img src={url} style={imageStyle} alt="" onLoad={() => setLoaded(true)} />
+      {!thumbnailOnly && (
+        <img
+          src={url}
+          style={imageStyle}
+          alt=""
+          onLoad={() => setLoaded(true)}
+        />
+      )}
     </Box>
   );
 }

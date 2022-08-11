@@ -77,6 +77,7 @@ export * from './util/rgbToHex';
 export * from './util/rotateColor';
 export * from './util/simpleRandom';
 export * from './util/simpleStringHash';
+export * from './util/verifyProperty';
 export * from './util/wrap';
 export * from './util/removeUndefinedValues';
 export * from './UpdateServerRequest';
@@ -96,6 +97,7 @@ export * from './IRotationSystem';
 export * from './SettingsType';
 export * from './IClientApi';
 export * from './IGrid';
+export * from './WithId';
 
 export const NETWORK_VERSION = 2;
 

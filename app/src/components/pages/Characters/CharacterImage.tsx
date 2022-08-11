@@ -9,6 +9,7 @@ type CharacterImageProps = {
   width: number;
   hasShadow?: boolean;
   strongShadow?: boolean;
+  thumbnailOnly?: boolean;
 };
 
 function _CharacterImage({
@@ -17,6 +18,7 @@ function _CharacterImage({
   thumbnail,
   hasShadow,
   strongShadow,
+  thumbnailOnly,
 }: CharacterImageProps) {
   const sx: SxProps<Theme> = React.useMemo(
     () => ({
@@ -36,6 +38,7 @@ function _CharacterImage({
       thumbnail={thumbnail ? `data:image/png;base64,${thumbnail}` : undefined}
       thumbnailFallbackUrl={`${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/${characterId}_thumbnail.png`}
       url={`${process.env.REACT_APP_IMAGES_ROOT_URL}/characters/${characterId}.png`}
+      thumbnailOnly={thumbnailOnly}
     />
   );
 }

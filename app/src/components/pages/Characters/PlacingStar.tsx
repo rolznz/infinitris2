@@ -23,9 +23,13 @@ const getScoreColor = (n?: number) =>
     : '#DE5E5E';
 
 const getScoreSize = (n?: number) => (!n || n < 4 ? 100 : 80);
-const getScoreFontSize = (n?: number) => {
+const getScoreFontSize = (n?: number, numberOnly = false) => {
   if (!n) n = 1;
-  return getScoreSize(n) * 0.23 * (1 / (1 + (n.toString().length - 1) * 0.15));
+  return (
+    getScoreSize(n) *
+    (numberOnly ? 0.3 : 0.23) *
+    (1 / (1 + (n.toString().length - 1) * 0.15))
+  );
 };
 
 type PlacingStarProps = {
@@ -34,6 +38,7 @@ type PlacingStarProps = {
   scale?: number;
   absolute?: boolean;
   linkToScoreboard?: boolean;
+  numberOnly?: boolean;
 };
 
 export function PlacingStar({
@@ -42,6 +47,7 @@ export function PlacingStar({
   scale = 1,
   absolute = true,
   linkToScoreboard,
+  numberOnly,
 }: PlacingStarProps) {
   return (
     <FlexBox
@@ -72,12 +78,12 @@ export function PlacingStar({
         variant="body1"
         style={{
           position: 'absolute',
-          fontSize: getScoreFontSize(placing) * scale + 'px',
+          fontSize: getScoreFontSize(placing, numberOnly) * scale + 'px',
           color: colors.white,
         }}
       >
         {placing || '?'}
-        {placing && <sup>{getOrdinalSuffix(placing)}</sup>}
+        {placing && !numberOnly && <sup>{getOrdinalSuffix(placing)}</sup>}
       </Typography>
       {linkToScoreboard && (
         <FlexBox

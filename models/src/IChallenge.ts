@@ -8,6 +8,8 @@ import IEntity, {
 } from './IEntity';
 import { WorldType, WorldVariation } from '@models/WorldType';
 import IUser from '@models/IUser';
+import { IChallengeAttempt } from '@models/IChallengeAttempt';
+import { WithId } from '@models/WithId';
 
 export interface IRateable {
   readonly numRatings: number;
@@ -20,6 +22,7 @@ export interface IChallengeReadOnlyProperties
   readonly numAttempts: number;
   readonly thumbnail?: string;
   readonly user?: Pick<IUser['readOnly'], 'nickname'>;
+  readonly topAttempts?: WithId<IChallengeAttempt>[];
 }
 
 export type CreatableChallenge = Creatable<IChallenge>;

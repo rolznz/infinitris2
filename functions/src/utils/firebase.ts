@@ -6,6 +6,9 @@ let _db: firestore.Firestore;
 
 export const systemUserId = 'SYSTEM';
 
+export type FirestoreDocRef<T = firestore.DocumentData> =
+  firestore.DocumentReference<T>;
+
 export function getApp(): admin.app.App {
   if (!_app) {
     _app = admin.initializeApp();

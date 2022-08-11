@@ -10,6 +10,7 @@ export interface IChallengeAttemptReadOnlyProperties
   extends IEntityReadOnlyProperties {
   user?: Pick<IUser['readOnly'], 'nickname'> &
     Pick<IUser, 'selectedCharacterId'>;
+  isPlayerTopAttempt?: boolean;
 }
 
 export type ChallengeAttemptFrame = {

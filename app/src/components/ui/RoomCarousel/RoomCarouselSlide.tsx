@@ -27,6 +27,14 @@ import { textShadows } from '@/theme/theme';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import { ChallengeGridPartialPreview } from '@/components/pages/ChallengesPage/ChallengeGridPartialPreview';
 import { useWindowSize } from 'react-use';
+import React from 'react';
+import { SxProps } from '@mui/material/styles';
+
+const nameSx: SxProps = { textShadow: textShadows.base };
+const fadeSx: SxProps = {
+  background:
+    'linear-gradient(180deg, rgba(0,0,0, 0.0) 0%, rgba(0,0,0, 0.1) 20%, rgba(0, 0, 0, 0.8) 100%)',
+};
 
 export type RoomCarouselSlideProps = {
   gameModeType?: GameModeType;
@@ -52,20 +60,27 @@ export function RoomCarouselSlide({
 }: RoomCarouselSlideProps) {
   const isLandscape = useIsLandscape();
   const windowSize = useWindowSize();
-  return (
-    <FlexBox
-      key={id}
-      width="100vw"
-      height="100vh"
-      sx={{
+  const backgroundSx = React.useMemo(
+    () =>
+      ({
         background: getBackground(isLandscape, worldType, worldVariation),
         backgroundSize: 'cover',
         backgroundRepeat: 'no-repeat',
         backgroundPositionY: '100%',
         backgroundPositionX: '22%',
-      }}
-      position="relative"
-    >
+      } as SxProps),
+    [isLandscape, worldType, worldVariation]
+  );
+  return (
+    <FlexBox key={id} width="100vw" height="100vh" position="relative">
+      <FlexBox
+        position="absolute"
+        top={0}
+        left={0}
+        width="100%"
+        height="100%"
+        sx={backgroundSx}
+      />
       {grid && typeof grid === 'string' && (
         <FlexBox
           position="absolute"
@@ -89,10 +104,7 @@ export function RoomCarouselSlide({
           width="100%"
           top={isLandscape ? '7%' : '150px'}
         >
-          <Typography
-            variant={isLandscape ? 'h1' : 'h2'}
-            sx={{ textShadow: textShadows.base }}
-          >
+          <Typography variant={isLandscape ? 'h1' : 'h2'} sx={nameSx}>
             {name}
           </Typography>
         </FlexBox>
@@ -102,10 +114,7 @@ export function RoomCarouselSlide({
         width="100%"
         bottom={0}
         height="30%"
-        sx={{
-          background:
-            'linear-gradient(180deg, rgba(0,0,0, 0.0) 0%, rgba(0,0,0, 0.1) 20%, rgba(0, 0, 0, 0.8) 100%)',
-        }}
+        sx={fadeSx}
       />
       <FlexBox
         position="absolute"
@@ -116,17 +125,8 @@ export function RoomCarouselSlide({
         //zIndex="above"
       >
         <FlexBox flexDirection="row" gap={1}>
-          {customText && (
-            <Typography variant="h1" mr={2}>
-              {customText}
-            </Typography>
-          )}
-          {gameModeType && (
-            <SvgIcon color="primary">
-              <GameModeIcon gameModeType={gameModeType} />
-            </SvgIcon>
-          )}
-          <Typography variant="h1">{gameModeType}</Typography>
+          {customText}
+
           {numPlayers !== undefined && (
             <FlexBox flexDirection="row">
               <SvgIcon color="primary">
@@ -137,9 +137,17 @@ export function RoomCarouselSlide({
           )}
         </FlexBox>
         {gameModeType && (
-          <Typography variant="body2">
-            <GameModeDescription gameModeType={gameModeType} />
-          </Typography>
+          <FlexBox alignItems="flex-start">
+            <FlexBox flexDirection="row">
+              <SvgIcon color="primary">
+                <GameModeIcon gameModeType={gameModeType} />
+              </SvgIcon>
+              <Typography variant="h1">{gameModeType}</Typography>
+            </FlexBox>
+            <Typography variant="body2">
+              <GameModeDescription gameModeType={gameModeType} />
+            </Typography>
+          </FlexBox>
         )}
       </FlexBox>
     </FlexBox>

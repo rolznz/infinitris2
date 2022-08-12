@@ -10,6 +10,9 @@ import useOfficialChallenges, {
 } from '@/components/hooks/useOfficialChallenges';
 import { useUser } from '@/components/hooks/useUser';
 import { IChallenge, WorldVariationValues } from 'infinitris2-models';
+import FlexBox from '@/components/ui/FlexBox';
+import Typography from '@mui/material/Typography';
+import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
 
 export function StoryModePage() {
   const history = useHistory();
@@ -30,7 +33,17 @@ export function StoryModePage() {
         (challengeDoc, index) =>
           ({
             id: challengeDoc.id,
-            customText: getOfficialChallengeTitle(challengeDoc.data()),
+            customText: (
+              <FlexBox alignItems="flex-start" mb={1}>
+                <Typography variant="h1">
+                  {getOfficialChallengeTitle(challengeDoc.data())}
+                </Typography>
+                <ChallengeTopAttempts
+                  challengeId={challengeDoc.id}
+                  challenge={challengeDoc.data()}
+                />
+              </FlexBox>
+            ),
             worldType: challengeDoc.data().worldType || 'grass',
             worldVariation: challengeDoc.data().worldVariation || '0',
             isLocked: index > (completedOfficialChallengeIds?.length || 0),

@@ -17,7 +17,6 @@ import useAuthStore from '@/state/AuthStore';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 import { Checkbox, FormControlLabel, SxProps } from '@mui/material';
 import {
-  borderColors,
   borderRadiuses,
   boxShadows,
   dropShadows,
@@ -31,7 +30,7 @@ import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 type ChallengeTopAttemptsProps = {
   challengeId: string;
   challenge: IChallenge;
-  viewReplay(attempt: IChallengeAttempt): void;
+  viewReplay?(attempt: IChallengeAttempt): void;
 };
 
 const noLimitSx: SxProps = {
@@ -60,8 +59,10 @@ function ChallengeTopAttemptsInternal({
   const [showOnlyTopPlayerAttempts, setShowOnlyTopPlayerAttempts] =
     React.useState(true);
   const toggleLimit = React.useCallback(() => {
-    setHasLimit((hasLimit) => !hasLimit);
-  }, []);
+    if (viewReplay) {
+      setHasLimit((hasLimit) => !hasLimit);
+    }
+  }, [viewReplay]);
   const toggleShowOnlyTopPlayerAttempts = React.useCallback(() => {
     setShowOnlyTopPlayerAttempts(
       (showOnlyTopPlayerAttempts) => !showOnlyTopPlayerAttempts
@@ -102,7 +103,7 @@ function ChallengeTopAttemptsInternal({
     return null;
   }
   return (
-    <FlexBox pt={4}>
+    <FlexBox mb={hasLimit ? 0 : -2}>
       {/*<Typography variant="h4" textAlign="center">
         <FormattedMessage
           defaultMessage="Top Plays"
@@ -112,7 +113,6 @@ function ChallengeTopAttemptsInternal({
       <FlexBox
         flexDirection="row"
         gap={2}
-        p={2}
         maxWidth={500}
         flexWrap="nowrap"
         justifyContent={hasLimit ? undefined : 'flex-start'}
@@ -192,7 +192,7 @@ const attemptSx: SxProps = {
   boxShadow: boxShadows.small,
   p: 0.5,
   borderRadius: borderRadiuses.base,
-  backgroundColor: borderColors.inverse,
+  backgroundColor: 'background.paper',
 };
 
 type ChallengeTopAttemptProps = {
@@ -206,7 +206,7 @@ function ChallengeTopAttempt({
   viewReplay,
 }: ChallengeTopAttemptProps) {
   const viewReplayForThisAttempt = React.useCallback(
-    () => viewReplay(attempt),
+    () => viewReplay?.(attempt),
     [viewReplay, attempt]
   );
   return (

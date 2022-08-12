@@ -142,7 +142,7 @@ export default function ChallengeInfoView({
               </FlexBox>
               <FlexBox
                 position="absolute"
-                bottom={isMobile() ? '25vh' : '21vh'}
+                bottom={isMobile() ? '28vh' : '24vh'}
               >
                 <ChallengeTopAttempts
                   challengeId={challengeId}

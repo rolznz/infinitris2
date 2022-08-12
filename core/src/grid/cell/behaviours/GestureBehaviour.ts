@@ -5,16 +5,16 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import { CustomizableInputAction } from '@models/InputAction';
 
 export default class GestureBehaviour implements ICellBehaviour {
-  private _inputAction: CustomizableInputAction;
-  constructor(inputAction: CustomizableInputAction) {
+  private _inputAction: CustomizableInputAction[];
+  constructor(...inputAction: CustomizableInputAction[]) {
     this._inputAction = inputAction;
   }
 
   clone(_cell: ICell): ICellBehaviour {
-    return new GestureBehaviour(this._inputAction);
+    return new GestureBehaviour(...this._inputAction);
   }
 
-  get inputAction(): CustomizableInputAction {
+  get inputAction(): CustomizableInputAction[] {
     return this._inputAction;
   }
 
@@ -35,7 +35,7 @@ export default class GestureBehaviour implements ICellBehaviour {
   }
 
   toChallengeCellType(): ChallengeCellType {
-    switch (this._inputAction) {
+    switch (this._inputAction[0]) {
       case CustomizableInputAction.MoveLeft:
         return ChallengeCellType.GestureMoveLeft;
       case CustomizableInputAction.MoveRight:
@@ -43,9 +43,13 @@ export default class GestureBehaviour implements ICellBehaviour {
       case CustomizableInputAction.MoveDown:
         return ChallengeCellType.GestureMoveDown;
       case CustomizableInputAction.RotateClockwise:
-        return ChallengeCellType.GestureRotateClockwise;
+        return this._inputAction.length === 1
+          ? ChallengeCellType.GestureRotateClockwise
+          : ChallengeCellType.GestureRotateDownClockwise;
       case CustomizableInputAction.RotateAnticlockwise:
-        return ChallengeCellType.GestureRotateAnticlockwise;
+        return this._inputAction.length === 1
+          ? ChallengeCellType.GestureRotateAnticlockwise
+          : ChallengeCellType.GestureRotateDownAnticlockwise;
       case CustomizableInputAction.Drop:
         return ChallengeCellType.GestureDrop;
       default:
@@ -54,7 +58,8 @@ export default class GestureBehaviour implements ICellBehaviour {
   }
   getImageFilename(): string {
     const prefix = 'gesture_';
-    switch (this._inputAction) {
+    const rotateDownPrefix = this._inputAction.length > 1 ? '_down' : '';
+    switch (this._inputAction[0]) {
       case CustomizableInputAction.MoveLeft:
         return prefix + 'left';
       case CustomizableInputAction.MoveRight:
@@ -62,9 +67,9 @@ export default class GestureBehaviour implements ICellBehaviour {
       case CustomizableInputAction.MoveDown:
         return prefix + 'down';
       case CustomizableInputAction.RotateClockwise:
-        return prefix + 'rotate_clockwise';
+        return prefix + `rotate${rotateDownPrefix}_clockwise`;
       case CustomizableInputAction.RotateAnticlockwise:
-        return prefix + 'rotate_anticlockwise';
+        return prefix + `rotate${rotateDownPrefix}_anticlockwise`;
       case CustomizableInputAction.Drop:
         return prefix + 'drop';
       default:

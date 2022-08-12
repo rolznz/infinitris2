@@ -1,5 +1,6 @@
 import { ChallengeCellType } from 'infinitris2-models';
 
+// TODO: remove (unused)
 export function getCellFillColor(cellType: ChallengeCellType): string {
   switch (cellType) {
     case ChallengeCellType.Laser:
@@ -30,6 +31,8 @@ export function getCellFillColor(cellType: ChallengeCellType): string {
     case ChallengeCellType.GestureMoveDown:
     case ChallengeCellType.GestureRotateClockwise:
     case ChallengeCellType.GestureRotateAnticlockwise:
+    case ChallengeCellType.GestureRotateDownClockwise:
+    case ChallengeCellType.GestureRotateDownAnticlockwise:
     case ChallengeCellType.GestureDrop:
       return '#f0f';
     case ChallengeCellType.Infection:

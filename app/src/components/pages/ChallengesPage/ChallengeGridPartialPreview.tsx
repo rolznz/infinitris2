@@ -18,6 +18,7 @@ interface ChallengePreviewProps {
 
 const imageCache = {} as Record<ChallengeCellType, HTMLImageElement>;
 
+// TODO: remove (only generate previews serverside)
 async function getChallengeCellImage(
   cellType: ChallengeCellType
 ): Promise<HTMLImageElement | undefined> {
@@ -82,6 +83,10 @@ async function getChallengeCellImage(
       return loadImage(cellType, 'gesture_rotate_clockwise');
     case ChallengeCellType.GestureRotateAnticlockwise:
       return loadImage(cellType, 'gesture_rotate_anticlockwise');
+    case ChallengeCellType.GestureRotateDownClockwise:
+      return loadImage(cellType, 'gesture_rotate_down_clockwise');
+    case ChallengeCellType.GestureRotateDownAnticlockwise:
+      return loadImage(cellType, 'gesture_rotate_down_anticlockwise');
     default:
       return undefined;
   }

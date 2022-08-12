@@ -242,6 +242,10 @@ function getChallengeCellTypeUrl(
       return getChallengeTypeUrlInternal('gesture_rotate_clockwise');
     case ChallengeCellType.GestureRotateAnticlockwise:
       return getChallengeTypeUrlInternal('gesture_rotate_anticlockwise');
+    case ChallengeCellType.GestureRotateDownClockwise:
+      return getChallengeTypeUrlInternal('gesture_rotate_down_clockwise');
+    case ChallengeCellType.GestureRotateDownAnticlockwise:
+      return getChallengeTypeUrlInternal('gesture_rotate_down_anticlockwise');
     default:
       return undefined;
   }

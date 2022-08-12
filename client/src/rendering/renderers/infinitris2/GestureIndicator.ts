@@ -5,6 +5,7 @@ import IBlock from '@models/IBlock';
 import {
   CustomizableInputAction,
   InputActionWithData,
+  RotateActionWithData,
 } from '@models/InputAction';
 import { InputMethod } from '@models/InputMethod';
 import { fontFamily } from '@models/ui';
@@ -14,6 +15,9 @@ import * as PIXI from 'pixi.js-legacy';
 
 const keyTextLineHeight = 50;
 
+const getKey = (inputActions: CustomizableInputAction[]) =>
+  inputActions.join('-');
+
 export class GestureIndicator {
   private _app: PIXI.Application;
   private _virtualKeyboardGraphics?: PIXI.Graphics;
@@ -21,8 +25,8 @@ export class GestureIndicator {
   private _virtualGestureSprites?: PIXI.Sprite[];
   private _preferredInputMethod: InputMethod;
   private _controls: ControlSettings;
-  private _learnedInputActions: CustomizableInputAction[];
-  private _lastInputAction: CustomizableInputAction | undefined;
+  private _learnedInputActions: string[];
+  private _lastInputAction: CustomizableInputAction[] | undefined;
 
   constructor(
     app: PIXI.Application,
@@ -41,7 +45,7 @@ export class GestureIndicator {
   }
 
   update(block: IBlock | undefined, simulationIsRunning: boolean) {
-    let inputAction: CustomizableInputAction | undefined = simulationIsRunning
+    let inputAction: CustomizableInputAction[] | undefined = simulationIsRunning
       ? (
           block?.cells.find((cell) => cell.behaviour.type === CellType.Gesture)
             ?.behaviour as GestureBehaviour
@@ -50,11 +54,14 @@ export class GestureIndicator {
 
     if (
       this._lastInputAction &&
-      this._learnedInputActions.indexOf(this._lastInputAction) >= 0
+      this._learnedInputActions.indexOf(getKey(this._lastInputAction)) >= 0
     ) {
       this._lastInputAction = undefined;
     }
-    if (inputAction && this._learnedInputActions.indexOf(inputAction) >= 0) {
+    if (
+      inputAction &&
+      this._learnedInputActions.indexOf(getKey(inputAction)) >= 0
+    ) {
       inputAction = undefined;
     }
     if (!inputAction) {
@@ -69,7 +76,14 @@ export class GestureIndicator {
   }
 
   onInputAction(action: InputActionWithData) {
-    this._learnedInputActions.push(action.type as CustomizableInputAction);
+    this._learnedInputActions.push(
+      getKey([
+        action.type as CustomizableInputAction,
+        ...((action as RotateActionWithData).data?.rotateDown
+          ? [CustomizableInputAction.MoveDown]
+          : []),
+      ])
+    );
   }
 
   async loadImages() {
@@ -128,7 +142,7 @@ export class GestureIndicator {
   }
 
   private _renderVirtualKeyboard(
-    inputAction: CustomizableInputAction | undefined
+    inputAction: CustomizableInputAction[] | undefined
   ) {
     if (!this._virtualKeyboardGraphics) {
       return;
@@ -140,16 +154,23 @@ export class GestureIndicator {
       return;
     }
 
-    const key = this._controls[inputAction];
-    const keySymbol = getUserFriendlyKeyText(key);
+    let combinedKeySymbol = '';
+    for (const individualAction of inputAction) {
+      const key = this._controls[individualAction];
+      const keySymbol = getUserFriendlyKeyText(key);
+      if (combinedKeySymbol.length) {
+        combinedKeySymbol += ' + ';
+      }
+      combinedKeySymbol += keySymbol;
+    }
     const keyHeight = this._app.renderer.width * 0.05;
-    const keyWidth = (1 + (keySymbol.length - 1) * 0.2) * keyHeight;
+    const keyWidth = (1 + (combinedKeySymbol.length - 1) * 0.2) * keyHeight;
     const keyPadding = keyHeight * 0.1;
 
     const x =
       this._app.renderer.width - this._app.renderer.height * 0.1 - keyWidth;
     const y = this._app.renderer.height * 0.9 - keyHeight;
-    this._virtualKeyboardCurrentKeyText.text = keySymbol;
+    this._virtualKeyboardCurrentKeyText.text = combinedKeySymbol;
     this._virtualKeyboardCurrentKeyText.x = x + keyWidth * 0.5;
     this._virtualKeyboardCurrentKeyText.y =
       y + keyHeight * 0.5 + keyTextLineHeight * 0.125;
@@ -174,7 +195,7 @@ export class GestureIndicator {
   }
 
   private _renderVirtualGestures(
-    inputAction: CustomizableInputAction | undefined
+    inputAction: CustomizableInputAction[] | undefined
   ) {
     if (!this._virtualGestureSprites) {
       return;
@@ -183,15 +204,22 @@ export class GestureIndicator {
     this._virtualGestureSprites.forEach((sprite, i) => {
       sprite.x =
         this._app.renderer.width *
-        (inputAction === CustomizableInputAction.RotateAnticlockwise
+        (inputAction?.[0] === CustomizableInputAction.RotateAnticlockwise
           ? 0.25
-          : inputAction === CustomizableInputAction.RotateClockwise
+          : inputAction?.[0] === CustomizableInputAction.RotateClockwise
           ? 0.75
           : 0.5);
-      sprite.y = this._app.renderer.height * 0.75;
+      sprite.y =
+        this._app.renderer.height *
+        (inputAction?.[0] === CustomizableInputAction.RotateClockwise ||
+        inputAction?.[0] === CustomizableInputAction.RotateAnticlockwise
+          ? inputAction.length > 1
+            ? 0.75
+            : 0.25
+          : 0.5);
       sprite.alpha =
         inputAction &&
-        Object.values(CustomizableInputAction).indexOf(inputAction) === i
+        Object.values(CustomizableInputAction).indexOf(inputAction[0]) === i
           ? 1
           : 0;
     });

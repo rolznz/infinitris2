@@ -105,6 +105,16 @@ function getBehaviour(
       return new GestureBehaviour(CustomizableInputAction.RotateClockwise);
     case ChallengeCellType.GestureRotateAnticlockwise:
       return new GestureBehaviour(CustomizableInputAction.RotateAnticlockwise);
+    case ChallengeCellType.GestureRotateDownClockwise:
+      return new GestureBehaviour(
+        CustomizableInputAction.RotateClockwise,
+        CustomizableInputAction.MoveDown
+      );
+    case ChallengeCellType.GestureRotateDownAnticlockwise:
+      return new GestureBehaviour(
+        CustomizableInputAction.RotateAnticlockwise,
+        CustomizableInputAction.MoveDown
+      );
     case ChallengeCellType.GestureDrop:
       return new GestureBehaviour(CustomizableInputAction.Drop);
     case ChallengeCellType.Checkpoint:

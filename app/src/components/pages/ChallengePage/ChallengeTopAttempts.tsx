@@ -6,16 +6,18 @@ import {
   challengeAttemptsPath,
   IChallenge,
   IChallengeAttempt,
+  verifyProperty,
 } from 'infinitris2-models';
 import React from 'react';
-import { FormattedMessage } from 'react-intl';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { useCollection, UseCollectionOptions } from 'swr-firestore';
 import { ReactComponent as StopwatchIcon } from '@/icons/stopwatch.svg';
 import { ReactComponent as PlayIcon } from '@/icons/play.svg';
 import useAuthStore from '@/state/AuthStore';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
-import { SxProps } from '@mui/material';
+import { Checkbox, FormControlLabel, SxProps } from '@mui/material';
 import {
+  borderColors,
   borderRadiuses,
   boxShadows,
   dropShadows,
@@ -52,22 +54,44 @@ function ChallengeTopAttemptsInternal({
   challenge,
   viewReplay,
 }: ChallengeTopAttemptsProps) {
+  const intl = useIntl();
   const userId = useAuthStore((store) => store.user?.uid);
   const [hasLimit, setHasLimit] = React.useState(true);
-  const toggleLimit = React.useCallback(
-    () => setHasLimit((hasLimit) => !hasLimit),
-    []
-  );
+  const [showOnlyTopPlayerAttempts, setShowOnlyTopPlayerAttempts] =
+    React.useState(true);
+  const toggleLimit = React.useCallback(() => {
+    setHasLimit((hasLimit) => !hasLimit);
+  }, []);
+  const toggleShowOnlyTopPlayerAttempts = React.useCallback(() => {
+    setShowOnlyTopPlayerAttempts(
+      (showOnlyTopPlayerAttempts) => !showOnlyTopPlayerAttempts
+    );
+  }, []);
   const useCollectionOptions: UseCollectionOptions = React.useMemo(
     () => ({
       constraints: [
-        where('challengeId', '==', challengeId),
+        where(
+          verifyProperty<IChallengeAttempt>('challengeId'),
+          '==',
+          challengeId
+        ),
+        ...(showOnlyTopPlayerAttempts
+          ? [
+              where(
+                verifyProperty<IChallengeAttempt>(
+                  'readOnly.isPlayerTopAttempt'
+                ),
+                '==',
+                true
+              ),
+            ]
+          : []),
         orderBy('stats.timeTakenMs', 'asc'),
         ...(hasLimit ? [limit(3)] : []),
       ],
       listen: true,
     }),
-    [challengeId, hasLimit]
+    [challengeId, hasLimit, showOnlyTopPlayerAttempts]
   );
 
   const { data: attemptDocs } = useCollection<IChallengeAttempt>(
@@ -130,6 +154,27 @@ function ChallengeTopAttemptsInternal({
           </Typography>
         )}
       </FlexBox>
+      {!hasLimit && (
+        <FormControlLabel
+          control={
+            <Checkbox
+              color="primary"
+              checked={showOnlyTopPlayerAttempts}
+              onChange={() => {
+                toggleShowOnlyTopPlayerAttempts();
+              }}
+              // checkedIcon={<CheckCircleIcon />}
+              // icon={<RadioButtonUncheckedIcon />}
+              //className={classes.checkbox}
+            />
+          }
+          label={intl.formatMessage({
+            defaultMessage: 'Player PBs Only',
+            description: 'Challenge Top Attempts - Show Player Top Attempts',
+          })}
+        />
+      )}
+
       {!userId && (
         <Typography variant="caption" textAlign="center" mt={1} mb={-3}>
           <FormattedMessage
@@ -147,6 +192,7 @@ const attemptSx: SxProps = {
   boxShadow: boxShadows.small,
   p: 0.5,
   borderRadius: borderRadiuses.base,
+  backgroundColor: borderColors.inverse,
 };
 
 type ChallengeTopAttemptProps = {

@@ -27,6 +27,7 @@ export const keepUnderlineClassName = 'keep-underline';
 export const borderColorDark = 'rgba(249, 248, 247, 0.5)';
 export const borderColor = 'rgba(249, 248, 247, 0.3)';
 export const borderColorLight = 'rgba(249, 248, 247, 0.1)';
+export const borderColors = { inverse: 'rgba(0, 0, 0, 0.3)' };
 export const grey = '#A0997D';
 export const gold = '#D37953';
 

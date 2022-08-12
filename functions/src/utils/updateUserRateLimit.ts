@@ -6,14 +6,16 @@ import {
 } from 'infinitris2-models';
 import { getDb, increment } from './firebase';
 
-// simple rate limiter that allows up to 10 writes over 5 seconds
-export const RATE_LIMIT_USER_WRITE_RATE_CHANGE = 0.1;
+export const RATE_LIMIT_USER_CREATE_WRITE_RATE_CHANGE = 0.1;
+export const RATE_LIMIT_USER_UPDATE_WRITE_RATE_CHANGE = 0.01;
+export const RATE_LIMIT_USER_COOLDOWN_WRITE_RATE_CHANGE = 0.1;
 export const RATE_LIMIT_MAX_SECONDS = 5;
 
 export async function updateUserRateLimit(
   userId: string | undefined,
   currentTime: Timestamp,
-  extraFields?: { [key: string]: Object }
+  extraFields?: { [key: string]: Object },
+  isUpdate = false
 ) {
   if (!userId) {
     return;
@@ -30,12 +32,14 @@ export async function updateUserRateLimit(
     // reduce rate limiter
     if (user.readOnly.writeRate > 0) {
       writeRateChange = -Math.min(
-        RATE_LIMIT_USER_WRITE_RATE_CHANGE * secondsSinceLastUpdate,
+        RATE_LIMIT_USER_COOLDOWN_WRITE_RATE_CHANGE * secondsSinceLastUpdate,
         user.readOnly.writeRate
       );
     }
   } else {
-    writeRateChange = RATE_LIMIT_USER_WRITE_RATE_CHANGE;
+    writeRateChange = isUpdate
+      ? RATE_LIMIT_USER_UPDATE_WRITE_RATE_CHANGE
+      : RATE_LIMIT_USER_CREATE_WRITE_RATE_CHANGE;
   }
 
   if (user.readOnly.writeRate + writeRateChange >= 1) {

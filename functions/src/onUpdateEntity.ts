@@ -45,7 +45,8 @@ export const onUpdateEntity = functions.firestore
         await updateUserRateLimit(
           entity.userId,
           currentTime,
-          isUser ? updateReadOnly : undefined
+          isUser ? updateReadOnly : undefined,
+          true
         );
 
         if (!isUser) {

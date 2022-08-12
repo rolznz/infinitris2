@@ -1,10 +1,10 @@
 import * as functions from 'firebase-functions';
-import { removeUndefinedValues } from 'infinitris2-models';
 import {
   getUserPath,
   IChallenge,
   IUser,
   objectToDotNotation,
+  removeUndefinedValues,
 } from 'infinitris2-models';
 import { createChallengePreviewImages } from './utils/createChallengePreviewImages';
 import { getDb, increment } from './utils/firebase';

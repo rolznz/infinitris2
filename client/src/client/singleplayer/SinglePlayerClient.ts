@@ -61,7 +61,10 @@ export default class SinglePlayerClient
   private async _create(options: LaunchOptions) {
     this._renderer =
       options.rendererSettings?.rendererType === 'minimal'
-        ? new MinimalRenderer(this._clientApiConfig)
+        ? new MinimalRenderer(
+            this._clientApiConfig,
+            options.rendererSettings?.showNicknames
+          )
         : new Infinitris2Renderer(
             this._clientApiConfig,
             undefined,

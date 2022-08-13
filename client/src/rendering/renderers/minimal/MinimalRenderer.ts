@@ -66,12 +66,14 @@ export default class MinimalRenderer extends BaseRenderer {
   private _blocks!: { [playerId: number]: IRenderableBlock };
   private _cells!: { [cellId: number]: IRenderableCell };
   private _particles!: IParticle[];
+  private _showNicknames: boolean;
   //private _playerScores!: IPlayerScore[];
 
   private _gridLines!: GridLines;
 
-  constructor(clientApiConfig: ClientApiConfig) {
+  constructor(clientApiConfig: ClientApiConfig, showNicknames = true) {
     super(clientApiConfig, 0x333333);
+    this._showNicknames = showNicknames;
   }
 
   /**
@@ -423,23 +425,25 @@ export default class MinimalRenderer extends BaseRenderer {
       this._renderCellCopies(cell, RenderCellType.Block, 1, block.player.color);
     });
 
-    this.renderCopies(
-      renderableBlock.playerNameText,
-      1,
-      () => {},
-      () => {
-        const text = new PIXI.Text(block.player.nickname, {
-          font: 'bold italic 60px Arvo',
-          fill: PIXI.utils.hex2string(block.player.color),
-          align: 'center',
-          stroke: '#000000',
-          strokeThickness: 7,
-        });
-        text.anchor.set(0.5, 0);
-        renderableBlock.playerNameText.container.addChild(text);
-        return text;
-      }
-    );
+    if (this._showNicknames) {
+      this.renderCopies(
+        renderableBlock.playerNameText,
+        1,
+        () => {},
+        () => {
+          const text = new PIXI.Text(block.player.nickname, {
+            font: 'bold italic 60px Arvo',
+            fill: PIXI.utils.hex2string(block.player.color),
+            align: 'center',
+            stroke: '#000000',
+            strokeThickness: 7,
+          });
+          text.anchor.set(0.5, 0);
+          renderableBlock.playerNameText.container.addChild(text);
+          return text;
+        }
+      );
+    }
   }
 
   private _moveBlock(block: IBlock) {

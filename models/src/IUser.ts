@@ -53,6 +53,7 @@ export default interface IUser
   readonly selectedCharacterId?: string;
   readonly unlockedFeatures?: UnlockableFeature[];
   readonly completedOfficialChallengeIds?: string[];
+  readonly showUI?: boolean;
 }
 
 // defaults for custom DAS and gamepad input

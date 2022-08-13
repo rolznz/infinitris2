@@ -192,8 +192,8 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
         }
         title={
           <FormattedMessage
-            defaultMessage="Play Offline"
-            description="Game Mode Picker Card - Play Offline (Single Player)"
+            defaultMessage="Single Player"
+            description="Game Mode Picker Card - Single Player"
           />
         }
         link={Routes.singlePlayerGameModePicker}

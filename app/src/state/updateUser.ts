@@ -207,6 +207,10 @@ export const setUserBlockShadowType = (blockShadowType: BlockShadowType) => {
   updateUser({ blockShadowType });
 };
 
+export const setUserShowUI = (showUI: boolean) => {
+  updateUser({ showUI });
+};
+
 export const setUserShowFaces = (showFaces: boolean) => {
   updateUser({ showFaces });
 };

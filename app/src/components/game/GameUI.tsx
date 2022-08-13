@@ -12,6 +12,7 @@ import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { ReactComponent as RefreshIcon } from '@/icons/refresh.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
+import { useUser } from '@/components/hooks/useUser';
 
 type GameUIProps = {
   challengeEditorEnabled?: boolean;
@@ -28,7 +29,12 @@ export function GameUI({
   showEndRoundDisplay = true,
   allowSkipCountdown,
 }: GameUIProps) {
+  const user = useUser();
+  if (user.showUI === false) {
+    return null;
+  }
   console.log('Re-render game UI');
+
   return (
     <FlexBox
       position="absolute"

@@ -60,6 +60,7 @@ import {
   setUserUseCustomRepeat,
   setUserCustomRepeatInitialDelay,
   setUserCustomRepeatRate,
+  setUserShowUI,
 } from '@/state/updateUser';
 import { useUser } from '@/components/hooks/useUser';
 import { getDefaultPreferredInputMethod } from '@/state/LocalUserStore';
@@ -226,6 +227,22 @@ export default function SettingsPage() {
                   </MenuItem>
                 ))}
               </Select>
+            }
+          />
+          <SettingsRow
+            left={
+              <FormattedMessage
+                defaultMessage="Show Game UI (Leaderboard, chat etc)"
+                description="Settings Page Table - Show Game UI"
+              />
+            }
+            right={
+              <IconSwitch
+                checked={user.showUI !== false}
+                onChange={(event) => {
+                  setUserShowUI(event.target.checked);
+                }}
+              />
             }
           />
           <SettingsRow

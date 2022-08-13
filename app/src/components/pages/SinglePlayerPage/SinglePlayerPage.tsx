@@ -136,5 +136,5 @@ export default function SinglePlayerPage() {
     userLaunchOptions,
   ]);
 
-  return isDemo ? null : <GameUI />;
+  return isDemo ? null : <GameUI allowSkipCountdown chatEnabled={false} />;
 }

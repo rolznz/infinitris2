@@ -124,7 +124,7 @@ export default class SinglePlayerClient
       options.controls_keyboard,
       options.controls_gamepad,
       undefined,
-      undefined,
+      false,
       this._launchOptions?.useCustomRepeat
         ? this._launchOptions.customRepeatInitialDelay
         : undefined,

@@ -27,7 +27,7 @@ enum Routes {
   about = '/about',
   play = '/play',
   pwa = '/pwa',
-  storyMode = '/story-mode/picker',
+  storyMode = '/story-mode',
   premium = '/premium',
 }
 

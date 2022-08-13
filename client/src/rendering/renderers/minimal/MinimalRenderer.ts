@@ -18,6 +18,7 @@ import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
 import { GameModeEvent } from '@models/GameModeEvent';
 import { renderCellBehaviour } from '@src/rendering/renderers/minimal/renderCellBehaviour';
+import { GridFloor } from '../infinitris2/GridFloor';
 
 const minCellSize = 32;
 const particleDivisions = 4;
@@ -67,6 +68,7 @@ export default class MinimalRenderer extends BaseRenderer {
   private _cells!: { [cellId: number]: IRenderableCell };
   private _particles!: IParticle[];
   private _showNicknames: boolean;
+  private _gridFloor!: GridFloor;
   //private _playerScores!: IPlayerScore[];
 
   private _gridLines!: GridLines;
@@ -104,6 +106,12 @@ export default class MinimalRenderer extends BaseRenderer {
       if (!this._hasShadows) {
         this.wrapObjects();
       }
+      this._gridFloor.update(
+        this._camera.x,
+        !this._hasScrollY
+          ? this._gridLines.y + this._gridHeight
+          : this._world.y + this._gridHeight
+      );
     }
 
     // FIXME: use simulation cells (see Infinitris2Renderer)
@@ -136,11 +144,14 @@ export default class MinimalRenderer extends BaseRenderer {
     this._app.stage.removeChildren();
 
     this._gridLines = new GridLines(simulation, this._app, this._camera);
+    this._gridFloor = new GridFloor(this, this._app, 'grass', '0', false);
 
     this._shadowGradientGraphics = new PIXI.Graphics();
 
     this._world.removeChildren();
     this._app.stage.addChild(this._world);
+    this._gridFloor.createImages();
+    this._gridFloor.addChildren();
     this._app.stage.addChild(this._shadowGradientGraphics);
 
     this._placementHelperShadowCells = [];
@@ -353,6 +364,7 @@ export default class MinimalRenderer extends BaseRenderer {
       this._hasScrollX,
       this._hasScrollY
     );
+    this._gridFloor.resize(this._floorHeight);
 
     this._renderCells(this._simulation.grid.reducedCells);
 

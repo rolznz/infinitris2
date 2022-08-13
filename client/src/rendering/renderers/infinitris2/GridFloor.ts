@@ -18,23 +18,28 @@ export class GridFloor {
   private _worldVariation: WorldVariation;
   private _enabled = true;
   private _renderer: BaseRenderer;
+  private _useImages: boolean;
 
   constructor(
     renderer: BaseRenderer,
     app: PIXI.Application,
     worldType: WorldType,
-    worldVariation: WorldVariation
+    worldVariation: WorldVariation,
+    useImages = true
   ) {
     this._renderer = renderer;
+    this._useImages = useImages;
     this._app = app;
     this._worldConfig = worldBackgroundConfigs.find(
       (config) => config.worldType === worldType
     )!;
     this._worldVariation = worldVariation;
 
-    this._app.loader.add(this._getFloorImageFilename());
-    this._app.loader.add(this._getGlowImageFilename());
-    if (!this._worldConfig.hasFloorImage) {
+    if (useImages) {
+      this._app.loader.add(this._getFloorImageFilename());
+      this._app.loader.add(this._getGlowImageFilename());
+    }
+    if (!this._worldConfig.hasFloorImage || !useImages) {
       this._gridFloorGraphics = new PIXI.Graphics();
     }
   }
@@ -57,7 +62,7 @@ export class GridFloor {
   }
 
   createImages() {
-    if (this._worldConfig.hasFloorImage) {
+    if (this._worldConfig.hasFloorImage && this._useImages) {
       this._floorSprite = new WrappedSprite(() =>
         this._createSprite(
           this._getFloorImageFilename()
@@ -65,12 +70,19 @@ export class GridFloor {
         )
       );
     }
-    this._glowSprite = this._createSprite(this._getGlowImageFilename());
-    this._glowSprite.tint = 0x0c2d21; // TODO: make it per-world
+    if (this._useImages) {
+      this._glowSprite = this._createSprite(this._getGlowImageFilename());
+      this._glowSprite.tint = 0x0c2d21; // TODO: make it per-world
+    }
 
-    if (this._worldConfig.floorColor && this._gridFloorGraphics) {
+    if (
+      (this._worldConfig.floorColor || !this._useImages) &&
+      this._gridFloorGraphics
+    ) {
       const floorGraphicsHeight = 267;
-      const colorRgb = PIXI.utils.hex2rgb(this._worldConfig.floorColor);
+      const colorRgb = PIXI.utils.hex2rgb(
+        this._useImages ? this._worldConfig.floorColor : 0x444444
+      );
       for (let y = 0; y < floorGraphicsHeight; y++) {
         this._gridFloorGraphics.beginFill(
           PIXI.utils.rgb2hex(
@@ -92,7 +104,9 @@ export class GridFloor {
     if (this._gridFloorGraphics) {
       this._app.stage.addChild(this._gridFloorGraphics);
     }
-    this._app.stage.addChild(this._glowSprite);
+    if (this._glowSprite) {
+      this._app.stage.addChild(this._glowSprite);
+    }
   }
 
   update(cameraX: number, gridBottom: number) {
@@ -105,7 +119,9 @@ export class GridFloor {
     if (this._gridFloorGraphics) {
       this._gridFloorGraphics.y = Math.floor(gridBottom) + 1;
     }
-    this._glowSprite.y = Math.floor(gridBottom - this._glowSprite.height) + 1;
+    if (this._glowSprite) {
+      this._glowSprite.y = Math.floor(gridBottom - this._glowSprite.height) + 1;
+    }
   }
 
   resize(floorHeight: number) {
@@ -125,7 +141,9 @@ export class GridFloor {
     if (this._gridFloorGraphics) {
       this._gridFloorGraphics.height = floorHeight;
     }
-    this._glowSprite.height = floorHeight * 0.25;
+    if (this._glowSprite) {
+      this._glowSprite.height = floorHeight * 0.25;
+    }
   }
 
   private _createSprite = (url: string) => {

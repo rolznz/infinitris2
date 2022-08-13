@@ -45,21 +45,20 @@ import { PremiumPage } from '@/components/pages/PremiumPage/PremiumPage';
 
 const coinsDisplayPaths = [Routes.market, Routes.profile];
 
+export function isIngameRoute(pathname: string) {
+  return (
+    (pathname.startsWith(Routes.challenges) &&
+      pathname.length > Routes.challenges.length + 1) || // match /challenges or /challenges/ but not /challenges/<challengeId>
+    pathname.startsWith(Routes.singlePlayerPlay) ||
+    (pathname.startsWith(Routes.rooms) && !pathname.endsWith('/info'))
+  );
+}
+
 function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
     <Route
       render={({ location }) => {
-        return !(
-          (
-            location.pathname.startsWith(Routes.challenges) &&
-            location.pathname.length > Routes.challenges.length + 1
-          ) // match /challenges or /challenges/ but not /challenges/<challengeId>
-        ) &&
-          !location.pathname.startsWith(Routes.singlePlayerPlay) &&
-          (!location.pathname.startsWith(Routes.rooms) ||
-            location.pathname.endsWith('/info')) ? (
-          <>{props.children}</>
-        ) : null;
+        return !isIngameRoute(location.pathname) ? <>{props.children}</> : null;
       }}
     />
   );

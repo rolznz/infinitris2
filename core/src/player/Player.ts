@@ -130,9 +130,15 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   get patternFilename(): string | undefined {
     return this._patternFilename;
   }
+  set patternFilename(patternFilename: string | undefined) {
+    this._patternFilename = patternFilename;
+  }
 
   get characterId(): string | undefined {
     return this._characterId;
+  }
+  set characterId(characterId: string | undefined) {
+    this._characterId = characterId;
   }
 
   get nickname(): string {
@@ -141,6 +147,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
   get color(): number {
     return this._color;
+  }
+  set color(color: number) {
+    this._color = color;
   }
 
   get estimatedSpawnDelay(): number {

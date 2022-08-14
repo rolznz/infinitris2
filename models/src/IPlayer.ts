@@ -26,7 +26,9 @@ export type NetworkPlayerInfo = {
 export interface IPlayer {
   get nickname(): string;
   get color(): number;
+  set color(color: number);
   get patternFilename(): string | undefined;
+  set patternFilename(patternFilename: string | undefined);
   get characterId(): string | undefined;
   get id(): number;
   get isControllable(): boolean;
@@ -47,6 +49,7 @@ export interface IPlayer {
   get estimatedSpawnDelay(): number;
   set estimatedSpawnDelay(estimatedSpawnDelay: number);
   set status(status: PlayerStatus);
+  set characterId(characterId: string | undefined);
   get lastStatusChangeTime(): number;
   get firedActions(): InputActionWithData[];
   toggleChat(cancel?: boolean): void;

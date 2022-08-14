@@ -12,6 +12,8 @@ import {
   ISimulation,
   charactersPath,
   WorldVariation,
+  IBlock,
+  stringToHex,
 } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
@@ -65,12 +67,12 @@ export default function SinglePlayerPage() {
   const isDemo = settings.isDemo;
   const trackNumber = worldVariationToTrackNumber(worldVariation);
   const player = useNetworkPlayerInfo();
-  const allCharacters = useCollection<ICharacter>(charactersPath);
+  const { data: allCharacters } = useCollection<ICharacter>(charactersPath);
 
   const hasLoaded =
     useLoaderStore((store) => store.hasFinished) &&
     !!player &&
-    allCharacters.data?.length;
+    allCharacters?.length;
 
   useReleaseClientOnExitPage();
 
@@ -79,7 +81,7 @@ export default function SinglePlayerPage() {
       setLaunched(true);
       launchSinglePlayer({
         ...userLaunchOptions,
-        allCharacters: allCharacters.data!.map((document) => document.data()),
+        allCharacters: allCharacters!.map((document) => document.data()),
         player,
         worldType,
         worldVariation,
@@ -93,6 +95,26 @@ export default function SinglePlayerPage() {
           {
             onSimulationInit(simulation: ISimulation) {
               useIngameStore.getState().setSimulation(simulation);
+            },
+            onBlockPlaced(block: IBlock) {
+              // The below gives the player a new character each time they place a block.
+              // Ideally the player shouldn't have to be destroyed and recreated.
+              // This should only be turned on for demos.
+              if (process.env.REACT_APP_DEMO_ROTATE_CHARACTER === 'true') {
+                let player = block.player;
+                useIngameStore.getState().simulation!.removePlayer(player.id);
+                const newCharacter = useIngameStore
+                  .getState()
+                  .simulation!.generateCharacter(
+                    allCharacters.map((doc) => doc.data()),
+                    player.id,
+                    false
+                  );
+                player.characterId = newCharacter.id!.toString();
+                player.color = stringToHex(newCharacter.color!);
+                player.patternFilename = newCharacter.patternFilename!;
+                useIngameStore.getState().simulation!.addPlayer(player);
+              }
             },
             onPlayerToggleChat(player: IPlayer, cancel: boolean) {
               if (player.isControllable) {
@@ -130,7 +152,7 @@ export default function SinglePlayerPage() {
     worldVariation,
     simulationSettings,
     trackNumber,
-    allCharacters.data,
+    allCharacters,
     isDemo,
     player,
     userLaunchOptions,

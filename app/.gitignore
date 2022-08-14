@@ -24,3 +24,5 @@ yarn-error.log*
 
 /public/client
 .env
+.env.local
+.env.prod

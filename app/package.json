@@ -50,7 +50,7 @@
   },
   "scripts": {
     "start": "REACT_APP_VERSION=$(git rev-list HEAD --count) dotenv -e .env react-app-rewired start",
-    "build": "REACT_APP_VERSION=$(git rev-list HEAD --count) dotenv -e .env react-app-rewired build",
+    "build": "REACT_APP_VERSION=$(git rev-list HEAD --count) dotenv -e .env.prod react-app-rewired build",
     "build-local": "REACT_APP_VERSION=$(git rev-list HEAD --count) dotenv -e .env.local react-app-rewired build",
     "serve": "cd build && python3 -m http.server 3000",
     "deploy": "(cd .. && yarn firebase:deploy:hosting)",

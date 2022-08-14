@@ -162,6 +162,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _showPatterns: boolean;
   private _showNicknames: boolean;
   private _numPaddingRows: number;
+  private _showUI?: boolean;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -176,7 +177,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     blockShadowType: BlockShadowType = 'full',
     showFaces = true,
     showPatterns = true,
-    showNicknames = true
+    showNicknames = true,
+    showUI = true
   ) {
     super(clientApiConfig, undefined, rendererQuality, isDemo);
     this._preferredInputMethod = preferredInputMethod;
@@ -200,6 +202,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     document.body.style.overflow = 'none';
     this._renderFpsFrames = [];
+    this._showUI = showUI;
   }
 
   /**
@@ -402,7 +405,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
   onInputAction = (action: InputActionWithData) => {
     super.onInputAction(action);
-    this._gestureIndicator.onInputAction(action);
+    if (this._showUI) {
+      this._gestureIndicator.onInputAction(action);
+    }
   };
 
   private _updatePlayerBlockContainer(playerId: number) {
@@ -1020,10 +1025,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
-    this._gestureIndicator.update(
-      this._simulation.followingPlayer?.block,
-      this._simulation.isRunning
-    );
+    if (this._showUI) {
+      this._gestureIndicator.update(
+        this._simulation.followingPlayer?.block,
+        this._simulation.isRunning
+      );
+    }
     const followingPlayer = this._simulation.followingPlayer;
     this._fallbackLeaderboard?.update(
       this._simulation.players,

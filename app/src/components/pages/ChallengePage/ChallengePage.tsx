@@ -104,6 +104,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const userLaunchOptions = useUserLaunchOptions(user);
   const userId = useAuthStore((store) => store.user?.uid);
   const { enqueueSnackbar } = useSnackbar();
+  const { showUI } = user;
 
   const isTest = isTestChallenge(challengeId);
   console.log('isTest', isTest);
@@ -350,6 +351,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           listeners: [...coreGameListeners, challengeSimulationEventListener],
           preferredInputMethod,
           player,
+          showUI,
           allCharacters: allCharacters?.data?.map((document) =>
             document.data()
           ),
@@ -408,6 +410,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     handleRetry,
     userLaunchOptions,
     enqueueSnackbar,
+    showUI,
   ]);
 
   if (!hasLaunched || !challenge || !simulation) {

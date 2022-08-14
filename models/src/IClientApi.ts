@@ -42,6 +42,7 @@ export type LaunchOptions = WithControls &
     useFallbackUI?: boolean;
     isDemo?: boolean;
     allCharacters?: ICharacter[];
+    showUI?: boolean;
   };
 
 export type ChallengeLaunchOptions = LaunchOptions & {

@@ -86,11 +86,14 @@ function TopRightPanel(props: React.PropsWithChildren<{}>) {
   );
 }
 
-function MobileRotateDevice() {
+export function MobileRotateDevice() {
   const isLandscape = useIsLandscape();
   if (!isLandscape) {
     return (
       <FlexBox
+        position="fixed"
+        top={0}
+        left={0}
         zIndex={999999999999999999}
         width="100vw"
         height="100vh"

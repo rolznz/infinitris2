@@ -13,6 +13,7 @@ import { IChallenge, WorldVariationValues } from 'infinitris2-models';
 import FlexBox from '@/components/ui/FlexBox';
 import Typography from '@mui/material/Typography';
 import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
+import { MobileRotateDevice } from '@/components/game/GameUI';
 
 export function StoryModePage() {
   const history = useHistory();
@@ -72,21 +73,26 @@ export function StoryModePage() {
 
   // TODO: this should not be called "RoomCarousel"
   return (
-    <RoomCarousel
-      title={
-        <FormattedMessage
-          defaultMessage="Story Mode"
-          description="Story mode page title"
-        />
-      }
-      //secondaryIcon={<SettingsIcon />}
-      //secondaryIconLink={Routes.singlePlayerOptions}
-      onPlay={onSubmit}
-      slides={slides}
-      initialStep={
-        firstIncompletedChallengeIndex >= 0 ? firstIncompletedChallengeIndex : 0
-      }
-    />
+    <>
+      <MobileRotateDevice />
+      <RoomCarousel
+        title={
+          <FormattedMessage
+            defaultMessage="Story Mode"
+            description="Story mode page title"
+          />
+        }
+        //secondaryIcon={<SettingsIcon />}
+        //secondaryIconLink={Routes.singlePlayerOptions}
+        onPlay={onSubmit}
+        slides={slides}
+        initialStep={
+          firstIncompletedChallengeIndex >= 0
+            ? firstIncompletedChallengeIndex
+            : 0
+        }
+      />
+    </>
   );
 }
 export function getOfficialChallengeTitle(challenge: IChallenge): string {

@@ -6,12 +6,14 @@ import { colors, dropShadows } from '@/theme/theme';
 import useReceivedInput from '@/components/hooks/useReceivedInput';
 import React from 'react';
 import { useIntl } from 'react-intl';
+import { useUser } from '@/components/hooks/useUser';
 
 type RestartButtonProps = {
   onClick(): void;
 };
 
 export function RestartButton({ onClick }: RestartButtonProps) {
+  const user = useUser();
   const hasReceivedInput = useReceivedInput('r', false);
   const intl = useIntl();
   React.useEffect(() => {
@@ -19,6 +21,9 @@ export function RestartButton({ onClick }: RestartButtonProps) {
       onClick();
     }
   }, [hasReceivedInput, onClick]);
+  if (user.showUI === false) {
+    return null;
+  }
   return (
     <FlexBox style={{ pointerEvents: 'all' }}>
       <Tooltip

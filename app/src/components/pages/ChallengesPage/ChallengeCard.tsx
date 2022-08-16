@@ -77,13 +77,11 @@ export function CommunityChallengeCard({ challenge }: ChallengeCardProps) {
   );
 }
 
-export default function ChallengeCard({
-  challenge,
-  onClick,
-}: ChallengeCardProps) {
+function _ChallengeCard({ challenge, onClick }: ChallengeCardProps) {
   //const user = useUser();
   //const translation = challenge?.translations?.[user.locale];
   const user = useUser();
+  console.log('Rerender challenge card ' + challenge.id);
 
   const cardSx: SxProps<Theme> = React.useMemo(
     () => ({
@@ -103,7 +101,6 @@ export default function ChallengeCard({
           sx={gridPreviewSx}
           width={challengeCardWidth + 'px'}
           height={challengeCardHeight + 'px'}
-          bgcolor="black"
         >
           <ProgressiveImage
             width={challengeCardWidth}
@@ -133,6 +130,7 @@ export default function ChallengeCard({
           >
             {challenge.data()?.readOnly?.topAttempts?.map((attempt, index) => (
               <Tooltip
+                key={attempt.id}
                 title={
                   (attempt.readOnly?.user?.nickname ?? 'Unknown Player') +
                   ' - ' +
@@ -218,3 +216,6 @@ export default function ChallengeCard({
     </FlexBox>
   );
 }
+
+const ChallengeCard = React.memo(_ChallengeCard, () => true);
+export default ChallengeCard;

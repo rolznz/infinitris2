@@ -14,10 +14,11 @@ import { lightTheme } from './theme/lightTheme';
 
 import { RateLimitDetector } from '@/components/RateLimitDetector';
 import { CustomSnackbarProvider } from '@/components/ui/CustomSnackbarProvider';
+import { CustomSWRConfig } from '@/components/CustomSWRConfig';
+import Loader from '@/components/ui/Loader';
+import PageRouter from '@/PageRouter';
 
-interface AppProps {}
-
-function App({ children }: React.PropsWithChildren<AppProps>) {
+function App() {
   useInfinitrisClient();
 
   const isDarkMode = useDarkMode();
@@ -32,7 +33,7 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
   console.log('Render app');
 
   return (
-    <>
+    <CustomSWRConfig>
       <CssBaseline />
       <Internationalization>
         <StyledEngineProvider injectFirst>
@@ -40,13 +41,15 @@ function App({ children }: React.PropsWithChildren<AppProps>) {
             <FlexBox className="App" width="100%">
               <CustomSnackbarProvider>
                 <RateLimitDetector />
-                {children}
+                <Loader>
+                  <PageRouter />
+                </Loader>
               </CustomSnackbarProvider>
             </FlexBox>
           </ThemeProvider>
         </StyledEngineProvider>
       </Internationalization>
-    </>
+    </CustomSWRConfig>
   );
 }
 

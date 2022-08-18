@@ -28,20 +28,20 @@ export function useUser(): CombinedUser {
   );
 
   let combinedUser: CombinedUser = cachedCombinedUser;
-  if (!combinedUser || localUser !== cachedLocalUser || cachedUser !== user) {
+  if (!combinedUser || cachedLocalUser !== localUser || user !== cachedUser) {
     combinedUser = {
       ...localUser,
       id: user?.id,
       ...(user?.data() || ({} as IUser)),
     };
-    cachedCombinedUser = combinedUser;
-    cachedUser = user;
-    cachedLocalUser = localUser;
     console.log(
       'User changed',
       user === cachedUser,
       localUser === cachedLocalUser
     );
+    cachedCombinedUser = combinedUser;
+    cachedUser = user;
+    cachedLocalUser = localUser;
   }
 
   return combinedUser;

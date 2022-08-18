@@ -57,9 +57,10 @@ export function MarketPageCharacterList({
   const myCharacterId = user.selectedCharacterId || DEFAULT_CHARACTER_ID;
   const myCharacterIds = React.useMemo(
     () =>
-      !authStoreUserId
-        ? (user as LocalUser).freeCharacterIds || DEFAULT_CHARACTER_IDs
-        : user.readOnly?.characterIds || DEFAULT_CHARACTER_IDs,
+      (!authStoreUserId
+        ? (user as LocalUser).freeCharacterIds || []
+        : user.readOnly?.characterIds || []
+      ).concat(DEFAULT_CHARACTER_IDs),
     [user, authStoreUserId]
   );
 

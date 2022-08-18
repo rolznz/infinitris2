@@ -24,13 +24,15 @@ import { CharacterHabitatBackground } from '@/components/ui/CharacterHabitatBack
 import { CharacterCoinStatChip } from '@/components/pages/Characters/CharacterStatChip';
 import { useSnackbar } from 'notistack';
 
-export default function MarketPage() {
+export default function MarketCharacterPage() {
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
   const { id } = useParams<{ id: string }>();
   const { data: character } = useDocument<ICharacter>(getCharacterPath(id));
   const intl = useIntl();
   const user = useUser();
   const [isLoading, setIsLoading] = React.useState(false);
+  const [hasPurchased, setHasPurchased] = React.useState(false);
+
   const { enqueueSnackbar } = useSnackbar();
 
   const pages: React.ReactNode[] = character
@@ -53,7 +55,8 @@ export default function MarketPage() {
           ((!authStoreUserId &&
             ((user as LocalUser).freeCharacterIds?.indexOf(id) ?? -1)) < 0 ||
             (authStoreUserId &&
-              (user.readOnly?.characterIds?.indexOf(id) ?? -1) < 0)) && (
+              (user.readOnly?.characterIds?.indexOf(id) ?? -1) < 0)) &&
+          !hasPurchased && (
             <Button
               autoFocus
               color="primary"
@@ -79,6 +82,7 @@ export default function MarketPage() {
                     purchaseSucceeded = true;
                   }
                   if (purchaseSucceeded) {
+                    setHasPurchased(true);
                     setSelectedCharacterId(id);
                     enqueueSnackbar(
                       intl.formatMessage({

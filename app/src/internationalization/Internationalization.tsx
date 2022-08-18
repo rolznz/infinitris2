@@ -8,9 +8,9 @@ function loadLocaleData(locale: string) {
   return import(`./compiled-lang/${locale}.json`);
 }
 
-export default function Internationalization(
-  props: React.PropsWithChildren<{}>
-) {
+export default function Internationalization({
+  children,
+}: React.PropsWithChildren<{}>) {
   const appStore = useAppStore();
   const locale = useUser().locale || defaultLocale;
   const setInternationalizationMessages =
@@ -24,14 +24,36 @@ export default function Internationalization(
   if (!Object.keys(appStore.internationalization.messages).length) {
     return null;
   }
-
   return (
-    <IntlProvider
+    <InternationalizationInternal
+      children={children}
       messages={appStore.internationalization.messages}
       locale={locale}
-      defaultLocale={defaultLocale}
-    >
-      {props.children}
-    </IntlProvider>
+    />
   );
 }
+
+const InternationalizationInternal = React.memo(
+  ({
+    children,
+    messages,
+    locale,
+  }: React.PropsWithChildren<{
+    messages: Record<string, string>;
+    locale: string;
+  }>) => {
+    console.log('Render InternationalizationInternal');
+    return (
+      <IntlProvider
+        messages={messages}
+        locale={locale}
+        defaultLocale={defaultLocale}
+      >
+        {children}
+      </IntlProvider>
+    );
+  },
+  (prevProps, nextProps) =>
+    nextProps.locale === prevProps.locale &&
+    nextProps.messages === prevProps.messages
+);

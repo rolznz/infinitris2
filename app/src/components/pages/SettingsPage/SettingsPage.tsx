@@ -70,24 +70,33 @@ import VolumeUpIcon from '@mui/icons-material/VolumeUp';
 import FlexBox from '../../ui/FlexBox';
 import { defaultKeyRepeatInitialDelay } from 'infinitris2-models';
 
-export function LanguagePicker() {
-  const user = useUser();
-  return (
-    <Select
-      value={user.locale || defaultLocale}
-      onChange={(event) => {
-        setUserLocale(event.target.value as string);
-        playSound(SoundKey.click);
-      }}
-    >
-      {supportedLocales.map((language) => (
-        <MenuItem key={language} value={language}>
-          {language.toUpperCase()}
-        </MenuItem>
-      ))}
-    </Select>
-  );
-}
+export const LanguagePicker = React.memo(
+  () => {
+    const user = useUser();
+    return <LanguagePickerInternal locale={user.locale || defaultLocale} />;
+  },
+  () => true
+);
+const LanguagePickerInternal = React.memo(
+  ({ locale }: { locale: string }) => {
+    return (
+      <Select
+        value={locale}
+        onChange={(event) => {
+          setUserLocale(event.target.value as string);
+          playSound(SoundKey.click);
+        }}
+      >
+        {supportedLocales.map((language) => (
+          <MenuItem key={language} value={language}>
+            {language.toUpperCase()}
+          </MenuItem>
+        ))}
+      </Select>
+    );
+  },
+  (prevProps, nextProps) => prevProps.locale === nextProps.locale
+);
 
 export default function SettingsPage() {
   const intl = useIntl();

@@ -48,10 +48,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const increaseSteps = loaderStore.increaseSteps;
   const increaseStepsCompleted = loaderStore.increaseStepsCompleted;
   const clickStart = loaderStore.clickStart;
-  const intl = useIntl();
   const [hasToggledSounds, setHasToggledSounds] = useState(false);
-
-  const classes = { startButton: '', checkbox: '' }; //useStyles();
 
   const clientLoaded = useAppStore((appStore) => !!appStore.clientApi);
 
@@ -120,178 +117,203 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
     }
   }, [hasFinished]);
 
-  // if (!hasToggledSounds) {
-  //   return null;
-  // }
+  const showSettings =
+    !loaderStore.startClicked &&
+    loaderStore.hasInitialized &&
+    hasToggledSounds &&
+    loaderStore.stepsCompleted === loaderStore.steps;
+
+  const loaderStyle: React.CSSProperties = React.useMemo(
+    () => ({
+      opacity: hasFinished ? 0 : 1,
+      transition: hasFinished ? 'opacity 1s' : '',
+      pointerEvents: hasFinished ? 'none' : 'all',
+    }),
+    [hasFinished]
+  );
 
   return (
     <>
       <FlexBox
         height="100%"
         width="100%"
-        style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          opacity: hasFinished ? 0 : 1,
-          transition: hasFinished ? 'opacity 1s' : '',
-          pointerEvents: hasFinished ? 'none' : 'all',
-        }}
+        style={loaderStyle}
+        position="fixed"
+        top={0}
+        left={0}
         bgcolor="background.loader"
         zIndex="loader"
       >
-        {!loaderStore.startClicked && (
-          <Box
-            style={{ position: 'absolute', top: 0, right: 0 }}
-            padding={2}
-            height={100}
-          >
+        {showSettings && (
+          <Box padding={2} height={100} position="absolute" top={0} right={0}>
             <LanguagePicker />
           </Box>
         )}
         <FlexBox
           height="50%"
           width="100vw"
-          style={{ position: 'fixed', left: 0, bottom: 0 }}
           justifyContent="flex-start"
+          position="fixed"
+          left={0}
+          bottom={0}
         >
-          <FlexBox
-            width="259px"
-            style={{
-              opacity: loaderStore.stepsCompleted < loaderStore.steps ? 1 : 0,
-              transition: 'opacity 1s',
-              marginTop: '50px',
-            }}
-            alignItems="flex-start"
-          >
-            <Typography
-              variant="body1"
-              color="textPrimary"
-              style={{ textTransform: 'uppercase' }}
-            >
-              loading{' '}
-              {Math.floor(
-                (loaderStore.stepsCompleted * 100) / loaderStore.steps
-              )}
-              %
-            </Typography>
-            <Box width="100%">
-              <LinearProgress
-                key={loaderStore.key}
-                color="primary"
-                variant="determinate"
-                style={{ height: '19px' }}
-                value={
-                  loaderStore.steps === 0
-                    ? 0
-                    : (loaderStore.stepsCompleted * 100) / loaderStore.steps
-                }
-              />
-            </Box>
-          </FlexBox>
+          <LoaderProgress />
 
-          {!loaderStore.startClicked &&
-            loaderStore.hasInitialized &&
-            loaderStore.stepsCompleted === loaderStore.steps && (
-              <FlexBox position="absolute" top="100px">
-                <Button
-                  variant="contained"
-                  autoFocus
-                  color="primary" // TODO: tertiary
-                  sx={{
-                    backgroundColor: '#A4DAF2CC',
-                    fontSize: 32,
-                    '&:hover': {
-                      backgroundColor: '#A4DAF2AA',
-                    },
-                    lineHeight: 1.5,
-                  }}
-                  className={classes.startButton}
-                  onClick={() => {
-                    if (musicOn || sfxOn) {
-                      loaderStore.reset();
-                    }
-                    // TODO: also check if user is logged in
-                    clickStart(musicOn);
-                    // On mobile, sounds can only be loaded after an interaction
-                    if (sfxOn) {
-                      setSfxOn(true);
-                    }
-                    if (musicOn) {
-                      setMusicOn(true);
-                    }
-                    playSound(SoundKey.silence);
-                    playMenuTheme();
-                  }}
-                >
-                  <FormattedMessage
-                    defaultMessage="Start"
-                    description="Loader - Start button text"
-                  />
-                </Button>
-                <FlexBox
-                  flexDirection="row"
-                  mt={2}
-                  sx={{
-                    background: borderColor,
-                    transform: 'scale(0.75)',
-                  }}
-                  borderRadius={borderRadiuses.base}
-                  pl={2.5}
-                  py={0.5}
-                >
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        color="primary"
-                        checked={musicOn}
-                        onChange={(event) => {
-                          setUserMusicOn(event.target.checked);
-                        }}
-                        checkedIcon={<CheckCircleIcon />}
-                        icon={<RadioButtonUncheckedIcon />}
-                        className={classes.checkbox}
-                      />
-                    }
-                    label={intl.formatMessage({
-                      defaultMessage: 'Music',
-                      description: 'Loader - Load Music Sounds checkbox text',
-                    })}
-                  />
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        color="primary"
-                        checked={sfxOn}
-                        onChange={(event) => {
-                          setUserSfxOn(event.target.checked);
-                          setSfxOn(event.target.checked);
-                        }}
-                        checkedIcon={<CheckCircleIcon />}
-                        icon={<RadioButtonUncheckedIcon />}
-                        className={classes.checkbox}
-                      />
-                    }
-                    label={intl.formatMessage({
-                      defaultMessage: 'SFX',
-                      description: 'Loader - Load Music Sounds checkbox text',
-                    })}
-                  />
-                </FlexBox>
-
-                {sfxOn && isMobile() && (
-                  <Typography variant="caption" mt={1}>
-                    <FormattedMessage
-                      defaultMessage="Silent mode must be off to enable sounds"
-                      description="Loader - ringer switch warning"
-                    />
-                  </Typography>
-                )}
-              </FlexBox>
-            )}
+          {showSettings && (
+            <LoaderStartSettings sfxOn={sfxOn} musicOn={musicOn} />
+          )}
         </FlexBox>
       </FlexBox>
       {children}
     </>
   );
 }
+
+const LoaderProgress = React.memo(
+  () => {
+    const [stepsCompleted, steps, key] = useLoaderStore(
+      (store) => [store.stepsCompleted, store.steps, store.key],
+      shallow
+    );
+    return (
+      <FlexBox
+        width="259px"
+        style={{
+          opacity: stepsCompleted < steps ? 1 : 0,
+          transition: 'opacity 1s',
+          marginTop: '50px',
+        }}
+        alignItems="flex-start"
+      >
+        <Typography
+          variant="body1"
+          color="textPrimary"
+          style={{ textTransform: 'uppercase' }}
+        >
+          loading {Math.floor((stepsCompleted * 100) / steps)}%
+        </Typography>
+        <Box width="100%">
+          <LinearProgress
+            key={key}
+            color="primary"
+            variant="determinate"
+            style={{ height: '19px' }}
+            value={steps === 0 ? 0 : (stepsCompleted * 100) / steps}
+          />
+        </Box>
+      </FlexBox>
+    );
+  },
+  () => true
+);
+
+type LoaderStartSettingsProps = {
+  musicOn: boolean;
+  sfxOn: boolean;
+};
+
+const LoaderStartSettings = React.memo(
+  ({ musicOn, sfxOn }: LoaderStartSettingsProps) => {
+    const [reset, clickStart] = useLoaderStore(
+      (store) => [store.reset, store.clickStart],
+      shallow
+    );
+    const intl = useIntl();
+    return (
+      <FlexBox position="absolute" top="100px">
+        <Button
+          variant="contained"
+          autoFocus
+          color="primary" // TODO: tertiary
+          sx={{
+            backgroundColor: '#A4DAF2CC',
+            fontSize: 32,
+            '&:hover': {
+              backgroundColor: '#A4DAF2AA',
+            },
+            lineHeight: 1.5,
+          }}
+          onClick={() => {
+            if (musicOn || sfxOn) {
+              reset();
+            }
+            clickStart(musicOn);
+            // On mobile, sounds can only be loaded after an interaction
+            if (sfxOn) {
+              setSfxOn(true);
+            }
+            if (musicOn) {
+              setMusicOn(true);
+            }
+            playSound(SoundKey.silence);
+            playMenuTheme();
+          }}
+        >
+          <FormattedMessage
+            defaultMessage="Start"
+            description="Loader - Start button text"
+          />
+        </Button>
+        <FlexBox
+          flexDirection="row"
+          mt={2}
+          sx={{
+            background: borderColor,
+            transform: 'scale(0.75)',
+          }}
+          borderRadius={borderRadiuses.base}
+          pl={2.5}
+          py={0.5}
+        >
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                checked={musicOn}
+                onChange={(event) => {
+                  setUserMusicOn(event.target.checked);
+                }}
+                checkedIcon={<CheckCircleIcon />}
+                icon={<RadioButtonUncheckedIcon />}
+              />
+            }
+            label={intl.formatMessage({
+              defaultMessage: 'Music',
+              description: 'Loader - Load Music Sounds checkbox text',
+            })}
+          />
+          <FormControlLabel
+            control={
+              <Checkbox
+                color="primary"
+                checked={sfxOn}
+                onChange={(event) => {
+                  setUserSfxOn(event.target.checked);
+                  setSfxOn(event.target.checked);
+                }}
+                checkedIcon={<CheckCircleIcon />}
+                icon={<RadioButtonUncheckedIcon />}
+              />
+            }
+            label={intl.formatMessage({
+              defaultMessage: 'SFX',
+              description: 'Loader - Load Music Sounds checkbox text',
+            })}
+          />
+        </FlexBox>
+
+        {sfxOn && isMobile() && (
+          <Typography variant="caption" mt={1}>
+            <FormattedMessage
+              defaultMessage="Silent mode must be off to enable sounds"
+              description="Loader - ringer switch warning"
+            />
+          </Typography>
+        )}
+      </FlexBox>
+    );
+  },
+  (prevProps, nextProps) =>
+    nextProps.musicOn === prevProps.musicOn &&
+    nextProps.sfxOn === prevProps.sfxOn
+);

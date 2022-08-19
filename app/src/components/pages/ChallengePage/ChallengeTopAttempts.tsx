@@ -1,21 +1,13 @@
 import FlexBox from '@/components/ui/FlexBox';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import Typography from '@mui/material/Typography';
-import { limit, orderBy, where } from 'firebase/firestore';
-import {
-  challengeAttemptsPath,
-  IChallenge,
-  IChallengeAttempt,
-  verifyProperty,
-} from 'infinitris2-models';
+import { IChallenge, IChallengeAttempt, WithId } from 'infinitris2-models';
 import React from 'react';
-import { FormattedMessage, useIntl } from 'react-intl';
-import { useCollection, UseCollectionOptions } from 'swr-firestore';
+import { FormattedMessage } from 'react-intl';
 import { ReactComponent as StopwatchIcon } from '@/icons/stopwatch.svg';
 import { ReactComponent as PlayIcon } from '@/icons/play.svg';
-import useAuthStore from '@/state/AuthStore';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
-import { Checkbox, FormControlLabel, SxProps } from '@mui/material';
+import { SxProps } from '@mui/material/styles';
 import {
   borderRadiuses,
   boxShadows,
@@ -26,15 +18,15 @@ import {
 import { PlacingStar } from '@/components/pages/Characters/PlacingStar';
 import isMobile from '@/utils/isMobile';
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
+import Routes, { RouteSubPaths } from '@/models/Routes';
+import { Link as RouterLink } from 'react-router-dom';
+import Link from '@mui/material/Link';
+import { challengeLaunchReplaySearchParam } from '@/components/pages/ChallengePage/ChallengePage';
 
 type ChallengeTopAttemptsProps = {
   challengeId: string;
   challenge: IChallenge;
   viewReplay?(attempt: IChallengeAttempt): void;
-};
-
-const noLimitSx: SxProps = {
-  overflowX: 'auto',
 };
 
 export function ChallengeTopAttempts(props: ChallengeTopAttemptsProps) {
@@ -53,96 +45,48 @@ function ChallengeTopAttemptsInternal({
   challenge,
   viewReplay,
 }: ChallengeTopAttemptsProps) {
-  const intl = useIntl();
-  const userId = useAuthStore((store) => store.user?.uid);
-  const [hasLimit, setHasLimit] = React.useState(true);
-  const [showOnlyTopPlayerAttempts, setShowOnlyTopPlayerAttempts] =
-    React.useState(true);
-  const toggleLimit = React.useCallback(() => {
-    if (viewReplay) {
-      setHasLimit((hasLimit) => !hasLimit);
-    }
-  }, [viewReplay]);
-  const toggleShowOnlyTopPlayerAttempts = React.useCallback(() => {
-    setShowOnlyTopPlayerAttempts(
-      (showOnlyTopPlayerAttempts) => !showOnlyTopPlayerAttempts
-    );
-  }, []);
-  const useCollectionOptions: UseCollectionOptions = React.useMemo(
-    () => ({
-      constraints: [
-        where(
-          verifyProperty<IChallengeAttempt>('challengeId'),
-          '==',
-          challengeId
-        ),
-        ...(showOnlyTopPlayerAttempts
-          ? [
-              where(
-                verifyProperty<IChallengeAttempt>(
-                  'readOnly.isPlayerTopAttempt'
-                ),
-                '==',
-                true
-              ),
-            ]
-          : []),
-        orderBy('stats.timeTakenMs', 'asc'),
-        ...(hasLimit ? [limit(3)] : []),
-      ],
-      listen: true,
-    }),
-    [challengeId, hasLimit, showOnlyTopPlayerAttempts]
-  );
+  const topAttempts = challenge.readOnly?.topAttempts;
 
-  const { data: attemptDocs } = useCollection<IChallengeAttempt>(
-    challengeAttemptsPath,
-    useCollectionOptions
-  );
-  if (!attemptDocs) {
-    return null;
-  }
   return (
-    <FlexBox mb={hasLimit ? 0 : -2}>
+    <FlexBox>
       {/*<Typography variant="h4" textAlign="center">
         <FormattedMessage
           defaultMessage="Top Plays"
           description="Top challenge attempts"
         />
   </Typography>*/}
-      <FlexBox
-        flexDirection="row"
-        gap={2}
-        maxWidth={500}
-        flexWrap="nowrap"
-        justifyContent={hasLimit ? undefined : 'flex-start'}
-        sx={hasLimit ? undefined : noLimitSx}
-      >
-        {attemptDocs?.length ? (
+      <FlexBox flexDirection="row" gap={2} maxWidth={500} flexWrap="nowrap">
+        {topAttempts?.length ? (
           <>
-            {attemptDocs.map((attempt, index) => (
+            {topAttempts.map((attempt, index) => (
               <ChallengeTopAttempt
                 key={attempt.id}
                 placing={index + 1}
-                attempt={attempt.data()}
+                challengeId={challengeId}
+                attempt={attempt}
                 viewReplay={viewReplay}
               />
             ))}
-            {hasLimit &&
-              !!challenge.readOnly?.numAttempts &&
+            {!!challenge.readOnly?.numAttempts &&
               challenge.readOnly.numAttempts > 3 && (
-                <FlexBox sx={attemptSx} onClick={toggleLimit}>
-                  <FlexBox p={2}>
-                    <Typography
-                      variant="h6"
-                      textAlign="center"
-                      sx={{ textShadow: textShadows.base }}
-                    >
-                      {'+'}
-                      {challenge.readOnly.numAttempts - 3}
-                    </Typography>
+                <Link
+                  component={RouterLink}
+                  to={`${Routes.challenges}/${challengeId}/${RouteSubPaths.challengesPageAttempts}`}
+                  underline="none"
+                >
+                  <FlexBox sx={attemptSx}>
+                    <FlexBox p={2}>
+                      <Typography
+                        variant="h6"
+                        textAlign="center"
+                        sx={{ textShadow: textShadows.base }}
+                      >
+                        {'+'}
+                        {challenge.readOnly.numAttempts - 3}
+                      </Typography>
+                    </FlexBox>
                   </FlexBox>
-                </FlexBox>
+                </Link>
               )}
           </>
         ) : (
@@ -154,35 +98,15 @@ function ChallengeTopAttemptsInternal({
           </Typography>
         )}
       </FlexBox>
-      {!hasLimit && (
-        <FormControlLabel
-          control={
-            <Checkbox
-              color="primary"
-              checked={showOnlyTopPlayerAttempts}
-              onChange={() => {
-                toggleShowOnlyTopPlayerAttempts();
-              }}
-              // checkedIcon={<CheckCircleIcon />}
-              // icon={<RadioButtonUncheckedIcon />}
-              //className={classes.checkbox}
-            />
-          }
-          label={intl.formatMessage({
-            defaultMessage: 'Player PBs Only',
-            description: 'Challenge Top Attempts - Show Player Top Attempts',
-          })}
-        />
-      )}
 
-      {!userId && (
+      {/*!userId && (
         <Typography variant="caption" textAlign="center" mt={1} mb={-3}>
           <FormattedMessage
             defaultMessage="Get Infinitris Premium to appear here"
             description="Top challenge attempts"
           />
         </Typography>
-      )}
+      )*/}
     </FlexBox>
   );
 }
@@ -196,20 +120,25 @@ const attemptSx: SxProps = {
 };
 
 type ChallengeTopAttemptProps = {
-  attempt: IChallengeAttempt;
+  challengeId: string;
+  attempt: WithId<IChallengeAttempt>;
   placing: number;
+  showPlayerName?: boolean;
 } & Pick<ChallengeTopAttemptsProps, 'viewReplay'>;
 
-function ChallengeTopAttempt({
+export function ChallengeTopAttempt({
   placing,
   attempt,
+  challengeId,
+  showPlayerName,
   viewReplay,
 }: ChallengeTopAttemptProps) {
   const viewReplayForThisAttempt = React.useCallback(
     () => viewReplay?.(attempt),
     [viewReplay, attempt]
   );
-  return (
+
+  const component = (
     <FlexBox
       position="relative"
       onClick={viewReplayForThisAttempt}
@@ -240,6 +169,11 @@ function ChallengeTopAttempt({
           scale={isMobile() ? 0.5 : 0.75}
         />
       </FlexBox>
+      {showPlayerName && (
+        <Typography variant="body1">
+          {attempt.readOnly?.user?.nickname || 'Unknown Player'}
+        </Typography>
+      )}
       <FlexBox width={70} justifyContent="flex-start">
         <FlexBox flexDirection="row">
           <SvgIcon color="primary" sx={{ mt: -0.5 }}>
@@ -249,10 +183,18 @@ function ChallengeTopAttempt({
             {(attempt.stats.timeTakenMs / 1000).toFixed(2)}s
           </Typography>
         </FlexBox>
-        {/*<Typography variant="body1">
-          {scoreboardEntry?.data()?.nickname}
-  </Typography>*/}
       </FlexBox>
     </FlexBox>
+  );
+
+  return viewReplay ? (
+    component
+  ) : (
+    <Link
+      component={RouterLink}
+      to={`${Routes.challenges}/${challengeId}?${challengeLaunchReplaySearchParam}=${attempt.id}`}
+    >
+      {component}
+    </Link>
   );
 }

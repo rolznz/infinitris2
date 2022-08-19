@@ -24,21 +24,20 @@ import foregroundRightPortraitImage from './assets/foreground_portrait_right_lig
 import foregroundRightPortraitImageDark from './assets/foreground_portrait_right.png';
 
 import useWindowSize from 'react-use/lib/useWindowSize';
-import useOrientation from 'react-use/lib/useOrientation';
 import FlexBox from '@/components/ui/FlexBox';
 import useLoaderStore from '@/state/LoaderStore';
 import useDarkMode from '@/components/hooks/useDarkMode';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
 import { zIndexes } from '@/theme/theme';
 import shallow from 'zustand/shallow';
+import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 
 export const homePageBackgroundTransitionSeconds = 5;
 
 const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
   const isDarkMode = useDarkMode();
   const windowSize = useWindowSize();
-  const orientation = useOrientation(); // force re-render on orientation change
-  const isLandscape = windowSize.width >= windowSize.height;
+  const isLandscape = useIsLandscape();
   const isShortScreen = useMediaQuery(
     `(max-height:${isLandscape ? 400 : 600}px)`
   );
@@ -55,8 +54,8 @@ const _HomePageBackground = ({ children }: React.PropsWithChildren<{}>) => {
       bgcolor={'background.paper'}
       overflow="hidden"
       key={
-        orientation.type +
-        ' ' +
+        // orientation.type +
+        // ' ' +
         windowSize.width +
         ' ' +
         windowSize.height /* force home page images re-render */
@@ -195,7 +194,7 @@ let backgroundImageLoadedMap: { [key: string]: boolean } = {};
 const HomePageBackgroundImage = React.memo(
   (props: HomePageBackgroundImageProps) => {
     useWindowSize();
-    useOrientation();
+    useIsLandscape();
 
     return (
       <img

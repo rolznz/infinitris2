@@ -495,6 +495,7 @@ export default class ChallengeClient
       // execute one frame to warm up the simulation (creates the player's block, etc)
       simulation.step();
     }
+    this._listener.onChallengeReady(simulation);
     //this._renderer.startTicker();
   }
 }

@@ -32,3 +32,7 @@ enum Routes {
 }
 
 export default Routes;
+
+export enum RouteSubPaths {
+  challengesPageAttempts = 'attempts',
+}

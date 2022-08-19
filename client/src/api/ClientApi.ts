@@ -195,6 +195,7 @@ export default class ClientApi implements IClientApi {
               }, 100);
             }
           },
+          onChallengeReady: () => {},
         },
         {
           useFallbackUI: true,

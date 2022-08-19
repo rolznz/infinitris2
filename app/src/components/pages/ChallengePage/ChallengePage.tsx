@@ -8,6 +8,7 @@ import {
   charactersPath,
   ICharacter,
   stringToHex,
+  getChallengeAttemptPath,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
@@ -39,7 +40,9 @@ import useAuthStore from '@/state/AuthStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 import { useSnackbar } from 'notistack';
+import useSearchParam from 'react-use/lib/useSearchParam';
 
+export const challengeLaunchReplaySearchParam = 'replay';
 interface ChallengePageRouteParams {
   id: string;
 }
@@ -52,6 +55,7 @@ let lastCompletedGrid: IChallenge['grid'];
 
 export default function ChallengePage() {
   const { id } = useParams<ChallengePageRouteParams>();
+
   useReleaseClientOnExitPage(true);
   return <ChallengePageInternal key={id} challengeId={id!} />;
 }
@@ -93,7 +97,9 @@ async function saveChallengeAttempt(
   }
 }
 
-type ChallengePageInternalProps = { challengeId: string };
+type ChallengePageInternalProps = {
+  challengeId: string;
+};
 
 function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const appStore = useAppStore();
@@ -105,6 +111,14 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const userId = useAuthStore((store) => store.user?.uid);
   const { enqueueSnackbar } = useSnackbar();
   const { showUI } = user;
+  const launchReplayChallengeAttemptId = useSearchParam(
+    challengeLaunchReplaySearchParam
+  );
+  const { data: launchReplayChallengeAttempt } = useDocument<IChallengeAttempt>(
+    launchReplayChallengeAttemptId
+      ? getChallengeAttemptPath(launchReplayChallengeAttemptId)
+      : null
+  );
 
   const isTest = isTestChallenge(challengeId);
   console.log('isTest', isTest);
@@ -131,6 +145,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
 
   const launchChallenge = client?.launchChallenge;
   const [hasLaunched, setLaunched] = React.useState(false);
+  const [hasLaunchedReplayChallengeAttempt, setLaunchedReplayChallengeAttempt] =
+    React.useState(false);
   const [hasContinued, setContinued] = React.useState(false);
   const [isViewingReplay, setViewingReplay] = React.useState(false);
   const [replayAttempt, setReplayAttempt] = React.useState<
@@ -217,6 +233,24 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     [allCharacters.data, handleRetry]
   );
 
+  React.useEffect(() => {
+    if (
+      launchReplayChallengeAttempt &&
+      simulation &&
+      hasLaunched &&
+      !hasLaunchedReplayChallengeAttempt
+    ) {
+      setLaunchedReplayChallengeAttempt(true);
+      viewOtherReplay(launchReplayChallengeAttempt.data()!);
+    }
+  }, [
+    viewOtherReplay,
+    simulation,
+    launchReplayChallengeAttempt,
+    hasLaunched,
+    hasLaunchedReplayChallengeAttempt,
+  ]);
+
   const preferredInputMethod =
     user.preferredInputMethod || (isMobile() ? 'touch' : 'keyboard');
 
@@ -269,15 +303,13 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       launchChallenge &&
       !hasLaunched &&
       hasLoadedCharacters &&
-      !isLoadingOfficialChallenges
+      !isLoadingOfficialChallenges &&
+      (!launchReplayChallengeAttemptId || launchReplayChallengeAttempt)
     ) {
       setLaunched(true);
 
       const challengeSimulationEventListener: Partial<ISimulationEventListener> =
         {
-          onSimulationInit(simulation: ISimulation) {
-            useIngameStore.getState().setSimulation(simulation);
-          },
           onNextRound() {
             setRoundStarted(true);
           },
@@ -286,6 +318,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       challengeClient = launchChallenge(
         challenge,
         {
+          onChallengeReady(simulation: ISimulation) {
+            useIngameStore.getState().setSimulation(simulation);
+          },
           onAttempt(attempt: IIngameChallengeAttempt) {
             if (!challengeClient?.recording) {
               setChallengeAttempt(attempt);
@@ -411,6 +446,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     userLaunchOptions,
     enqueueSnackbar,
     showUI,
+    launchReplayChallengeAttemptId,
+    launchReplayChallengeAttempt,
   ]);
 
   if (!hasLaunched || !challenge || !simulation) {

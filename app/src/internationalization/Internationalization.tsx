@@ -42,7 +42,6 @@ const InternationalizationInternal = React.memo(
     messages: Record<string, string>;
     locale: string;
   }>) => {
-    console.log('Render InternationalizationInternal');
     return (
       <IntlProvider
         messages={messages}

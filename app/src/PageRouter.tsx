@@ -12,8 +12,9 @@ import ControlSettingsPage from '@/components/pages/SettingsPage/ControlSettings
 import SettingsPage from '@/components/pages/SettingsPage/SettingsPage';
 import ChallengePage from '@/components/pages/ChallengePage/ChallengePage';
 import { ChallengesPage } from '@/components/pages/ChallengesPage/ChallengesPage';
+import { ChallengeAttemptsPage } from '@/components/pages/ChallengePage/ChallengeAttemptsPage';
 // import WelcomePage from '@/components/pages/WelcomePage';
-import Routes from './models/Routes';
+import Routes, { RouteSubPaths } from './models/Routes';
 import { CreditsPage } from '@/components/pages/CreditsPage/CreditsPage';
 import { PrivacyPolicyPage } from '@/components/pages/PrivacyPolicyPage';
 import EarnCreditsPage from '@/components/pages/EarnCreditsPage';
@@ -189,6 +190,11 @@ function RouterContents() {
         </Route>
         <Route exact path={Routes.newChallenge}>
           <LoadChallengePage />
+        </Route>
+        <Route
+          path={`${Routes.challenges}/:id/${RouteSubPaths.challengesPageAttempts}`}
+        >
+          <ChallengeAttemptsPage />
         </Route>
         <Route path={`${Routes.challenges}/:id`}>
           <ChallengePage />

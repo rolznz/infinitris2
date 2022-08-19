@@ -7,7 +7,7 @@ import { useCollection, UseCollectionOptions } from 'swr-firestore';
 
 export type InfiniteLoaderProps<T> = {
   items: QueryDocumentSnapshot<T>[];
-  renderItem(item: QueryDocumentSnapshot<T>): React.ReactNode;
+  renderItem(item: QueryDocumentSnapshot<T>, index: number): React.ReactNode;
   itemKey?(item: QueryDocumentSnapshot<T>): string;
   onNewItemsLoaded(items: QueryDocumentSnapshot<T>[]): void;
   itemWidth: number;
@@ -84,7 +84,7 @@ export function InfiniteLoader<T>({
           index={index}
           onInView={onInView}
         >
-          {renderItem(item)}
+          {renderItem(item, index)}
         </Intersection>
       ))}
     </FlexBox>

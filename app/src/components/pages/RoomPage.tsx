@@ -32,7 +32,6 @@ import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientO
 import useIngameStore from '@/state/IngameStore';
 import { GameUI } from '@/components/game/GameUI';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
-import useLoaderStore from '@/state/LoaderStore';
 import shallow from 'zustand/shallow';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
@@ -116,8 +115,7 @@ export default function RoomPage() {
   const controls_keyboard = user.controls_keyboard;
   const controls_gamepad = user.controls_gamepad;
 
-  const hasLoaded =
-    useLoaderStore((store) => store.hasFinished) && !!player && !!room;
+  const hasLoaded = !!client && !!player && !!room;
 
   useReleaseClientOnExitPage();
 

@@ -5,5 +5,6 @@ const localStorageKeys = {
   challenge: `${prefix}challenge`,
   challengeId: `${prefix}challengeId`,
   referredByAffiliateId: `${prefix}affiliateLinkRef`,
+  cache: `${prefix}cache`,
 };
 export default localStorageKeys;

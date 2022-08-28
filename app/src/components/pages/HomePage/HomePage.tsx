@@ -112,7 +112,7 @@ const _HomePage = () => {
         </FlexBox>
         <Box mt={8} />
       </FlexBox>
-      <PlayTypePicker display="none" />
+      <PlayTypePicker />
     </>
   );
 };

@@ -13,7 +13,7 @@ import {
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
 import React from 'react';
-import { useCollection, useDocument } from 'swr-firestore';
+import { useDocument } from 'swr-firestore';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import { useUser, useUserLaunchOptions } from '@/components/hooks/useUser';
@@ -41,6 +41,7 @@ import removeUndefinedValues from '@/utils/removeUndefinedValues';
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 import { useSnackbar } from 'notistack';
 import useSearchParam from 'react-use/lib/useSearchParam';
+import { useCachedCollection } from '@/components/hooks/useCachedCollection';
 
 export const challengeLaunchReplaySearchParam = 'replay';
 interface ChallengePageRouteParams {
@@ -134,14 +135,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     ? useChallengeEditorStore.getState().challenge
     : syncedChallenge?.data();
 
-  // TODO: this is needed for both bots and replays
-  // but we don't necessarily need all characters
-  // it would be more efficient to store redundant data on the replay itself (character ID, color, patternFilename, player nickname)
-  const loadCharacters = true; //!!challenge?.simulationSettings?.botSettings;
-  const allCharacters = useCollection<ICharacter>(
-    loadCharacters ? charactersPath : null
-  );
-  const hasLoadedCharacters = !loadCharacters || allCharacters?.data?.length;
+  const allCharacters = useCachedCollection<ICharacter>(charactersPath);
+  const hasLoadedCharacters = allCharacters?.length;
 
   const launchChallenge = client?.launchChallenge;
   const [hasLaunched, setLaunched] = React.useState(false);
@@ -210,11 +205,9 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     (otherAttempt: IChallengeAttempt) => {
       setReplayAttempt(otherAttempt);
       challengeClient!.recording = otherAttempt.recording;
-      const replayCharacter: ICharacter | undefined = allCharacters.data
-        ?.find(
-          (doc) => doc.id === otherAttempt.readOnly?.user?.selectedCharacterId
-        )
-        ?.data();
+      const replayCharacter: ICharacter | undefined = allCharacters?.find(
+        (doc) => doc.id === otherAttempt.readOnly?.user?.selectedCharacterId
+      );
       challengeClient!.launchOptions.player = {
         ...challengeClient!.launchOptions.player,
         characterId:
@@ -230,7 +223,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       };
       handleRetry(true);
     },
-    [allCharacters.data, handleRetry]
+    [allCharacters, handleRetry]
   );
 
   React.useEffect(() => {
@@ -387,9 +380,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           preferredInputMethod,
           player,
           showUI,
-          allCharacters: allCharacters?.data?.map((document) =>
-            document.data()
-          ),
+          allCharacters,
           challengeEditorSettings: isTest
             ? {
                 isEditing: false,

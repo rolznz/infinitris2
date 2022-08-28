@@ -3,7 +3,6 @@ import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { useReleaseClientOnExitPage } from '@/components/hooks/useReleaseClientOnExitPage';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import useIngameStore from '@/state/IngameStore';
-import useLoaderStore from '@/state/LoaderStore';
 import {
   hexToString,
   ICharacter,
@@ -17,7 +16,6 @@ import {
 } from 'infinitris2-models';
 import { useEffect, useState } from 'react';
 import useSearchParam from 'react-use/lib/useSearchParam';
-import { useCollection } from 'swr-firestore';
 import useAppStore from '@/state/AppStore';
 import { useUser, useUserLaunchOptions } from '@/components/hooks/useUser';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
@@ -31,6 +29,7 @@ import useSinglePlayerOptionsStore, {
 } from '@/state/SinglePlayerOptionsStore';
 import Routes from '@/models/Routes';
 import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
+import { useCachedCollection } from '@/components/hooks/useCachedCollection';
 
 export function launchSinglePlayer(history: ReturnType<typeof useHistory>) {
   const settings = useSinglePlayerOptionsStore.getState().formData;
@@ -67,12 +66,8 @@ export default function SinglePlayerPage() {
   const isDemo = settings.isDemo;
   const trackNumber = worldVariationToTrackNumber(worldVariation);
   const player = useNetworkPlayerInfo();
-  const { data: allCharacters } = useCollection<ICharacter>(charactersPath);
-
-  const hasLoaded =
-    useLoaderStore((store) => store.hasFinished) &&
-    !!player &&
-    allCharacters?.length;
+  const allCharacters = useCachedCollection<ICharacter>(charactersPath);
+  const hasLoaded = !!client && !!player && allCharacters?.length;
 
   useReleaseClientOnExitPage();
 
@@ -81,7 +76,7 @@ export default function SinglePlayerPage() {
       setLaunched(true);
       launchSinglePlayer({
         ...userLaunchOptions,
-        allCharacters: allCharacters!.map((document) => document.data()),
+        allCharacters,
         player,
         worldType,
         worldVariation,
@@ -106,7 +101,7 @@ export default function SinglePlayerPage() {
                 const newCharacter = useIngameStore
                   .getState()
                   .simulation!.generateCharacter(
-                    allCharacters.map((doc) => doc.data()),
+                    allCharacters,
                     player.id,
                     false
                   );

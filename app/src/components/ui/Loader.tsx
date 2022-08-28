@@ -33,6 +33,8 @@ import { setUserMusicOn, setUserSfxOn } from '@/state/updateUser';
 import useAuthStore from '@/state/AuthStore';
 import usePrevious from 'react-use/lib/usePrevious';
 import shallow from 'zustand/shallow';
+import { useCachedCollection } from '@/components/hooks/useCachedCollection';
+import { charactersPath, ICharacter } from 'infinitris2-models';
 
 export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const loaderStore = useLoaderStore();
@@ -49,6 +51,9 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const increaseStepsCompleted = loaderStore.increaseStepsCompleted;
   const clickStart = loaderStore.clickStart;
   const [hasToggledSounds, setHasToggledSounds] = useState(false);
+  const allCharacters = useCachedCollection<ICharacter>(charactersPath);
+  const hasLoadedCharacters = allCharacters?.length;
+  const prevHasLoadedCharacters = usePrevious(hasLoadedCharacters);
 
   const clientLoaded = useAppStore((appStore) => !!appStore.clientApi);
 
@@ -63,6 +68,19 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
       }
     }
   }, [isLoggedIn, prevIsLoggedIn, increaseSteps, authUserId]);
+
+  useEffect(() => {
+    if (!hasLoadedCharacters) {
+      increaseSteps();
+    } else if (!prevHasLoadedCharacters && hasLoadedCharacters) {
+      increaseStepsCompleted();
+    }
+  }, [
+    prevHasLoadedCharacters,
+    hasLoadedCharacters,
+    increaseSteps,
+    increaseStepsCompleted,
+  ]);
 
   useEffect(() => {
     if (userExists) {
@@ -133,41 +151,74 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   );
 
   return (
-    <>
-      <FlexBox
-        height="100%"
-        width="100%"
-        style={loaderStyle}
-        position="fixed"
-        top={0}
-        left={0}
-        bgcolor="background.loader"
-        zIndex="loader"
-      >
-        {showSettings && (
-          <Box padding={2} height={100} position="absolute" top={0} right={0}>
-            <LanguagePicker />
-          </Box>
-        )}
-        <FlexBox
-          height="50%"
-          width="100vw"
-          justifyContent="flex-start"
-          position="fixed"
-          left={0}
-          bottom={0}
-        >
-          <LoaderProgress />
-
-          {showSettings && (
-            <LoaderStartSettings sfxOn={sfxOn} musicOn={musicOn} />
-          )}
-        </FlexBox>
-      </FlexBox>
+    <LoaderInternal
+      loaderStyle={loaderStyle}
+      sfxOn={sfxOn}
+      musicOn={musicOn}
+      showSettings={showSettings}
+    >
       {children}
-    </>
+    </LoaderInternal>
   );
 }
+
+type LoaderInternalProps = {
+  showSettings: boolean;
+  sfxOn: boolean;
+  musicOn: boolean;
+  loaderStyle: React.CSSProperties;
+};
+
+const LoaderInternal = React.memo(
+  ({
+    loaderStyle,
+    showSettings,
+    musicOn,
+    sfxOn,
+    children,
+  }: React.PropsWithChildren<LoaderInternalProps>) => {
+    return (
+      <>
+        <FlexBox
+          height="100%"
+          width="100%"
+          style={loaderStyle}
+          position="fixed"
+          top={0}
+          left={0}
+          bgcolor="background.loader"
+          zIndex="loader"
+        >
+          {showSettings && (
+            <Box padding={2} height={100} position="absolute" top={0} right={0}>
+              <LanguagePicker />
+            </Box>
+          )}
+          <FlexBox
+            height="50%"
+            width="100vw"
+            justifyContent="flex-start"
+            position="fixed"
+            left={0}
+            bottom={0}
+          >
+            <LoaderProgress />
+
+            {showSettings && (
+              <LoaderStartSettings sfxOn={sfxOn} musicOn={musicOn} />
+            )}
+          </FlexBox>
+        </FlexBox>
+        {children}
+      </>
+    );
+  },
+  (prevProps, nextProps) =>
+    nextProps.loaderStyle === prevProps.loaderStyle &&
+    nextProps.musicOn === prevProps.musicOn &&
+    nextProps.sfxOn === prevProps.sfxOn &&
+    nextProps.showSettings === prevProps.showSettings
+);
 
 const LoaderProgress = React.memo(
   () => {

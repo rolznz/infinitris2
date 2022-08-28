@@ -51,11 +51,7 @@ import { getChallengeTestUrl } from '@/utils/getChallengeTestUrl';
 export const playTypePickerId = 'play-type-picker';
 export const playTypePickerFirstCardId = 'play-type-picker-first-card';
 
-type GameModePickerProps = {
-  display: 'flex' | 'none';
-};
-
-export function PlayTypePicker({ display }: GameModePickerProps) {
+function _PlayTypePicker() {
   const isDarkMode = useDarkMode();
   const isLandscape = useIsLandscape();
   const user = useUser();
@@ -77,7 +73,7 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
       flexWrap="wrap"
       justifyContent="space-evenly"
       alignItems="flex-start"
-      display={display}
+      display="none"
       id={playTypePickerId}
     >
       <PlayTypeCard
@@ -221,3 +217,5 @@ export function PlayTypePicker({ display }: GameModePickerProps) {
     </FlexBox>
   );
 }
+
+export const PlayTypePicker = React.memo(_PlayTypePicker, () => true);

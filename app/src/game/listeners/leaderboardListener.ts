@@ -7,7 +7,7 @@ import {
 import { debounce } from 'ts-debounce';
 
 function _updateLeaderboard() {
-  console.log('Updating leaderboard');
+  // console.log('Updating leaderboard');
   const simulation = useIngameStore.getState().simulation;
   const maxEntries = 5; // TODO: responsive
 

@@ -297,7 +297,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
               )
             ];
 
-          console.log(
+          /*console.log(
             'Trying spawn',
             Object.entries(this._simulation.layoutSet.layouts).find(
               (entry) => entry[1] === layout
@@ -306,10 +306,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
               layoutsRemaining.length +
               ' check placement: ' +
               checkPlacement
-          );
+          );*/
           lastAttemptedBlock = this._tryCreateBlock(layout, checkPlacement);
           if (this._block) {
-            console.log(
+            /* console.log(
               'Spawn succeeded. Bag size: ' + this._layoutBag.length,
               this._layoutBag
                 .map(
@@ -319,7 +319,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
                     )?.[0]
                 )
                 .join(', ')
-            );
+            );*/
             break;
           }
           layoutsRemaining = layoutsRemaining.filter((v) => v !== layout);

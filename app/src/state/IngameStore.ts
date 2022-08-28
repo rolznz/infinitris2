@@ -33,6 +33,7 @@ type IngameStore = {
   addToMessageLog(message: MessageLogEntry): void;
   readonly leaderboardEntries: LeaderboardEntry[];
   setLeaderboardEntries(leaderboardEntries: LeaderboardEntry[]): void;
+  readonly leaderboardPlayerIds: number[];
   readonly endRoundDisplayOpen: boolean;
   setEndRoundDisplayOpen(endRoundDisplayOpen: boolean): void;
   readonly roundConditionsAreMet: boolean;
@@ -45,6 +46,7 @@ type IngameStore = {
 
 const useIngameStore = create<IngameStore>((set) => ({
   leaderboardEntries: [],
+  leaderboardPlayerIds: [],
   messageLogEntries: [],
   simulation: undefined,
   endRoundDisplayOpen: false,
@@ -62,7 +64,10 @@ const useIngameStore = create<IngameStore>((set) => ({
       messageLogEntries: [...state.messageLogEntries, message],
     })),
   setLeaderboardEntries: (leaderboardEntries: LeaderboardEntry[]) =>
-    set((_) => ({ leaderboardEntries })),
+    set((_) => ({
+      leaderboardEntries,
+      leaderboardPlayerIds: leaderboardEntries.map((entry) => entry.playerId),
+    })),
   setEndRoundDisplayOpen: (endRoundDisplayOpen: boolean) =>
     set((_) => ({ endRoundDisplayOpen })),
   setRoundConditionsAreMet: (roundConditionsAreMet: boolean) =>

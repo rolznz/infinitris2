@@ -145,7 +145,7 @@ function skipCountdown() {
 export function NextRoundIndicator({
   allowSkipCountdown,
 }: NextRoundIndicatorProps) {
-  console.log('Re-render next round indicator');
+  // console.log('Re-render next round indicator');
   const simulation = useIngameStore((store) => store.simulation);
   const [renderId, setRenderId] = React.useState(0);
   const conditionsAreMet = useIngameStore(

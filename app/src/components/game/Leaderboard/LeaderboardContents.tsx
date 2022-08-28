@@ -1,18 +1,21 @@
 import useIngameStore from '@/state/IngameStore';
 import { LeaderboardEntryLine } from '@/components/game/Leaderboard/LeaderboardEntryLine';
+import shallow from 'zustand/shallow';
 
 export function LeaderboardContents() {
-  const leaderboardEntries = useIngameStore(
-    (store) => store.leaderboardEntries
+  // this component should only re-render if the order of player ids (based on score) changes or a player joins/leaves
+  const leaderboardPlayerIds = useIngameStore(
+    (store) => store.leaderboardPlayerIds,
+    shallow
   );
-  console.log('Re-render leaderboard contents');
+  // console.log('Re-render leaderboard contents');
 
   return (
     <>
-      {leaderboardEntries?.map((entry) => (
+      {leaderboardPlayerIds?.map((playerId) => (
         <LeaderboardEntryLine
-          key={entry.playerId}
-          entry={entry}
+          key={playerId}
+          playerId={playerId}
           isLeaderboardOpen
         />
       ))}

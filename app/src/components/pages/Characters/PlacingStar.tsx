@@ -41,7 +41,7 @@ type PlacingStarProps = {
   numberOnly?: boolean;
 };
 
-export function PlacingStar({
+function _PlacingStar({
   placing,
   offset,
   scale = 1,
@@ -108,3 +108,8 @@ export function PlacingStar({
     </FlexBox>
   );
 }
+
+export const PlacingStar = React.memo(
+  _PlacingStar,
+  (prevProps, nextProps) => prevProps.placing === nextProps.placing
+);

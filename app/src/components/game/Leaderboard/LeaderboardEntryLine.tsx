@@ -5,7 +5,7 @@ import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 import Typography from '@mui/material/Typography';
 import { SxProps, Theme } from '@mui/material/styles';
 import React from 'react';
-import useIngameStore, { LeaderboardEntry } from '@/state/IngameStore';
+import useIngameStore from '@/state/IngameStore';
 import { ReactComponent as ConquestIcon } from '@/icons/conquest.svg';
 import { ReactComponent as ScoreIcon } from '@/icons/score.svg';
 import { ReactComponent as BotIcon } from '@/icons/bot.svg';
@@ -16,16 +16,72 @@ import { FormattedMessage } from 'react-intl';
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 
 type LeaderboardEntryLineProps = {
-  entry: LeaderboardEntry;
+  playerId: number;
   isLeaderboardOpen: boolean;
 };
 
-export function LeaderboardEntryLine({
-  entry,
+export const LeaderboardEntryLine = React.memo(
+  _LeaderboardEntryLine,
+  (prevProps, nextProps) =>
+    nextProps.playerId === prevProps.playerId &&
+    nextProps.isLeaderboardOpen === prevProps.isLeaderboardOpen
+);
+
+function _LeaderboardEntryLine({
+  playerId,
   isLeaderboardOpen,
 }: LeaderboardEntryLineProps) {
+  //console.log('Re-render leaderboard entry line');
+
+  return (
+    <LeaderboardEntryLineInternal
+      playerId={playerId}
+      isLeaderboardOpen={isLeaderboardOpen}
+    >
+      <LeaderboardEntryScore playerId={playerId} />
+    </LeaderboardEntryLineInternal>
+  );
+}
+
+type LeaderboardEntryScoreProps = {
+  playerId: number;
+};
+
+function LeaderboardEntryScore({ playerId }: LeaderboardEntryScoreProps) {
+  const score = useIngameStore(
+    (store) =>
+      store.leaderboardEntries.find((entry) => entry.playerId === playerId)
+        ?.score
+  );
+  // console.log('Re-render leaderboard entry score');
+  return <>{score || 0}</>;
+}
+
+type LeaderboardEntryLineInternalProps = {
+  playerId: number;
+  isLeaderboardOpen: boolean;
+};
+
+function LeaderboardEntryLineInternal({
+  playerId,
+  isLeaderboardOpen,
+  children,
+}: React.PropsWithChildren<LeaderboardEntryLineInternalProps>) {
+  // only re-render if the player's placing or status changes
+  const entry = useIngameStore(
+    (store) =>
+      store.leaderboardEntries.find((entry) => entry.playerId === playerId)!,
+    (prevState, newState) =>
+      prevState.placing === newState.placing &&
+      prevState.status === newState.status
+  );
   const simulation = useIngameStore((store) => store.simulation);
-  console.log('Re-render leaderboard entry line');
+  // console.log(
+  //   'Re-render leaderboard entry line internal ' +
+  //     entry.playerId +
+  //     ' ' +
+  //     entry.placing
+  // );
   const nameTypographySx: SxProps<Theme> = React.useMemo(
     () => ({ color: entry.color, textShadow: textShadows.small }),
     [entry.color]
@@ -133,7 +189,7 @@ export function LeaderboardEntryLine({
           flexShrink={0}
         >
           <Typography variant="body1" color="secondary" lineHeight="1">
-            {entry.score}
+            {children}
           </Typography>
           <SvgIcon fontSize="small" sx={{ color: entry.color }}>
             {simulation?.settings.gameModeType === 'conquest' ? (

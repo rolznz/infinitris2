@@ -24,7 +24,7 @@ export function Leaderboard() {
   const leaderboardEmpty = useIngameStore(
     (store) => store.leaderboardEntries.length === 0
   );
-  console.log('Re-render leaderboard');
+  // console.log('Re-render leaderboard');
   if (leaderboardEmpty) {
     return null;
   }
@@ -70,7 +70,7 @@ function LeaderboardButton(props: { toggleIsOpen: () => void }) {
     <FlexBox onClick={props.toggleIsOpen} zIndex="hamburgerButton" sx={sx}>
       <LeaderboardEntryLine
         key={entry.playerId}
-        entry={entry}
+        playerId={entry.playerId}
         isLeaderboardOpen={false}
       />
     </FlexBox>

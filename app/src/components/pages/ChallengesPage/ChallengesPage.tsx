@@ -46,6 +46,36 @@ const cachedChallenges: Record<
   latest: [],
 };
 
+const challengesMostPlaysFilter: UseCollectionOptions = {
+  constraints: [
+    where('isOfficial', '==', false),
+    orderBy('readOnly.numAttempts', 'desc'),
+  ],
+};
+
+const challengesMostRatingsFilter: UseCollectionOptions = {
+  constraints: [
+    where('isOfficial', '==', false),
+    orderBy('readOnly.numRatings', 'desc'),
+    orderBy('readOnly.rating', 'desc'),
+  ],
+};
+
+const challengesRatingFilter: UseCollectionOptions = {
+  constraints: [
+    where('isOfficial', '==', false),
+    orderBy('readOnly.rating', 'desc'),
+    orderBy('readOnly.numRatings', 'desc'),
+  ],
+};
+
+const challengesDateFilter: UseCollectionOptions = {
+  constraints: [
+    where('isOfficial', '==', false),
+    orderBy('readOnly.createdTimestamp', 'desc'),
+  ],
+};
+
 function ChallengesPageChallengeList({
   sortType,
 }: {
@@ -54,49 +84,6 @@ function ChallengesPageChallengeList({
   const [challenges, setChallenges] = React.useState<
     QueryDocumentSnapshot<IChallenge>[]
   >(cachedChallenges[sortType]);
-
-  // TODO: remove listen param and wait for challenge to be created before navigating
-
-  const challengesMostPlaysFilter: UseCollectionOptions = React.useMemo(
-    () => ({
-      constraints: [
-        where('isOfficial', '==', false),
-        orderBy('readOnly.numAttempts', 'desc'),
-      ],
-    }),
-    []
-  );
-
-  const challengesMostRatingsFilter: UseCollectionOptions = React.useMemo(
-    () => ({
-      constraints: [
-        where('isOfficial', '==', false),
-        orderBy('readOnly.numRatings', 'desc'),
-        orderBy('readOnly.rating', 'desc'),
-      ],
-    }),
-    []
-  );
-
-  const challengesRatingFilter: UseCollectionOptions = React.useMemo(
-    () => ({
-      constraints: [
-        where('isOfficial', '==', false),
-        orderBy('readOnly.rating', 'desc'),
-        orderBy('readOnly.numRatings', 'desc'),
-      ],
-    }),
-    []
-  );
-  const challengesDateFilter: UseCollectionOptions = React.useMemo(
-    () => ({
-      constraints: [
-        where('isOfficial', '==', false),
-        orderBy('readOnly.createdTimestamp', 'desc'),
-      ],
-    }),
-    []
-  );
 
   const onNewItemsLoaded = React.useCallback(
     (newItems: QueryDocumentSnapshot<IChallenge>[]) => {

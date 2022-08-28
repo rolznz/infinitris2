@@ -100,7 +100,7 @@ function _MarketPage() {
                     setAvailableBlocksTab(value);
                     lastSelectedTab = value;
                   }}
-                  aria-label="lab API tabs example"
+                  aria-label="market page character tabs"
                 >
                   <Tab label="Featured" value="available-featured" />
                   <Tab label="Free" value="available-free" />

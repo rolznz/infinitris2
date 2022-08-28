@@ -26,9 +26,9 @@ import { ReactComponent as PremiumPlayerIcon } from '@/icons/premium_player.svg'
 import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
-import ChallengeCard from '@/components/pages/ChallengesPage/ChallengeCard';
 import { where } from 'firebase/firestore';
 import { borderColorLight, borderRadiuses, colors } from '@/theme/theme';
+import { CommunityChallengeCard } from '@/components/pages/ChallengesPage/ChallengeCard';
 
 export default function ProfilePage() {
   const intl = useIntl();
@@ -109,7 +109,7 @@ export default function ProfilePage() {
           >
             {userChallenges.map((challenge) => (
               <FlexBox key={challenge.id} margin={4}>
-                <ChallengeCard challenge={challenge} />
+                <CommunityChallengeCard challenge={challenge} />
               </FlexBox>
             ))}
           </FlexBox>

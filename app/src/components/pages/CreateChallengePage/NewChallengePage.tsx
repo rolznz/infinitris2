@@ -1,5 +1,4 @@
-import { Button, Link, Typography } from '@mui/material';
-import { useCollection, UseCollectionOptions } from 'swr-firestore';
+import { UseCollectionOptions } from 'swr-firestore';
 import { challengesPath, IChallenge } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -7,7 +6,11 @@ import { useHistory } from 'react-router-dom';
 import useAuthStore from '../../../state/AuthStore';
 
 import FlexBox from '../../ui/FlexBox';
-import { DocumentSnapshot, where } from 'firebase/firestore';
+import {
+  DocumentSnapshot,
+  QueryDocumentSnapshot,
+  where,
+} from 'firebase/firestore';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import { createNewChallenge } from '@/components/pages/CreateChallengePage/createNewChallenge';
 import { useUser } from '@/components/hooks/useUser';
@@ -15,23 +18,86 @@ import { Page } from '@/components/ui/Page';
 import { getChallengeTestUrl } from '@/utils/getChallengeTestUrl';
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
-import ChallengeCard from '@/components/pages/ChallengesPage/ChallengeCard';
+import ChallengeCard, {
+  challengeCardHeight,
+  challengeCardWidth,
+} from '@/components/pages/ChallengesPage/ChallengeCard';
 import challengecreatorImage from '@components/ui/GameModePicker/assets/illustration_challengecreator.jpg';
+import TabList from '@mui/lab/TabList';
+import Typography from '@mui/material/Typography';
+import Link from '@mui/material/Link';
+import Button from '@mui/material/Button';
+import Tab from '@mui/material/Tab';
+import TabContext from '@mui/lab/TabContext';
+import TabPanel from '@mui/lab/TabPanel';
+import { InfiniteLoader } from '@/components/ui/InfiniteLoader';
+import { useIsLandscape } from '@/components/hooks/useIsLandscape';
+import useWindowSize from 'react-use/lib/useWindowSize';
+
+export const NewChallengePageTabValues = [
+  'templates',
+  'your-challenges',
+  'community-challenges',
+] as const;
+export type NewChallengePageTab = typeof NewChallengePageTabValues[number];
 
 interface ChallengesRowProps {
-  challenges: DocumentSnapshot<IChallenge>[] | undefined;
+  tab: NewChallengePageTab;
 }
 
-function ChallengesRow({ challenges }: ChallengesRowProps) {
+const cachedChallenges: Record<
+  NewChallengePageTab,
+  QueryDocumentSnapshot<IChallenge>[]
+> = {
+  templates: [],
+  'your-challenges': [],
+  'community-challenges': [],
+};
+
+const templatesFilter: UseCollectionOptions = {
+  constraints: [
+    where('isTemplate', '==', true),
+    // orderBy('readOnly.createdTimestamp', 'desc'),
+  ],
+};
+
+const communityChallengesFilter: UseCollectionOptions = {
+  constraints: [where('isOfficial', '==', false)],
+};
+
+function ChallengesRow({ tab }: ChallengesRowProps) {
   const history = useHistory();
   const user = useUser();
-  if (!challenges) {
-    return null;
-  }
+
+  const userId = useAuthStore((store) => store.user?.uid);
+
+  const userChallengesFilter: UseCollectionOptions = React.useMemo(
+    () => ({
+      constraints: [where('userId', '==', userId)],
+    }),
+    [userId]
+  );
+
+  const [challenges, setChallenges] = React.useState<
+    QueryDocumentSnapshot<IChallenge>[]
+  >(cachedChallenges[tab]);
+
+  const onNewItemsLoaded = React.useCallback(
+    (newItems: QueryDocumentSnapshot<IChallenge>[]) => {
+      cachedChallenges[tab] = cachedChallenges[tab].concat(newItems);
+      setChallenges(cachedChallenges[tab]);
+      console.log('Loaded', cachedChallenges[tab].length, 'challenges');
+    },
+    [tab]
+  );
+
   const isAdmin = user.readOnly?.isAdmin;
-  return (
-    <FlexBox flexWrap="wrap" flexDirection="row" gap={4} pt={2} pb={4}>
-      {challenges.map((challenge) => (
+
+  const renderItem = React.useCallback<
+    (challenge: DocumentSnapshot<IChallenge>) => React.ReactNode
+  >(
+    (challenge) => {
+      return (
         <ChallengeCard
           key={challenge.id}
           challenge={challenge}
@@ -61,41 +127,46 @@ function ChallengesRow({ challenges }: ChallengesRowProps) {
             history.push(getChallengeTestUrl());
           }}
         />
-      ))}
-    </FlexBox>
+      );
+    },
+    [history, isAdmin]
+  );
+
+  const isLandscape = useIsLandscape();
+  const windowSize = useWindowSize();
+  const gap = isLandscape ? 4 : 2;
+
+  return (
+    <InfiniteLoader<IChallenge>
+      items={challenges}
+      onNewItemsLoaded={onNewItemsLoaded}
+      renderItem={renderItem}
+      itemWidth={challengeCardWidth}
+      itemHeight={challengeCardHeight}
+      numColumns={
+        isLandscape ? Math.floor(windowSize.width / (200 + gap * 2)) : 2
+      }
+      gap={gap}
+      collectionPath={challengesPath}
+      useCollectionOptions={
+        tab === 'templates'
+          ? templatesFilter
+          : tab === 'community-challenges'
+          ? communityChallengesFilter
+          : userChallengesFilter
+      }
+      justifyContent="center"
+    />
   );
 }
 
-const templateChallengesFilter: UseCollectionOptions = {
-  constraints: [where('isTemplate', '==', true)],
-};
-
-const allChallengesFilter: UseCollectionOptions = {
-  constraints: [where('isOfficial', '==', false)],
-};
-
 export function LoadChallengePage() {
-  const userId = useAuthStore().user?.uid;
   const challenge = useChallengeEditorStore((store) => store.challenge);
-  const useUserChallengesOptions: UseCollectionOptions = React.useMemo(
-    () => ({
-      constraints: [where('userId', '==', userId)],
-    }),
-    [userId]
-  );
+  const userId = useAuthStore((store) => store.user?.uid);
 
-  const { data: userChallenges } = useCollection<IChallenge>(
-    userId ? challengesPath : null,
-    useUserChallengesOptions
-  );
-  const { data: allChallenges } = useCollection<IChallenge>(
-    challengesPath,
-    allChallengesFilter
-  );
-  const { data: templateChallenges } = useCollection<IChallenge>(
-    challengesPath,
-    templateChallengesFilter
-  );
+  const [selectedChallengesTab, setSelectedChallengesTab] =
+    React.useState<NewChallengePageTab>('templates');
+
   const intl = useIntl();
 
   return (
@@ -107,11 +178,11 @@ export function LoadChallengePage() {
     >
       <img alt="" src={challengecreatorImage} height="300px" />
       <FlexBox my={2}>
-        {challenge ? (
+        {challenge && (
           <>
-            <Typography align="center">
+            <Typography align="center" variant="body2" mb={1}>
               <FormattedMessage
-                defaultMessage="Resume Challenge"
+                defaultMessage="You seem to have a challenge in progress."
                 description="New Challenge Page - Resume challenge"
               />
             </Typography>
@@ -124,44 +195,68 @@ export function LoadChallengePage() {
               </Button>
             </Link>
           </>
-        ) : (
-          <Typography variant="body2" align="center">
-            <FormattedMessage
-              defaultMessage="Select one of the templates below to begin creating your challenge"
-              description="New Challenge Page - Select a template to begin"
-            />
-          </Typography>
         )}
       </FlexBox>
 
-      <Typography align="center" variant="h2">
-        <FormattedMessage
-          defaultMessage="Official Templates"
-          description="Challenges Page - Official Templates"
-        />
-      </Typography>
-
-      <ChallengesRow challenges={templateChallenges} />
-
-      {userChallenges?.length && (
-        <>
-          <Typography align="center" variant="h2">
-            <FormattedMessage
-              defaultMessage="Your Published Challenges"
-              description="Challenges Page - Your Published Challenges section title"
+      <TabContext value={selectedChallengesTab}>
+        <TabList
+          onChange={(
+            _event: React.SyntheticEvent,
+            value: NewChallengePageTab
+          ) => {
+            setSelectedChallengesTab(value);
+            // lastSelectedChallengesTab = value;
+          }}
+          aria-label="new challenge picker tabs"
+        >
+          <Tab
+            label={
+              <FormattedMessage
+                defaultMessage="Official Templates"
+                description="Challenges Page - Official Templates"
+              />
+            }
+            value="templates"
+          />
+          {userId && (
+            <Tab
+              label={
+                <FormattedMessage
+                  defaultMessage="Your Published Challenges"
+                  description="Challenges Page - Your Published Challenges section title"
+                />
+              }
+              value="your-challenges"
             />
-          </Typography>
-          <ChallengesRow challenges={userChallenges} />
-        </>
-      )}
-
-      <Typography align="center" variant="h2">
-        <FormattedMessage
-          defaultMessage="Community Published Challenges"
-          description="Challenges Page - Community Published Challenges section title"
-        />
-      </Typography>
-      <ChallengesRow challenges={allChallenges} />
+          )}
+          <Tab
+            label={
+              <FormattedMessage
+                defaultMessage="Community Challenges"
+                description="Challenges Page - Community Challenges section title"
+              />
+            }
+            value="community-challenges"
+          />
+        </TabList>
+        <FlexBox py={4}>
+          {NewChallengePageTabValues.map((value) => (
+            <TabPanel key={value} value={value}>
+              <FlexBox>
+                {value === 'templates' && (
+                  <Typography variant="body2" align="center" mb={2}>
+                    <FormattedMessage
+                      defaultMessage="Select one of the templates below to begin creating your challenge"
+                      description="New Challenge Page - Select a template to begin"
+                    />
+                  </Typography>
+                )}
+                <ChallengesRow tab={value} />
+              </FlexBox>
+            </TabPanel>
+          ))}
+        </FlexBox>
+      </TabContext>
     </Page>
   );
 }

@@ -237,6 +237,9 @@ export default class Simulation implements ISimulation {
   get shouldNewPlayerSpectate(): boolean {
     return !!this._round;
   }
+  get forgivingPlacementTime(): number {
+    return this._settings.forgivingPlacementTime ?? 1000; //ms
+  }
 
   nextRandom(key: string): number {
     return this._random.next(key);

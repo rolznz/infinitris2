@@ -59,9 +59,6 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     this._calculateKnockouts();
   }
   private _calculateKnockouts() {
-    if (this._simulation.isNetworkClient) {
-      return;
-    }
     const activePlayers = this._simulation.players.filter(
       (player) => player.status === PlayerStatus.ingame
     );
@@ -71,7 +68,9 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         (cell) => conquestCanPlace(player, this._simulation, cell)
       ).length;
       if (!player.isFirstBlock && placableCellsCount === 0) {
-        player.status = PlayerStatus.knockedOut;
+        if (!this._simulation.isNetworkClient) {
+          player.status = PlayerStatus.knockedOut;
+        }
       } else {
         player.score = placableCellsCount;
       }
@@ -107,12 +106,28 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
 export function conquestCanPlace(
   player: IPlayer,
   simulation: ISimulation,
-  cell: ICell
+  cell: ICell,
+  allowRecentlyPlaced = true
 ) {
-  if (!cell?.isEmpty) {
+  if (
+    !cell.isEmpty &&
+    (!allowRecentlyPlaced ||
+      !cell.wasRecentlyPlaced(simulation.forgivingPlacementTime))
+  ) {
     return false;
   }
-  if (cell.row === simulation.grid.numRows - 1 && cell.isEmpty) {
+  // only allow placement on empty sections with at least 5 empty cells free
+  if (
+    [0, -1, 1, -2, 2]
+      .map((offset) => simulation.grid.getNeighbour(cell, offset, 0)!)
+      .every(
+        (neighbour) =>
+          neighbour.row === simulation.grid.numRows - 1 &&
+          (neighbour.isEmpty ||
+            (allowRecentlyPlaced &&
+              neighbour.wasRecentlyPlaced(simulation.forgivingPlacementTime)))
+      )
+  ) {
     return true;
   }
 

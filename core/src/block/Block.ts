@@ -318,7 +318,7 @@ export default class Block implements IBlock {
                   options?.isForgiving &&
                   cell?.player !== this._player &&
                   cell?.wasRecentlyPlaced(
-                    this._simulation.settings.forgivingPlacementTime ?? 1000 //ms
+                    this._simulation.forgivingPlacementTime
                   )
               ));
         }

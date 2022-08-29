@@ -92,7 +92,8 @@ export class ConquestRenderer implements IGameModeRenderer {
             const canPlace = conquestCanPlace(
               simulation.followingPlayer!,
               simulation,
-              cell
+              cell,
+              false
             );
 
             if (canPlace) {

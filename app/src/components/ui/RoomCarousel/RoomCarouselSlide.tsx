@@ -113,7 +113,7 @@ export function RoomCarouselSlide({
         position="absolute"
         width="100%"
         bottom={0}
-        height="30%"
+        height="50%"
         sx={fadeSx}
       />
       <FlexBox

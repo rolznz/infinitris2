@@ -392,6 +392,7 @@ export const coreThemeOptions: ThemeOptions = {
           borderRadius: borderRadiuses.base,
           paddingTop: '2px',
           paddingBottom: '2px',
+          borderColor: borderColor,
         },
       },
     },

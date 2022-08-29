@@ -28,10 +28,10 @@ body > canvas {
   /*background: none !important;*/
 }
 
-.MuiOutlinedInput-notchedOutline {
+/* .MuiOutlinedInput-notchedOutline {
   border: none !important;
   outline: none !important;
-}
+} */
 
 .carousel-scaletransform .react-swipeable-view-container [aria-hidden='true'] {
   transform: scale(0.9);

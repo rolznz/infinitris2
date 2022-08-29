@@ -1,5 +1,5 @@
 import { UseCollectionOptions } from 'swr-firestore';
-import { challengesPath, IChallenge } from 'infinitris2-models';
+import { challengesPath, IChallenge, verifyProperty } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage, useIntl } from 'react-intl';
 import { useHistory } from 'react-router-dom';
@@ -33,16 +33,20 @@ import TabPanel from '@mui/lab/TabPanel';
 import { InfiniteLoader } from '@/components/ui/InfiniteLoader';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import TextField from '@mui/material/TextField';
+import { debounce } from 'ts-debounce';
 
 export const NewChallengePageTabValues = [
   'templates',
   'your-challenges',
   'community-challenges',
+  'search',
 ] as const;
 export type NewChallengePageTab = typeof NewChallengePageTabValues[number];
 
 interface ChallengesRowProps {
   tab: NewChallengePageTab;
+  searchQuery: string;
 }
 
 const cachedChallenges: Record<
@@ -52,20 +56,21 @@ const cachedChallenges: Record<
   templates: [],
   'your-challenges': [],
   'community-challenges': [],
+  search: [],
 };
 
 const templatesFilter: UseCollectionOptions = {
   constraints: [
-    where('isTemplate', '==', true),
+    where(verifyProperty<IChallenge>('isTemplate'), '==', true),
     // orderBy('readOnly.createdTimestamp', 'desc'),
   ],
 };
 
 const communityChallengesFilter: UseCollectionOptions = {
-  constraints: [where('isOfficial', '==', false)],
+  constraints: [where(verifyProperty<IChallenge>('isOfficial'), '==', false)],
 };
 
-function ChallengesRow({ tab }: ChallengesRowProps) {
+function ChallengesList({ tab, searchQuery }: ChallengesRowProps) {
   const history = useHistory();
   const user = useUser();
 
@@ -73,14 +78,34 @@ function ChallengesRow({ tab }: ChallengesRowProps) {
 
   const userChallengesFilter: UseCollectionOptions = React.useMemo(
     () => ({
-      constraints: [where('userId', '==', userId)],
+      constraints: [where(verifyProperty<IChallenge>('userId'), '==', userId)],
     }),
     [userId]
+  );
+  const searchChallengesFilter: UseCollectionOptions = React.useMemo(
+    () => ({
+      constraints: [
+        where(verifyProperty<IChallenge>('title'), '>=', searchQuery),
+        where(
+          verifyProperty<IChallenge>('title'),
+          '<=',
+          searchQuery + '\uf8ff'
+        ),
+      ],
+    }),
+    [searchQuery]
   );
 
   const [challenges, setChallenges] = React.useState<
     QueryDocumentSnapshot<IChallenge>[]
   >(cachedChallenges[tab]);
+
+  React.useEffect(() => {
+    if (tab === 'search') {
+      // reset challenges when search query changes
+      setChallenges([]);
+    }
+  }, [tab, searchQuery]);
 
   const onNewItemsLoaded = React.useCallback(
     (newItems: QueryDocumentSnapshot<IChallenge>[]) => {
@@ -153,6 +178,8 @@ function ChallengesRow({ tab }: ChallengesRowProps) {
           ? templatesFilter
           : tab === 'community-challenges'
           ? communityChallengesFilter
+          : tab === 'search'
+          ? searchChallengesFilter
           : userChallengesFilter
       }
       justifyContent="center"
@@ -168,6 +195,18 @@ export function LoadChallengePage() {
     React.useState<NewChallengePageTab>('templates');
 
   const intl = useIntl();
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const updateSearchQuery = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      cachedChallenges['search'] = [];
+      setSearchQuery(event.target.value);
+    },
+    []
+  );
+  const debouncedUpdateSearchQuery = React.useMemo(
+    () => debounce(updateSearchQuery, 500),
+    [updateSearchQuery]
+  );
 
   return (
     <Page
@@ -238,6 +277,15 @@ export function LoadChallengePage() {
             }
             value="community-challenges"
           />
+          <Tab
+            label={
+              <FormattedMessage
+                defaultMessage="Search"
+                description="Challenges Page - Search section title"
+              />
+            }
+            value="search"
+          />
         </TabList>
         <FlexBox py={4}>
           {NewChallengePageTabValues.map((value) => (
@@ -251,7 +299,19 @@ export function LoadChallengePage() {
                     />
                   </Typography>
                 )}
-                <ChallengesRow tab={value} />
+                {value === 'search' && (
+                  <FlexBox mb={2}>
+                    <TextField
+                      placeholder="Search"
+                      variant="outlined"
+                      defaultValue={searchQuery}
+                      onChange={debouncedUpdateSearchQuery}
+                    />
+                  </FlexBox>
+                )}
+                {(searchQuery.length > 0 || value !== 'search') && (
+                  <ChallengesList tab={value} searchQuery={searchQuery} />
+                )}
               </FlexBox>
             </TabPanel>
           ))}

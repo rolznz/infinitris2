@@ -1,17 +1,22 @@
 import ICell from '@models/ICell';
+import { IPlayer } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
 
-export function checkMistake(cells: ICell[], simulation: ISimulation) {
+export function checkMistake(
+  player: IPlayer,
+  cells: ICell[],
+  simulation: ISimulation
+) {
   // imperfect mistake detection that will probably not work for non-tetromino block layouts
   let isMistake = false;
-  let bottomRow = 0;
+  let topRow = simulation.grid.numRows - 1;
   for (const cell of cells) {
-    bottomRow = Math.max(bottomRow, cell.row);
+    topRow = Math.min(topRow, cell.row);
   }
 
   if (
     simulation.settings.preventTowers !== false &&
-    simulation.grid.isTower(bottomRow)
+    simulation.grid.isTower(topRow)
   ) {
     isMistake = true;
   } else {
@@ -25,6 +30,10 @@ export function checkMistake(cells: ICell[], simulation: ISimulation) {
         isMistake = true;
       }
     }
+  }
+
+  if (simulation.gameMode.checkMistake) {
+    isMistake = simulation.gameMode.checkMistake(player, cells, isMistake);
   }
 
   return isMistake;

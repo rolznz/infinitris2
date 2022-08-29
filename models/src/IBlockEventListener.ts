@@ -23,6 +23,13 @@ export default interface IBlockEventListener {
   onBlockPlaced(block: IBlock): void;
 
   /**
+   * Triggered when a block is removed (either placed or died)
+   *
+   * @param block the block that was removed
+   */
+  onBlockRemoved(block: IBlock): void;
+
+  /**
    * Triggered when a block moves or rotates
    *
    * @param block The block that moved

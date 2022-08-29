@@ -32,14 +32,12 @@ export class RaceGameMode implements IGameMode<RaceGameModeState> {
         .map((player) => player.score)
         .find((score) => !activePlayers.some((other) => other.score > score)) ||
       0;
-    const withGrace = (score: number) => Math.max(score - 200, 0);
-    const highestPlayerScoreWithGrace = withGrace(highestPlayerScore);
-    const deathScore = highestPlayerScoreWithGrace - 200;
+    const deathScore = highestPlayerScore - 200; // TODO: make this value customizable
 
     for (const activePlayer of activePlayers) {
       activePlayer.health =
-        Math.max(withGrace(activePlayer.score) - deathScore, 0) /
-        (highestPlayerScoreWithGrace - deathScore);
+        Math.max(activePlayer.score - deathScore, 0) /
+        (highestPlayerScore - deathScore);
       console.log(
         'Set player ' + activePlayer.id + ' health ' + activePlayer.health
       );

@@ -5,7 +5,12 @@ import useSinglePlayerOptionsStore, {
   SinglePlayerOptionsFormData,
 } from '@/state/SinglePlayerOptionsStore';
 
-import { GameModeTypeValues } from 'infinitris2-models';
+import {
+  GameModeType,
+  GameModeTypeValues,
+  WorldType,
+  WorldVariation,
+} from 'infinitris2-models';
 
 import lodashMerge from 'lodash.merge';
 import { launchSinglePlayer } from '@/components/pages/SinglePlayerPage/SinglePlayerPage';
@@ -29,7 +34,7 @@ export function SinglePlayerGameModePickerPage() {
           gameModeType,
           id: gameModeType,
           worldType: getWorldType(gameModeType),
-          worldVariation: '0',
+          worldVariation: getWorldVariation(gameModeType),
         }))
       : [
           {
@@ -76,10 +81,17 @@ export function SinglePlayerGameModePickerPage() {
     />
   );
 }
-function getWorldType(gameModeType: string): any {
+function getWorldType(gameModeType: GameModeType): WorldType {
   return gameModeType === 'conquest'
-    ? 'volcano'
-    : gameModeType === 'race'
     ? 'desert'
+    : gameModeType === 'race'
+    ? 'space'
+    : gameModeType === 'battle'
+    ? 'volcano'
+    : gameModeType === 'column-conquest'
+    ? 'space'
     : 'grass';
+}
+function getWorldVariation(gameModeType: GameModeType): WorldVariation {
+  return gameModeType === 'column-conquest' ? '4' : '0';
 }

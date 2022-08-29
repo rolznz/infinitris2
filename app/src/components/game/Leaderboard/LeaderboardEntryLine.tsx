@@ -70,11 +70,12 @@ function LeaderboardEntryLineInternal({
   // only re-render if the player's placing or status changes
   const entry = useIngameStore(
     (store) =>
-      store.leaderboardEntries.find((entry) => entry.playerId === playerId)!,
+      store.leaderboardEntries.find((entry) => entry.playerId === playerId),
     (prevState, newState) =>
-      prevState.placing === newState.placing &&
-      prevState.status === newState.status
+      prevState?.placing === newState?.placing &&
+      prevState?.status === newState?.status
   );
+
   const simulation = useIngameStore((store) => store.simulation);
   // console.log(
   //   'Re-render leaderboard entry line internal ' +
@@ -83,21 +84,26 @@ function LeaderboardEntryLineInternal({
   //     entry.placing
   // );
   const nameTypographySx: SxProps<Theme> = React.useMemo(
-    () => ({ color: entry.color, textShadow: textShadows.small }),
-    [entry.color]
+    () => ({ color: entry?.color, textShadow: textShadows.small }),
+    [entry?.color]
   );
   const statusTypographySx: SxProps<Theme> = React.useMemo(
     () => ({
-      color: entry.color,
+      color: entry?.color,
       textShadow: textShadows.small,
       fontSize: 12,
     }),
-    [entry.color]
+    [entry?.color]
   );
   const boxSx: SxProps<Theme> = React.useMemo(
-    () => ({ opacity: entry.status !== PlayerStatus.ingame ? 0.5 : undefined }),
-    [entry.status]
+    () => ({
+      opacity: entry?.status !== PlayerStatus.ingame ? 0.5 : undefined,
+    }),
+    [entry?.status]
   );
+  if (!entry) {
+    return null;
+  }
   return (
     <FlexBox
       boxShadow={

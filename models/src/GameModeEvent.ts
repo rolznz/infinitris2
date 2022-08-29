@@ -1,4 +1,6 @@
-export type GameModeEvent = {
-  type: 'conquest-columnChanged';
+export type ColumnConquestEvent = {
+  type: 'columnChanged';
   column: number;
-};
+}; // | SecondEvent
+
+export type GameModeEvent = ColumnConquestEvent; // | SecondGameModeTypeEvent

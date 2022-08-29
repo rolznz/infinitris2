@@ -1,7 +1,6 @@
 import * as PIXI from 'pixi.js-legacy';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
-import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { fontFamily } from '@models/ui';
 
 type LeaderboardEntry = {

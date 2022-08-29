@@ -412,8 +412,8 @@ export default class ChallengeClient
     }
 
     const isClassicChallenge =
-      this._challenge.simulationSettings?.gameModeType ||
-      'infinity' === 'infinity';
+      (this._challenge.simulationSettings?.gameModeType || 'infinity') ===
+      'infinity';
 
     this._renderer.challengeEditorEnabled = this._editor?.isEditing || false;
     this._renderer.gridLineType = this._editor?.isEditing

@@ -185,6 +185,10 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     return this._checkpointCell;
   }
 
+  get isFirstBlock(): boolean {
+    return this._isFirstBlock;
+  }
+
   set status(status: PlayerStatus) {
     this._status = status;
     this._lastStatusChangeTime = Date.now();
@@ -409,7 +413,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     );*/
     if (newBlock.isAlive) {
       this._block = newBlock;
-      this._isFirstBlock = false;
       this.onBlockCreated(this._block);
     }
     return newBlock;
@@ -463,9 +466,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       throw new Error('Block mismatch');
     }
 
-    //const isMistake = checkMistake(block.cells, this._simulation);
-
-    //console.log(`${this._nickname} Mistake detected: `, isMistake);
     this._modifyScoreFromBlockPlacement(block, false);
 
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
@@ -508,9 +508,19 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
 
   removeBlock() {
+    if (!this._block) {
+      return;
+    }
     this._calculateSpawnDelay();
+    const block = this._block;
     this._block?.destroy();
     this._block = undefined;
+    this._isFirstBlock = false;
+    this.onBlockRemoved(block);
+  }
+
+  onBlockRemoved(block: IBlock) {
+    this._eventListeners.forEach((listener) => listener.onBlockRemoved(block));
   }
 
   private _calculateSpawnDelay() {

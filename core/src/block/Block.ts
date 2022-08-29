@@ -328,7 +328,11 @@ export default class Block implements IBlock {
         options.cells = newCells;
       }
       if (canMove && options && !options.allowMistakes) {
-        options.isMistake = checkMistake(newCells, this._simulation);
+        options.isMistake = checkMistake(
+          this._player,
+          newCells,
+          this._simulation
+        );
       }
     } else {
       canMove = false;
@@ -463,9 +467,9 @@ export default class Block implements IBlock {
       if (!this._simulation.isNetworkClient && !fell && this.isReadyToLock) {
         const isMistake =
           (this._simulation.settings.preventTowers !== false &&
-            this._simulation.grid.isTower(this.bottomRow)) ||
+            this._simulation.grid.isTower(this.topRow)) ||
           (this._simulation.settings.mistakeDetection !== false &&
-            checkMistake(this._cells, this._simulation));
+            checkMistake(this._player, this._cells, this._simulation));
 
         if (isMistake && this._isDropping) {
           // try forgiving placement - can overwrite any cells that were placed in the last X ms

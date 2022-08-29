@@ -1,3 +1,5 @@
+import ICell from '@models/ICell';
+import { IPlayer } from '@models/IPlayer';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 
 export interface IGameMode<GameModeState>
@@ -7,4 +9,5 @@ export interface IGameMode<GameModeState>
   step(): void;
   serialize(): GameModeState;
   deserialize(state: GameModeState): void;
+  checkMistake?(player: IPlayer, cells: ICell[], isMistake: boolean): boolean;
 }

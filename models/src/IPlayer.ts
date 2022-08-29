@@ -55,6 +55,7 @@ export interface IPlayer {
   toggleChat(cancel?: boolean): void;
 
   get isChatting(): boolean;
+  get isFirstBlock(): boolean;
 
   update(): void;
   addEventListener(eventListener: IBlockEventListener): void;

@@ -1,4 +1,4 @@
-import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
+import { ColumnConquestGameMode } from '@core/gameModes/ColumnConquestGameMode';
 import IBlock, { BlockCanMoveOptions } from '@models/IBlock';
 import ICell from '@models/ICell';
 import ISimulation from '@models/ISimulation';
@@ -105,8 +105,8 @@ export class DumbAIBehaviour implements IAIBehaviour {
     dr: number,
     canMoveOptions: BlockCanMoveOptions
   ): number {
-    if (this._simulation.settings.gameModeType === 'conquest') {
-      const gameMode = this._simulation.gameMode as ConquestGameMode;
+    if (this._simulation.settings.gameModeType === 'column-conquest') {
+      const gameMode = this._simulation.gameMode as ColumnConquestGameMode;
 
       if (canMoveOptions.cells) {
         if (

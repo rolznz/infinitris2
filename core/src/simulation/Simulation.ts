@@ -10,7 +10,6 @@ import ICell from '@models/ICell';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import IGrid from '@models/IGrid';
 import { IGameMode } from '@models/IGameMode';
-import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { InfinityGameMode } from '@core/gameModes/InfinityGameMode';
 import { FpsCounter } from '@core/FpsCounter';
 import { GameModeEvent } from '@models/GameModeEvent';
@@ -32,6 +31,9 @@ import { IRotationSystem, RotationSystem } from '@models/IRotationSystem';
 import { InfinitrisRotationSystem } from '@core/block/rotation/infinitrisRotationSystem';
 import { BasicRotationSystem } from '@core/block/rotation/BasicRotationSystem';
 import { KeyedRandom } from '@core/simulation/KeyedRandom';
+import { ColumnConquestGameMode } from '@core/gameModes/ColumnConquestGameMode';
+import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
+import { BattleGameMode } from '@core/gameModes/BattleGameMode';
 
 /**
  * The length of a single animation frame for the simulation.
@@ -437,6 +439,15 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
+  onBlockRemoved(block: IBlock) {
+    this._eventListeners.forEach((listener) =>
+      listener.onBlockRemoved?.(block)
+    );
+  }
+
+  /**
+   * @inheritdoc
+   */
   onPlayerCreated(player: IPlayer) {
     this._eventListeners.forEach((listener) =>
       listener.onPlayerCreated?.(player)
@@ -566,6 +577,10 @@ export default class Simulation implements ISimulation {
         return new InfinityGameMode(this);
       case 'conquest':
         return new ConquestGameMode(this);
+      case 'column-conquest':
+        return new ColumnConquestGameMode(this);
+      case 'battle':
+        return new BattleGameMode(this);
       case 'race':
         return new RaceGameMode(this);
       default:

@@ -20,7 +20,7 @@ import { RendererQuality } from '@models/RendererQuality';
 import { getBorderColor } from '@models/util/adjustColor';
 import { WorldType, WorldVariation } from '@models/WorldType';
 import { GridLines } from '@src/rendering/renderers/infinitris2/GridLines';
-import { ConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes/ConquestRenderer';
+import { ColumnConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes/ColumnConquestRenderer';
 import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GameModeRenderer';
 import { BaseRenderer, Wrappable } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
@@ -37,6 +37,7 @@ import {
 import RockBehaviour from '@core/grid/cell/behaviours/RockBehaviour';
 import { GestureIndicator } from '@src/rendering/renderers/infinitris2/GestureIndicator';
 import { checkMistake } from '@core/block/checkMistake';
+import { ConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes/ConquestRenderer';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -524,7 +525,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     //this._scoreChangeIndicator.create();
     this._placementHelperShadowCells = [];
 
-    if (simulation.settings.gameModeType === 'conquest') {
+    if (simulation.settings.gameModeType === 'column-conquest') {
+      this._gameModeRenderer = new ColumnConquestRenderer(this);
+    } else if (simulation.settings.gameModeType === 'conquest') {
       this._gameModeRenderer = new ConquestRenderer(this);
     }
 
@@ -1763,7 +1766,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     )!.row;
     const isMistake =
       this._simulation.settings.mistakeDetection !== false &&
-      checkMistake(blockPlacementCells, this._simulation);
+      checkMistake(block.player, blockPlacementCells, this._simulation);
     /*lowestCells.some((cell) => {
         const cellDistanceFromLowestRow = lowestBlockRow - cell.row;
         return this._simulation!.grid.cells[
@@ -1773,7 +1776,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     const isTower =
       this._simulation.settings.preventTowers !== false &&
-      this._simulation.grid.isTower(highestPlacementRow);
+      isMistake &&
+      this._simulation.grid.isTower(highestBlockPlacementCellRow);
 
     const displayInvalidPlacement = isMistake || isTower;
     this._towerIndicator.update(

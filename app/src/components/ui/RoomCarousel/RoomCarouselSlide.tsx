@@ -22,6 +22,7 @@ import { ReactComponent as ConquestIcon } from '@/icons/conquest.svg';
 import { ReactComponent as InfinityIcon } from '@/icons/infinity.svg';
 import { ReactComponent as ProfileIcon } from '@/icons/profile.svg';
 import RunCircleIcon from '@mui/icons-material/RunCircle';
+import WhatshotIcon from '@mui/icons-material/Whatshot';
 import { FormattedMessage } from 'react-intl';
 import { textShadows } from '@/theme/theme';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
@@ -138,7 +139,7 @@ export function RoomCarouselSlide({
         </FlexBox>
         {gameModeType && (
           <FlexBox alignItems="flex-start">
-            <FlexBox flexDirection="row">
+            <FlexBox flexDirection="row" gap={1}>
               <SvgIcon color="primary">
                 <GameModeIcon gameModeType={gameModeType} />
               </SvgIcon>
@@ -160,7 +161,10 @@ function GameModeIcon(props: { gameModeType: GameModeType }) {
       return <InfinityIcon />;
     case 'race':
       return <RunCircleIcon />;
+    case 'battle':
+      return <WhatshotIcon />;
     case 'conquest':
+    case 'column-conquest':
       return <ConquestIcon />;
     default:
       throw new Error('No description for ' + props.gameModeType);
@@ -179,15 +183,29 @@ export function GameModeDescription(props: { gameModeType: GameModeType }) {
     case 'race':
       return (
         <FormattedMessage
-          defaultMessage="Keep your score high to stay in the game."
+          defaultMessage="Get more than 200 points ahead to knock out other players."
           description="Race Game mode description"
         />
       );
     case 'conquest':
       return (
         <FormattedMessage
-          defaultMessage="Capture columns by holding the bottom row."
+          defaultMessage="Capture other players' cells to knock them out of the game"
           description="Conquest Game mode description"
+        />
+      );
+    case 'column-conquest':
+      return (
+        <FormattedMessage
+          defaultMessage="Capture columns by holding the bottom row."
+          description="Column Conquest Game mode description"
+        />
+      );
+    case 'battle':
+      return (
+        <FormattedMessage
+          defaultMessage="Conquest with Bombs"
+          description="Battle Game mode description"
         />
       );
     default:

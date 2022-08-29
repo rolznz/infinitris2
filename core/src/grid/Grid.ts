@@ -205,7 +205,7 @@ export default class Grid implements IGrid {
       this._cachedNumNonEmptyCells / this.numColumns
     );
     // first 4 rows must never be placeable (to ensure blocks can always be placed)
-    return row < Math.max(this.numRows - numFilledRows - 4, 7);
+    return row < Math.max(this.numRows - numFilledRows - 4, 4);
   }
 
   resize(numRows: number, numColumns: number, atRow = 0, atColumn = 0): void {

@@ -1,3 +1,4 @@
+import { wrap } from '@core/utils/wrap';
 import { GameModeEvent } from '@models/GameModeEvent';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
@@ -135,6 +136,13 @@ export function conquestCanPlace(
   }
 
   // check for stalemates - the cell is within two towers that touch the ceiling
+  // in the below scenario, no one would be able to place between A's blocks because they are touching the tower height.
+  // instead, make that entire gap free for all players to drop.
+  //  ------------------
+  //  AA              AA
+  //  AA              AA
+  //  AA              AA
+  //  AA              AA
   // due to tower height not being forgiving (it can change instantly, we store all recent tower heights)
   // TODO: make this more efficient (don't recalculate every single check)
   const currentTowerRow = simulation.grid.getTowerRow();
@@ -173,27 +181,32 @@ export function conquestCanPlace(
     }
   }
 
+  // allow a player (B) to place on a column next to any of their cells, as long as one of their cells on a neighbour column is above
+  // where "X" is player B's next block
+  //   BB
+  //   AB
+  //   ABBB
+  //   AAAB
+  //   AAAB
+  // XXAAAB
+  // XXAAAB
+
   let canPlace = false;
-  [
-    [-1, 0],
-    [1, 0],
-    [0, 1],
-    [-1, 1],
-    [1, 1],
-  ].forEach((neighbourDirection) => {
-    const neighbour = simulation.grid.getNeighbour(
-      cell,
-      neighbourDirection[0],
-      neighbourDirection[1]
+  [-1, 1, 0].forEach((neighbourDirection) => {
+    const neighbourColumn = wrap(
+      cell.column + neighbourDirection,
+      simulation.grid.numColumns
     );
-    if (neighbour) {
-      canPlace = canPlace || neighbour.player === player;
+    for (
+      let row = 0;
+      row < Math.min(cell.row + 2, simulation.grid.numRows);
+      row++
+    ) {
+      canPlace =
+        canPlace ||
+        simulation.grid.cells[row][neighbourColumn].player === player;
     }
   });
 
-  if (canPlace) {
-    return { canPlace: true, isStalemate: false };
-  }
-
-  return { canPlace: false, isStalemate: false };
+  return { canPlace, isStalemate: false };
 }

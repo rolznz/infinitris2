@@ -9,7 +9,7 @@
     "watch-tests": "tsc -w",
     "test": "ts-node node_modules/jasmine/bin/jasmine --config=spec/support/jasmine.json",
     "coverage": "nyc --cache false -r lcov -r text yarn test",
-    "build": "webpack",
+    "build": "NODE_ENV=production webpack",
     "watch": "webpack --watch",
     "start": "node ./dist/bundle.js launch",
     "debug": "node --nolazy --inspect-brk ./dist/bundle.js launch",

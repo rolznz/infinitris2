@@ -1,4 +1,6 @@
-require('dotenv').config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 import ServerSocket from './networking/ServerSocket';
 import Room from './Room';
 import IServerSocketEventListener from './networking/IServerSocketEventListener';

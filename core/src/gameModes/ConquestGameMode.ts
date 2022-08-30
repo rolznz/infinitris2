@@ -160,7 +160,7 @@ export function conquestCanPlace(
       const towerColumns: (number | undefined)[] = [undefined, undefined];
       for (
         let columnOffset = 1;
-        columnOffset < simulation.grid.numColumns - 1;
+        columnOffset < Math.floor(simulation.grid.numColumns / 2);
         columnOffset++
       ) {
         for (let i = 0; i < towerColumns.length; i++) {
@@ -236,8 +236,5 @@ function isBetweenShortestPath(
   const distanceBetweenTowers = wrappedDistance(columnA, columnB, numColumns);
   const distanceToTowerA = wrappedDistance(column, columnA, numColumns);
   const distanceToTowerB = wrappedDistance(column, columnB, numColumns);
-  return (
-    distanceToTowerA < distanceBetweenTowers &&
-    distanceToTowerB < distanceBetweenTowers
-  );
+  return Math.max(distanceToTowerA, distanceToTowerB) < distanceBetweenTowers;
 }

@@ -41,22 +41,6 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._rerender();
   }
 
-  // private _getLowestFreeCellRow(column: number) {
-  //   let lowestFreeCellY = 0;
-  //   for (
-  //     ;
-  //     lowestFreeCellY < this._renderer.simulation!.grid.numRows;
-  //     lowestFreeCellY++
-  //   ) {
-  //     if (
-  //       !this._renderer.simulation!.grid.cells[lowestFreeCellY][column].isEmpty
-  //     ) {
-  //       break;
-  //     }
-  //   }
-  //   return Math.max(0, lowestFreeCellY - 1);
-  // }
-
   private _renderFreeCells() {
     const simulation = this._renderer.simulation;
     if (!simulation || !simulation.followingPlayer) {
@@ -89,15 +73,18 @@ export class ConquestRenderer implements IGameModeRenderer {
             graphics.x = shadowX;
 
             graphics.clear();
-            const canPlace = conquestCanPlace(
+            const canPlaceResult = conquestCanPlace(
               simulation.followingPlayer!,
               simulation,
               cell,
               false
             );
 
-            if (canPlace) {
-              graphics.beginFill(0x00ff00, 0.5);
+            if (canPlaceResult.canPlace) {
+              graphics.beginFill(
+                canPlaceResult.isStalemate ? 0xff00ff : 0x00ff00,
+                0.5
+              );
               graphics.drawRect(
                 0,
                 0,

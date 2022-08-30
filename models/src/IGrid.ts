@@ -29,6 +29,7 @@ export default interface IGrid extends ICellEventListener {
   get nextLinesToClear(): number[];
   nextRandom(key: string): number;
   isTower(row: number): boolean;
+  getTowerRow(): number;
   getNeighbour(cell: ICell, dx: number, dy: number): ICell | undefined;
   removePlayer(player: IPlayer): void;
   reset(): void;

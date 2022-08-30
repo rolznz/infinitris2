@@ -65,7 +65,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     for (const player of activePlayers) {
       // TODO: optimize - this is checking every single cell in the grid
       const placableCellsCount = this._simulation.grid.reducedCells.filter(
-        (cell) => conquestCanPlace(player, this._simulation, cell)
+        (cell) => conquestCanPlace(player, this._simulation, cell).canPlace
       ).length;
       if (!player.isFirstBlock && placableCellsCount === 0) {
         if (!this._simulation.isNetworkClient) {
@@ -94,7 +94,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
 
     isMistake = true;
     for (const cell of cells) {
-      if (conquestCanPlace(player, this._simulation, cell)) {
+      if (conquestCanPlace(player, this._simulation, cell).canPlace) {
         isMistake = false;
         break;
       }
@@ -103,32 +103,74 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   }
 }
 
+type ConquestCanPlaceResult = {
+  canPlace: boolean;
+  isStalemate: boolean;
+};
+
+let forgivingTowerRows: { row: number; checkTimeMs: number }[] = [];
+
 export function conquestCanPlace(
   player: IPlayer,
   simulation: ISimulation,
   cell: ICell,
-  allowRecentlyPlaced = true
-) {
+  isForgiving = true
+): ConquestCanPlaceResult {
   if (
     !cell.isEmpty &&
-    (!allowRecentlyPlaced ||
-      !cell.wasRecentlyPlaced(simulation.forgivingPlacementTime))
+    (!isForgiving || !cell.wasRecentlyPlaced(simulation.forgivingPlacementTime))
   ) {
-    return false;
+    return { canPlace: false, isStalemate: false };
   }
-  // only allow placement on empty sections with at least 5 empty cells free
+
+  // only allow placement on empty sections if first block
   if (
-    [0, -1, 1, -2, 2]
-      .map((offset) => simulation.grid.getNeighbour(cell, offset, 0)!)
-      .every(
-        (neighbour) =>
-          neighbour.row === simulation.grid.numRows - 1 &&
-          (neighbour.isEmpty ||
-            (allowRecentlyPlaced &&
-              neighbour.wasRecentlyPlaced(simulation.forgivingPlacementTime)))
-      )
+    player.isFirstBlock &&
+    cell.row === simulation.grid.numRows - 1 &&
+    (cell.isEmpty ||
+      (isForgiving &&
+        cell.wasRecentlyPlaced(simulation.forgivingPlacementTime)))
   ) {
-    return true;
+    return { canPlace: true, isStalemate: false };
+  }
+
+  // check for stalemates - the cell is within two towers that touch the ceiling
+  // due to tower height not being forgiving (it can change instantly, we store all recent tower heights)
+  // TODO: make this more efficient (don't recalculate every single check)
+  const currentTowerRow = simulation.grid.getTowerRow();
+  forgivingTowerRows = forgivingTowerRows.filter(
+    (entry) =>
+      entry.row !== currentTowerRow &&
+      entry.checkTimeMs > Date.now() - simulation.forgivingPlacementTime
+  );
+  forgivingTowerRows.push({ row: currentTowerRow, checkTimeMs: Date.now() });
+
+  for (const forgivingTowerRow of forgivingTowerRows) {
+    const touchingCeilingHeight = forgivingTowerRow.row + 1;
+    if (cell.row >= touchingCeilingHeight) {
+      // TODO: verify if it really needs to be the same player. 2 players could potentially abuse this
+      const hasTower: IPlayer[][] = [[], []];
+      for (let i = 0; i < hasTower.length; i++) {
+        for (
+          let columnOffset = 0;
+          columnOffset < Math.floor(simulation.grid.numColumns / 4);
+          columnOffset++
+        ) {
+          const neighbour = simulation.grid.getNeighbour(
+            cell,
+            columnOffset * (i === 0 ? 1 : -1),
+            touchingCeilingHeight - cell.row
+          );
+          if (!neighbour?.isEmpty && neighbour?.player) {
+            hasTower[i].push(neighbour.player);
+          }
+        }
+      }
+      if (hasTower[0].some((player) => hasTower[1].indexOf(player) >= 0)) {
+        // someone created a tower
+        return { canPlace: true, isStalemate: true };
+      }
+    }
   }
 
   let canPlace = false;
@@ -146,5 +188,10 @@ export function conquestCanPlace(
       canPlace = canPlace || neighbour.player === player;
     }
   });
-  return canPlace;
+
+  if (canPlace) {
+    return { canPlace: true, isStalemate: false };
+  }
+
+  return { canPlace: false, isStalemate: false };
 }

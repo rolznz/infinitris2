@@ -1,4 +1,4 @@
-import { wrap } from '@core/utils/wrap';
+import { wrap, wrappedDistance } from '@core/utils/wrap';
 import { GameModeEvent } from '@models/GameModeEvent';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
@@ -143,6 +143,7 @@ export function conquestCanPlace(
   //  AA              AA
   //  AA              AA
   //  AA              AA
+
   // due to tower height not being forgiving (it can change instantly, we store all recent tower heights)
   // TODO: make this more efficient (don't recalculate every single check)
   const currentTowerRow = simulation.grid.getTowerRow();
@@ -154,28 +155,43 @@ export function conquestCanPlace(
   forgivingTowerRows.push({ row: currentTowerRow, checkTimeMs: Date.now() });
 
   for (const forgivingTowerRow of forgivingTowerRows) {
-    const touchingCeilingHeight = forgivingTowerRow.row + 1;
-    if (cell.row >= touchingCeilingHeight) {
-      // TODO: verify if it really needs to be the same player. 2 players could potentially abuse this
-      const hasTower: IPlayer[][] = [[], []];
-      for (let i = 0; i < hasTower.length; i++) {
-        for (
-          let columnOffset = 0;
-          columnOffset < Math.floor(simulation.grid.numColumns / 4);
-          columnOffset++
-        ) {
-          const neighbour = simulation.grid.getNeighbour(
-            cell,
-            columnOffset * (i === 0 ? 1 : -1),
-            touchingCeilingHeight - cell.row
+    const touchingTowerHeightRow = forgivingTowerRow.row + 1;
+    if (cell.row >= touchingTowerHeightRow) {
+      const towerColumns: (number | undefined)[] = [undefined, undefined];
+      for (
+        let columnOffset = 1;
+        columnOffset < simulation.grid.numColumns - 1;
+        columnOffset++
+      ) {
+        for (let i = 0; i < towerColumns.length; i++) {
+          const wrappedColumn = wrap(
+            cell.column + columnOffset * (i === 0 ? 1 : -1),
+            simulation.grid.numColumns
           );
-          if (!neighbour?.isEmpty && neighbour?.player) {
-            hasTower[i].push(neighbour.player);
+          const touchingTowerHeightCell =
+            simulation.grid.cells[touchingTowerHeightRow][wrappedColumn];
+          if (
+            !touchingTowerHeightCell.isEmpty &&
+            touchingTowerHeightCell.player
+          ) {
+            towerColumns[i] = wrappedColumn;
           }
         }
+        if (towerColumns[0] !== undefined && towerColumns[1] !== undefined) {
+          break;
+        }
       }
-      if (hasTower[0].some((player) => hasTower[1].indexOf(player) >= 0)) {
-        // someone created a tower
+      if (
+        towerColumns[0] !== undefined &&
+        towerColumns[1] !== undefined &&
+        towerColumns[0] !== towerColumns[1] &&
+        isBetweenShortestPath(
+          cell.column,
+          towerColumns[0],
+          towerColumns[1],
+          simulation.grid.numColumns
+        )
+      ) {
         return { canPlace: true, isStalemate: true };
       }
     }
@@ -209,4 +225,19 @@ export function conquestCanPlace(
   });
 
   return { canPlace, isStalemate: false };
+}
+function isBetweenShortestPath(
+  column: number,
+  columnA: number,
+  columnB: number,
+  numColumns: number
+) {
+  // distance from column -> columnA and column -> columnB must be less than columnA -> columnB
+  const distanceBetweenTowers = wrappedDistance(columnA, columnB, numColumns);
+  const distanceToTowerA = wrappedDistance(column, columnA, numColumns);
+  const distanceToTowerB = wrappedDistance(column, columnB, numColumns);
+  return (
+    distanceToTowerA < distanceBetweenTowers &&
+    distanceToTowerB < distanceBetweenTowers
+  );
 }

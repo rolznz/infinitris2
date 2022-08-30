@@ -178,6 +178,8 @@ export function conquestCanPlace(
     [-1, 0],
     [1, 0],
     [0, 1],
+    [-1, 1],
+    [1, 1],
   ].forEach((neighbourDirection) => {
     const neighbour = simulation.grid.getNeighbour(
       cell,

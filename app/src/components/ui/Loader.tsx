@@ -52,7 +52,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const clickStart = loaderStore.clickStart;
   const [hasToggledSounds, setHasToggledSounds] = useState(false);
   const allCharacters = useCachedCollection<ICharacter>(charactersPath);
-  const hasLoadedCharacters = allCharacters?.length;
+  const hasLoadedCharacters = (allCharacters?.length || 0) > 0;
   const prevHasLoadedCharacters = usePrevious(hasLoadedCharacters);
 
   const clientLoaded = useAppStore((appStore) => !!appStore.clientApi);
@@ -72,7 +72,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   useEffect(() => {
     if (!hasLoadedCharacters) {
       increaseSteps();
-    } else if (!prevHasLoadedCharacters && hasLoadedCharacters) {
+    } else if (prevHasLoadedCharacters === false && hasLoadedCharacters) {
       increaseStepsCompleted();
     }
   }, [

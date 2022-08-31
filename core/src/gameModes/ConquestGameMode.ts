@@ -189,10 +189,9 @@ export function conquestCanPlace(
     return { canPlace: false, isStalemate: false };
   }
 
-  // only allow placement on empty sections if first block
+  // only allow placement anywhere if first block
   if (
     player.isFirstBlock &&
-    cell.row === simulation.grid.numRows - 1 &&
     (cell.isEmpty ||
       (isForgiving &&
         cell.wasRecentlyPlaced(simulation.forgivingPlacementTime)))

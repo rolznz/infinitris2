@@ -442,6 +442,12 @@ export default class Room implements Partial<ISimulationEventListener> {
 
   onGameModeEvent(event: GameModeEvent): void {}
 
+  onPlayerKilled(victim: IPlayer, attacker: IPlayer) {
+    this._sendServerChatMessage(
+      'Player ' + victim.nickname + ' killed by ' + attacker.nickname
+    );
+  }
+
   private _sendMessageToAllPlayers(message: IServerMessage) {
     const playerIds: number[] = this._simulation.getNetworkPlayerIds();
     this._sendMessageToPlayers(message, ...playerIds);

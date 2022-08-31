@@ -1,4 +1,5 @@
 import { IGameModeEventListener } from '@models/IGameModeEventListener';
+import { IPlayer } from '@models/IPlayer';
 import { IPlayerEventListener } from '@models/IPlayerEventListener';
 import { IRoundEventListener } from '@models/IRoundEventListener';
 import IGridEventListener from './IGridEventListener';
@@ -22,4 +23,6 @@ export default interface ISimulationEventListener
    * Fired after each single simulation step/frame (optimally 60 times per second).
    */
   onSimulationStep(simulation: ISimulation): void;
+
+  onPlayerKilled(victim: IPlayer, attacker: IPlayer): void;
 }

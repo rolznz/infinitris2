@@ -13,6 +13,7 @@ type ConquestGameModeState = {};
 export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   private _simulation: ISimulation;
   private _lastCalculationTime: number;
+  private _lastPlayerPlaced: IPlayer | undefined;
 
   constructor(simulation: ISimulation) {
     this._simulation = simulation;
@@ -59,6 +60,54 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   onBlockRemoved() {
     this._calculateKnockouts();
   }
+  onBlockPlaced(block: IBlock) {
+    this._lastPlayerPlaced = block.player;
+    // area capture
+    const lineClearRowsToCheck: number[] = [];
+    const touchingTowerRow = this._simulation.grid.getTowerRow() + 1;
+    const cellsTouchingTowerRow = block.cells.filter(
+      (cell) => cell.row === touchingTowerRow
+    );
+    for (const cellTouchingTowerRow of cellsTouchingTowerRow) {
+      for (
+        let i = 1;
+        i < Math.floor(this._simulation.grid.numColumns / 2 - 1);
+        i++
+      ) {
+        for (const direction of [-1, 1]) {
+          const neighbour = this._simulation.grid.getNeighbour(
+            cellTouchingTowerRow,
+            i * direction,
+            0
+          );
+          if (neighbour && neighbour.player === block.player) {
+            for (
+              let r = touchingTowerRow;
+              r < this._simulation.grid.numRows;
+              r++
+            ) {
+              for (let dx = 0; dx <= i; dx++) {
+                const cellToFill = this._simulation.grid.getNeighbour(
+                  cellTouchingTowerRow,
+                  dx * direction,
+                  r - touchingTowerRow
+                );
+                if (cellToFill && cellToFill.player !== block.player) {
+                  cellToFill.place(block.player);
+                  lineClearRowsToCheck.push(cellToFill.row);
+                }
+              }
+            }
+            break;
+          }
+        }
+      }
+    }
+    this._simulation.grid.checkLineClears(
+      lineClearRowsToCheck.filter((row, i, rows) => rows.indexOf(row) === i)
+    );
+  }
+
   private _calculateKnockouts() {
     const activePlayers = this._simulation.players.filter(
       (player) => player.status === PlayerStatus.ingame
@@ -69,6 +118,9 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         (cell) => conquestCanPlace(player, this._simulation, cell).canPlace
       ).length;
       if (!player.isFirstBlock && placableCellsCount === 0) {
+        if (this._lastPlayerPlaced) {
+          this._simulation.onPlayerKilled(player, this._lastPlayerPlaced);
+        }
         if (!this._simulation.isNetworkClient) {
           player.status = PlayerStatus.knockedOut;
         }
@@ -80,6 +132,19 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
 
   onNextRound() {
     this._lastCalculationTime = 0;
+    this._lastPlayerPlaced = undefined;
+
+    /*// FIXME: remove
+    setTimeout(() => {
+      const towerRow = this._simulation.grid.getTowerRow();
+      for (const column of [8, 9, 19]) {
+        for (let row = towerRow; row < this._simulation.grid.numRows; row++) {
+          this._simulation.grid.cells[row][column].place(
+            this._simulation.followingPlayer
+          );
+        }
+      }
+    }, 100);*/
   }
 
   serialize(): ConquestGameModeState {
@@ -160,10 +225,13 @@ export function conquestCanPlace(
       const towerColumns: (number | undefined)[] = [undefined, undefined];
       for (
         let columnOffset = 1;
-        columnOffset < Math.floor(simulation.grid.numColumns / 2);
+        columnOffset < Math.floor(simulation.grid.numColumns / 2 - 1);
         columnOffset++
       ) {
         for (let i = 0; i < towerColumns.length; i++) {
+          if (towerColumns[i] !== undefined) {
+            continue;
+          }
           const wrappedColumn = wrap(
             cell.column + columnOffset * (i === 0 ? 1 : -1),
             simulation.grid.numColumns
@@ -176,9 +244,6 @@ export function conquestCanPlace(
           ) {
             towerColumns[i] = wrappedColumn;
           }
-        }
-        if (towerColumns[0] !== undefined && towerColumns[1] !== undefined) {
-          break;
         }
       }
       if (
@@ -218,9 +283,23 @@ export function conquestCanPlace(
       row < Math.min(cell.row + 2, simulation.grid.numRows);
       row++
     ) {
+      const neighbour = simulation.grid.cells[row][neighbourColumn];
       canPlace =
         canPlace ||
-        simulation.grid.cells[row][neighbourColumn].player === player;
+        (neighbour.player === player &&
+          // discard diagonal items
+          [
+            [-1, 0],
+            [1, 0],
+            [0, -1],
+          ].some(
+            (neighbourDirection) =>
+              simulation.grid.getNeighbour(
+                neighbour,
+                neighbourDirection[0],
+                neighbourDirection[1]
+              )?.isEmpty
+          ));
     }
   });
 
@@ -232,9 +311,9 @@ function isBetweenShortestPath(
   columnB: number,
   numColumns: number
 ) {
-  // distance from column -> columnA and column -> columnB must be less than columnA -> columnB
   const distanceBetweenTowers = wrappedDistance(columnA, columnB, numColumns);
   const distanceToTowerA = wrappedDistance(column, columnA, numColumns);
   const distanceToTowerB = wrappedDistance(column, columnB, numColumns);
-  return Math.max(distanceToTowerA, distanceToTowerB) < distanceBetweenTowers;
+
+  return distanceToTowerA + distanceToTowerB <= distanceBetweenTowers;
 }

@@ -93,12 +93,6 @@ export default class Simulation implements ISimulation {
     this._layoutSet = this._settings.layoutSetId
       ? blockLayoutSets.find((set) => set.id === this._settings.layoutSetId)
       : undefined;
-    if (this._settings.gameModeType === 'conquest') {
-      this._settings = {
-        ...this._settings,
-        calculateSpawnDelays: false,
-      };
-    }
 
     this._isNetworkClient = isClient;
     this._gameMode = this._createGameMode(

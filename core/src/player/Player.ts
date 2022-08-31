@@ -1,4 +1,4 @@
-import Block, { MAX_SCORE } from '../block/Block';
+import Block from '../block/Block';
 import Layout from '@models/Layout';
 import IBlockEventListener from '@models/IBlockEventListener';
 import IBlock from '@models/IBlock';
@@ -501,10 +501,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
   onLineClearCellReward(numRowsCleared: number) {
     // TODO: find a better way to manage different reward types - simulation settings?
-    if (this._simulation.settings.gameModeType === 'conquest') {
-      return;
+    if (this._simulation.gameMode.hasLineClearReward) {
+      this._score += numRowsCleared;
     }
-    this._score += numRowsCleared;
   }
 
   removeBlock() {
@@ -529,27 +528,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     }
     if (
       this._simulation.settings.calculateSpawnDelays !== false &&
-      this._simulation.settings.gameModeType === 'infinity'
+      this._simulation.gameMode.getSpawnDelay
     ) {
-      const highestPlayerScore = Math.max(
-        ...this._simulation.players.map((player) => player.score)
-      );
-
-      // apply a grace period to the score, to stop players who make a mistake at the start of the game from being unfairly penalized
-      const scoreGraceAmount =
-        this._simulation.settings.spawnDelayScoreGraceAmount ?? 250;
-      const getScoreWithGrace = (score: number) =>
-        Math.min(
-          Math.max(score - scoreGraceAmount, 0),
-          this._simulation.settings.spawnDelayMaxScore ?? 1000
-        );
-
-      const scoreDiffWithGrace =
-        getScoreWithGrace(highestPlayerScore) - getScoreWithGrace(this._score);
-      this.estimatedSpawnDelay =
-        (scoreDiffWithGrace *
-          ((this._simulation.settings.maxSpawnDelaySeconds ?? 5) * 1000)) /
-        MAX_SCORE;
+      this.estimatedSpawnDelay = this._simulation.gameMode.getSpawnDelay(this);
     } else {
       //this.estimatedSpawnDelay = 0;
     }

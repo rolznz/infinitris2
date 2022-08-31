@@ -17,4 +17,7 @@ export class BattleGameMode implements IGameMode<BattleGameModeState> {
   get hasHealthbars(): boolean {
     return false;
   }
+  get hasLineClearReward(): boolean {
+    return false;
+  }
 }

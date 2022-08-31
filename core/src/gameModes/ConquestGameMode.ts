@@ -1,3 +1,4 @@
+import { INITIAL_FALL_DELAY } from '@core/block/Block';
 import { wrap, wrappedDistance } from '@core/utils/wrap';
 import { GameModeEvent } from '@models/GameModeEvent';
 import IBlock from '@models/IBlock';
@@ -14,16 +15,21 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   private _simulation: ISimulation;
   private _lastCalculationTime: number;
   private _lastPlayerPlaced: IPlayer | undefined;
+  private _lastMoveWasMistake: { [playerId: number]: boolean };
 
   constructor(simulation: ISimulation) {
     this._simulation = simulation;
     this._lastCalculationTime = 0;
+    this._lastMoveWasMistake = [];
   }
 
   get hasRounds(): boolean {
     return true;
   }
   get hasHealthbars(): boolean {
+    return false;
+  }
+  get hasLineClearReward(): boolean {
     return false;
   }
 
@@ -60,7 +66,11 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   onBlockRemoved() {
     this._calculateKnockouts();
   }
+  onBlockDied(block: IBlock) {
+    this._lastMoveWasMistake[block.player.id] = true;
+  }
   onBlockPlaced(block: IBlock) {
+    this._lastMoveWasMistake[block.player.id] = false;
     this._lastPlayerPlaced = block.player;
     // area capture
     const lineClearRowsToCheck: number[] = [];
@@ -113,20 +123,24 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       (player) => player.status === PlayerStatus.ingame
     );
     for (const player of activePlayers) {
-      // TODO: optimize - this is checking every single cell in the grid
-      const placableCellsCount = this._simulation.grid.reducedCells.filter(
-        (cell) =>
-          conquestCanPlace(player, this._simulation, cell, false).canPlace
-      ).length;
-      if (!player.isFirstBlock && placableCellsCount === 0) {
-        if (this._lastPlayerPlaced) {
-          this._simulation.onPlayerKilled(player, this._lastPlayerPlaced);
-        }
-        if (!this._simulation.isNetworkClient) {
-          player.status = PlayerStatus.knockedOut;
+      if (!player.isFirstBlock) {
+        // TODO: optimize - this is checking every single cell in the grid
+        const placableCellsCount = this._simulation.grid.reducedCells.filter(
+          (cell) =>
+            conquestCanPlace(player, this._simulation, cell, false).canPlace
+        ).length;
+        if (placableCellsCount === 0) {
+          if (this._lastPlayerPlaced) {
+            this._simulation.onPlayerKilled(player, this._lastPlayerPlaced);
+          }
+          if (!this._simulation.isNetworkClient) {
+            player.status = PlayerStatus.knockedOut;
+          }
+        } else {
+          player.score = placableCellsCount;
         }
       } else {
-        player.score = placableCellsCount;
+        player.score = 0;
       }
     }
   }
@@ -134,6 +148,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   onNextRound() {
     this._lastCalculationTime = 0;
     this._lastPlayerPlaced = undefined;
+    this._lastMoveWasMistake = [];
 
     /*// FIXME: remove
     setTimeout(() => {
@@ -167,6 +182,22 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       }
     }
     return isMistake;
+  }
+
+  getSpawnDelay(player: IPlayer) {
+    if (this._lastMoveWasMistake[player.id]) {
+      return 1000;
+    } else {
+      return 0;
+    }
+  }
+  getFallDelay(player: IPlayer) {
+    return player.isFirstBlock
+      ? INITIAL_FALL_DELAY
+      : INITIAL_FALL_DELAY -
+          (player.score / this._simulation.grid.numColumns) *
+            0.35 *
+            INITIAL_FALL_DELAY;
   }
 }
 

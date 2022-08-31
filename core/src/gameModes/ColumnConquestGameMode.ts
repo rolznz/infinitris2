@@ -1,3 +1,4 @@
+import { INITIAL_FALL_DELAY } from '@core/block/Block';
 import { GameModeEvent } from '@models/GameModeEvent';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
@@ -37,6 +38,9 @@ export class ColumnConquestGameMode
   }
   get hasHealthbars(): boolean {
     return true;
+  }
+  get hasLineClearReward(): boolean {
+    return false;
   }
 
   step(): void {
@@ -134,5 +138,13 @@ export class ColumnConquestGameMode
 
   deserialize(state: ColumnConquestGameModeState) {
     this._columnCaptures = state.columnCaptures;
+  }
+
+  getFallDelay(player: IPlayer) {
+    return (
+      INITIAL_FALL_DELAY -
+      Math.pow(player.score / this._simulation.grid.numColumns, 0.25) *
+        INITIAL_FALL_DELAY
+    );
   }
 }

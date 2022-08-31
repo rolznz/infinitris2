@@ -1,3 +1,4 @@
+import { getScoreBasedFallDelay } from '@core/gameModes/InfinityGameMode';
 import { IGameMode } from '@models/IGameMode';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
@@ -13,6 +14,10 @@ export class RaceGameMode implements IGameMode<RaceGameModeState> {
     return true;
   }
   get hasHealthbars(): boolean {
+    return true;
+  }
+
+  get hasLineClearReward(): boolean {
     return true;
   }
 
@@ -53,5 +58,9 @@ export class RaceGameMode implements IGameMode<RaceGameModeState> {
         otherPlayer.status = PlayerStatus.knockedOut;
       }
     }
+  }
+
+  getFallDelay(player: IPlayer) {
+    return getScoreBasedFallDelay(player);
   }
 }

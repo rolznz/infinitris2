@@ -115,7 +115,8 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     for (const player of activePlayers) {
       // TODO: optimize - this is checking every single cell in the grid
       const placableCellsCount = this._simulation.grid.reducedCells.filter(
-        (cell) => conquestCanPlace(player, this._simulation, cell).canPlace
+        (cell) =>
+          conquestCanPlace(player, this._simulation, cell, false).canPlace
       ).length;
       if (!player.isFirstBlock && placableCellsCount === 0) {
         if (this._lastPlayerPlaced) {

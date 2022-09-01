@@ -231,7 +231,7 @@ type ConquestCanPlaceResult = {
   isStalemate: boolean;
 };
 
-let forgivingTowerRows: { row: number; checkTimeMs: number }[] = [];
+let _forgivingTowerRows: { row: number; checkTimeMs: number }[] = [];
 
 export function conquestCanPlace(
   player: IPlayer,
@@ -246,16 +246,6 @@ export function conquestCanPlace(
     return { canPlace: false, isStalemate: false };
   }
 
-  // only allow placement anywhere if first block
-  if (
-    player.isFirstBlock &&
-    (cell.isEmpty ||
-      (isForgiving &&
-        cell.wasRecentlyPlaced(simulation.forgivingPlacementTime)))
-  ) {
-    return { canPlace: true, isStalemate: false };
-  }
-
   // check for stalemates - the cell is within two towers that touch the ceiling
   // in the below scenario, no one would be able to place between A's blocks because they are touching the tower height.
   // instead, make that entire gap free for all players to drop.
@@ -266,14 +256,45 @@ export function conquestCanPlace(
   //  AA              AA
 
   // due to tower height not being forgiving (it can change instantly, we store all recent tower heights)
-  // TODO: make this more efficient (don't recalculate every single check)
+  // TODO: make this more efficient (don't recalculate every single check) and remove use of global _forgivingTowerRows
+
   const currentTowerRow = simulation.grid.getTowerRow();
-  forgivingTowerRows = forgivingTowerRows.filter(
-    (entry) =>
-      entry.row !== currentTowerRow &&
-      entry.checkTimeMs > Date.now() - simulation.forgivingPlacementTime
-  );
-  forgivingTowerRows.push({ row: currentTowerRow, checkTimeMs: Date.now() });
+  const currentTowerRowEntry = {
+    row: currentTowerRow,
+    checkTimeMs: Date.now(),
+  };
+  if (isForgiving) {
+    _forgivingTowerRows = _forgivingTowerRows.filter(
+      (entry) =>
+        entry.row !== currentTowerRow &&
+        entry.checkTimeMs > Date.now() - simulation.forgivingPlacementTime
+    );
+    _forgivingTowerRows.push(currentTowerRowEntry);
+  }
+  let forgivingTowerRows = isForgiving
+    ? _forgivingTowerRows
+    : [currentTowerRowEntry];
+
+  if (
+    cell.row <=
+    forgivingTowerRows.find(
+      (towerRow) =>
+        !forgivingTowerRows.some((other) => other.row < towerRow.row)
+    )!.row
+  ) {
+    // cell is above tower height
+    return { canPlace: false, isStalemate: false };
+  }
+
+  // only allow placement anywhere if first block
+  if (
+    player.isFirstBlock &&
+    (cell.isEmpty ||
+      (isForgiving &&
+        cell.wasRecentlyPlaced(simulation.forgivingPlacementTime)))
+  ) {
+    return { canPlace: true, isStalemate: false };
+  }
 
   for (const forgivingTowerRow of forgivingTowerRows) {
     const touchingTowerHeightRow = forgivingTowerRow.row + 1;

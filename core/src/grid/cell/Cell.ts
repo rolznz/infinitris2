@@ -16,7 +16,8 @@ export default class Cell implements ICell {
   private readonly _blocks: IBlock[];
   private readonly _eventListener?: ICellEventListener;
   private _player: IPlayer | undefined;
-  private _requiresRerender;
+  private _requiresRerender: boolean;
+  private _nextRerender: number;
   private _playerPlacementTime: number;
   constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
@@ -27,6 +28,7 @@ export default class Cell implements ICell {
     this._blocks = [];
     this._eventListener = grid;
     this._requiresRerender = true;
+    this._nextRerender = 0;
     this._playerPlacementTime = 0;
   }
 
@@ -50,10 +52,16 @@ export default class Cell implements ICell {
   }
 
   get requiresRerender(): boolean {
-    return this._requiresRerender;
+    return this._requiresRerender && this.rerenderDelay === 0;
   }
   set requiresRerender(requiresRerender: boolean) {
     this._requiresRerender = requiresRerender;
+  }
+  set rerenderDelay(rerenderDelay: number) {
+    this._nextRerender = Date.now() + rerenderDelay;
+  }
+  get rerenderDelay(): number {
+    return Math.max(0, this._nextRerender - Date.now());
   }
 
   get isPassable(): boolean {

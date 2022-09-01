@@ -3,4 +3,11 @@ export type ColumnConquestEvent = {
   column: number;
 }; // | SecondEvent
 
-export type GameModeEvent = ColumnConquestEvent; // | SecondGameModeTypeEvent
+export type ConquestEvent = {
+  type: 'cellAreaCapture';
+  row: number;
+  column: number;
+  color: number;
+}; // | SecondEvent
+
+export type GameModeEvent = ColumnConquestEvent | ConquestEvent;

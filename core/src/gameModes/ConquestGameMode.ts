@@ -113,6 +113,13 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
                   r - touchingTowerRow
                 );
                 if (cellToFill && cellToFill.player !== block.player) {
+                  this._simulation.onGameModeEvent({
+                    type: 'cellAreaCapture',
+                    column: cellToFill.column,
+                    row: cellToFill.row,
+                    color: block.player.color,
+                  });
+                  cellToFill.rerenderDelay = Math.random() * 500;
                   cellToFill.place(block.player);
                   lineClearRowsToCheck.push(cellToFill.row);
                 }

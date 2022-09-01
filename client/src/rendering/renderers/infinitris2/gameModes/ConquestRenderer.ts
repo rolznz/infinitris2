@@ -1,4 +1,4 @@
-import { GameModeEvent } from '@models/GameModeEvent';
+import { ConquestEvent, GameModeEvent } from '@models/GameModeEvent';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GameModeRenderer';
@@ -17,7 +17,18 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._renderer = renderer;
     this._renderer.simulation!.addEventListener(this);
   }
-  onGameModeEvent(event: GameModeEvent): void {}
+  onGameModeEvent(event: ConquestEvent): void {
+    if (event.type === 'cellAreaCapture') {
+      for (let i = 0; i < 10; i++) {
+        this._renderer.emitParticle(
+          event.column + 0.5,
+          event.row + 0.5,
+          event.color,
+          'capture'
+        );
+      }
+    }
+  }
 
   private _rerender() {
     if (!this._renderer.simulation) {

@@ -56,6 +56,7 @@ export interface IPlayer {
 
   get isChatting(): boolean;
   get isFirstBlock(): boolean;
+  set isFirstBlock(isFirstBlock: boolean);
 
   update(): void;
   addEventListener(eventListener: IBlockEventListener): void;

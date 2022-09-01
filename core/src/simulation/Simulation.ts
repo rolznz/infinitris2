@@ -288,6 +288,7 @@ export default class Simulation implements ISimulation {
       // interval set at 1ms and handled in onInterval (iOS low battery forces <= 30fps)
       this._stepInterval = setInterval(this._onInterval, 1);
       console.log('Simulation started');
+      this.onSimulationStart();
     }
   }
 
@@ -298,8 +299,20 @@ export default class Simulation implements ISimulation {
     if (this._stepInterval) {
       clearInterval(this._stepInterval);
       this._stepInterval = undefined;
+      this.onSimulationStop();
       console.log('Simulation stopped');
     }
+  }
+
+  onSimulationStart(): void {
+    this._eventListeners.forEach((listener) =>
+      listener.onSimulationStart?.(this)
+    );
+  }
+  onSimulationStop(): void {
+    this._eventListeners.forEach((listener) =>
+      listener.onSimulationStart?.(this)
+    );
   }
 
   get runningTime(): number {
@@ -579,7 +592,8 @@ export default class Simulation implements ISimulation {
       case 'infinity':
         return new InfinityGameMode(this);
       case 'conquest':
-        return new ConquestGameMode(this);
+      case 'conquest-infinity':
+        return new ConquestGameMode(this, gameModeType === 'conquest');
       case 'column-conquest':
         return new ColumnConquestGameMode(this);
       case 'battle':

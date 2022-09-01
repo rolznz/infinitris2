@@ -188,6 +188,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   get isFirstBlock(): boolean {
     return this._isFirstBlock;
   }
+  set isFirstBlock(isFirstBlock: boolean) {
+    this._isFirstBlock = isFirstBlock;
+  }
 
   set status(status: PlayerStatus) {
     this._status = status;
@@ -469,8 +472,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._modifyScoreFromBlockPlacement(block, false);
 
     this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
-    this.removeBlock();
+    this._isFirstBlock = false;
     this._spawnLocationCell = undefined;
+    this.removeBlock();
     this.saveSpawnPosition(block);
   }
 
@@ -514,7 +518,6 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     const block = this._block;
     this._block?.destroy();
     this._block = undefined;
-    this._isFirstBlock = false;
     this.onBlockRemoved(block);
   }
 
@@ -537,8 +540,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
 
   private _modifyScoreFromBlockPlacement(block: IBlock, isMistake: boolean) {
-    // TODO: find a better way to manage different reward types - simulation settings?
-    if (this._simulation.settings.gameModeType === 'conquest') {
+    // TODO: move block placement score calculation to game mode
+    if (!this._simulation.gameMode.hasBlockPlacementReward) {
       return;
     }
     if (isMistake && this._simulation.settings.mistakeDetection !== false) {

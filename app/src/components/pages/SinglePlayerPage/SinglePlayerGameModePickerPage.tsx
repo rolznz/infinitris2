@@ -30,12 +30,14 @@ export function SinglePlayerGameModePickerPage() {
 
   const slides: RoomCarouselSlideProps[] = React.useMemo(() => {
     return !advancedOptionsChanged
-      ? GameModeTypeValues.map((gameModeType) => ({
-          gameModeType,
-          id: gameModeType,
-          worldType: getWorldType(gameModeType),
-          worldVariation: getWorldVariation(gameModeType),
-        }))
+      ? GameModeTypeValues.filter((gameMode) => gameMode !== 'battle').map(
+          (gameModeType) => ({
+            gameModeType,
+            id: gameModeType,
+            worldType: getWorldType(gameModeType),
+            worldVariation: getWorldVariation(gameModeType),
+          })
+        )
       : [
           {
             gameModeType: formData.simulationSettings.gameModeType!,
@@ -84,14 +86,15 @@ export function SinglePlayerGameModePickerPage() {
 function getWorldType(gameModeType: GameModeType): WorldType {
   return gameModeType === 'conquest'
     ? 'desert'
-    : gameModeType === 'race'
+    : gameModeType === 'race' || gameModeType === 'column-conquest'
     ? 'space'
-    : gameModeType === 'battle'
+    : gameModeType === 'battle' || gameModeType === 'conquest-infinity'
     ? 'volcano'
-    : gameModeType === 'column-conquest'
-    ? 'space'
     : 'grass';
 }
 function getWorldVariation(gameModeType: GameModeType): WorldVariation {
-  return gameModeType === 'column-conquest' ? '4' : '0';
+  return gameModeType === 'column-conquest' ||
+    gameModeType === 'conquest-infinity'
+    ? '4'
+    : '0';
 }

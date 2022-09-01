@@ -20,6 +20,9 @@ export class RaceGameMode implements IGameMode<RaceGameModeState> {
   get hasLineClearReward(): boolean {
     return true;
   }
+  get hasBlockPlacementReward(): boolean {
+    return true;
+  }
 
   step(): void {}
 

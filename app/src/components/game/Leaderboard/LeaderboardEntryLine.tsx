@@ -198,7 +198,8 @@ function LeaderboardEntryLineInternal({
             {children}
           </Typography>
           <SvgIcon fontSize="small" sx={{ color: entry.color }}>
-            {simulation?.settings.gameModeType === 'conquest' ||
+            {simulation?.settings.gameModeType === 'conquest-infinity' ||
+            simulation?.settings.gameModeType === 'conquest' ||
             simulation?.settings.gameModeType === 'column-conquest' ? (
               <ConquestIcon />
             ) : (

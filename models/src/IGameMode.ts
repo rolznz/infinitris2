@@ -7,6 +7,7 @@ export interface IGameMode<GameModeState>
   get hasRounds(): boolean;
   get hasHealthbars(): boolean;
   get hasLineClearReward(): boolean;
+  get hasBlockPlacementReward(): boolean;
   step(): void;
   serialize(): GameModeState;
   deserialize(state: GameModeState): void;

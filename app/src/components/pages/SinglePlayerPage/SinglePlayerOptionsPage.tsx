@@ -139,7 +139,9 @@ export function SinglePlayerOptionsPage() {
                 <FormControl variant="standard">
                   <InputLabel>Game Mode</InputLabel>
                   <Select {...field}>
-                    {GameModeTypeValues.map((type) => (
+                    {GameModeTypeValues.filter(
+                      (gameMode) => gameMode !== 'battle'
+                    ).map((type) => (
                       <MenuItem key={type} value={type}>
                         {type}
                       </MenuItem>
@@ -196,7 +198,7 @@ export function SinglePlayerOptionsPage() {
                 </FormControl>
               )}
             /> */}
-            {watchedGameModeType === 'conquest' && (
+            {watchedGameModeType === 'column-conquest' && (
               <Controller
                 name="simulationSettings.roundLength"
                 control={control}

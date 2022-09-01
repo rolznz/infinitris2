@@ -16,20 +16,27 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   private _lastCalculationTime: number;
   private _lastPlayerPlaced: IPlayer | undefined;
   private _lastMoveWasMistake: { [playerId: number]: boolean };
+  private _temporarilyDeadPlayers: { [playerId: number]: boolean };
+  private _hasRounds: boolean;
 
-  constructor(simulation: ISimulation) {
+  constructor(simulation: ISimulation, hasRounds: boolean) {
     this._simulation = simulation;
     this._lastCalculationTime = 0;
     this._lastMoveWasMistake = [];
+    this._temporarilyDeadPlayers = [];
+    this._hasRounds = hasRounds;
   }
 
   get hasRounds(): boolean {
-    return true;
+    return this._hasRounds;
   }
   get hasHealthbars(): boolean {
     return false;
   }
   get hasLineClearReward(): boolean {
+    return false;
+  }
+  get hasBlockPlacementReward(): boolean {
     return false;
   }
 
@@ -62,6 +69,9 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
 
   onLinesCleared() {
     this._calculateKnockouts();
+  }
+  onBlockCreated(block: IBlock) {
+    this._temporarilyDeadPlayers[block.player.id] = false;
   }
   onBlockRemoved() {
     this._calculateKnockouts();
@@ -134,7 +144,13 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
             this._simulation.onPlayerKilled(player, this._lastPlayerPlaced);
           }
           if (!this._simulation.isNetworkClient) {
-            player.status = PlayerStatus.knockedOut;
+            if (this._hasRounds) {
+              player.status = PlayerStatus.knockedOut;
+            } else {
+              this._temporarilyDeadPlayers[player.id] = true;
+              player.block?.die();
+              player.isFirstBlock = true;
+            }
           }
         } else {
           player.score = placableCellsCount;
@@ -185,7 +201,9 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   }
 
   getSpawnDelay(player: IPlayer) {
-    if (this._lastMoveWasMistake[player.id]) {
+    if (this._temporarilyDeadPlayers[player.id]) {
+      return 5000;
+    } else if (this._lastMoveWasMistake[player.id]) {
       return 1000;
     } else {
       return 0;

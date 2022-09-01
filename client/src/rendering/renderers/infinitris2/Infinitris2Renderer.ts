@@ -527,7 +527,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     if (simulation.settings.gameModeType === 'column-conquest') {
       this._gameModeRenderer = new ColumnConquestRenderer(this);
-    } else if (simulation.settings.gameModeType === 'conquest') {
+    } else if (
+      simulation.settings.gameModeType === 'conquest' ||
+      simulation.settings.gameModeType === 'conquest-infinity'
+    ) {
       this._gameModeRenderer = new ConquestRenderer(this);
     }
 

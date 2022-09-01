@@ -143,7 +143,9 @@ export function RoomCarouselSlide({
               <SvgIcon color="primary">
                 <GameModeIcon gameModeType={gameModeType} />
               </SvgIcon>
-              <Typography variant="h1">{gameModeType}</Typography>
+              <Typography variant="h1">
+                {gameModeType.replace('-', ' ')}
+              </Typography>
             </FlexBox>
             <Typography variant="body2">
               <GameModeDescription gameModeType={gameModeType} />
@@ -164,6 +166,7 @@ function GameModeIcon(props: { gameModeType: GameModeType }) {
     case 'battle':
       return <WhatshotIcon />;
     case 'conquest':
+    case 'conquest-infinity':
     case 'column-conquest':
       return <ConquestIcon />;
     default:
@@ -188,6 +191,7 @@ export function GameModeDescription(props: { gameModeType: GameModeType }) {
         />
       );
     case 'conquest':
+    case 'conquest-infinity':
       return (
         <FormattedMessage
           defaultMessage="Capture other players' cells to knock them out of the game"

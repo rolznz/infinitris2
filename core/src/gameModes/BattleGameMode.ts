@@ -20,4 +20,7 @@ export class BattleGameMode implements IGameMode<BattleGameModeState> {
   get hasLineClearReward(): boolean {
     return false;
   }
+  get hasBlockPlacementReward(): boolean {
+    return false;
+  }
 }

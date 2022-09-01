@@ -42,6 +42,9 @@ export class ColumnConquestGameMode
   get hasLineClearReward(): boolean {
     return false;
   }
+  get hasBlockPlacementReward(): boolean {
+    return false;
+  }
 
   step(): void {
     const now = Date.now();

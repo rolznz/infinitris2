@@ -126,7 +126,9 @@ export class FallbackLeaderboard {
         playerText += scoreboardEntry.isSpectating ? ' (spectating)' : '';
         if (!scoreboardEntry.isSpectating) {
           playerText +=
-            simulation.settings.gameModeType === 'conquest'
+            simulation.settings.gameModeType === 'conquest' ||
+            simulation.settings.gameModeType === 'column-conquest' ||
+            simulation.settings.gameModeType === 'conquest-infinity'
               ? `  ⦿ ${scoreboardEntry.score}`
               : '  ' + scoreboardEntry.score;
         }

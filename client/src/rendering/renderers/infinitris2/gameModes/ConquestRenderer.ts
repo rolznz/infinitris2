@@ -27,6 +27,32 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._renderFreeCells();
   }
 
+  onSimulationStep() {
+    if (!this._renderer.simulation) {
+      return;
+    }
+    for (const player of this._renderer.simulation.nonSpectatorPlayers) {
+      if (player.isFirstBlock && player.block) {
+        for (const cell of player.block.cells) {
+          if (Math.random() < 0.1) {
+            this._renderer.emitParticle(
+              cell.column + Math.random(),
+              cell.row + Math.random(),
+              player.color,
+              'capture'
+            );
+          }
+        }
+      }
+    }
+  }
+
+  onSimulationStart() {
+    // FIXME: why is a timeout needed to render correctly?
+    setTimeout(() => {
+      this._rerender();
+    }, 1);
+  }
   onNextRound() {
     this._rerender();
   }

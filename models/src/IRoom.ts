@@ -15,5 +15,4 @@ export default interface IRoom extends IEntity {
   worldType?: WorldType;
   worldVariation?: WorldVariation;
   simulationSettings?: SimulationSettings;
-  gameModeType: GameModeType; // TODO: remove
 }

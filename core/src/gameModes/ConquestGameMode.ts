@@ -150,13 +150,14 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
           if (this._lastPlayerPlaced) {
             this._simulation.onPlayerKilled(player, this._lastPlayerPlaced);
           }
+          if (!this._hasRounds) {
+            this._temporarilyDeadPlayers[player.id] = true;
+          }
           if (!this._simulation.isNetworkClient) {
-            if (this._hasRounds) {
-              player.status = PlayerStatus.knockedOut;
-            } else {
-              this._temporarilyDeadPlayers[player.id] = true;
-              player.block?.die();
-              player.isFirstBlock = true;
+            player.status = PlayerStatus.knockedOut;
+            if (!this._hasRounds) {
+              // instantly switch state back - will cause the player to reset
+              player.status = PlayerStatus.ingame;
             }
           }
         } else {

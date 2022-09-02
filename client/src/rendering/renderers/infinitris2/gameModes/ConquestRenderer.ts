@@ -62,7 +62,7 @@ export class ConquestRenderer implements IGameModeRenderer {
     // FIXME: why is a timeout needed to render correctly?
     setTimeout(() => {
       this._rerender();
-    }, 1);
+    }, 1000);
   }
   onNextRound() {
     this._rerender();

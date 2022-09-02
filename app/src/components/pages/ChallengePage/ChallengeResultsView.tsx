@@ -134,7 +134,7 @@ export default function ChallengeResultsView({
 
         {!showWinnerDisplay && (
           <FlexBox
-            bgcolor="background.paper"
+            //bgcolor="background.paper"
             p={4}
             borderRadius={borderRadiuses.base}
           >

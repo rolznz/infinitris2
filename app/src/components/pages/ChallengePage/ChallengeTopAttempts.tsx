@@ -9,6 +9,7 @@ import { ReactComponent as PlayIcon } from '@/icons/play.svg';
 import { CharacterImage } from '@/components/pages/Characters/CharacterImage';
 import { SxProps } from '@mui/material/styles';
 import {
+  borderColorLight,
   borderRadiuses,
   boxShadows,
   dropShadows,
@@ -22,6 +23,7 @@ import Routes, { RouteSubPaths } from '@/models/Routes';
 import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import { challengeLaunchReplaySearchParam } from '@/components/pages/ChallengePage/ChallengePage';
+import ribbonImage from '@components/game/EndRoundDisplay/assets/winner_ribbon.svg';
 
 type ChallengeTopAttemptsProps = {
   challengeId: string;
@@ -48,13 +50,28 @@ function ChallengeTopAttemptsInternal({
   const topAttempts = challenge.readOnly?.topAttempts;
 
   return (
-    <FlexBox>
-      {/*<Typography variant="h4" textAlign="center">
+    <FlexBox mt={4}>
+      <FlexBox position="relative" mb={-3}>
+        <img alt="" src={ribbonImage} width={300} />
+        <Typography
+          position="absolute"
+          variant="h3"
+          textAlign="center"
+          zIndex={1}
+          mt={-3}
+        >
+          <FormattedMessage
+            defaultMessage="Top Plays"
+            description="Top challenge attempts"
+          />
+        </Typography>
+      </FlexBox>
+      <Typography variant="body1" color="#37D27C" mb={1}>
         <FormattedMessage
-          defaultMessage="Top Plays"
-          description="Top challenge attempts"
+          defaultMessage="Watch replays"
+          description="Top challenge attempts - watch replays"
         />
-  </Typography>*/}
+      </Typography>
       <FlexBox flexDirection="row" gap={2} maxWidth={500} flexWrap="nowrap">
         {topAttempts?.length ? (
           <>
@@ -116,7 +133,8 @@ const attemptSx: SxProps = {
   boxShadow: boxShadows.small,
   p: 0.5,
   borderRadius: borderRadiuses.base,
-  backgroundColor: 'background.paper',
+  //backgroundColor: 'background.paper',
+  backgroundColor: borderColorLight,
 };
 
 type ChallengeTopAttemptProps = {

@@ -21,6 +21,7 @@ export type NetworkPlayerInfo = {
   readonly isBot: boolean;
   readonly isPremium: boolean;
   readonly isNicknameVerified: boolean;
+  readonly isFirstBlock: boolean;
 };
 
 export interface IPlayer {

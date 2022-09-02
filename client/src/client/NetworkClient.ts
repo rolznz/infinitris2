@@ -183,6 +183,7 @@ export default class NetworkClient
             this._simulation.addPlayer(otherPlayer);
             otherPlayer.score = playerInfo.score;
             otherPlayer.health = playerInfo.health;
+            otherPlayer.isFirstBlock = playerInfo.isFirstBlock;
           }
         }
         for (let i = 0; i < joinResponseData.grid.reducedCells.length; i++) {
@@ -292,11 +293,11 @@ export default class NetworkClient
             ? this._simulation.getPlayer(winnerId)
             : undefined;
         this._simulation.round!.end(winner);
-      } else if (message.type === ServerMessageType.NEXT_SPAWN) {
+      } /*else if (message.type === ServerMessageType.NEXT_SPAWN) {
         this._simulation.getPlayer(this._playerId!).estimatedSpawnDelay = (
           message as IServerNextSpawnEvent
         ).time;
-      } else if (message.type === ServerMessageType.PLAYER_CHANGE_STATUS) {
+      }*/ else if (message.type === ServerMessageType.PLAYER_CHANGE_STATUS) {
         const playerChangeStatusMessage =
           message as IServerPlayerChangeStatusEvent;
         this._simulation.getPlayer(playerChangeStatusMessage.playerId).status =

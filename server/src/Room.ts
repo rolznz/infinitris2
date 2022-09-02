@@ -498,5 +498,6 @@ function createPlayerInfo(player: IPlayer): NetworkPlayerInfo {
     isBot: player.isBot,
     isNicknameVerified: player.isNicknameVerified,
     isPremium: player.isPremium,
+    isFirstBlock: player.isFirstBlock,
   };
 }

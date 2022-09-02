@@ -64,7 +64,9 @@ export default class Server implements IServerSocketEventListener {
         if (i < GameModeTypeValues.length) {
           roomInfoJson = JSON.stringify({
             name: 'Room ' + i,
-            gameModeType: GameModeTypeValues[i],
+            simulationSettings: {
+              gameModeType: GameModeTypeValues[i],
+            },
           } as IRoom);
         } else {
           break;
@@ -205,8 +207,7 @@ export default class Server implements IServerSocketEventListener {
             created: true,
             maxPlayers: 12,
             name: room.info.name,
-            gameModeType:
-              room.simulation.settings.gameModeType || room.info.gameModeType, // TODO: remove
+            gameModeType: room.simulation.settings.gameModeType,
             numPlayers: room.simulation.players.length,
             numHumans: room.simulation.humanPlayers.length,
             numBots: room.simulation.players.filter((player) => player.isBot)

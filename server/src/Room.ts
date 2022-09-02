@@ -58,7 +58,7 @@ export default class Room implements Partial<ISimulationEventListener> {
     this._sendMessage = sendMessage;
     this._simulation = new Simulation(
       new Grid(50, 16),
-      roomInfo.simulationSettings || { gameModeType: roomInfo.gameModeType }
+      roomInfo.simulationSettings
     );
     this._simulation.addEventListener(this);
     this._simulation.init();

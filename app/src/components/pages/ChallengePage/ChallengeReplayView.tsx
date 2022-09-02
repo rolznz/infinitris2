@@ -12,6 +12,8 @@ import FlexBox from '../../ui/FlexBox';
 import { ReactComponent as StopwatchIcon } from '@/icons/stopwatch.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import Typography from '@mui/material/Typography';
+import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
+import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 
 export interface ChallengeReplayViewProps {
   onReceivedInput(): void;
@@ -25,6 +27,7 @@ export default function ChallengeReplayView({
   replayAttempt,
 }: ChallengeReplayViewProps) {
   //const user = useUser();
+  const player = useNetworkPlayerInfo();
   const [hasReceivedInput, continueButton] = useContinueButton(
     undefined,
     <FormattedMessage
@@ -78,7 +81,9 @@ export default function ChallengeReplayView({
               <FlexBox my={-2}>
                 <CharacterImage
                   characterId={
-                    replayAttempt.readOnly?.user?.selectedCharacterId || '0'
+                    replayAttempt.readOnly?.user?.selectedCharacterId ||
+                    player?.characterId ||
+                    DEFAULT_CHARACTER_ID
                   }
                   width={128}
                 />
@@ -90,6 +95,7 @@ export default function ChallengeReplayView({
                   values={{
                     nickname:
                       replayAttempt.readOnly?.user?.nickname ||
+                      player?.nickname ||
                       'Unnamed Player',
                   }}
                 />

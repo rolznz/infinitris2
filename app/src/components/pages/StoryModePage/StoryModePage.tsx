@@ -12,7 +12,7 @@ import { useUser } from '@/components/hooks/useUser';
 import { IChallenge, WorldVariationValues } from 'infinitris2-models';
 import FlexBox from '@/components/ui/FlexBox';
 import Typography from '@mui/material/Typography';
-import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
+//import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
 import { MobileRotateDevice } from '@/components/game/GameUI';
 
 export function StoryModePage() {
@@ -39,10 +39,10 @@ export function StoryModePage() {
                 <Typography variant="h1">
                   {getOfficialChallengeTitle(challengeDoc.data())}
                 </Typography>
-                <ChallengeTopAttempts
+                {/*<ChallengeTopAttempts
                   challengeId={challengeDoc.id}
                   challenge={challengeDoc.data()}
-                />
+            />*/}
               </FlexBox>
             ),
             worldType: challengeDoc.data().worldType || 'grass',

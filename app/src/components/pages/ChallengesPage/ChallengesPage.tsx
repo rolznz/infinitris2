@@ -152,7 +152,7 @@ export function ChallengesPage() {
         description: 'Community Challenges page title',
       })}
     >
-      <FlexBox flexDirection="row" mb={2}>
+      <FlexBox flexDirection="row" mb={2} gap={1}>
         <SvgIcon color="primary">
           <SortIcon />
         </SvgIcon>

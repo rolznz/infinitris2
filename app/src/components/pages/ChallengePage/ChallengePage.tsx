@@ -470,6 +470,13 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           player={simulation?.humanPlayers[0]}
           retryChallenge={retryChallenge}
           viewReplay={viewReplay}
+          skipChallenge={handleContinue}
+          canSkipChallenge={
+            !!challenge.isOfficial &&
+            !incompleteChallenges.some(
+              (incompleteChallenge) => incompleteChallenge.id === challengeId
+            )
+          }
           viewOtherReplay={viewOtherReplay}
           isTest={isTest}
           onContinue={handleContinue}

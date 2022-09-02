@@ -1,6 +1,6 @@
 import { EndRoundDisplayOverlay } from '@/components/game/EndRoundDisplay/EndRoundDisplay';
 import useContinueButton from '@/components/hooks/useContinueButton';
-import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
+// import { ChallengeTopAttempts } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
 import { getOfficialChallengeTitle } from '@/components/pages/StoryModePage/StoryModePage';
 import { textShadows, zIndexes } from '@/theme/theme';
 import isMobile from '@/utils/isMobile';
@@ -9,7 +9,6 @@ import Typography from '@mui/material/Typography';
 import {
   getVariationHueRotation,
   IChallenge,
-  IChallengeAttempt,
   WorldVariationValues,
 } from 'infinitris2-models';
 import React from 'react';
@@ -21,12 +20,15 @@ import FlexBox from '../../ui/FlexBox';
 import grassScrollImage from './assets/scroll_grass.svg';
 import desertScrollImage from './assets/scroll_desert.svg';
 import spaceScrollImage from './assets/scroll_space.svg';
+import volcanoScrollImage from './assets/scroll_volcano.svg';
 
 export interface ChallengeInfoViewProps {
-  onReceivedInput(): void;
+  onReceivedPlayInput(): void;
+  onReceivedSkipInput(): void;
+  canSkip: boolean;
   challenge: IChallenge;
   challengeId: string;
-  viewOtherReplay(attempt: IChallengeAttempt): void;
+  //viewOtherReplay(attempt: IChallengeAttempt): void;
 }
 
 const titleSx: SxProps = {
@@ -46,15 +48,17 @@ function splitTitle(title: string) {
 }
 
 export default function ChallengeInfoView({
-  onReceivedInput,
-  viewOtherReplay,
+  onReceivedPlayInput,
+  onReceivedSkipInput,
+  canSkip,
+  //viewOtherReplay,
   challenge,
-  challengeId,
-}: ChallengeInfoViewProps) {
+}: //challengeId,
+ChallengeInfoViewProps) {
   //const user = useUser();
   const [scrollLoaded, setScrollLoaded] = React.useState(false);
 
-  const [hasReceivedInput, continueButton] = useContinueButton(
+  const [hasReceivedPlayInput, playButton] = useContinueButton(
     undefined,
     <FormattedMessage
       defaultMessage="Play"
@@ -65,11 +69,21 @@ export default function ChallengeInfoView({
     'large',
     '4vh'
   );
+  const [hasReceivedSkipInput, skipButton] = useContinueButton(
+    's',
+    <FormattedMessage
+      defaultMessage="Skip"
+      description="Challenge Info Skip button text"
+    />,
+    undefined,
+    'secondary'
+  );
   const hueRotation = getVariationHueRotation(
     WorldVariationValues.indexOf(challenge.worldVariation || '0')
   );
 
-  useTrue(hasReceivedInput, onReceivedInput);
+  useTrue(hasReceivedPlayInput, onReceivedPlayInput);
+  useTrue(canSkip && hasReceivedSkipInput, onReceivedSkipInput);
   //const translation = challenge?.translations?.[user.locale];
   const challengeTitle = challenge.isOfficial
     ? getOfficialChallengeTitle(challenge)
@@ -90,6 +104,8 @@ export default function ChallengeInfoView({
                 ? spaceScrollImage
                 : challenge.worldType === 'desert'
                 ? desertScrollImage
+                : challenge.worldType === 'volcano'
+                ? volcanoScrollImage
                 : grassScrollImage
             }
             height="100%"
@@ -122,36 +138,45 @@ export default function ChallengeInfoView({
               <FlexBox
                 position="absolute"
                 top={isMobile() ? '27vh' : '23vh'}
-                height="15vh"
+                height="36vh"
               >
                 <Typography
                   variant="h1"
-                  fontSize="8vh"
+                  fontSize="10vh"
                   textAlign="center"
                   sx={titleSx}
                 >
-                  {isMobile()
-                    ? challengeTitle
-                    : splitTitle(challengeTitle).map((part, index) => (
-                        <React.Fragment key={index}>
-                          {part}
-                          <br />
-                        </React.Fragment>
-                      ))}
+                  {splitTitle(challengeTitle).map((part, index) => (
+                    <React.Fragment key={index}>
+                      {part}
+                      <br />
+                    </React.Fragment>
+                  ))}
                 </Typography>
+                {!challenge.isOfficial && (
+                  <Typography variant="h4" textAlign="center" sx={titleSx}>
+                    By {challenge.readOnly?.user?.nickname || 'Unknown'}
+                  </Typography>
+                )}
               </FlexBox>
               <FlexBox
                 position="absolute"
                 bottom={isMobile() ? '28vh' : '24vh'}
               >
-                <ChallengeTopAttempts
+                {/* <ChallengeTopAttempts
                   challengeId={challengeId}
                   challenge={challenge}
                   viewReplay={viewOtherReplay}
-                />
+                /> */}
               </FlexBox>
-              <FlexBox position="absolute" bottom={isMobile() ? '3vh' : '6vh'}>
-                {continueButton}
+              <FlexBox
+                flexDirection="row"
+                position="absolute"
+                bottom={'3vh'}
+                gap={1}
+              >
+                {playButton}
+                {canSkip && skipButton}
               </FlexBox>
             </>
           )}

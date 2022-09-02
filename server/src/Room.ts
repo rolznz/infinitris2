@@ -390,11 +390,11 @@ export default class Room implements Partial<ISimulationEventListener> {
     this._sendMessageToAllPlayers(blockDiedEvent);
   }
   onBlockDestroyed(block: IBlock): void {
-    const nextSpawnEvent: IServerNextSpawnEvent = {
-      type: ServerMessageType.NEXT_SPAWN,
-      time: block.player.estimatedSpawnDelay,
-    };
-    this._sendMessageToPlayers(nextSpawnEvent, block.player.id);
+    // const nextSpawnEvent: IServerNextSpawnEvent = {
+    //   type: ServerMessageType.NEXT_SPAWN,
+    //   time: block.player.estimatedSpawnDelay,
+    // };
+    // this._sendMessageToPlayers(nextSpawnEvent, block.player.id);
   }
 
   onPlayerCreated(player: IPlayer) {

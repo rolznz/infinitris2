@@ -9,7 +9,6 @@ import { textShadows } from '@/theme/theme';
 const sx: SxProps<Theme> = { textShadow: textShadows.base };
 
 export function SpawnDelayDisplay() {
-  console.log('Re-render spawn delay display');
   const simulation = useIngameStore((store) => store.simulation);
   const [renderId, setRenderId] = React.useState(0);
 
@@ -24,6 +23,11 @@ export function SpawnDelayDisplay() {
 
   const estimatedSpawnDelaySeconds = Math.ceil(
     (simulation?.controllablePlayer?.estimatedSpawnDelay || 0) / 1000
+  );
+  console.log(
+    'Re-render spawn delay display',
+    spawnDelayDisplayVisible,
+    estimatedSpawnDelaySeconds
   );
 
   if (!spawnDelayDisplayVisible || estimatedSpawnDelaySeconds <= 0) {

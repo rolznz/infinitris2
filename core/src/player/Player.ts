@@ -526,9 +526,9 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
 
   private _calculateSpawnDelay() {
-    if (this._simulation.isNetworkClient) {
-      return;
-    }
+    // if (this._simulation.isNetworkClient) {
+    //   return;
+    // }
     if (
       this._simulation.settings.calculateSpawnDelays !== false &&
       this._simulation.gameMode.getSpawnDelay

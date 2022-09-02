@@ -756,7 +756,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       container: new PIXI.Container(),
     };
     playerContainer.container.visible = false;
-
+    playerContainer.container.zIndex = 100;
     playerContainer.container.addChild(playerContainer.nicknameText.container);
     playerContainer.container.addChild(playerContainer.healthbar.container);
     this._world.addChild(playerContainer.container);

@@ -106,7 +106,7 @@ let _sfxAudioBuffer: AudioBuffer;
 
 async function prepareSoundEffects() {
   if (!_sfxContext) {
-    useLoaderStore.getState().increaseSteps();
+    useLoaderStore.getState().addStep('sfx');
     _sfxContext = new AudioContext();
 
     try {
@@ -120,7 +120,7 @@ async function prepareSoundEffects() {
         'Error: ' + JSON.stringify(error, Object.getOwnPropertyNames(error))
       );
     }
-    useLoaderStore.getState().increaseStepsCompleted();
+    useLoaderStore.getState().completeStep('sfx');
   }
 }
 
@@ -201,10 +201,10 @@ function playMusic(
     loop: true,
   });
 
-  useLoaderStore.getState().increaseSteps();
+  useLoaderStore.getState().addStep('music');
   existingHowl.once('play', () => {
     setTimeout(() => {
-      useLoaderStore.getState().increaseStepsCompleted();
+      useLoaderStore.getState().completeStep('music');
     }, 500);
   });
   existingHowl.load();

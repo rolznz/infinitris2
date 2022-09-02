@@ -30,6 +30,7 @@ import useSinglePlayerOptionsStore, {
 import Routes from '@/models/Routes';
 import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
 import { useCachedCollection } from '@/components/hooks/useCachedCollection';
+import useLoaderStore from '@/state/LoaderStore';
 
 export function launchSinglePlayer(history: ReturnType<typeof useHistory>) {
   const settings = useSinglePlayerOptionsStore.getState().formData;
@@ -67,7 +68,10 @@ export default function SinglePlayerPage() {
   const trackNumber = worldVariationToTrackNumber(worldVariation);
   const player = useNetworkPlayerInfo();
   const allCharacters = useCachedCollection<ICharacter>(charactersPath);
-  const hasLoaded = !!client && !!player && allCharacters?.length;
+
+  const loaderHasFinished = useLoaderStore((store) => store.hasFinished);
+  const hasLoaded =
+    !!client && !!player && allCharacters?.length && loaderHasFinished;
 
   useReleaseClientOnExitPage();
 

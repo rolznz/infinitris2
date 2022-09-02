@@ -42,6 +42,7 @@ import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 import { useSnackbar } from 'notistack';
 import useSearchParam from 'react-use/lib/useSearchParam';
 import { useCachedCollection } from '@/components/hooks/useCachedCollection';
+import useLoaderStore from '@/state/LoaderStore';
 
 export const challengeLaunchReplaySearchParam = 'replay';
 interface ChallengePageRouteParams {
@@ -136,7 +137,11 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     : syncedChallenge?.data();
 
   const allCharacters = useCachedCollection<ICharacter>(charactersPath);
-  const hasLoadedCharacters = allCharacters?.length;
+  const player = useNetworkPlayerInfo();
+
+  const loaderHasFinished = useLoaderStore((store) => store.hasFinished);
+  const hasLoaded =
+    !!client && !!player && allCharacters?.length && loaderHasFinished;
 
   const launchChallenge = client?.launchChallenge;
   const [hasLaunched, setLaunched] = React.useState(false);
@@ -167,7 +172,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     }
   }, []);
   const simulation = useIngameStore((store) => store.simulation);
-  const player = useNetworkPlayerInfo();
 
   const handleRetry = React.useCallback(
     (isPlayingRecording: boolean) => {
@@ -295,7 +299,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       player /*&& !requiresRedirect*/ &&
       launchChallenge &&
       !hasLaunched &&
-      hasLoadedCharacters &&
+      hasLoaded &&
       !isLoadingOfficialChallenges &&
       (!launchReplayChallengeAttemptId || launchReplayChallengeAttempt)
     ) {
@@ -427,7 +431,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     user.completedOfficialChallengeIds,
     challengeId,
     allCharacters,
-    hasLoadedCharacters,
+    hasLoaded,
     user.unlockedFeatures,
     incompleteChallenges,
     isLoadingOfficialChallenges,

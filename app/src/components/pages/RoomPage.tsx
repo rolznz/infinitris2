@@ -35,6 +35,7 @@ import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import shallow from 'zustand/shallow';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
+import useLoaderStore from '@/state/LoaderStore';
 
 export interface RoomPageRouteParams {
   id: string;
@@ -110,12 +111,13 @@ export default function RoomPage() {
   usePwaRedirect();
   const player = useNetworkPlayerInfo();
 
+  const loaderHasFinished = useLoaderStore((store) => store.hasFinished);
   const user = useUser();
   const userLaunchOptions = useUserLaunchOptions(user);
   const controls_keyboard = user.controls_keyboard;
   const controls_gamepad = user.controls_gamepad;
 
-  const hasLoaded = !!client && !!player && !!room;
+  const hasLoaded = !!client && !!player && !!room && loaderHasFinished;
 
   useReleaseClientOnExitPage();
 

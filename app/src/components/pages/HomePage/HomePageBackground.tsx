@@ -25,7 +25,7 @@ import foregroundRightPortraitImageDark from './assets/foreground_portrait_right
 
 import useWindowSize from 'react-use/lib/useWindowSize';
 import FlexBox from '@/components/ui/FlexBox';
-import useLoaderStore from '@/state/LoaderStore';
+import useLoaderStore, { LoaderStepName } from '@/state/LoaderStore';
 import useDarkMode from '@/components/hooks/useDarkMode';
 import { firstTimeAnimationDelaySeconds } from './homePageConstants';
 import { zIndexes } from '@/theme/theme';
@@ -201,7 +201,10 @@ const HomePageBackgroundImage = React.memo(
         ref={(imageRef) => {
           let image = backgroundImageMap[props.src];
           if (!image) {
-            useLoaderStore.getState().increaseSteps();
+            const stepKey = 'image-' + props.src;
+            useLoaderStore
+              .getState()
+              .addStep(stepKey as unknown as LoaderStepName);
             image = new Image();
 
             image.style.position = 'absolute';
@@ -215,7 +218,9 @@ const HomePageBackgroundImage = React.memo(
 
             image.addEventListener('load', function () {
               imageRef?.replaceWith(image);
-              useLoaderStore.getState().increaseStepsCompleted();
+              useLoaderStore
+                .getState()
+                .completeStep(stepKey as unknown as LoaderStepName);
               backgroundImageMap[props.src] = image;
               backgroundImageLoadedMap[props.src] = true;
             });

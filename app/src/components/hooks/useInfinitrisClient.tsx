@@ -12,7 +12,7 @@ declare global {
 const useInfinitrisClient = () => {
   useEffect(() => {
     (async () => {
-      useLoaderStore.getState().increaseSteps();
+      useLoaderStore.getState().addStep('infinitris-client');
       try {
         const clientManifest = await (
           await fetch(`${process.env.PUBLIC_URL}/client/manifest.json`, {
@@ -28,7 +28,7 @@ const useInfinitrisClient = () => {
           window.infinitris2.setConfig({
             imagesRootUrl: process.env.REACT_APP_IMAGES_ROOT_URL!,
           });
-          useLoaderStore.getState().increaseStepsCompleted();
+          useLoaderStore.getState().completeStep('infinitris-client');
           useAppStore.setState({
             clientApi: window.infinitris2,
           });

@@ -1,34 +1,51 @@
 import create from 'zustand';
 
+export type LoaderStepName =
+  | 'infinitris-client'
+  | 'login'
+  | 'characters'
+  | 'user'
+  | 'sfx'
+  | 'music';
+
 type LoaderStore = {
   readonly key: number;
-  readonly stepsCompleted: number;
-  readonly steps: number;
+  readonly stepsCompleted: string[];
+  readonly steps: string[];
   readonly startClicked: boolean;
   readonly hasInitialized: boolean;
   readonly hasFinished: boolean;
   readonly delayButtonVisibility: boolean;
-  increaseSteps(amount?: number): void;
-  increaseStepsCompleted(): void;
+  readonly allStepsLoaded: boolean;
+  addStep(stepName: LoaderStepName): void;
+  completeStep(stepName: LoaderStepName): void;
   clickStart(delayButtonVisibility: boolean): void;
   reset(): void;
   initialize(): void;
   disableDelayButtonVisiblity(): void;
 };
 
+function calculateAllStepsLoaded(state: LoaderStore) {
+  return state.steps.every((step) => state.stepsCompleted.indexOf(step) > -1);
+}
+
 const calculateHasFinished = (state: LoaderStore) => {
-  return (
-    state.stepsCompleted >= state.steps &&
-    state.hasInitialized &&
+  console.log(
+    'Loader calculateHasFinished ',
+    state.steps.filter((step) => state.stepsCompleted.indexOf(step) < 0),
+    state.allStepsLoaded,
+    state.hasInitialized,
     state.startClicked
   );
+  return state.allStepsLoaded && state.hasInitialized && state.startClicked;
 };
 
 const useLoaderStore = create<LoaderStore>((set) => ({
   delayButtonVisibility: true,
   key: 0,
-  steps: 0,
-  stepsCompleted: 0,
+  steps: [],
+  stepsCompleted: [],
+  allStepsLoaded: false,
   startClicked: false,
   hasInitialized: false,
   hasFinished: false,
@@ -36,19 +53,40 @@ const useLoaderStore = create<LoaderStore>((set) => ({
     set((_) => ({
       delayButtonVisibility: false,
     })),
-  increaseSteps: (amount = 1) =>
+  addStep: (stepName: string) =>
     set((state) => ({
-      steps: state.steps + amount,
-      hasFinished: calculateHasFinished({ ...state, steps: state.steps + 1 }),
+      steps: [
+        ...state.steps.filter((existingStep) => existingStep !== stepName),
+        stepName,
+      ],
+      stepsCompleted: state.stepsCompleted.filter(
+        (existingStep) => existingStep !== stepName
+      ),
+      hasFinished: false,
     })),
-  increaseStepsCompleted: () =>
-    set((state) => ({
-      stepsCompleted: state.stepsCompleted + 1,
-      hasFinished: calculateHasFinished({
+  completeStep: (stepName: string) =>
+    set((state) => {
+      const newStepsCompleted = [
+        ...state.stepsCompleted.filter(
+          (existingStep) => existingStep !== stepName
+        ),
+        stepName,
+      ];
+      const allStepsLoaded = calculateAllStepsLoaded({
         ...state,
-        stepsCompleted: state.stepsCompleted + 1,
-      }),
-    })),
+        stepsCompleted: newStepsCompleted,
+      });
+      return {
+        stepsCompleted: newStepsCompleted,
+        allStepsLoaded,
+        hasFinished: calculateHasFinished({
+          ...state,
+          allStepsLoaded,
+          stepsCompleted: newStepsCompleted,
+        }),
+      };
+    }),
+
   clickStart: (delayButtonVisibility: boolean) =>
     set(
       (state) =>
@@ -60,8 +98,8 @@ const useLoaderStore = create<LoaderStore>((set) => ({
     ),
   reset: () =>
     set((state) => ({
-      steps: 0,
-      stepsCompleted: 0,
+      steps: [],
+      stepsCompleted: [],
       hasFinished: false,
       key: state.key + 1,
     })),

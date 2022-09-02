@@ -42,51 +42,45 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
     (store) => [store.isLoggedIn, store.user?.uid],
     shallow
   );
-  const prevIsLoggedIn = usePrevious(isLoggedIn);
   const user = useUser();
   const userExists = !!user?.id;
+  const prevUserExists = usePrevious(userExists);
   const hasFinished = loaderStore.hasFinished;
   const initializeLoaderStore = loaderStore.initialize;
-  const increaseSteps = loaderStore.increaseSteps;
-  const increaseStepsCompleted = loaderStore.increaseStepsCompleted;
+  const addStep = loaderStore.addStep;
+  const completeStep = loaderStore.completeStep;
   const clickStart = loaderStore.clickStart;
   const [hasToggledSounds, setHasToggledSounds] = useState(false);
   const allCharacters = useCachedCollection<ICharacter>(charactersPath);
   const hasLoadedCharacters = (allCharacters?.length || 0) > 0;
-  const prevHasLoadedCharacters = usePrevious(hasLoadedCharacters);
 
   const clientLoaded = useAppStore((appStore) => !!appStore.clientApi);
 
   // Wait for the user to load if they are logged in
   // this also ensures if the app thinks they were logged in but aren't anymore (for whatever reason), the step will be reversed
   useEffect(() => {
-    if (!authUserId) {
-      if (isLoggedIn && prevIsLoggedIn !== undefined) {
-        increaseSteps();
-      } else if (prevIsLoggedIn) {
-        increaseSteps(-1);
-      }
+    if (isLoggedIn && !authUserId) {
+      addStep('login');
+    } else if (!isLoggedIn || authUserId) {
+      completeStep('login');
     }
-  }, [isLoggedIn, prevIsLoggedIn, increaseSteps, authUserId]);
+  }, [isLoggedIn, addStep, completeStep, authUserId]);
 
   useEffect(() => {
     if (!hasLoadedCharacters) {
-      increaseSteps();
-    } else if (prevHasLoadedCharacters === false && hasLoadedCharacters) {
-      increaseStepsCompleted();
+      addStep('characters');
+    } else if (hasLoadedCharacters) {
+      completeStep('characters');
     }
-  }, [
-    prevHasLoadedCharacters,
-    hasLoadedCharacters,
-    increaseSteps,
-    increaseStepsCompleted,
-  ]);
+  }, [hasLoadedCharacters, addStep, completeStep]);
 
   useEffect(() => {
-    if (userExists) {
-      increaseStepsCompleted();
+    if (prevUserExists === false && authUserId) {
+      addStep('user');
+    } else if (userExists) {
+      completeStep('user');
     }
-  }, [userExists, increaseStepsCompleted]);
+  }, [authUserId, prevUserExists, userExists, addStep, completeStep]);
 
   useEffect(() => {
     const htmlLoaderSpiner = document.getElementById('html-loader-spinner');
@@ -105,7 +99,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   const musicOn = user.musicOn !== undefined ? user.musicOn : true;
   const sfxOn = user.sfxOn !== undefined ? user.sfxOn : true;
   useEffect(() => {
-    if (loaderStore.stepsCompleted === loaderStore.steps) {
+    if (loaderStore.allStepsLoaded) {
       if (musicOn === false && sfxOn === false && !hasToggledSounds) {
         // no interaction needed since sound is muted
         clickStart(false);
@@ -124,6 +118,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
     setHasToggledSounds,
     loaderStore.stepsCompleted,
     loaderStore.steps,
+    loaderStore.allStepsLoaded,
     user.musicVolume,
     user.sfxVolume,
   ]);
@@ -139,7 +134,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
     !loaderStore.startClicked &&
     loaderStore.hasInitialized &&
     hasToggledSounds &&
-    loaderStore.stepsCompleted === loaderStore.steps;
+    loaderStore.allStepsLoaded;
 
   const loaderStyle: React.CSSProperties = React.useMemo(
     () => ({
@@ -202,7 +197,7 @@ const LoaderInternal = React.memo(
             left={0}
             bottom={0}
           >
-            <LoaderProgress />
+            {!showSettings && <LoaderProgress />}
 
             {showSettings && (
               <LoaderStartSettings sfxOn={sfxOn} musicOn={musicOn} />
@@ -226,6 +221,9 @@ const LoaderProgress = React.memo(
       (store) => [store.stepsCompleted, store.steps, store.key],
       shallow
     );
+    const progressPercent = Math.floor(
+      Math.min(stepsCompleted.length / steps.length, 1) * 100
+    );
     return (
       <FlexBox
         width="259px"
@@ -241,7 +239,7 @@ const LoaderProgress = React.memo(
           color="textPrimary"
           style={{ textTransform: 'uppercase' }}
         >
-          loading {Math.floor((stepsCompleted * 100) / steps)}%
+          loading {progressPercent}%
         </Typography>
         <Box width="100%">
           <LinearProgress
@@ -249,7 +247,7 @@ const LoaderProgress = React.memo(
             color="primary"
             variant="determinate"
             style={{ height: '19px' }}
-            value={steps === 0 ? 0 : (stepsCompleted * 100) / steps}
+            value={steps.length === 0 ? 0 : progressPercent}
           />
         </Box>
       </FlexBox>

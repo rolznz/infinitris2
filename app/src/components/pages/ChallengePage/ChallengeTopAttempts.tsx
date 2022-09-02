@@ -1,7 +1,12 @@
 import FlexBox from '@/components/ui/FlexBox';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import Typography from '@mui/material/Typography';
-import { IChallenge, IChallengeAttempt, WithId } from 'infinitris2-models';
+import {
+  getChallengePath,
+  IChallenge,
+  IChallengeAttempt,
+  WithId,
+} from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
 import { ReactComponent as StopwatchIcon } from '@/icons/stopwatch.svg';
@@ -24,10 +29,11 @@ import { Link as RouterLink } from 'react-router-dom';
 import Link from '@mui/material/Link';
 import { challengeLaunchReplaySearchParam } from '@/components/pages/ChallengePage/ChallengePage';
 import ribbonImage from '@components/game/EndRoundDisplay/assets/winner_ribbon.svg';
+import { useDocument, UseDocumentOptions } from 'swr-firestore';
 
 type ChallengeTopAttemptsProps = {
-  challengeId: string;
   challenge: IChallenge;
+  challengeId: string;
   viewReplay?(attempt: IChallengeAttempt): void;
 };
 
@@ -42,12 +48,17 @@ export function ChallengeTopAttempts(props: ChallengeTopAttemptsProps) {
   }
   return null;
 }
+const useChallengeOptions: UseDocumentOptions = { listen: true };
 function ChallengeTopAttemptsInternal({
   challengeId,
-  challenge,
   viewReplay,
 }: ChallengeTopAttemptsProps) {
-  const topAttempts = challenge.readOnly?.topAttempts;
+  const { data: challengeDoc } = useDocument<IChallenge>(
+    getChallengePath(challengeId),
+    useChallengeOptions
+  );
+  const challenge = challengeDoc?.data?.();
+  const topAttempts = challenge?.readOnly?.topAttempts;
 
   return (
     <FlexBox mt={4}>
@@ -84,8 +95,8 @@ function ChallengeTopAttemptsInternal({
                 viewReplay={viewReplay}
               />
             ))}
-            {!!challenge.readOnly?.numAttempts &&
-              challenge.readOnly.numAttempts > 3 && (
+            {!!challenge?.readOnly?.numAttempts &&
+              challenge?.readOnly.numAttempts > 3 && (
                 <Link
                   component={RouterLink}
                   to={`${Routes.challenges}/${challengeId}/${RouteSubPaths.challengesPageAttempts}`}
@@ -99,7 +110,7 @@ function ChallengeTopAttemptsInternal({
                         sx={{ textShadow: textShadows.base }}
                       >
                         {'+'}
-                        {challenge.readOnly.numAttempts - 3}
+                        {challenge?.readOnly.numAttempts - 3}
                       </Typography>
                     </FlexBox>
                   </FlexBox>

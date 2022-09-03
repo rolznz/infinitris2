@@ -68,10 +68,16 @@ export default class ClientApi implements IClientApi {
       const worldType = (params.get('world') as WorldType) ?? undefined;
       const worldVariation =
         (params.get('worldVariation') as WorldVariation) || '0';
+      const hasRounds = params.get('hasRounds') === 'true';
+      const hasConversions = params.get('hasConversions') === 'true';
 
       const gameModeType = params.get('gameMode') as GameModeType;
       const simulationSettings: SimulationSettings = {
         gameModeType,
+        gameModeSettings: {
+          hasRounds,
+          hasConversions,
+        },
         botSettings: {
           numBots,
           botReactionDelay,

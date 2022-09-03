@@ -25,6 +25,7 @@ export default interface ISimulation extends ISimulationEventListener {
   get followingPlayer(): IPlayer | undefined;
   get controllablePlayer(): IPlayer | undefined;
   get humanPlayers(): IPlayer[];
+  get activePlayers(): IPlayer[];
   get shouldNewPlayerSpectate(): boolean;
   get round(): IRound | undefined;
   get isPaused(): boolean;

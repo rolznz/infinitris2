@@ -59,6 +59,9 @@ export interface IPlayer {
   get isFirstBlock(): boolean;
   set isFirstBlock(isFirstBlock: boolean);
 
+  get requiresFullRerender(): boolean;
+  set requiresFullRerender(requiresFullRerender: boolean);
+
   update(): void;
   addEventListener(eventListener: IBlockEventListener): void;
   onLineClearCellReward(numRowsCleared: number): void;

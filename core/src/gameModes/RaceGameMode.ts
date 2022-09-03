@@ -32,9 +32,7 @@ export class RaceGameMode implements IGameMode<RaceGameModeState> {
   deserialize(state: RaceGameModeState) {}
 
   onPlayerScoreChanged(player: IPlayer) {
-    const activePlayers = this._simulation.players.filter(
-      (otherPlayer) => otherPlayer.status === PlayerStatus.ingame
-    );
+    const activePlayers = this._simulation.activePlayers;
     const highestPlayerScore =
       activePlayers
         .map((player) => player.score)

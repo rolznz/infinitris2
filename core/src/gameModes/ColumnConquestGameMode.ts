@@ -53,9 +53,7 @@ export class ColumnConquestGameMode
     }
     this._lastCalculationTime = now;
 
-    const activePlayers = this._simulation.players.filter(
-      (player) => player.status === PlayerStatus.ingame
-    );
+    const activePlayers = this._simulation.activePlayers;
 
     const healthChangeSpeed =
       (1 + this._simulation.round!.currentRoundDuration / 10000) *
@@ -123,9 +121,7 @@ export class ColumnConquestGameMode
         });
       }
     }
-    const activePlayers = this._simulation.players.filter(
-      (player) => player.status === PlayerStatus.ingame
-    );
+    const activePlayers = this._simulation.activePlayers;
     for (const player of activePlayers) {
       player.score = this._columnCaptures.filter(
         (c) => c.playerId === player.id

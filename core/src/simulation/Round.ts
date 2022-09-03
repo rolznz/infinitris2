@@ -68,9 +68,7 @@ export class Round implements IRound {
         this.start();
       }
     } else {
-      const activePlayers = this._simulation.players.filter(
-        (player) => player.status === PlayerStatus.ingame
-      );
+      const activePlayers = this._simulation.activePlayers;
       if (activePlayers.length <= 1) {
         this.end(activePlayers[0]);
       }

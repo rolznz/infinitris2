@@ -527,10 +527,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     if (simulation.settings.gameModeType === 'column-conquest') {
       this._gameModeRenderer = new ColumnConquestRenderer(this);
-    } else if (
-      simulation.settings.gameModeType === 'conquest' ||
-      simulation.settings.gameModeType === 'conquest-infinity'
-    ) {
+    } else if (simulation.settings.gameModeType === 'conquest') {
       this._gameModeRenderer = new ConquestRenderer(this);
     }
 
@@ -1037,6 +1034,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
         this._simulation.isRunning
       );
     }
+    for (const player of this._simulation.activePlayers) {
+      if (player.requiresFullRerender) {
+        this._renderPlayer(player);
+        player.requiresFullRerender = false;
+      }
+    }
+
     const followingPlayer = this._simulation.followingPlayer;
     this._fallbackLeaderboard?.update(
       this._simulation.players,

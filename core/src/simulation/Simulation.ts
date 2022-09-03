@@ -197,6 +197,12 @@ export default class Simulation implements ISimulation {
     );
   }
 
+  get activePlayers(): IPlayer[] {
+    return this.players.filter(
+      (player) => player.status === PlayerStatus.ingame
+    );
+  }
+
   get humanPlayers(): IPlayer[] {
     return this.players.filter((player) => !player.isBot);
   }
@@ -592,8 +598,7 @@ export default class Simulation implements ISimulation {
       case 'infinity':
         return new InfinityGameMode(this);
       case 'conquest':
-      case 'conquest-infinity':
-        return new ConquestGameMode(this, gameModeType === 'conquest');
+        return new ConquestGameMode(this);
       case 'column-conquest':
         return new ColumnConquestGameMode(this);
       case 'battle':

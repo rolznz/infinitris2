@@ -39,6 +39,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _firedActions: InputActionWithData[];
   private _isPremium: boolean;
   private _isNicknameVerified: boolean;
+  private _requiresFullRerender: boolean;
 
   constructor(
     simulation: ISimulation,
@@ -79,6 +80,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._firedActions = [];
     this._isPremium = isPremium || false;
     this._isNicknameVerified = isNicknameVerified || false;
+    this._requiresFullRerender = false;
     this.addEventListener(simulation);
     this._calculateSpawnDelay();
   }
@@ -190,6 +192,13 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   }
   set isFirstBlock(isFirstBlock: boolean) {
     this._isFirstBlock = isFirstBlock;
+  }
+
+  get requiresFullRerender(): boolean {
+    return this._requiresFullRerender;
+  }
+  set requiresFullRerender(requiresFullRerender: boolean) {
+    this._requiresFullRerender = requiresFullRerender;
   }
 
   set status(status: PlayerStatus) {

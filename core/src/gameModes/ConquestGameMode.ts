@@ -10,6 +10,11 @@ import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
 
 type ConquestGameModeState = {};
+type PlayerAppearance = {
+  color: number;
+  patternFilename: string | undefined;
+  characterId: string | undefined;
+};
 
 export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   private _simulation: ISimulation;
@@ -17,18 +22,21 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   private _lastPlayerPlaced: IPlayer | undefined;
   private _lastMoveWasMistake: { [playerId: number]: boolean };
   private _temporarilyDeadPlayers: { [playerId: number]: boolean };
-  private _hasRounds: boolean;
+  private _originalPlayerAppearances: { [playerId: number]: PlayerAppearance };
 
-  constructor(simulation: ISimulation, hasRounds: boolean) {
+  constructor(simulation: ISimulation) {
     this._simulation = simulation;
     this._lastCalculationTime = 0;
     this._lastMoveWasMistake = [];
     this._temporarilyDeadPlayers = [];
-    this._hasRounds = hasRounds;
+    this._originalPlayerAppearances = [];
   }
 
   get hasRounds(): boolean {
-    return this._hasRounds;
+    return this._simulation.settings.gameModeSettings?.hasRounds ?? false;
+  }
+  get hasConversions(): boolean {
+    return this._simulation.settings.gameModeSettings?.hasConversions ?? false;
   }
   get hasHealthbars(): boolean {
     return false;
@@ -40,32 +48,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     return false;
   }
 
-  step(): void {
-    // const now = Date.now();
-    // if (now - this._lastCalculationTime < 1000) {
-    //   return;
-    // }
-    // this._lastCalculationTime = now;
-    // const activePlayers = this._simulation.players.filter(
-    //   (player) => player.status === PlayerStatus.ingame
-    // );
-    // const healthChangeSpeed =
-    //   (1 + this._simulation.round!.currentRoundDuration / 10000) *
-    //   0.001 *
-    //   (this._simulation.settings.roundLength === 'short'
-    //     ? 5
-    //     : this._simulation.settings.roundLength === 'long'
-    //     ? 1
-    //     : 3);
-    // for (const player of activePlayers) {
-    //   player.health = Math.max(player.health - healthChangeSpeed, 0);
-    //   if (player.health === 0) {
-    //     if (!this._simulation.isNetworkClient) {
-    //       player.status = PlayerStatus.knockedOut;
-    //     }
-    //   }
-    // }
-  }
+  step(): void {}
 
   onLinesCleared() {
     this._calculateKnockouts();
@@ -134,11 +117,44 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       lineClearRowsToCheck.filter((row, i, rows) => rows.indexOf(row) === i)
     );
   }
+  onPlayerKilled(victim: IPlayer, attacker: IPlayer) {
+    if (this.hasConversions && attacker) {
+      // if a player gets killed,
+      this._originalPlayerAppearances[victim.id] = {
+        color: attacker.color,
+        patternFilename: attacker.patternFilename,
+        characterId: attacker.characterId,
+      };
+      this._updatePlayerAppearance(victim, attacker);
+    }
+  }
+  onPlayerChangeStatus(player: IPlayer) {
+    if (
+      this.hasConversions &&
+      player.status === PlayerStatus.ingame &&
+      this._simulation.activePlayers.some(
+        (other) => other !== player && other.color === player.color
+      )
+    ) {
+      // players who get converted already have one more more cells to play on
+      player.isFirstBlock = false;
+    }
+  }
+
+  onEndRound() {
+    for (const player of this._simulation.nonSpectatorPlayers) {
+      if (this._originalPlayerAppearances[player.id]) {
+        this._updatePlayerAppearance(
+          player,
+          this._originalPlayerAppearances[player.id]
+        );
+        delete this._originalPlayerAppearances[player.id];
+      }
+    }
+  }
 
   private _calculateKnockouts() {
-    const activePlayers = this._simulation.players.filter(
-      (player) => player.status === PlayerStatus.ingame
-    );
+    const activePlayers = this._simulation.activePlayers;
     for (const player of activePlayers) {
       if (!player.isFirstBlock) {
         // TODO: optimize - this is checking every single cell in the grid
@@ -150,12 +166,39 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
           if (this._lastPlayerPlaced) {
             this._simulation.onPlayerKilled(player, this._lastPlayerPlaced);
           }
-          if (!this._hasRounds) {
+          if (!this.hasRounds) {
             this._temporarilyDeadPlayers[player.id] = true;
           }
           if (!this._simulation.isNetworkClient) {
             player.status = PlayerStatus.knockedOut;
-            if (!this._hasRounds) {
+
+            let conversionsEndRound = false;
+            if (
+              this.hasConversions &&
+              this._simulation.activePlayers.every(
+                (v, _, a) => v.color === a[0].color
+              )
+            ) {
+              // everyone is on the same team now, knock out all players except the winner
+              conversionsEndRound = true;
+              // TODO: leave the player that has been active the longest (the winner)
+              const winner = this._simulation.activePlayers.find(
+                (activePlayer, _, a) =>
+                  !a.some(
+                    (other) =>
+                      other.lastStatusChangeTime <
+                      activePlayer.lastStatusChangeTime
+                  )
+              );
+              this._simulation.activePlayers
+                .filter((activePlayer) => activePlayer !== winner)
+                .forEach((player) => (player.status = PlayerStatus.knockedOut));
+            }
+
+            if (
+              !this.hasRounds ||
+              (this.hasConversions && !conversionsEndRound)
+            ) {
               // instantly switch state back - will cause the player to reset
               player.status = PlayerStatus.ingame;
             }
@@ -167,6 +210,15 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         player.score = 0;
       }
     }
+  }
+  private _updatePlayerAppearance(
+    player: IPlayer,
+    appearance: PlayerAppearance
+  ) {
+    player.color = appearance.color;
+    player.patternFilename = appearance.patternFilename;
+    player.characterId = appearance.characterId;
+    player.requiresFullRerender = true;
   }
 
   onNextRound() {
@@ -364,20 +416,29 @@ export function conquestCanPlace(
       const neighbour = simulation.grid.cells[row][neighbourColumn];
       canPlace =
         canPlace ||
-        (neighbour.player === player &&
+        ((neighbour.player?.color === player.color ||
+          (isForgiving &&
+            neighbour.wasRecentlyPlaced(simulation.forgivingPlacementTime) &&
+            playerHasNearbyCell(player, neighbour, simulation))) &&
           // discard diagonal items
           [
             [-1, 0],
             [1, 0],
             [0, -1],
-          ].some(
-            (neighbourDirection) =>
-              simulation.grid.getNeighbour(
-                neighbour,
-                neighbourDirection[0],
-                neighbourDirection[1]
-              )?.isEmpty
-          ));
+          ].some((neighbourDirection) => {
+            const neighbourNeighbour = simulation.grid.getNeighbour(
+              neighbour,
+              neighbourDirection[0],
+              neighbourDirection[1]
+            );
+            return (
+              neighbourNeighbour?.isEmpty ||
+              (isForgiving &&
+                neighbourNeighbour?.wasRecentlyPlaced(
+                  simulation.forgivingPlacementTime
+                ))
+            );
+          }));
     }
   });
 
@@ -394,4 +455,20 @@ function isBetweenShortestPath(
   const distanceToTowerB = wrappedDistance(column, columnB, numColumns);
 
   return distanceToTowerA + distanceToTowerB <= distanceBetweenTowers;
+}
+function playerHasNearbyCell(
+  player: IPlayer,
+  neighbour: ICell,
+  simulation: ISimulation
+): boolean {
+  return [
+    [1, 0],
+    [-1, 0],
+    [0, -1],
+    [0, 1],
+  ].some(
+    (direction) =>
+      simulation.grid.getNeighbour(neighbour, direction[0], direction[1])
+        ?.player?.color === player.color
+  );
 }

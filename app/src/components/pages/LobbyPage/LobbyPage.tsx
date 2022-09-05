@@ -23,7 +23,8 @@ export default function LobbyPage() {
   const slides: RoomCarouselSlideProps[] | undefined = React.useMemo(
     () =>
       roomServerPairs?.map((pair) => ({
-        gameModeType: pair.room.data().gameModeType || 'infinity',
+        gameModeType:
+          pair.room.data().simulationSettings?.gameModeType || 'infinity',
         worldType: pair.room.data().worldType,
         name: pair.room.data().name,
         numPlayers: pair.room.data().numHumans,

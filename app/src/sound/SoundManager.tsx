@@ -85,9 +85,7 @@ export function playGameMusic(
   // TODO: add tracks for space and desert
   _gameTheme = playMusic(
     _gameTheme,
-    `${rootUrl}/${
-      worldType === 'grass' || worldType === 'volcano' ? worldType : 'space'
-    }_${trackNumber}.mp3`,
+    `${rootUrl}/${worldType}_${trackNumber}.mp3`,
     true
   );
 }

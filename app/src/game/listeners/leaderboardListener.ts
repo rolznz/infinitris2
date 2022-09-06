@@ -15,7 +15,7 @@ function _updateLeaderboard() {
     simulation?.players
       .filter(
         (player) =>
-          simulation?.settings.gameModeType !== 'conquest' ||
+          !simulation?.settings.gameModeSettings?.hasConversions ||
           !simulation?.players.some(
             (other) =>
               other.color === player.color &&

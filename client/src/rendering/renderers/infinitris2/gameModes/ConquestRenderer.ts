@@ -39,6 +39,25 @@ export class ConquestRenderer implements IGameModeRenderer {
     if (!this._renderer.simulation) {
       return;
     }
+    const topPlayableRowHeight =
+      this._renderer.simulation.grid.getTowerRow() + 1;
+    for (
+      let column = 0;
+      column < this._renderer.simulation.grid.numColumns;
+      column++
+    ) {
+      const cell =
+        this._renderer.simulation.grid.cells[topPlayableRowHeight][column];
+      if (cell.player && Math.random() < 0.1) {
+        this._renderer.emitParticle(
+          cell.column + Math.random(),
+          cell.row,
+          cell.player.color,
+          'capture'
+        );
+      }
+    }
+
     for (const player of this._renderer.simulation.nonSpectatorPlayers) {
       if (player.isFirstBlock && player.block) {
         for (const cell of player.block.cells) {

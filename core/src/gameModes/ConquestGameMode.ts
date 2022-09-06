@@ -164,7 +164,6 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
           player,
           this._originalPlayerAppearances[player.id]
         );
-        delete this._originalPlayerAppearances[player.id];
       }
     }
   }

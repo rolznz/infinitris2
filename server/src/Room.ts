@@ -254,6 +254,7 @@ export default class Room implements Partial<ISimulationEventListener> {
               }
             }
           } else if (clientMessage.message.startsWith('/nextround')) {
+            this._simulation.round!.end(undefined);
             this._simulation.round!.start();
           } else if (clientMessage.message.startsWith('/endround')) {
             this._simulation.round!.end(undefined);

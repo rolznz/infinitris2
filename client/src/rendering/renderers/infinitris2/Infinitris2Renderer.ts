@@ -836,7 +836,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
         },
         () => {
           const text = new PIXI.Text(player.nickname, {
-            fill: PIXI.utils.hex2string(player.color),
             align: 'center',
             //stroke: '#000000',
             //strokeThickness: 7,
@@ -866,6 +865,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
         }
       );
       playerContainer.nicknameText.children.forEach((child) => {
+        child.renderableObject.text.style.fill = PIXI.utils.hex2string(
+          player.color
+        );
         child.renderableObject.text.scale.set(this._cellSize * 0.03);
         child.renderableObject.icon?.scale.set(this._cellSize * 0.03);
       });

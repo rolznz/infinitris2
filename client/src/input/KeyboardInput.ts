@@ -17,6 +17,7 @@ export default class KeyboardInput {
   private _customRepeatRate: number | undefined;
   private _useCustomDAS: boolean;
   private _destroyed: boolean;
+  private _hasFiredDrop: boolean;
   private _pressedKeys: {
     [key: string]: Omit<ButtonPressState, 'isPressing'> & {
       event: KeyboardEvent | undefined;
@@ -30,6 +31,7 @@ export default class KeyboardInput {
     customRepeatRate: number | undefined
   ) {
     this._destroyed = false;
+    this._hasFiredDrop = false;
     this._controls = controls;
     this._fireAction = fireAction;
     this._customRepeatInitialDelay = customRepeatInitialDelay;
@@ -82,7 +84,10 @@ export default class KeyboardInput {
     } else if (event.key === this._controls[CustomizableInputAction.MoveDown]) {
       this._fireAction({ type: CustomizableInputAction.MoveDown });
     } else if (event.key === this._controls[CustomizableInputAction.Drop]) {
-      this._fireAction({ type: CustomizableInputAction.Drop });
+      if (!this._hasFiredDrop) {
+        this._hasFiredDrop = true;
+        this._fireAction({ type: CustomizableInputAction.Drop });
+      }
     } else if (
       event.key ===
         this._controls[CustomizableInputAction.RotateAnticlockwise] ||
@@ -112,6 +117,10 @@ export default class KeyboardInput {
       lastAction: 0,
       event: undefined,
     };
+
+    if (event.key === this._controls[CustomizableInputAction.Drop]) {
+      this._hasFiredDrop = false;
+    }
   };
 
   private _onAnimationFrame = () => {

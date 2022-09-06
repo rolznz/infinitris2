@@ -174,11 +174,11 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     for (const player of activePlayers) {
       if (!player.isFirstBlock) {
         // TODO: optimize - this is checking every single cell in the grid
-        const placableCellsCount = this._simulation.grid.reducedCells.filter(
+        const placableCells = this._simulation.grid.reducedCells.filter(
           (cell) =>
             conquestCanPlace(player, this._simulation, cell, false).canPlace
-        ).length;
-        if (placableCellsCount === 0) {
+        );
+        if (placableCells.length === 0) {
           if (this._lastPlayerPlaced) {
             this._simulation.onPlayerKilled(
               this._simulation,
@@ -224,7 +224,13 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
             }
           }
         } else {
-          player.score = placableCellsCount;
+          player.score = Math.floor(
+            (placableCells
+              .map((cell) => cell.column)
+              .filter((column, i, a) => a.indexOf(column) === i).length *
+              100) /
+              this._simulation.grid.numColumns
+          );
         }
       } else {
         player.score = 0;
@@ -292,10 +298,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   getFallDelay(player: IPlayer) {
     return player.isFirstBlock
       ? INITIAL_FALL_DELAY
-      : INITIAL_FALL_DELAY -
-          (player.score / this._simulation.grid.numColumns) *
-            0.35 *
-            INITIAL_FALL_DELAY;
+      : INITIAL_FALL_DELAY - (player.score / 100) * INITIAL_FALL_DELAY;
   }
 }
 

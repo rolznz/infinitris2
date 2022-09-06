@@ -48,13 +48,20 @@ type LeaderboardEntryScoreProps = {
 };
 
 function LeaderboardEntryScore({ playerId }: LeaderboardEntryScoreProps) {
+  const simulation = useIngameStore((store) => store.simulation);
   const score = useIngameStore(
     (store) =>
       store.leaderboardEntries.find((entry) => entry.playerId === playerId)
         ?.score
   );
+  const hasPercent = simulation?.settings.gameModeType === 'conquest';
   // console.log('Re-render leaderboard entry score');
-  return <>{score || 0}</>;
+  return (
+    <>
+      {score || 0}
+      {hasPercent ? '%' : ''}
+    </>
+  );
 }
 
 type LeaderboardEntryLineInternalProps = {

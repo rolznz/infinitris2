@@ -344,7 +344,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
           break;
         }
         // reset to check all layouts first
-        console.log('Reset bag');
+        // console.log('Reset bag');
         this._layoutBag = validLayouts.slice();
       }
       if (

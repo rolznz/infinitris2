@@ -224,7 +224,8 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
           }
         } else {
           player.score = Math.floor(
-            (placableCells
+            (this._simulation.grid.reducedCells
+              .filter((cell) => cell.player?.color === player.color)
               .map((cell) => cell.column)
               .filter((column, i, a) => a.indexOf(column) === i).length *
               100) /

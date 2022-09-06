@@ -55,6 +55,12 @@ export type CellConnection = {
   dy: number;
 };
 
+type CachedRenderableCell = {
+  connections: CellConnection[];
+  color: number;
+  patternFilename: string | undefined;
+};
+
 interface IBlockContainer {
   originalBlock: IBlock;
 
@@ -164,6 +170,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _showNicknames: boolean;
   private _numPaddingRows: number;
   private _showUI?: boolean;
+  private _cachedRenderableCells: { [index: number]: CachedRenderableCell };
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -191,6 +198,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._showFaces = showFaces;
     this._showPatterns = showPatterns;
     this._showNicknames = showNicknames;
+    this._cachedRenderableCells = {};
     this._gestureIndicator = new GestureIndicator(
       this._app,
       this._preferredInputMethod,
@@ -1186,11 +1194,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this.rerenderGrid();
   }
 
-  // TODO: move to base renderer
   protected _resize = async () => {
     if (!this._simulation) {
       return;
     }
+    this._cachedRenderableCells = {};
     super._resize();
     this._numPaddingRows = Math.max(
       Math.ceil((this._appHeight - this._gridHeight) / this._cellSize),
@@ -1333,6 +1341,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     );
     renderableCell.container.y =
       (renderableCell.cell.row + rowOffset) * this._cellSize;
+
     this._renderCellCopies(renderableCell, cell, rowOffset);
     //}
     /*else {
@@ -1496,40 +1505,61 @@ export default class Infinitris2Renderer extends BaseRenderer {
     const color: number = cell.player?.color ?? cell.color;
     const patternFilename: string | undefined = cell.player?.patternFilename;
     const behaviour: ICellBehaviour = cell.behaviour;
+
+    const connections: CellConnection[] = [];
+    for (let r = -1; r <= 1; r++) {
+      for (let c = -1; c <= 1; c++) {
+        if (r !== 0 || c !== 0) {
+          const neighbour = this._simulation.grid.getNeighbour(
+            renderableCell.cell,
+            c,
+            r
+          );
+          if (
+            neighbour?.isConnectedTo(renderableCell.cell) ||
+            (r === -1 && cell.row === 0 && this._numPaddingRows > 0) ||
+            (r === 1 &&
+              cell.row === 0 &&
+              rowOffset !== 0 &&
+              this._numPaddingRows > 0)
+          ) {
+            connections.push({
+              column: neighbour?.column ?? 0,
+              row: neighbour?.row ?? r,
+              dx: c,
+              dy: r,
+            });
+          }
+        }
+      }
+    }
+
+    if (cell.type === CellType.Normal) {
+      const cellToCache: CachedRenderableCell = {
+        connections,
+        color,
+        patternFilename,
+      };
+      const cachedCell = this._cachedRenderableCells[cell.index];
+      this._cachedRenderableCells[cell.index] = cellToCache;
+      if (
+        cachedCell &&
+        JSON.stringify(cellToCache.connections) ===
+          JSON.stringify(cachedCell.connections) &&
+        cellToCache.color === cachedCell.color &&
+        cellToCache.color === cachedCell.color &&
+        cellToCache.patternFilename === cachedCell.patternFilename
+      ) {
+        return;
+      }
+    }
+
     this.renderCopies(
       renderableCell,
       1,
       (_, shadowIndexWithDirection, child) => {
         if (!this._simulation) {
           return;
-        }
-
-        const connections: CellConnection[] = [];
-        for (let r = -1; r <= 1; r++) {
-          for (let c = -1; c <= 1; c++) {
-            if (r !== 0 || c !== 0) {
-              const neighbour = this._simulation.grid.getNeighbour(
-                renderableCell.cell,
-                c,
-                r
-              );
-              if (
-                neighbour?.isConnectedTo(renderableCell.cell) ||
-                (r === -1 && cell.row === 0 && this._numPaddingRows > 0) ||
-                (r === 1 &&
-                  cell.row === 0 &&
-                  rowOffset !== 0 &&
-                  this._numPaddingRows > 0)
-              ) {
-                connections.push({
-                  column: neighbour?.column ?? 0,
-                  row: neighbour?.row ?? r,
-                  dx: c,
-                  dy: r,
-                });
-              }
-            }
-          }
         }
 
         this._renderCellInternal(

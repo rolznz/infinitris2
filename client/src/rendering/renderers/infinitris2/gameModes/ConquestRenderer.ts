@@ -20,7 +20,7 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._freeRenderableCells = {};
     this._renderer = renderer;
     this._renderer.simulation!.addEventListener(this);
-    this._cachedCanPlaceResults = [];
+    this._cachedCanPlaceResults = {};
   }
   onGameModeEvent(event: ConquestEvent): void {
     if (event.type === 'cellAreaCapture') {
@@ -76,10 +76,11 @@ export class ConquestRenderer implements IGameModeRenderer {
   }
 
   resize() {
-    this._rerender(true);
+    this._cachedCanPlaceResults = {};
+    this._rerender();
   }
 
-  private _rerender(force = false) {
+  private _rerender() {
     const simulation = this._renderer.simulation;
     if (!simulation || !simulation.followingPlayer) {
       return;
@@ -108,9 +109,7 @@ export class ConquestRenderer implements IGameModeRenderer {
           cell,
           false
         );
-        const cachedCanPlaceResult = force
-          ? undefined
-          : this._cachedCanPlaceResults[cellIndex];
+        const cachedCanPlaceResult = this._cachedCanPlaceResults[cellIndex];
         this._cachedCanPlaceResults[cellIndex] = canPlaceResult;
         if (
           canPlaceResult.canPlace === cachedCanPlaceResult?.canPlace &&

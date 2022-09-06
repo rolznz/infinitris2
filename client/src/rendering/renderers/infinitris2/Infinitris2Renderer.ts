@@ -1296,6 +1296,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       );
     }
     this._app.view.style.visibility = 'visible';
+    this._gameModeRenderer?.resize();
   };
 
   private _renderCells(cells: ICell[]) {

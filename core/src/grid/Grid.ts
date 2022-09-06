@@ -6,6 +6,9 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import { IPlayer } from '@models/IPlayer';
 import { KeyedRandom } from '@core/simulation/KeyedRandom';
 
+export const MAX_COLUMNS = 100000;
+export const MAX_ROWS = 100000;
+
 export default class Grid implements IGrid {
   private _cells: ICell[][];
   private _reducedCells: ICell[];
@@ -20,6 +23,8 @@ export default class Grid implements IGrid {
     numRows: number = 16,
     forceSeamless = true
   ) {
+    numColumns = Math.min(numColumns, MAX_COLUMNS);
+    numRows = Math.min(numRows, MAX_ROWS);
     if (forceSeamless) {
       numColumns = Math.max(Math.floor(numColumns / 4), 1) * 4; // force % 4 columns for seamless pattern wrap
     }

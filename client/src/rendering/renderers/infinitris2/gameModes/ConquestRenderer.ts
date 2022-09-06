@@ -3,7 +3,10 @@ import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GameModeRenderer';
 import * as PIXI from 'pixi.js-legacy';
-import { conquestCanPlace } from '@core/gameModes/ConquestGameMode';
+import {
+  conquestCanPlace,
+  ConquestCanPlaceResult,
+} from '@core/gameModes/ConquestGameMode';
 import { wrap } from '@models/util/wrap';
 
 interface IRenderableFreeCell extends IRenderableEntity<PIXI.Graphics> {}
@@ -11,11 +14,13 @@ interface IRenderableFreeCell extends IRenderableEntity<PIXI.Graphics> {}
 export class ConquestRenderer implements IGameModeRenderer {
   private _freeRenderableCells!: { [rowColumnId: number]: IRenderableFreeCell };
   private _renderer: BaseRenderer;
+  private _cachedCanPlaceResults: { [index: number]: ConquestCanPlaceResult };
 
   constructor(renderer: BaseRenderer) {
     this._freeRenderableCells = {};
     this._renderer = renderer;
     this._renderer.simulation!.addEventListener(this);
+    this._cachedCanPlaceResults = [];
   }
   onGameModeEvent(event: ConquestEvent): void {
     if (event.type === 'cellAreaCapture') {
@@ -28,14 +33,6 @@ export class ConquestRenderer implements IGameModeRenderer {
         );
       }
     }
-  }
-
-  private _rerender() {
-    if (!this._renderer.simulation) {
-      return;
-    }
-
-    this._renderFreeCells();
   }
 
   onSimulationStep() {
@@ -78,14 +75,19 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._rerender();
   }
 
-  private _renderFreeCells() {
+  resize() {
+    this._rerender(true);
+  }
+
+  private _rerender(force = false) {
     const simulation = this._renderer.simulation;
     if (!simulation || !simulation.followingPlayer) {
       return;
     }
     for (let row = 0; row < simulation.grid.numRows; row++) {
       for (let column = 0; column < simulation.grid.numColumns; column++) {
-        const cellIndex = row * simulation.grid.numColumns + column;
+        const cell = simulation.grid.cells[row][column];
+        const cellIndex = cell.index;
         if (!this._freeRenderableCells[cellIndex]) {
           const freeCellContainer = new PIXI.Container();
           this._renderer.world.addChild(freeCellContainer);
@@ -95,12 +97,27 @@ export class ConquestRenderer implements IGameModeRenderer {
           };
         }
         const freeRenderableCell = this._freeRenderableCells[cellIndex];
-        const cell = simulation.grid.cells[row][column];
 
         freeRenderableCell.container.x = this._renderer.getWrappedX(
           column * this._renderer.cellSize
         );
         freeRenderableCell.container.y = cell.row * this._renderer.cellSize;
+        const canPlaceResult = conquestCanPlace(
+          simulation.followingPlayer!,
+          simulation,
+          cell,
+          false
+        );
+        const cachedCanPlaceResult = force
+          ? undefined
+          : this._cachedCanPlaceResults[cellIndex];
+        this._cachedCanPlaceResults[cellIndex] = canPlaceResult;
+        if (
+          canPlaceResult.canPlace === cachedCanPlaceResult?.canPlace &&
+          canPlaceResult.isStalemate === cachedCanPlaceResult?.isStalemate
+        ) {
+          continue;
+        }
 
         this._renderer.renderCopies(
           freeRenderableCell,
@@ -110,12 +127,6 @@ export class ConquestRenderer implements IGameModeRenderer {
             graphics.x = shadowX;
 
             graphics.clear();
-            const canPlaceResult = conquestCanPlace(
-              simulation.followingPlayer!,
-              simulation,
-              cell,
-              false
-            );
 
             if (canPlaceResult.canPlace) {
               graphics.beginFill(

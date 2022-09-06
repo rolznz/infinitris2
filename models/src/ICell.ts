@@ -20,6 +20,7 @@ export default interface ICell {
   get isPassable(): boolean;
   get isPassableWhileDropping(): boolean;
   get grid(): IGrid;
+  get index(): number;
   get behaviour(): ICellBehaviour;
   set behaviour(behaviour: ICellBehaviour);
   get blocks(): IBlock[];

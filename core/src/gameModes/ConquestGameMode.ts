@@ -282,7 +282,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   }
 }
 
-type ConquestCanPlaceResult = {
+export type ConquestCanPlaceResult = {
   canPlace: boolean;
   isStalemate: boolean;
 };

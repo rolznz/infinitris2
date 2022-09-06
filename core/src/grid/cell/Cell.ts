@@ -6,6 +6,7 @@ import NormalCellBehaviour from './behaviours/NormalCellBehaviour';
 import IGrid from '@models/IGrid';
 import ICellEventListener from '@models/ICellEventListener';
 import { IPlayer } from '@models/IPlayer';
+import { MAX_COLUMNS } from '@core/grid/Grid';
 
 export default class Cell implements ICell {
   private _grid: IGrid;
@@ -19,10 +20,12 @@ export default class Cell implements ICell {
   private _requiresRerender: boolean;
   private _nextRerender: number;
   private _playerPlacementTime: number;
+  private _index: number;
   constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
     this._row = row;
     this._column = column;
+    this._index = row * MAX_COLUMNS + column;
     this._behaviour = new NormalCellBehaviour(this);
     this._isEmpty = true;
     this._blocks = [];
@@ -49,6 +52,10 @@ export default class Cell implements ICell {
     return this._blocks.length
       ? this._blocks[0].player.color
       : this._behaviour?.color || 0xffffff;
+  }
+
+  get index(): number {
+    return this._index;
   }
 
   get requiresRerender(): boolean {

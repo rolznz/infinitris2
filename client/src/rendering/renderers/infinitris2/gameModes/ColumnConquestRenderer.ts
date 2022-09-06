@@ -46,6 +46,10 @@ export class ColumnConquestRenderer implements IGameModeRenderer {
     }
   }
 
+  resize() {
+    this._rerender();
+  }
+
   private _rerender(column?: number) {
     if (!this._renderer.simulation) {
       return;

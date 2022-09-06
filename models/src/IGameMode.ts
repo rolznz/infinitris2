@@ -8,6 +8,7 @@ export interface IGameMode<GameModeState>
   get hasHealthbars(): boolean;
   get hasLineClearReward(): boolean;
   get hasBlockPlacementReward(): boolean;
+  get shouldNewPlayerSpectate(): boolean;
   step(): void;
   serialize(): GameModeState;
   deserialize(state: GameModeState): void;

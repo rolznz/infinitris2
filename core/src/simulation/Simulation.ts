@@ -235,7 +235,11 @@ export default class Simulation implements ISimulation {
   }
 
   get shouldNewPlayerSpectate(): boolean {
-    return !!this._round;
+    return (
+      !!this._round &&
+      (this._round.isWaitingForNextRound ||
+        this._gameMode.shouldNewPlayerSpectate)
+    );
   }
   get forgivingPlacementTime(): number {
     return this._settings.forgivingPlacementTime ?? 1000; //ms

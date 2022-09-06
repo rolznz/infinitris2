@@ -23,6 +23,9 @@ export class RaceGameMode implements IGameMode<RaceGameModeState> {
   get hasBlockPlacementReward(): boolean {
     return true;
   }
+  get shouldNewPlayerSpectate(): boolean {
+    return true;
+  }
 
   step(): void {}
 

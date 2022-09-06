@@ -31,6 +31,9 @@ export class InfinityGameMode implements IGameMode<InfinityGameModeState> {
   get hasBlockPlacementReward(): boolean {
     return true;
   }
+  get shouldNewPlayerSpectate(): boolean {
+    return false;
+  }
 
   getFallDelay(player: IPlayer) {
     return getScoreBasedFallDelay(player);

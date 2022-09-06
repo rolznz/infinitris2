@@ -47,6 +47,9 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   get hasBlockPlacementReward(): boolean {
     return false;
   }
+  get shouldNewPlayerSpectate(): boolean {
+    return !this.hasRounds || !this.hasConversions;
+  }
 
   step(): void {}
 

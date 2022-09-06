@@ -45,6 +45,9 @@ export class ColumnConquestGameMode
   get hasBlockPlacementReward(): boolean {
     return false;
   }
+  get shouldNewPlayerSpectate(): boolean {
+    return true;
+  }
 
   step(): void {
     const now = Date.now();

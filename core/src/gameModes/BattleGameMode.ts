@@ -23,4 +23,7 @@ export class BattleGameMode implements IGameMode<BattleGameModeState> {
   get hasBlockPlacementReward(): boolean {
     return false;
   }
+  get shouldNewPlayerSpectate(): boolean {
+    return true;
+  }
 }

@@ -20,6 +20,7 @@ export type LeaderboardEntry = {
   status: PlayerStatus;
   isPremium: boolean;
   isNicknameVerified: boolean;
+  allyNicknames: string[];
 };
 
 type IngameStore = {

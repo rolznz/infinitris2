@@ -72,10 +72,14 @@ export class ConquestRenderer implements IGameModeRenderer {
   }
 
   onBlockRemoved() {
-    this._rerender();
+    setTimeout(() => {
+      this._rerender();
+    }, 1);
   }
   onLinesCleared() {
-    this._rerender();
+    setTimeout(() => {
+      this._rerender();
+    }, 1);
   }
   onPlayerChangeStatus() {
     this._rerender();

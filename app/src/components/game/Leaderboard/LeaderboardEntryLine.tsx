@@ -80,7 +80,8 @@ function LeaderboardEntryLineInternal({
       store.leaderboardEntries.find((entry) => entry.playerId === playerId),
     (prevState, newState) =>
       prevState?.placing === newState?.placing &&
-      prevState?.status === newState?.status
+      prevState?.status === newState?.status &&
+      prevState?.allyNicknames.length === newState?.allyNicknames.length
   );
 
   const simulation = useIngameStore((store) => store.simulation);
@@ -126,92 +127,110 @@ function LeaderboardEntryLineInternal({
       py={0}
       borderRadius={borderRadiuses.base}
       position="relative"
-      flexDirection="row"
-      flex={1}
       width="100%"
       justifyContent="flex-start"
       sx={boxSx}
     >
-      <FlexBox width={0.16}>
-        <PlacingStar
-          absolute={false}
-          placing={entry.placing}
-          offset={0}
-          scale={0.7}
+      <FlexBox flexDirection="row" justifyContent="flex-start" width="100%">
+        <FlexBox width={0.16}>
+          <PlacingStar
+            absolute={false}
+            placing={entry.placing}
+            offset={0}
+            scale={0.7}
+          />
+        </FlexBox>
+        <CharacterImage
+          characterId={entry.characterId || DEFAULT_CHARACTER_ID}
+          width={64}
         />
-      </FlexBox>
-      <CharacterImage
-        characterId={entry.characterId || DEFAULT_CHARACTER_ID}
-        width={64}
-      />
-      <FlexBox flex={1} alignItems="flex-start">
-        <FlexBox flexDirection="row" gap={0.5}>
-          <Typography
-            flex={1}
-            variant="body1"
-            sx={nameTypographySx}
-            maxWidth={0.9}
-            textOverflow="ellipsis"
-            overflow="hidden"
-            whiteSpace="nowrap"
-          >
-            {entry.nickname}
-          </Typography>
-          {entry.isBot && (
-            <SvgIcon fontSize="small" color="secondary">
-              <BotIcon />
-            </SvgIcon>
-          )}
-          {entry.isNicknameVerified && (
-            <SvgIcon fontSize="small" color="secondary">
-              <VerifiedIcon />
-            </SvgIcon>
+        <FlexBox flex={1} alignItems="flex-start">
+          <FlexBox flexDirection="row" gap={0.5}>
+            <Typography
+              flex={1}
+              variant="body1"
+              sx={nameTypographySx}
+              maxWidth={0.9}
+              textOverflow="ellipsis"
+              overflow="hidden"
+              whiteSpace="nowrap"
+            >
+              {entry.nickname}
+            </Typography>
+            {entry.isBot && (
+              <SvgIcon fontSize="small" color="secondary">
+                <BotIcon />
+              </SvgIcon>
+            )}
+            {entry.isNicknameVerified && (
+              <SvgIcon fontSize="small" color="secondary">
+                <VerifiedIcon />
+              </SvgIcon>
+            )}
+          </FlexBox>
+          {entry.status !== PlayerStatus.ingame && (
+            <Typography variant="body1" sx={statusTypographySx}>
+              {entry.playerId === simulation?.round?.winner?.id ? (
+                <FormattedMessage
+                  defaultMessage="Winner"
+                  description="leaderboard entry winner status"
+                />
+              ) : entry.status === PlayerStatus.knockedOut ? (
+                <FormattedMessage
+                  defaultMessage="Knocked out"
+                  description="leaderboard entry knocked out status"
+                />
+              ) : (
+                <FormattedMessage
+                  defaultMessage="Spectating"
+                  description="leaderboard entry spectating status"
+                />
+              )}
+            </Typography>
           )}
         </FlexBox>
-        {entry.status !== PlayerStatus.ingame && (
-          <Typography variant="body1" sx={statusTypographySx}>
-            {entry.playerId === simulation?.round?.winner?.id ? (
-              <FormattedMessage
-                defaultMessage="Winner"
-                description="leaderboard entry winner status"
-              />
-            ) : entry.status === PlayerStatus.knockedOut ? (
-              <FormattedMessage
-                defaultMessage="Knocked out"
-                description="leaderboard entry knocked out status"
-              />
-            ) : (
-              <FormattedMessage
-                defaultMessage="Spectating"
-                description="leaderboard entry spectating status"
-              />
-            )}
-          </Typography>
+        {entry.status !== PlayerStatus.spectating && (
+          <FlexBox
+            boxShadow={boxShadows.small}
+            borderRadius={borderRadiuses.base}
+            px={1}
+            py={0.5}
+            justifySelf="flex-end"
+            //width={0.2}
+            gap={0.5}
+            flexDirection="row"
+            flexShrink={0}
+          >
+            <Typography variant="body1" color="secondary" lineHeight="1">
+              {children}
+            </Typography>
+            <SvgIcon fontSize="small" sx={{ color: entry.color }}>
+              {simulation?.settings.gameModeType === 'conquest' ||
+              simulation?.settings.gameModeType === 'column-conquest' ? (
+                <ConquestIcon />
+              ) : (
+                <ScoreIcon />
+              )}
+            </SvgIcon>
+          </FlexBox>
         )}
       </FlexBox>
-      {entry.status !== PlayerStatus.spectating && (
+      {entry.allyNicknames.length > 0 && (
         <FlexBox
-          boxShadow={boxShadows.small}
-          borderRadius={borderRadiuses.base}
-          px={1}
-          py={0.5}
-          justifySelf="flex-end"
-          //width={0.2}
-          gap={0.5}
           flexDirection="row"
-          flexShrink={0}
+          justifyContent="flex-start"
+          width="100%"
+          py={1}
         >
-          <Typography variant="body1" color="secondary" lineHeight="1">
-            {children}
+          <Typography
+            variant="body1"
+            color={entry.color}
+            fontSize="12px"
+            lineHeight="0"
+          >
+            {'+'}
+            {entry.allyNicknames.join(' +')}
           </Typography>
-          <SvgIcon fontSize="small" sx={{ color: entry.color }}>
-            {simulation?.settings.gameModeType === 'conquest' ||
-            simulation?.settings.gameModeType === 'column-conquest' ? (
-              <ConquestIcon />
-            ) : (
-              <ScoreIcon />
-            )}
-          </SvgIcon>
         </FlexBox>
       )}
     </FlexBox>

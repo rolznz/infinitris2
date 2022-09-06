@@ -12,19 +12,36 @@ function _updateLeaderboard() {
   const maxEntries = 5; // TODO: responsive
 
   const leaderboardEntries: LeaderboardEntry[] =
-    simulation?.players.map((player) => ({
-      isControllable: player.isControllable,
-      placing: 0,
-      playerId: player.id,
-      isBot: player.isBot,
-      nickname: player.nickname,
-      color: hexToString(player.color),
-      characterId: player.characterId,
-      score: player.score,
-      status: player.status,
-      isPremium: player.isPremium,
-      isNicknameVerified: player.isNicknameVerified,
-    })) || [];
+    simulation?.players
+      .filter(
+        (player) =>
+          simulation?.settings.gameModeType !== 'conquest' ||
+          !simulation?.players.some(
+            (other) =>
+              other.color === player.color &&
+              other.lastStatusChangeTime < player.lastStatusChangeTime
+          )
+      )
+      .map((player) => ({
+        isControllable: player.isControllable,
+        placing: 0,
+        playerId: player.id,
+        isBot: player.isBot,
+        nickname: player.nickname,
+        color: hexToString(player.color),
+        characterId: player.characterId,
+        score: player.score,
+        status: player.status,
+        isPremium: player.isPremium,
+        isNicknameVerified: player.isNicknameVerified,
+        allyNicknames: simulation.players
+          .filter(
+            (other) =>
+              other.color === player.color &&
+              other.lastStatusChangeTime > player.lastStatusChangeTime
+          )
+          .map((ally) => ally.nickname),
+      })) || [];
 
   leaderboardEntries.sort((a, b) => {
     if (a.status === PlayerStatus.ingame && b.status === PlayerStatus.ingame) {

@@ -3,7 +3,7 @@ import create from 'zustand';
 
 export type MessageLogEntry = {
   message: string;
-  nickname: string;
+  nickname?: string;
   color: string;
   createdTime: number;
 };

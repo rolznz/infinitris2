@@ -474,9 +474,21 @@ export default class Simulation implements ISimulation {
     );
   }
 
-  onPlayerKilled(victim: IPlayer, attacker: IPlayer) {
+  addMessage(message: string) {
     this._eventListeners.forEach((listener) =>
-      listener.onPlayerKilled?.(victim, attacker)
+      listener.onSimulationMessage?.(this, message)
+    );
+  }
+
+  onSimulationMessage() {}
+
+  onPlayerKilled(_simulation: ISimulation, victim: IPlayer, attacker: IPlayer) {
+    this.addMessage(
+      'Player ' + victim.nickname + ' knocked out by ' + attacker.nickname
+    );
+
+    this._eventListeners.forEach((listener) =>
+      listener.onPlayerKilled?.(this, victim, attacker)
     );
   }
 

@@ -74,6 +74,13 @@ export function SinglePlayerGameModePickerPage() {
             lodashMerge(formData, {
               simulationSettings: {
                 gameModeType: GameModeTypeValues[step],
+                gameModeSettings:
+                  GameModeTypeValues[step] === 'conquest'
+                    ? {
+                        hasConversions: true,
+                        hasRounds: true,
+                      }
+                    : undefined,
               },
               worldType: getWorldType(GameModeTypeValues[step]),
             } as SinglePlayerOptionsFormData)
@@ -86,9 +93,9 @@ export function SinglePlayerGameModePickerPage() {
 function getWorldType(gameModeType: GameModeType): WorldType {
   return gameModeType === 'conquest'
     ? 'desert'
-    : gameModeType === 'race' || gameModeType === 'column-conquest'
+    : gameModeType === 'race'
     ? 'space'
-    : gameModeType === 'battle'
+    : gameModeType === 'battle' || gameModeType === 'column-conquest'
     ? 'volcano'
     : 'grass';
 }

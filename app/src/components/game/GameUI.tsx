@@ -48,7 +48,7 @@ export function GameUI({
       }}
     >
       {chatEnabled && <IngameChat />}
-      {chatEnabled && <MessageLog />}
+      <MessageLog />
       <TopRightPanel>
         {challengeEditorEnabled && <ChallengeEditorTopRightPanelContents />}
         {chatEnabled && !challengeEditorEnabled && <ChatButton />}

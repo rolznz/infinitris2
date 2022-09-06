@@ -41,6 +41,7 @@ import { IServerPlayerChangeStatusEvent } from '@core/networking/server/IServerP
 import { IServerMessage } from '@models/networking/server/IServerMessage';
 import { ICharacter } from '@models/ICharacter';
 import IRoom from '@models/IRoom';
+import ISimulation from '@models/ISimulation';
 
 export default class Room implements Partial<ISimulationEventListener> {
   private _sendMessage: SendServerMessageFunction;
@@ -442,11 +443,11 @@ export default class Room implements Partial<ISimulationEventListener> {
 
   onGameModeEvent(event: GameModeEvent): void {}
 
-  onPlayerKilled(victim: IPlayer, attacker: IPlayer) {
-    this._sendServerChatMessage(
-      'Player ' + victim.nickname + ' killed by ' + attacker.nickname
-    );
-  }
+  onPlayerKilled(
+    _simulation: ISimulation,
+    _victim: IPlayer,
+    _attacker: IPlayer
+  ) {}
 
   private _sendMessageToAllPlayers(message: IServerMessage) {
     const playerIds: number[] = this._simulation.getNetworkPlayerIds();

@@ -69,9 +69,11 @@ function MessageLogEntryLine({ entry }: MessageLogEntryLineProps): JSX.Element {
         backgroundColor: '#00000055',
       }}
     >
-      <Typography variant="body1" style={{ color: entry.color }}>
-        {entry.nickname}
-      </Typography>
+      {entry.nickname && (
+        <Typography variant="body1" style={{ color: entry.color }}>
+          {entry.nickname}
+        </Typography>
+      )}
       <Typography style={{ color: '#fff' }}>{entry.message}</Typography>
     </FlexBox>
   );

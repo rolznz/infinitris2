@@ -127,7 +127,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       characterId: player.characterId,
     };
   }
-  onPlayerKilled(victim: IPlayer, attacker: IPlayer) {
+  onPlayerKilled(_simulation: ISimulation, victim: IPlayer, attacker: IPlayer) {
     if (attacker) {
       for (const cell of this._simulation.grid.reducedCells.filter(
         (victimCell) => victimCell.player === victim
@@ -180,7 +180,11 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         ).length;
         if (placableCellsCount === 0) {
           if (this._lastPlayerPlaced) {
-            this._simulation.onPlayerKilled(player, this._lastPlayerPlaced);
+            this._simulation.onPlayerKilled(
+              this._simulation,
+              player,
+              this._lastPlayerPlaced
+            );
           }
           if (!this.hasRounds) {
             this._temporarilyDeadPlayers[player.id] = true;

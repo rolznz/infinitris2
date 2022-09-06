@@ -24,8 +24,14 @@ export default interface ISimulationEventListener
    */
   onSimulationStep(simulation: ISimulation): void;
 
-  onPlayerKilled(victim: IPlayer, attacker: IPlayer): void;
+  onPlayerKilled(
+    simulation: ISimulation,
+    victim: IPlayer,
+    attacker: IPlayer
+  ): void;
 
   onSimulationStart(simulation: ISimulation): void;
   onSimulationStop(simulation: ISimulation): void;
+
+  onSimulationMessage(simulation: ISimulation, message: string): void;
 }

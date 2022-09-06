@@ -1134,7 +1134,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     });*/
   }
 
-  onNextRound() {}
+  onNextRound() {
+    this._cachedRenderableCells = {};
+  }
 
   onLineClearing(row: number) {
     this._lineClearingIndicator.setLineClearing(row, true);

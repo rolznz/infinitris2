@@ -62,7 +62,10 @@ export class ConquestRenderer implements IGameModeRenderer {
     }, 1000);
   }
   onNextRound() {
-    this._rerender();
+    setTimeout(() => {
+      this._cachedCanPlaceResults = {};
+      this._rerender();
+    }, 1);
   }
   onEndRound() {
     this._rerender();
@@ -72,6 +75,9 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._rerender();
   }
   onLinesCleared() {
+    this._rerender();
+  }
+  onPlayerChangeStatus() {
     this._rerender();
   }
 

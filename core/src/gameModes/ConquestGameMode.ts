@@ -105,7 +105,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
                     row: cellToFill.row,
                     color: block.player.color,
                   });
-                  cellToFill.rerenderDelay = Math.random() * 500;
+                  this._delayRerender(cellToFill);
                   cellToFill.place(block.player);
                   lineClearRowsToCheck.push(cellToFill.row);
                 }
@@ -120,16 +120,29 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       lineClearRowsToCheck.filter((row, i, rows) => rows.indexOf(row) === i)
     );
   }
+  onPlayerCreated(player: IPlayer) {
+    this._originalPlayerAppearances[player.id] = {
+      color: player.color,
+      patternFilename: player.patternFilename,
+      characterId: player.characterId,
+    };
+  }
   onPlayerKilled(victim: IPlayer, attacker: IPlayer) {
+    if (attacker) {
+      for (const cell of this._simulation.grid.reducedCells.filter(
+        (victimCell) => victimCell.player === victim
+      )) {
+        //this._delayRerender(cell);
+        cell.place(attacker);
+      }
+    }
+
     if (this.hasConversions && attacker) {
-      // if a player gets killed,
-      this._originalPlayerAppearances[victim.id] = {
-        color: attacker.color,
-        patternFilename: attacker.patternFilename,
-        characterId: attacker.characterId,
-      };
       this._updatePlayerAppearance(victim, attacker);
     }
+  }
+  private _delayRerender(cell: ICell) {
+    cell.rerenderDelay = Math.random() * 500;
   }
   onPlayerChangeStatus(player: IPlayer) {
     if (

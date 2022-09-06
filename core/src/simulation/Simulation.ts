@@ -509,7 +509,9 @@ export default class Simulation implements ISimulation {
    */
   onPlayerChangeStatus(player: IPlayer) {
     if (player.status !== PlayerStatus.ingame) {
-      this._grid.removePlayer(player);
+      // this causes the player's cells to change to the default "grass" cell
+      // which is problematic for the conquest game mode (it should be captured by the attacker)
+      //this._grid.removePlayer(player);
     }
     this._eventListeners.forEach((listener) =>
       listener.onPlayerChangeStatus?.(player)

@@ -2,7 +2,7 @@ import ISimulationEventListener from '@models/ISimulationEventListener';
 import ControlSettings from '@models/ControlSettings';
 import ISimulation from '@models/ISimulation';
 
-export type ParticleType = 'classic' | 'capture';
+export type ParticleType = 'classic' | 'capture' | 'fountain';
 
 export interface IRenderer extends Partial<ISimulationEventListener> {
   /**

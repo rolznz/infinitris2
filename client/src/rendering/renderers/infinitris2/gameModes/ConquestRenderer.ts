@@ -48,12 +48,12 @@ export class ConquestRenderer implements IGameModeRenderer {
     ) {
       const cell =
         this._renderer.simulation.grid.cells[topPlayableRowHeight][column];
-      if (cell.player && Math.random() < 0.1) {
+      if (cell.player && Math.random() < 0.2) {
         this._renderer.emitParticle(
           cell.column + Math.random(),
           cell.row,
           cell.player.color,
-          'capture'
+          'fountain'
         );
       }
     }

@@ -60,6 +60,7 @@ type CachedRenderableCell = {
   color: number;
   patternFilename: string | undefined;
   isEmpty: boolean;
+  cacheId: number;
 };
 
 interface IBlockContainer {
@@ -172,6 +173,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _numPaddingRows: number;
   private _showUI?: boolean;
   private _cachedRenderableCells: { [index: number]: CachedRenderableCell };
+  private _cacheId: number;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -213,6 +215,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     document.body.style.overflow = 'none';
     this._renderFpsFrames = [];
     this._showUI = showUI;
+    this._cacheId = 0;
   }
 
   /**
@@ -988,15 +991,17 @@ export default class Infinitris2Renderer extends BaseRenderer {
     y: number,
     color: number,
     type: ParticleType,
-    isSolid = true
+    isSolid = type !== 'fountain'
   ) {
-    const life = 50; //type === 'classic' ? 100 : 50;
+    const life = type === 'fountain' ? 25 : 50; //type === 'classic' ? 100 : 50;
     const particle: IParticle = {
       x: x + (type === 'capture' ? (Math.random() - 0.5) * 6 : 0),
       y: y + (type === 'capture' ? (Math.random() - 0.5) * 6 : 0),
       vx: type === 'classic' ? (Math.random() - 0.5) * 0.1 : 0,
       vy:
-        type === 'classic'
+        type === 'fountain'
+          ? -(Math.random() + 1) * 0.1
+          : type === 'classic'
           ? isSolid
             ? -(Math.random() + 0.5) * 0.05
             : -(Math.random() + 0.5) * 0.1
@@ -1083,7 +1088,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     //console.log('Rendering', this._particles.length, 'particles');
     for (const particle of this._particles) {
-      if (particle.type === 'classic') {
+      if (particle.type === 'classic' || particle.type === 'fountain') {
         particle.vx *= 0.99;
         particle.vy += 0.01;
         particle.container.alpha = particle.life / particle.maxLife;
@@ -1154,7 +1159,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   onNextRound() {
-    this._cachedRenderableCells = {};
+    this.rerenderGrid();
   }
 
   onLineClearing(row: number) {
@@ -1212,14 +1217,19 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   onGridReset(_grid: IGrid): void {
+    this._resetCache();
     this.rerenderGrid();
+  }
+
+  private _resetCache() {
+    ++this._cacheId;
   }
 
   protected _resize = async () => {
     if (!this._simulation) {
       return;
     }
-    this._cachedRenderableCells = {};
+    this._resetCache();
     super._resize();
     this._numPaddingRows = Math.max(
       Math.ceil((this._appHeight - this._gridHeight) / this._cellSize),
@@ -1495,7 +1505,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         graphics.x = shadowX;
         graphics.clear();
         graphics.beginFill(color);
-        if (particle.type === 'capture') {
+        if (particle.type === 'capture' || particle.type === 'fountain') {
           graphics.drawCircle(0, 0, particleSize);
         } else {
           graphics.lineStyle(this._cellPadding, 0);
@@ -1561,12 +1571,14 @@ export default class Infinitris2Renderer extends BaseRenderer {
         color,
         patternFilename,
         isEmpty: cell.isEmpty,
+        cacheId: this._cacheId,
       };
       const cachedCell = this._cachedRenderableCells[cell.index];
       this._cachedRenderableCells[cell.index] = cellToCache;
       if (
         (!cachedCell && cell.isEmpty) ||
         (cachedCell &&
+          cellToCache.cacheId === cachedCell.cacheId &&
           ((cellToCache.isEmpty && cachedCell.isEmpty) ||
             JSON.stringify(cellToCache.connections) ===
               JSON.stringify(cachedCell.connections)) &&

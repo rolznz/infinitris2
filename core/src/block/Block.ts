@@ -314,10 +314,9 @@ export default class Block implements IBlock {
               Boolean(
                 this._isDropping &&
                   options?.isForgiving &&
-                  cell?.player !== this._player &&
-                  cell?.wasRecentlyPlaced(
-                    this._simulation.forgivingPlacementTime
-                  )
+                  cell &&
+                  cell.player !== this._player &&
+                  this._simulation.wasRecentlyPlaced(cell.placementFrame)
               ));
         }
       );

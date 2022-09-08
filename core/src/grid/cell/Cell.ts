@@ -19,8 +19,8 @@ export default class Cell implements ICell {
   private _player: IPlayer | undefined;
   private _requiresRerender: boolean;
   private _nextRerender: number;
-  private _playerPlacementTime: number;
   private _index: number;
+  private _placementFrame: number;
   constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
     this._row = row;
@@ -32,7 +32,7 @@ export default class Cell implements ICell {
     this._eventListener = grid;
     this._requiresRerender = true;
     this._nextRerender = 0;
-    this._playerPlacementTime = 0;
+    this._placementFrame = 0;
   }
 
   get grid(): IGrid {
@@ -91,8 +91,8 @@ export default class Cell implements ICell {
     }
   }
 
-  wasRecentlyPlaced(recentPlacementTimeout: number): boolean {
-    return Date.now() - this._playerPlacementTime < recentPlacementTimeout;
+  get placementFrame(): number {
+    return this._placementFrame;
   }
 
   get behaviour(): ICellBehaviour {
@@ -126,7 +126,7 @@ export default class Cell implements ICell {
       this.behaviour = new NormalCellBehaviour(this, player?.color);
     }
     if (player) {
-      this._playerPlacementTime = Date.now();
+      this._placementFrame = this._grid.frameNumber;
     }
   }
 

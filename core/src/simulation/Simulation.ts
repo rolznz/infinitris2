@@ -35,10 +35,11 @@ import { ColumnConquestGameMode } from '@core/gameModes/ColumnConquestGameMode';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { BattleGameMode } from '@core/gameModes/BattleGameMode';
 
+const IDEAL_FPS = 60;
 /**
  * The length of a single animation frame for the simulation.
  */
-export const FRAME_LENGTH: number = 1000 / 60;
+export const FRAME_LENGTH: number = 1000 / IDEAL_FPS;
 /**
  * Multiple frames can be executed in one go in order
  * to attempt to run at 60fps
@@ -241,8 +242,15 @@ export default class Simulation implements ISimulation {
         this._gameMode.shouldNewPlayerSpectate)
     );
   }
-  get forgivingPlacementTime(): number {
+  /*get forgivingPlacementTime(): number {
     return this._settings.forgivingPlacementTime ?? 1000; //ms
+  }*/
+  get forgivingPlacementFrames(): number {
+    return this._settings.forgivingPlacementFrames ?? IDEAL_FPS;
+  }
+
+  wasRecentlyPlaced(occurrenceFrame: number): boolean {
+    return this._frameNumber - occurrenceFrame < this.forgivingPlacementFrames;
   }
 
   nextRandom(key: string): number {
@@ -665,7 +673,7 @@ export default class Simulation implements ISimulation {
       listener.onSimulationPreStep?.(this)
     );
     this.players.forEach(this._updatePlayer);
-    this._grid.step(this._isNetworkClient);
+    this._grid.step(this._isNetworkClient, this._frameNumber);
     this._gameMode.step();
     this._round?.step();
     this._runningTime += FRAME_LENGTH;

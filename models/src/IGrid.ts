@@ -27,13 +27,14 @@ export default interface IGrid extends ICellEventListener {
   get numRows(): number;
   get numColumns(): number;
   get nextLinesToClear(): number[];
+  get frameNumber(): number;
   nextRandom(key: string): number;
   isTower(row: number): boolean;
   getTowerRow(): number;
   getNeighbour(cell: ICell, dx: number, dy: number): ICell | undefined;
   removePlayer(player: IPlayer): void;
   reset(): void;
-  step(isNetworkClient: boolean): void;
+  step(isNetworkClient: boolean, frameNumber: number): void;
   checkLineClears(rows: number[]): void;
   clearLines(rows: number[]): void;
   resize(rows: number, cols: number, atRow: number, atColumn: number): void;

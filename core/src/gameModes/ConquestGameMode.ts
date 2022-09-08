@@ -248,15 +248,17 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     for (const player of this._simulation.activePlayers) {
       if (!player.isFirstBlock) {
         // TODO: optimize - this is checking every single cell in the grid
-        const playerHasPlacableCell =
-          this._simulation.grid.reducedCells.some(
-            (cell) => cell.player?.color === player.color
-          ) &&
-          this._simulation.grid.reducedCells.some(
-            (cell) =>
-              conquestCanPlace(player, this._simulation, cell, false, false)
-                .canPlace
-          );
+        const playerHasPlacableCell = this._simulation.grid.reducedCells.some(
+          (cell) =>
+            conquestCanPlace(
+              player,
+              this._simulation,
+              cell,
+              false,
+              false,
+              false
+            ).canPlace
+        );
         if (!playerHasPlacableCell) {
           if (this._lastPlayerPlaced) {
             this._simulation.onPlayerKilled(
@@ -435,18 +437,17 @@ export type ConquestCanPlaceResult = {
   isStalemate: boolean;
 };
 
-let _forgivingTowerRows: { row: number; checkTimeMs: number }[] = [];
-
 export function conquestCanPlace(
   player: IPlayer,
   simulation: ISimulation,
   cell: ICell,
   isForgiving = true,
-  allowStalemates = true
+  allowStalemates = true,
+  allowTowers = true
 ): ConquestCanPlaceResult {
   if (
     !cell.isEmpty &&
-    (!isForgiving || !cell.wasRecentlyPlaced(simulation.forgivingPlacementTime))
+    (!isForgiving || !simulation.wasRecentlyPlaced(cell.placementFrame))
   ) {
     return { canPlace: false, isStalemate: false };
   }
@@ -460,43 +461,21 @@ export function conquestCanPlace(
   //  AA              AA
   //  AA              AA
 
-  // due to tower height not being forgiving (it can change instantly, we store all recent tower heights)
+  // TODO: consider making simulation tower height be forgiving (it can change instantly)
   // TODO: make this more efficient (don't recalculate every single check) and remove use of global _forgivingTowerRows
 
   const currentTowerRow = simulation.grid.getTowerRow();
-  const currentTowerRowEntry = {
-    row: currentTowerRow,
-    checkTimeMs: Date.now(),
-  };
-  if (isForgiving) {
-    _forgivingTowerRows = _forgivingTowerRows.filter(
-      (entry) =>
-        entry.row !== currentTowerRow &&
-        entry.checkTimeMs > Date.now() - simulation.forgivingPlacementTime
-    );
-    _forgivingTowerRows.push(currentTowerRowEntry);
-  }
-  let forgivingTowerRows = isForgiving
-    ? _forgivingTowerRows
-    : [currentTowerRowEntry];
 
-  // if (
-  //   cell.row <=
-  //   forgivingTowerRows.find(
-  //     (towerRow) =>
-  //       !forgivingTowerRows.some((other) => other.row < towerRow.row)
-  //   )!.row
-  // ) {
-  //   // cell is above tower height
-  //   return { canPlace: false, isStalemate: false };
-  // }
+  if (!allowTowers && cell.row <= currentTowerRow) {
+    // cell is above tower height
+    return { canPlace: false, isStalemate: false };
+  }
 
   // only allow placement anywhere if first block
   if (
     player.isFirstBlock &&
     (cell.isEmpty ||
-      (isForgiving &&
-        cell.wasRecentlyPlaced(simulation.forgivingPlacementTime))) &&
+      (isForgiving && simulation.wasRecentlyPlaced(cell.placementFrame))) &&
     (cell.row === simulation.grid.numRows - 1 ||
       !simulation.grid.getNeighbour(cell, 0, 1)?.isEmpty)
   ) {
@@ -504,46 +483,44 @@ export function conquestCanPlace(
   }
 
   if (allowStalemates) {
-    for (const forgivingTowerRow of forgivingTowerRows) {
-      const touchingTowerHeightRow = forgivingTowerRow.row + 1;
-      if (cell.row >= touchingTowerHeightRow) {
-        const towerColumns: (number | undefined)[] = [undefined, undefined];
-        for (
-          let columnOffset = 1;
-          columnOffset < Math.floor(simulation.grid.numColumns / 2 - 1);
-          columnOffset++
-        ) {
-          for (let i = 0; i < towerColumns.length; i++) {
-            if (towerColumns[i] !== undefined) {
-              continue;
-            }
-            const wrappedColumn = wrap(
-              cell.column + columnOffset * (i === 0 ? 1 : -1),
-              simulation.grid.numColumns
-            );
-            const touchingTowerHeightCell =
-              simulation.grid.cells[touchingTowerHeightRow][wrappedColumn];
-            if (
-              !touchingTowerHeightCell.isEmpty &&
-              touchingTowerHeightCell.player
-            ) {
-              towerColumns[i] = wrappedColumn;
-            }
+    const touchingTowerHeightRow = currentTowerRow + 1;
+    if (cell.row >= touchingTowerHeightRow) {
+      const towerColumns: (number | undefined)[] = [undefined, undefined];
+      for (
+        let columnOffset = 1;
+        columnOffset < Math.floor(simulation.grid.numColumns / 2 - 1);
+        columnOffset++
+      ) {
+        for (let i = 0; i < towerColumns.length; i++) {
+          if (towerColumns[i] !== undefined) {
+            continue;
+          }
+          const wrappedColumn = wrap(
+            cell.column + columnOffset * (i === 0 ? 1 : -1),
+            simulation.grid.numColumns
+          );
+          const touchingTowerHeightCell =
+            simulation.grid.cells[touchingTowerHeightRow][wrappedColumn];
+          if (
+            !touchingTowerHeightCell.isEmpty &&
+            touchingTowerHeightCell.player
+          ) {
+            towerColumns[i] = wrappedColumn;
           }
         }
-        if (
-          towerColumns[0] !== undefined &&
-          towerColumns[1] !== undefined &&
-          towerColumns[0] !== towerColumns[1] &&
-          isBetweenShortestPath(
-            cell.column,
-            towerColumns[0],
-            towerColumns[1],
-            simulation.grid.numColumns
-          )
-        ) {
-          return { canPlace: true, isStalemate: true };
-        }
+      }
+      if (
+        towerColumns[0] !== undefined &&
+        towerColumns[1] !== undefined &&
+        towerColumns[0] !== towerColumns[1] &&
+        isBetweenShortestPath(
+          cell.column,
+          towerColumns[0],
+          towerColumns[1],
+          simulation.grid.numColumns
+        )
+      ) {
+        return { canPlace: true, isStalemate: true };
       }
     }
   }
@@ -574,7 +551,7 @@ export function conquestCanPlace(
         canPlace ||
         ((neighbour.player?.color === player.color ||
           (isForgiving &&
-            neighbour.wasRecentlyPlaced(simulation.forgivingPlacementTime) &&
+            simulation.wasRecentlyPlaced(neighbour.placementFrame) &&
             playerHasNearbyCell(player, neighbour, simulation))) &&
           // discard diagonal items
           [
@@ -590,9 +567,8 @@ export function conquestCanPlace(
             return (
               neighbourNeighbour?.isEmpty ||
               (isForgiving &&
-                neighbourNeighbour?.wasRecentlyPlaced(
-                  simulation.forgivingPlacementTime
-                ))
+                neighbourNeighbour &&
+                simulation.wasRecentlyPlaced(neighbourNeighbour.placementFrame))
             );
           }));
     }

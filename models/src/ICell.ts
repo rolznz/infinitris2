@@ -30,7 +30,7 @@ export default interface ICell {
   set requiresRerender(requiresRerender: boolean);
   set rerenderDelay(rerenderDelay: number);
   get rerenderDelay(): number;
-  wasRecentlyPlaced(recentPlacementTimeout: number): boolean;
+  get placementFrame(): number;
   addBlock(block: IBlock): void;
   removeBlock(block: IBlock): void;
   step(): void;

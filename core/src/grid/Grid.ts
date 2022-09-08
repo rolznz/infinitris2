@@ -17,6 +17,7 @@ export default class Grid implements IGrid {
   private _nextLinesToClear: number[];
   private _nextLineClearTime: number;
   private _random: KeyedRandom;
+  private _frameNumber: number;
 
   constructor(
     numColumns: number = 60,
@@ -28,6 +29,7 @@ export default class Grid implements IGrid {
     if (forceSeamless) {
       numColumns = Math.max(Math.floor(numColumns / 4), 1) * 4; // force % 4 columns for seamless pattern wrap
     }
+    this._frameNumber = 0;
     this._cells = [];
     this._reducedCells = [];
     this._eventListeners = [];
@@ -58,6 +60,10 @@ export default class Grid implements IGrid {
     return !this.reducedCells.some((cell) => !cell.isEmpty);
   }
 
+  get frameNumber(): number {
+    return this._frameNumber;
+  }
+
   setRandom(random: KeyedRandom) {
     this._random = random;
   }
@@ -81,7 +87,8 @@ export default class Grid implements IGrid {
     }
   }
 
-  step(isNetworkClient: boolean) {
+  step(isNetworkClient: boolean, frameNumber: number) {
+    this._frameNumber = frameNumber;
     this._cells.forEach((row) => row.forEach((cell) => cell.step()));
     this._cachedNumNonEmptyCells = this._reducedCells.filter(
       (cell) => !cell.isEmpty

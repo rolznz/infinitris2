@@ -8,6 +8,7 @@ import { IGameMode } from '@models/IGameMode';
 import IGrid from '@models/IGrid';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
+import { debounce } from 'ts-debounce';
 
 type ConquestGameModeState = {};
 type PlayerAppearance = {
@@ -23,6 +24,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   private _lastMoveWasMistake: { [playerId: number]: boolean };
   private _temporarilyDeadPlayers: { [playerId: number]: boolean };
   private _originalPlayerAppearances: { [playerId: number]: PlayerAppearance };
+  private _debouncedCalculatePlayerScores: () => void;
 
   constructor(simulation: ISimulation) {
     this._simulation = simulation;
@@ -30,6 +32,10 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     this._lastMoveWasMistake = [];
     this._temporarilyDeadPlayers = [];
     this._originalPlayerAppearances = [];
+    this._debouncedCalculatePlayerScores = debounce(
+      this._calculatePlayerScores,
+      500
+    );
   }
 
   get hasRounds(): boolean {
@@ -242,10 +248,15 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     for (const player of this._simulation.activePlayers) {
       if (!player.isFirstBlock) {
         // TODO: optimize - this is checking every single cell in the grid
-        const playerHasPlacableCell = this._simulation.grid.reducedCells.some(
-          (cell) =>
-            conquestCanPlace(player, this._simulation, cell, false).canPlace
-        );
+        const playerHasPlacableCell =
+          this._simulation.grid.reducedCells.some(
+            (cell) => cell.player?.color === player.color
+          ) &&
+          this._simulation.grid.reducedCells.some(
+            (cell) =>
+              conquestCanPlace(player, this._simulation, cell, false, false)
+                .canPlace
+          );
         if (!playerHasPlacableCell) {
           if (this._lastPlayerPlaced) {
             this._simulation.onPlayerKilled(
@@ -291,21 +302,10 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
               player.status = PlayerStatus.ingame;
             }
           }
-        } else {
-          // TODO: debounce this calculation - no need to call multiple times in a small timeframe (250ms?)
-          player.score = Math.floor(
-            (this._simulation.grid.reducedCells
-              .filter((cell) => cell.player?.color === player.color)
-              .map((cell) => cell.column)
-              .filter((column, i, a) => a.indexOf(column) === i).length *
-              100) /
-              this._simulation.grid.numColumns
-          );
         }
-      } else {
-        player.score = 0;
       }
     }
+    this._debouncedCalculatePlayerScores();
     console.log('Calculate knockouts: ' + (Date.now() - startTime) + 'ms');
   }
   private _updatePlayerAppearance(
@@ -410,6 +410,24 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       )
     );
   }
+
+  private _calculatePlayerScores() {
+    console.log('Calculate player scores');
+    for (const player of this._simulation.activePlayers) {
+      if (player.isFirstBlock) {
+        player.score = 0;
+      } else {
+        player.score = Math.floor(
+          (this._simulation.grid.reducedCells
+            .filter((cell) => cell.player?.color === player.color)
+            .map((cell) => cell.column)
+            .filter((column, i, a) => a.indexOf(column) === i).length *
+            100) /
+            this._simulation.grid.numColumns
+        );
+      }
+    }
+  }
 }
 
 export type ConquestCanPlaceResult = {
@@ -423,7 +441,8 @@ export function conquestCanPlace(
   player: IPlayer,
   simulation: ISimulation,
   cell: ICell,
-  isForgiving = true
+  isForgiving = true,
+  allowStalemates = true
 ): ConquestCanPlaceResult {
   if (
     !cell.isEmpty &&
@@ -482,45 +501,47 @@ export function conquestCanPlace(
     return { canPlace: true, isStalemate: false };
   }
 
-  for (const forgivingTowerRow of forgivingTowerRows) {
-    const touchingTowerHeightRow = forgivingTowerRow.row + 1;
-    if (cell.row >= touchingTowerHeightRow) {
-      const towerColumns: (number | undefined)[] = [undefined, undefined];
-      for (
-        let columnOffset = 1;
-        columnOffset < Math.floor(simulation.grid.numColumns / 2 - 1);
-        columnOffset++
-      ) {
-        for (let i = 0; i < towerColumns.length; i++) {
-          if (towerColumns[i] !== undefined) {
-            continue;
-          }
-          const wrappedColumn = wrap(
-            cell.column + columnOffset * (i === 0 ? 1 : -1),
-            simulation.grid.numColumns
-          );
-          const touchingTowerHeightCell =
-            simulation.grid.cells[touchingTowerHeightRow][wrappedColumn];
-          if (
-            !touchingTowerHeightCell.isEmpty &&
-            touchingTowerHeightCell.player
-          ) {
-            towerColumns[i] = wrappedColumn;
+  if (allowStalemates) {
+    for (const forgivingTowerRow of forgivingTowerRows) {
+      const touchingTowerHeightRow = forgivingTowerRow.row + 1;
+      if (cell.row >= touchingTowerHeightRow) {
+        const towerColumns: (number | undefined)[] = [undefined, undefined];
+        for (
+          let columnOffset = 1;
+          columnOffset < Math.floor(simulation.grid.numColumns / 2 - 1);
+          columnOffset++
+        ) {
+          for (let i = 0; i < towerColumns.length; i++) {
+            if (towerColumns[i] !== undefined) {
+              continue;
+            }
+            const wrappedColumn = wrap(
+              cell.column + columnOffset * (i === 0 ? 1 : -1),
+              simulation.grid.numColumns
+            );
+            const touchingTowerHeightCell =
+              simulation.grid.cells[touchingTowerHeightRow][wrappedColumn];
+            if (
+              !touchingTowerHeightCell.isEmpty &&
+              touchingTowerHeightCell.player
+            ) {
+              towerColumns[i] = wrappedColumn;
+            }
           }
         }
-      }
-      if (
-        towerColumns[0] !== undefined &&
-        towerColumns[1] !== undefined &&
-        towerColumns[0] !== towerColumns[1] &&
-        isBetweenShortestPath(
-          cell.column,
-          towerColumns[0],
-          towerColumns[1],
-          simulation.grid.numColumns
-        )
-      ) {
-        return { canPlace: true, isStalemate: true };
+        if (
+          towerColumns[0] !== undefined &&
+          towerColumns[1] !== undefined &&
+          towerColumns[0] !== towerColumns[1] &&
+          isBetweenShortestPath(
+            cell.column,
+            towerColumns[0],
+            towerColumns[1],
+            simulation.grid.numColumns
+          )
+        ) {
+          return { canPlace: true, isStalemate: true };
+        }
       }
     }
   }

@@ -59,6 +59,7 @@ type CachedRenderableCell = {
   connections: CellConnection[];
   color: number;
   patternFilename: string | undefined;
+  isEmpty: boolean;
 };
 
 interface IBlockContainer {
@@ -388,32 +389,30 @@ export default class Infinitris2Renderer extends BaseRenderer {
       );
     }
 
-    this._simulation.grid.reducedCells.forEach((cell) => {
-      if (!cell.isEmpty) {
-        // FIXME: remove
-        this._isOnScreen(cell);
-      }
-      if (cell.requiresRerender /* && this._isOnScreen(cell)*/) {
-        this._renderCell(cell);
-        cell.requiresRerender = false;
-      }
-      const renderableCell = this._getRenderableCell(cell);
-      renderableCell.container.alpha = cell.behaviour.alpha;
-
-      // rotate non-player cell sprites around center (requires rotating each individually to support shadow and wrap rendering)
-      renderableCell.children.forEach((child) => {
-        if (child.renderableObject.patternSprite) {
-          const rotation = !cell.player ? cell.behaviour.rotation || 0 : 0;
-          child.renderableObject.patternSprite.rotation = rotation;
+    for (const cell of this._simulation.grid.reducedCells) {
+      if (this._isOnScreen(cell)) {
+        if (cell.requiresRerender) {
+          this._renderCell(cell);
+          cell.requiresRerender = false;
         }
-      });
-      // TODO: do not access cell type directly like this
-      if (cell.behaviour.type === CellType.Rock) {
-        renderableCell.container.y =
-          (cell.row + (cell.behaviour as RockBehaviour).offsetY) *
-          this._cellSize;
+        const renderableCell = this._getRenderableCell(cell);
+        renderableCell.container.alpha = cell.behaviour.alpha;
+
+        // rotate non-player cell sprites around center (requires rotating each individually to support shadow and wrap rendering)
+        renderableCell.children.forEach((child) => {
+          if (child.renderableObject.patternSprite) {
+            const rotation = !cell.player ? cell.behaviour.rotation || 0 : 0;
+            child.renderableObject.patternSprite.rotation = rotation;
+          }
+        });
+        // TODO: do not access cell type directly like this
+        if (cell.behaviour.type === CellType.Rock) {
+          renderableCell.container.y =
+            (cell.row + (cell.behaviour as RockBehaviour).offsetY) *
+            this._cellSize;
+        }
       }
-    });
+    }
   }
   private _isOnScreen(cell: ICell) {
     if (this._hasShadows) {
@@ -422,10 +421,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     // TODO: add vertical checks too
     const wrappedX = this.getWrappedX(cell.column * this._cellSize);
-    const cameraLeft = -this._camera.x - this._appWidth * 0.5;
+    const invertedCameraX = -this._camera.x;
     const isOnScreen =
-      wrappedX > cameraLeft - this._cellSize &&
-      wrappedX < cameraLeft + this._appWidth;
+      wrappedX > invertedCameraX - this._cellSize - this._visibilityX &&
+      wrappedX < invertedCameraX + this._visibilityX;
     //console.log('On screen: ' + isOnScreen);
     return isOnScreen;
   }
@@ -1561,16 +1560,18 @@ export default class Infinitris2Renderer extends BaseRenderer {
         connections,
         color,
         patternFilename,
+        isEmpty: cell.isEmpty,
       };
       const cachedCell = this._cachedRenderableCells[cell.index];
       this._cachedRenderableCells[cell.index] = cellToCache;
       if (
-        cachedCell &&
-        JSON.stringify(cellToCache.connections) ===
-          JSON.stringify(cachedCell.connections) &&
-        cellToCache.color === cachedCell.color &&
-        cellToCache.color === cachedCell.color &&
-        cellToCache.patternFilename === cachedCell.patternFilename
+        (!cachedCell && cell.isEmpty) ||
+        (cachedCell &&
+          ((cellToCache.isEmpty && cachedCell.isEmpty) ||
+            JSON.stringify(cellToCache.connections) ===
+              JSON.stringify(cachedCell.connections)) &&
+          cellToCache.color === cachedCell.color &&
+          cellToCache.patternFilename === cachedCell.patternFilename)
       ) {
         return;
       }

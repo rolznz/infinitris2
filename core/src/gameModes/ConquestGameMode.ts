@@ -156,7 +156,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
             i * direction,
             0
           );
-          if (neighbour && neighbour.player === block.player) {
+          if (neighbour && neighbour.player?.color === block.player.color) {
             for (
               let r = touchingTowerRow;
               r < this._simulation.grid.numRows;

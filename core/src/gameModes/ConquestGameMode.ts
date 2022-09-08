@@ -68,7 +68,71 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   onBlockPlaced(block: IBlock) {
     this._lastMoveWasMistake[block.player.id] = false;
     this._lastPlayerPlaced = block.player;
-    // area capture
+    this._calculateWrapCaptures(block);
+    this._calculateTowerCaptures(block);
+  }
+  private _calculateWrapCaptures(block: IBlock) {
+    const startTime = Date.now();
+
+    const cellsToCapture: ICell[] = [];
+    const blockCellNeighboursToCheck = ([] as ICell[])
+      .concat(
+        ...block.cells.map((cell) =>
+          [
+            [0, -1],
+            [1, 0],
+            [-1, 0],
+            [0, 1],
+          ]
+            .map(
+              (direction) =>
+                this._simulation.grid.getNeighbour(
+                  cell,
+                  direction[0],
+                  direction[1]
+                )!
+            )
+            .filter(
+              (neighbour) =>
+                neighbour && neighbour.player?.color !== block.player.color
+            )
+        )
+      )
+      .filter((c, i, a) => a.indexOf(c) === i);
+    for (const cell of blockCellNeighboursToCheck) {
+      const checkedPathCells: { [index: number]: ICell } = {};
+      if (
+        cellsToCapture.indexOf(cell) < 0 &&
+        this._collectTrappedCells(block.player.color, cell, checkedPathCells, 0)
+      ) {
+        cellsToCapture.push(
+          ...Object.values(checkedPathCells).filter(
+            (checkedCell) => checkedCell.color !== block.player.color
+          )
+        );
+      }
+    }
+    const lineClearRowsToCheck: number[] = [];
+    for (const cellToCapture of cellsToCapture) {
+      this._simulation.onGameModeEvent({
+        type: 'cellAreaCapture',
+        column: cellToCapture.column,
+        row: cellToCapture.row,
+        color: block.player.color,
+      });
+      this._delayRerender(cellToCapture);
+      cellToCapture.place(block.player);
+      lineClearRowsToCheck.push(cellToCapture.row);
+    }
+
+    this._simulation.grid.checkLineClears(
+      lineClearRowsToCheck.filter((row, i, rows) => rows.indexOf(row) === i)
+    );
+
+    console.log('Calculate wrap captures: ' + (Date.now() - startTime) + 'ms');
+  }
+  private _calculateTowerCaptures(block: IBlock) {
+    const startTime = Date.now();
     const lineClearRowsToCheck: number[] = [];
     const touchingTowerRow = this._simulation.grid.getTowerRow() + 1;
     const cellsTouchingTowerRow = block.cells.filter(
@@ -119,6 +183,11 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     this._simulation.grid.checkLineClears(
       lineClearRowsToCheck.filter((row, i, rows) => rows.indexOf(row) === i)
     );
+    if (lineClearRowsToCheck.length > 0) {
+      console.log(
+        'Calculate area captures: ' + (Date.now() - startTime) + 'ms'
+      );
+    }
   }
   onPlayerCreated(player: IPlayer) {
     this._originalPlayerAppearances[player.id] = {
@@ -169,15 +238,15 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   }
 
   private _calculateKnockouts() {
-    const activePlayers = this._simulation.activePlayers;
-    for (const player of activePlayers) {
+    const startTime = Date.now();
+    for (const player of this._simulation.activePlayers) {
       if (!player.isFirstBlock) {
         // TODO: optimize - this is checking every single cell in the grid
-        const placableCells = this._simulation.grid.reducedCells.filter(
+        const playerHasPlacableCell = this._simulation.grid.reducedCells.some(
           (cell) =>
             conquestCanPlace(player, this._simulation, cell, false).canPlace
         );
-        if (placableCells.length === 0) {
+        if (!playerHasPlacableCell) {
           if (this._lastPlayerPlaced) {
             this._simulation.onPlayerKilled(
               this._simulation,
@@ -223,6 +292,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
             }
           }
         } else {
+          // TODO: debounce this calculation - no need to call multiple times in a small timeframe (250ms?)
           player.score = Math.floor(
             (this._simulation.grid.reducedCells
               .filter((cell) => cell.player?.color === player.color)
@@ -236,6 +306,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         player.score = 0;
       }
     }
+    console.log('Calculate knockouts: ' + (Date.now() - startTime) + 'ms');
   }
   private _updatePlayerAppearance(
     player: IPlayer,
@@ -299,6 +370,45 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     return player.isFirstBlock
       ? INITIAL_FALL_DELAY
       : INITIAL_FALL_DELAY - (player.score / 100) * INITIAL_FALL_DELAY;
+  }
+
+  private _collectTrappedCells(
+    color: number,
+    cell: ICell,
+    checkedPathCells: { [index: number]: ICell } = {},
+    iteration: number
+  ): boolean {
+    const towerRow = this._simulation.grid.getTowerRow(); // TODO: move out of function
+    checkedPathCells[cell.index] = cell;
+    if (cell.row <= towerRow) {
+      return false;
+    }
+    if (cell.player?.color === color) {
+      return true;
+    }
+
+    const neighbours = [
+      [0, 1],
+      [1, 0],
+      [-1, 0],
+      [0, -1],
+    ]
+      .map((direction) =>
+        this._simulation.grid.getNeighbour(cell, direction[0], direction[1])
+      )
+      .filter(
+        (neighbour) =>
+          neighbour && checkedPathCells[neighbour.index] === undefined
+      ) as ICell[];
+
+    return neighbours.every((neighbour) =>
+      this._collectTrappedCells(
+        color,
+        neighbour,
+        checkedPathCells,
+        iteration + 1
+      )
+    );
   }
 }
 

@@ -212,22 +212,18 @@ export abstract class BaseRenderer implements IRenderer {
     // TODO: replace while loops with single operation
     const wrapSize = this._gridWidth;
     const minVisibilityX = ignoreVisibility
-      ? this._gridWidth
-      : Math.min(this._visibilityX, this._gridWidth);
-    let maxIterations = 1000;
-    while (x + this._cellSize < -this._camera.x - minVisibilityX) {
-      x += wrapSize;
-      if (--maxIterations < 0) {
-        throw new Error('FIXME remove while loop in getWrappedX (+)');
-      }
-    }
-    while (x + this._cellSize > -this._camera.x + wrapSize - minVisibilityX) {
-      x -= wrapSize;
-      if (--maxIterations < 0) {
-        throw new Error('FIXME remove while loop in getWrappedX (-)');
-      }
-    }
-    return x;
+      ? wrapSize
+      : Math.min(this._visibilityX, wrapSize);
+
+    // position the object would appear on the left side of the camera
+    let leftPosition = x + this._cellSize + minVisibilityX;
+
+    // calculate how many times the object needs to be moved by wrapSize in order to get into the
+    // wrapped version of the grid the camera is currently viewing
+    const leftPositionDiff =
+      Math.ceil((-this._camera.x - leftPosition) / wrapSize) * wrapSize;
+
+    return x + leftPositionDiff;
   }
 
   tick() {

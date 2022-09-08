@@ -389,7 +389,11 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
 
     this._simulation.grid.reducedCells.forEach((cell) => {
-      if (cell.requiresRerender) {
+      if (!cell.isEmpty) {
+        // FIXME: remove
+        this._isOnScreen(cell);
+      }
+      if (cell.requiresRerender /* && this._isOnScreen(cell)*/) {
         this._renderCell(cell);
         cell.requiresRerender = false;
       }
@@ -410,6 +414,20 @@ export default class Infinitris2Renderer extends BaseRenderer {
           this._cellSize;
       }
     });
+  }
+  private _isOnScreen(cell: ICell) {
+    if (this._hasShadows) {
+      return true;
+    }
+
+    // TODO: add vertical checks too
+    const wrappedX = this.getWrappedX(cell.column * this._cellSize);
+    const cameraLeft = -this._camera.x - this._appWidth * 0.5;
+    const isOnScreen =
+      wrappedX > cameraLeft - this._cellSize &&
+      wrappedX < cameraLeft + this._appWidth;
+    //console.log('On screen: ' + isOnScreen);
+    return isOnScreen;
   }
 
   onInputAction = (action: InputActionWithData) => {

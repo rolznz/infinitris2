@@ -480,23 +480,25 @@ export function conquestCanPlace(
     ? _forgivingTowerRows
     : [currentTowerRowEntry];
 
-  if (
-    cell.row <=
-    forgivingTowerRows.find(
-      (towerRow) =>
-        !forgivingTowerRows.some((other) => other.row < towerRow.row)
-    )!.row
-  ) {
-    // cell is above tower height
-    return { canPlace: false, isStalemate: false };
-  }
+  // if (
+  //   cell.row <=
+  //   forgivingTowerRows.find(
+  //     (towerRow) =>
+  //       !forgivingTowerRows.some((other) => other.row < towerRow.row)
+  //   )!.row
+  // ) {
+  //   // cell is above tower height
+  //   return { canPlace: false, isStalemate: false };
+  // }
 
   // only allow placement anywhere if first block
   if (
     player.isFirstBlock &&
     (cell.isEmpty ||
       (isForgiving &&
-        cell.wasRecentlyPlaced(simulation.forgivingPlacementTime)))
+        cell.wasRecentlyPlaced(simulation.forgivingPlacementTime))) &&
+    (cell.row === simulation.grid.numRows - 1 ||
+      !simulation.grid.getNeighbour(cell, 0, 1)?.isEmpty)
   ) {
     return { canPlace: true, isStalemate: false };
   }

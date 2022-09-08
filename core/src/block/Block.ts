@@ -464,11 +464,17 @@ export default class Block implements IBlock {
       let removed = false;
       if (!this._simulation.isNetworkClient && !fell && this.isReadyToLock) {
         const isMistake =
-          (this._simulation.settings.preventTowers !== false &&
-            this._simulation.grid.isTower(this.topRow)) ||
-          (this._simulation.settings.mistakeDetection !== false &&
-            checkMistake(this._player, this._cells, this._simulation));
+          this._simulation.settings.mistakeDetection !== false &&
+          checkMistake(this._player, this._cells, this._simulation);
 
+        if (!isMistake) {
+          while (
+            this._simulation.settings.preventTowers !== false &&
+            this._simulation.grid.isTower(this.topRow)
+          ) {
+            this.move(0, 1, 0, true);
+          }
+        }
         if (isMistake && this._isDropping) {
           // try forgiving placement - can overwrite any cells that were placed in the last X ms
           fell = this.fall(true);

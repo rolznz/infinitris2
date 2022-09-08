@@ -51,8 +51,8 @@ export class TowerIndicator {
     const dashWidth = cellSize * 0.3;
     const dashPadding = dashHeight;
     for (
-      let i = 0;
-      i < this._app.renderer.width;
+      let i = -cellSize;
+      i < this._app.renderer.width + cellSize;
       i += dashWidth + dashPadding * 2
     ) {
       this._graphics.drawRect(

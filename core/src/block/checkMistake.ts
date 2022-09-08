@@ -14,21 +14,14 @@ export function checkMistake(
     topRow = Math.min(topRow, cell.row);
   }
 
-  if (
-    simulation.settings.preventTowers !== false &&
-    simulation.grid.isTower(topRow)
-  ) {
-    isMistake = true;
-  } else {
-    for (const cell of cells) {
-      // placing block A leaves hard-to-fill gap X
-      //AA
-      //AX
-      //A
-      const cellBelow = simulation.grid.getNeighbour(cell, 0, 1);
-      if (cellBelow?.isPassable && !cells.includes(cellBelow)) {
-        isMistake = true;
-      }
+  for (const cell of cells) {
+    // placing block A leaves hard-to-fill gap X
+    //AA
+    //AX
+    //A
+    const cellBelow = simulation.grid.getNeighbour(cell, 0, 1);
+    if (cellBelow?.isPassable && !cells.includes(cellBelow)) {
+      isMistake = true;
     }
   }
 

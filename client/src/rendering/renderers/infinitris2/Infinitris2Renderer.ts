@@ -1837,10 +1837,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
     const isTower =
       this._simulation.settings.preventTowers !== false &&
-      isMistake &&
+      //isMistake &&
       this._simulation.grid.isTower(highestBlockPlacementCellRow);
 
-    const displayInvalidPlacement = isMistake || isTower;
+    const displayInvalidPlacement = isMistake; /*|| isTower*/
     this._towerIndicator.update(
       !this._hasScrollY ? this._gridLines.y : this._world.y,
       isTower,
@@ -1882,10 +1882,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
         renderableCell.container.zIndex = -1000;
         const opacity = displayInvalidPlacement ? 0.5 : 0.33;
         const isCause =
-          displayInvalidPlacement &&
-          (isTower ||
-            (y > highestPlacementRow - cellDistanceFromLowestRow &&
-              blockPlacementCells.indexOf(cell) < 0));
+          displayInvalidPlacement /*isTower ||*/ &&
+          y > highestPlacementRow - cellDistanceFromLowestRow &&
+          blockPlacementCells.indexOf(cell) < 0;
         const color = displayInvalidPlacement ? 0xff0000 : block.player.color;
         if (
           this._blockShadowType === 'full' ||

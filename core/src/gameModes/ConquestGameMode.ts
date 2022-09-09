@@ -78,6 +78,9 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     this._calculateTowerCaptures(block);
   }
   private _calculateWrapCaptures(block: IBlock) {
+    if (this._simulation.isNetworkClient) {
+      return;
+    }
     const startTime = Date.now();
 
     const cellsToCapture: ICell[] = [];
@@ -118,32 +121,54 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         );
       }
     }
-    const lineClearRowsToCheck: number[] = [];
-    for (const cellToCapture of cellsToCapture) {
-      this._simulation.onGameModeEvent({
-        type: 'cellAreaCapture',
-        column: cellToCapture.column,
-        row: cellToCapture.row,
-        color: block.player.color,
-      });
-      this._delayRerender(cellToCapture);
-      cellToCapture.place(block.player);
-      lineClearRowsToCheck.push(cellToCapture.row);
-    }
 
+    this.fillCells(cellsToCapture, block.player);
+    if (cellsToCapture.length > 0) {
+      console.log(
+        'Calculate wrap captures: ' + (Date.now() - startTime) + 'ms'
+      );
+    }
+  }
+  fillCells(cellsToFill: ICell[], player: IPlayer) {
+    this._simulation.onGameModeEvent({
+      type: 'cellsCaptured',
+      playerId: player.id,
+      cells: cellsToFill.map((cell) => ({
+        row: cell.row,
+        column: cell.column,
+      })),
+      isSynced: true,
+    });
+
+    const lineClearRowsToCheck: number[] = [];
+
+    for (const cellToFill of cellsToFill) {
+      this._simulation.onGameModeEvent({
+        type: 'cellCaptured',
+        column: cellToFill.column,
+        row: cellToFill.row,
+        color: player.color,
+      });
+      this._delayRerender(cellToFill);
+      cellToFill.place(player);
+      lineClearRowsToCheck.push(cellToFill.row);
+    }
     this._simulation.grid.checkLineClears(
       lineClearRowsToCheck.filter((row, i, rows) => rows.indexOf(row) === i)
     );
-
-    console.log('Calculate wrap captures: ' + (Date.now() - startTime) + 'ms');
   }
+
   private _calculateTowerCaptures(block: IBlock) {
+    if (this._simulation.isNetworkClient) {
+      return;
+    }
     const startTime = Date.now();
-    const lineClearRowsToCheck: number[] = [];
+
     const touchingTowerRow = this._simulation.grid.getTowerRow() + 1;
     const cellsTouchingTowerRow = block.cells.filter(
       (cell) => cell.row === touchingTowerRow
     );
+    const cellsToFill: ICell[] = [];
     for (const cellTouchingTowerRow of cellsTouchingTowerRow) {
       for (
         let i = 1;
@@ -168,16 +193,11 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
                   dx * direction,
                   r - touchingTowerRow
                 );
-                if (cellToFill && cellToFill.player !== block.player) {
-                  this._simulation.onGameModeEvent({
-                    type: 'cellAreaCapture',
-                    column: cellToFill.column,
-                    row: cellToFill.row,
-                    color: block.player.color,
-                  });
-                  this._delayRerender(cellToFill);
-                  cellToFill.place(block.player);
-                  lineClearRowsToCheck.push(cellToFill.row);
+                if (
+                  cellToFill &&
+                  cellToFill.player?.color !== block.player.color
+                ) {
+                  cellsToFill.push(cellToFill);
                 }
               }
             }
@@ -186,10 +206,10 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         }
       }
     }
-    this._simulation.grid.checkLineClears(
-      lineClearRowsToCheck.filter((row, i, rows) => rows.indexOf(row) === i)
-    );
-    if (lineClearRowsToCheck.length > 0) {
+
+    this.fillCells(cellsToFill, block.player);
+
+    if (cellsToFill.length > 0) {
       console.log(
         'Calculate area captures: ' + (Date.now() - startTime) + 'ms'
       );
@@ -244,6 +264,10 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   }
 
   private _calculateKnockouts() {
+    if (this._simulation.isNetworkClient) {
+      return;
+    }
+
     const startTime = Date.now();
     for (const player of this._simulation.activePlayers) {
       if (!player.isFirstBlock) {
@@ -270,39 +294,41 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
           if (!this.hasRounds) {
             this._temporarilyDeadPlayers[player.id] = true;
           }
-          if (!this._simulation.isNetworkClient) {
-            player.status = PlayerStatus.knockedOut;
+          player.status = PlayerStatus.knockedOut;
 
-            let conversionsEndRound = false;
-            if (
-              this.hasConversions &&
-              this._simulation.activePlayers.every(
-                (v, _, a) => v.color === a[0].color
-              )
-            ) {
-              // everyone is on the same team now, knock out all players except the winner
-              conversionsEndRound = true;
-              // TODO: leave the player that has been active the longest (the winner)
-              const winner = this._simulation.activePlayers.find(
-                (activePlayer, _, a) =>
-                  !a.some(
-                    (other) =>
-                      other.lastStatusChangeTime <
-                      activePlayer.lastStatusChangeTime
-                  )
-              );
-              this._simulation.activePlayers
-                .filter((activePlayer) => activePlayer !== winner)
-                .forEach((player) => (player.status = PlayerStatus.knockedOut));
-            }
+          let conversionsEndRound = false;
+          if (
+            this.hasConversions &&
+            this._simulation.activePlayers.every(
+              (v, _, a) => v.color === a[0].color
+            )
+          ) {
+            // everyone is on the same team now, knock out all players except the winner
+            conversionsEndRound = true;
+            // TODO: leave the player that has been active the longest (the winner)
+            const winner = this._simulation.activePlayers.find(
+              (activePlayer, _, a) =>
+                !a.some(
+                  (other) =>
+                    other.lastStatusChangeTime <
+                    activePlayer.lastStatusChangeTime
+                )
+            );
+            this._simulation.activePlayers
+              .filter((activePlayer) => activePlayer !== winner)
+              .forEach((player) => (player.status = PlayerStatus.knockedOut));
+          }
 
-            if (
-              !this.hasRounds ||
-              (this.hasConversions && !conversionsEndRound)
-            ) {
-              // instantly switch state back - will cause the player to reset
-              player.status = PlayerStatus.ingame;
-            }
+          if (
+            !this.hasRounds ||
+            (this.hasConversions && !conversionsEndRound)
+          ) {
+            // instantly switch state back - will cause the player to reset
+            player.status = PlayerStatus.ingame;
+          }
+          if (conversionsEndRound) {
+            // all other players were kicked out
+            break;
           }
         }
       }

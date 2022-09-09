@@ -55,6 +55,6 @@ export default class NormalCellBehaviour implements ICellBehaviour {
     return true;
   }
   hasTileset() {
-    return true;
+    return !this._cell.isEmpty && !this._cell.player;
   }
 }

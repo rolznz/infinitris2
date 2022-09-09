@@ -23,7 +23,7 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._cachedCanPlaceResults = {};
   }
   onGameModeEvent(event: ConquestEvent): void {
-    if (event.type === 'cellAreaCapture') {
+    if (event.type === 'cellCaptured') {
       for (let i = 0; i < 10; i++) {
         this._renderer.emitParticle(
           event.column + 0.5,

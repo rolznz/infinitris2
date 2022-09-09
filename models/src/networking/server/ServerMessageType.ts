@@ -14,4 +14,6 @@ export enum ServerMessageType {
   CLEAR_LINES,
   END_ROUND,
   START_NEXT_ROUND_TIMER,
+  PLAYER_KILLED,
+  GAME_MODE_EVENT,
 }

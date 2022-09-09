@@ -3,11 +3,24 @@ export type ColumnConquestEvent = {
   column: number;
 }; // | SecondEvent
 
-export type ConquestEvent = {
-  type: 'cellAreaCapture';
-  row: number;
-  column: number;
-  color: number;
-}; // | SecondEvent
+export type ConquestEvent =
+  | {
+      type: 'cellCaptured';
+      row: number;
+      column: number;
+      color: number;
+    }
+  | ({
+      type: 'cellsCaptured';
+      playerId: number;
+      cells: {
+        row: number;
+        column: number;
+      }[];
+    } & SyncedGameModeEvent);
 
-export type GameModeEvent = ColumnConquestEvent | ConquestEvent;
+type SyncedGameModeEvent = { isSynced: true };
+
+export type GameModeEvent = (ColumnConquestEvent | ConquestEvent) & {
+  isSynced?: boolean;
+};

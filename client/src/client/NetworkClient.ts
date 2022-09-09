@@ -42,6 +42,9 @@ import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
 import { IServerEndRoundEvent } from '@core/networking/server/IServerEndRoundEvent';
 import { IServerBlockDroppedEvent } from '@core/networking/server/IServerBlockDroppedEvent';
+import { IServerPlayerKilledEvent } from '@core/networking/server/IServerPlayerKilledEvent';
+import { IServerGameModeEvent } from '@core/networking/server/IServerGameModeEvent';
+import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 
 export default class NetworkClient
   extends BaseClient
@@ -305,6 +308,33 @@ export default class NetworkClient
       } else if (message.type === ServerMessageType.CLEAR_LINES) {
         const clearLinesMessage = message as IServerClearLinesEvent;
         this._simulation.grid.clearLines(clearLinesMessage.rows);
+      } else if (message.type === ServerMessageType.PLAYER_KILLED) {
+        const playerKilledEvent = message as IServerPlayerKilledEvent;
+        const victim = this._simulation.getPlayer(playerKilledEvent.victimId);
+        const attacker = this._simulation.getPlayer(
+          playerKilledEvent.attackerId
+        );
+        this._simulation.onPlayerKilled(this._simulation, victim, attacker);
+      } else if (message.type === ServerMessageType.GAME_MODE_EVENT) {
+        const event = message as IServerGameModeEvent;
+        if (event.data.type === 'cellsCaptured') {
+          if (this._simulation.settings.gameModeType !== 'conquest') {
+            throw new Error(
+              'Unexpected game mode for event ' +
+                event.data.type +
+                ': ' +
+                this._simulation.settings.gameModeType
+            );
+          }
+          const gameMode = this._simulation.gameMode as ConquestGameMode;
+          const player = this._simulation.getPlayer(event.data.playerId);
+          const cells = event.data.cells.map(
+            (cell) => this._simulation.grid.cells[cell.row][cell.column]
+          );
+          gameMode.fillCells(cells, player);
+        } else {
+          throw new Error('Unsupported game mode event: ' + event.data.type);
+        }
       }
     }
   }

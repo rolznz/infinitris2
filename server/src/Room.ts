@@ -42,6 +42,8 @@ import { IServerMessage } from '@models/networking/server/IServerMessage';
 import { ICharacter } from '@models/ICharacter';
 import IRoom from '@models/IRoom';
 import ISimulation from '@models/ISimulation';
+import { IServerPlayerKilledEvent } from '@core/networking/server/IServerPlayerKilledEvent';
+import { IServerGameModeEvent } from '@core/networking/server/IServerGameModeEvent';
 
 export default class Room implements Partial<ISimulationEventListener> {
   private _sendMessage: SendServerMessageFunction;
@@ -442,13 +444,24 @@ export default class Room implements Partial<ISimulationEventListener> {
     this._sendMessageToAllPlayers(playerToggleSpectatingMessage);
   }
 
-  onGameModeEvent(event: GameModeEvent): void {}
+  onGameModeEvent(event: GameModeEvent): void {
+    if (event.isSynced) {
+      const eventMessage: IServerGameModeEvent = {
+        data: event,
+        type: ServerMessageType.GAME_MODE_EVENT,
+      };
+      this._sendMessageToAllPlayers(eventMessage);
+    }
+  }
 
-  onPlayerKilled(
-    _simulation: ISimulation,
-    _victim: IPlayer,
-    _attacker: IPlayer
-  ) {}
+  onPlayerKilled(_simulation: ISimulation, victim: IPlayer, attacker: IPlayer) {
+    const playerKilledMessage: IServerPlayerKilledEvent = {
+      type: ServerMessageType.PLAYER_KILLED,
+      victimId: victim.id,
+      attackerId: attacker.id,
+    };
+    this._sendMessageToAllPlayers(playerKilledMessage);
+  }
 
   private _sendMessageToAllPlayers(message: IServerMessage) {
     const playerIds: number[] = this._simulation.getNetworkPlayerIds();

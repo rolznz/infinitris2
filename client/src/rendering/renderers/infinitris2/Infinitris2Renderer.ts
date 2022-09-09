@@ -822,8 +822,23 @@ export default class Infinitris2Renderer extends BaseRenderer {
               );
             }
           }
-          if (player.block) {
-            this._renderBlock(player.block);
+          if (this._simulation) {
+            for (const playerWithPattern of this._simulation.players.filter(
+              (otherPlayer) =>
+                otherPlayer.patternFilename === player.patternFilename
+            )) {
+              if (playerWithPattern.block) {
+                this._renderBlock(playerWithPattern.block);
+              }
+            }
+
+            const cellsToRerender = this._simulation.grid.reducedCells.filter(
+              (cell) => cell.player?.patternFilename === player.patternFilename
+            );
+            for (const cell of cellsToRerender) {
+              delete this._cachedRenderableCells[cell.index];
+            }
+            this._renderCells(cellsToRerender);
           }
         });
       }

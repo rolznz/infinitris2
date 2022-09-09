@@ -74,6 +74,7 @@ export * from './IRound';
 export * from './IRoundEventListener';
 export * from './util/hexToRgb';
 export * from './util/rgbToHex';
+export * from './util/colorDistance';
 export * from './util/rotateColor';
 export * from './util/simpleRandom';
 export * from './util/simpleStringHash';

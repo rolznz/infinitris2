@@ -21,6 +21,7 @@ import { RaceGameMode } from '@core/gameModes/RaceGameMode';
 import { ICharacter } from '@models/ICharacter';
 import { colors } from '@models/colors';
 import { stringToHex } from '@models/util/stringToHex';
+import { colorDistance } from '@models/util/colorDistance';
 import { hexToString } from '@models/util/hexToString';
 import Layout, { defaultLayoutSet, LayoutSet } from '@models/Layout';
 import { blockLayoutSets } from '@models/blockLayouts/blockLayoutSets';
@@ -689,12 +690,15 @@ export default class Simulation implements ISimulation {
     isBot: boolean,
     desiredCharacterId?: string
   ): Partial<ICharacter> {
+    // example colorDistance #1f645b #15444d 15.327725023522083
+    const isCloseColor = (c1: number, c2: number) =>
+      c1 === c2 || colorDistance(c1, c2) < 15;
     const freeCharacters = charactersPool?.filter(
       (character) =>
         !this.players.some(
           (player) =>
             player.characterId === character.id.toString() ||
-            player.color === stringToHex(character.color)
+            isCloseColor(player.color, stringToHex(character.color))
         )
     );
 
@@ -713,9 +717,10 @@ export default class Simulation implements ISimulation {
         .map((color) => stringToHex(color.hex))
         .filter(
           (color) =>
-            this.players.map((player) => player.color).indexOf(color) < 0
+            !this.players.some((player) => isCloseColor(player.color, color))
         );
       if (!freeColors.length) {
+        console.log('No free colors found');
         freeColors = colors.map((color) => stringToHex(color.hex));
       }
 

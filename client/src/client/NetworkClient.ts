@@ -133,9 +133,7 @@ export default class NetworkClient
           joinResponseData.simulation.settings,
           true
         );
-        this._simulation.gameMode.deserialize(
-          joinResponseData.simulation.gameModeState
-        );
+
         this._simulation.addEventListener(this._renderer, this);
         if (this._launchOptions?.listeners) {
           this._simulation.addEventListener(...this._launchOptions.listeners);
@@ -210,6 +208,9 @@ export default class NetworkClient
               true
             );
         }
+        this._simulation.gameMode.deserialize(
+          joinResponseData.simulation.gameModeState
+        );
         this._renderer.rerenderGrid();
         this._simulation.startInterval();
       } else {

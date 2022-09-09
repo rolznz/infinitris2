@@ -1,20 +1,19 @@
 import { INITIAL_FALL_DELAY } from '@core/block/Block';
 import { wrap, wrappedDistance } from '@core/utils/wrap';
-import { GameModeEvent } from '@models/GameModeEvent';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
-import ICellBehaviour from '@models/ICellBehaviour';
 import { IGameMode } from '@models/IGameMode';
-import IGrid from '@models/IGrid';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
 import { debounce } from 'ts-debounce';
 
-type ConquestGameModeState = {};
 type PlayerAppearance = {
   color: number;
   patternFilename: string | undefined;
   characterId: string | undefined;
+};
+type ConquestGameModeState = {
+  originalPlayerAppearances: { [playerId: number]: PlayerAppearance };
 };
 
 export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
@@ -24,6 +23,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   private _lastMoveWasMistake: { [playerId: number]: boolean };
   private _temporarilyDeadPlayers: { [playerId: number]: boolean };
   private _originalPlayerAppearances: { [playerId: number]: PlayerAppearance };
+
   private _debouncedCalculatePlayerScores: () => void;
 
   constructor(simulation: ISimulation) {
@@ -339,10 +339,14 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   }
 
   serialize(): ConquestGameModeState {
-    return {};
+    return {
+      originalPlayerAppearances: this._originalPlayerAppearances,
+    };
   }
 
-  deserialize(state: ConquestGameModeState) {}
+  deserialize(state: ConquestGameModeState) {
+    this._originalPlayerAppearances = state.originalPlayerAppearances;
+  }
 
   checkMistake(player: IPlayer, cells: ICell[], isMistake: boolean): boolean {
     if (isMistake) {

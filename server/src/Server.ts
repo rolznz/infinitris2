@@ -24,7 +24,6 @@ import {
   JoinRoomResponseStatus,
 } from '@core/networking/server/IServerJoinRoomResponse';
 import { ServerMessageType } from '@models/networking/server/ServerMessageType';
-import { NETWORK_VERSION } from '@models/index';
 
 export const apiUrl = process.env.API_URL;
 export default class Server implements IServerSocketEventListener {
@@ -121,7 +120,7 @@ export default class Server implements IServerSocketEventListener {
           const isFull =
             room && room.simulation.players.length > room.info.maxPlayers;
           const matchingVersion =
-            joinRoomRequest.networkVersion === NETWORK_VERSION;
+            parseInt(joinRoomRequest.version) >= parseInt(__VERSION__);
           console.log('Join room request from ' + socket.id, joinRoomRequest);
           if (!room || isFull || !matchingVersion) {
             const joinRoomResponse: IServerJoinRoomResponse = {
@@ -196,7 +195,7 @@ export default class Server implements IServerSocketEventListener {
         : {
             ...serverInfo,
             created: true,
-            version: NETWORK_VERSION,
+            version: __VERSION__,
           },
       rooms: Object.entries(this._rooms)
         .filter((entry) => !roomIndex || parseInt(entry[0]) === roomIndex)

@@ -41,7 +41,6 @@ import { BaseClient } from '@src/client/BaseClient';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IServerClearLinesEvent } from '@core/networking/server/IServerClearLinesEvent';
 import { IServerEndRoundEvent } from '@core/networking/server/IServerEndRoundEvent';
-import { NETWORK_VERSION } from '@models/index';
 import { IServerBlockDroppedEvent } from '@core/networking/server/IServerBlockDroppedEvent';
 
 export default class NetworkClient
@@ -97,7 +96,7 @@ export default class NetworkClient
       type: ClientMessageType.JOIN_ROOM_REQUEST,
       roomIndex: this._launchOptions.roomIndex || 0,
       player: this._launchOptions.player,
-      networkVersion: NETWORK_VERSION,
+      version: __VERSION__,
     };
     this._socket.sendMessage(joinRoomRequest);
   }
@@ -220,7 +219,7 @@ export default class NetworkClient
             message = 'Room is full';
             break;
           case JoinRoomResponseStatus.INCORRECT_VERSION:
-            message = 'Incorrect version';
+            message = 'Incorrect version (please try refreshing the page)';
             break;
           case JoinRoomResponseStatus.WRONG_PASSWORD:
             message = 'Wrong password';

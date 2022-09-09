@@ -4,5 +4,5 @@ export interface IServer extends IEntity {
   name: string;
   url: string;
   region: string;
-  version: number;
+  version: string;
 }

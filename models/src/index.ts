@@ -99,8 +99,6 @@ export * from './IClientApi';
 export * from './IGrid';
 export * from './WithId';
 
-export const NETWORK_VERSION = 2;
-
 export {
   exampleChallenges,
   IEntity,

@@ -38,6 +38,7 @@ import RockBehaviour from '@core/grid/cell/behaviours/RockBehaviour';
 import { GestureIndicator } from '@src/rendering/renderers/infinitris2/GestureIndicator';
 import { checkMistake } from '@core/block/checkMistake';
 import { ConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes/ConquestRenderer';
+import { MAX_COLUMNS } from '@core/grid/Grid';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -58,6 +59,7 @@ export type CellConnection = {
 type CachedRenderableCell = {
   connections: CellConnection[];
   color: number;
+  type: CellType;
   patternFilename: string | undefined;
   isEmpty: boolean;
   cacheId: number;
@@ -1587,17 +1589,20 @@ export default class Infinitris2Renderer extends BaseRenderer {
         patternFilename,
         isEmpty: cell.isEmpty,
         cacheId: this._cacheId,
+        type: cell.type,
       };
-      const cachedCell = this._cachedRenderableCells[cell.index];
-      this._cachedRenderableCells[cell.index] = cellToCache;
+      const cellIndexWithRowOffset = cell.index - rowOffset * MAX_COLUMNS;
+      const cachedCell = this._cachedRenderableCells[cellIndexWithRowOffset];
+      this._cachedRenderableCells[cellIndexWithRowOffset] = cellToCache;
       if (
         (!cachedCell && cell.isEmpty) ||
         (cachedCell &&
           cellToCache.cacheId === cachedCell.cacheId &&
-          ((cellToCache.isEmpty && cachedCell.isEmpty) ||
-            JSON.stringify(cellToCache.connections) ===
-              JSON.stringify(cachedCell.connections)) &&
+          cellToCache.isEmpty === cachedCell.isEmpty &&
+          JSON.stringify(cellToCache.connections) ===
+            JSON.stringify(cachedCell.connections) &&
           cellToCache.color === cachedCell.color &&
+          cellToCache.type === cachedCell.type &&
           cellToCache.patternFilename === cachedCell.patternFilename)
       ) {
         return;

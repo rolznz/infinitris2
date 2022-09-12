@@ -1611,10 +1611,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
         JSON.stringify(cellToCache.connections) ===
           JSON.stringify(cachedCell.connections))
     ) {
-      console.log('Skipped cached cell');
       return;
     }
-    console.log('Rendered new cell');
 
     this.renderCopies(
       renderableCell,

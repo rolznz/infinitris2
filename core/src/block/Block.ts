@@ -454,7 +454,7 @@ export default class Block implements IBlock {
 
     while (true) {
       let fell = false;
-      if (this.isReadyToFall && !this._player.isNetworked) {
+      if (this.isReadyToFall) {
         fell = this.fall();
       }
       if (!this._isAlive) {

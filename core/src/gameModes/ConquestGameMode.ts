@@ -272,16 +272,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     }
   }
 
-  onEndRound() {
-    for (const player of this._simulation.nonSpectatorPlayers) {
-      if (this._originalPlayerAppearances[player.id]) {
-        this._updatePlayerAppearance(
-          player,
-          this._originalPlayerAppearances[player.id]
-        );
-      }
-    }
-  }
+  onEndRound() {}
 
   private _calculateKnockouts() {
     if (this._simulation.isNetworkClient) {
@@ -367,6 +358,14 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   }
 
   onNextRound() {
+    for (const player of this._simulation.nonSpectatorPlayers) {
+      if (this._originalPlayerAppearances[player.id]) {
+        this._updatePlayerAppearance(
+          player,
+          this._originalPlayerAppearances[player.id]
+        );
+      }
+    }
     this._lastCalculationTime = 0;
     this._lastPlayerPlaced = undefined;
     this._lastMoveWasMistake = [];

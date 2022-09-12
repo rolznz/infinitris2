@@ -48,6 +48,7 @@ const nicknameVerifiedIconUrl = `${imagesDirectory}/nickname/verified.png`;
 const particleDivisions = 4;
 const numPatternDivisions = 4;
 let averageRenderFps: number = 0;
+const MAX_PARTICLES = 500;
 
 export type CellConnection = {
   row: number;
@@ -1010,6 +1011,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     type: ParticleType,
     isSolid = type !== 'fountain'
   ) {
+    if (this._particles.length > MAX_PARTICLES) {
+      return;
+    }
     const life = type === 'fountain' ? 25 : 50; //type === 'classic' ? 100 : 50;
     const particle: IParticle = {
       x: x + (type === 'capture' ? (Math.random() - 0.5) * 6 : 0),

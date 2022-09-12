@@ -366,9 +366,10 @@ export default class Simulation implements ISimulation {
   removePlayer(playerId: number) {
     const player = this._players[playerId];
     if (player) {
-      this._grid.removePlayer(player);
       player.destroy();
+      this._grid.removePlayer(player);
       delete this._players[playerId];
+      //this.onSimulationPlayerRemoved(player);
     }
   }
 

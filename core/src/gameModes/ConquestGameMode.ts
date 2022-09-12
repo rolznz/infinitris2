@@ -129,6 +129,22 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       );
     }
   }
+  onPlayerDestroyed(player: IPlayer) {
+    if (this._simulation.isNetworkClient) {
+      return;
+    }
+    // find another player on the same team and give the cells to them instead so that they aren't reset
+    const allyPlayer = this._simulation.activePlayers.find(
+      (other) => other.color === player.color && other !== player
+    );
+    if (allyPlayer) {
+      const cellsToReplace = this._simulation.grid.reducedCells.filter(
+        (cell) => cell.player === player
+      );
+      this.fillCells(cellsToReplace, allyPlayer);
+    }
+  }
+
   fillCells(cellsToFill: ICell[], player: IPlayer) {
     this._simulation.onGameModeEvent({
       type: 'cellsCaptured',
@@ -143,13 +159,17 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     const lineClearRowsToCheck: number[] = [];
 
     for (const cellToFill of cellsToFill) {
-      this._simulation.onGameModeEvent({
-        type: 'cellCaptured',
-        column: cellToFill.column,
-        row: cellToFill.row,
-        color: player.color,
-      });
-      this._delayRerender(cellToFill);
+      // only re-fire event if color changed
+      // (same color is player transfer when someone exits the game)
+      if (cellToFill.player?.color !== player.color) {
+        this._simulation.onGameModeEvent({
+          type: 'cellCaptured',
+          column: cellToFill.column,
+          row: cellToFill.row,
+          color: player.color,
+        });
+        this._delayRerender(cellToFill);
+      }
       cellToFill.place(player);
       lineClearRowsToCheck.push(cellToFill.row);
     }

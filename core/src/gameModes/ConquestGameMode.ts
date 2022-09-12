@@ -61,12 +61,14 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
 
   onLinesCleared() {
     this._calculateKnockouts();
+    this._debouncedCalculatePlayerScores();
   }
   onBlockCreated(block: IBlock) {
     this._temporarilyDeadPlayers[block.player.id] = false;
   }
   onBlockRemoved() {
     this._calculateKnockouts();
+    this._debouncedCalculatePlayerScores();
   }
   onBlockDied(block: IBlock) {
     this._lastMoveWasMistake[block.player.id] = true;
@@ -176,6 +178,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     this._simulation.grid.checkLineClears(
       lineClearRowsToCheck.filter((row, i, rows) => rows.indexOf(row) === i)
     );
+    this._debouncedCalculatePlayerScores();
   }
 
   private _calculateTowerCaptures(block: IBlock) {
@@ -344,7 +347,6 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         }
       }
     }
-    this._debouncedCalculatePlayerScores();
     console.log('Calculate knockouts: ' + (Date.now() - startTime) + 'ms');
   }
   private _updatePlayerAppearance(

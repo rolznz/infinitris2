@@ -43,7 +43,7 @@ export default class NormalCellBehaviour implements ICellBehaviour {
     }
   }
   getImageFilename(): string | undefined {
-    if (this._cell.isEmpty) {
+    if (this._cell.isEmpty || this._cell.player) {
       return undefined;
     }
     return 'fill';

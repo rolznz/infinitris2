@@ -64,6 +64,7 @@ type CachedRenderableCell = {
   patternFilename: string | undefined;
   isEmpty: boolean;
   cacheId: number;
+  imageFilename: string | undefined;
 };
 
 interface IBlockContainer {
@@ -1586,32 +1587,34 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
     }
 
-    if (cell.type === CellType.Normal) {
-      const cellToCache: CachedRenderableCell = {
-        connections,
-        color,
-        patternFilename,
-        isEmpty: cell.isEmpty,
-        cacheId: this._cacheId,
-        type: cell.type,
-      };
-      const cellIndexWithRowOffset = cell.index - rowOffset * MAX_COLUMNS;
-      const cachedCell = this._cachedRenderableCells[cellIndexWithRowOffset];
-      this._cachedRenderableCells[cellIndexWithRowOffset] = cellToCache;
-      if (
-        (!cachedCell && cell.isEmpty) ||
-        (cachedCell &&
-          cellToCache.cacheId === cachedCell.cacheId &&
-          cellToCache.isEmpty === cachedCell.isEmpty &&
-          JSON.stringify(cellToCache.connections) ===
-            JSON.stringify(cachedCell.connections) &&
-          cellToCache.color === cachedCell.color &&
-          cellToCache.type === cachedCell.type &&
-          cellToCache.patternFilename === cachedCell.patternFilename)
-      ) {
-        return;
-      }
+    const cellToCache: CachedRenderableCell = {
+      connections,
+      color,
+      patternFilename,
+      imageFilename: cell.behaviour.getImageFilename?.(),
+      isEmpty: cell.isEmpty,
+      cacheId: this._cacheId,
+      type: cell.type,
+    };
+    const cellIndexWithRowOffset = cell.index - rowOffset * MAX_COLUMNS;
+    const cachedCell = this._cachedRenderableCells[cellIndexWithRowOffset];
+    this._cachedRenderableCells[cellIndexWithRowOffset] = cellToCache;
+    if (
+      cachedCell &&
+      cellToCache.cacheId === cachedCell.cacheId &&
+      cellToCache.isEmpty === cachedCell.isEmpty &&
+      cellToCache.color === cachedCell.color &&
+      cellToCache.type === cachedCell.type &&
+      cellToCache.patternFilename === cachedCell.patternFilename &&
+      cellToCache.imageFilename === cachedCell.imageFilename &&
+      (cellToCache.isEmpty ||
+        JSON.stringify(cellToCache.connections) ===
+          JSON.stringify(cachedCell.connections))
+    ) {
+      console.log('Skipped cached cell');
+      return;
     }
+    console.log('Rendered new cell');
 
     this.renderCopies(
       renderableCell,

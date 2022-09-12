@@ -737,6 +737,25 @@ export default class Simulation implements ISimulation {
     }
   }
 
+  addBot(charactersPool: ICharacter[] | undefined, reactionDelay = 30) {
+    const botId = this.getFreePlayerId();
+    const botCharacter = this.generateCharacter(charactersPool, botId, true);
+
+    const bot = new AIPlayer(
+      this,
+      botId,
+      this.shouldNewPlayerSpectate
+        ? PlayerStatus.knockedOut
+        : PlayerStatus.ingame,
+      botCharacter.name!,
+      stringToHex(botCharacter.color!),
+      reactionDelay,
+      botCharacter.patternFilename!,
+      botCharacter.id!.toString()
+    );
+    this.addPlayer(bot);
+  }
+
   addBots(charactersPool: ICharacter[] | undefined) {
     if (this._settings?.botSettings?.numBots) {
       for (let i = 0; i < this._settings.botSettings.numBots; i++) {

@@ -166,6 +166,10 @@ export default class Room implements Partial<ISimulationEventListener> {
     this._sendMessageToPlayers(joinRoomResponse, newPlayer.id);
 
     this._simulation.startInterval();
+
+    if (this._simulation.players.length === 1) {
+      this._simulation.addBots(this._charactersPool);
+    }
   }
 
   /**
@@ -229,26 +233,11 @@ export default class Room implements Partial<ISimulationEventListener> {
           this._sendMessageToAllPlayers(serverChatMessage);
         } else {
           if (clientMessage.message.startsWith('/addbot')) {
-            const botId = this._simulation.getFreePlayerId();
-            const botCharacter = this._simulation.generateCharacter(
+            const reactionDelay = clientMessage.message.split(' ')[1];
+            this._simulation.addBot(
               this._charactersPool,
-              botId,
-              true
+              reactionDelay ? parseInt(reactionDelay) : undefined
             );
-
-            const bot = new AIPlayer(
-              this._simulation,
-              botId,
-              this._simulation.shouldNewPlayerSpectate
-                ? PlayerStatus.knockedOut
-                : PlayerStatus.ingame,
-              botCharacter.name!,
-              stringToHex(botCharacter.color!),
-              parseInt(clientMessage.message.split(' ')[1] || '30'),
-              botCharacter.patternFilename!,
-              botCharacter.id!.toString()
-            );
-            this._simulation.addPlayer(bot);
           } else if (clientMessage.message.startsWith('/kickbots')) {
             for (const player of this._simulation.players) {
               if (!player.isNetworked) {
@@ -419,8 +408,9 @@ export default class Room implements Partial<ISimulationEventListener> {
     };
     this._sendMessageToAllPlayers(playerDisconnectedMessage);
     if (
-      !this._simulation.players.filter((p) => p.isNetworked && p !== player)
-        .length
+      !this._simulation.networkPlayers.filter(
+        (otherPlayer) => otherPlayer !== player
+      ).length
     ) {
       for (const player of this._simulation.players) {
         if (!player.isNetworked) {

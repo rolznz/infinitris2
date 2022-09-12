@@ -37,6 +37,10 @@ export default interface ISimulation extends ISimulationEventListener {
   get rotationSystem(): IRotationSystem;
   get frameNumber(): number;
   get rootSeed(): number;
+  addBot(
+    charactersPool: ICharacter[] | undefined,
+    reactionDelay?: number
+  ): void;
   wasRecentlyPlaced(occurrenceFrame: number): boolean;
   destroy(): void;
   startInterval(): void;

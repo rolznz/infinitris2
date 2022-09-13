@@ -36,6 +36,10 @@ import shallow from 'zustand/shallow';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
 import useLoaderStore from '@/state/LoaderStore';
+import {
+  playGameMusic,
+  worldVariationToTrackNumber,
+} from '@/sound/SoundManager';
 
 export interface RoomPageRouteParams {
   id: string;
@@ -168,6 +172,10 @@ export default function RoomPage() {
         },
       ],
     });
+    playGameMusic(
+      room.data()?.worldType || 'grass',
+      worldVariationToTrackNumber(room.data()?.worldVariation)
+    );
   }, [
     disconnected,
     retryCount,

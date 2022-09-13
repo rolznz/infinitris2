@@ -8,6 +8,7 @@ import {
   ConquestCanPlaceResult,
 } from '@core/gameModes/ConquestGameMode';
 import { wrap } from '@models/util/wrap';
+import IBlock from '@models/IBlock';
 
 interface IRenderableFreeCell extends IRenderableEntity<PIXI.Graphics> {}
 
@@ -15,6 +16,7 @@ export class ConquestRenderer implements IGameModeRenderer {
   private _freeRenderableCells!: { [rowColumnId: number]: IRenderableFreeCell };
   private _renderer: BaseRenderer;
   private _cachedCanPlaceResults: { [index: number]: ConquestCanPlaceResult };
+  private _minimap: PIXI.Graphics | undefined;
 
   constructor(renderer: BaseRenderer) {
     this._freeRenderableCells = {};
@@ -108,12 +110,27 @@ export class ConquestRenderer implements IGameModeRenderer {
     this._cachedCanPlaceResults = {};
     this._rerender();
   }
+  onBlockMoved(block: IBlock) {
+    if (block.player === this._renderer?.simulation?.followingPlayer) {
+      // TODO: shouldn't re-render the whole minimap, just the player position indicator
+      this._rendererMinimap();
+    }
+  }
+  onBlockCreated(block: IBlock) {
+    if (block.player === this._renderer?.simulation?.followingPlayer) {
+      // TODO: shouldn't re-render the whole minimap, just the player position indicator
+      this._rendererMinimap();
+    }
+  }
 
   private _rerender() {
     const simulation = this._renderer.simulation;
-    if (!simulation || !simulation.followingPlayer) {
+    const followingPlayer = simulation?.followingPlayer;
+    if (!simulation || !followingPlayer) {
       return;
     }
+    this._rendererMinimap();
+
     for (let row = 0; row < simulation.grid.numRows; row++) {
       for (let column = 0; column < simulation.grid.numColumns; column++) {
         const cell = simulation.grid.cells[row][column];
@@ -133,7 +150,7 @@ export class ConquestRenderer implements IGameModeRenderer {
         );
         freeRenderableCell.container.y = cell.row * this._renderer.cellSize;
         const canPlaceResult = conquestCanPlace(
-          simulation.followingPlayer!,
+          followingPlayer,
           simulation,
           cell,
           false
@@ -175,6 +192,66 @@ export class ConquestRenderer implements IGameModeRenderer {
             return graphics;
           }
         );
+      }
+    }
+  }
+  private _rendererMinimap() {
+    const simulation = this._renderer.simulation;
+    const followingPlayer = simulation?.followingPlayer;
+    if (!simulation || !followingPlayer) {
+      return;
+    }
+    if (!this._minimap) {
+      this._minimap = new PIXI.Graphics();
+      this._renderer.app.stage.addChild(this._minimap);
+      this._minimap.zIndex = 10000;
+    }
+    const minimapWidth = this._renderer.app.screen.width * 0.3;
+    const minimapCellSize = Math.max(
+      minimapWidth / simulation.grid.numColumns,
+      1
+    );
+    this._minimap.x = this._renderer.app.screen.width * 0.95 - minimapWidth;
+    this._minimap.y =
+      this._renderer.app.screen.height -
+      (this._renderer.floorHeight - minimapCellSize * 2) * 0.5 -
+      minimapCellSize;
+    this._minimap.clear();
+    const lineSize = Math.max(minimapCellSize * 0.1, 1);
+    this._minimap.lineStyle(lineSize, 0xffffff);
+    this._minimap.drawRect(
+      -lineSize,
+      -lineSize,
+      minimapWidth + lineSize * 2,
+      minimapCellSize + lineSize * 2
+    );
+
+    if (followingPlayer.block) {
+      this._minimap.beginFill(followingPlayer.color, 1);
+      this._minimap.drawRect(
+        (wrap(followingPlayer.block.column, simulation.grid.numColumns) /
+          simulation.grid.numColumns) *
+          minimapWidth,
+        -minimapCellSize * 2,
+        minimapCellSize,
+        minimapCellSize
+      );
+    }
+    this._minimap.lineStyle(undefined);
+
+    for (let column = 0; column < simulation.grid.numColumns; column++) {
+      for (let row = 0; row < simulation.grid.numRows; row++) {
+        const cell = simulation.grid.cells[row][column];
+        if (cell.player) {
+          this._minimap.beginFill(cell.player.color, 1);
+          this._minimap.drawRect(
+            (column / simulation.grid.numColumns) * minimapWidth,
+            0,
+            minimapCellSize,
+            minimapCellSize
+          );
+          break;
+        }
       }
     }
   }

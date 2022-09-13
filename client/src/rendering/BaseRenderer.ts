@@ -119,6 +119,10 @@ export abstract class BaseRenderer implements IRenderer {
     return this._camera;
   }
 
+  get floorHeight(): number {
+    return this._floorHeight;
+  }
+
   set challengeEditorEnabled(challengeEditorEnabled: boolean) {
     this._challengeEditorEnabled = challengeEditorEnabled;
   }

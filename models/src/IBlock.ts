@@ -5,6 +5,7 @@ import { SimulationSettings } from './SimulationSettings';
 
 export type BlockCanMoveOptions = {
   allowMistakes: boolean;
+  allowTowers?: boolean;
   isMistake?: boolean;
   cells?: ICell[];
   isForgiving?: boolean;

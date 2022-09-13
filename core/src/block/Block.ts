@@ -328,7 +328,8 @@ export default class Block implements IBlock {
         options.isMistake = checkMistake(
           this._player,
           newCells,
-          this._simulation
+          this._simulation,
+          options.allowTowers
         );
       }
     } else {
@@ -606,6 +607,7 @@ export default class Block implements IBlock {
   hasPlacement() {
     const canMoveOptions: BlockCanMoveOptions = {
       allowMistakes: false,
+      allowTowers: false,
     };
 
     for (let dr = 0; dr < 4; dr++) {

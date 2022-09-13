@@ -22,15 +22,17 @@ export default function LobbyPage() {
 
   const slides: RoomCarouselSlideProps[] | undefined = React.useMemo(
     () =>
-      roomServerPairs?.map((pair) => ({
-        gameModeType:
-          pair.room.data().simulationSettings?.gameModeType || 'infinity',
-        worldType: pair.room.data().worldType,
-        name: pair.room.data().name,
-        numPlayers: pair.room.data().numHumans,
-        id: pair.room.id,
-        worldVariation: pair.room.data().worldVariation || '0',
-      })),
+      roomServerPairs?.map((pair) => {
+        const slideProps: RoomCarouselSlideProps = {
+          simulationSettings: pair.room.data().simulationSettings,
+          worldType: pair.room.data().worldType,
+          name: pair.room.data().name,
+          numPlayers: pair.room.data().numHumans,
+          id: pair.room.id,
+          worldVariation: pair.room.data().worldVariation || '0',
+        };
+        return slideProps;
+      }),
     [roomServerPairs]
   );
 

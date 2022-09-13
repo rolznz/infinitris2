@@ -243,9 +243,8 @@ export default class Simulation implements ISimulation {
         this._gameMode.shouldNewPlayerSpectate)
     );
   }
-  /*get forgivingPlacementTime(): number {
-    return this._settings.forgivingPlacementTime ?? 1000; //ms
-  }*/
+
+  // TODO: move to SimulationSettings, remove reliance on simulation
   get forgivingPlacementFrames(): number {
     return this._settings.forgivingPlacementFrames ?? IDEAL_FPS;
   }

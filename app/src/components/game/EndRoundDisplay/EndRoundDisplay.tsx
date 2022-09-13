@@ -222,7 +222,8 @@ export function NextRoundIndicator({
         simulation.settings.gameModeType !== 'infinity' && (
           <Typography variant="body2" mt={2}>
             <GameModeDescription
-              gameModeType={simulation?.settings.gameModeType}
+              gameModeType={simulation.settings.gameModeType}
+              simulationSettings={simulation.settings}
             />
           </Typography>
         )}

@@ -5,9 +5,11 @@ import {
   GameModeType,
   getVariationHueRotation,
   IChallenge,
+  SimulationSettings,
   WorldType,
   WorldVariation,
   WorldVariationValues,
+  getKnockoutPointDifference,
 } from 'infinitris2-models';
 import grassImage from '@/components/ui/RoomCarousel/assets/carousel/grass_desktop.svg';
 import desertImage from '@/components/ui/RoomCarousel/assets/carousel/desert_desktop.svg';
@@ -38,7 +40,7 @@ const fadeSx: SxProps = {
 };
 
 export type RoomCarouselSlideProps = {
-  gameModeType?: GameModeType;
+  simulationSettings?: SimulationSettings;
   customText?: React.ReactNode;
   name?: string;
   numPlayers?: number;
@@ -51,7 +53,7 @@ export type RoomCarouselSlideProps = {
 
 export function RoomCarouselSlide({
   numPlayers,
-  gameModeType,
+  simulationSettings,
   customText,
   name,
   worldType,
@@ -59,6 +61,8 @@ export function RoomCarouselSlide({
   grid,
   id,
 }: RoomCarouselSlideProps) {
+  const gameModeType: GameModeType | undefined =
+    simulationSettings?.gameModeType || 'infinity';
   const isLandscape = useIsLandscape();
   const windowSize = useWindowSize();
   const backgroundSx = React.useMemo(
@@ -148,7 +152,10 @@ export function RoomCarouselSlide({
               </Typography>
             </FlexBox>
             <Typography variant="body2">
-              <GameModeDescription gameModeType={gameModeType} />
+              <GameModeDescription
+                gameModeType={gameModeType}
+                simulationSettings={simulationSettings}
+              />
             </Typography>
           </FlexBox>
         )}
@@ -173,7 +180,10 @@ function GameModeIcon(props: { gameModeType: GameModeType }) {
   }
 }
 
-export function GameModeDescription(props: { gameModeType: GameModeType }) {
+export function GameModeDescription(props: {
+  gameModeType: GameModeType;
+  simulationSettings: SimulationSettings | undefined;
+}) {
   switch (props.gameModeType) {
     case 'infinity':
       return (
@@ -185,8 +195,13 @@ export function GameModeDescription(props: { gameModeType: GameModeType }) {
     case 'race':
       return (
         <FormattedMessage
-          defaultMessage="Get more than 200 points ahead to knock out other players."
+          defaultMessage="Get more than {knockoutPointDifference} points ahead to knock out other players."
           description="Race Game mode description"
+          values={{
+            knockoutPointDifference: getKnockoutPointDifference(
+              props.simulationSettings
+            ),
+          }}
         />
       );
     case 'conquest':

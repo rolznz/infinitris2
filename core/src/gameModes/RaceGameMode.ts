@@ -2,6 +2,7 @@ import { getScoreBasedFallDelay } from '@core/gameModes/InfinityGameMode';
 import { IGameMode } from '@models/IGameMode';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import ISimulation from '@models/ISimulation';
+import { getKnockoutPointDifference } from '@models/SimulationSettings';
 
 type RaceGameModeState = {};
 export class RaceGameMode implements IGameMode<RaceGameModeState> {
@@ -41,7 +42,9 @@ export class RaceGameMode implements IGameMode<RaceGameModeState> {
         .map((player) => player.score)
         .find((score) => !activePlayers.some((other) => other.score > score)) ||
       0;
-    const deathScore = highestPlayerScore - 200; // TODO: make this value customizable
+    const deathScore =
+      highestPlayerScore -
+      getKnockoutPointDifference(this._simulation.settings);
 
     for (const activePlayer of activePlayers) {
       activePlayer.health =

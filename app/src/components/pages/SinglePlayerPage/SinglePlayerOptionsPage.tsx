@@ -19,6 +19,7 @@ import {
 import {
   blockLayoutSets,
   GameModeTypeValues,
+  getKnockoutPointDifference,
   RoundLengthValues,
   WorldTypeValues,
   WorldVariationValues,
@@ -121,7 +122,7 @@ export function SinglePlayerOptionsPage() {
       background={
         <FlexBox position="fixed" top={0} zIndex="below" sx={{ opacity: 0.75 }}>
           <RoomCarouselSlide
-            gameModeType={formData.simulationSettings.gameModeType!}
+            simulationSettings={formData.simulationSettings}
             id={'custom'}
             worldType={formData.worldType}
             worldVariation={formData.worldVariation}
@@ -131,7 +132,7 @@ export function SinglePlayerOptionsPage() {
     >
       <form onSubmit={handleSubmit(onSubmit)}>
         <FlexBox gap={2}>
-          <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
+          <FlexBox flexDirection="row" flexWrap="wrap" gap={4}>
             <Controller
               name="simulationSettings.gameModeType"
               control={control}
@@ -198,6 +199,67 @@ export function SinglePlayerOptionsPage() {
                 </FormControl>
               )}
             /> */}
+            {watchedGameModeType === 'conquest' && (
+              <Controller
+                name="simulationSettings.gameModeSettings.hasRounds"
+                control={control}
+                render={({ field }) => (
+                  <FormControl variant="standard">
+                    <InputLabel>Rounds</InputLabel>
+                    <Switch {...field} defaultChecked={field.value} />
+                  </FormControl>
+                )}
+              />
+            )}
+            {watchedGameModeType === 'conquest' && (
+              <Controller
+                name="simulationSettings.gameModeSettings.hasConversions"
+                control={control}
+                render={({ field }) => (
+                  <FormControl variant="standard">
+                    <InputLabel>Conversions</InputLabel>
+                    <Switch {...field} defaultChecked={field.value} />
+                  </FormControl>
+                )}
+              />
+            )}
+            {watchedGameModeType === 'conquest' && (
+              <Controller
+                name="simulationSettings.gameModeSettings.numTeams"
+                control={control}
+                render={({ field }) => (
+                  <FormControl variant="standard">
+                    <InputLabel># Teams</InputLabel>
+
+                    <Select {...field} defaultValue={0}>
+                      {[0, 1, 2, 3, 4].map((type) => (
+                        <MenuItem key={type} value={type}>
+                          {type}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                )}
+              />
+            )}
+            {watchedGameModeType === 'race' && (
+              <Controller
+                name="simulationSettings.gameModeSettings.knockoutPointDifference"
+                control={control}
+                render={({ field }) => (
+                  <FormControl variant="standard">
+                    <InputLabel>Knockout Point Difference</InputLabel>
+
+                    <Input
+                      {...field}
+                      defaultValue={getKnockoutPointDifference(
+                        formData.simulationSettings
+                      )}
+                    />
+                  </FormControl>
+                )}
+              />
+            )}
             {watchedGameModeType === 'column-conquest' && (
               <Controller
                 name="simulationSettings.roundLength"

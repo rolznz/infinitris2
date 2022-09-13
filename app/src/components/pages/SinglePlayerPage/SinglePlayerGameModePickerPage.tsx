@@ -32,15 +32,22 @@ export function SinglePlayerGameModePickerPage() {
     return !advancedOptionsChanged
       ? GameModeTypeValues.filter((gameMode) => gameMode !== 'battle').map(
           (gameModeType) => ({
-            gameModeType,
+            simulationSettings: { gameModeType },
             id: gameModeType,
             worldType: getWorldType(gameModeType),
             worldVariation: getWorldVariation(gameModeType),
+            gameModeSettings:
+              gameModeType === 'conquest'
+                ? {
+                    hasConversions: true,
+                    hasRounds: true,
+                  }
+                : undefined,
           })
         )
       : [
           {
-            gameModeType: formData.simulationSettings.gameModeType!,
+            simulationSettings: formData.simulationSettings,
             id: JSON.stringify(formData),
             worldType: formData.worldType,
             worldVariation: formData.worldVariation,
@@ -72,16 +79,7 @@ export function SinglePlayerGameModePickerPage() {
         if (!advancedOptionsChanged) {
           useSinglePlayerOptionsStore.getState().setFormData(
             lodashMerge(formData, {
-              simulationSettings: {
-                gameModeType: GameModeTypeValues[step],
-                gameModeSettings:
-                  GameModeTypeValues[step] === 'conquest'
-                    ? {
-                        hasConversions: true,
-                        hasRounds: true,
-                      }
-                    : undefined,
-              },
+              simulationSettings: slides[step].simulationSettings,
               worldType: getWorldType(GameModeTypeValues[step]),
             } as SinglePlayerOptionsFormData)
           );

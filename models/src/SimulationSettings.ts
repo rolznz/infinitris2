@@ -5,6 +5,7 @@ import { RoundLength } from '@models/RoundLength';
 export type ConquestGameModeSettings = {
   hasRounds?: boolean;
   hasConversions?: boolean;
+  numTeams?: number;
 };
 
 export type InfinityGameModeSettings = {};
@@ -43,3 +44,7 @@ export type SimulationSettings = {
   readonly replaceUnplayableBlocks?: boolean;
   readonly forgivingPlacementFrames?: number; // allows blocks from multiple players to be placed in the same position
 };
+
+export function getKnockoutPointDifference(settings?: SimulationSettings) {
+  return settings?.gameModeSettings?.knockoutPointDifference ?? 200;
+}

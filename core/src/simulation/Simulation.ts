@@ -35,6 +35,7 @@ import { KeyedRandom } from '@core/simulation/KeyedRandom';
 import { ColumnConquestGameMode } from '@core/gameModes/ColumnConquestGameMode';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { BattleGameMode } from '@core/gameModes/BattleGameMode';
+import { wrap, wrappedDistance } from '@core/utils/wrap';
 
 const IDEAL_FPS = 60;
 /**
@@ -247,6 +248,52 @@ export default class Simulation implements ISimulation {
   // TODO: move to SimulationSettings, remove reliance on simulation
   get forgivingPlacementFrames(): number {
     return this._settings.forgivingPlacementFrames ?? IDEAL_FPS;
+  }
+
+  findFreeSpawnColumn(): number {
+    const maxTries = 50;
+    let column = 0;
+    let found = false;
+    let attempts = 0;
+    let quality = 0;
+    const qualities = [
+      [0, -1, 1, -2, 2, -3, 3],
+      [0, -1, 1, -2, 2],
+      [0, -1, 1],
+      [0],
+    ];
+    for (; quality < qualities.length; quality++) {
+      attempts = 0;
+      for (; attempts < maxTries; attempts++) {
+        column = Math.floor(
+          this.nextRandom('randomSpawnColumn') * this._grid.numColumns
+        );
+        if (
+          !this.activePlayers.some((player) =>
+            player.block?.cells.some((cell) =>
+              qualities[quality].some(
+                (i) => wrap(column + i, this._grid.numColumns) === cell.column
+              )
+            )
+          )
+        ) {
+          found = true;
+          break;
+        }
+      }
+      if (found) {
+        break;
+      }
+    }
+    // console.log(
+    //   'Chose column: ' +
+    //     column +
+    //     ' attempts: ' +
+    //     attempts +
+    //     ' quality: ' +
+    //     qualities[quality].join(' ')
+    // );
+    return column;
   }
 
   wasRecentlyPlaced(occurrenceFrame: number): boolean {

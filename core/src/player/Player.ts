@@ -377,10 +377,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
       ? this._spawnLocationCell.column
       : this._lastPlacementColumn === undefined
       ? this._simulation.settings.randomBlockPlacement !== false
-        ? Math.floor(
-            this._simulation.nextRandom('randomSpawnColumn') *
-              this._simulation.grid.numColumns
-          )
+        ? this._simulation.findFreeSpawnColumn()
         : Math.floor((this._simulation.grid.numColumns - layout[0].length) / 2)
       : this._lastPlacementColumn;
 

@@ -418,6 +418,7 @@ export default class Room implements Partial<ISimulationEventListener> {
         }
       }
       this._simulation.grid.reset();
+      this._simulation.round?.end(undefined);
       this._simulation.stopInterval();
     }
     this._sendServerChatMessage('Player ' + player.nickname + ' left the game');

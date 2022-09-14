@@ -115,6 +115,13 @@ export abstract class BaseRenderer implements IRenderer {
     return this._gridHeight;
   }
 
+  get appWidth(): number {
+    return this._appWidth;
+  }
+  get appHeight(): number {
+    return this._appHeight;
+  }
+
   get camera(): Camera {
     return this._camera;
   }

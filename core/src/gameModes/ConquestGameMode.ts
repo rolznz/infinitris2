@@ -1,10 +1,13 @@
 import { INITIAL_FALL_DELAY } from '@core/block/Block';
 import { wrap, wrappedDistance } from '@core/utils/wrap';
+import { colors } from '@models/colors';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import { IGameMode } from '@models/IGameMode';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
+import { teams } from '@models/teams';
 import ISimulation from '@models/ISimulation';
+import { stringToHex } from '@models/util/stringToHex';
 import { debounce } from 'ts-debounce';
 
 type PlayerAppearance = {
@@ -54,7 +57,15 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     return false;
   }
   get shouldNewPlayerSpectate(): boolean {
-    return !this.hasRounds || !this.hasConversions;
+    // TODO: re-disable for conversions (see FIXME in onPlayerChangeStatus)
+    return !this.hasRounds; // || !this.hasConversions;
+  }
+
+  get numTeams(): number {
+    return Math.min(
+      this._simulation.settings.gameModeSettings?.numTeams ?? 0,
+      4
+    );
   }
 
   step(): void {}
@@ -244,6 +255,9 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       patternFilename: player.patternFilename,
       characterId: player.characterId,
     };
+    if (this.numTeams > 0 && !this._simulation.isNetworkClient) {
+      this.assignPlayerToTeam(player);
+    }
   }
   onPlayerKilled(_simulation: ISimulation, victim: IPlayer, attacker: IPlayer) {
     if (attacker) {
@@ -263,8 +277,12 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     cell.rerenderDelay = Math.random() * 500;
   }
   onPlayerChangeStatus(player: IPlayer) {
-    if (
+    // FIXME: the below code has multiple issues regarding network sync
+    // if a new player joins, they are free to place anywhere. This is problematic for conversions/team modes
+    /*if (
+      !this._simulation.isNetworkClient &&
       this.hasConversions &&
+      this._simulation.round!.currentRoundDuration > 1000 &&
       player.status === PlayerStatus.ingame &&
       this._simulation.activePlayers.some(
         (other) => other !== player && other.color === player.color
@@ -272,7 +290,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     ) {
       // players who get converted already have one more more cells to play on
       player.isFirstBlock = false;
-    }
+    }*/
   }
 
   onEndRound() {}
@@ -310,15 +328,15 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
           }
           player.status = PlayerStatus.knockedOut;
 
-          let conversionsEndRound = false;
+          let forceEndRound = false;
           if (
-            this.hasConversions &&
+            (this.hasConversions || this.numTeams > 0) &&
             this._simulation.activePlayers.every(
               (v, _, a) => v.color === a[0].color
             )
           ) {
             // everyone is on the same team now, knock out all players except the winner
-            conversionsEndRound = true;
+            forceEndRound = true;
             // TODO: leave the player that has been active the longest (the winner)
             const winner = this._simulation.activePlayers.find(
               (activePlayer, _, a) =>
@@ -333,14 +351,11 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
               .forEach((player) => (player.status = PlayerStatus.knockedOut));
           }
 
-          if (
-            !this.hasRounds ||
-            (this.hasConversions && !conversionsEndRound)
-          ) {
+          if (!this.hasRounds || (this.hasConversions && !forceEndRound)) {
             // instantly switch state back - will cause the player to reset
             player.status = PlayerStatus.ingame;
           }
-          if (conversionsEndRound) {
+          if (forceEndRound) {
             // all other players were kicked out
             break;
           }
@@ -360,12 +375,28 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
   }
 
   onNextRound() {
-    for (const player of this._simulation.nonSpectatorPlayers) {
-      if (this._originalPlayerAppearances[player.id]) {
-        this._updatePlayerAppearance(
-          player,
-          this._originalPlayerAppearances[player.id]
-        );
+    if (this.numTeams > 0) {
+      if (!this._simulation.isNetworkClient) {
+        // reset teams
+        for (const player of this._simulation.nonSpectatorPlayers) {
+          player.color = 0;
+        }
+        const randomlyOrderedPlayers = [
+          ...this._simulation.nonSpectatorPlayers,
+        ];
+        randomlyOrderedPlayers.sort(() => (Math.random() > 0.5 ? 1 : -1));
+        for (const player of randomlyOrderedPlayers) {
+          this.assignPlayerToTeam(player);
+        }
+      }
+    } else {
+      for (const player of this._simulation.nonSpectatorPlayers) {
+        if (this._originalPlayerAppearances[player.id]) {
+          this._updatePlayerAppearance(
+            player,
+            this._originalPlayerAppearances[player.id]
+          );
+        }
       }
     }
     this._lastCalculationTime = 0;
@@ -383,6 +414,42 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
         }
       }
     }, 100);*/
+  }
+  // TODO: there will probably be other game modes with teams too, most of this code should live somewhere else
+  // currently teams are identified by player colors (cells with the same color will be connected)
+  assignPlayerToTeam(player: IPlayer, teamNumber?: number) {
+    if (teamNumber === undefined) {
+      if (this._simulation.isNetworkClient) {
+        throw new Error('No team number');
+      }
+      const players = this._simulation.nonSpectatorPlayers;
+      const teamCounts = [...new Array(this.numTeams)].map((_, teamNumber) => ({
+        teamNumber,
+        numPlayers: players.filter(
+          (player) => player.color === teams[teamNumber].color
+        ).length,
+      }));
+      teamCounts.sort((a, b) => a.numPlayers - b.numPlayers);
+      teamNumber = teamCounts[0].teamNumber;
+      console.log(
+        'Chose team number: ',
+        teamCounts[0].teamNumber,
+        teamCounts.map((count) => count.teamNumber + ' ' + count.numPlayers)
+      );
+    }
+
+    this._updatePlayerAppearance(player, {
+      characterId: teams[teamNumber].characterId,
+      color: teams[teamNumber].color,
+      patternFilename: `pattern_${teams[teamNumber].patternNumber}.png`,
+    });
+
+    this._simulation.onGameModeEvent({
+      type: 'teamChanged',
+      teamNumber,
+      playerId: player.id,
+      isSynced: true,
+    });
   }
 
   serialize(): ConquestGameModeState {

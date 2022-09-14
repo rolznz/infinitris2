@@ -206,14 +206,15 @@ export class ConquestRenderer implements IGameModeRenderer {
       this._renderer.app.stage.addChild(this._minimap);
       this._minimap.zIndex = 10000;
     }
-    const minimapWidth = this._renderer.app.screen.width * 0.3;
+    const minimapWidth = this._renderer.appWidth * 0.3;
     const minimapCellSize = Math.max(
       minimapWidth / simulation.grid.numColumns,
       1
     );
-    this._minimap.x = this._renderer.app.screen.width * 0.95 - minimapWidth;
+    this._minimap.x =
+      this._renderer.appWidth - this._renderer.floorHeight * 0.5 - minimapWidth;
     this._minimap.y =
-      this._renderer.app.screen.height -
+      this._renderer.appHeight -
       (this._renderer.floorHeight - minimapCellSize * 2) * 0.5 -
       minimapCellSize;
     this._minimap.clear();

@@ -1,3 +1,11 @@
+type SyncedGameModeEvent = { isSynced: true };
+
+export type GameModeTeamEvent = {
+  type: 'teamChanged';
+  playerId: number;
+  teamNumber: number;
+} & SyncedGameModeEvent;
+
 export type ColumnConquestEvent = {
   type: 'columnChanged';
   column: number;
@@ -19,8 +27,10 @@ export type ConquestEvent =
       }[];
     } & SyncedGameModeEvent);
 
-type SyncedGameModeEvent = { isSynced: true };
-
-export type GameModeEvent = (ColumnConquestEvent | ConquestEvent) & {
+export type GameModeEvent = (
+  | ColumnConquestEvent
+  | ConquestEvent
+  | GameModeTeamEvent
+) & {
   isSynced?: boolean;
 };

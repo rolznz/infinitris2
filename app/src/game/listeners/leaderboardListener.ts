@@ -3,6 +3,7 @@ import {
   hexToString,
   ISimulationEventListener,
   PlayerStatus,
+  teams,
 } from 'infinitris2-models';
 import { debounce } from 'ts-debounce';
 
@@ -12,36 +13,72 @@ function _updateLeaderboard() {
   const maxEntries = 5; // TODO: responsive
 
   const leaderboardEntries: LeaderboardEntry[] =
-    simulation?.players
-      .filter(
-        (player) =>
-          !simulation?.settings.gameModeSettings?.hasConversions ||
-          !simulation?.players.some(
-            (other) =>
-              other.color === player.color &&
-              other.lastStatusChangeTime < player.lastStatusChangeTime
+    (simulation?.settings.gameModeSettings?.numTeams || 0) > 0
+      ? teams
+          .filter((team) =>
+            simulation!.players.some((player) => player.color === team.color)
           )
-      )
-      .map((player) => ({
-        isControllable: player.isControllable,
-        placing: 0,
-        playerId: player.id,
-        isBot: player.isBot,
-        nickname: player.nickname,
-        color: hexToString(player.color),
-        characterId: player.characterId,
-        score: player.score,
-        status: player.status,
-        isPremium: player.isPremium,
-        isNicknameVerified: player.isNicknameVerified,
-        allyNicknames: simulation.players
+          .map((team) => ({
+            nickname: team.name,
+            allyNicknames: simulation!.players
+              .filter((player) => player.color === team.color)
+              .map((ally) => ally.nickname),
+            characterId: team.characterId,
+            color: hexToString(team.color),
+            isBot: simulation!.players
+              .filter((player) => player.color === team.color)
+              .every((player) => player.isBot),
+            isControllable: simulation!.players
+              .filter((player) => player.color === team.color)
+              .some((player) => player.isControllable),
+            isNicknameVerified: simulation!.players
+              .filter((player) => player.color === team.color)
+              .some((player) => player.isNicknameVerified),
+            isPremium: simulation!.players
+              .filter((player) => player.color === team.color)
+              .some((player) => player.isPremium),
+            placing: 0,
+            playerId: simulation!.players.find(
+              (player) => player.color === team.color
+            )!.id,
+            score: simulation!.players.find(
+              (player) => player.color === team.color
+            )!.score,
+            status: simulation!.players.find(
+              (player) => player.color === team.color
+            )!.status,
+          }))
+      : simulation?.players
           .filter(
-            (other) =>
-              other.color === player.color &&
-              other.lastStatusChangeTime > player.lastStatusChangeTime
+            (player) =>
+              !simulation?.settings.gameModeSettings?.hasConversions ||
+              !simulation?.players.some(
+                (other) =>
+                  other.color === player.color &&
+                  other.lastStatusChangeTime < player.lastStatusChangeTime
+              )
           )
-          .map((ally) => ally.nickname),
-      })) || [];
+          .map((player) => ({
+            isControllable: player.isControllable,
+            placing: 0,
+            playerId: player.id,
+            isBot: player.isBot,
+            nickname: player.nickname,
+            color: hexToString(player.color),
+            characterId: player.characterId,
+            score: player.score,
+            status: player.status,
+            isPremium: player.isPremium,
+            isNicknameVerified: player.isNicknameVerified,
+            allyNicknames: simulation.players
+              .filter(
+                (other) =>
+                  other.color === player.color &&
+                  (other.lastStatusChangeTime > player.lastStatusChangeTime ||
+                    (simulation.settings.gameModeSettings?.numTeams || 0) > 0)
+              )
+              .map((ally) => ally.nickname),
+          })) || [];
 
   leaderboardEntries.sort((a, b) => {
     if (a.status === PlayerStatus.ingame && b.status === PlayerStatus.ingame) {

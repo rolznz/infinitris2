@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import useIngameStore from '@/state/IngameStore';
 import React from 'react';
 import { textShadows } from '@/theme/theme';
-import { hexToString, IPlayer } from 'infinitris2-models';
+import { hexToString, IPlayer, teams } from 'infinitris2-models';
 import { FormattedMessage } from 'react-intl';
 import ChallengeMedalDisplay from '@/components/pages/ChallengePage/ChallengeMedalDisplay';
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
@@ -76,16 +76,22 @@ export function RoundWinnerDisplay({
   message,
   medalIndex,
 }: RoundWinnerDisplayProps) {
+  const simulation = useIngameStore((store) => store.simulation);
   const starSize = characterSize * 1.1;
   const ribbonSize = starSize * 0.4;
   const nameTypographySx: SxProps<Theme> = React.useMemo(
     () => ({
-      color: hexToString(winner?.color || 0),
+      color: hexToString(winner.color || 0),
       textShadow: textShadows.small,
       fontSize: Math.floor(characterSize / 10) + 'px',
     }),
-    [winner?.color, characterSize]
+    [winner.color, characterSize]
   );
+
+  const nickname =
+    (simulation?.settings?.gameModeSettings?.numTeams || 0) > 0
+      ? teams.find((team) => team.color === winner.color)?.name
+      : winner.nickname;
 
   return (
     <FlexBox height={starSize} maxWidth="90vw" position="relative">
@@ -124,7 +130,7 @@ export function RoundWinnerDisplay({
               defaultMessage="{nickname} WINS!"
               description="end round display player wins message"
               values={{
-                nickname: winner.nickname,
+                nickname,
               }}
             />
           )}

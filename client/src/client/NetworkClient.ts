@@ -332,6 +332,18 @@ export default class NetworkClient
             (cell) => this._simulation.grid.cells[cell.row][cell.column]
           );
           gameMode.fillCells(cells, player);
+        } else if (event.data.type === 'teamChanged') {
+          if (this._simulation.settings.gameModeType !== 'conquest') {
+            throw new Error(
+              'Unexpected game mode for event ' +
+                event.data.type +
+                ': ' +
+                this._simulation.settings.gameModeType
+            );
+          }
+          const gameMode = this._simulation.gameMode as ConquestGameMode;
+          const player = this._simulation.getPlayer(event.data.playerId);
+          gameMode.assignPlayerToTeam(player, event.data.teamNumber);
         } else {
           throw new Error('Unsupported game mode event: ' + event.data.type);
         }

@@ -63,14 +63,16 @@ export function getCellBehaviourImageFilename(
   ) {
     return undefined;
   }
+  const behaviourFilename = behaviour.getImageFilename?.();
+  if (!behaviourFilename) {
+    return undefined;
+  }
   // TODO: use a sprite sheet instead of individual sprites
   let filename: string | undefined;
   try {
     filename = `${imagesDirectory}/cells/${
       behaviour.hasWorldImage?.() ? `${worldType}/` : ''
-    }${behaviour.getImageFilename?.()}${
-      behaviour.hasTileset?.() ? '_tileset' : ''
-    }${
+    }${behaviourFilename}${behaviour.hasTileset?.() ? '_tileset' : ''}${
       worldVariation !== '0' && behaviour.hasWorldVariationImage?.()
         ? '_variation' + worldVariation
         : ''

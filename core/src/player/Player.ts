@@ -207,14 +207,18 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     if (this._status === PlayerStatus.spectating) {
       this._score = 0;
     }
+    this.removeBlock();
     if (this._status !== PlayerStatus.ingame) {
       if (this._status === PlayerStatus.knockedOut && this._block) {
         this._block.die();
       }
       this._health = 0;
-      this.removeBlock();
     } else {
       this._isFirstBlock = true;
+      this._health =
+        this._simulation.settings.gameModeType === 'column-conquest' ? 0.5 : 1; // TODO: add initial health to game mode
+      this._score = 0;
+      this.estimatedSpawnDelay = 0;
     }
     this._eventListeners.forEach((listener) =>
       listener.onPlayerChangeStatus(this)

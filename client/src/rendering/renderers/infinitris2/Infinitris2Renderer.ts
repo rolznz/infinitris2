@@ -178,6 +178,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _showUI?: boolean;
   private _cachedRenderableCells: { [index: number]: CachedRenderableCell };
   private _cacheId: number;
+  private _pendingDestroy: boolean;
+  private _hasDestroyed: boolean;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -196,6 +198,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     showUI = true
   ) {
     super(clientApiConfig, undefined, rendererQuality, isDemo);
+    this._pendingDestroy = false;
+    this._hasDestroyed = false;
     this._preferredInputMethod = preferredInputMethod;
     this._worldType = worldType;
     this._useFallbackUI = useFallbackUI;
@@ -276,7 +280,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   tick() {
-    if (!this._simulation) {
+    if (this._pendingDestroy && !this._hasDestroyed) {
+      this._destroy();
+    }
+    if (!this._simulation || this._hasDestroyed) {
       return;
     }
 
@@ -511,6 +518,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
    * @inheritdoc
    */
   destroy() {
+    this._pendingDestroy = true;
+  }
+  _destroy() {
+    this._hasDestroyed = true;
     if (this._app) {
       this._app.destroy(true);
     }

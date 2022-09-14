@@ -70,6 +70,8 @@ export default class ClientApi implements IClientApi {
         (params.get('worldVariation') as WorldVariation) || '0';
       const hasRounds = params.get('hasRounds') === 'true';
       const hasConversions = params.get('hasConversions') === 'true';
+      const numTeamsString = params.get('numTeams');
+      const numTeams = numTeamsString ? parseInt(numTeamsString) : undefined;
 
       const gameModeType = params.get('gameMode') as GameModeType;
       const simulationSettings: SimulationSettings = {
@@ -77,6 +79,7 @@ export default class ClientApi implements IClientApi {
         gameModeSettings: {
           hasRounds,
           hasConversions,
+          numTeams,
         },
         botSettings: {
           numBots,

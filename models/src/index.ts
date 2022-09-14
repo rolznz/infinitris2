@@ -47,6 +47,7 @@ export * from './RendererQuality';
 export * from './AppTheme';
 export * from './RendererType';
 export * from './colors';
+export * from './teams';
 export * from './util/hexToString';
 export * from './util/stringToHex';
 export * from './SimulationSettings';

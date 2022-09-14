@@ -219,6 +219,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         this._simulation.settings.gameModeType === 'column-conquest' ? 0.5 : 1; // TODO: add initial health to game mode
       this._score = 0;
       this.estimatedSpawnDelay = 0;
+      this._lastPlacementColumn = undefined;
     }
     this._eventListeners.forEach((listener) =>
       listener.onPlayerChangeStatus(this)

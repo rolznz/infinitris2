@@ -30,28 +30,28 @@ export function StoryModePage() {
 
   const slides: RoomCarouselSlideProps[] = React.useMemo(
     () =>
-      sortedOfficialChallenges?.map(
-        (challengeDoc, index) =>
-          ({
-            id: challengeDoc.id,
-            customText: (
-              <FlexBox alignItems="flex-start" mb={1}>
-                <Typography variant="h1">
-                  {getOfficialChallengeTitle(challengeDoc.data())}
-                </Typography>
-                {/*<ChallengeTopAttempts
+      sortedOfficialChallenges?.map((challengeDoc, index) => {
+        const props: RoomCarouselSlideProps = {
+          id: challengeDoc.id,
+          customText: (
+            <FlexBox alignItems="flex-start" mb={1}>
+              <Typography variant="h1">
+                {getOfficialChallengeTitle(challengeDoc.data())}
+              </Typography>
+              {/*<ChallengeTopAttempts
                   challengeId={challengeDoc.id}
                   challenge={challengeDoc.data()}
             />*/}
-              </FlexBox>
-            ),
-            worldType: challengeDoc.data().worldType || 'grass',
-            worldVariation: challengeDoc.data().worldVariation || '0',
-            isLocked: index > (completedOfficialChallengeIds?.length || 0),
-            grid: challengeDoc.data().grid,
-            gameModeType: challengeDoc.data().simulationSettings?.gameModeType,
-          } as RoomCarouselSlideProps)
-      ) || [],
+            </FlexBox>
+          ),
+          worldType: challengeDoc.data().worldType || 'grass',
+          worldVariation: challengeDoc.data().worldVariation || '0',
+          isLocked: index > (completedOfficialChallengeIds?.length || 0),
+          grid: challengeDoc.data().grid,
+          simulationSettings: challengeDoc.data().simulationSettings,
+        };
+        return props;
+      }) || [],
     [sortedOfficialChallenges, completedOfficialChallengeIds]
   );
 
@@ -116,7 +116,9 @@ function romanizeChallengeStage(num: number) {
       return 'IV';
     case 5:
       return 'V';
+    case 6:
+      return 'VI';
     default:
-      throw new Error('Unsupported challenge stage number');
+      throw new Error('Unsupported challenge stage number: ' + num);
   }
 }

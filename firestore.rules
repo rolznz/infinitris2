@@ -138,7 +138,8 @@ service cloud.firestore {
           getProperty('worldType', 'grass') in ['grass', 'desert', 'volcano', 'space'] &&
           getProperty('worldVariation', '0') in ['0', '1', '2', '3', '4', '5'] &&
           simulationSettings is map &&
-          simulationSettings.keys().hasOnly(['layoutSetId', 'gravityEnabled', 'replaceUnplayableBlocks', 'allowedBlockLayoutIds']) &&
+          simulationSettings.keys().hasOnly(['layoutSetId', 'gravityEnabled', 'replaceUnplayableBlocks', 'allowedBlockLayoutIds', 'gameModeType']) &&
+          simulationSettings.get('gameModeType', '') is string &&
           simulationSettings.get('gravityEnabled', false) is bool &&
           simulationSettings.get('replaceUnplayableBlocks', false) is bool &&
           simulationSettings.get('layoutSetId', '') is string && simulationSettings.get('layoutSetId', '').size() < 100 &&

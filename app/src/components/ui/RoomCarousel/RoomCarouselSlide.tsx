@@ -141,7 +141,7 @@ export function RoomCarouselSlide({
             </FlexBox>
           )}
         </FlexBox>
-        {gameModeType && (
+        {gameModeType && (!grid || typeof grid !== 'string') && (
           <FlexBox alignItems="flex-start">
             <FlexBox flexDirection="row" gap={1}>
               <SvgIcon color="primary">

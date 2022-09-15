@@ -37,40 +37,48 @@ const medalProps: React.SVGProps<SVGSVGElement> = {
 };
 
 export function WorldProgress({ worldType }: WorldProgressProps) {
-  const incompleteChallenges = useIncompleteChallenges(worldType);
+  const {
+    incompleteChallenges,
+    officialChallengesCount,
+    isLoadingOfficialChallenges,
+  } = useIncompleteChallenges(worldType);
   const user = useUser();
   const [showAnimation, setShowAnimation] = React.useState(true);
   const progress = Math.max(
     0,
-    (incompleteChallenges?.isLoadingOfficialChallenges
+    (isLoadingOfficialChallenges
       ? 0
-      : 5 - incompleteChallenges.incompleteChallenges?.length) -
+      : (officialChallengesCount || 0) - incompleteChallenges?.length) -
       (showAnimation ? 1 : 0)
   );
-  const progressPercentage = (progress / 5) * 100;
+  const progressPercentage = (progress / (officialChallengesCount || 1)) * 100;
 
   React.useEffect(() => {
     setTimeout(() => setShowAnimation(false), 1000);
   }, []);
 
-  const medals = [0, 1, 2, 3, 4].map((value) => (
-    <FlexBox
-      key={value}
-      position="absolute"
-      left={`calc(${Math.min(value + 1, 4.9) * 20}% - 20px)`}
-      top={40}
-      zIndex={1}
-    >
-      <Typography variant="body1" sx={{ position: 'absolute' }} zIndex={1}>
-        {value + 1}
-      </Typography>
-      {progress > value ? (
-        <GoldMedal {...medalProps} />
-      ) : (
-        <IncompleteMedal {...medalProps} />
-      )}
-    </FlexBox>
-  ));
+  const medals = [...new Array(officialChallengesCount || 0)].map(
+    (_, value) => (
+      <FlexBox
+        key={value}
+        position="absolute"
+        left={`calc(${
+          Math.min((value + 1) / (officialChallengesCount || 1), 0.99) * 100
+        }% - 20px)`}
+        top={40}
+        zIndex={1}
+      >
+        <Typography variant="body1" sx={{ position: 'absolute' }} zIndex={1}>
+          {value + 1}
+        </Typography>
+        {progress > value ? (
+          <GoldMedal {...medalProps} />
+        ) : (
+          <IncompleteMedal {...medalProps} />
+        )}
+      </FlexBox>
+    )
+  );
 
   return (
     <FlexBox

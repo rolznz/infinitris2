@@ -13,6 +13,7 @@ import {
   IChallenge,
   WorldTypeValues,
   WorldVariationValues,
+  GameModeTypeValues,
 } from 'infinitris2-models';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import FlexBox from '@/components/ui/FlexBox';
@@ -394,6 +395,22 @@ export function ChallengeEditorSettingsForm({
                       }
                       label={'Official (Story Mode)'}
                     />
+                  )}
+                />
+                <Controller
+                  name="simulationSettings.gameModeType"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl variant="standard" fullWidth>
+                      <InputLabel>Game Mode</InputLabel>
+                      <Select {...field}>
+                        {GameModeTypeValues.map((value) => (
+                          <MenuItem key={value} value={value}>
+                            {value}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
                   )}
                 />
               </FlexBox>

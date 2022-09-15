@@ -14,6 +14,8 @@ export default function useIncompleteChallenges(
   const isLoadingOfficialChallenges =
     !officialChallenges?.length && isValidating;
 
+  const officialChallengesCount = officialChallenges?.length || 0;
+
   const user = useUser();
   const incompleteChallenges = React.useMemo(
     () =>
@@ -28,5 +30,9 @@ export default function useIncompleteChallenges(
       ),
     [officialChallenges, user.completedOfficialChallengeIds]
   );
-  return { incompleteChallenges, isLoadingOfficialChallenges };
+  return {
+    incompleteChallenges,
+    isLoadingOfficialChallenges,
+    officialChallengesCount,
+  };
 }

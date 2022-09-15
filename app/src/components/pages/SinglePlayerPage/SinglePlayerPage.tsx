@@ -80,6 +80,7 @@ export default function SinglePlayerPage() {
       setLaunched(true);
       launchSinglePlayer({
         ...userLaunchOptions,
+        teachAllControls: true,
         allCharacters,
         player,
         worldType,

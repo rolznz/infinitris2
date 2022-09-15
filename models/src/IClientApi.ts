@@ -43,6 +43,7 @@ export type LaunchOptions = WithControls &
     isDemo?: boolean;
     allCharacters?: ICharacter[];
     showUI?: boolean;
+    teachAllControls?: boolean;
   };
 
 export type ChallengeLaunchOptions = LaunchOptions & {

@@ -78,7 +78,9 @@ export default class SinglePlayerClient
             options.rendererSettings?.blockShadowType,
             options.rendererSettings?.showFaces,
             options.rendererSettings?.showPatterns,
-            options.rendererSettings?.showNicknames
+            options.rendererSettings?.showNicknames,
+            options.showUI !== false,
+            options.teachAllControls
           );
     await this._renderer.create();
 

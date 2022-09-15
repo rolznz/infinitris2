@@ -195,7 +195,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     showFaces = true,
     showPatterns = true,
     showNicknames = true,
-    showUI = true
+    showUI = true,
+    teachAllControls = false
   ) {
     super(clientApiConfig, undefined, rendererQuality, isDemo);
     this._pendingDestroy = false;
@@ -213,7 +214,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._gestureIndicator = new GestureIndicator(
       this._app,
       this._preferredInputMethod,
-      controls
+      controls,
+      teachAllControls
     );
 
     this._numPaddingRows = 0;

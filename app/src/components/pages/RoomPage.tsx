@@ -144,6 +144,7 @@ export default function RoomPage() {
       socketListener: socketEventListener,
       controls_keyboard,
       controls_gamepad,
+      teachAllControls: true,
       worldType: room.data()!.worldType,
       worldVariation: room.data()!.worldVariation,
       player,

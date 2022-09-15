@@ -18,6 +18,17 @@ const keyTextLineHeight = 50;
 const getKey = (inputActions: CustomizableInputAction[]) =>
   inputActions.join('-');
 
+const teachableInputActions = [
+  CustomizableInputAction.MoveLeft,
+  CustomizableInputAction.MoveRight,
+  CustomizableInputAction.MoveDown,
+  CustomizableInputAction.RotateClockwise,
+  CustomizableInputAction.RotateAnticlockwise,
+  CustomizableInputAction.Drop,
+];
+
+const teachAllControlsIterations = 3;
+
 export class GestureIndicator {
   private _app: PIXI.Application;
   private _virtualKeyboardGraphics?: PIXI.Graphics;
@@ -27,16 +38,22 @@ export class GestureIndicator {
   private _controls: ControlSettings;
   private _learnedInputActions: string[];
   private _lastInputAction: CustomizableInputAction[] | undefined;
+  private _teachAllControls: boolean;
+  private _teachAllControlsIteration: number;
+  private _container!: PIXI.Container;
 
   constructor(
     app: PIXI.Application,
     preferredInputMethod: InputMethod,
-    controls: ControlSettings
+    controls: ControlSettings,
+    teachAllControls: boolean
   ) {
     this._app = app;
     this._preferredInputMethod = preferredInputMethod;
     this._controls = controls;
     this._learnedInputActions = [];
+    this._teachAllControls = teachAllControls;
+    this._teachAllControlsIteration = 0;
   }
 
   reset() {
@@ -45,11 +62,33 @@ export class GestureIndicator {
   }
 
   update(block: IBlock | undefined, simulationIsRunning: boolean) {
+    this._container.alpha =
+      (teachAllControlsIterations - this._teachAllControlsIteration) /
+      teachAllControlsIterations;
+    let firstUnlearnedInputAction: CustomizableInputAction | undefined =
+      undefined;
+    if (
+      this._teachAllControls &&
+      block &&
+      this._teachAllControlsIteration <= teachAllControlsIterations
+    ) {
+      firstUnlearnedInputAction = teachableInputActions.find(
+        (action) => this._learnedInputActions.indexOf(action) < 0
+      );
+      if (!firstUnlearnedInputAction) {
+        ++this._teachAllControlsIteration;
+        this._learnedInputActions = [];
+      }
+    }
+
     let inputAction: CustomizableInputAction[] | undefined = simulationIsRunning
-      ? (
-          block?.cells.find((cell) => cell.behaviour.type === CellType.Gesture)
-            ?.behaviour as GestureBehaviour
-        )?.inputAction
+      ? this._teachAllControls && firstUnlearnedInputAction
+        ? [firstUnlearnedInputAction]
+        : (
+            block?.cells.find(
+              (cell) => cell.behaviour.type === CellType.Gesture
+            )?.behaviour as GestureBehaviour
+          )?.inputAction
       : undefined;
 
     if (
@@ -120,9 +159,10 @@ export class GestureIndicator {
     }
   }
   addChildren() {
+    this._container = new PIXI.Container();
     if (this._preferredInputMethod === 'keyboard') {
       this._virtualKeyboardGraphics = new PIXI.Graphics();
-      this._app.stage.addChild(this._virtualKeyboardGraphics);
+      this._container.addChild(this._virtualKeyboardGraphics);
 
       this._virtualKeyboardCurrentKeyText = new PIXI.Text('', {
         fontFamily,
@@ -133,12 +173,13 @@ export class GestureIndicator {
         letterSpacing: 2,
         lineHeight: keyTextLineHeight,
       } as PIXI.TextStyle);
-      this._app.stage.addChild(this._virtualKeyboardCurrentKeyText);
+      this._container.addChild(this._virtualKeyboardCurrentKeyText);
     }
 
     if (this._preferredInputMethod === 'touch') {
-      this._app.stage.addChild(...this._virtualGestureSprites);
+      this._container.addChild(...this._virtualGestureSprites);
     }
+    this._app.stage.addChild(this._container);
   }
 
   private _renderVirtualKeyboard(

@@ -88,7 +88,9 @@ export default class NetworkClient
       this._launchOptions.rendererSettings?.blockShadowType,
       this._launchOptions.rendererSettings?.showFaces,
       this._launchOptions.rendererSettings?.showPatterns,
-      this._launchOptions.rendererSettings?.showNicknames
+      this._launchOptions.rendererSettings?.showNicknames,
+      this._launchOptions.showUI !== false,
+      this._launchOptions.teachAllControls
     );
     await this._renderer.create();
     await this._tryJoinRoom();

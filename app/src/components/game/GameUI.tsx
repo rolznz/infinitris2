@@ -13,6 +13,8 @@ import { FormattedMessage } from 'react-intl';
 import { ReactComponent as RefreshIcon } from '@/icons/refresh.svg';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import { useUser } from '@/components/hooks/useUser';
+import useIngameStore from '@/state/IngameStore';
+import { borderRadiuses } from '@/theme/theme';
 
 type GameUIProps = {
   challengeEditorEnabled?: boolean;
@@ -20,6 +22,7 @@ type GameUIProps = {
   chatEnabled?: boolean;
   showEndRoundDisplay?: boolean;
   allowSkipCountdown?: boolean;
+  showWaitForRoundEnd?: boolean;
 };
 
 export function GameUI({
@@ -28,6 +31,7 @@ export function GameUI({
   chatEnabled = true,
   showEndRoundDisplay = true,
   allowSkipCountdown,
+  showWaitForRoundEnd,
 }: GameUIProps) {
   const user = useUser();
   if (user.showUI === false) {
@@ -47,6 +51,7 @@ export function GameUI({
         pointerEvents: 'none',
       }}
     >
+      {showWaitForRoundEnd && <WaitForRoundEndMessage />}
       {chatEnabled && <IngameChat />}
       <MessageLog />
       <TopRightPanel>
@@ -122,4 +127,31 @@ export function MobileRotateDevice() {
   } else {
     return null;
   }
+}
+
+export function WaitForRoundEndMessage() {
+  const isWaitingForRoundToEnd = useIngameStore(
+    (store) => store.isWaitingForRoundToEnd
+  );
+  if (!isWaitingForRoundToEnd) {
+    return null;
+  }
+
+  return (
+    <FlexBox position="fixed" top={0} left={0} zIndex={10000} width="100%">
+      <FlexBox
+        bgcolor="background.paper"
+        mt={10}
+        p={1}
+        borderRadius={borderRadiuses.base}
+      >
+        <Typography variant="h1">
+          <FormattedMessage
+            defaultMessage="Please wait for the current round to finish..."
+            description="Wait for current round to end message"
+          />
+        </Typography>
+      </FlexBox>
+    </FlexBox>
+  );
 }

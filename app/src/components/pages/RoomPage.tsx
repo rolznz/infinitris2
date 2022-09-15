@@ -23,6 +23,7 @@ import {
   ServerMessageType,
   IServerMessage,
   reservedPlayerIds,
+  PlayerStatus,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
 import { useUser, useUserLaunchOptions } from '../hooks/useUser';
@@ -150,6 +151,21 @@ export default function RoomPage() {
       listeners: [
         ...coreGameListeners,
         {
+          onPlayerCreated(player: IPlayer) {
+            if (
+              player.isControllable &&
+              player.status === PlayerStatus.knockedOut &&
+              !useIngameStore.getState().simulation?.round
+                ?.isWaitingForNextRound
+            ) {
+              useIngameStore.getState().setIsWaitingForRoundToEnd(true);
+            }
+          },
+          onEndRound() {
+            useIngameStore.getState().setIsWaitingForRoundToEnd(false);
+          },
+        },
+        {
           onSimulationInit(simulation: ISimulation) {
             useIngameStore.getState().setSimulation(simulation);
           },
@@ -198,7 +214,7 @@ export default function RoomPage() {
   }, [setConnected, setDisconnected]);
 
   if (connected) {
-    return <GameUI />;
+    return <GameUI showWaitForRoundEnd />;
   }
 
   const status = disconnected

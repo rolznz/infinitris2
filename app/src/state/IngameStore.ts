@@ -43,6 +43,8 @@ type IngameStore = {
   setSpawnDelayDisplayVisible(spawnDelayDisplayVisible: boolean): void;
   readonly numNonSpectatorPlayers: number;
   setNumNonSpectatorPlayers(numNonSpectatorPlayers: number): void;
+  readonly isWaitingForRoundToEnd: boolean;
+  setIsWaitingForRoundToEnd(isWaitingForRoundToEnd: boolean): void;
 };
 
 const useIngameStore = create<IngameStore>((set) => ({
@@ -53,6 +55,7 @@ const useIngameStore = create<IngameStore>((set) => ({
   endRoundDisplayOpen: false,
   roundConditionsAreMet: false,
   spawnDelayDisplayVisible: false,
+  isWaitingForRoundToEnd: false,
   isChatOpen: false,
   chatMessage: '',
   numNonSpectatorPlayers: 0,
@@ -77,6 +80,8 @@ const useIngameStore = create<IngameStore>((set) => ({
     set((_) => ({ spawnDelayDisplayVisible })),
   setNumNonSpectatorPlayers: (numNonSpectatorPlayers: number) =>
     set((_) => ({ numNonSpectatorPlayers })),
+  setIsWaitingForRoundToEnd: (isWaitingForRoundToEnd: boolean) =>
+    set((_) => ({ isWaitingForRoundToEnd })),
 }));
 
 export default useIngameStore;

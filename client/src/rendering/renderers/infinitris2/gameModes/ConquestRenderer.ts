@@ -9,6 +9,7 @@ import {
 } from '@core/gameModes/ConquestGameMode';
 import { wrap } from '@models/util/wrap';
 import IBlock from '@models/IBlock';
+import { debounce } from 'ts-debounce';
 
 interface IRenderableFreeCell extends IRenderableEntity<PIXI.Graphics> {}
 
@@ -17,12 +18,16 @@ export class ConquestRenderer implements IGameModeRenderer {
   private _renderer: BaseRenderer;
   private _cachedCanPlaceResults: { [index: number]: ConquestCanPlaceResult };
   private _minimap: PIXI.Graphics | undefined;
+  private _debouncedRerender: () => void;
+  private _debouncedRerenderMinimap: () => void;
 
   constructor(renderer: BaseRenderer) {
     this._freeRenderableCells = {};
     this._renderer = renderer;
     this._renderer.simulation!.addEventListener(this);
     this._cachedCanPlaceResults = {};
+    this._debouncedRerender = debounce(this._rerender, 100);
+    this._debouncedRerenderMinimap = debounce(this._rendererMinimap, 100);
   }
   onGameModeEvent(event: ConquestEvent): void {
     if (event.type === 'cellCaptured') {
@@ -79,47 +84,47 @@ export class ConquestRenderer implements IGameModeRenderer {
   onSimulationStart() {
     // FIXME: why is a timeout needed to render correctly?
     setTimeout(() => {
-      this._rerender();
+      this._debouncedRerender();
     }, 1000);
   }
   onNextRound() {
     setTimeout(() => {
       this._cachedCanPlaceResults = {};
-      this._rerender();
+      this._debouncedRerender();
     }, 1);
   }
   onEndRound() {
-    this._rerender();
+    this._debouncedRerender();
   }
 
   onBlockRemoved() {
     setTimeout(() => {
-      this._rerender();
+      this._debouncedRerender();
     }, 1);
   }
   onLinesCleared() {
     setTimeout(() => {
-      this._rerender();
+      this._debouncedRerender();
     }, 1);
   }
   onPlayerChangeStatus() {
-    this._rerender();
+    this._debouncedRerender();
   }
 
   resize() {
     this._cachedCanPlaceResults = {};
-    this._rerender();
+    this._debouncedRerender();
   }
   onBlockMoved(block: IBlock) {
     if (block.player === this._renderer?.simulation?.followingPlayer) {
       // TODO: shouldn't re-render the whole minimap, just the player position indicator
-      this._rendererMinimap();
+      this._debouncedRerenderMinimap();
     }
   }
   onBlockCreated(block: IBlock) {
     if (block.player === this._renderer?.simulation?.followingPlayer) {
       // TODO: shouldn't re-render the whole minimap, just the player position indicator
-      this._rendererMinimap();
+      this._debouncedRerenderMinimap();
     }
   }
 

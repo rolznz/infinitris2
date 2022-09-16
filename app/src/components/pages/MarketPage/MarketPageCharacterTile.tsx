@@ -1,13 +1,12 @@
 import React from 'react';
 
 import FlexBox from '../../ui/FlexBox';
-import { ICharacter } from 'infinitris2-models';
+import { ICharacter, WithId } from 'infinitris2-models';
 
 import { Link as RouterLink } from 'react-router-dom';
 import Routes from '@/models/Routes';
 import { CharacterImage } from '../Characters/CharacterImage';
 import { CharacterCoinStatChip } from '../Characters/CharacterStatChip';
-import { DocumentSnapshot } from 'firebase/firestore';
 import { zIndexes } from '@/theme/theme';
 //import { ReactComponent as TickIcon } from '@/icons/tick.svg';
 //import SvgIcon from '@mui/material/SvgIcon';
@@ -16,7 +15,7 @@ import Link from '@mui/material/Link';
 import { setSelectedCharacterId } from '@/state/updateUser';
 
 type CharacterTileProps = {
-  character: DocumentSnapshot<ICharacter>;
+  character: WithId<ICharacter>;
   size: number;
   isPurchased: boolean;
   isSelected: boolean;
@@ -91,11 +90,11 @@ function _CharacterTile({
       <CharacterImage
         characterId={character.id}
         width={size * 1.2}
-        thumbnail={character.data()!.thumbnail}
+        thumbnail={character.thumbnail}
         strongShadow={isSelected}
       />
       <FlexBox mt={-size * 0.02} mb={size * 0.02}>
-        <CharacterCoinStatChip value={character.data()!.price} />
+        <CharacterCoinStatChip value={character.price} />
       </FlexBox>
     </FlexBox>
   );

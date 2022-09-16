@@ -17,6 +17,8 @@ import { UseCollectionOptions } from 'swr-firestore';
 import { CharacterTile } from './MarketPageCharacterTile';
 import useAuthStore from '@/state/AuthStore';
 import { InfiniteLoader } from '@/components/ui/InfiniteLoader';
+import { useCachedCollection } from '@/components/hooks/useCachedCollection';
+import FlexBox from '@/components/ui/FlexBox';
 
 const cachedCharacters: Record<
   MarketPageCharacterListFilter,
@@ -26,15 +28,13 @@ const cachedCharacters: Record<
   'available-free': [],
   'available-premium': [],
   'available-featured': [],
-  'my-blocks': [],
 };
 
 export type MarketPageCharacterListFilter =
   | 'available-featured'
   | 'available-all'
   | 'available-free'
-  | 'available-premium'
-  | 'my-blocks';
+  | 'available-premium';
 
 type MarketPageCharacterListProps = {
   filter: MarketPageCharacterListFilter;
@@ -45,6 +45,7 @@ export function MarketPageCharacterList({
 }: MarketPageCharacterListProps) {
   const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
 
+  // TODO: remove useCollection in infinite loader since all characters are loaded at startup
   const [characters, setCharacters] = React.useState<
     QueryDocumentSnapshot<ICharacter>[]
   >(cachedCharacters[filter]);
@@ -67,35 +68,24 @@ export function MarketPageCharacterList({
   const useCharactersOptions: UseCollectionOptions = React.useMemo(
     () => ({
       constraints: [
-        ...(filter === 'my-blocks'
-          ? [
-              where(
-                'id',
-                'in',
-                myCharacterIds.map((id) => parseInt(id))
-              ),
-            ] // TODO: my ids FIXME: character ID should be a string everywhere
-          : [
-              ...(filter === 'available-free'
-                ? [where('price', '==', 0)]
-                : filter === 'available-featured'
-                ? [where('isFeatured', '==', true), orderBy('price')]
-                : filter === 'available-premium'
-                ? [where('price', '>', 400)]
-                : [orderBy('price')]),
-            ]),
+        ...[
+          ...(filter === 'available-free'
+            ? [where('price', '==', 0)]
+            : filter === 'available-featured'
+            ? [where('isFeatured', '==', true), orderBy('price')]
+            : filter === 'available-premium'
+            ? [where('price', '>', 400)]
+            : [orderBy('price')]),
+        ],
       ],
     }),
-    [filter, myCharacterIds]
+    [filter]
   );
 
   const onNewItemsLoaded = React.useCallback(
     (newItems: QueryDocumentSnapshot<ICharacter>[]) => {
       cachedCharacters[filter] = cachedCharacters[filter].concat(
-        newItems.filter(
-          (character) =>
-            filter === 'my-blocks' || myCharacterIds.indexOf(character.id) < 0
-        )
+        newItems.filter((character) => myCharacterIds.indexOf(character.id) < 0)
       );
       setCharacters(cachedCharacters[filter]);
       console.log('Loaded', cachedCharacters[filter].length, 'characters');
@@ -105,20 +95,24 @@ export function MarketPageCharacterList({
 
   const characterBlockHeight = size + 50 + size * 0.1;
 
+  // FIXME: remove weird character cast (see TODO to use cached characters)
   const renderItem = React.useCallback<
     (character: DocumentSnapshot<ICharacter>) => React.ReactNode
   >(
     (character) => {
       return (
         <CharacterTile
-          character={character}
+          character={{
+            ...(character.data() as ICharacter),
+            id: character.id as never,
+          }}
           size={size}
-          isPurchased={filter === 'my-blocks'}
+          isPurchased={myCharacterIds.indexOf(character.id) > -1}
           isSelected={character.id === myCharacterId}
         />
       );
     },
-    [filter, myCharacterId, size]
+    [myCharacterId, myCharacterIds, size]
   );
 
   return (
@@ -127,12 +121,46 @@ export function MarketPageCharacterList({
       onNewItemsLoaded={onNewItemsLoaded}
       itemKey={(item) => item.id + '-' + (item.id === myCharacterId)}
       renderItem={renderItem}
-      minHeight={filter === 'my-blocks' ? characterBlockHeight : '100vh'}
+      minHeight={'100vh'}
       itemWidth={size}
       itemHeight={characterBlockHeight}
       numColumns={columns}
       collectionPath={charactersPath}
       useCollectionOptions={useCharactersOptions}
     />
+  );
+}
+
+export function MarketPagePurchasedCharacterList() {
+  const user = useUser();
+  const authStoreUserId = useAuthStore((authStore) => authStore.user?.uid);
+  const allCharacters = useCachedCollection<ICharacter>(charactersPath);
+  const myCharacterId = user.selectedCharacterId || DEFAULT_CHARACTER_ID;
+  const myCharacterIds = React.useMemo(
+    () =>
+      (!authStoreUserId
+        ? (user as LocalUser).freeCharacterIds || []
+        : user.readOnly?.characterIds || []
+      ).concat(DEFAULT_CHARACTER_IDs),
+    [user, authStoreUserId]
+  );
+  const myCharacters = React.useMemo(
+    () =>
+      allCharacters?.filter((c) => myCharacterIds.some((id) => c.id === id)),
+    [allCharacters, myCharacterIds]
+  );
+  const size = 150;
+  return (
+    <FlexBox flexDirection="row" flexWrap="wrap" justifyContent="flex-start">
+      {myCharacters?.map((character) => (
+        <CharacterTile
+          key={character.id}
+          character={character}
+          size={size}
+          isPurchased={true}
+          isSelected={character.id === myCharacterId}
+        />
+      ))}
+    </FlexBox>
   );
 }

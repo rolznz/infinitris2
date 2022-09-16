@@ -15,6 +15,7 @@ import {
 import {
   MarketPageCharacterList,
   MarketPageCharacterListFilter,
+  MarketPagePurchasedCharacterList,
 } from './MarketPageCharacterList';
 import { ReactComponent as MarketIcon } from '@/icons/market.svg';
 import { ReactComponent as MyBlocksIcon } from '@/icons/my-blocks.svg';
@@ -70,7 +71,7 @@ function _MarketPage() {
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <MarketPageCharacterList filter="my-blocks" />
+          <MarketPagePurchasedCharacterList />
         </AccordionDetails>
       </Accordion>
       <Accordion

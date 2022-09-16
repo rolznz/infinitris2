@@ -34,7 +34,11 @@ export function GameUI({
   showWaitForRoundEnd,
 }: GameUIProps) {
   const user = useUser();
-  if (user.showUI === false) {
+  const endRoundDisplayOpen = useIngameStore(
+    (store) => store.endRoundDisplayOpen
+  );
+
+  if (user.showUI === false && !endRoundDisplayOpen) {
     return null;
   }
   console.log('Re-render game UI');

@@ -31,19 +31,24 @@ export function SinglePlayerGameModePickerPage() {
   const slides: RoomCarouselSlideProps[] = React.useMemo(() => {
     return !advancedOptionsChanged
       ? GameModeTypeValues.filter((gameMode) => gameMode !== 'battle').map(
-          (gameModeType) => ({
-            simulationSettings: { gameModeType },
-            id: gameModeType,
-            worldType: getWorldType(gameModeType),
-            worldVariation: getWorldVariation(gameModeType),
-            gameModeSettings:
-              gameModeType === 'conquest'
-                ? {
-                    hasConversions: true,
-                    hasRounds: true,
-                  }
-                : undefined,
-          })
+          (gameModeType) => {
+            const slideProps: RoomCarouselSlideProps = {
+              simulationSettings: {
+                gameModeType,
+                gameModeSettings:
+                  gameModeType === 'conquest'
+                    ? {
+                        hasConversions: true,
+                        hasRounds: true,
+                      }
+                    : undefined,
+              },
+              id: gameModeType,
+              worldType: getWorldType(gameModeType),
+              worldVariation: getWorldVariation(gameModeType),
+            };
+            return slideProps;
+          }
         )
       : [
           {

@@ -336,7 +336,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
           // to ensure the camera doesn't slightly change each time the player gets a new block of different width,
           // just guess the average width is 3
           const blockX = (block.column + 1.5) * cellSize;
-          const y = block.row * cellSize;
+          const y = Math.min(
+            block.row * cellSize,
+            this._gridHeight +
+              this._floorHeight -
+              this._appHeight +
+              this._visibilityY
+          );
           this._camera.follow(
             blockX, // + block.width * cellSize * 0.5,
             y,
@@ -652,6 +658,14 @@ export default class Infinitris2Renderer extends BaseRenderer {
    * @inheritdoc
    */
   onBlockDied(block: IBlock) {
+    if (block.player === this._simulation?.followingPlayer) {
+      const strength = this._cellSize * 0.125;
+      this._camera.bumpPosition(
+        (Math.random() > 0.5 ? 1 : -1) * strength,
+        strength
+      ); // minor camera shake
+    }
+
     const numSegments = 4;
     block.cells.forEach((cell) => {
       for (let x = 0; x < numSegments; x++) {
@@ -778,9 +792,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     this._updatePlayerBlockContainer(block.player.id);
-    //if (block.player === this._simulation.followingPlayer) {
-    //this._camera.bump(0, 1000); // TODO: minor camera shake
-    //}
+    if (block.player === this._simulation.followingPlayer && block.isDropping) {
+      this._camera.bumpPosition(0, this._cellSize * 0.125 * 0.5); // minor camera shake
+    }
   }
 
   onPlayerCreated(player: IPlayer): void {

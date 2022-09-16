@@ -27,9 +27,9 @@ export type Wrappable = {
   ignoreVisibility: boolean;
 };
 
+// TODO: make these customizable
 const idealCellSize = 38;
 const minLandscapeCellCount = 18;
-const minPortraitCellCount = 14; // TODO
 const maxCellCount = 32;
 
 export abstract class BaseRenderer implements IRenderer {
@@ -268,42 +268,16 @@ export abstract class BaseRenderer implements IRenderer {
 
     this._camera.update(this._app.ticker.deltaMS / 16.66);
 
-    // figure out the floor beneath the block and clamp the camera
-    // otherwise the camera will scroll down unnecessarily
-    // TODO: this is not very smooth, it should probably be based on an average of cells around the block
-    // FIXME: visibility is really bad for some challenges. Disabled for now
-    let unpassableCellHeight = this._gridHeight;
-    /*if (this._simulation?.followingPlayer?.block) {
-      let floorHeightBeneathBlock = this._simulation.grid.numRows - 1;
-      for (let cell of this._simulation.followingPlayer.block.cells) {
-        for (let row = cell.row; row < this._simulation.grid.numRows; row++) {
-          if (!this._simulation.grid.cells[row][cell.column].isPassable) {
-            floorHeightBeneathBlock = Math.min(floorHeightBeneathBlock, row);
-            break;
-          }
-        }
-      }
-      unpassableCellHeight =
-        Math.min(
-          Math.max(
-            floorHeightBeneathBlock,
-            this._simulation.followingPlayer.block.cells[0].row +
-              Math.floor(minPortraitCellCount * 0.25)
-          ),
-          this._simulation.grid.numRows
-        ) * this._cellSize;
-    }*/
-
     // clamp the camera to fit within the grid
-    this._camera.clampY(
-      0,
-      -(
-        unpassableCellHeight -
-        this._app.renderer.height +
-        this._visibilityY +
-        this._calculateFloorHeight()
-      )
-    );
+    // this._camera.clampY(
+    //   Math.max(this._appHeight - this._gridHeight, 0),
+    //   -(
+    //     this._gridHeight +
+    //     this._calculateFloorHeight() -
+    //     this._app.renderer.height +
+    //     this._visibilityY
+    //   )
+    //);
 
     if (this._hasScrollX) {
       this._world.x = this._camera.x + this._visibilityX;
@@ -364,8 +338,8 @@ export abstract class BaseRenderer implements IRenderer {
     this._floorHeight = this._calculateFloorHeight();
     this._hasScrollX = true; // only false if grid < screen width + shadow rendering disabled - for now always enabled
     this._hasShadows = this._gridWidth < this._appWidth;
-    this._hasScrollY =
-      this._gridHeight /* + this._floorHeight*/ > this._appHeight;
+    this._hasScrollY = true;
+    //this._gridHeight /* + this._floorHeight*/ > this._appHeight;
 
     this._shadowCount = this._hasShadows
       ? Math.ceil(this._appWidth / this._gridWidth / 2)
@@ -382,14 +356,8 @@ export abstract class BaseRenderer implements IRenderer {
   }
 
   private _calculateCellSize = () => {
-    const minDimension = Math.min(
-      this._app.renderer.width,
-      this._app.renderer.height
-    );
-    const minCount =
-      this._app.renderer.height < this._app.renderer.width
-        ? minLandscapeCellCount
-        : minPortraitCellCount;
+    const minDimension = this._app.renderer.height;
+    const minCount = minLandscapeCellCount;
 
     if (minDimension < idealCellSize * minCount * window.devicePixelRatio) {
       return Math.floor(minDimension / minCount);

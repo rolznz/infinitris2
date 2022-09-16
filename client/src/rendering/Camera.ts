@@ -81,7 +81,7 @@ export default class Camera {
   }
 
   update(delta: number) {
-    this._dy = Math.min(Math.max(this._dy, this._clampBottom), this._clampTop);
+    // this._dy = Math.min(Math.max(this._dy, this._clampBottom), this._clampTop);
     this._vx *= 1 - Math.min(cameraDrag * delta, 1);
     this._vy *= 1 - Math.min(cameraDrag * delta, 1);
 

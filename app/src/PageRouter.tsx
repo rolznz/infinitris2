@@ -43,6 +43,7 @@ import { TopLeftPanel, TopLeftPanelPortal } from '@/components/ui/TopLeftPanel';
 import NavigationButton from '@/components/ui/BackButton';
 import useRouterStore from '@/state/RouterStore';
 import { PremiumPage } from '@/components/pages/PremiumPage/PremiumPage';
+import useLoaderStore from '@/state/LoaderStore';
 
 const coinsDisplayPaths = [Routes.market, Routes.profile];
 
@@ -91,6 +92,7 @@ function RouterContents() {
         useRouterStore.getState().push();
       }
       hasNavigated = true;
+      useLoaderStore.getState().disableDelayButtonVisiblity();
     }
   }, [location]);
   return (

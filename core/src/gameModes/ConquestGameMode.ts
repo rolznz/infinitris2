@@ -264,7 +264,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       for (const cell of this._simulation.grid.reducedCells.filter(
         (victimCell) => victimCell.player === victim
       )) {
-        //this._delayRerender(cell);
+        this._delayRerender(cell);
         cell.place(attacker);
       }
     }

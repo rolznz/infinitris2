@@ -14,6 +14,7 @@ import {
   WorldTypeValues,
   WorldVariationValues,
   GameModeTypeValues,
+  getVariationHueRotation,
 } from 'infinitris2-models';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import FlexBox from '@/components/ui/FlexBox';
@@ -33,7 +34,6 @@ import { createNewChallenge } from '@/components/pages/CreateChallengePage/creat
 import { useUser } from '@/components/hooks/useUser';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { Typography } from '@mui/material';
 import { getLastCompletedGrid } from '@/components/pages/ChallengePage/ChallengePage';
 import { useSnackbar } from 'notistack';
 import {
@@ -42,6 +42,22 @@ import {
 } from '@/components/pages/ChallengesPage/ChallengesPage';
 import { useDocument, UseDocumentOptions } from 'swr-firestore';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
+
+import { ReactComponent as GrassWorldIcon } from '@/icons/room-info/world_icon_grass.svg';
+import { ReactComponent as SpaceWorldIcon } from '@/icons/room-info/world_icon_space.svg';
+import { ReactComponent as VolcanoWorldIcon } from '@/icons/room-info/world_icon_volcano.svg';
+import { ReactComponent as DesertWorldIcon } from '@/icons/room-info/world_icon_desert.svg';
+import Typography from '@mui/material/Typography';
+const worldIconProps: React.SVGProps<SVGSVGElement> = {
+  width: '32px',
+  height: '32px',
+};
+const worldIcons = {
+  grass: <GrassWorldIcon {...worldIconProps} />,
+  space: <SpaceWorldIcon {...worldIconProps} />,
+  volcano: <VolcanoWorldIcon {...worldIconProps} />,
+  desert: <DesertWorldIcon {...worldIconProps} />,
+};
 
 const exportChallenge = () => {
   const challenge = useChallengeEditorStore.getState().challenge!;
@@ -320,38 +336,68 @@ export function ChallengeEditorSettingsForm({
                 </FormControl>
               )}
             />
-            <Controller
-              name="worldType"
-              control={control}
-              render={({ field }) => (
-                <FormControl variant="standard" fullWidth>
-                  <InputLabel>World</InputLabel>
-                  <Select {...field}>
-                    {WorldTypeValues.map((worldType) => (
-                      <MenuItem key={worldType} value={worldType}>
-                        {worldType}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-            />
-            <Controller
-              name="worldVariation"
-              control={control}
-              render={({ field }) => (
-                <FormControl variant="standard" fullWidth>
-                  <InputLabel>World Variation</InputLabel>
-                  <Select {...field}>
-                    {WorldVariationValues.map((variation) => (
-                      <MenuItem key={variation} value={variation}>
-                        {variation}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              )}
-            />
+            <FlexBox flexDirection="row" gap={1}>
+              <FlexBox>
+                <Controller
+                  name="worldType"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl variant="standard" fullWidth>
+                      <InputLabel>World</InputLabel>
+                      <Select {...field} defaultValue="grass">
+                        {WorldTypeValues.map((worldType) => (
+                          <MenuItem key={worldType} value={worldType}>
+                            <FlexBox
+                              flexDirection="row"
+                              gap={1}
+                              justifyContent="flex-start"
+                            >
+                              {worldIcons[worldType]}
+                              {worldType}
+                            </FlexBox>
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+              </FlexBox>
+              <FlexBox>
+                <Controller
+                  name="worldVariation"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl variant="standard" fullWidth>
+                      <InputLabel>Variation</InputLabel>
+                      <Select {...field} defaultValue="0">
+                        {WorldVariationValues.map(
+                          (variation, variationIndex) => (
+                            <MenuItem key={variation} value={variation}>
+                              <FlexBox
+                                flexDirection="row"
+                                gap={1}
+                                justifyContent="flex-start"
+                              >
+                                <FlexBox
+                                  style={{
+                                    filter: `hue-rotate(${getVariationHueRotation(
+                                      variationIndex
+                                    )}deg)`,
+                                  }}
+                                >
+                                  {worldIcons[challenge.worldType || 'grass']}
+                                </FlexBox>
+                                {variation}
+                              </FlexBox>
+                            </MenuItem>
+                          )
+                        )}
+                      </Select>
+                    </FormControl>
+                  )}
+                />
+              </FlexBox>
+            </FlexBox>
 
             {isAdmin && (
               <FlexBox my={2} border="1px solid red" p={2}>

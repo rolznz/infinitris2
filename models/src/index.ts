@@ -100,6 +100,7 @@ export * from './SettingsType';
 export * from './IClientApi';
 export * from './IGrid';
 export * from './WithId';
+export * from './util/getCellTypePreviewImage';
 
 export {
   exampleChallenges,

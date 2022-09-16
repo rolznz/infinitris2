@@ -3,7 +3,13 @@ import EditIcon from '@mui/icons-material/Edit';
 import { ReactComponent as PlayArrowIcon } from '@/icons/play2.svg';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import shallow from 'zustand/shallow';
-import { borderRadiuses, boxShadows, colors, spacing } from '@/theme/theme';
+import {
+  borderColor,
+  borderRadiuses,
+  boxShadows,
+  colors,
+  spacing,
+} from '@/theme/theme';
 import FlexBox from '@/components/ui/FlexBox';
 import useIngameStore from '@/state/IngameStore';
 import Button from '@mui/material/Button/Button';
@@ -11,6 +17,7 @@ import React from 'react';
 import Select from '@mui/material/Select/Select';
 import {
   ChallengeCellType,
+  getCellTypePreviewImageUrl,
   isChallengeCellTypeEnabled,
 } from 'infinitris2-models';
 import MenuItem from '@mui/material/MenuItem/MenuItem';
@@ -118,6 +125,14 @@ function ChallengeEditorCellTypePicker() {
   const challengeCellType = useChallengeEditorStore(
     (store) => store.challengeCellType
   );
+  const challengeCellTypes = React.useMemo(() => {
+    const _challengeCellTypes = Object.values(ChallengeCellType).filter(
+      isChallengeCellTypeEnabled
+    );
+    _challengeCellTypes.sort(orderChallengeCellTypes);
+    return _challengeCellTypes;
+  }, []);
+  const challenge = useChallengeEditorStore((store) => store.challenge);
   if (!editor || !isEditing) {
     return null;
   }
@@ -128,14 +143,53 @@ function ChallengeEditorCellTypePicker() {
       onChange={(event) => {
         editor.challengeCellType = event.target.value as ChallengeCellType;
       }}
+      sx={{ flexDirection: 'row', flexWrap: 'wrap', gap: 1 }}
     >
-      {Object.values(ChallengeCellType)
-        .filter(isChallengeCellTypeEnabled)
-        .map((challengeCellType) => (
+      {challengeCellTypes.map((challengeCellType) => {
+        const imageUrl = getCellTypePreviewImageUrl(
+          challengeCellType,
+          challenge?.worldType,
+          challenge?.worldVariation
+        );
+        return (
           <MenuItem key={challengeCellType} value={challengeCellType}>
-            {getChallengeCellTypeDescription(challengeCellType)}
+            <FlexBox flexDirection="row" gap={1}>
+              <FlexBox
+                width={32}
+                height={32}
+                bgcolor={borderColor}
+                borderRadius={borderRadiuses.base}
+                overflow="hidden"
+              >
+                {imageUrl && (
+                  <img src={imageUrl} alt="" width={32} height={32} />
+                )}
+              </FlexBox>
+              {getChallengeCellTypeDescription(challengeCellType)}
+            </FlexBox>
           </MenuItem>
-        ))}
+        );
+      })}
     </Select>
   );
 }
+
+const orderChallengeCellTypes = (
+  a: ChallengeCellType,
+  b: ChallengeCellType
+) => {
+  const orderedCellTypes = [
+    ChallengeCellType.Empty,
+    ChallengeCellType.Full,
+    ChallengeCellType.SpawnLocation,
+    ChallengeCellType.Finish,
+    ChallengeCellType.Checkpoint,
+  ];
+
+  for (const cellType of orderedCellTypes) {
+    if (a === cellType || b === cellType) {
+      return a === cellType ? -1 : 1;
+    }
+  }
+  return 0;
+};

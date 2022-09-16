@@ -1,22 +1,18 @@
 import {
   ChallengeCellType,
+  clientChallengePreviewBackgroundImagesDirectory,
+  getCellTypePreviewImageUrl,
   getChallengePath,
   getVariationHueRotation,
   IChallenge,
   objectToDotNotation,
   parseGrid,
   WorldType,
-  WorldVariation,
-  WorldVariationValues,
   wrap,
 } from 'infinitris2-models';
 import * as Jimp from 'jimp';
 import * as functions from 'firebase-functions';
 import { getApp, getDb } from './firebase';
-
-const clientImagesDirectory = 'https://infinitris.net/client/images';
-const clientChallengePreviewBackgroundImagesDirectory = `${clientImagesDirectory}/challenge-previews`;
-const clientCellImagesDirectory = `${clientImagesDirectory}/cells`;
 
 export function createChallengePreviewImages(
   challengeId: string,
@@ -151,7 +147,7 @@ async function placeCells(
           : ChallengeCellType.Full;
 
       if (cellType !== ChallengeCellType.Empty) {
-        const url = getChallengeCellTypeUrl(
+        const url = getCellTypePreviewImageUrl(
           cellType,
           challenge.worldType,
           challenge.worldVariation
@@ -166,103 +162,6 @@ async function placeCells(
   }
 
   return image;
-}
-
-// FIXME: this is duplicated from challenge behaviours which is in the core directory (not a package)
-// which would require initializing a grid and cells in order to get the image filenames
-// functions shouldn't have access to all that unnecessary code, so this should probably be moved to the models package
-function getChallengeCellTypeUrl(
-  cellType: ChallengeCellType,
-  worldType: WorldType = 'grass',
-  worldVariation: WorldVariation = '0'
-): string | undefined {
-  worldType = 'grass'; // TODO: remove hardcoding once other world assets are available
-  switch (cellType) {
-    case ChallengeCellType.Full:
-      return getChallengeTypeUrlInternal('fill', worldType, worldVariation);
-    case ChallengeCellType.RockGenerator:
-      return getChallengeTypeUrlInternal(
-        'rock-generator',
-        worldType,
-        worldVariation
-      );
-    case ChallengeCellType.RedKey:
-      return getChallengeTypeUrlInternal('key_red');
-    case ChallengeCellType.BlueKey:
-      return getChallengeTypeUrlInternal('key_blue');
-    case ChallengeCellType.GreenKey:
-      return getChallengeTypeUrlInternal('key_green');
-    case ChallengeCellType.YellowKey:
-      return getChallengeTypeUrlInternal('key_yellow');
-    case ChallengeCellType.RedLock:
-      return getChallengeTypeUrlInternal('lock_red');
-    case ChallengeCellType.BlueLock:
-      return getChallengeTypeUrlInternal('lock_blue');
-    case ChallengeCellType.GreenLock:
-      return getChallengeTypeUrlInternal('lock_green');
-    case ChallengeCellType.YellowLock:
-      return getChallengeTypeUrlInternal('lock_yellow');
-    case ChallengeCellType.ReverseRedLock:
-      return getChallengeTypeUrlInternal('reverse_lock_red');
-    case ChallengeCellType.ReverseBlueLock:
-      return getChallengeTypeUrlInternal('reverse_lock_blue');
-    case ChallengeCellType.ReverseGreenLock:
-      return getChallengeTypeUrlInternal('reverse_lock_green');
-    case ChallengeCellType.ReverseYellowLock:
-      return getChallengeTypeUrlInternal('reverse_lock_yellow');
-    case ChallengeCellType.RedSwitch:
-      return getChallengeTypeUrlInternal('switch_red_on');
-    case ChallengeCellType.BlueSwitch:
-      return getChallengeTypeUrlInternal('switch_blue_on');
-    case ChallengeCellType.GreenSwitch:
-      return getChallengeTypeUrlInternal('switch_green_on');
-    case ChallengeCellType.YellowSwitch:
-      return getChallengeTypeUrlInternal('switch_yellow_on');
-    case ChallengeCellType.Checkpoint:
-      return getChallengeTypeUrlInternal('checkpoint');
-    case ChallengeCellType.SpawnLocation:
-      return getChallengeTypeUrlInternal('spawn');
-    case ChallengeCellType.Finish:
-      return getChallengeTypeUrlInternal('finish');
-    case ChallengeCellType.Infection:
-      return getChallengeTypeUrlInternal('virus', worldType, worldVariation);
-    case ChallengeCellType.Wafer:
-      return getChallengeTypeUrlInternal('wafer');
-    case ChallengeCellType.Deadly:
-      return getChallengeTypeUrlInternal('deadly', worldType, worldVariation);
-    case ChallengeCellType.GestureMoveLeft:
-      return getChallengeTypeUrlInternal('gesture_left');
-    case ChallengeCellType.GestureMoveRight:
-      return getChallengeTypeUrlInternal('gesture_right');
-    case ChallengeCellType.GestureMoveDown:
-      return getChallengeTypeUrlInternal('gesture_down');
-    case ChallengeCellType.GestureDrop:
-      return getChallengeTypeUrlInternal('gesture_drop');
-    case ChallengeCellType.GestureRotateClockwise:
-      return getChallengeTypeUrlInternal('gesture_rotate_clockwise');
-    case ChallengeCellType.GestureRotateAnticlockwise:
-      return getChallengeTypeUrlInternal('gesture_rotate_anticlockwise');
-    case ChallengeCellType.GestureRotateDownClockwise:
-      return getChallengeTypeUrlInternal('gesture_rotate_down_clockwise');
-    case ChallengeCellType.GestureRotateDownAnticlockwise:
-      return getChallengeTypeUrlInternal('gesture_rotate_down_anticlockwise');
-    default:
-      return undefined;
-  }
-}
-
-function getChallengeTypeUrlInternal(
-  image: string,
-  worldType?: WorldType,
-  worldVariation?: WorldVariation
-): string {
-  return `${clientCellImagesDirectory}/${
-    worldType ? worldType + '/' : ''
-  }${image}${
-    worldVariation && worldVariation !== '0'
-      ? `_variation${worldVariation}`
-      : ''
-  }.png`;
 }
 
 const cellImageCache: { [key: string]: Jimp } = {};

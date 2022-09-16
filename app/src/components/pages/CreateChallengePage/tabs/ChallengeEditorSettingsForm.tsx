@@ -446,8 +446,8 @@ export function ChallengeEditorSettingsForm({
         <Link component={RouterLink} to={Routes.newChallenge}>
           <Button color="secondary" variant="contained">
             <FormattedMessage
-              defaultMessage="Load Challenge"
-              description="Load challenge button text"
+              defaultMessage="Load/New Challenge"
+              description="Load/New challenge button text"
             />
           </Button>
         </Link>

@@ -332,15 +332,17 @@ export default class Infinitris2Renderer extends BaseRenderer {
         const block = blockContainer.originalBlock;
 
         if (followingPlayer && block.player.id === followingPlayer.id) {
-          // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
           const cellSize = this._cellSize;
-          const blockX = block.centreX * cellSize;
+          // to ensure the camera doesn't slightly change each time the player gets a new block of different width,
+          // just guess the average width is 3
+          const blockX = (block.column + 1.5) * cellSize;
           const y = block.row * cellSize;
           this._camera.follow(
             blockX, // + block.width * cellSize * 0.5,
             y,
             block.player.id
           );
+          // render block placement shadow on every frame (it's difficult to figure out if lava transitioned to active/inactive, locks changed etc.)
           this._renderBlockPlacementShadow(block);
         } else if (!followingPlayer) {
           this._towerIndicator.hide();

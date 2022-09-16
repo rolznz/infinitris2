@@ -25,6 +25,7 @@ import volcanoScrollImage from './assets/scroll_volcano.svg';
 export interface ChallengeInfoViewProps {
   onReceivedPlayInput(): void;
   onReceivedSkipInput(): void;
+  onReceivedViewReplaysInput(): void;
   canSkip: boolean;
   challenge: IChallenge;
   challengeId: string;
@@ -50,6 +51,7 @@ function splitTitle(title: string) {
 export default function ChallengeInfoView({
   onReceivedPlayInput,
   onReceivedSkipInput,
+  onReceivedViewReplaysInput,
   canSkip,
   //viewOtherReplay,
   challenge,
@@ -78,12 +80,22 @@ ChallengeInfoViewProps) {
     undefined,
     'secondary'
   );
+  const [hasReceivedViewReplaysInput, viewReplaysButton] = useContinueButton(
+    'v',
+    <FormattedMessage
+      defaultMessage="Replays"
+      description="Challenge Info View replays button text"
+    />,
+    undefined,
+    'secondary'
+  );
   const hueRotation = getVariationHueRotation(
     WorldVariationValues.indexOf(challenge.worldVariation || '0')
   );
 
   useTrue(hasReceivedPlayInput, onReceivedPlayInput);
   useTrue(canSkip && hasReceivedSkipInput, onReceivedSkipInput);
+  useTrue(canSkip && hasReceivedViewReplaysInput, onReceivedViewReplaysInput);
   //const translation = challenge?.translations?.[user.locale];
   const challengeTitle = challenge.isOfficial
     ? getOfficialChallengeTitle(challenge)
@@ -175,6 +187,7 @@ ChallengeInfoViewProps) {
                 bottom={'3vh'}
                 gap={1}
               >
+                {canSkip && viewReplaysButton}
                 {playButton}
                 {canSkip && skipButton}
               </FlexBox>

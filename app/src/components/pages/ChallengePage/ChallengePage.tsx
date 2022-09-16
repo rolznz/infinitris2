@@ -31,7 +31,7 @@ import { ChallengeUI } from '@/components/pages/ChallengePage/ChallengeUI';
 import { useNetworkPlayerInfo } from '@/components/hooks/useNetworkPlayerInfo';
 import { completeOfficialChallenge, unlockFeature } from '@/state/updateUser';
 import useIncompleteChallenges from '@/components/hooks/useIncompleteChallenges';
-import Routes from '@/models/Routes';
+import Routes, { RouteSubPaths } from '@/models/Routes';
 import isMobile from '@/utils/isMobile';
 import { IChallengeAttempt } from 'infinitris2-models';
 import { addDoc, collection, getFirestore } from 'firebase/firestore';
@@ -204,6 +204,12 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       handleRetry(true);
     }
   }, [challengeAttempt, handleRetry]);
+
+  const viewAllReplays = React.useCallback(() => {
+    history.push(
+      `${Routes.challenges}/${challengeId}/${RouteSubPaths.challengesPageAttempts}`
+    );
+  }, [challengeId, history]);
 
   const viewOtherReplay = React.useCallback(
     (otherAttempt: IChallengeAttempt) => {
@@ -474,6 +480,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           player={simulation?.humanPlayers[0]}
           retryChallenge={retryChallenge}
           viewReplay={viewReplay}
+          viewAllReplays={viewAllReplays}
           skipChallenge={handleContinue}
           canSkipChallenge={
             !!challenge.isOfficial &&

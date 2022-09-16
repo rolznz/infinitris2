@@ -59,7 +59,6 @@ export class RaceGameMode implements IGameMode<RaceGameModeState> {
     }
 
     // kick out slowest players
-
     for (const otherPlayer of activePlayers) {
       if (otherPlayer.score < deathScore) {
         otherPlayer.status = PlayerStatus.knockedOut;

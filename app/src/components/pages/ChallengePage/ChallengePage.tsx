@@ -112,7 +112,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const userLaunchOptions = useUserLaunchOptions(user);
   const userId = useAuthStore((store) => store.user?.uid);
   const { enqueueSnackbar } = useSnackbar();
-  const { showUI } = user;
   const launchReplayChallengeAttemptId = useSearchParam(
     challengeLaunchReplaySearchParam
   );
@@ -389,7 +388,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           listeners: [...coreGameListeners, challengeSimulationEventListener],
           preferredInputMethod,
           player,
-          showUI,
           allCharacters,
           challengeEditorSettings: isTest
             ? {
@@ -446,7 +444,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     handleRetry,
     userLaunchOptions,
     enqueueSnackbar,
-    showUI,
     launchReplayChallengeAttemptId,
     launchReplayChallengeAttempt,
   ]);

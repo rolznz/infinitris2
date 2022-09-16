@@ -69,6 +69,7 @@ export function useUserLaunchOptions(
     useCustomRepeat,
     customRepeatInitialDelay,
     customRepeatRate,
+    showUI,
   } = user;
 
   const launchOptions = React.useMemo(
@@ -87,6 +88,7 @@ export function useUserLaunchOptions(
       useCustomRepeat,
       customRepeatInitialDelay,
       customRepeatRate,
+      showUI,
     }),
     [
       blockShadowType,
@@ -96,6 +98,7 @@ export function useUserLaunchOptions(
       showFaces,
       showNicknames,
       showPatterns,
+      showUI,
       controls_keyboard,
       controls_gamepad,
       useCustomRepeat,

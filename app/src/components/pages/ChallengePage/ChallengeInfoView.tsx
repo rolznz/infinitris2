@@ -13,7 +13,6 @@ import {
 } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
-//import { useUser } from '../../../state/UserStore';
 import useTrue from '../../hooks/useTrue';
 import FlexBox from '../../ui/FlexBox';
 //import finishLineImage from './assets/finish.svg';
@@ -21,11 +20,13 @@ import grassScrollImage from './assets/scroll_grass.svg';
 import desertScrollImage from './assets/scroll_desert.svg';
 import spaceScrollImage from './assets/scroll_space.svg';
 import volcanoScrollImage from './assets/scroll_volcano.svg';
+import { useUser } from '@/components/hooks/useUser';
 
 export interface ChallengeInfoViewProps {
   onReceivedPlayInput(): void;
   onReceivedSkipInput(): void;
   onReceivedViewReplaysInput(): void;
+  isTest: boolean;
   canSkip: boolean;
   challenge: IChallenge;
   challengeId: string;
@@ -53,11 +54,12 @@ export default function ChallengeInfoView({
   onReceivedSkipInput,
   onReceivedViewReplaysInput,
   canSkip,
+  isTest,
   //viewOtherReplay,
   challenge,
 }: //challengeId,
 ChallengeInfoViewProps) {
-  //const user = useUser();
+  const user = useUser();
   const [scrollLoaded, setScrollLoaded] = React.useState(false);
 
   const [hasReceivedPlayInput, playButton] = useContinueButton(
@@ -167,7 +169,10 @@ ChallengeInfoViewProps) {
                 </Typography>
                 {!challenge.isOfficial && (
                   <Typography variant="h4" textAlign="center" sx={titleSx}>
-                    By {challenge.readOnly?.user?.nickname || 'Unknown'}
+                    By{' '}
+                    {(isTest
+                      ? user?.nickname
+                      : challenge.readOnly?.user?.nickname) || 'Unknown'}
                   </Typography>
                 )}
               </FlexBox>

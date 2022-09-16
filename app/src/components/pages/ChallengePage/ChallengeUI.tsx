@@ -66,6 +66,7 @@ export function ChallengeUI({
           />
         ) : (
           <ChallengeInfoView
+            isTest={isTest}
             challenge={challenge}
             challengeId={challengeId}
             // viewOtherReplay={viewOtherReplay}

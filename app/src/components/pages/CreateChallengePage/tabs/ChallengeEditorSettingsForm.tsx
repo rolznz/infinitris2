@@ -326,10 +326,38 @@ export function ChallengeEditorSettingsForm({
               render={({ field }) => (
                 <FormControl variant="standard" fullWidth>
                   <InputLabel>Layout Set</InputLabel>
-                  <Select {...field}>
+                  <Select {...field} defaultValue={blockLayoutSets[0].id}>
                     {blockLayoutSets.map((set) => (
                       <MenuItem key={set.id} value={set.id}>
-                        {set.name}
+                        <FlexBox flexDirection="row" gap={1}>
+                          {set.name}
+                          <FlexBox
+                            flexDirection="row"
+                            gap={1}
+                            flexWrap="wrap"
+                            width={200}
+                          >
+                            {Object.values(set.layouts).map((layout, index) => (
+                              <span
+                                key={index}
+                                style={{
+                                  whiteSpace: 'pre',
+                                  fontSize: '10px',
+                                  fontFamily: 'monospace',
+                                  lineHeight: '5px',
+                                }}
+                              >
+                                {layout
+                                  .map((line) =>
+                                    line
+                                      .map((value) => (value ? '■' : ' '))
+                                      .join('')
+                                  )
+                                  .join('\n')}
+                              </span>
+                            ))}
+                          </FlexBox>
+                        </FlexBox>
                       </MenuItem>
                     ))}
                   </Select>

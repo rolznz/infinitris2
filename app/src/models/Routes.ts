@@ -29,6 +29,7 @@ enum Routes {
   pwa = '/pwa',
   storyMode = '/story-mode',
   premium = '/premium',
+  trailerFeature = '/trailer-feature',
 }
 
 export default Routes;

@@ -29,6 +29,7 @@ import AboutPage from '@/components/pages/AboutPage/AboutPage';
 import DonatePage from '@/components/pages/AboutPage/DonatePage';
 import MarketPage from '@/components/pages/MarketPage/MarketPage';
 import MarketCharacterPage from '@/components/pages/MarketPage/MarketCharacterPage';
+import { TrailerFeaturePage } from '@/components/pages/TrailerFeaturePage/TrailerFeaturePage';
 import HomeButton from '@/components/ui/HomeButton';
 import useAffiliateLinkRef from '@/components/hooks/useAffiliateLinkRef';
 import { PwaPage } from '@/components/pages/PwaPage/PwaPage';
@@ -168,6 +169,9 @@ function RouterContents() {
         </Route>
         <Route exact path={`${Routes.market}/:id`}>
           <MarketCharacterPage />
+        </Route>
+        <Route exact path={`${Routes.trailerFeature}`}>
+          <TrailerFeaturePage />
         </Route>
         <Route exact path={Routes.lobby}>
           <LobbyPage />

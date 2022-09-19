@@ -155,14 +155,14 @@ function ChallengeEditorCellTypePicker() {
           <MenuItem key={challengeCellType} value={challengeCellType}>
             <FlexBox flexDirection="row" gap={1}>
               <FlexBox
-                width={32}
-                height={32}
+                width={36}
+                height={36}
                 bgcolor={borderColor}
                 borderRadius={borderRadiuses.base}
                 overflow="hidden"
               >
                 {imageUrl && (
-                  <img src={imageUrl} alt="" width={32} height={32} />
+                  <img src={imageUrl} alt="" width={28} height={28} />
                 )}
               </FlexBox>
               {getChallengeCellTypeDescription(challengeCellType)}

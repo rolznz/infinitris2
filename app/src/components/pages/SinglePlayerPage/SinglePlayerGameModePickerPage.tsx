@@ -1,7 +1,6 @@
 import { useHistory } from 'react-router-dom';
 import Routes from '../../../models/Routes';
 import useSinglePlayerOptionsStore, {
-  getSinglePlayerOptionsDefaultValues,
   SinglePlayerOptionsFormData,
 } from '@/state/SinglePlayerOptionsStore';
 
@@ -24,41 +23,28 @@ export function SinglePlayerGameModePickerPage() {
   const history = useHistory();
   const formData = useSinglePlayerOptionsStore((store) => store.formData);
 
-  const advancedOptionsChanged =
-    JSON.stringify(formData) !==
-    JSON.stringify(getSinglePlayerOptionsDefaultValues());
-
   const slides: RoomCarouselSlideProps[] = React.useMemo(() => {
-    return !advancedOptionsChanged
-      ? GameModeTypeValues.filter((gameMode) => gameMode !== 'battle').map(
-          (gameModeType) => {
-            const slideProps: RoomCarouselSlideProps = {
-              simulationSettings: {
-                gameModeType,
-                gameModeSettings:
-                  gameModeType === 'conquest'
-                    ? {
-                        hasConversions: true,
-                        hasRounds: true,
-                      }
-                    : undefined,
-              },
-              id: gameModeType,
-              worldType: getWorldType(gameModeType),
-              worldVariation: getWorldVariation(gameModeType),
-            };
-            return slideProps;
-          }
-        )
-      : [
-          {
-            simulationSettings: formData.simulationSettings,
-            id: JSON.stringify(formData),
-            worldType: formData.worldType,
-            worldVariation: formData.worldVariation,
+    return GameModeTypeValues.filter((gameMode) => gameMode !== 'battle').map(
+      (gameModeType) => {
+        const slideProps: RoomCarouselSlideProps = {
+          simulationSettings: {
+            gameModeType,
+            gameModeSettings:
+              gameModeType === 'conquest'
+                ? {
+                    hasConversions: true,
+                    hasRounds: true,
+                  }
+                : undefined,
           },
-        ];
-  }, [formData, advancedOptionsChanged]);
+          id: gameModeType,
+          worldType: getWorldType(gameModeType),
+          worldVariation: getWorldVariation(gameModeType),
+        };
+        return slideProps;
+      }
+    );
+  }, []);
 
   const onSubmit = () => {
     launchSinglePlayer(history);
@@ -76,19 +62,14 @@ export function SinglePlayerGameModePickerPage() {
       secondaryIconLink={Routes.singlePlayerOptions}
       onPlay={onSubmit}
       slides={slides}
-      initialStep={
-        GameModeTypeValues.indexOf(formData.simulationSettings.gameModeType!) ||
-        0
-      }
+      initialStep={0}
       onChangeSlide={(step) => {
-        if (!advancedOptionsChanged) {
-          useSinglePlayerOptionsStore.getState().setFormData(
-            lodashMerge(formData, {
-              simulationSettings: slides[step].simulationSettings,
-              worldType: getWorldType(GameModeTypeValues[step]),
-            } as SinglePlayerOptionsFormData)
-          );
-        }
+        useSinglePlayerOptionsStore.getState().setFormData(
+          lodashMerge(formData, {
+            simulationSettings: slides[step].simulationSettings,
+            worldType: getWorldType(GameModeTypeValues[step]),
+          } as SinglePlayerOptionsFormData)
+        );
       }}
     />
   );

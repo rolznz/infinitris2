@@ -15,6 +15,7 @@ import {
   MenuItem,
   Select,
   Switch,
+  Typography,
 } from '@mui/material';
 import {
   blockLayoutSets,
@@ -130,6 +131,19 @@ export function SinglePlayerOptionsPage() {
         </FlexBox>
       }
     >
+      <Typography variant="body2" mb={2}>
+        <FormattedMessage
+          defaultMessage="Customize the options below and then press play."
+          description="Single Player Options directions"
+        />
+      </Typography>
+      <Typography variant="body2" mb={2}>
+        <FormattedMessage
+          defaultMessage="Returning to the previous page will result in all changes being discarded."
+          description="Single Player Options back notice"
+        />
+      </Typography>
+
       <form onSubmit={handleSubmit(onSubmit)}>
         <FlexBox gap={2}>
           <FlexBox flexDirection="row" flexWrap="wrap" gap={4}>

@@ -38,7 +38,11 @@ export function GameUI({
     (store) => store.endRoundDisplayOpen
   );
 
-  if (user.showUI === false && !endRoundDisplayOpen) {
+  if (
+    user.showUI === false &&
+    !challengeEditorEnabled &&
+    !endRoundDisplayOpen
+  ) {
     return null;
   }
   console.log('Re-render game UI');

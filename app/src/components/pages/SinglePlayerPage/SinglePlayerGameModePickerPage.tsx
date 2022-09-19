@@ -83,6 +83,6 @@ function getWorldType(gameModeType: GameModeType): WorldType {
     ? 'volcano'
     : 'grass';
 }
-function getWorldVariation(gameModeType: GameModeType): WorldVariation {
-  return gameModeType === 'column-conquest' ? '4' : '0';
+function getWorldVariation(_gameModeType: GameModeType): WorldVariation {
+  return '0'; //gameModeType === 'column-conquest' ? '4' : '0';
 }

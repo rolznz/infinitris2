@@ -45,6 +45,7 @@ import NavigationButton from '@/components/ui/BackButton';
 import useRouterStore from '@/state/RouterStore';
 import { PremiumPage } from '@/components/pages/PremiumPage/PremiumPage';
 import useLoaderStore from '@/state/LoaderStore';
+import { TrailerCharacterPage } from '@/components/pages/TrailerFeaturePage/TrailerCharacterPage';
 
 const coinsDisplayPaths = [Routes.market, Routes.profile];
 
@@ -61,7 +62,10 @@ function OutsideGameElement(props: React.PropsWithChildren<{}>) {
   return (
     <Route
       render={({ location }) => {
-        return !isIngameRoute(location.pathname) ? <>{props.children}</> : null;
+        return !isIngameRoute(location.pathname) &&
+          location.pathname !== '/trailer-character' ? (
+          <>{props.children}</>
+        ) : null;
       }}
     />
   );
@@ -172,6 +176,9 @@ function RouterContents() {
         </Route>
         <Route exact path={`${Routes.trailerFeature}`}>
           <TrailerFeaturePage />
+        </Route>
+        <Route exact path={`${Routes.trailerCharacter}`}>
+          <TrailerCharacterPage />
         </Route>
         <Route exact path={Routes.lobby}>
           <LobbyPage />

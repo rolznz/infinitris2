@@ -17,7 +17,12 @@ export function useIsNavigationButtonVisible() {
     location.pathname.indexOf(Routes.singlePlayerPlay) >= 0 &&
     singlePlayerOptionsFormData.isDemo;
   const hideUI = user.showUI === false && isIngameRoute(location.pathname);
-  if (location.pathname === '/' || isDemo || hideUI) {
+  if (
+    location.pathname === '/' ||
+    isDemo ||
+    hideUI ||
+    location.pathname === '/trailer-character'
+  ) {
     //|| (!isPwa() && !isFullscreen) || isDemo) {
     return false;
   }

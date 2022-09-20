@@ -30,6 +30,7 @@ enum Routes {
   storyMode = '/story-mode',
   premium = '/premium',
   trailerFeature = '/trailer-feature',
+  trailerCharacter = '/trailer-character',
 }
 
 export default Routes;

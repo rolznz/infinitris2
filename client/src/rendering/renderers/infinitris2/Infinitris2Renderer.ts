@@ -1288,8 +1288,6 @@ export default class Infinitris2Renderer extends BaseRenderer {
     );
 
     this._gridLines.render(
-      this._gridWidth,
-      this._gridHeight,
       this._cellSize,
       this._cellPadding,
       this._hasScrollX,

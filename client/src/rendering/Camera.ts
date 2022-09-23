@@ -32,8 +32,8 @@ export default class Camera {
     return this._isDemo ? this._y : Math.round(this._y);
   }
 
-  clampY(top: number, bottom: number) {
-    this._clampTop = top;
+  clampY(/*top: number, */ bottom: number) {
+    //this._clampTop = top;
     this._clampBottom = bottom;
     /*if (this._y > top) {
       this._y = interpolate(this._y, top, cameraSpeed);
@@ -81,6 +81,7 @@ export default class Camera {
   }
 
   update(delta: number) {
+    this._dy = Math.max(this._dy, this._clampBottom);
     // this._dy = Math.min(Math.max(this._dy, this._clampBottom), this._clampTop);
     this._vx *= 1 - Math.min(cameraDrag * delta, 1);
     this._vy *= 1 - Math.min(cameraDrag * delta, 1);
@@ -89,5 +90,6 @@ export default class Camera {
     this._vy += (this._dy - this._y) * cameraSpeed * delta;
     this._x += this._vx * delta;
     this._y += this._vy * delta;
+    this._y = Math.max(this._y, this._clampBottom);
   }
 }

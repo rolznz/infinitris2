@@ -268,7 +268,16 @@ export abstract class BaseRenderer implements IRenderer {
 
     this._camera.update(this._app.ticker.deltaMS / 16.66);
 
-    // clamp the camera to fit within the grid
+    // clamp the camera to not go below the floor
+    this._camera.clampY(
+      -(
+        this._gridHeight +
+        this._calculateFloorHeight() -
+        this._app.renderer.height +
+        this._visibilityY
+      )
+    );
+
     // this._camera.clampY(
     //   Math.max(this._appHeight - this._gridHeight, 0),
     //   -(

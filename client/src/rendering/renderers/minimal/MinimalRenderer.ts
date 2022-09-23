@@ -357,8 +357,6 @@ export default class MinimalRenderer extends BaseRenderer {
     super._resize();
 
     this._gridLines.render(
-      this._gridWidth,
-      this._gridHeight,
       this._cellSize,
       this._cellPadding,
       this._hasScrollX,

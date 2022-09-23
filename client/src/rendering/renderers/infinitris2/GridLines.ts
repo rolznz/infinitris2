@@ -6,8 +6,6 @@ export class GridLines {
   private _grid: IGrid;
   private _graphics: PIXI.Graphics;
   private _camera: Camera;
-  private _width: number;
-  private _height: number;
   private _app: PIXI.Application;
   private _lineType: GridLineType;
 
@@ -22,8 +20,6 @@ export class GridLines {
     this._lineType = lineType;
     this._graphics = new PIXI.Graphics();
     this._camera = camera;
-    this._width = 0;
-    this._height = 0;
     if (this._lineType === 'none') {
       return;
     }
@@ -34,23 +30,12 @@ export class GridLines {
     return this._graphics.y;
   }
 
-  get width() {
-    return this._width;
-  }
-  get height() {
-    return this._height;
-  }
-
   render(
-    gridWidth: number,
-    gridHeight: number,
     cellSize: number,
     cellPadding: number,
     scrollX: boolean,
     scrollY: boolean
   ) {
-    this._width = gridWidth;
-    this._height = gridHeight;
     if (this._lineType === 'none') {
       return;
     }
@@ -63,6 +48,7 @@ export class GridLines {
     const gridColumns = scrollX
       ? Math.ceil(this._app.renderer.width / cellSize) + 2
       : this._grid.numColumns;
+    const height = gridRows * cellSize;
 
     const gridColor = 0xffffff;
     const gridAlpha = 0.5;
@@ -105,7 +91,7 @@ export class GridLines {
 
       for (let c = 0; c < gridColumns; c++) {
         this._graphics.moveTo(c * cellSize, 0);
-        this._graphics.lineTo(c * cellSize, gridHeight);
+        this._graphics.lineTo(c * cellSize, height);
       }
     }
     this._graphics.cacheAsBitmap = true;
@@ -119,7 +105,7 @@ export class GridLines {
     cellSize: number,
     visibilityX: number,
     visibilityY: number,
-    clampedCameraY: number
+    cameraY: number
   ) {
     if (scrollX) {
       this._graphics.x = ((this._camera.x + visibilityX) % cellSize) - cellSize;
@@ -127,7 +113,7 @@ export class GridLines {
       throw new Error('Unsupported !scrollX');
     }
     if (scrollY) {
-      this._graphics.y = ((clampedCameraY + visibilityY) % cellSize) - cellSize;
+      this._graphics.y = ((cameraY + visibilityY) % cellSize) - cellSize;
     } else {
       this._graphics.y = worldY;
     }

@@ -23,6 +23,7 @@ import { WorldType, WorldVariation } from '@models/WorldType';
 import { RendererQuality } from '@models/RendererQuality';
 import { IChallengeEventListener } from '@models/IChallengeEventListener';
 import { ChallengeAttemptRecording } from '@models/IChallengeAttempt';
+import { GridLineType } from '@models/IGrid';
 
 export default class ClientApi implements IClientApi {
   private _client?: IClient;
@@ -88,8 +89,12 @@ export default class ClientApi implements IClientApi {
         layoutSetId,
       };
 
+      const gridNumRows: number | undefined =
+        parseInt(params.get('gridNumRows') || '0') || undefined;
       const gridNumColumns: number | undefined =
         parseInt(params.get('gridNumColumns') || '0') || undefined;
+      const gridLineType =
+        (params.get('gridLineType') as GridLineType | null) || undefined;
 
       this.launchSinglePlayer({
         controls_keyboard: controls,
@@ -97,12 +102,14 @@ export default class ClientApi implements IClientApi {
         rendererSettings: {
           rendererType,
           rendererQuality,
+          gridLineType,
         },
         simulationSettings,
         worldType,
         worldVariation,
         useFallbackUI: !isDemo,
         gridNumColumns,
+        gridNumRows,
         isDemo,
         player: {
           characterId: '487',

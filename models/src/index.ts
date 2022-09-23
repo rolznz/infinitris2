@@ -67,7 +67,7 @@ export * from './networking/client/IClientChatMessage';
 export * from './networking/client/ClientMessageType';
 export * from './networking/server/ServerMessageType';
 export * from './networking/server/IServerMessage';
-export * from './networking/server/IServerChatMessage';
+export * from './networking/server/IServerSimulationMessage';
 export * from './networking/reservedPlayerIds';
 export * from './ui';
 export * from './GameModeEvent';

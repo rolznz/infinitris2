@@ -3,4 +3,5 @@ export enum ClientMessageType {
   BLOCK_MOVED,
   BLOCK_DROPPED,
   CHAT,
+  TOGGLE_CHAT,
 }

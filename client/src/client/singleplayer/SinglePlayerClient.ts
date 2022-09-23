@@ -129,7 +129,7 @@ export default class SinglePlayerClient
       options.controls_keyboard,
       options.controls_gamepad,
       undefined,
-      false,
+      this._launchOptions.chatEnabled ?? false,
       this._launchOptions?.useCustomRepeat
         ? this._launchOptions.customRepeatInitialDelay
         : undefined,

@@ -26,7 +26,7 @@ import { BaseRenderer, Wrappable } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
 import { wrap } from '@core/utils/wrap';
-import { fontFamily } from '@models/ui';
+import { fontFamily, secondaryFontFamily } from '@models/ui';
 import { TowerIndicator } from '@src/rendering/renderers/infinitris2/TowerIndicator';
 import { LineClearingIndicator } from '@src/rendering/renderers/infinitris2/LineClearingIndicator';
 import { GameModeEvent } from '@models/GameModeEvent';
@@ -39,6 +39,7 @@ import { GestureIndicator } from '@src/rendering/renderers/infinitris2/GestureIn
 import { checkMistake } from '@core/block/checkMistake';
 import { ConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes/ConquestRenderer';
 import { MAX_COLUMNS } from '@core/grid/Grid';
+import { hexToString } from '@models/util/hexToString';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -87,6 +88,15 @@ interface IPlayerContainer {
     text: PIXI.Text;
     icon?: PIXI.Sprite;
   }>;
+  typingIndicator: IRenderableEntity<{
+    text: PIXI.Text;
+  }>;
+  recentChatMessage: {
+    entity: IRenderableEntity<{
+      text: PIXI.Text;
+    }>;
+    lastMessageTime: number;
+  };
   container: PIXI.Container;
 }
 
@@ -807,6 +817,17 @@ export default class Infinitris2Renderer extends BaseRenderer {
         container: new PIXI.Container(),
         children: [],
       },
+      typingIndicator: {
+        container: new PIXI.Container(),
+        children: [],
+      },
+      recentChatMessage: {
+        entity: {
+          container: new PIXI.Container(),
+          children: [],
+        },
+        lastMessageTime: 0,
+      },
       healthbar: {
         container: new PIXI.Container(),
         children: [],
@@ -817,6 +838,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
     playerContainer.container.zIndex = 100;
     playerContainer.container.addChild(playerContainer.nicknameText.container);
     playerContainer.container.addChild(playerContainer.healthbar.container);
+    playerContainer.container.addChild(
+      playerContainer.recentChatMessage.entity.container
+    );
+    playerContainer.container.addChild(
+      playerContainer.typingIndicator.container
+    );
     this._world.addChild(playerContainer.container);
 
     this._players[player.id] = playerContainer;
@@ -913,6 +940,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
             dropShadowAngle: Math.PI / 2,
             dropShadowDistance: 1,
             dropShadowBlur: 2,
+            dropShadowColor: hexToString(
+              this._worldBackground.blockOutlineColor
+            ),
           });
 
           //text.cacheAsBitmap = true;
@@ -939,7 +969,83 @@ export default class Infinitris2Renderer extends BaseRenderer {
         child.renderableObject.text.scale.set(this._cellSize * 0.03);
         child.renderableObject.icon?.scale.set(this._cellSize * 0.03);
       });
+
+      this.renderCopies(
+        playerContainer.typingIndicator,
+        1,
+        (renderableObject, shadowIndexWithDirection) => {
+          const shadowX = shadowIndexWithDirection * this._gridWidth;
+          renderableObject.text.x = shadowX;
+        },
+        () => {
+          const text = new PIXI.Text('...', {
+            align: 'center',
+            //stroke: '#000000',
+            //strokeThickness: 7,
+            fontFamily,
+            //fontSize: ,
+            dropShadow: true,
+            dropShadowAngle: Math.PI / 2,
+            dropShadowDistance: 1,
+            dropShadowBlur: 2,
+            dropShadowColor: hexToString(
+              this._worldBackground.blockOutlineColor
+            ),
+          });
+
+          //text.cacheAsBitmap = true;
+          text.anchor.set(0.5, 0.15);
+          playerContainer.typingIndicator.container.addChild(text);
+
+          return { text };
+        }
+      );
+
+      playerContainer.typingIndicator.children.forEach((child) => {
+        child.renderableObject.text.style.fill = PIXI.utils.hex2string(
+          player.color
+        );
+        child.renderableObject.text.scale.set(this._cellSize * 0.03);
+      });
+      playerContainer.typingIndicator.container.visible = false;
     }
+    this.renderCopies(
+      playerContainer.recentChatMessage.entity,
+      1,
+      (renderableObject, shadowIndexWithDirection) => {
+        const shadowX = shadowIndexWithDirection * this._gridWidth;
+        renderableObject.text.x = shadowX;
+      },
+      () => {
+        const text = new PIXI.Text('', {
+          align: 'center',
+          //stroke: '#000000',
+          //strokeThickness: 7,
+          fontFamily: secondaryFontFamily,
+          //fontSize: ,
+          dropShadow: true,
+          dropShadowAngle: Math.PI / 2,
+          dropShadowDistance: 1,
+          dropShadowBlur: 2,
+          dropShadowColor: hexToString(this._worldBackground.blockOutlineColor),
+        });
+
+        //text.cacheAsBitmap = true;
+        text.anchor.set(0.5, 0.5);
+        playerContainer.recentChatMessage.entity.container.addChild(text);
+
+        return { text };
+      }
+    );
+
+    playerContainer.recentChatMessage.entity.children.forEach((child) => {
+      child.renderableObject.text.style.fill = PIXI.utils.hex2string(
+        player.color
+      );
+      child.renderableObject.text.scale.set(this._cellSize * 0.02);
+    });
+    playerContainer.recentChatMessage.entity.container.visible = false;
+
     if (this._simulation!.gameMode.hasHealthbars) {
       this.renderCopies(
         playerContainer.healthbar,
@@ -1104,6 +1210,25 @@ export default class Infinitris2Renderer extends BaseRenderer {
     delete this._blocks[block.player.id];
   }
 
+  onSimulationMessage(
+    _simulation: ISimulation,
+    message: string,
+    player: IPlayer | undefined
+  ) {
+    if (player) {
+      const playerContainer = this._players[player.id];
+      if (playerContainer) {
+        playerContainer.recentChatMessage.entity.children.forEach((child) => {
+          child.renderableObject.text.text = message;
+        });
+        playerContainer.recentChatMessage.entity.container.visible = true;
+        playerContainer.recentChatMessage.lastMessageTime = Date.now();
+        // push name up to fit recent chat message below it
+        playerContainer.nicknameText.container.y = -this.cellSize * 0.75;
+      }
+    }
+  }
+
   /**
    * @inheritdoc
    */
@@ -1195,6 +1320,28 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._blockDropEffects = this._blockDropEffects.filter(
       (dropEffect) => dropEffect.container.alpha > 0
     );
+
+    for (const player of this._simulation.players) {
+      const playerContainer = this._players[player.id];
+      if (!playerContainer) {
+        continue;
+      }
+      playerContainer.typingIndicator.container.visible = player.isChatting;
+      if (player.isChatting) {
+        playerContainer.typingIndicator.children.forEach((child) => {
+          child.renderableObject.text.text = '.'.repeat(
+            1 + ((Date.now() / 500) % 3)
+          );
+        });
+      }
+      if (
+        playerContainer.recentChatMessage.entity.container.visible &&
+        Date.now() - playerContainer.recentChatMessage.lastMessageTime > 5000
+      ) {
+        playerContainer.recentChatMessage.entity.container.visible = false;
+        playerContainer.nicknameText.container.y = 0;
+      }
+    }
 
     // TODO: animation for where block died
     /*Object.values(this._blocks).forEach((block) => {

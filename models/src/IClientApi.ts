@@ -44,6 +44,7 @@ export type LaunchOptions = WithControls &
     allCharacters?: ICharacter[];
     showUI?: boolean;
     teachAllControls?: boolean;
+    chatEnabled?: boolean;
   };
 
 export type ChallengeLaunchOptions = LaunchOptions & {

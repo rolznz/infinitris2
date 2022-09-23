@@ -68,4 +68,9 @@ export default interface ISimulation extends ISimulationEventListener {
     desiredCharacterId?: string
   ): Partial<ICharacter>;
   nextRandom(key: string): number;
+  addMessage(
+    message: string,
+    player: IPlayer | undefined,
+    isSynced: boolean
+  ): void;
 }

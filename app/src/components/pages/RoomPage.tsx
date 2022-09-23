@@ -11,18 +11,13 @@ import {
   ClientMessageType,
   getRoomPath,
   getServerPath,
-  hexToString,
   IClientChatMessage,
   IClientSocket,
   IClientSocketEventListener,
   IPlayer,
   IRoom,
   IServer,
-  IServerChatMessage,
   ISimulation,
-  ServerMessageType,
-  IServerMessage,
-  reservedPlayerIds,
   PlayerStatus,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../hooks/useForcedRedirect';
@@ -59,28 +54,7 @@ const socketEventListener: IClientSocketEventListener = {
     useIngameStore.getState().setSimulation(undefined);
     useAppStore.getState().clientApi?.releaseClient();
   },
-  onMessage: (message: IServerMessage) => {
-    const simulation = useIngameStore.getState().simulation;
-    if (message.type === ServerMessageType.CHAT) {
-      const chatMessage = message as IServerChatMessage;
-      const player = simulation?.getPlayer(chatMessage.playerId);
-      if (player) {
-        useIngameStore.getState().addToMessageLog({
-          createdTime: Date.now(),
-          message: chatMessage.message,
-          nickname: player.nickname,
-          color: hexToString(player.color),
-        });
-      } else if (chatMessage.playerId === reservedPlayerIds.SERVER) {
-        useIngameStore.getState().addToMessageLog({
-          createdTime: Date.now(),
-          message: chatMessage.message,
-          nickname: '[SERVER]',
-          color: '#ff0000',
-        });
-      }
-    }
-  },
+  onMessage: () => {},
 };
 
 export default function RoomPage() {
@@ -171,6 +145,7 @@ export default function RoomPage() {
             useIngameStore.getState().setSimulation(simulation);
           },
           onPlayerToggleChat(player: IPlayer, cancel: boolean) {
+            // TODO: go through simulation addMessage instead of directly to socket
             if (player.isControllable) {
               if (!cancel && useIngameStore.getState().isChatOpen) {
                 const message = useIngameStore.getState().chatMessage?.trim();

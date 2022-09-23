@@ -28,7 +28,6 @@ import { IClientMessage } from '@models/networking/client/IClientMessage';
 import { ServerMessageType } from '@models/networking/server/ServerMessageType';
 import { ClientMessageType } from '@models/networking/client/ClientMessageType';
 import { IClientChatMessage } from '@models/networking/client/IClientChatMessage';
-import { IServerChatMessage } from '@models/networking/server/IServerChatMessage';
 import { GameModeType } from '@models/GameModeType';
 import AIPlayer from '@core/player/AIPlayer';
 import { IServerNextRoundEvent } from '@core/networking/server/IServerNextRoundEvent';
@@ -44,6 +43,9 @@ import IRoom from '@models/IRoom';
 import ISimulation from '@models/ISimulation';
 import { IServerPlayerKilledEvent } from '@core/networking/server/IServerPlayerKilledEvent';
 import { IServerGameModeEvent } from '@core/networking/server/IServerGameModeEvent';
+import IClientToggleChatEvent from '@core/networking/client/IClientToggleChatEvent';
+import { IServerPlayerToggleChatEvent } from '@core/networking/server/IServerPlayerToggleChatEvent';
+import { IServerSimulationMessage } from '@models/networking/server/IServerSimulationMessage';
 
 export default class Room implements Partial<ISimulationEventListener> {
   private _sendMessage: SendServerMessageFunction;
@@ -194,14 +196,17 @@ export default class Room implements Partial<ISimulationEventListener> {
    */
   onClientMessage(socketId: number, message: IClientMessage) {
     const player = this._simulation.getNetworkPlayerBySocketId(socketId);
-    const playerId = player?.id;
-    if (playerId === undefined) {
-      console.error('No player ID found matching socket: ');
+    if (!player) {
+      console.error('No player ID found matching socket: ' + socketId);
       return;
     }
+    const playerId = player.id;
     //console.log('Room received message from player ' + playerId + ':', message);
     //console.log('Received client message', message);
-    if (message.type === ClientMessageType.BLOCK_MOVED) {
+    if (message.type === ClientMessageType.TOGGLE_CHAT) {
+      const isChatting = (message as IClientToggleChatEvent).isChatting;
+      player.isChatting = isChatting;
+    } else if (message.type === ClientMessageType.BLOCK_MOVED) {
       const block = this._simulation.getPlayer(playerId)?.block;
       const blockInfo = (message as IClientBlockMovedEvent).data;
       if (block?.id === blockInfo.blockId) {
@@ -225,13 +230,9 @@ export default class Room implements Partial<ISimulationEventListener> {
         clientMessage.message.length
       ) {
         if (!clientMessage.message.startsWith('/')) {
-          const serverChatMessage: IServerChatMessage = {
-            type: ServerMessageType.CHAT,
-            message: clientMessage.message,
-            playerId: playerId,
-          };
-          this._sendMessageToAllPlayers(serverChatMessage);
+          this._simulation.addMessage(clientMessage.message, player, true);
         } else {
+          // TODO: simulation addCommand
           if (clientMessage.message.startsWith('/addbot')) {
             const reactionDelay = clientMessage.message.split(' ')[1];
             this._simulation.addBot(
@@ -280,6 +281,23 @@ export default class Room implements Partial<ISimulationEventListener> {
    * @inheritdoc
    */
   onSimulationStep(simulation: Simulation) {}
+
+  onSimulationMessage(
+    simulation: ISimulation,
+    message: string,
+    player: IPlayer | undefined,
+    isSynced: boolean
+  ) {
+    if (isSynced) {
+      const simulationMessage: IServerSimulationMessage = {
+        message,
+        playerId: player?.id,
+        type: ServerMessageType.SIMULATION_MESSAGE,
+      };
+
+      this._sendMessageToAllPlayers(simulationMessage);
+    }
+  }
 
   onNextRound(): void {
     const nextRoundEvent: IServerNextRoundEvent = {
@@ -424,7 +442,12 @@ export default class Room implements Partial<ISimulationEventListener> {
     this._sendServerChatMessage('Player ' + player.nickname + ' left the game');
   }
   onPlayerToggleChat(player: IPlayer): void {
-    // TODO: mark player as chatting/not chatting
+    const playerToggleChatMessage: IServerPlayerToggleChatEvent = {
+      type: ServerMessageType.PLAYER_TOGGLE_CHAT,
+      playerId: player.id,
+      isChatting: player.isChatting,
+    };
+    this._sendMessageToAllPlayersExcept(playerToggleChatMessage, player.id);
   }
   onPlayerChangeStatus(player: IPlayer): void {
     const playerToggleSpectatingMessage: IServerPlayerChangeStatusEvent = {
@@ -470,11 +493,13 @@ export default class Room implements Partial<ISimulationEventListener> {
   }
 
   private _sendServerChatMessage(message: string) {
-    this._sendMessageToAllPlayers({
-      message,
-      type: ServerMessageType.CHAT,
-      playerId: reservedPlayerIds.SERVER,
-    } as IServerChatMessage);
+    const simulationMessage: IServerSimulationMessage = {
+      message: message,
+      playerId: undefined,
+      type: ServerMessageType.SIMULATION_MESSAGE,
+    };
+
+    this._sendMessageToAllPlayers(simulationMessage);
   }
 
   private _sendMessageToPlayers(
@@ -505,5 +530,6 @@ function createPlayerInfo(player: IPlayer): NetworkPlayerInfo {
     isNicknameVerified: player.isNicknameVerified,
     isPremium: player.isPremium,
     isFirstBlock: player.isFirstBlock,
+    isChatting: player.isChatting,
   };
 }

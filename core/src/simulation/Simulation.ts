@@ -530,9 +530,9 @@ export default class Simulation implements ISimulation {
     );
   }
 
-  addMessage(message: string) {
+  addMessage(message: string, player: IPlayer | undefined, isSynced: boolean) {
     this._eventListeners.forEach((listener) =>
-      listener.onSimulationMessage?.(this, message)
+      listener.onSimulationMessage?.(this, message, player, isSynced)
     );
   }
 
@@ -540,7 +540,9 @@ export default class Simulation implements ISimulation {
 
   onPlayerKilled(_simulation: ISimulation, victim: IPlayer, attacker: IPlayer) {
     this.addMessage(
-      'Player ' + victim.nickname + ' knocked out by ' + attacker.nickname
+      'Player ' + victim.nickname + ' knocked out by ' + attacker.nickname,
+      undefined,
+      false
     );
 
     this._eventListeners.forEach((listener) =>

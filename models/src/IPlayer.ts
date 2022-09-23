@@ -22,6 +22,7 @@ export type NetworkPlayerInfo = {
   readonly isPremium: boolean;
   readonly isNicknameVerified: boolean;
   readonly isFirstBlock: boolean;
+  readonly isChatting: boolean;
 };
 
 export interface IPlayer {
@@ -55,6 +56,7 @@ export interface IPlayer {
   get firedActions(): InputActionWithData[];
   toggleChat(cancel?: boolean): void;
 
+  set isChatting(isChatting: boolean);
   get isChatting(): boolean;
   get isFirstBlock(): boolean;
   set isFirstBlock(isFirstBlock: boolean);

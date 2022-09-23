@@ -33,5 +33,10 @@ export default interface ISimulationEventListener
   onSimulationStart(simulation: ISimulation): void;
   onSimulationStop(simulation: ISimulation): void;
 
-  onSimulationMessage(simulation: ISimulation, message: string): void;
+  onSimulationMessage(
+    simulation: ISimulation,
+    message: string,
+    player: IPlayer | undefined,
+    isSynced: boolean
+  ): void;
 }

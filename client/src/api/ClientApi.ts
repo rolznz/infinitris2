@@ -104,6 +104,7 @@ export default class ClientApi implements IClientApi {
           rendererQuality,
           gridLineType,
         },
+        chatEnabled: true,
         simulationSettings,
         worldType,
         worldVariation,

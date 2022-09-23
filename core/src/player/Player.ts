@@ -245,6 +245,12 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     return false;
   }
 
+  set isChatting(isChatting: boolean) {
+    if (this._isChatting !== isChatting) {
+      this.toggleChat();
+    }
+  }
+
   cancelChat() {
     if (this._isChatting) {
       this.toggleChat(true);

@@ -45,6 +45,9 @@ import { IServerBlockDroppedEvent } from '@core/networking/server/IServerBlockDr
 import { IServerPlayerKilledEvent } from '@core/networking/server/IServerPlayerKilledEvent';
 import { IServerGameModeEvent } from '@core/networking/server/IServerGameModeEvent';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
+import IClientToggleChatEvent from '@core/networking/client/IClientToggleChatEvent';
+import { IServerPlayerToggleChatEvent } from '@core/networking/server/IServerPlayerToggleChatEvent';
+import { IServerSimulationMessage } from '@models/networking/server/IServerSimulationMessage';
 
 export default class NetworkClient
   extends BaseClient
@@ -186,6 +189,7 @@ export default class NetworkClient
             otherPlayer.score = playerInfo.score;
             otherPlayer.health = playerInfo.health;
             otherPlayer.isFirstBlock = playerInfo.isFirstBlock;
+            otherPlayer.isChatting = playerInfo.isChatting;
           }
         }
         for (let i = 0; i < joinResponseData.grid.reducedCells.length; i++) {
@@ -317,6 +321,17 @@ export default class NetworkClient
           playerKilledEvent.attackerId
         );
         this._simulation.onPlayerKilled(this._simulation, victim, attacker);
+      } else if (message.type === ServerMessageType.PLAYER_TOGGLE_CHAT) {
+        const event = message as IServerPlayerToggleChatEvent;
+        const player = this._simulation.getPlayer(event.playerId);
+        player.isChatting = event.isChatting;
+      } else if (message.type === ServerMessageType.SIMULATION_MESSAGE) {
+        const event = message as IServerSimulationMessage;
+        const player =
+          event.playerId !== undefined
+            ? this._simulation.getPlayer(event.playerId)
+            : undefined;
+        this._simulation.addMessage(event.message, player, false);
       } else if (message.type === ServerMessageType.GAME_MODE_EVENT) {
         const event = message as IServerGameModeEvent;
         if (event.data.type === 'cellsCaptured') {
@@ -414,6 +429,15 @@ export default class NetworkClient
         },
       };
       this._socket.sendMessage(blockDroppedEvent);
+    }
+  }
+  onPlayerToggleChat(player: IPlayer): void {
+    if (player.id === this._playerId) {
+      const toggleChatEvent: IClientToggleChatEvent = {
+        type: ClientMessageType.TOGGLE_CHAT,
+        isChatting: player.isChatting,
+      };
+      this._socket.sendMessage(toggleChatEvent);
     }
   }
 }

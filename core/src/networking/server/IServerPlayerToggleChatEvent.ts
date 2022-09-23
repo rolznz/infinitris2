@@ -1,6 +1,6 @@
 import { IServerMessage } from '@models/networking/server/IServerMessage';
 
-export interface IServerChatMessage extends IServerMessage {
-  message: string;
+export interface IServerPlayerToggleChatEvent extends IServerMessage {
   playerId: number;
+  isChatting: boolean;
 }

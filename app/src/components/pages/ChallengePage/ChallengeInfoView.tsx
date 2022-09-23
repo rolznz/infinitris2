@@ -171,7 +171,7 @@ ChallengeInfoViewProps) {
                   <Typography variant="h4" textAlign="center" sx={titleSx}>
                     By{' '}
                     {(isTest
-                      ? user?.nickname
+                      ? user?.readOnly?.nickname || user?.nickname
                       : challenge.readOnly?.user?.nickname) || 'Unknown'}
                   </Typography>
                 )}

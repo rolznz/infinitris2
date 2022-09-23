@@ -64,7 +64,7 @@ export const fullscreenSwipeableViewsStyles: SwipeableViewsStyles = lodashMerge(
 
 export const fullscreenMobileStepperStyles: React.CSSProperties = {
   position: 'absolute',
-  bottom: '5%',
+  bottom: '7%',
   width: '100vw',
 };
 

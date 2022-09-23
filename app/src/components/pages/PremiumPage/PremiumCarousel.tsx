@@ -12,6 +12,8 @@ import saveProgressImage from './assets/save_progress.svg';
 import saveProgressImageMobile from './assets/save_progress_mobile.svg';
 import rateChallengesImage from './assets/rate_challenges.svg';
 import rateChallengesImageMobile from './assets/rate_challenges_mobile.svg';
+import competeInCommunityChallengesImage from './assets/compete_community_challenges.svg';
+import competeInCommunityChallengesImageMobile from './assets/compete_community_challenges_mobile.svg';
 import comingSoonImage from './assets/coming_soon.svg';
 import comingSoonImageMobile from './assets/coming_soon_mobile.svg';
 import { FormattedMessage } from 'react-intl';
@@ -116,7 +118,7 @@ export function PremiumCarousel() {
         ? [
             saveProgressImage,
             coinsImage,
-            comingSoonImage,
+            competeInCommunityChallengesImage,
             rateChallengesImage,
             comingSoonImage,
             comingSoonImage,
@@ -127,7 +129,7 @@ export function PremiumCarousel() {
         : [
             saveProgressImageMobile,
             coinsImageMobile,
-            comingSoonImageMobile,
+            competeInCommunityChallengesImageMobile,
             rateChallengesImageMobile,
             comingSoonImageMobile,
             comingSoonImageMobile,
@@ -146,7 +148,7 @@ export function PremiumCarousel() {
           width="100vw"
           height="100vh"
           sx={{
-            background: `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, #000000 100%), url(${image})`,
+            background: `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.85) 100%), url(${image})`,
             backgroundSize: 'cover',
             backgroundRepeat: 'no-repeat',
             backgroundPositionY: '0%',
@@ -156,7 +158,7 @@ export function PremiumCarousel() {
         >
           <FlexBox
             position="absolute"
-            bottom={170}
+            bottom={isLandscape ? 100 : 170}
             left={isLandscape ? 100 : 20}
             maxWidth="70%"
             alignItems="flex-start"

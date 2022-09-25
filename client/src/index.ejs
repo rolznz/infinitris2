@@ -26,14 +26,15 @@
     if (!window.infinitris2.loadUrl(window.location.href)) {
       // TODO: URL builder
       document.write(`
-        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001">Join local server (room 0)</a><br/>
-        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=1">Join local server - room 1</a><br/>
-        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=2">Join local server - room 2</a><br/>
-        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=3">Join local server - room 3</a><br/>
-        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=4">Join local server - room 4</a><br/>
-        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=5">Join local server - room 5</a><br/>
-        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=6">Join local server - room 6</a><br/>
-        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=7">Join local server - room 7</a><br/>
+        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001">Join local server - room 0 (Infinity)</a><br/>
+        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=1">Join local server - room 1 (Column Conquest)</a><br/>
+        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=2">Join local server - room 2 (Race)</a><br/>
+        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=3">Join local server - room 3 (Infinity Pentominoes)</a><br/>
+        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=4">Join local server - room 4 (Conquest)</a><br/>
+        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=5">Join local server - room 5 (Conquest Infinity)</a><br/>
+        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=6">Join local server - room 6 (Conquest Conversions)</a><br/>
+        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=7">Join local server - room 7 (Conquest Conversions Teams)</a><br/>
+        <a href="/?url=ws%3A%2F%2F127.0.0.1%3A9001&roomId=8">Join local server - room 8 (Garbage Defense)</a><br/>
         <a href="/?single-player">Single Player</a><br/>
         <a href="/?single-player&layout=pentominoes">Single Player - pentominoes layout</a><br/>
         <a href="/?single-player&layout=pentominoes&numBots=5&botReactionDelay=10">Single Player - pentominoes with bots</a><br/>
@@ -53,6 +54,7 @@
         <a href="/?single-player&gameMode=conquest&numBots=1">Single Player Conquest Infinity</a><br/>
         <a href="/?single-player&gameMode=battle&numBots=1">Single Player Battle</a><br/>
         <a href="/?single-player&gameMode=race&numBots=1">Single Player Race</a><br/>
+        <a href="/?single-player&gameMode=garbage-defense&numBots=1">Single Player Garbage Defense</a><br/>
         <a href="/?single-player&gameMode=column-conquest&numBots=1">Single Player Column Conquest</a><br/>
         <a href="/?single-player&numBots=1">Single Player with bots</a><br/>
         <a href="/?single-player&numBots=5&spectate=true">Spectate</a><br/>

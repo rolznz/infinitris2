@@ -167,6 +167,9 @@ export default class Server implements IServerSocketEventListener {
   }
 
   private async _updateLobby(roomIndex?: number) {
+    if (process.env.UPDATE_LOBBY === 'false') {
+      return;
+    }
     const serverId = process.env.SERVER_ID;
     if (!serverId) {
       console.log('No SERVER_ID set, not updating lobby server');

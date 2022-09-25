@@ -2,7 +2,8 @@ export const GameModeTypeValues = [
   'infinity',
   'race',
   'conquest',
-  'battle',
+  'garbage-defense',
   'column-conquest',
+  'battle',
 ] as const;
 export type GameModeType = typeof GameModeTypeValues[number];

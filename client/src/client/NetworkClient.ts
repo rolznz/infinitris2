@@ -48,6 +48,7 @@ import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import IClientToggleChatEvent from '@core/networking/client/IClientToggleChatEvent';
 import { IServerPlayerToggleChatEvent } from '@core/networking/server/IServerPlayerToggleChatEvent';
 import { IServerSimulationMessage } from '@models/networking/server/IServerSimulationMessage';
+import { GarbageDefenseGameMode } from '@core/gameModes/GarbageDefenseGameMode';
 
 export default class NetworkClient
   extends BaseClient
@@ -334,6 +335,7 @@ export default class NetworkClient
         this._simulation.addMessage(event.message, player, false);
       } else if (message.type === ServerMessageType.GAME_MODE_EVENT) {
         const event = message as IServerGameModeEvent;
+        this._simulation.onGameModeEvent(event.data);
         if (event.data.type === 'cellsCaptured') {
           if (this._simulation.settings.gameModeType !== 'conquest') {
             throw new Error(
@@ -361,6 +363,18 @@ export default class NetworkClient
           const gameMode = this._simulation.gameMode as ConquestGameMode;
           const player = this._simulation.getPlayer(event.data.playerId);
           gameMode.assignPlayerToTeam(player, event.data.teamNumber);
+        } else if (
+          event.data.type === 'garbageWarning' ||
+          event.data.type === 'garbagePlaced'
+        ) {
+          if (this._simulation.settings.gameModeType !== 'garbage-defense') {
+            throw new Error(
+              'Unexpected game mode for event ' +
+                event.data.type +
+                ': ' +
+                this._simulation.settings.gameModeType
+            );
+          }
         } else {
           throw new Error('Unsupported game mode event: ' + event.data.type);
         }

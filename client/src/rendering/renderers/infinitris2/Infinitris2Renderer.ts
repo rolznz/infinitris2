@@ -40,6 +40,7 @@ import { checkMistake } from '@core/block/checkMistake';
 import { ConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes/ConquestRenderer';
 import { MAX_COLUMNS } from '@core/grid/Grid';
 import { hexToString } from '@models/util/hexToString';
+import { GarbageDefenseRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GarbageDefenseRenderer';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -588,7 +589,9 @@ export default class Infinitris2Renderer extends BaseRenderer {
     //this._scoreChangeIndicator.create();
     this._placementHelperShadowCells = [];
 
-    if (simulation.settings.gameModeType === 'column-conquest') {
+    if (simulation.settings.gameModeType === 'garbage-defense') {
+      this._gameModeRenderer = new GarbageDefenseRenderer(this);
+    } else if (simulation.settings.gameModeType === 'column-conquest') {
       this._gameModeRenderer = new ColumnConquestRenderer(this);
     } else if (simulation.settings.gameModeType === 'conquest') {
       this._gameModeRenderer = new ConquestRenderer(this);

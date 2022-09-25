@@ -125,9 +125,8 @@ export default class Cell implements ICell {
     if (this.behaviour.isReplaceable) {
       this.behaviour = new NormalCellBehaviour(this, player?.color);
     }
-    if (player) {
-      this._placementFrame = this._grid.frameNumber;
-    }
+
+    this._placementFrame = this._grid.frameNumber;
   }
 
   step() {

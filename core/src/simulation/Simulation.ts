@@ -36,6 +36,7 @@ import { ColumnConquestGameMode } from '@core/gameModes/ColumnConquestGameMode';
 import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { BattleGameMode } from '@core/gameModes/BattleGameMode';
 import { wrap, wrappedDistance } from '@core/utils/wrap';
+import { GarbageDefenseGameMode } from '@core/gameModes/GarbageDefenseGameMode';
 
 const IDEAL_FPS = 60;
 /**
@@ -677,6 +678,8 @@ export default class Simulation implements ISimulation {
         return new ConquestGameMode(this);
       case 'column-conquest':
         return new ColumnConquestGameMode(this);
+      case 'garbage-defense':
+        return new GarbageDefenseGameMode(this);
       case 'battle':
         return new BattleGameMode(this);
       case 'race':

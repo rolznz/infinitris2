@@ -62,7 +62,7 @@ export default class Room implements Partial<ISimulationEventListener> {
     this._roomInfo = roomInfo;
     this._sendMessage = sendMessage;
     this._simulation = new Simulation(
-      new Grid(50, 16),
+      new Grid(roomInfo.gridNumColumns ?? 50, roomInfo.gridNumRows ?? 16),
       roomInfo.simulationSettings
     );
     this._simulation.addEventListener(this);

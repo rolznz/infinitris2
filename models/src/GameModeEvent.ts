@@ -11,6 +11,16 @@ export type ColumnConquestEvent = {
   column: number;
 }; // | SecondEvent
 
+export type GarbageDefenseEvent =
+  | ({
+      type: 'garbageWarning';
+      cells: { row: number; column: number }[];
+    } & SyncedGameModeEvent)
+  | ({
+      type: 'garbagePlaced';
+      cells: { row: number; column: number }[];
+    } & SyncedGameModeEvent);
+
 export type ConquestEvent =
   | {
       type: 'cellCaptured';
@@ -30,6 +40,7 @@ export type ConquestEvent =
 export type GameModeEvent = (
   | ColumnConquestEvent
   | ConquestEvent
+  | GarbageDefenseEvent
   | GameModeTeamEvent
 ) & {
   isSynced?: boolean;

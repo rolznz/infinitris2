@@ -15,4 +15,5 @@ export interface IGameMode<GameModeState>
   checkMistake?(player: IPlayer, cells: ICell[], isMistake: boolean): boolean;
   getFallDelay?(player: IPlayer): number;
   getSpawnDelay?(player: IPlayer): number;
+  getMinPlayersForRound?(): number;
 }

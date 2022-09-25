@@ -4,7 +4,7 @@ import { IRoundEventListener } from '@models/IRoundEventListener';
 import ISimulation from '@models/ISimulation';
 
 const NEXT_ROUND_DELAY_MS = __DEV__ ? 1000 : 10000; // 10s
-
+const DEFAULT_MIN_PLAYERS = 2;
 export class Round implements IRound {
   private _simulation: ISimulation;
   private _isWaitingForNextRound: boolean;
@@ -49,8 +49,9 @@ export class Round implements IRound {
 
   get conditionsAreMet(): boolean {
     return (
-      this._simulation.nonSpectatorPlayers.length > 1 &&
-      this._simulation.isRunning
+      this._simulation.nonSpectatorPlayers.length >=
+        (this._simulation.gameMode.getMinPlayersForRound?.() ??
+          DEFAULT_MIN_PLAYERS) && this._simulation.isRunning
     );
   }
 
@@ -69,7 +70,11 @@ export class Round implements IRound {
       }
     } else {
       const activePlayers = this._simulation.activePlayers;
-      if (activePlayers.length <= 1) {
+      if (
+        activePlayers.length <
+        (this._simulation.gameMode.getMinPlayersForRound?.() ??
+          DEFAULT_MIN_PLAYERS)
+      ) {
         this.end(activePlayers[0]);
       }
     }

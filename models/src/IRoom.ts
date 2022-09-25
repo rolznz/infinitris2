@@ -15,4 +15,6 @@ export default interface IRoom extends IEntity {
   worldType?: WorldType;
   worldVariation?: WorldVariation;
   simulationSettings?: SimulationSettings;
+  gridNumRows?: number; // TODO: consider putting these in SimulationSettings
+  gridNumColumns?: number;
 }

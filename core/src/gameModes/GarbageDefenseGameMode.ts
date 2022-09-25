@@ -46,9 +46,15 @@ export class GarbageDefenseGameMode
         this._simulation.grid.cells[cellToFill.row][cellToFill.column].place(
           undefined
         );
-        this._simulation.grid.checkLineClears([cellToFill.row]);
       }
+      this._simulation.grid.checkLineClears(
+        event.cells
+          .map((cell) => cell.row)
+          .filter((row, i, rows) => rows.indexOf(row) === i)
+      );
       this._nextCellsToFill = [];
+    } else if (event.type === 'garbageWarning') {
+      this._nextCellsToFill.push(...event.cells);
     }
   }
 
@@ -63,7 +69,8 @@ export class GarbageDefenseGameMode
 
     if (
       !this._simulation.isNetworkClient &&
-      this._simulation.frameNumber > this._nextFillFrame
+      this._simulation.frameNumber > this._nextFillFrame &&
+      this._nextCellsToFill.length
     ) {
       if (
         this._nextCellsToFill.some(
@@ -71,6 +78,7 @@ export class GarbageDefenseGameMode
         )
       ) {
         // TODO: who is the winner? this is a co-op mode. It should show the level?
+        console.log('a garbage cell hit the death row');
         this._simulation.round!.end(undefined);
       } else {
         this._simulation.onGameModeEvent({
@@ -82,19 +90,37 @@ export class GarbageDefenseGameMode
     }
     if (
       !this._simulation.isNetworkClient &&
-      this._simulation.frameNumber > this._nextGarbageFrame
+      this._simulation.frameNumber > this._nextGarbageFrame &&
+      !this._nextCellsToFill.length
     ) {
       this._calculateNextGarbageFrame();
-      let nextCellsToFill: typeof this._nextCellsToFill = [];
-      for (let i = 0; i < this._level; i++) {
+      const nextCellsToFill: typeof this._nextCellsToFill = [];
+      const requiredRowsEmpty = Math.floor(this._level / 10) % 3; // [1 => 0, 11 => 1, 21 => 2, 31 => 0]
+      const numGarbageToGenerate = Math.min(
+        requiredRowsEmpty > 1 ? 1 : requiredRowsEmpty > 0 ? 3 : 9,
+        this._level
+      ); // max 9 for simple, 1 for extra difficult
+
+      const numGarbageToGenerateClamped = Math.min(
+        numGarbageToGenerate,
+        Math.floor(this._simulation.grid.numColumns / 2)
+      ); // don't generate too many for small grids
+      for (let i = 0; i < numGarbageToGenerateClamped; i++) {
         const column = Math.floor(
           this._simulation.nextRandom('garbage_defense_column') *
             this._simulation.grid.numColumns
         );
         let row = this._simulation.grid.numRows - 1;
+        let numRowsEmpty = 0;
+
         for (; row > this._getDeathRow(); row--) {
           if (this._simulation.grid.cells[row][column].isEmpty) {
-            break;
+            ++numRowsEmpty;
+            if (numRowsEmpty > requiredRowsEmpty) {
+              break;
+            }
+          } else {
+            numRowsEmpty = 0;
           }
         }
         nextCellsToFill.push({ row, column });
@@ -104,7 +130,6 @@ export class GarbageDefenseGameMode
         cells: nextCellsToFill,
         isSynced: true,
       });
-      this._nextCellsToFill = nextCellsToFill;
       this._nextFillFrame =
         this._simulation.frameNumber + (1000 / FRAME_LENGTH) * 1;
     }
@@ -112,6 +137,7 @@ export class GarbageDefenseGameMode
 
   onNextRound() {
     this._level = 1;
+    this._nextCellsToFill = [];
     this._calculateNextGarbageFrame();
   }
 
@@ -123,23 +149,28 @@ export class GarbageDefenseGameMode
   }
 
   getFallDelay(player: IPlayer) {
-    // TODO: base on level instead
+    // TODO: base on level instead?
     return getScoreBasedFallDelay(player);
   }
   onLinesCleared(rows: number[]) {
-    // TODO: sync
-    /*if (rows.some((row) => row === this._simulation.grid.numRows - 1)) {
-      ++this._level;
-      this._simulation.addMessage('LEVEL ' + this._level, undefined, false);
-    }*/
+    this._level += rows.length;
+    this._simulation.addMessage('LEVEL ' + this._level, undefined, false);
+    // TODO: add an event for this
+    this._nextCellsToFill = [];
   }
 
   private _calculateNextGarbageFrame() {
     if (this._simulation.isNetworkClient) {
       return;
     }
+
+    const maxLevel = 100;
+    // TODO: make the speed more variable
     this._nextGarbageFrame =
-      this._simulation.frameNumber + (1000 / FRAME_LENGTH) * 10;
+      this._simulation.frameNumber +
+      (1000 / FRAME_LENGTH) *
+        10 *
+        (1 - Math.min(this._level, maxLevel - 1) / maxLevel);
   }
 
   private _getDeathRow(): number {

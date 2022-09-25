@@ -25,6 +25,7 @@ import { ReactComponent as InfinityIcon } from '@/icons/infinity.svg';
 import { ReactComponent as ProfileIcon } from '@/icons/profile.svg';
 import RunCircleIcon from '@mui/icons-material/RunCircle';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
+import RestoreFromTrashIcon from '@mui/icons-material/RestoreFromTrash';
 import { FormattedMessage } from 'react-intl';
 import { textShadows } from '@/theme/theme';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
@@ -170,6 +171,8 @@ function GameModeIcon(props: { gameModeType: GameModeType }) {
       return <InfinityIcon />;
     case 'race':
       return <RunCircleIcon />;
+    case 'garbage-defense':
+      return <RestoreFromTrashIcon />;
     case 'battle':
       return <WhatshotIcon />;
     case 'conquest':
@@ -189,14 +192,14 @@ export function GameModeDescription(props: {
       return (
         <FormattedMessage
           defaultMessage="Play at your own pace. No rounds or time limits."
-          description="Infinity Game mode description"
+          description="Infinity game mode description"
         />
       );
     case 'race':
       return (
         <FormattedMessage
           defaultMessage="Get more than {knockoutPointDifference} points ahead to knock out other players."
-          description="Race Game mode description"
+          description="Race game mode description"
           values={{
             knockoutPointDifference: getKnockoutPointDifference(
               props.simulationSettings
@@ -208,21 +211,28 @@ export function GameModeDescription(props: {
       return (
         <FormattedMessage
           defaultMessage="Capture other players' cells to knock them out of the game"
-          description="Conquest Game mode description"
+          description="Conquest game mode description"
         />
       );
     case 'column-conquest':
       return (
         <FormattedMessage
           defaultMessage="Capture columns by holding the bottom row."
-          description="Column Conquest Game mode description"
+          description="Column Conquest game mode description"
         />
       );
     case 'battle':
       return (
         <FormattedMessage
           defaultMessage="Conquest with Bombs"
-          description="Battle Game mode description"
+          description="Battle game mode description"
+        />
+      );
+    case 'garbage-defense':
+      return (
+        <FormattedMessage
+          defaultMessage="Stop the garbage reaching the top of the grid"
+          description="Garbage Defense game mode description"
         />
       );
     default:

@@ -79,10 +79,12 @@ function getWorldType(gameModeType: GameModeType): WorldType {
     ? 'desert'
     : gameModeType === 'race'
     ? 'space'
-    : gameModeType === 'battle' || gameModeType === 'column-conquest'
+    : gameModeType === 'battle' ||
+      gameModeType === 'column-conquest' ||
+      gameModeType === 'garbage-defense'
     ? 'volcano'
     : 'grass';
 }
-function getWorldVariation(_gameModeType: GameModeType): WorldVariation {
-  return '0'; //gameModeType === 'column-conquest' ? '4' : '0';
+function getWorldVariation(gameModeType: GameModeType): WorldVariation {
+  return gameModeType === 'column-conquest' ? '4' : '0';
 }

@@ -8,6 +8,8 @@ import ISimulation from '@models/ISimulation';
 type GarbageDefenseGameModeState = {
   level: number;
 };
+
+const maxLevel = 100;
 export class GarbageDefenseGameMode
   implements IGameMode<GarbageDefenseGameModeState>
 {
@@ -98,20 +100,31 @@ export class GarbageDefenseGameMode
       const requiredRowsEmpty = Math.floor(this._level / 10) % 3; // [1 => 0, 11 => 1, 21 => 2, 31 => 0]
       const numGarbageToGenerate = Math.min(
         requiredRowsEmpty > 1 ? 1 : requiredRowsEmpty > 0 ? 3 : 9,
-        this._level
-      ); // max 9 for simple, 1 for extra difficult
-
-      const numGarbageToGenerateClamped = Math.min(
-        numGarbageToGenerate,
+        this._level,
         Math.floor(this._simulation.grid.numColumns / 2)
-      ); // don't generate too many for small grids
-      for (let i = 0; i < numGarbageToGenerateClamped; i++) {
+      );
+
+      for (let i = 0; i < numGarbageToGenerate; i++) {
         const column = Math.floor(
           this._simulation.nextRandom('garbage_defense_column') *
             this._simulation.grid.numColumns
         );
         let row = this._simulation.grid.numRows - 1;
         let numRowsEmpty = 0;
+        // alternate way of generating requiredRowsEmpty per cell
+        // to fix also need to ensure that the entire column is checked
+        // to make sure the garbage isn't unintentionally filling in a gap
+        /*const requiredRowsEmptyRandom = Math.pow(
+          this._simulation.nextRandom('garbage_defense_rows_empty'),
+          1 / (Math.min(this._level, maxLevel) / maxLevel)
+        );
+        console.log('requiredRowsEmptyRandom', requiredRowsEmptyRandom);
+        const requiredRowsEmpty =
+          requiredRowsEmptyRandom > 0.95
+            ? 2
+            : requiredRowsEmptyRandom > 0.9
+            ? 1
+            : 0;*/
 
         for (; row > this._getDeathRow(); row--) {
           if (this._simulation.grid.cells[row][column].isEmpty) {
@@ -164,8 +177,7 @@ export class GarbageDefenseGameMode
       return;
     }
 
-    const maxLevel = 100;
-    // TODO: make the speed more variable
+    // TODO: consider making the speed more variable?
     this._nextGarbageFrame =
       this._simulation.frameNumber +
       (1000 / FRAME_LENGTH) *

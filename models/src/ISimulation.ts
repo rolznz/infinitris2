@@ -73,4 +73,6 @@ export default interface ISimulation extends ISimulationEventListener {
     player: IPlayer | undefined,
     isSynced: boolean
   ): void;
+  isTower(row: number): boolean;
+  getTowerRow(): number;
 }

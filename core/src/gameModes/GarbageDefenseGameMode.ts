@@ -63,6 +63,9 @@ export class GarbageDefenseGameMode
   getMinPlayersForRound(): number {
     return 1;
   }
+  getTowerRow(): number {
+    return 0;
+  }
 
   step(): void {
     if (this._simulation.round!.isWaitingForNextRound) {
@@ -186,6 +189,6 @@ export class GarbageDefenseGameMode
   }
 
   private _getDeathRow(): number {
-    return 0; //this._simulation.grid.getTowerRow();
+    return 0; //this._simulation.getTowerRow();
   }
 }

@@ -17,7 +17,7 @@ export function checkMistake(
 
   if (
     simulation.settings.preventTowers !== false &&
-    simulation.grid.isTower(topRow) &&
+    simulation.isTower(topRow) &&
     !allowTowers
   ) {
     isMistake = true;

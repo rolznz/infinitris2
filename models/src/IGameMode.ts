@@ -16,4 +16,5 @@ export interface IGameMode<GameModeState>
   getFallDelay?(player: IPlayer): number;
   getSpawnDelay?(player: IPlayer): number;
   getMinPlayersForRound?(): number;
+  getTowerRow?(): number;
 }

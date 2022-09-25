@@ -670,6 +670,27 @@ export default class Simulation implements ISimulation {
     );
   }
 
+  isTower(row: number): boolean {
+    // old dynamic logic no longer used, confusing
+    /*const numFilledRows = Math.ceil(
+      this._cachedNumNonEmptyCells / this.numColumns
+    );*/
+    // first 4 rows must never be placeable (to ensure blocks can always be placed)
+    //return row < Math.max(this.numRows - numFilledRows - 4, 4);
+    return row <= this.getTowerRow();
+  }
+  getTowerRow(): number {
+    return this._gameMode.getTowerRow?.() ?? 4;
+    /*let towerRow = 0;
+    while (towerRow < this.numRows) {
+      if (!this.isTower(towerRow)) {
+        break;
+      }
+      ++towerRow;
+    }
+    return towerRow - 1;*/
+  }
+
   private _createGameMode(gameModeType: GameModeType): IGameMode<unknown> {
     switch (gameModeType) {
       case 'infinity':

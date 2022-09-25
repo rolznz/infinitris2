@@ -1,4 +1,5 @@
 import IGrid from '@models/IGrid';
+import ISimulation from '@models/ISimulation';
 import * as PIXI from 'pixi.js-legacy';
 
 export class TowerIndicator {
@@ -18,12 +19,17 @@ export class TowerIndicator {
     this._graphics.visible = false;
   }
 
-  update(gridY: number, isTower: boolean, grid: IGrid, cellSize: number) {
+  update(
+    gridY: number,
+    isTower: boolean,
+    simulation: ISimulation,
+    cellSize: number
+  ) {
     let towerY = 0;
     if (isTower) {
       let towerRow = 0;
       while (true) {
-        if (!grid.isTower(towerRow)) {
+        if (!simulation.isTower(towerRow)) {
           break;
         }
         ++towerRow;

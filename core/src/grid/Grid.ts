@@ -212,26 +212,6 @@ export default class Grid implements IGrid {
     );
   }
 
-  isTower(row: number): boolean {
-    /*const numFilledRows = Math.ceil(
-      this._cachedNumNonEmptyCells / this.numColumns
-    );*/
-    return row <= this.getTowerRow();
-    // first 4 rows must never be placeable (to ensure blocks can always be placed)
-    //return row < Math.max(this.numRows - numFilledRows - 4, 4);
-  }
-  getTowerRow(): number {
-    return 4;
-    /*let towerRow = 0;
-    while (towerRow < this.numRows) {
-      if (!this.isTower(towerRow)) {
-        break;
-      }
-      ++towerRow;
-    }
-    return towerRow - 1;*/
-  }
-
   resize(numRows: number, numColumns: number, atRow = 0, atColumn = 0): void {
     let originalNumRows = this.numRows;
     let originalNumColumns = this.numColumns;

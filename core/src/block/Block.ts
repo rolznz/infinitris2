@@ -470,7 +470,7 @@ export default class Block implements IBlock {
         if (!isMistake) {
           while (
             this._simulation.settings.preventTowers !== false &&
-            this._simulation.grid.isTower(this.topRow)
+            this._simulation.isTower(this.topRow)
           ) {
             this.move(0, 1, 0, true);
           }

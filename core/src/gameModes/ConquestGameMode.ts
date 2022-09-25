@@ -198,7 +198,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     }
     const startTime = Date.now();
 
-    const touchingTowerRow = this._simulation.grid.getTowerRow() + 1;
+    const touchingTowerRow = this._simulation.getTowerRow() + 1;
     const cellsTouchingTowerRow = block.cells.filter(
       (cell) => cell.row === touchingTowerRow
     );
@@ -405,7 +405,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
 
     /*// FIXME: remove
     setTimeout(() => {
-      const towerRow = this._simulation.grid.getTowerRow();
+      const towerRow = this._simulation.getTowerRow();
       for (const column of [8, 9, 19]) {
         for (let row = towerRow; row < this._simulation.grid.numRows; row++) {
           this._simulation.grid.cells[row][column].place(
@@ -498,7 +498,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     checkedPathCells: { [index: number]: ICell } = {},
     iteration: number
   ): boolean {
-    const towerRow = this._simulation.grid.getTowerRow(); // TODO: move out of function
+    const towerRow = this._simulation.getTowerRow(); // TODO: move out of function
     checkedPathCells[cell.index] = cell;
     if (cell.row <= towerRow) {
       return false;
@@ -582,7 +582,7 @@ export function conquestCanPlace(
   // TODO: consider making simulation tower height be forgiving (it can change instantly)
   // TODO: make this more efficient (don't recalculate every single check) and remove use of global _forgivingTowerRows
 
-  const currentTowerRow = simulation.grid.getTowerRow();
+  const currentTowerRow = simulation.getTowerRow();
 
   if (!allowTowers && cell.row <= currentTowerRow) {
     // cell is above tower height

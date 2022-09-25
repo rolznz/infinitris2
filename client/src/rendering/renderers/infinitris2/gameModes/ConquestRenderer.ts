@@ -46,8 +46,7 @@ export class ConquestRenderer implements IGameModeRenderer {
     if (!this._renderer.simulation) {
       return;
     }
-    const topPlayableRowHeight =
-      this._renderer.simulation.grid.getTowerRow() + 1;
+    const topPlayableRowHeight = this._renderer.simulation.getTowerRow() + 1;
     for (
       let column = 0;
       column < this._renderer.simulation.grid.numColumns;

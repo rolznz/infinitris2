@@ -2052,13 +2052,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
     const isTower =
       this._simulation.settings.preventTowers !== false &&
       //isMistake &&
-      this._simulation.grid.isTower(highestBlockPlacementCellRow);
+      this._simulation.isTower(highestBlockPlacementCellRow);
 
     const displayInvalidPlacement = isMistake; /*|| isTower*/
     this._towerIndicator.update(
       !this._hasScrollY ? this._gridLines.y : this._world.y,
       isTower,
-      this._simulation.grid,
+      this._simulation,
       this._cellSize
     );
 

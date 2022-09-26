@@ -22,9 +22,11 @@ import useAuthStore from '@/state/AuthStore';
 import { intervalToDuration } from 'date-fns';
 import useInterval from 'react-use/lib/useInterval';
 import { PremiumLink } from '@/components/ui/PremiumLink';
+import { Timestamp as FirestoreTimestamp } from 'firebase/firestore';
 
 const scoreboardCollectionOptions: UseCollectionOptions = {
   constraints: [orderBy('placing', 'asc')],
+  listen: true,
 };
 
 export default function ScoreboardPage() {
@@ -55,12 +57,14 @@ export default function ScoreboardPage() {
             values={{
               nextUpdate: (
                 <CountdownTimer
-                  to={{
+                  lastUpdateTimestamp={{
                     nanoseconds: 0,
                     seconds:
-                      scoreboardSetting.data()!.lastUpdatedTimestamp.seconds +
-                      12 * 60 * 60 /* update every 12 hours*/,
+                      scoreboardSetting.data()!.lastUpdatedTimestamp.seconds,
                   }}
+                  updateIntervalSeconds={
+                    12 * 60 * 60 /* update every 12 hours*/
+                  }
                 />
               ),
             }}
@@ -96,15 +100,35 @@ export default function ScoreboardPage() {
   );
 }
 
-function CountdownTimer({ to }: { to: Timestamp }) {
+type CountdownTimerProps = {
+  lastUpdateTimestamp: Timestamp;
+  updateIntervalSeconds: number;
+};
+
+function CountdownTimer({
+  lastUpdateTimestamp,
+  updateIntervalSeconds,
+}: CountdownTimerProps) {
   const [_, setCount] = React.useState(0);
   useInterval(() => setCount((count) => count + 1));
-  return <>{getTimeRemaining(to)}</>;
+  return <>{getTimeRemaining(lastUpdateTimestamp, updateIntervalSeconds)}</>;
 }
 
-function getTimeRemaining(until: Timestamp): React.ReactNode {
+function getTimeRemaining(
+  lastUpdateTimestamp: Timestamp,
+  updateIntervalSeconds: number,
+  repeatable = true
+): React.ReactNode {
+  let nextTime = lastUpdateTimestamp.seconds;
+  while (nextTime < FirestoreTimestamp.now().seconds) {
+    nextTime += updateIntervalSeconds;
+    if (!repeatable) {
+      break;
+    }
+  }
   const date = new Date(0);
-  date.setSeconds(until.seconds);
+  date.setSeconds(nextTime);
+
   let duration = intervalToDuration({
     start: new Date(),
     end: date,

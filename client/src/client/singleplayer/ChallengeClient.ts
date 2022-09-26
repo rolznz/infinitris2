@@ -480,7 +480,8 @@ export default class ChallengeClient
         : undefined,
       this._launchOptions?.useCustomRepeat
         ? this._launchOptions.customRepeatRate
-        : undefined
+        : undefined,
+      this._launchOptions?.allowRepeatedRotations
     );
     //this._renderer.virtualKeyboardControls = this._input.controls;
     if (this._editor) {

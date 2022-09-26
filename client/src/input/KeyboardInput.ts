@@ -22,14 +22,17 @@ export default class KeyboardInput {
       event: KeyboardEvent | undefined;
     };
   };
+  private _allowRepeatedRotations: boolean;
 
   constructor(
     fireAction: InputActionListener,
     controls: ControlSettings,
     customRepeatInitialDelay: number | undefined,
-    customRepeatRate: number | undefined
+    customRepeatRate: number | undefined,
+    allowRepeatedRotations = false
   ) {
     this._destroyed = false;
+    this._allowRepeatedRotations = allowRepeatedRotations;
     this._controls = controls;
     this._fireAction = fireAction;
     this._customRepeatInitialDelay = customRepeatInitialDelay;
@@ -97,7 +100,8 @@ export default class KeyboardInput {
         this._controls[CustomizableInputAction.RotateAnticlockwise] ||
         event.key ===
           this._controls[CustomizableInputAction.RotateClockwise]) &&
-      !this._pressedKeys[event.key].hasRepeated
+      (!this._pressedKeys[event.key].hasRepeated ||
+        this._allowRepeatedRotations)
     ) {
       const action =
         event.key ===

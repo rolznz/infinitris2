@@ -61,6 +61,7 @@ import {
   setUserCustomRepeatInitialDelay,
   setUserCustomRepeatRate,
   setUserShowUI,
+  setUserAllowRepeatedRotations,
 } from '@/state/updateUser';
 import { useUser } from '@/components/hooks/useUser';
 import { getDefaultPreferredInputMethod } from '@/state/LocalUserStore';
@@ -529,6 +530,24 @@ export default function SettingsPage() {
                   ).toString()}
                   onChange={(event) => {
                     setUserCustomRepeatRate(parseInt(event.target.value));
+                  }}
+                />
+              }
+            />
+          )}
+          {user.preferredInputMethod !== 'touch' && (
+            <SettingsRow
+              left={
+                <FormattedMessage
+                  defaultMessage="Allow multiple rotations by holding the rotate key"
+                  description="Settings Page Table - Allow multiple rotations"
+                />
+              }
+              right={
+                <IconSwitch
+                  checked={user.allowRepeatedRotations === true}
+                  onChange={(event) => {
+                    setUserAllowRepeatedRotations(event.target.checked);
                   }}
                 />
               }

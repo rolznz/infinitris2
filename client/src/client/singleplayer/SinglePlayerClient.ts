@@ -135,7 +135,8 @@ export default class SinglePlayerClient
         : undefined,
       this._launchOptions?.useCustomRepeat
         ? this._launchOptions.customRepeatRate
-        : undefined
+        : undefined,
+      this._launchOptions?.allowRepeatedRotations
     );
     this._simulation.addBots(this._launchOptions.allCharacters);
 

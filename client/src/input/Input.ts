@@ -41,7 +41,8 @@ export default class Input {
     challengeEditorEnabled = false,
     chatEnabled = true,
     customRepeatInitialDelay?: number,
-    customRepeatRate?: number
+    customRepeatRate?: number,
+    allowRepeatedRotations?: boolean
   ) {
     this._chatEnabled = chatEnabled;
     this._simulation = simulation;
@@ -52,7 +53,8 @@ export default class Input {
       this._fireAction,
       this._controls,
       customRepeatInitialDelay,
-      customRepeatRate
+      customRepeatRate,
+      allowRepeatedRotations
     );
     this._touchInput = new TouchInput(this._fireAction);
     this._challengeEditorEnabled = challengeEditorEnabled;

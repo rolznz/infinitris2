@@ -242,3 +242,9 @@ export const setUserCustomRepeatInitialDelay = (
 export const setUserCustomRepeatRate = (customRepeatRate: number) => {
   updateUser({ customRepeatRate });
 };
+
+export const setUserAllowRepeatedRotations = (
+  allowRepeatedRotations: boolean
+) => {
+  updateUser({ allowRepeatedRotations });
+};

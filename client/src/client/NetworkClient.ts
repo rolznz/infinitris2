@@ -182,7 +182,8 @@ export default class NetworkClient
                 : undefined,
               this._launchOptions?.useCustomRepeat
                 ? this._launchOptions.customRepeatRate
-                : undefined
+                : undefined,
+              this._launchOptions?.allowRepeatedRotations
             );
           } else {
             const otherPlayer = this._createNetworkPlayer(playerInfo);

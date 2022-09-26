@@ -52,15 +52,21 @@ export function useUser(): CombinedUser {
   return combinedUser;
 }
 
-export function useUserLaunchOptions(
-  user: CombinedUser
-): Pick<
+type UseUserLaunchOptionsType = Pick<
   LaunchOptions,
   | 'rendererSettings'
   | 'useCustomRepeat'
   | 'customRepeatInitialDelay'
   | 'customRepeatRate'
-> {
+  | 'allowRepeatedRotations'
+  | 'controls_keyboard'
+  | 'controls_gamepad'
+  | 'showUI'
+>;
+
+export function useUserLaunchOptions(
+  user: CombinedUser
+): UseUserLaunchOptionsType {
   const {
     rendererQuality,
     rendererType,
@@ -75,10 +81,11 @@ export function useUserLaunchOptions(
     customRepeatInitialDelay,
     customRepeatRate,
     showUI,
+    allowRepeatedRotations,
   } = user;
 
-  const launchOptions = React.useMemo(
-    () => ({
+  const launchOptions = React.useMemo(() => {
+    const settings: UseUserLaunchOptionsType = {
       rendererSettings: {
         rendererQuality,
         rendererType,
@@ -93,26 +100,28 @@ export function useUserLaunchOptions(
         ...(controls_keyboard || {}),
       },
       controls_gamepad,
+      allowRepeatedRotations,
       useCustomRepeat,
       customRepeatInitialDelay,
       customRepeatRate,
       showUI,
-    }),
-    [
-      blockShadowType,
-      gridLineType,
-      rendererQuality,
-      rendererType,
-      showFaces,
-      showNicknames,
-      showPatterns,
-      showUI,
-      controls_keyboard,
-      controls_gamepad,
-      useCustomRepeat,
-      customRepeatInitialDelay,
-      customRepeatRate,
-    ]
-  );
+    };
+    return settings;
+  }, [
+    blockShadowType,
+    gridLineType,
+    rendererQuality,
+    rendererType,
+    showFaces,
+    showNicknames,
+    showPatterns,
+    showUI,
+    controls_keyboard,
+    controls_gamepad,
+    useCustomRepeat,
+    customRepeatInitialDelay,
+    customRepeatRate,
+    allowRepeatedRotations,
+  ]);
   return launchOptions;
 }

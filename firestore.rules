@@ -74,12 +74,13 @@ service cloud.firestore {
       function isValidUser() {
         return
           baseRequestValid() &&
-          entityHasExpectedFields(['controls_keyboard', 'controls_gamepad', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality', 'selectedCharacterId', 'unlockedFeatures', 'completedOfficialChallengeIds','gridLineType', 'blockShadowType', 'showNicknames', 'showPatterns', 'showFaces', 'showUI', 'useCustomRepeat', 'customRepeatInitialDelay', 'customRepeatRate']) &&
+          entityHasExpectedFields(['controls_keyboard', 'controls_gamepad', 'preferredInputMethod', 'locale', 'musicOn', 'sfxOn', 'appTheme', 'musicVolume', 'sfxVolume', 'rendererType', 'rendererQuality', 'selectedCharacterId', 'unlockedFeatures', 'completedOfficialChallengeIds','gridLineType', 'blockShadowType', 'showNicknames', 'showPatterns', 'showFaces', 'showUI', 'useCustomRepeat', 'customRepeatInitialDelay', 'customRepeatRate', 'allowRepeatedRotations']) &&
           getProperty('unlockedFeatures', []) is list &&
           getProperty('completedOfficialChallengeIds', []) is list &&
           getProperty('useCustomRepeat', false) is bool &&
           getProperty('customRepeatRate', 0) is number &&
           getProperty('customRepeatInitialDelay', 0) is number &&
+          getProperty('allowRepeatedRotations', false) is bool &&
           getProperty('musicOn', false) is bool &&
           getProperty('musicVolume', 0) is number &&
           getProperty('sfxOn', false) is bool &&

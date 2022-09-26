@@ -14,6 +14,7 @@ import { BlockShadowType, GridLineType } from '@models/IGrid';
 import { IChallengeEditorEventListener } from '@models/IChallengeEditor';
 import { IChallengeEventListener } from '@models/IChallengeEventListener';
 import { ChallengeAttemptRecording } from '@models/IChallengeAttempt';
+import ControlSettings from '@models/ControlSettings';
 
 export type RendererSettings = {
   rendererType?: RendererType;
@@ -25,7 +26,7 @@ export type RendererSettings = {
   showNicknames?: boolean;
 };
 
-export type LaunchOptions = WithControls &
+export type LaunchOptions = Omit<WithControls, 'controls_keyboard'> &
   CustomDAS & {
     listeners?: Partial<ISimulationEventListener>[];
     socketListener?: IClientSocketEventListener;
@@ -45,6 +46,8 @@ export type LaunchOptions = WithControls &
     showUI?: boolean;
     teachAllControls?: boolean;
     chatEnabled?: boolean;
+    allowRepeatedRotations?: boolean;
+    controls_keyboard: ControlSettings;
   };
 
 export type ChallengeLaunchOptions = LaunchOptions & {

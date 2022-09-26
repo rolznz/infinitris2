@@ -53,6 +53,7 @@ export default interface IUser
   readonly selectedCharacterId?: string;
   readonly unlockedFeatures?: UnlockableFeature[];
   readonly completedOfficialChallengeIds?: string[];
+  readonly allowRepeatedRotations?: boolean;
   readonly showUI?: boolean;
 }
 

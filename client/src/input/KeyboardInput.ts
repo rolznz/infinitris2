@@ -17,7 +17,6 @@ export default class KeyboardInput {
   private _customRepeatRate: number | undefined;
   private _useCustomDAS: boolean;
   private _destroyed: boolean;
-  private _hasFiredDrop: boolean;
   private _pressedKeys: {
     [key: string]: Omit<ButtonPressState, 'isPressing'> & {
       event: KeyboardEvent | undefined;
@@ -31,7 +30,6 @@ export default class KeyboardInput {
     customRepeatRate: number | undefined
   ) {
     this._destroyed = false;
-    this._hasFiredDrop = false;
     this._controls = controls;
     this._fireAction = fireAction;
     this._customRepeatInitialDelay = customRepeatInitialDelay;
@@ -56,7 +54,7 @@ export default class KeyboardInput {
     this._onKeyDownInternal(event);
   };
 
-  private _onKeyDownInternal(event: KeyboardEvent, isRepeat = false) {
+  private _onKeyDownInternal(event: KeyboardEvent, isCustomDASRepeat = false) {
     const now = Date.now();
     if (!this._pressedKeys[event.key] || !this._pressedKeys[event.key].event) {
       this._pressedKeys[event.key] = {
@@ -64,8 +62,14 @@ export default class KeyboardInput {
         lastAction: now,
         event,
       };
-    } else if (!isRepeat && this._useCustomDAS) {
+    } else if (!isCustomDASRepeat && this._useCustomDAS) {
       return; // cancel OS-defined repeat rate
+    } else {
+      this._pressedKeys[event.key] = {
+        hasRepeated: true,
+        lastAction: now,
+        event,
+      };
     }
 
     if (event.key === this._controls[CustomizableInputAction.Esc]) {
@@ -83,15 +87,17 @@ export default class KeyboardInput {
       this._fireAction({ type: action });
     } else if (event.key === this._controls[CustomizableInputAction.MoveDown]) {
       this._fireAction({ type: CustomizableInputAction.MoveDown });
-    } else if (event.key === this._controls[CustomizableInputAction.Drop]) {
-      if (!this._hasFiredDrop) {
-        this._hasFiredDrop = true;
-        this._fireAction({ type: CustomizableInputAction.Drop });
-      }
     } else if (
-      event.key ===
+      event.key === this._controls[CustomizableInputAction.Drop] &&
+      !this._pressedKeys[event.key].hasRepeated
+    ) {
+      this._fireAction({ type: CustomizableInputAction.Drop });
+    } else if (
+      (event.key ===
         this._controls[CustomizableInputAction.RotateAnticlockwise] ||
-      event.key === this._controls[CustomizableInputAction.RotateClockwise]
+        event.key ===
+          this._controls[CustomizableInputAction.RotateClockwise]) &&
+      !this._pressedKeys[event.key].hasRepeated
     ) {
       const action =
         event.key ===
@@ -117,10 +123,6 @@ export default class KeyboardInput {
       lastAction: 0,
       event: undefined,
     };
-
-    if (event.key === this._controls[CustomizableInputAction.Drop]) {
-      this._hasFiredDrop = false;
-    }
   };
 
   private _onAnimationFrame = () => {
@@ -138,8 +140,6 @@ export default class KeyboardInput {
 
         if (now - pressState.lastAction > delay) {
           this._onKeyDownInternal(pressState.event, true);
-          pressState.hasRepeated = true;
-          pressState.lastAction = now;
         }
       }
     }

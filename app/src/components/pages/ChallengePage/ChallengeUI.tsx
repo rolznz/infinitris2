@@ -24,6 +24,7 @@ type ChallengeUIProps = {
   skipChallenge(): void;
   viewAllReplays(): void;
   canSkipChallenge: boolean;
+  canViewReplays: boolean;
   viewOtherReplay(attempt: IChallengeAttempt): void;
   isTest: boolean;
   player: IPlayer;
@@ -48,6 +49,7 @@ export function ChallengeUI({
   skipChallenge,
   viewAllReplays,
   canSkipChallenge,
+  canViewReplays,
 }: ChallengeUIProps) {
   console.log('Render challenge UI: ', challengeAttempt, showChallengeInfo);
   return (
@@ -73,7 +75,8 @@ export function ChallengeUI({
             onReceivedPlayInput={startChallenge}
             onReceivedSkipInput={skipChallenge}
             onReceivedViewReplaysInput={viewAllReplays}
-            canSkip={canSkipChallenge}
+            canSkipChallenge={canSkipChallenge}
+            canViewReplays={canViewReplays}
           />
         )
       ) : challengeAttempt?.status === 'success' ? (

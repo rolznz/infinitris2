@@ -48,6 +48,17 @@ const updateUser = (
 const setLocalUserNickname = (nickname: string) => {
   updateLocalUser({ nickname });
 };
+export const updateUserOfflineCompletedChallengeIds = (
+  existingCompletedChallengeIds: string[],
+  newChallengeId: string
+) => {
+  updateLocalUser({
+    offlineCompletedChallengeIds: [
+      ...existingCompletedChallengeIds,
+      newChallengeId,
+    ],
+  });
+};
 
 export async function setNickname(nicknameId: string): Promise<boolean> {
   const userId = useAuthStore.getState().user?.uid;

@@ -27,7 +27,8 @@ export interface ChallengeInfoViewProps {
   onReceivedSkipInput(): void;
   onReceivedViewReplaysInput(): void;
   isTest: boolean;
-  canSkip: boolean;
+  canSkipChallenge: boolean;
+  canViewReplays: boolean;
   challenge: IChallenge;
   challengeId: string;
   //viewOtherReplay(attempt: IChallengeAttempt): void;
@@ -53,7 +54,8 @@ export default function ChallengeInfoView({
   onReceivedPlayInput,
   onReceivedSkipInput,
   onReceivedViewReplaysInput,
-  canSkip,
+  canSkipChallenge,
+  canViewReplays,
   isTest,
   //viewOtherReplay,
   challenge,
@@ -96,8 +98,11 @@ ChallengeInfoViewProps) {
   );
 
   useTrue(hasReceivedPlayInput, onReceivedPlayInput);
-  useTrue(canSkip && hasReceivedSkipInput, onReceivedSkipInput);
-  useTrue(canSkip && hasReceivedViewReplaysInput, onReceivedViewReplaysInput);
+  useTrue(canSkipChallenge && hasReceivedSkipInput, onReceivedSkipInput);
+  useTrue(
+    canViewReplays && hasReceivedViewReplaysInput,
+    onReceivedViewReplaysInput
+  );
   //const translation = challenge?.translations?.[user.locale];
   const challengeTitle = challenge.isOfficial
     ? getOfficialChallengeTitle(challenge)
@@ -192,9 +197,9 @@ ChallengeInfoViewProps) {
                 bottom={'3vh'}
                 gap={1}
               >
-                {canSkip && viewReplaysButton}
+                {canViewReplays && viewReplaysButton}
                 {playButton}
-                {canSkip && skipButton}
+                {canSkipChallenge && skipButton}
               </FlexBox>
             </>
           )}

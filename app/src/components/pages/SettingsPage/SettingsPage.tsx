@@ -477,8 +477,8 @@ export default function SettingsPage() {
             <SettingsRow
               left={
                 <FormattedMessage
-                  defaultMessage="Custom DAS"
-                  description="Settings Page Table - Custom DAS left column"
+                  defaultMessage="Custom DAS/ARR"
+                  description="Settings Page Table - Custom DAS/ARR left column"
                 />
               }
               right={
@@ -495,7 +495,7 @@ export default function SettingsPage() {
             <SettingsRow
               left={
                 <FormattedMessage
-                  defaultMessage="Custom DAS - Initial Repeat Delay (ms)"
+                  defaultMessage="Delayed Auto Shift (ms)"
                   description="Settings Page Table - Custom DAS Initial Repeat left column"
                 />
               }
@@ -518,8 +518,8 @@ export default function SettingsPage() {
             <SettingsRow
               left={
                 <FormattedMessage
-                  defaultMessage="Custom DAS - Repeat Rate (ms)"
-                  description="Settings Page Table - Custom DAS Repeat Rate left column"
+                  defaultMessage="Auto Repeat Rate (ms)"
+                  description="Settings Page Table - Custom ARR left column"
                 />
               }
               right={

@@ -102,7 +102,7 @@ export default function ChallengeReplayView({
               </Typography>
               <Typography variant="caption">
                 <FormattedMessage
-                  defaultMessage="Custom DAS settings may be used to increase movement speed"
+                  defaultMessage="Custom DAS/ARR settings may be used to increase movement speed"
                   description="Challenge info - custom DAS"
                 />
               </Typography>

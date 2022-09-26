@@ -298,7 +298,11 @@ export default class Simulation implements ISimulation {
   }
 
   wasRecentlyPlaced(occurrenceFrame: number): boolean {
-    return this._frameNumber - occurrenceFrame < this.forgivingPlacementFrames;
+    return (
+      occurrenceFrame !==
+        0 /* make sure cannot overwrite cells placed on simulation start */ &&
+      this._frameNumber - occurrenceFrame < this.forgivingPlacementFrames
+    );
   }
 
   nextRandom(key: string): number {

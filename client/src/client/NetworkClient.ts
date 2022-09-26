@@ -82,7 +82,7 @@ export default class NetworkClient
     this._renderer = new Infinitris2Renderer(
       this._clientApiConfig,
       undefined,
-      this._launchOptions.controls_keyboard || DEFAULT_KEYBOARD_CONTROLS,
+      this._launchOptions.controls_keyboard,
       undefined,
       this._launchOptions.worldType,
       this._launchOptions.worldVariation,

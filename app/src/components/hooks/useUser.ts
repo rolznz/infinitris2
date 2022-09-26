@@ -1,5 +1,10 @@
 import { useDocument, UseDocumentOptions } from 'swr-firestore';
-import { getUserPath, IUser, LaunchOptions } from 'infinitris2-models';
+import {
+  DEFAULT_KEYBOARD_CONTROLS,
+  getUserPath,
+  IUser,
+  LaunchOptions,
+} from 'infinitris2-models';
 import useAuthStore from '../../state/AuthStore';
 import useLocalUserStore, {
   LocalUser,
@@ -83,7 +88,10 @@ export function useUserLaunchOptions(
         showPatterns,
         showNicknames,
       },
-      controls_keyboard,
+      controls_keyboard: {
+        ...DEFAULT_KEYBOARD_CONTROLS,
+        ...(controls_keyboard || {}),
+      },
       controls_gamepad,
       useCustomRepeat,
       customRepeatInitialDelay,

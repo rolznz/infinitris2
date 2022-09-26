@@ -93,8 +93,6 @@ export default function RoomPage() {
   const loaderHasFinished = useLoaderStore((store) => store.hasFinished);
   const user = useUser();
   const userLaunchOptions = useUserLaunchOptions(user);
-  const controls_keyboard = user.controls_keyboard;
-  const controls_gamepad = user.controls_gamepad;
 
   const hasLoaded = !!client && !!player && !!room && loaderHasFinished;
 
@@ -116,8 +114,6 @@ export default function RoomPage() {
     client.launchNetworkClient(serverUrl as string, {
       ...userLaunchOptions,
       socketListener: socketEventListener,
-      controls_keyboard,
-      controls_gamepad,
       teachAllControls: true,
       worldType: room.data()!.worldType,
       worldVariation: room.data()!.worldVariation,
@@ -176,8 +172,6 @@ export default function RoomPage() {
     setConnected,
     hasLaunched,
     setLaunched,
-    controls_keyboard,
-    controls_gamepad,
     hasLoaded,
     player,
     room,

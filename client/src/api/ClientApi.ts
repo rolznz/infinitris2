@@ -9,7 +9,9 @@ import SinglePlayerClient from '../client/singleplayer/SinglePlayerClient';
 import ChallengeClient from '@src/client/singleplayer/ChallengeClient';
 import { InputMethod } from '@models/InputMethod';
 import { exampleChallenges } from '@models/exampleChallenges';
-import ControlSettings from '@models/ControlSettings';
+import ControlSettings, {
+  DEFAULT_KEYBOARD_CONTROLS,
+} from '@models/ControlSettings';
 import { IChallenge } from '@models/IChallenge';
 import ISimulation from '@models/ISimulation';
 import { RendererType } from '@models/RendererType';
@@ -50,9 +52,9 @@ export default class ClientApi implements IClientApi {
   loadUrl = (url: string) => {
     const params = new URLSearchParams(url.substring(url.indexOf('?') + 1));
     const controlsString = params.get('controls') as string;
-    const controls = (
-      controlsString ? JSON.parse(controlsString) : undefined
-    ) as ControlSettings;
+    const controls = controlsString
+      ? (JSON.parse(controlsString) as ControlSettings)
+      : DEFAULT_KEYBOARD_CONTROLS;
     const preferredInputMethod: InputMethod =
       (params.get('input') as InputMethod) || 'keyboard';
 

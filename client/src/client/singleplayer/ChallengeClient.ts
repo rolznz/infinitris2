@@ -351,7 +351,7 @@ export default class ChallengeClient
         : new Infinitris2Renderer(
             this._clientApiConfig,
             this._preferredInputMethod,
-            this._launchOptions.controls_keyboard || DEFAULT_KEYBOARD_CONTROLS,
+            this._launchOptions.controls_keyboard,
             undefined,
             challenge.worldType,
             challenge.worldVariation,

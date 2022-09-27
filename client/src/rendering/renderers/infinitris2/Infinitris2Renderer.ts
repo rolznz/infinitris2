@@ -644,6 +644,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
   }
   private _createBlock(block: IBlock) {
+    this._removeBlock(block, false);
     const blockContainer: IBlockContainer = {
       originalBlock: block,
       block: {
@@ -1182,36 +1183,41 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._renderParticle(particle, color);
   }
 
-  private _removeBlock(block: IBlock) {
+  private _removeBlock(block: IBlock, leaveFace = true) {
     var blockContainer = this._blocks[block.player.id];
     if (!blockContainer) {
       return;
     }
-
-    // remove everything except the face
-    blockContainer.block.children.forEach((child) => {
-      child.renderableObject.container.removeChild(
-        ...child.renderableObject.container.children.filter(
-          (c) => c !== child.renderableObject.faceSprite
-        )
-      );
-    });
-    // TODO: this is probably not an efficient way to manage the face alpha
-    // store the faces as an array and process them in the normal loop
-    // also will fix the issue where faces do not move down or get removed after line clear
-    const faceFadeTime = 1000;
-    const fadeSteps = 30;
-    setTimeout(
-      () => this._world.removeChild(blockContainer.block.container),
-      faceFadeTime
-    );
-    for (let i = 0; i < fadeSteps; i++) {
-      setTimeout(() => {
-        blockContainer.block.container.alpha -= 1 / fadeSteps;
-      }, ((i + 1) * faceFadeTime) / fadeSteps);
-    }
-
     delete this._blocks[block.player.id];
+
+    if (leaveFace) {
+      // remove everything except the face
+      blockContainer.block.children.forEach((child) => {
+        child.renderableObject.container.removeChild(
+          ...child.renderableObject.container.children.filter(
+            (c) => c !== child.renderableObject.faceSprite
+          )
+        );
+      });
+
+      // TODO: this is probably not an efficient way to manage the face alpha
+      // store the faces as an array and process them in the normal loop
+      // also will fix the issue where faces do not move down or get removed after line clear
+      const faceFadeTime = 1000;
+      const fadeSteps = 30;
+      setTimeout(
+        () => this._world.removeChild(blockContainer.block.container),
+        faceFadeTime
+      );
+      for (let i = 0; i < fadeSteps; i++) {
+        setTimeout(() => {
+          blockContainer.block.container.alpha -= 1 / fadeSteps;
+        }, ((i + 1) * faceFadeTime) / fadeSteps);
+      }
+    } else {
+      // remove the entire block
+      this._world.removeChild(blockContainer.block.container);
+    }
   }
 
   onSimulationMessage(

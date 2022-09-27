@@ -38,4 +38,20 @@ export default class LayoutUtils {
       (cell, index) => !cell && minimalLayout[minimalLayout.length - 2][index]
     );
   }
+
+  static getNumCells(layout: Layout): number {
+    if (layout.length !== layout[0].length) {
+      throw new Error('Layout must have the same number of rows and columns');
+    }
+
+    let num = 0;
+    for (let row: number = 0; row < layout.length; row++) {
+      for (let col: number = 0; col < layout.length; col++) {
+        if (layout[row][col]) {
+          ++num;
+        }
+      }
+    }
+    return num;
+  }
 }

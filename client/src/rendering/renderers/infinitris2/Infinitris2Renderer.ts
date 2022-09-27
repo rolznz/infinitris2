@@ -41,6 +41,7 @@ import { ConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes
 import { MAX_COLUMNS } from '@core/grid/Grid';
 import { hexToString } from '@models/util/hexToString';
 import { GarbageDefenseRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GarbageDefenseRenderer';
+import LayoutUtils from '@core/block/layout/LayoutUtils';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -1404,7 +1405,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   private _renderTopPadding() {
-    if (!this._simulation) {
+    if (
+      !this._simulation ||
+      (this.simulation?.settings.gameModeType || 'infinity') !== 'infinity'
+    ) {
+      // only fill in top paddings for challenges in the infinity game mode
+      // this is to prevent issues in the garbage defense game mode when the top row gets filled with garbage
+      // TODO: find a better solution
       return;
     }
     // extend top row to top of the screen
@@ -1680,15 +1687,19 @@ export default class Infinitris2Renderer extends BaseRenderer {
         return {
           container,
           faceSprite: undefined,
-          cells: block.cells.map((_) => {
-            const renderableObject: RenderableCellObject = {
-              graphics: new PIXI.Graphics(),
-              patternSprite: undefined,
-              patternSpriteFilename: undefined,
-            };
-            container.addChild(renderableObject.graphics);
-            return renderableObject;
-          }),
+          // cells: block.cells.map ... (removed due to block supporting negative position)
+          // TODO: block could have virtual cells instead of an empty array of cells?
+          cells: [...new Array(LayoutUtils.getNumCells(block.layout))].map(
+            (_) => {
+              const renderableObject: RenderableCellObject = {
+                graphics: new PIXI.Graphics(),
+                patternSprite: undefined,
+                patternSpriteFilename: undefined,
+              };
+              container.addChild(renderableObject.graphics);
+              return renderableObject;
+            }
+          ),
         };
       }
     );
@@ -2034,11 +2045,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
         }
       }
     }
-    // TODO: block.getPlacementCells() allows a different type of placement shadow rendering (just the final placement location)
     const blockPlacementCells = block.getPlacementCells();
-    const highestBlockPlacementCellRow = blockPlacementCells.find(
-      (c, i, a) => !a.some((o) => o.row < c.row)
-    )!.row;
+    const highestBlockPlacementCellRow =
+      blockPlacementCells.find((c, i, a) => !a.some((o) => o.row < c.row))
+        ?.row ?? -1; // -1 for block negative position, see TODO
     const isMistake =
       this._simulation.settings.mistakeDetection !== false &&
       checkMistake(block.player, blockPlacementCells, this._simulation);

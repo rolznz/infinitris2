@@ -4,6 +4,7 @@ import ISimulationEventListener from '@models/ISimulationEventListener';
 
 export interface IGameMode<GameModeState>
   extends Partial<ISimulationEventListener> {
+  // TODO: make these getters optional
   get hasRounds(): boolean;
   get hasHealthbars(): boolean;
   get hasLineClearReward(): boolean;
@@ -17,4 +18,5 @@ export interface IGameMode<GameModeState>
   getSpawnDelay?(player: IPlayer): number;
   getMinPlayersForRound?(): number;
   getTowerRow?(): number;
+  allowsSpawnAboveGrid?(): boolean;
 }

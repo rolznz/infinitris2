@@ -11,7 +11,11 @@ import ISimulation from '@models/ISimulation';
 import { wrap } from '@core/utils/wrap';
 import { MovementAttempt } from '@models/IRotationSystem';
 
-type LoopCellEvent = (cell?: ICell) => void;
+type LoopCellEvent = (
+  cell: ICell | undefined,
+  row: number,
+  column: number
+) => void;
 
 export const INITIAL_FALL_DELAY = 90;
 
@@ -74,6 +78,11 @@ export default class Block implements IBlock {
           break;
         }
         --this._row;
+      }
+      if (this._simulation.gameMode.allowsSpawnAboveGrid?.()) {
+        while (!this.canMove(0, 0, 0)) {
+          --this._row;
+        }
       }
     }
 
@@ -303,13 +312,14 @@ export default class Block implements IBlock {
         this._column + dx,
         this._row + dy,
         this._rotation + dr,
-        (cell) => {
+        (cell, cellRow, _cellColumn) => {
           if (cell) {
             newCells.push(cell);
           }
           canMove =
             canMove &&
             (Boolean(cell && cell.isPassable) ||
+              (!cell && cellRow < 0) ||
               Boolean(this._isDropping && cell?.isPassableWhileDropping) ||
               Boolean(
                 this._isDropping &&
@@ -360,9 +370,9 @@ export default class Block implements IBlock {
     isForgiving: boolean = false
   ): boolean {
     // force downward rotations when above the grid (e.g. long block on spawn), otherwise can't rotate
-    if (!force && this._row < 0) {
+    /*if (!force && this._row < 0) {
       rotateDown = true;
-    }
+    }*/
     const attempts: MovementAttempt[] =
       !force && !this.isDropping && dr !== 0
         ? this._simulation.rotationSystem.getAttempts(dx, dy, dr, rotateDown)
@@ -520,10 +530,9 @@ export default class Block implements IBlock {
   private _updateCells() {
     const newCells: ICell[] = [];
     const addCell = (cell: ICell | undefined) => {
-      if (!cell) {
-        throw new Error('Cannot add undefined cell to block');
+      if (cell) {
+        newCells.push(cell);
       }
-      newCells.push(cell);
     };
 
     this._loopCells(
@@ -594,7 +603,7 @@ export default class Block implements IBlock {
             cellRow > -1 && cellRow < gridCells.length
               ? gridCells[cellRow][cellColumn]
               : undefined;
-          cellEvent(gridCell);
+          cellEvent(gridCell, cellRow, cellColumn);
         }
       }
     }

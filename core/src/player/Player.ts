@@ -564,7 +564,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     }
     if (isMistake && this._simulation.settings.mistakeDetection !== false) {
       this.score = Math.max(0, Math.floor(this._score * 0.75) - 1);
-    } else {
+    } else if (block.cells.length) {
       this.score += Math.floor(
         Math.pow(
           block.cells

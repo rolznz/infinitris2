@@ -52,8 +52,20 @@ export class GarbageDefenseGameMode
       this._simulation.grid.checkLineClears(
         event.cells
           .map((cell) => cell.row)
-          .filter((row, i, rows) => rows.indexOf(row) === i)
+          .filter((row) => row !== 0) // don't clear top line, this is the end game condition
+          .filter((row, i, rows) => rows.indexOf(row) === i) // remove duplicates
       );
+
+      // end game condition - top row is full and there are no pending line clears
+      if (
+        !this._simulation.isNetworkClient &&
+        !this._simulation.grid.nextLinesToClear.length &&
+        !this._simulation.grid.cells[0].some((cell) => cell.isEmpty)
+      ) {
+        console.log('a garbage cell hit the death row');
+        // TODO: who is the winner? this is a co-op mode. It should show the level instead?
+        this._simulation.round!.end(undefined);
+      }
       this._nextCellsToFill = [];
     } else if (event.type === 'garbageWarning') {
       this._nextCellsToFill.push(...event.cells);
@@ -77,21 +89,11 @@ export class GarbageDefenseGameMode
       this._simulation.frameNumber > this._nextFillFrame &&
       this._nextCellsToFill.length
     ) {
-      if (
-        this._nextCellsToFill.some(
-          (cellToFill) => cellToFill.row === this._getDeathRow()
-        )
-      ) {
-        // TODO: who is the winner? this is a co-op mode. It should show the level?
-        console.log('a garbage cell hit the death row');
-        this._simulation.round!.end(undefined);
-      } else {
-        this._simulation.onGameModeEvent({
-          type: 'garbagePlaced',
-          cells: this._nextCellsToFill,
-          isSynced: true,
-        });
-      }
+      this._simulation.onGameModeEvent({
+        type: 'garbagePlaced',
+        cells: this._nextCellsToFill,
+        isSynced: true,
+      });
     }
     if (
       !this._simulation.isNetworkClient &&
@@ -108,10 +110,25 @@ export class GarbageDefenseGameMode
       );
 
       for (let i = 0; i < numGarbageToGenerate; i++) {
-        const column = Math.floor(
-          this._simulation.nextRandom('garbage_defense_column') *
-            this._simulation.grid.numColumns
-        );
+        const okColumns = [...new Array(this._simulation.grid.numColumns)]
+          .map((_, index) => index)
+          .filter(
+            (column) =>
+              this._simulation.grid.cells[0][column].isEmpty &&
+              !nextCellsToFill.some(
+                (existingCellToFill) => column === existingCellToFill.column
+              )
+          );
+        if (!okColumns.length) {
+          break;
+        }
+        const column =
+          okColumns[
+            Math.floor(
+              this._simulation.nextRandom('garbage_defense_column') *
+                okColumns.length
+            )
+          ];
         let row = this._simulation.grid.numRows - 1;
         let numRowsEmpty = 0;
         // alternate way of generating requiredRowsEmpty per cell
@@ -130,9 +147,20 @@ export class GarbageDefenseGameMode
             : 0;*/
 
         for (; row > this._getDeathRow(); row--) {
-          if (this._simulation.grid.cells[row][column].isEmpty) {
+          if (
+            this._simulation.grid.cells[row][column].isEmpty &&
+            this._simulation.grid.cells[row].filter((cell) => cell.isEmpty)
+              .length -
+              nextCellsToFill.filter(
+                (existingCellToFill) => existingCellToFill.row === row
+              ).length >
+              1 /* avoid line clears */
+          ) {
             ++numRowsEmpty;
-            if (numRowsEmpty > requiredRowsEmpty) {
+            if (
+              numRowsEmpty > requiredRowsEmpty ||
+              row === 0 /* hit top of grid*/
+            ) {
               break;
             }
           } else {
@@ -173,6 +201,10 @@ export class GarbageDefenseGameMode
     this._simulation.addMessage('LEVEL ' + this._level, undefined, false);
     // TODO: add an event for this
     this._nextCellsToFill = [];
+  }
+
+  allowsSpawnAboveGrid(): boolean {
+    return true;
   }
 
   private _calculateNextGarbageFrame() {

@@ -681,7 +681,7 @@ export default class Simulation implements ISimulation {
     );*/
     // first 4 rows must never be placeable (to ensure blocks can always be placed)
     //return row < Math.max(this.numRows - numFilledRows - 4, 4);
-    return row <= this.getTowerRow();
+    return row < this.getTowerRow();
   }
   getTowerRow(): number {
     return this._gameMode.getTowerRow?.() ?? 4;

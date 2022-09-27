@@ -102,7 +102,8 @@ export class GarbageDefenseGameMode
     if (
       !this._simulation.isNetworkClient &&
       this._simulation.frameNumber > this._nextGarbageFrame &&
-      !this._nextCellsToFill.length
+      !this._nextCellsToFill.length &&
+      !this._simulation.grid.nextLinesToClear.length
     ) {
       this._calculateNextGarbageFrame();
       const nextCellsToFill: typeof this._nextCellsToFill = [];

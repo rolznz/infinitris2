@@ -138,7 +138,7 @@ export default class Grid implements IGrid {
 
     this._nextLinesToClear = [...this._nextLinesToClear, ...rowsToClear]
       .filter((row, i, rows) => rows.indexOf(row) === i) // get unique rows
-      .sort((a, b) => b - a); // clear lowest row first
+      .sort((a, b) => b - a); // clear row closest to the ground first
     this._nextLineClearFrame =
       this._frameNumber + Math.floor(1000 / FRAME_LENGTH);
   }

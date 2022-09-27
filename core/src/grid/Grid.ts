@@ -5,6 +5,7 @@ import IGrid from '@models/IGrid';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { IPlayer } from '@models/IPlayer';
 import { KeyedRandom } from '@core/simulation/KeyedRandom';
+import { FRAME_LENGTH } from '@core/simulation/Simulation';
 
 export const MAX_COLUMNS = 100000;
 export const MAX_ROWS = 100000;
@@ -15,7 +16,7 @@ export default class Grid implements IGrid {
   private _eventListeners: IGridEventListener[];
   private _cachedNumNonEmptyCells = 0;
   private _nextLinesToClear: number[];
-  private _nextLineClearTime: number;
+  private _nextLineClearFrame: number;
   private _random: KeyedRandom;
   private _frameNumber: number;
 
@@ -34,7 +35,7 @@ export default class Grid implements IGrid {
     this._reducedCells = [];
     this._eventListeners = [];
     this.resize(numRows, numColumns);
-    this._nextLineClearTime = 0;
+    this._nextLineClearFrame = 0;
     this._nextLinesToClear = [];
     this._random = new KeyedRandom(0);
   }
@@ -97,7 +98,7 @@ export default class Grid implements IGrid {
     if (
       !isNetworkClient &&
       this._nextLinesToClear.length &&
-      Date.now() > this._nextLineClearTime
+      this._frameNumber > this._nextLineClearFrame
     ) {
       this.clearLines(this._nextLinesToClear);
     }
@@ -138,7 +139,8 @@ export default class Grid implements IGrid {
     this._nextLinesToClear = [...this._nextLinesToClear, ...rowsToClear]
       .filter((row, i, rows) => rows.indexOf(row) === i) // get unique rows
       .sort((a, b) => b - a); // clear lowest row first
-    this._nextLineClearTime = Date.now() + 1000;
+    this._nextLineClearFrame =
+      this._frameNumber + Math.floor(1000 / FRAME_LENGTH);
   }
 
   clearLines(rowsToClear: number[]) {

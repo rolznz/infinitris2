@@ -45,9 +45,13 @@ export class GarbageDefenseGameMode
   onGameModeEvent(event: GameModeEvent) {
     if (event.type === 'garbagePlaced') {
       for (const cellToFill of event.cells) {
-        this._simulation.grid.cells[cellToFill.row][cellToFill.column].place(
-          undefined
-        );
+        if (
+          this._simulation.grid.cells[cellToFill.row][cellToFill.column].isEmpty
+        ) {
+          this._simulation.grid.cells[cellToFill.row][cellToFill.column].place(
+            undefined
+          );
+        }
       }
       this._simulation.grid.checkLineClears(
         event.cells
@@ -102,9 +106,9 @@ export class GarbageDefenseGameMode
     ) {
       this._calculateNextGarbageFrame();
       const nextCellsToFill: typeof this._nextCellsToFill = [];
-      const requiredRowsEmpty = Math.floor(this._level / 10) % 3; // [1 => 0, 11 => 1, 21 => 2, 31 => 0]
+      const requiredRowsEmpty = Math.floor(this._level / 10) % 3 === 1 ? 1 : 0; // [1 => 0, 11 => 1, 21 => 0, 31 => 0]
       const numGarbageToGenerate = Math.min(
-        requiredRowsEmpty > 1 ? 1 : requiredRowsEmpty > 0 ? 3 : 9,
+        requiredRowsEmpty === 1 ? 3 : 9,
         this._level,
         Math.floor(this._simulation.grid.numColumns / 2)
       );
@@ -159,7 +163,8 @@ export class GarbageDefenseGameMode
             ++numRowsEmpty;
             if (
               numRowsEmpty > requiredRowsEmpty ||
-              row === 0 /* hit top of grid*/
+              row <=
+                1 /* near top of grid, don't create garbage with a gap below*/
             ) {
               break;
             }
@@ -167,20 +172,29 @@ export class GarbageDefenseGameMode
             numRowsEmpty = 0;
           }
         }
-        nextCellsToFill.push({ row, column });
+        if (
+          row > 0 ||
+          this._simulation.grid.cells[1].filter((cell) => cell.isEmpty)
+            .length === 1
+        ) {
+          // only fill top row when 2nd row is filled except for one cell (totally filled would cause a line clear)
+          nextCellsToFill.push({ row, column });
+        }
       }
-      this._simulation.onGameModeEvent({
-        type: 'garbageWarning',
-        cells: nextCellsToFill,
-        isSynced: true,
-      });
-      this._nextFillFrame =
-        this._simulation.frameNumber + (1000 / FRAME_LENGTH) * 1;
+      if (nextCellsToFill.length) {
+        this._simulation.onGameModeEvent({
+          type: 'garbageWarning',
+          cells: nextCellsToFill,
+          isSynced: true,
+        });
+        this._nextFillFrame =
+          this._simulation.frameNumber + (1000 / FRAME_LENGTH) * 1;
+      }
     }
   }
 
   onNextRound() {
-    this._level = 1;
+    this._level = 100;
     this._nextCellsToFill = [];
     this._calculateNextGarbageFrame();
   }

@@ -84,12 +84,16 @@ export class GarbageDefenseGameMode
   }
 
   step(): void {
-    if (this._simulation.round!.isWaitingForNextRound) {
+    if (
+      this._simulation.round!.isWaitingForNextRound ||
+      this._simulation.isNetworkClient ||
+      this._simulation.grid.nextLinesToClear
+        .length /* don't prepare/place any garbage while clearing lines */
+    ) {
       return;
     }
 
     if (
-      !this._simulation.isNetworkClient &&
       this._simulation.frameNumber > this._nextFillFrame &&
       this._nextCellsToFill.length
     ) {
@@ -100,10 +104,8 @@ export class GarbageDefenseGameMode
       });
     }
     if (
-      !this._simulation.isNetworkClient &&
       this._simulation.frameNumber > this._nextGarbageFrame &&
-      !this._nextCellsToFill.length &&
-      !this._simulation.grid.nextLinesToClear.length
+      !this._nextCellsToFill.length
     ) {
       this._calculateNextGarbageFrame();
       const nextCellsToFill: typeof this._nextCellsToFill = [];

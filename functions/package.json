@@ -43,6 +43,7 @@
     "test:files:createUserWebhook": "jest -- \"src/__tests__/createUserWebhook.test.ts\"",
     "test:files:buyCoinsWebhook": "jest -- \"src/__tests__/buyCoinsWebhook.test.ts\"",
     "test:files:loginWebhook": "jest -- \"src/__tests__/loginWebhook.test.ts\"",
+    "test:files:roomHooks": "jest -- \"src/__tests__/roomHooks.test.ts\"",
     "logs": "firebase functions:log"
   },
   "engines": {

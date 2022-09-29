@@ -99,6 +99,7 @@ async function announceTopAttempt(
     const challengeDoc = await challengeRef.get();
     const challengeData = challengeDoc.data() as IChallenge;
     postSimpleWebhook(
+      'challenges',
       `${user.readOnly.nickname || 'Unknown user'} took first place on ${
         challengeData.title || 'Unnamed challenge'
       } with a time of ${(challengeAttempt.stats.timeTakenMs / 1000).toFixed(

@@ -231,7 +231,7 @@ const server1: IServer = {
   region: 'Asia',
   url: 'https://google.com',
   userId: userId1,
-  version: 1,
+  version: '1',
 };
 const serverKey1Id = 'server-key-1';
 const serverKey1Path = getServerKeyPath(serverKey1Id);
@@ -252,7 +252,6 @@ const room1: IRoom = {
   roomIndex: 0,
   serverId: server1Id,
   userId: userId1,
-  gameModeType: 'infinity',
 };
 const room1Id = getRoomId(server1Id, room1.roomIndex);
 const room1Path = getRoomPath(room1Id);

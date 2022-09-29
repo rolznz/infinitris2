@@ -41,7 +41,8 @@ Please note that the deployment scripts are in the parent directory.
 - email_password: password of sender email account
 - email_host: host which serves the email account
 - export_bucket url of bucket to do daily backups of infinitris data to
-- simple_output_webhook_url - url to send notifications to when things happen (e.g. new challenges created)
+- simple_output_webhook_url_challenges - url to send notifications to when challenge-related things happen (e.g. new challenges created or new top replay)
+- simple_output_webhook_url_multiplayer - url to send notifications to when multiplayer-related things happen (e.g. player joins/leaves server)
 - images_bucket name of bucket to save images to (e.g. generated challenge previews)
 
 `firebase functions:config:get`

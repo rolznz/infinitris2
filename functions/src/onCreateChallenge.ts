@@ -61,6 +61,7 @@ export const onCreateChallenge = functions.firestore
 
       if (!challenge.isOfficial && !challenge.isTemplate) {
         await postSimpleWebhook(
+          'challenges',
           'New challenge published: ' +
             (challenge.title ?? 'Unnamed') +
             ' by ' +

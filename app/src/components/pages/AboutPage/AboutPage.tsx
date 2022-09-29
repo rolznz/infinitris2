@@ -35,7 +35,7 @@ export default function AboutPage() {
     >
       <Typography align="center" variant="body2">
         <FormattedMessage
-          defaultMessage="{appName} is a multiplayer puzzle falling block puzzle game. Place blocks on a giant grid that expands and contracts based on the number of players in-game. Customize your character, create challenges to share with the community and refine your skills in {appName} story mode."
+          defaultMessage="{appName} is a multiplayer falling block puzzle game. Place blocks on a giant grid that expands and contracts based on the number of players in-game. Customize your character, create challenges to share with the community and refine your skills in {appName} story mode."
           description="About page description"
           values={{ appName }}
         />

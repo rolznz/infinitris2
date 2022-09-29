@@ -1,12 +1,15 @@
 import * as functions from 'firebase-functions';
 import got from 'got';
 
-export async function postSimpleWebhook(content: string): Promise<boolean> {
+export async function postSimpleWebhook(
+  destination: 'challenges' | 'multiplayer',
+  content: string
+): Promise<boolean> {
   try {
-    const simpleWebhookUrl =
-      functions.config().webhooks.simple_output_webhook_url;
+    const webhookKey = `simple_output_webhook_url_${destination}`;
+    const simpleWebhookUrl = functions.config().webhooks[webhookKey];
     if (!simpleWebhookUrl) {
-      throw new Error('No webhooks.simple_output_webhook_url set');
+      throw new Error(`No ${webhookKey} set`);
     }
     const result = await got.post(simpleWebhookUrl, {
       json: {

@@ -8,6 +8,7 @@ import {
   objectToDotNotation,
   parseGrid,
   WorldType,
+  WorldVariationValues,
   wrap,
 } from 'infinitris2-models';
 import * as Jimp from 'jimp';

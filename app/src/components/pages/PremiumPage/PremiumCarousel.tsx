@@ -166,7 +166,7 @@ export function PremiumCarousel() {
             <Typography variant="h1" color={titleColors[i]}>
               {titles[i]}
             </Typography>
-            <Typography variant="h6" color={colors.white}>
+            <Typography variant="h6" color={colors.white} maxWidth="35vw">
               {subtitles[i]}
             </Typography>
           </FlexBox>

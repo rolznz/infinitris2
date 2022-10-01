@@ -51,11 +51,17 @@ export function LightningQR({ value }: LightningQRProps) {
         </Typography>
       )}
       <Typography align="center" variant="caption">
-        <Link href="https://www.coinbase.com/converter/sats/usd">
+        <Link
+          target="_blank"
+          href="https://www.coinbase.com/converter/sats/usd"
+        >
           check conversion rates
         </Link>
         {' • '}
-        Payments powered by <Link href="https://lnbits.com/">lnbits</Link>
+        Payments powered by{' '}
+        <Link target="_blank" href="https://lnbits.com/">
+          lnbits
+        </Link>
       </Typography>
     </FlexBox>
   );

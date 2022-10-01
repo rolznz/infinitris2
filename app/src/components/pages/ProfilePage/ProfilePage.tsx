@@ -92,7 +92,7 @@ export default function ProfilePage() {
       </FlexBox>
       <ProfilePageCharacterCard />
 
-      {userChallenges?.length && (
+      {!!userChallenges?.length && (
         <FlexBox mt={2}>
           <Typography align="center">
             <FormattedMessage

@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions';
 import got from 'got';
 
 export async function postSimpleWebhook(
-  destination: 'challenges' | 'multiplayer',
+  destination: 'challenges' | 'multiplayer' | 'premium',
   content: string
 ): Promise<boolean> {
   try {

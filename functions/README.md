@@ -43,6 +43,7 @@ Please note that the deployment scripts are in the parent directory.
 - export_bucket url of bucket to do daily backups of infinitris data to
 - simple_output_webhook_url_challenges - url to send notifications to when challenge-related things happen (e.g. new challenges created or new top replay)
 - simple_output_webhook_url_multiplayer - url to send notifications to when multiplayer-related things happen (e.g. player joins/leaves server)
+- simple_output_webhook_url_premium - url to send notifications to when new premium users are created
 - images_bucket name of bucket to save images to (e.g. generated challenge previews)
 
 `firebase functions:config:get`

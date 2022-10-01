@@ -7,6 +7,7 @@ import {
 } from 'infinitris2-models';
 import { getCurrentTimestamp, getDb } from './utils/firebase';
 import { getDefaultEntityReadOnlyProperties } from './utils/getDefaultEntityReadOnlyProperties';
+import { postSimpleWebhook } from './utils/postSimpleWebhook';
 
 export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
   try {
@@ -45,6 +46,8 @@ export const onCreateAuthUser = functions.auth.user().onCreate(async (user) => {
         created: true,
       };
       await userRef.set(newUser);
+
+      await postSimpleWebhook('premium', 'new premium signup!');
     } else {
       throw new Error(`Could not create user ${user.uid} - already exists`);
     }

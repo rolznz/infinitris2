@@ -41,6 +41,8 @@ export function launchSinglePlayer(history: ReturnType<typeof useHistory>) {
   );
 }
 
+const allowChatInSinglePlayer = false;
+
 export default function SinglePlayerPage() {
   const appStore = useAppStore();
   const client = appStore.clientApi;
@@ -88,6 +90,7 @@ export default function SinglePlayerPage() {
         gridNumRows,
         gridNumColumns,
         spectate,
+        chatEnabled: allowChatInSinglePlayer,
         isDemo,
         simulationSettings,
         listeners: [
@@ -158,5 +161,7 @@ export default function SinglePlayerPage() {
     userLaunchOptions,
   ]);
 
-  return isDemo ? null : <GameUI allowSkipCountdown chatEnabled={false} />;
+  return isDemo ? null : (
+    <GameUI allowSkipCountdown chatEnabled={allowChatInSinglePlayer} />
+  );
 }

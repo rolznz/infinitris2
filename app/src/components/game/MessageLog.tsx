@@ -36,7 +36,9 @@ export function MessageLog() {
       pb={1}
       sx={{
         overflowY: 'auto',
-        pointerEvents: isChatOpen ? undefined : 'none',
+        pointerEvents: isChatOpen ? 'all' : 'none',
+        userSelect: isChatOpen ? 'text' : 'none',
+        zIndex: 1,
       }}
     >
       {messageLogEntries

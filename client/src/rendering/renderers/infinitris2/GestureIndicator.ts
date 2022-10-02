@@ -33,6 +33,7 @@ export class GestureIndicator {
   private _app: PIXI.Application;
   private _virtualKeyboardGraphics?: PIXI.Graphics;
   private _virtualKeyboardCurrentKeyText!: PIXI.Text;
+  private _actionNameText!: PIXI.Text;
   private _virtualGestureSprites?: PIXI.Sprite[];
   private _preferredInputMethod: InputMethod;
   private _controls: ControlSettings;
@@ -106,6 +107,30 @@ export class GestureIndicator {
     if (!inputAction) {
       inputAction = this._lastInputAction;
     }
+    if (inputAction) {
+      this._actionNameText.visible = true;
+      // TODO: these need to be translated
+      let actionNameText =
+        inputAction.length > 1
+          ? 'Downward Rotation'
+          : inputAction[0] === CustomizableInputAction.MoveLeft
+          ? 'Move Left'
+          : inputAction[0] === CustomizableInputAction.MoveRight
+          ? 'Move Right'
+          : inputAction[0] === CustomizableInputAction.MoveDown
+          ? 'Move Down'
+          : inputAction[0] === CustomizableInputAction.RotateAnticlockwise
+          ? 'Rotate Anticlockwise'
+          : inputAction[0] === CustomizableInputAction.RotateClockwise
+          ? 'Rotate Clockwise'
+          : inputAction[0] === CustomizableInputAction.Drop
+          ? 'Drop'
+          : '';
+
+      this._actionNameText.text = actionNameText;
+    } else {
+      this._actionNameText.visible = false;
+    }
 
     this._renderVirtualKeyboard(inputAction);
     this._renderVirtualGestures(inputAction);
@@ -160,6 +185,16 @@ export class GestureIndicator {
   }
   addChildren() {
     this._container = new PIXI.Container();
+    this._actionNameText = new PIXI.Text('', {
+      fontFamily,
+      fill: '#444444',
+      align: 'center',
+      stroke: '#000000',
+      strokeThickness: 2,
+      letterSpacing: 2,
+      lineHeight: keyTextLineHeight,
+    } as PIXI.TextStyle);
+    this._container.addChild(this._actionNameText);
     if (this._preferredInputMethod === 'keyboard') {
       this._virtualKeyboardGraphics = new PIXI.Graphics();
       this._container.addChild(this._virtualKeyboardGraphics);
@@ -233,6 +268,9 @@ export class GestureIndicator {
       keyWidth - keyPadding * 2,
       keyHeight - keyPadding * 2
     );
+
+    this._actionNameText.x = x - this._actionNameText.width - keyPadding;
+    this._actionNameText.y = y + keyHeight * 0.5 - keyPadding;
   }
 
   private _renderVirtualGestures(
@@ -243,6 +281,9 @@ export class GestureIndicator {
     }
     // TODO: store last landed on action
     this._virtualGestureSprites.forEach((sprite, i) => {
+      const isCurrentInputAction =
+        inputAction &&
+        Object.values(CustomizableInputAction).indexOf(inputAction[0]) === i;
       sprite.x =
         this._app.renderer.width *
         (inputAction?.[0] === CustomizableInputAction.RotateAnticlockwise
@@ -258,11 +299,14 @@ export class GestureIndicator {
             ? 0.75
             : 0.25
           : 0.5);
-      sprite.alpha =
-        inputAction &&
-        Object.values(CustomizableInputAction).indexOf(inputAction[0]) === i
-          ? 1
-          : 0;
+      sprite.alpha = isCurrentInputAction ? 1 : 0;
+
+      if (isCurrentInputAction) {
+        this._actionNameText.x = sprite.x;
+        this._actionNameText.y =
+          sprite.y - sprite.height * 0.25 - this._actionNameText.height;
+        this._actionNameText.anchor.x = 0.5;
+      }
     });
   }
 }

@@ -114,6 +114,7 @@ export default class ClientApi implements IClientApi {
         gridNumColumns,
         gridNumRows,
         isDemo,
+        teachAllControls: true,
         player: {
           characterId: '487',
           patternFilename: 'pattern_3.png',

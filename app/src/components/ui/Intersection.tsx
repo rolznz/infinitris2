@@ -11,12 +11,12 @@ const _Intersection = ({
   width: number;
   height: number;
   index: number;
-  onInView: (index: number) => void;
+  onInView?: (index: number) => void;
 }>) => {
   const { ref, inView } = useInView({ threshold: 0, rootMargin: '500px' });
   React.useEffect(() => {
     if (inView) {
-      onInView(index);
+      onInView?.(index);
     }
   }, [inView, onInView, index]);
 

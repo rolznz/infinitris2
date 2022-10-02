@@ -122,7 +122,7 @@ export default function MarketCharacterPage() {
             </Button>
           )}
         {character && (character.data()?.maxPurchases || -1) >= 0 && (
-          <Typography variant="caption" color="secondary">
+          <Typography variant="body2" color="secondary">
             <FormattedMessage
               defaultMessage="{numRemaining} remaining"
               description="number of stock remaining for purchase"

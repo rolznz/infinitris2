@@ -10,7 +10,18 @@ export function CharacterHabitatBackground({
   character,
 }: CharacterHabitatBackgroundProps) {
   return (
-    <FlexBox zIndex={zIndexes.below}>
+    <FlexBox zIndex={zIndexes.below} position="relative">
+      <div
+        style={{
+          position: 'fixed',
+          top: 0,
+          right: 0,
+          width: '100%',
+          height: '100%',
+          background: 'rgba(0,0,0, 0.25)',
+          zIndex: 1,
+        }}
+      ></div>
       {character && (
         <div
           style={{

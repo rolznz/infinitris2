@@ -1931,6 +1931,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           container.addChild(patternSprite);
           renderableObject.patternSprite = patternSprite;
           renderableObject.patternSpriteFilename = newPatternSpriteFilename;
+          container.zIndex = behaviour.getZIndex?.() ?? 0;
         }
       }
       if (patternSprite) {

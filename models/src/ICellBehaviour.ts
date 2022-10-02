@@ -14,6 +14,7 @@ export default interface ICellBehaviour {
   hasWorldImage?(): boolean;
   hasWorldVariationImage?(): boolean;
   hasTileset?(): boolean;
+  getZIndex?(): number;
   color?: number;
   alpha: number;
   isPassable: boolean;

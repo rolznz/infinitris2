@@ -1,3 +1,5 @@
+import { INITIAL_FALL_DELAY } from '@core/block/Block';
+import { FRAME_LENGTH } from '@core/simulation/Simulation';
 import CellType from '@models/CellType';
 import ChallengeCellType from '@models/ChallengeCellType';
 import ICell from '@models/ICell';
@@ -17,6 +19,7 @@ export const rockFilenames = [
   'rock5',
   'rock6',
 ];
+const ROCK_INITIAL_DELAY = (1000 / FRAME_LENGTH) * 2; // 2 seconds
 export default class RockBehaviour implements ICellBehaviour {
   private _cell: ICell;
   private _grid: IGrid;
@@ -26,6 +29,7 @@ export default class RockBehaviour implements ICellBehaviour {
   private _imageFilename: string;
   private _rockFallInterval: number;
   private _rotation: number;
+  private _initialDelay: number;
   constructor(
     cell: ICell,
     grid: IGrid,
@@ -35,6 +39,8 @@ export default class RockBehaviour implements ICellBehaviour {
   ) {
     this._grid = grid;
     this._cell = cell;
+    // make the rock hang for a second before dropping
+    this._initialDelay = speed ? 0 : ROCK_INITIAL_DELAY;
     this._nextRockTimer = 0;
     this._offsetY = 0;
     this._rotation =
@@ -67,26 +73,30 @@ export default class RockBehaviour implements ICellBehaviour {
       this._remove();
     }
 
-    if (++this._nextRockTimer > this._rockFallInterval) {
-      //this._nextRockTimer = 0;
-      if (
-        belowCell &&
-        belowCell.isPassable &&
-        belowCell.behaviour.isReplaceable
-      ) {
-        belowCell.behaviour = new RockBehaviour(
-          belowCell,
-          this._grid,
-          this._imageFilename,
-          this._rockFallInterval,
-          this._rotation
-        );
-        this._remove(false);
-      } else {
-        this._remove();
+    if (this._initialDelay-- > 0) {
+      this._offsetY = -this._initialDelay / ROCK_INITIAL_DELAY;
+    } else {
+      if (++this._nextRockTimer > this._rockFallInterval) {
+        //this._nextRockTimer = 0;
+        if (
+          belowCell &&
+          belowCell.isPassable &&
+          belowCell.behaviour.isReplaceable
+        ) {
+          belowCell.behaviour = new RockBehaviour(
+            belowCell,
+            this._grid,
+            this._imageFilename,
+            this._rockFallInterval,
+            this._rotation
+          );
+          this._remove(false);
+        } else {
+          this._remove();
+        }
       }
+      this._offsetY = this._nextRockTimer / this._rockFallInterval;
     }
-    this._offsetY = this._nextRockTimer / this._rockFallInterval;
   }
   private _remove(shouldExplode = true) {
     this._shouldExplode = shouldExplode;
@@ -111,7 +121,9 @@ export default class RockBehaviour implements ICellBehaviour {
   }
 
   get alpha(): number {
-    return 1;
+    return this._initialDelay > 0
+      ? 1 - this._initialDelay / INITIAL_FALL_DELAY
+      : 1;
   }
 
   get isPassable(): boolean {

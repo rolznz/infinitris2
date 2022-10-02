@@ -40,7 +40,7 @@ import { SinglePlayerGameModePickerPage } from '@/components/pages/SinglePlayerP
 import { RoomInfoPage } from '@/components/pages/RoomInfoPage';
 import CoinsDisplay from '@/components/ui/CoinsDisplay';
 import { StoryModePage } from '@/components/pages/StoryModePage/StoryModePage';
-import { TopLeftPanel, TopLeftPanelPortal } from '@/components/ui/TopLeftPanel';
+import { TopLeftPanel } from '@/components/ui/TopLeftPanel';
 import NavigationButton from '@/components/ui/BackButton';
 import useRouterStore from '@/state/RouterStore';
 import { PremiumPage } from '@/components/pages/PremiumPage/PremiumPage';
@@ -105,18 +105,17 @@ function RouterContents() {
       <TopLeftPanel>
         <HomeButton />
         <NavigationButton />
+        <Switch location={location}>
+          <Route path={coinsDisplayPaths}>
+            <CoinsDisplay />
+          </Route>
+        </Switch>
       </TopLeftPanel>
       <DialogManager />
       <OutsideGameElement>
         <HamburgerMenuButton />
       </OutsideGameElement>
-      <Switch location={location}>
-        <Route path={coinsDisplayPaths}>
-          <TopLeftPanelPortal>
-            <CoinsDisplay />
-          </TopLeftPanelPortal>
-        </Route>
-      </Switch>
+
       <Switch location={location}>
         <Route exact path={Routes.home}>
           <HomePageBackground>

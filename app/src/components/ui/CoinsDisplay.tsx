@@ -6,20 +6,27 @@ import { useUser } from '@/components/hooks/useUser';
 import IconButton from '@mui/material/IconButton';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
+import { dropShadows } from '@/theme/theme';
 
 export default function CoinsDisplay() {
   const coins = useUser().readOnly?.coins || 0;
 
   return (
-    <FlexBox style={{ pointerEvents: 'all' }}>
-      <IconButton onClick={openCoinInfoDialog} size="large">
-        <FlexBox flexDirection="row" gap={1}>
-          <SvgIcon>
-            <CoinIcon />
-          </SvgIcon>
-          <Typography>{coins}</Typography>
-        </FlexBox>
+    <FlexBox
+      style={{ pointerEvents: 'all', cursor: 'pointer' }}
+      flexDirection="row"
+      onClick={openCoinInfoDialog}
+    >
+      <IconButton size="large">
+        <SvgIcon
+          sx={{
+            filter: dropShadows.small,
+          }}
+        >
+          <CoinIcon />
+        </SvgIcon>
       </IconButton>
+      <Typography sx={{ filter: dropShadows.small }}>{coins}</Typography>
     </FlexBox>
   );
 }

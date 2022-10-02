@@ -22,27 +22,43 @@ import {
   lockFilter,
 } from '@/theme/theme';
 
-const schema = yup
-  .object({
+const createSchema = (allowEmpty: boolean | undefined) => {
+  let schema = yup.object({
     nickname: yup
       .string()
-      .min(2)
+      .min(allowEmpty ? 0 : 2)
       .max(10)
-      .matches(/^[a-z0-9 ]+$/),
-  })
-  .required();
+      .matches(/^[a-z0-9 ]*$/),
+  });
+  if (!allowEmpty) {
+    schema = schema.required();
+  }
+  return schema;
+};
 
 type NicknameFormData = {
   nickname: string;
 };
 
-export function UserNicknameForm() {
+type UserNicknameFormProps = {
+  autoFocus?: boolean;
+  allowEmpty?: boolean;
+  variant?: 'update' | 'play';
+  onSubmit?(): void;
+};
+
+export function UserNicknameForm({
+  onSubmit,
+  autoFocus,
+  allowEmpty,
+  variant = 'update',
+}: UserNicknameFormProps) {
   const intl = useIntl();
   const [isLoading, setIsLoading] = React.useState(false);
   const user = useUser();
   const { enqueueSnackbar } = useSnackbar();
 
-  const onSubmit = React.useCallback(
+  const onSubmitInternal = React.useCallback(
     async (data: NicknameFormData) => {
       setIsLoading(true);
       if (!(await setNickname(data.nickname))) {
@@ -58,12 +74,15 @@ export function UserNicknameForm() {
         );
       }
       setIsLoading(false);
+      onSubmit?.();
     },
-    [enqueueSnackbar, intl]
+    [enqueueSnackbar, intl, onSubmit]
   );
 
   const defaultNickname =
     (user.id ? user.readOnly?.nickname : (user as LocalUser).nickname) || '';
+
+  const schema = React.useMemo(() => createSchema(allowEmpty), [allowEmpty]);
 
   const {
     control,
@@ -94,7 +113,7 @@ export function UserNicknameForm() {
 
   return (
     <FlexBox flexDirection="row" zIndex="above" gap={1}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmitInternal)}>
         <FlexBox
           flexDirection="row"
           gap={1}
@@ -103,7 +122,9 @@ export function UserNicknameForm() {
         >
           <FlexBox
             width={
-              currentNicknameValue.length > 1
+              variant === 'play'
+                ? 280
+                : currentNicknameValue.length > 1
                 ? (currentNicknameValue.length + 1) * 14 + 75
                 : 200
             }
@@ -113,18 +134,24 @@ export function UserNicknameForm() {
               control={control}
               render={({ field }) => (
                 <FormControl variant="standard">
-                  <InputLabel
-                    sx={
-                      currentNicknameValue.length < 2 ? { ml: 2, mt: 1.5 } : {}
-                    }
-                  >
-                    <FormattedMessage
-                      defaultMessage="Choose Nickname"
-                      description="Nickname field label text"
-                    />
-                  </InputLabel>
+                  {!allowEmpty && (
+                    <InputLabel
+                      sx={
+                        currentNicknameValue.length < 2
+                          ? { ml: 2, mt: 1.5 }
+                          : {}
+                      }
+                    >
+                      <FormattedMessage
+                        defaultMessage="Choose Nickname"
+                        description="Nickname field label text"
+                      />
+                    </InputLabel>
+                  )}
                   <Input
                     {...field}
+                    autoFocus={autoFocus}
+                    placeholder="Choose Nickname"
                     inputProps={{ maxLength: 10 }}
                     endAdornment={
                       currentNicknameValue.length > 1 ? (
@@ -169,17 +196,24 @@ export function UserNicknameForm() {
               )}
             />
           </FlexBox>
-          {isDirty && (
+          {(isDirty || allowEmpty) && (
             <Button
               type="submit"
               color="primary"
               variant="contained"
               disabled={!isValid || isLoading}
             >
-              <FormattedMessage
-                defaultMessage="Update"
-                description="Update nickname button text"
-              />
+              {variant === 'update' ? (
+                <FormattedMessage
+                  defaultMessage="Update"
+                  description="Update nickname button text"
+                />
+              ) : (
+                <FormattedMessage
+                  defaultMessage="Play"
+                  description="Update nickname play button text"
+                />
+              )}
             </Button>
           )}
         </FlexBox>

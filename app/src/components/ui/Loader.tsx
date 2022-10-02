@@ -24,14 +24,12 @@ import {
 import FlexBox from './FlexBox';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
-import useAppStore from '@/state/AppStore';
 import { LanguagePicker } from '../pages/SettingsPage/SettingsPage';
 import { borderColor, borderRadiuses } from '@/theme/theme';
 import isMobile from '@/utils/isMobile';
 import { useUser } from '@/components/hooks/useUser';
 import { setUserMusicOn, setUserSfxOn } from '@/state/updateUser';
 import useAuthStore from '@/state/AuthStore';
-import usePrevious from 'react-use/lib/usePrevious';
 import shallow from 'zustand/shallow';
 import { useCachedCollection } from '@/components/hooks/useCachedCollection';
 import { charactersPath, ICharacter } from 'infinitris2-models';
@@ -44,17 +42,13 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   );
   const user = useUser();
   const userExists = !!user?.id;
-  const prevUserExists = usePrevious(userExists);
   const hasFinished = loaderStore.hasFinished;
-  const initializeLoaderStore = loaderStore.initialize;
   const addStep = loaderStore.addStep;
   const completeStep = loaderStore.completeStep;
   const clickStart = loaderStore.clickStart;
   const [hasToggledSounds, setHasToggledSounds] = useState(false);
   const allCharacters = useCachedCollection<ICharacter>(charactersPath);
   const hasLoadedCharacters = (allCharacters?.length || 0) > 0;
-
-  const clientLoaded = useAppStore((appStore) => !!appStore.clientApi);
 
   // Wait for the user to load if they are logged in
   // this also ensures if the app thinks they were logged in but aren't anymore (for whatever reason), the step will be reversed
@@ -75,12 +69,12 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   }, [hasLoadedCharacters, addStep, completeStep]);
 
   useEffect(() => {
-    if (prevUserExists === false && authUserId) {
+    if (!userExists && isLoggedIn) {
       addStep('user');
-    } else if (userExists) {
+    } else if (userExists || !isLoggedIn) {
       completeStep('user');
     }
-  }, [authUserId, prevUserExists, userExists, addStep, completeStep]);
+  }, [isLoggedIn, userExists, addStep, completeStep]);
 
   useEffect(() => {
     const htmlLoaderSpiner = document.getElementById('html-loader-spinner');
@@ -88,12 +82,6 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
       htmlLoaderSpiner.style.display = 'none';
     }
   }, []);
-
-  useEffect(() => {
-    if (clientLoaded) {
-      initializeLoaderStore();
-    }
-  }, [initializeLoaderStore, clientLoaded]);
 
   // only show start button if music is on
   const musicOn = user.musicOn !== undefined ? user.musicOn : true;
@@ -131,10 +119,7 @@ export default function Loader({ children }: React.PropsWithChildren<{}>) {
   }, [hasFinished]);
 
   const showSettings =
-    !loaderStore.startClicked &&
-    loaderStore.hasInitialized &&
-    hasToggledSounds &&
-    loaderStore.allStepsLoaded;
+    !loaderStore.startClicked && hasToggledSounds && loaderStore.allStepsLoaded;
 
   const loaderStyle: React.CSSProperties = React.useMemo(
     () => ({

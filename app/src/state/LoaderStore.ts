@@ -13,7 +13,6 @@ type LoaderStore = {
   readonly stepsCompleted: string[];
   readonly steps: string[];
   readonly startClicked: boolean;
-  readonly hasInitialized: boolean;
   readonly hasFinished: boolean;
   readonly delayButtonVisibility: boolean;
   readonly allStepsLoaded: boolean;
@@ -21,7 +20,6 @@ type LoaderStore = {
   completeStep(stepName: LoaderStepName): void;
   clickStart(delayButtonVisibility: boolean): void;
   reset(): void;
-  initialize(): void;
   disableDelayButtonVisiblity(): void;
 };
 
@@ -34,10 +32,9 @@ const calculateHasFinished = (state: LoaderStore) => {
     'Loader calculateHasFinished ',
     state.steps.filter((step) => state.stepsCompleted.indexOf(step) < 0),
     state.allStepsLoaded,
-    state.hasInitialized,
     state.startClicked
   );
-  return state.allStepsLoaded && state.hasInitialized && state.startClicked;
+  return state.allStepsLoaded && state.startClicked;
 };
 
 const useLoaderStore = create<LoaderStore>((set) => ({
@@ -103,13 +100,6 @@ const useLoaderStore = create<LoaderStore>((set) => ({
       hasFinished: false,
       key: state.key + 1,
     })),
-  initialize: () =>
-    setTimeout(() => {
-      set((state) => ({
-        hasInitialized: true,
-        hasFinished: calculateHasFinished({ ...state, hasInitialized: true }),
-      }));
-    }, 500),
 }));
 
 export default useLoaderStore;

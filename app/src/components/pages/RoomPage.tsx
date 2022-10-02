@@ -36,6 +36,9 @@ import {
   playGameMusic,
   worldVariationToTrackNumber,
 } from '@/sound/SoundManager';
+import FlexBox from '@/components/ui/FlexBox';
+import { UserNicknameForm } from '@/components/pages/ProfilePage/UserNicknameForm';
+import React from 'react';
 
 export interface RoomPageRouteParams {
   id: string;
@@ -89,6 +92,15 @@ export default function RoomPage() {
   const serverUrl = server?.data()?.url;
   usePwaRedirect();
   const player = useNetworkPlayerInfo();
+  const [nicknameChosen, setNicknameChosen] = React.useState(
+    !!player?.nickname
+  );
+
+  React.useEffect(() => {
+    if (player?.nickname) {
+      setNicknameChosen(true);
+    }
+  }, [player?.nickname]);
 
   const loaderHasFinished = useLoaderStore((store) => store.hasFinished);
   const user = useUser();
@@ -106,7 +118,8 @@ export default function RoomPage() {
       disconnected ||
       !client ||
       !serverUrl ||
-      hasLaunched
+      hasLaunched ||
+      !nicknameChosen
     ) {
       return;
     }
@@ -165,6 +178,7 @@ export default function RoomPage() {
       worldVariationToTrackNumber(room.data()?.worldVariation)
     );
   }, [
+    nicknameChosen,
     disconnected,
     retryCount,
     serverUrl,
@@ -182,6 +196,20 @@ export default function RoomPage() {
     setDisconnected(false);
     setConnected(false);
   }, [setConnected, setDisconnected]);
+
+  if (!nicknameChosen) {
+    return (
+      <FlexBox width="100%" height="100%">
+        <UserNicknameForm
+          key={user?.id + '-' + user?.readOnly?.nickname}
+          autoFocus
+          allowEmpty
+          variant="play"
+          onSubmit={() => setNicknameChosen(true)}
+        />
+      </FlexBox>
+    );
+  }
 
   if (connected) {
     return <GameUI showWaitForRoundEnd />;

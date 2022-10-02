@@ -94,7 +94,10 @@ export default class SinglePlayerClient
 
     this._simulation = new Simulation(
       new Grid(options.gridNumColumns, options.gridNumRows),
-      simulationSettings
+      simulationSettings,
+      undefined,
+      undefined,
+      this._launchOptions.allCharacters
     );
     this._simulation.addEventListener(this, this._renderer);
     if (options.listeners) {
@@ -138,7 +141,7 @@ export default class SinglePlayerClient
         : undefined,
       this._launchOptions?.allowRepeatedRotations
     );
-    this._simulation.addBots(this._launchOptions.allCharacters);
+    this._simulation.addBots();
 
     this._simulation.startInterval();
   }

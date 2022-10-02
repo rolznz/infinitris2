@@ -15,10 +15,11 @@ import { FpsCounter } from '@core/FpsCounter';
 import { GameModeEvent } from '@models/GameModeEvent';
 import NetworkPlayer from '@core/player/NetworkPlayer';
 import { IRound } from '@models/IRound';
+import { WithId } from '@models/WithId';
 import { Round } from '@core/simulation/Round';
 import { GameModeType } from '@models/GameModeType';
 import { RaceGameMode } from '@core/gameModes/RaceGameMode';
-import { ICharacter } from '@models/ICharacter';
+import { FallbackCharacter, ICharacter } from '@models/ICharacter';
 import { colors } from '@models/colors';
 import { stringToHex } from '@models/util/stringToHex';
 import { colorDistance } from '@models/util/colorDistance';
@@ -68,13 +69,16 @@ export default class Simulation implements ISimulation {
   private _rootSeed: number;
   private _random: KeyedRandom;
   private _isAlive: boolean;
+  private _charactersPool: WithId<ICharacter>[];
 
   constructor(
     grid: Grid,
     settings: SimulationSettings = {},
     isClient = false,
-    rootSeed = Math.floor(Math.random() * 21000000)
+    rootSeed = Math.floor(Math.random() * 21000000),
+    charactersPool: WithId<ICharacter>[] = []
   ) {
+    this._charactersPool = charactersPool;
     this._isAlive = true;
     this._eventListeners = [];
     this._rootSeed = rootSeed;
@@ -762,28 +766,27 @@ export default class Simulation implements ISimulation {
   }
 
   generateCharacter(
-    charactersPool: ICharacter[] | undefined,
     playerId: number,
     isBot: boolean,
     desiredCharacterId?: string
-  ): Partial<ICharacter> {
+  ): WithId<ICharacter> | FallbackCharacter {
     // example colorDistance #1f645b #15444d 15.327725023522083
     const isCloseColor = (c1: number, c2: number) =>
       c1 === c2 || colorDistance(c1, c2) < 15;
-    const freeCharacters = charactersPool?.filter(
+    const freeCharacters = this._charactersPool.filter(
       (character) =>
         !this.players.some(
           (player) =>
-            player.characterId === character.id.toString() ||
+            player.characterId === character.id ||
             isCloseColor(player.color, stringToHex(character.color))
         )
     );
 
-    if (freeCharacters?.length) {
+    if (freeCharacters.length) {
       return (
         freeCharacters.find(
           (character) =>
-            desiredCharacterId && character.id.toString() === desiredCharacterId
+            desiredCharacterId && character.id === desiredCharacterId
         ) ||
         freeCharacters[
           Math.floor(this.nextRandom('freeCharacter') * freeCharacters.length)
@@ -802,7 +805,7 @@ export default class Simulation implements ISimulation {
       }
 
       return {
-        id: 0,
+        id: '0',
         color: hexToString(
           freeColors[
             Math.floor(this.nextRandom('freeColor') * freeColors.length)
@@ -813,9 +816,9 @@ export default class Simulation implements ISimulation {
     }
   }
 
-  addBot(charactersPool: ICharacter[] | undefined, reactionDelay = 30) {
+  addBot(reactionDelay = 30) {
     const botId = this.getFreePlayerId();
-    const botCharacter = this.generateCharacter(charactersPool, botId, true);
+    const botCharacter = this.generateCharacter(botId, true);
 
     const bot = new AIPlayer(
       this,
@@ -826,24 +829,20 @@ export default class Simulation implements ISimulation {
       botCharacter.name!,
       stringToHex(botCharacter.color!),
       reactionDelay,
-      botCharacter.patternFilename!,
+      botCharacter.patternFilename,
       botCharacter.id!.toString()
     );
     this.addPlayer(bot);
   }
 
-  addBots(charactersPool: ICharacter[] | undefined) {
+  addBots() {
     if (this._settings?.botSettings?.numBots) {
       for (let i = 0; i < this._settings.botSettings.numBots; i++) {
         // find a random bot color - unique until there are more players than colors
         // TODO: move to simulation and notify player of color switch if their color is already in use
 
         const botId = this.getFreePlayerId();
-        const character: Partial<ICharacter> = this.generateCharacter(
-          charactersPool,
-          botId,
-          true
-        );
+        const character = this.generateCharacter(botId, true);
 
         this.addPlayer(
           new AIPlayer(
@@ -856,7 +855,7 @@ export default class Simulation implements ISimulation {
             stringToHex(character.color!),
             this._generateBotReactionDelay(),
             character.patternFilename,
-            character.id!.toString()
+            character.id
           )
         );
       }

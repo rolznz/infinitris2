@@ -108,11 +108,7 @@ export default function SinglePlayerPage() {
                 useIngameStore.getState().simulation!.removePlayer(player.id);
                 const newCharacter = useIngameStore
                   .getState()
-                  .simulation!.generateCharacter(
-                    allCharacters,
-                    player.id,
-                    false
-                  );
+                  .simulation!.generateCharacter(player.id, false);
                 player.characterId = newCharacter.id!.toString();
                 player.color = stringToHex(newCharacter.color!);
                 player.patternFilename = newCharacter.patternFilename!;

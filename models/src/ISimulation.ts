@@ -1,11 +1,12 @@
 import { GameModeEvent } from '@models/GameModeEvent';
-import { ICharacter } from '@models/ICharacter';
+import { FallbackCharacter, ICharacter } from '@models/ICharacter';
 import { IGameMode } from '@models/IGameMode';
 import { IRotationSystem } from '@models/IRotationSystem';
 import { IRound, NetworkRoundInfo } from '@models/IRound';
 import ISimulationEventListener from '@models/ISimulationEventListener';
 import Layout, { LayoutSet } from '@models/Layout';
 import { SimulationSettings } from '@models/SimulationSettings';
+import { WithId } from '@models/WithId';
 import IGrid from './IGrid';
 import { IPlayer } from './IPlayer';
 
@@ -38,16 +39,13 @@ export default interface ISimulation extends ISimulationEventListener {
   get frameNumber(): number;
   get rootSeed(): number;
   findFreeSpawnColumn(): number;
-  addBot(
-    charactersPool: ICharacter[] | undefined,
-    reactionDelay?: number
-  ): void;
+  addBot(reactionDelay?: number): void;
   wasRecentlyPlaced(occurrenceFrame: number): boolean;
   destroy(): void;
   startInterval(): void;
   stopInterval(): void;
   addPlayer(player: IPlayer): void;
-  addBots(charactersPool?: ICharacter[] | undefined): void;
+  addBots(): void;
   runningTime: number;
   grid: IGrid;
   isFollowingPlayerId(playerId: number): boolean;
@@ -62,11 +60,10 @@ export default interface ISimulation extends ISimulationEventListener {
   removePlayer(playerId: number): void;
   getFreePlayerId(): number;
   generateCharacter(
-    charactersPool: ICharacter[] | undefined,
     playerId: number,
     isBot: boolean,
     desiredCharacterId?: string
-  ): Partial<ICharacter>;
+  ): WithId<ICharacter> | FallbackCharacter;
   nextRandom(key: string): number;
   addMessage(
     message: string,

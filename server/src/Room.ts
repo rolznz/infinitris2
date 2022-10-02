@@ -46,24 +46,26 @@ import { IServerGameModeEvent } from '@core/networking/server/IServerGameModeEve
 import IClientToggleChatEvent from '@core/networking/client/IClientToggleChatEvent';
 import { IServerPlayerToggleChatEvent } from '@core/networking/server/IServerPlayerToggleChatEvent';
 import { IServerSimulationMessage } from '@models/networking/server/IServerSimulationMessage';
+import { WithId } from '@models/WithId';
 
 export default class Room implements Partial<ISimulationEventListener> {
   private _sendMessage: SendServerMessageFunction;
   private _simulation: Simulation;
   private _roomInfo: IRoom;
-  private _charactersPool: ICharacter[] | undefined;
 
   constructor(
     sendMessage: SendServerMessageFunction,
     roomInfo: IRoom,
-    characters: ICharacter[] | undefined
+    charactersPool: WithId<ICharacter>[] | undefined
   ) {
-    this._charactersPool = characters;
     this._roomInfo = roomInfo;
     this._sendMessage = sendMessage;
     this._simulation = new Simulation(
       new Grid(roomInfo.gridNumColumns ?? 50, roomInfo.gridNumRows ?? 16),
-      roomInfo.simulationSettings
+      roomInfo.simulationSettings,
+      undefined,
+      undefined,
+      charactersPool
     );
     this._simulation.addEventListener(this);
     this._simulation.init();
@@ -94,7 +96,6 @@ export default class Room implements Partial<ISimulationEventListener> {
     // TODO: verify the player actually owns the character
     // TODO: update this function to check nicknames
     const character = this._simulation.generateCharacter(
-      this._charactersPool,
       playerId,
       false,
       playerInfo?.characterId
@@ -170,7 +171,7 @@ export default class Room implements Partial<ISimulationEventListener> {
     this._simulation.startInterval();
 
     if (this._simulation.players.length === 1) {
-      this._simulation.addBots(this._charactersPool);
+      this._simulation.addBots();
     }
   }
 
@@ -236,7 +237,6 @@ export default class Room implements Partial<ISimulationEventListener> {
           if (clientMessage.message.startsWith('/addbot')) {
             const reactionDelay = clientMessage.message.split(' ')[1];
             this._simulation.addBot(
-              this._charactersPool,
               reactionDelay ? parseInt(reactionDelay) : undefined
             );
           } else if (clientMessage.message.startsWith('/kickbots')) {

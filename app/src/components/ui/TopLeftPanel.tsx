@@ -18,8 +18,8 @@ export function TopLeftPanel(props: React.PropsWithChildren<{}>) {
         left: 0,
         pointerEvents: 'none',
       }}
-      justifyContent="flex-start"
-      alignItems="flex-start"
+      justifyContent="center"
+      alignItems="center"
       p={2}
       gap={1}
       ref={ref}

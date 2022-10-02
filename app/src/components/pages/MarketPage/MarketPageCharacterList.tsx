@@ -151,7 +151,12 @@ export function MarketPagePurchasedCharacterList() {
   );
   const size = 150;
   return (
-    <FlexBox flexDirection="row" flexWrap="wrap" justifyContent="flex-start">
+    <FlexBox
+      flexDirection="row"
+      flexWrap="wrap"
+      justifyContent="flex-start"
+      key={myCharacterId}
+    >
       {myCharacters?.map((character) => (
         <CharacterTile
           key={character.id}

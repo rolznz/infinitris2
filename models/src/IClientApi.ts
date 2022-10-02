@@ -15,6 +15,7 @@ import { IChallengeEditorEventListener } from '@models/IChallengeEditor';
 import { IChallengeEventListener } from '@models/IChallengeEventListener';
 import { ChallengeAttemptRecording } from '@models/IChallengeAttempt';
 import ControlSettings from '@models/ControlSettings';
+import { WithId } from '@models/WithId';
 
 export type RendererSettings = {
   rendererType?: RendererType;
@@ -42,7 +43,7 @@ export type LaunchOptions = Omit<WithControls, 'controls_keyboard'> &
     roomIndex?: number;
     useFallbackUI?: boolean;
     isDemo?: boolean;
-    allCharacters?: ICharacter[];
+    allCharacters?: WithId<ICharacter>[];
     showUI?: boolean;
     teachAllControls?: boolean;
     chatEnabled?: boolean;

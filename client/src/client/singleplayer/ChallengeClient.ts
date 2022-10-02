@@ -431,7 +431,8 @@ export default class ChallengeClient
         ...this._challenge.simulationSettings,
       },
       undefined,
-      this._recording?.simulationRootSeed
+      this._recording?.simulationRootSeed,
+      this._launchOptions.allCharacters
     ));
     simulation.addEventListener(this, this._renderer);
     if (this._launchOptions.listeners) {
@@ -458,7 +459,7 @@ export default class ChallengeClient
     }
     simulation.addPlayer(player);
     simulation.followPlayer(player);
-    this._simulation.addBots(this._launchOptions.allCharacters);
+    this._simulation.addBots();
     /*if (this._challenge.firstBlockLayoutId) {
       player.nextLayout = simulation.layoutSet[this._challenge.firstBlockLayoutId];
     }*/

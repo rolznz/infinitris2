@@ -40,8 +40,9 @@ function _CharacterTile({
   isPurchased,
   isSelected,
 }: CharacterTileProps) {
+  const hasLink = !isPurchased || isSelected;
   const onClick = React.useCallback(
-    (event: React.MouseEvent<HTMLAnchorElement>) => {
+    (event: React.MouseEvent<unknown>) => {
       if (isPurchased && !isSelected) {
         setSelectedCharacterId(character.id);
         event.preventDefault();
@@ -64,28 +65,23 @@ function _CharacterTile({
         /*style={{
           zIndex: zIndexes.above,
         }}*/
+        onClick={onClick}
+        sx={{
+          cursor: 'pointer',
+        }}
       >
-        <Link
-          component={RouterLink}
-          underline="none"
-          to={
-            !isPurchased || isSelected
-              ? `${Routes.market}/${character.id}`
-              : '#'
-          }
-          style={linkStyle}
-          onClick={onClick}
-        >
-          <div style={linkStyle}>
-            {/*isSelected && (
-              <FlexBox>
-                <SvgIcon fontSize="large" color="primary" sx={tickIconSx}>
-                  <TickIcon />
-                </SvgIcon>
-              </FlexBox>
-            )*/}
-          </div>
-        </Link>
+        {hasLink && (
+          <Link
+            component={RouterLink}
+            underline="none"
+            to={
+              !isPurchased || isSelected
+                ? `${Routes.market}/${character.id}`
+                : '#'
+            }
+            style={linkStyle}
+          />
+        )}
       </FlexBox>
       <CharacterImage
         characterId={character.id}

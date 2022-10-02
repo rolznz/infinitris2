@@ -140,7 +140,9 @@ export default class NetworkClient
             joinResponseData.grid.numRows
           ),
           joinResponseData.simulation.settings,
-          true
+          true,
+          undefined,
+          this._launchOptions.allCharacters
         );
 
         this._simulation.addEventListener(this._renderer, this);

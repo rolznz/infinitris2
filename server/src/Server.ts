@@ -24,6 +24,7 @@ import {
   JoinRoomResponseStatus,
 } from '@core/networking/server/IServerJoinRoomResponse';
 import { ServerMessageType } from '@models/networking/server/ServerMessageType';
+import { WithId } from '@models/WithId';
 
 export const apiUrl = process.env.API_URL;
 export default class Server implements IServerSocketEventListener {
@@ -44,7 +45,7 @@ export default class Server implements IServerSocketEventListener {
 
   private async _init() {
     const time = Date.now();
-    const characters = await cachedGet<ICharacter[] | undefined>(
+    const characters = await cachedGet<WithId<ICharacter>[] | undefined>(
       'characters',
       getCharacters
     );

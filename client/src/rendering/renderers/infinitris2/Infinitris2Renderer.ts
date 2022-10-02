@@ -34,14 +34,17 @@ import {
   getCellBehaviourImageFilename,
   renderCellBehaviour,
 } from '@src/rendering/renderers/infinitris2/renderCellBehaviour';
-import RockBehaviour from '@core/grid/cell/behaviours/RockBehaviour';
+import RockBehaviour, {
+  rockFilenames,
+} from '@core/grid/cell/behaviours/RockBehaviour';
 import { GestureIndicator } from '@src/rendering/renderers/infinitris2/GestureIndicator';
 import { checkMistake } from '@core/block/checkMistake';
 import { ConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes/ConquestRenderer';
-import { MAX_COLUMNS } from '@core/grid/Grid';
+import Grid, { MAX_COLUMNS } from '@core/grid/Grid';
 import { hexToString } from '@models/util/hexToString';
 import { GarbageDefenseRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GarbageDefenseRenderer';
 import LayoutUtils from '@core/block/layout/LayoutUtils';
+import Cell from '@core/grid/cell/Cell';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -192,6 +195,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _cacheId: number;
   private _pendingDestroy: boolean;
   private _hasDestroyed: boolean;
+  private _loadChallengeCellTypeImages: boolean;
 
   constructor(
     clientApiConfig: ClientApiConfig,
@@ -208,7 +212,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
     showPatterns = true,
     showNicknames = true,
     showUI = true,
-    teachAllControls = false
+    teachAllControls = false,
+    loadChallengeCellTypeImages = false
   ) {
     super(clientApiConfig, undefined, rendererQuality, isDemo);
     this._pendingDestroy = false;
@@ -222,6 +227,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._showFaces = showFaces;
     this._showPatterns = showPatterns;
     this._showNicknames = showNicknames;
+    this._loadChallengeCellTypeImages = loadChallengeCellTypeImages;
     this._cachedRenderableCells = {};
     this._gestureIndicator = new GestureIndicator(
       this._app,
@@ -282,6 +288,29 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._nicknameVerifiedIconTexture = PIXI.Texture.from(
       nicknameVerifiedIconUrl
     );
+    if (this._loadChallengeCellTypeImages) {
+      // TODO: collect all images for each cell type, and loop through all cell types, so that no images need to be loaded after simulation start
+      console.log('Loading rock images...');
+      const fakeGrid = new Grid(1, 1, false);
+      // load all rock images for this world
+      rockFilenames.forEach((filename) => {
+        const rockBehaviour = new RockBehaviour(
+          fakeGrid.reducedCells[0],
+          fakeGrid,
+          filename
+        );
+        this._app.loader.add(
+          getCellBehaviourImageFilename(
+            rockBehaviour,
+            this._worldType,
+            this._worldVariation,
+            this._challengeEditorEnabled
+          )
+        );
+      });
+      console.log('done');
+    }
+
     await new Promise((resolve) => this._app.loader.load(resolve));
 
     this._worldBackground.createImages();

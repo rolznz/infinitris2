@@ -363,7 +363,8 @@ export default class ChallengeClient
             this._launchOptions.rendererSettings?.showPatterns,
             this._launchOptions.rendererSettings?.showNicknames,
             this._launchOptions.showUI !== false,
-            this._launchOptions.teachAllControls
+            this._launchOptions.teachAllControls,
+            true
           );
     if (this._editor) {
       this._editor.renderer = this._renderer;

@@ -7,6 +7,16 @@ import NormalCellBehaviour from './NormalCellBehaviour';
 
 const rockFallInterval = 10;
 
+export const rockFilenames = [
+  'rock1a',
+  'rock1b',
+  'rock2',
+  'rock3a',
+  'rock3b',
+  'rock4',
+  'rock5',
+  'rock6',
+];
 export default class RockBehaviour implements ICellBehaviour {
   private _cell: ICell;
   private _grid: IGrid;
@@ -36,18 +46,10 @@ export default class RockBehaviour implements ICellBehaviour {
         rockFallInterval +
           this._grid.nextRandom('rockFallInterval') * 0.25 * rockFallInterval
       );
-    const filenames = [
-      'rock1a',
-      'rock1b',
-      'rock2',
-      'rock3a',
-      'rock3b',
-      'rock4',
-      'rock5',
-      'rock6',
-    ];
+
     this._imageFilename =
-      imageFilename || filenames[Math.floor(Math.random() * filenames.length)];
+      imageFilename ||
+      rockFilenames[Math.floor(Math.random() * rockFilenames.length)];
   }
 
   step(): void {

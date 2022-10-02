@@ -41,15 +41,16 @@ export function MarketPageCharacterList({
 
   const characters = React.useMemo(() => {
     const _characters = allCharacters?.filter((character) =>
-      filter === 'available-free'
-        ? character.price === 0
-        : filter === 'available-featured'
-        ? character.isFeatured === true
-        : filter === 'available-premium'
-        ? character.price > 400
-        : filter === 'my-blocks'
+      filter === 'my-blocks'
         ? myCharacterIds.indexOf(character.id) > -1
-        : true
+        : myCharacterIds.indexOf(character.id) === -1 &&
+          (filter === 'available-free'
+            ? character.price === 0
+            : filter === 'available-featured'
+            ? character.isFeatured === true
+            : filter === 'available-premium'
+            ? character.price > 400
+            : true)
     );
     _characters?.sort((a, b) => a.price - b.price);
     return _characters;

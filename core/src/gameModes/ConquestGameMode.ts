@@ -53,8 +53,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     return false;
   }
   get shouldNewPlayerSpectate(): boolean {
-    // TODO: re-disable for conversions (see FIXME in onPlayerChangeStatus)
-    return !this.hasRounds; // || !this.hasConversions;
+    return this.hasRounds;
   }
 
   get numTeams(): number {

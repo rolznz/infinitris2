@@ -9,12 +9,8 @@ import { teams } from '@models/teams';
 import ISimulation from '@models/ISimulation';
 import { stringToHex } from '@models/util/stringToHex';
 import { debounce } from 'ts-debounce';
+import { PlayerAppearance, updatePlayerAppearance } from '@core/player/Player';
 
-type PlayerAppearance = {
-  color: number;
-  patternFilename: string | undefined;
-  characterId: string | undefined;
-};
 type ConquestGameModeState = {
   originalPlayerAppearances: { [playerId: number]: PlayerAppearance };
 };
@@ -146,6 +142,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     if (this._simulation.isNetworkClient) {
       return;
     }
+    // TODO: this is copied in ConquestGameMode. Move to simulation
     // find another player on the same team and give the cells to them instead so that they aren't reset
     const allyPlayer = this._simulation.activePlayers.find(
       (other) => other.color === player.color && other !== player
@@ -270,7 +267,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     }
 
     if (this.hasConversions && attacker) {
-      this._updatePlayerAppearance(victim, attacker);
+      updatePlayerAppearance(victim, attacker);
     }
   }
   private _delayRerender(cell: ICell) {
@@ -364,15 +361,6 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     }
     console.log('Calculate knockouts: ' + (Date.now() - startTime) + 'ms');
   }
-  private _updatePlayerAppearance(
-    player: IPlayer,
-    appearance: PlayerAppearance
-  ) {
-    player.color = appearance.color;
-    player.patternFilename = appearance.patternFilename;
-    player.characterId = appearance.characterId;
-    player.requiresFullRerender = true;
-  }
 
   onNextRound() {
     if (this.numTeams > 0) {
@@ -392,7 +380,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     } else {
       for (const player of this._simulation.nonSpectatorPlayers) {
         if (this._originalPlayerAppearances[player.id]) {
-          this._updatePlayerAppearance(
+          updatePlayerAppearance(
             player,
             this._originalPlayerAppearances[player.id]
           );
@@ -402,18 +390,6 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
     this._lastCalculationTime = 0;
     this._lastPlayerPlaced = undefined;
     this._lastMoveWasMistake = [];
-
-    /*// FIXME: remove
-    setTimeout(() => {
-      const towerRow = this._simulation.getTowerRow();
-      for (const column of [8, 9, 19]) {
-        for (let row = towerRow; row < this._simulation.grid.numRows; row++) {
-          this._simulation.grid.cells[row][column].place(
-            this._simulation.followingPlayer
-          );
-        }
-      }
-    }, 100);*/
   }
   // TODO: there will probably be other game modes with teams too, most of this code should live somewhere else
   // currently teams are identified by player colors (cells with the same color will be connected)
@@ -438,7 +414,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       );
     }
 
-    this._updatePlayerAppearance(player, {
+    updatePlayerAppearance(player, {
       characterId: teams[teamNumber].characterId,
       color: teams[teamNumber].color,
       patternFilename: `pattern_${teams[teamNumber].patternNumber}.png`,

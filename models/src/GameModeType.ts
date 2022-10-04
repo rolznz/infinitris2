@@ -3,6 +3,7 @@ export const GameModeTypeValues = [
   'race',
   'conquest',
   'garbage-defense',
+  'escape',
   'column-conquest',
   'battle',
 ] as const;

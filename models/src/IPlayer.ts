@@ -39,7 +39,7 @@ export interface IPlayer {
   get isPremium(): boolean;
   get isNicknameVerified(): boolean;
   get status(): PlayerStatus;
-  set spawnLocationCell(cell: ICell | undefined);
+  set spawnLocation(cell: { row: number; column: number } | undefined);
   set checkpointCell(cell: ICell | undefined);
   get checkpointCell(): ICell | undefined;
 

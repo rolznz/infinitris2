@@ -170,6 +170,7 @@ function GameModeIcon(props: { gameModeType: GameModeType }) {
     case 'infinity':
       return <InfinityIcon />;
     case 'race':
+    case 'escape':
       return <RunCircleIcon />;
     case 'garbage-defense':
       return <RestoreFromTrashIcon />;
@@ -233,6 +234,13 @@ export function GameModeDescription(props: {
         <FormattedMessage
           defaultMessage="Stop the garbage reaching the top of the grid"
           description="Garbage Defense game mode description"
+        />
+      );
+    case 'escape':
+      return (
+        <FormattedMessage
+          defaultMessage="Escape the wall of fire for as long as you can"
+          description="Escape game mode description"
         />
       );
     default:

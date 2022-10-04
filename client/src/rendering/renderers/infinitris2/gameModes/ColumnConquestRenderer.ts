@@ -6,7 +6,7 @@ import { getBorderColor } from '@models/index';
 import { ColumnConquestEvent } from '@models/GameModeEvent';
 import { BaseRenderer } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
-import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GameModeRenderer';
+import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/IGameModeRenderer';
 import * as PIXI from 'pixi.js-legacy';
 
 interface IRenderableColumnCapture extends IRenderableEntity<PIXI.Graphics> {

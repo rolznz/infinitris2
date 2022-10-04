@@ -122,6 +122,10 @@ export abstract class BaseRenderer implements IRenderer {
     return this._appHeight;
   }
 
+  get visibilityX(): number {
+    return this._visibilityX;
+  }
+
   get camera(): Camera {
     return this._camera;
   }

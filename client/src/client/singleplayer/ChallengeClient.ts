@@ -456,7 +456,7 @@ export default class ChallengeClient
       this._launchOptions.player?.isNicknameVerified
     );
     if (spawnLocationCell) {
-      player.spawnLocationCell = spawnLocationCell;
+      player.spawnLocation = spawnLocationCell;
     }
     simulation.addPlayer(player);
     simulation.followPlayer(player);

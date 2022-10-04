@@ -21,7 +21,7 @@ import { getBorderColor } from '@models/util/adjustColor';
 import { WorldType, WorldVariation } from '@models/WorldType';
 import { GridLines } from '@src/rendering/renderers/infinitris2/GridLines';
 import { ColumnConquestRenderer } from '@src/rendering/renderers/infinitris2/gameModes/ColumnConquestRenderer';
-import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GameModeRenderer';
+import { IGameModeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/IGameModeRenderer';
 import { BaseRenderer, Wrappable } from '@src/rendering/BaseRenderer';
 import { IRenderableEntity } from '@src/rendering/IRenderableEntity';
 import { ClientApiConfig } from '@models/IClientApi';
@@ -45,6 +45,7 @@ import { hexToString } from '@models/util/hexToString';
 import { GarbageDefenseRenderer } from '@src/rendering/renderers/infinitris2/gameModes/GarbageDefenseRenderer';
 import LayoutUtils from '@core/block/layout/LayoutUtils';
 import Cell from '@core/grid/cell/Cell';
+import { EscapeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/EscapeRenderer';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -478,6 +479,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
         }
       }
     }
+    this._gameModeRenderer?.tick?.();
   }
   private _isOnScreen(cell: ICell) {
     if (this._hasShadows) {
@@ -625,6 +627,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._gameModeRenderer = new ColumnConquestRenderer(this);
     } else if (simulation.settings.gameModeType === 'conquest') {
       this._gameModeRenderer = new ConquestRenderer(this);
+    } else if (simulation.settings.gameModeType === 'escape') {
+      this._gameModeRenderer = new EscapeRenderer(this);
     }
 
     this._fpsText = new PIXI.Text('', {

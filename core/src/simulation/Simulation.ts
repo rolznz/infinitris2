@@ -38,6 +38,7 @@ import { ConquestGameMode } from '@core/gameModes/ConquestGameMode';
 import { BattleGameMode } from '@core/gameModes/BattleGameMode';
 import { wrap, wrappedDistance } from '@core/utils/wrap';
 import { GarbageDefenseGameMode } from '@core/gameModes/GarbageDefenseGameMode';
+import { EscapeGameMode } from '@core/gameModes/EscapeGameMode/EscapeGameMode';
 
 const IDEAL_FPS = 60;
 /**
@@ -540,6 +541,7 @@ export default class Simulation implements ISimulation {
   }
 
   addMessage(message: string, player: IPlayer | undefined, isSynced: boolean) {
+    console.log('Ingame message', message, player?.nickname, isSynced);
     this._eventListeners.forEach((listener) =>
       listener.onSimulationMessage?.(this, message, player, isSynced)
     );
@@ -709,6 +711,8 @@ export default class Simulation implements ISimulation {
         return new ColumnConquestGameMode(this);
       case 'garbage-defense':
         return new GarbageDefenseGameMode(this);
+      case 'escape':
+        return new EscapeGameMode(this);
       case 'battle':
         return new BattleGameMode(this);
       case 'race':

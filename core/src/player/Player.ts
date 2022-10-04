@@ -32,7 +32,7 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
   private _isChatting: boolean;
   private _status: PlayerStatus;
   private _lastStatusChangeTime: number;
-  private _spawnLocationCell: ICell | undefined;
+  private _spawnLocation: { row: number; column: number } | undefined;
   private _checkpointCell: ICell | undefined;
   private _layoutBag: Layout[];
   private _actionsToFire: InputActionWithData[];
@@ -177,8 +177,8 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._nextLayoutRotation = nextLayoutRotation;
   }*/
 
-  set spawnLocationCell(cell: ICell | undefined) {
-    this._spawnLocationCell = cell;
+  set spawnLocation(cell: ICell | undefined) {
+    this._spawnLocation = cell;
   }
   set checkpointCell(cell: ICell | undefined) {
     this._checkpointCell = cell;
@@ -382,11 +382,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     this._fireActions();
   }
   private _tryCreateBlock(layout: Layout, checkPlacement: boolean) {
-    const row = this._checkpointCell?.row ?? this._spawnLocationCell?.row ?? 0;
+    const row = this._checkpointCell?.row ?? this._spawnLocation?.row ?? 0;
     const column = this._checkpointCell
       ? this._checkpointCell.column
-      : this._spawnLocationCell
-      ? this._spawnLocationCell.column
+      : this._spawnLocation
+      ? this._spawnLocation.column
       : this._lastPlacementColumn === undefined
       ? this._simulation.settings.randomBlockPlacement !== false
         ? this._simulation.findFreeSpawnColumn()
@@ -489,11 +489,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
 
     this._modifyScoreFromBlockPlacement(block, false);
 
-    this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
     this._isFirstBlock = false;
-    this._spawnLocationCell = undefined;
-    this.removeBlock();
+    this._spawnLocation = undefined;
     this.saveSpawnPosition(block);
+    this._eventListeners.forEach((listener) => listener.onBlockPlaced(block));
+    this.removeBlock();
   }
 
   /**
@@ -532,11 +532,11 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
     if (!this._block) {
       return;
     }
-    this._calculateSpawnDelay();
     const block = this._block;
     this._block?.destroy();
     this._block = undefined;
     this.onBlockRemoved(block);
+    this._calculateSpawnDelay();
   }
 
   onBlockRemoved(block: IBlock) {
@@ -624,4 +624,20 @@ export default abstract class Player implements IPlayer, IBlockEventListener {
         break;
     }
   }
+}
+
+export type PlayerAppearance = {
+  color: number;
+  patternFilename: string | undefined;
+  characterId: string | undefined;
+};
+
+export function updatePlayerAppearance(
+  player: IPlayer,
+  appearance: PlayerAppearance
+) {
+  player.color = appearance.color;
+  player.patternFilename = appearance.patternFilename;
+  player.characterId = appearance.characterId;
+  player.requiresFullRerender = true;
 }

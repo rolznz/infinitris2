@@ -36,6 +36,12 @@ export function SinglePlayerGameModePickerPage() {
                     hasRounds: true,
                   }
                 : undefined,
+            botSettings:
+              gameModeType === 'escape'
+                ? {
+                    numBots: 0,
+                  }
+                : undefined,
           },
           id: gameModeType,
           worldType: getWorldType(gameModeType),
@@ -77,7 +83,7 @@ export function SinglePlayerGameModePickerPage() {
 function getWorldType(gameModeType: GameModeType): WorldType {
   return gameModeType === 'conquest'
     ? 'desert'
-    : gameModeType === 'race'
+    : gameModeType === 'race' || gameModeType === 'escape'
     ? 'space'
     : gameModeType === 'battle' ||
       gameModeType === 'column-conquest' ||
@@ -86,5 +92,9 @@ function getWorldType(gameModeType: GameModeType): WorldType {
     : 'grass';
 }
 function getWorldVariation(gameModeType: GameModeType): WorldVariation {
-  return gameModeType === 'column-conquest' ? '4' : '0';
+  return gameModeType === 'column-conquest'
+    ? '4'
+    : gameModeType === 'escape'
+    ? '2'
+    : '0';
 }

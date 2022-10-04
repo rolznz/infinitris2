@@ -85,7 +85,6 @@ export class Round implements IRound {
     this._currentRoundStartTime = Date.now();
     this._isWaitingForNextRound = false;
     this._winner = undefined;
-    this._eventListener.onNextRound(this._simulation);
 
     for (const player of this._simulation.players) {
       if (
@@ -97,6 +96,7 @@ export class Round implements IRound {
       }
     }
     this._simulation.grid.reset();
+    this._eventListener.onNextRound(this._simulation);
   }
 
   end(winner: IPlayer | undefined) {

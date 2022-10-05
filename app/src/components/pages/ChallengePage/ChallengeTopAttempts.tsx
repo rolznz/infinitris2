@@ -34,7 +34,6 @@ import { useDocument, UseDocumentOptions } from 'swr-firestore';
 type ChallengeTopAttemptsProps = {
   challenge: IChallenge;
   challengeId: string;
-  viewReplay?(attempt: IChallengeAttempt): void;
 };
 
 export function ChallengeTopAttempts(props: ChallengeTopAttemptsProps) {
@@ -51,7 +50,6 @@ export function ChallengeTopAttempts(props: ChallengeTopAttemptsProps) {
 const useChallengeOptions: UseDocumentOptions = { listen: true };
 function ChallengeTopAttemptsInternal({
   challengeId,
-  viewReplay,
 }: ChallengeTopAttemptsProps) {
   const { data: challengeDoc } = useDocument<IChallenge>(
     getChallengePath(challengeId),
@@ -92,7 +90,6 @@ function ChallengeTopAttemptsInternal({
                 placing={index + 1}
                 challengeId={challengeId}
                 attempt={attempt}
-                viewReplay={viewReplay}
               />
             ))}
             {!!challenge?.readOnly?.numAttempts &&
@@ -153,26 +150,16 @@ type ChallengeTopAttemptProps = {
   attempt: WithId<IChallengeAttempt>;
   placing: number;
   showPlayerName?: boolean;
-} & Pick<ChallengeTopAttemptsProps, 'viewReplay'>;
+};
 
 export function ChallengeTopAttempt({
   placing,
   attempt,
   challengeId,
   showPlayerName,
-  viewReplay,
 }: ChallengeTopAttemptProps) {
-  const viewReplayForThisAttempt = React.useCallback(
-    () => viewReplay?.(attempt),
-    [viewReplay, attempt]
-  );
-
   const component = (
-    <FlexBox
-      position="relative"
-      onClick={viewReplayForThisAttempt}
-      sx={attemptSx}
-    >
+    <FlexBox position="relative" sx={attemptSx}>
       <FlexBox
         position="absolute"
         top={0}
@@ -216,9 +203,7 @@ export function ChallengeTopAttempt({
     </FlexBox>
   );
 
-  return viewReplay ? (
-    component
-  ) : (
+  return (
     <Link
       component={RouterLink}
       to={`${Routes.challenges}/${challengeId}?${challengeLaunchReplaySearchParam}=${attempt.id}`}

@@ -25,7 +25,6 @@ type ChallengeUIProps = {
   viewAllReplays(): void;
   canSkipChallenge: boolean;
   canViewReplays: boolean;
-  viewOtherReplay(attempt: IChallengeAttempt): void;
   isTest: boolean;
   player: IPlayer;
   isViewingReplay: boolean;
@@ -44,7 +43,6 @@ export function ChallengeUI({
   onContinue,
   retryChallenge,
   viewReplay,
-  viewOtherReplay,
   startChallenge,
   skipChallenge,
   viewAllReplays,
@@ -71,7 +69,6 @@ export function ChallengeUI({
             isTest={isTest}
             challenge={challenge}
             challengeId={challengeId}
-            // viewOtherReplay={viewOtherReplay}
             onReceivedPlayInput={startChallenge}
             onReceivedSkipInput={skipChallenge}
             onReceivedViewReplaysInput={viewAllReplays}
@@ -86,11 +83,9 @@ export function ChallengeUI({
           challengeId={challengeId}
           isTest={isTest}
           player={player}
-          //status={challengeClient.getChallengeAttempt()}
           onContinue={onContinue}
           onRetry={retryChallenge}
           onViewReplay={viewReplay}
-          viewOtherReplay={viewOtherReplay}
         />
       ) : challengeAttempt?.status === 'failed' ? (
         <ChallengeFailedView onReceivedInput={retryChallenge} />

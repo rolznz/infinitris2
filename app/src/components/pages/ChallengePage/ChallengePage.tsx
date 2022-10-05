@@ -499,7 +499,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           skipChallenge={handleContinue}
           canViewReplays={!challenge.isOfficial || canSkipChallenge}
           canSkipChallenge={canSkipChallenge}
-          viewOtherReplay={viewOtherReplay}
           isTest={isTest}
           onContinue={handleContinue}
         />

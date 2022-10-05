@@ -12,7 +12,6 @@ import { borderRadiuses, zIndexes } from '@/theme/theme';
 import Typography from '@mui/material/Typography';
 import {
   IChallenge,
-  IChallengeAttempt,
   IIngameChallengeAttempt,
   IPlayer,
 } from 'infinitris2-models';
@@ -34,7 +33,6 @@ export interface ChallengeResultsViewProps {
   onContinue(): void;
   onRetry(): void;
   onViewReplay(): void;
-  viewOtherReplay(attempt: IChallengeAttempt): void;
 }
 
 export default function ChallengeResultsView({
@@ -46,7 +44,6 @@ export default function ChallengeResultsView({
   onContinue,
   onRetry,
   onViewReplay,
-  viewOtherReplay,
 }: ChallengeResultsViewProps) {
   //const user = useUser();
   console.log('Render challenge results view');
@@ -167,7 +164,6 @@ export default function ChallengeResultsView({
             <ChallengeTopAttempts
               challengeId={challengeId}
               challenge={challenge}
-              viewReplay={viewOtherReplay}
             />
           </FlexBox>
         )}

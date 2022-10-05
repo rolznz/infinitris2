@@ -1,5 +1,5 @@
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
-import { ChallengeTopAttempt } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
+import { ChallengeTopAttemptCard } from '@/components/pages/ChallengePage/ChallengeTopAttempts';
 import { getOfficialChallengeTitle } from '@/components/pages/StoryModePage/StoryModePage';
 import { InfiniteLoader } from '@/components/ui/InfiniteLoader';
 import { Page } from '@/components/ui/Page';
@@ -185,7 +185,7 @@ function ChallengeAttemptsTab({
         ...attempt.data()!,
       };
       return (
-        <ChallengeTopAttempt
+        <ChallengeTopAttemptCard
           attempt={attemptWithId}
           placing={index + 1}
           challengeId={challengeId}

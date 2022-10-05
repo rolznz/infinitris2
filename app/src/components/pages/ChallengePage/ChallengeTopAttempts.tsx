@@ -2,10 +2,9 @@ import FlexBox from '@/components/ui/FlexBox';
 import SvgIcon from '@mui/material/SvgIcon/SvgIcon';
 import Typography from '@mui/material/Typography';
 import {
+  ChallengeTopAttempt,
   getChallengePath,
   IChallenge,
-  IChallengeAttempt,
-  WithId,
 } from 'infinitris2-models';
 import React from 'react';
 import { FormattedMessage } from 'react-intl';
@@ -85,7 +84,7 @@ function ChallengeTopAttemptsInternal({
         {topAttempts?.length ? (
           <>
             {topAttempts.map((attempt, index) => (
-              <ChallengeTopAttempt
+              <ChallengeTopAttemptCard
                 key={attempt.id}
                 placing={index + 1}
                 challengeId={challengeId}
@@ -147,12 +146,12 @@ const attemptSx: SxProps = {
 
 type ChallengeTopAttemptProps = {
   challengeId: string;
-  attempt: WithId<IChallengeAttempt>;
+  attempt: ChallengeTopAttempt;
   placing: number;
   showPlayerName?: boolean;
 };
 
-export function ChallengeTopAttempt({
+export function ChallengeTopAttemptCard({
   placing,
   attempt,
   challengeId,

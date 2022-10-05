@@ -81,9 +81,9 @@ export default function ChallengeReplayView({
               <FlexBox my={-2}>
                 <CharacterImage
                   characterId={
-                    replayAttempt.readOnly?.user?.selectedCharacterId ||
-                    player?.characterId ||
-                    DEFAULT_CHARACTER_ID
+                    (replayAttempt.readOnly
+                      ? replayAttempt.readOnly.user?.selectedCharacterId
+                      : player?.characterId) ?? DEFAULT_CHARACTER_ID
                   }
                   width={128}
                 />

@@ -20,6 +20,7 @@ type ChallengeUIProps = {
   retryChallenge(): void;
   onContinue(): void;
   viewReplay(): void;
+  onClickTopAttempt(): void;
   startChallenge(): void;
   skipChallenge(): void;
   viewAllReplays(): void;
@@ -43,6 +44,7 @@ export function ChallengeUI({
   onContinue,
   retryChallenge,
   viewReplay,
+  onClickTopAttempt,
   startChallenge,
   skipChallenge,
   viewAllReplays,
@@ -85,6 +87,7 @@ export function ChallengeUI({
           player={player}
           onContinue={onContinue}
           onRetry={retryChallenge}
+          onClickTopAttempt={onClickTopAttempt}
           onViewReplay={viewReplay}
         />
       ) : challengeAttempt?.status === 'failed' ? (

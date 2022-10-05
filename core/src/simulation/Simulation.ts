@@ -127,6 +127,9 @@ export default class Simulation implements ISimulation {
 
   destroy() {
     this.stopInterval();
+    for (const player of this.players) {
+      this.removePlayer(player.id);
+    }
     this._eventListeners.length = 0;
     this._isAlive = false;
   }

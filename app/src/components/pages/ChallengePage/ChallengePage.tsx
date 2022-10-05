@@ -11,6 +11,7 @@ import {
   getChallengeAttemptPath,
   CreatableIssueReport,
   getIssueReportPath,
+  colors,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
@@ -246,14 +247,12 @@ function ChallengePageInternal({
         (doc) => doc.id === otherAttempt.readOnly?.user?.selectedCharacterId
       );
       challengeClient!.launchOptions.player = {
-        ...challengeClient!.launchOptions.player,
+        //...challengeClient!.launchOptions.player,
         characterId:
           otherAttempt.readOnly?.user?.selectedCharacterId ||
           DEFAULT_CHARACTER_ID,
         nickname: otherAttempt.readOnly?.user?.nickname || 'Unknown Player',
-        color: replayCharacter?.color
-          ? stringToHex(replayCharacter?.color)
-          : undefined,
+        color: stringToHex(replayCharacter?.color ?? colors[0].hex),
         patternFilename: replayCharacter?.patternFilename,
         isPremium: true,
         isNicknameVerified: !!otherAttempt.readOnly?.user?.nickname?.length,
@@ -263,6 +262,9 @@ function ChallengePageInternal({
     [allCharacters, handleRetry]
   );
 
+  // FIXME: viewing someone elses' replay currently requires a full reload of this
+  // component (see forceReset). This is overcomplicated and inefficient.
+  // ideally no reset of the component would be needed, and just update the necessary state
   React.useEffect(() => {
     if (
       launchReplayChallengeAttempt &&
@@ -572,6 +574,7 @@ function ChallengePageInternal({
           canViewReplays={
             (!isTest && !challenge.isOfficial) || canSkipChallenge
           }
+          onClickTopAttempt={forceReset}
           canSkipChallenge={canSkipChallenge}
           isTest={isTest}
           onContinue={handleContinue}

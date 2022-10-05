@@ -33,6 +33,7 @@ export interface ChallengeResultsViewProps {
   onContinue(): void;
   onRetry(): void;
   onViewReplay(): void;
+  onClickTopAttempt(): void;
 }
 
 export default function ChallengeResultsView({
@@ -44,6 +45,7 @@ export default function ChallengeResultsView({
   onContinue,
   onRetry,
   onViewReplay,
+  onClickTopAttempt,
 }: ChallengeResultsViewProps) {
   //const user = useUser();
   console.log('Render challenge results view');
@@ -167,6 +169,7 @@ export default function ChallengeResultsView({
             <ChallengeTopAttempts
               challengeId={challengeId}
               challenge={challenge}
+              onClickTopAttempt={onClickTopAttempt}
             />
           </FlexBox>
         )}

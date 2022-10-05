@@ -33,6 +33,7 @@ import { useDocument, UseDocumentOptions } from 'swr-firestore';
 type ChallengeTopAttemptsProps = {
   challenge: IChallenge;
   challengeId: string;
+  onClickTopAttempt(): void;
 };
 
 export function ChallengeTopAttempts(props: ChallengeTopAttemptsProps) {
@@ -49,6 +50,7 @@ export function ChallengeTopAttempts(props: ChallengeTopAttemptsProps) {
 const useChallengeOptions: UseDocumentOptions = { listen: true };
 function ChallengeTopAttemptsInternal({
   challengeId,
+  onClickTopAttempt,
 }: ChallengeTopAttemptsProps) {
   const { data: challengeDoc } = useDocument<IChallenge>(
     getChallengePath(challengeId),
@@ -89,6 +91,7 @@ function ChallengeTopAttemptsInternal({
                 placing={index + 1}
                 challengeId={challengeId}
                 attempt={attempt}
+                onClick={onClickTopAttempt}
               />
             ))}
             {!!challenge?.readOnly?.numAttempts &&
@@ -149,6 +152,7 @@ type ChallengeTopAttemptProps = {
   attempt: ChallengeTopAttempt;
   placing: number;
   showPlayerName?: boolean;
+  onClick?(): void;
 };
 
 export function ChallengeTopAttemptCard({
@@ -156,6 +160,7 @@ export function ChallengeTopAttemptCard({
   attempt,
   challengeId,
   showPlayerName,
+  onClick,
 }: ChallengeTopAttemptProps) {
   const component = (
     <FlexBox position="relative" sx={attemptSx}>
@@ -206,6 +211,7 @@ export function ChallengeTopAttemptCard({
     <Link
       component={RouterLink}
       to={`${Routes.challenges}/${challengeId}?${challengeLaunchReplaySearchParam}=${attempt.id}`}
+      onClick={onClick}
     >
       {component}
     </Link>

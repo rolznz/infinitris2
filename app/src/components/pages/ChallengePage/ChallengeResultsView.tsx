@@ -54,7 +54,7 @@ export default function ChallengeResultsView({
     undefined,
     'large'
   );
-  useTrue(hasReceivedContinueInput, onContinue);
+  useTrue(!isTest && hasReceivedContinueInput, onContinue);
   const [hasReceivedRetryInput, retryButton] = useContinueButton(
     'r',
     <FormattedMessage
@@ -84,10 +84,13 @@ export default function ChallengeResultsView({
   const [showWinnerDisplay, setShowWinnerDisplay] = React.useState(true);
 
   React.useEffect(() => {
-    setTimeout(() => {
-      setShowWinnerDisplay(false);
-    }, 2000);
-  }, []);
+    setTimeout(
+      () => {
+        setShowWinnerDisplay(false);
+      },
+      isTest ? 500 : 2000
+    );
+  }, [isTest]);
   // TODO: add keyboard shortcuts / improve accessibility
   /*const [hasReceivedRetryInput] = useReceivedInput('r', true);
   useTrue(hasReceivedRetryInput, onRetry);
@@ -154,7 +157,7 @@ export default function ChallengeResultsView({
                 gap={1}
               >
                 {retryButton}
-                {continueButton}
+                {!isTest && continueButton}
                 {viewReplayButton}
               </FlexBox>
               {!isTest && !challenge.isOfficial && (

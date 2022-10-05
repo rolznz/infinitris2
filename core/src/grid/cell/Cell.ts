@@ -149,7 +149,7 @@ export default class Cell implements ICell {
   }
 
   addBlock(block: IBlock) {
-    if (this._blocks.find((existingBlock) => existingBlock === block)) {
+    if (this._blocks.indexOf(block) > 0) {
       throw new Error('Cannot add the same block to a cell');
     }
     this._blocks.push(block);

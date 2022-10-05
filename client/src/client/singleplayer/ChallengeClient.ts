@@ -196,13 +196,16 @@ export default class ChallengeClient
   getChallengeAttempt(): IIngameChallengeAttempt {
     const { finishCriteria, rewardCriteria } = this._challenge;
     const matchesFinishCriteria = () => {
+      if (!this._simulation.followingPlayer) {
+        return false;
+      }
       if (this._simulation.round) {
         if (this._simulation.round.winner) {
           return true;
         }
         if (
           !this._simulation.round.isWaitingForNextRound &&
-          this._simulation.humanPlayers[0].status === PlayerStatus.knockedOut
+          this._simulation.followingPlayer.status === PlayerStatus.knockedOut
         ) {
           return true;
         }
@@ -215,10 +218,13 @@ export default class ChallengeClient
       ) {
         return true;
       }
+
+      // FIXME: why does cell.blocks have a dead block in it?
+      // the cell's blocks should be removed on block.die()
       if (
         !this._simulation.grid.reducedCells.some(
           (cell) =>
-            (!cell.isEmpty || cell.blocks.length) &&
+            (!cell.isEmpty || cell.blocks.some((block) => block.isAlive)) &&
             cell.type === CellType.FinishChallenge
         )
       ) {
@@ -245,6 +251,10 @@ export default class ChallengeClient
       ) {
         return false;
       }
+      // if (!this._simulation.followingPlayer?.block?.isAlive) {
+      //   // cannot finish the challenge if the player has no block (just died)
+      //   return false;
+      // }
 
       return true;
     };
@@ -256,7 +266,8 @@ export default class ChallengeClient
       ): boolean => {
         if (this._simulation.round) {
           if (
-            this._simulation.round.winner === this._simulation.humanPlayers[0]
+            this._simulation.round.winner &&
+            this._simulation.round.winner === this._simulation.followingPlayer
           ) {
             return true;
           }

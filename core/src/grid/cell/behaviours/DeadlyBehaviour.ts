@@ -12,7 +12,6 @@ export default class DeadlyBehaviour implements ICellBehaviour {
     this._rotation = Math.random() * Math.PI * 2;
   }
   step(): void {
-    this._cell.blocks.forEach((block) => block.die());
     this._rotation += 0.01;
   }
 

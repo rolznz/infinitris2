@@ -110,7 +110,7 @@ export function CreditsPage() {
         Eugene van Staden, Linda Pettigrew, Mitchel Roy, Niamh Fitzgerald, Tim
         Bewick, Michał Marcinkowski, Saintpoida, Jonathan Derrough, Andy
         Brennenstuhl, Bruno Finger, Aaike Van Roekeghem, Tae Kasidit, Vojita,
-        Moutig
+        Moutig, yenooh
       </Typography>
 
       <Box mt={10} />

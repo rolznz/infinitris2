@@ -9,16 +9,11 @@ import {
   ICharacter,
   stringToHex,
   getChallengeAttemptPath,
-  verifyProperty,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
 import React from 'react';
-import {
-  useCollection,
-  UseCollectionOptions,
-  useDocument,
-} from 'swr-firestore';
+import { useDocument } from 'swr-firestore';
 import usePwaRedirect from '@/components/hooks/usePwaRedirect';
 import { coreGameListeners } from '@/game/listeners/coreListeners';
 import { useUser, useUserLaunchOptions } from '@/components/hooks/useUser';
@@ -43,13 +38,7 @@ import useIncompleteChallenges from '@/components/hooks/useIncompleteChallenges'
 import Routes, { RouteSubPaths } from '@/models/Routes';
 import isMobile from '@/utils/isMobile';
 import { IChallengeAttempt } from 'infinitris2-models';
-import {
-  addDoc,
-  collection,
-  getFirestore,
-  limit,
-  where,
-} from 'firebase/firestore';
+import { addDoc, collection, getFirestore } from 'firebase/firestore';
 import { challengeAttemptsPath } from 'infinitris2-models';
 import useAuthStore from '@/state/AuthStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
@@ -136,17 +125,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       : null
   );
 
-  const loggedInUserHasChallengeAttemptCollectionOptions: UseCollectionOptions =
-    React.useMemo(
-      () => ({
-        constraints: [
-          where(verifyProperty<IChallengeAttempt>('userId'), '==', userId),
-          limit(1),
-        ],
-      }),
-      [userId]
-    );
-
   const isTest = isTestChallenge(challengeId);
   console.log('isTest', isTest);
 
@@ -160,15 +138,6 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
   const challenge: IChallenge | undefined = isTest
     ? useChallengeEditorStore.getState().challenge
     : syncedChallenge?.data();
-
-  const userHasOfflineCompletionRecord =
-    (user.offlineCompletedChallengeIds ?? []).indexOf(challengeId) >= 0;
-  const { data: loggedInFirstChallengeAttempt } = useCollection(
-    userId && !userHasOfflineCompletionRecord ? challengeAttemptsPath : null,
-    loggedInUserHasChallengeAttemptCollectionOptions
-  );
-  const hasPreviouslyCompletedChallenge =
-    userHasOfflineCompletionRecord || !!loggedInFirstChallengeAttempt?.length;
 
   const allCharacters = useCachedCollection<ICharacter>(charactersPath);
   const player = useNetworkPlayerInfo();
@@ -528,7 +497,7 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
           viewReplay={viewReplay}
           viewAllReplays={viewAllReplays}
           skipChallenge={handleContinue}
-          canViewReplays={hasPreviouslyCompletedChallenge || canSkipChallenge}
+          canViewReplays={!challenge.isOfficial || canSkipChallenge}
           canSkipChallenge={canSkipChallenge}
           viewOtherReplay={viewOtherReplay}
           isTest={isTest}

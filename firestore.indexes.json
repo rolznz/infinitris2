@@ -97,6 +97,20 @@
       ]
     },
     {
+      "collectionGroup": "challenges",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isOfficial",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "readOnly.createdTimestamp._seconds",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "characters",
       "queryScope": "COLLECTION",
       "fields": [

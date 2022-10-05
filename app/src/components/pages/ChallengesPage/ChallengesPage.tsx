@@ -69,10 +69,11 @@ const challengesRatingFilter: UseCollectionOptions = {
   ],
 };
 
+// FIXME: bug in Firebase causes incorrect date sorting on where condition
 const challengesDateFilter: UseCollectionOptions = {
   constraints: [
     where('isOfficial', '==', false),
-    orderBy('readOnly.createdTimestamp', 'desc'),
+    orderBy('readOnly.createdTimestamp._seconds', 'desc'),
   ],
 };
 

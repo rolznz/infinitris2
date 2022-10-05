@@ -249,6 +249,7 @@ export function ChallengeEditorSettingsForm({
           'Please test and complete the challenge first to ensure it is completable',
           { variant: 'error' }
         );
+        setIsLoading(false);
         return;
       }
       if (
@@ -293,6 +294,8 @@ export function ChallengeEditorSettingsForm({
           enqueueSnackbar('Failed to publish challenge', { variant: 'error' });
           setIsLoading(false);
         }
+      } else {
+        setIsLoading(false);
       }
     },
     [

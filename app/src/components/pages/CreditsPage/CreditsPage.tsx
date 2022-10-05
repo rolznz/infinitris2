@@ -80,6 +80,26 @@ export function CreditsPage() {
           role="Soundtrack"
           url="https://www.youtube.com/channel/UCzURFiRW3N2hoJupZ4AEGMg"
         />
+        <FlexBox flexDirection="row">
+          <PrimaryContributor
+            characterId={286}
+            name="AL"
+            role="Ideas & Testing"
+            url="https://www.youtube.com/channel/UCzURFiRW3N2hoJupZ4AEGMg"
+          />
+          <PrimaryContributor
+            characterId={427}
+            name="nick666101"
+            role="Ideas & Testing"
+            url="https://www.youtube.com/channel/UCzURFiRW3N2hoJupZ4AEGMg"
+          />
+          <PrimaryContributor
+            characterId={278}
+            name="Koishi"
+            role="Ideas & Testing"
+            url="https://www.youtube.com/channel/UCzURFiRW3N2hoJupZ4AEGMg"
+          />
+        </FlexBox>
       </FlexBox>
       <Box mt={10} />
       <Typography variant="h4">Special Thanks</Typography>
@@ -89,7 +109,8 @@ export function CreditsPage() {
         Burch, Charles Liu, Nick van der Vis, Koishi, Nust Ered, Seth Reid,
         Eugene van Staden, Linda Pettigrew, Mitchel Roy, Niamh Fitzgerald, Tim
         Bewick, Michał Marcinkowski, Saintpoida, Jonathan Derrough, Andy
-        Brennenstuhl, Bruno Finger, Aaike Van Roekeghem, Tae Kasidit
+        Brennenstuhl, Bruno Finger, Aaike Van Roekeghem, Tae Kasidit, Vojita,
+        Moutig
       </Typography>
 
       <Box mt={10} />
@@ -100,13 +121,6 @@ export function CreditsPage() {
           title="Pixel Buddha"
         >
           Pixel Buddha
-        </Link>
-      </Typography>
-      <Box mt={10} />
-      <Typography variant="body2">
-        Flags by&nbsp;
-        <Link href="https://flagcdn.com" title="Flag CDN">
-          Flag CDN
         </Link>
       </Typography>
       <Box mt={10} />

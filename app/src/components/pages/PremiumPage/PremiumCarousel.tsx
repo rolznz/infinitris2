@@ -14,6 +14,8 @@ import rateChallengesImage from './assets/rate_challenges.svg';
 import rateChallengesImageMobile from './assets/rate_challenges_mobile.svg';
 import competeInCommunityChallengesImage from './assets/compete_community_challenges.svg';
 import competeInCommunityChallengesImageMobile from './assets/compete_community_challenges_mobile.svg';
+import earnImpactImage from './assets/earn_impact.svg';
+import earnImpactImageMobile from './assets/earn_impact_mobile.svg';
 import comingSoonImage from './assets/coming_soon.svg';
 import comingSoonImageMobile from './assets/coming_soon_mobile.svg';
 import { FormattedMessage } from 'react-intl';
@@ -105,7 +107,7 @@ const titleColors = [
   '#FFE600',
   '#FFA800',
   '#FFA800',
-  '#FFA800',
+  '#D2A1F8',
   '#FFA800',
   '#FFA800',
 ];
@@ -122,7 +124,7 @@ export function PremiumCarousel() {
             rateChallengesImage,
             comingSoonImage,
             comingSoonImage,
-            comingSoonImage,
+            earnImpactImage,
             comingSoonImage,
             comingSoonImage,
           ]
@@ -133,7 +135,7 @@ export function PremiumCarousel() {
             rateChallengesImageMobile,
             comingSoonImageMobile,
             comingSoonImageMobile,
-            comingSoonImageMobile,
+            earnImpactImageMobile,
             comingSoonImageMobile,
             comingSoonImageMobile,
           ],
@@ -166,7 +168,7 @@ export function PremiumCarousel() {
             <Typography variant="h1" color={titleColors[i]}>
               {titles[i]}
             </Typography>
-            <Typography variant="h6" color={colors.white} maxWidth="35vw">
+            <Typography variant="h6" color={colors.white} maxWidth="30vw">
               {subtitles[i]}
             </Typography>
           </FlexBox>

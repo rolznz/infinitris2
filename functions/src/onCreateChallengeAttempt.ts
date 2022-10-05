@@ -1,6 +1,7 @@
 import * as functions from 'firebase-functions';
 import {
   challengeAttemptsPath,
+  ChallengeTopAttempt,
   getChallengePath,
   getUserPath,
   IChallenge,
@@ -171,10 +172,21 @@ export async function updateChallengeTopAttempts(
   const updateChallenge = objectToDotNotation<IChallenge>(
     {
       readOnly: {
-        topAttempts: topAttempts.docs.map((doc) => ({
-          ...(doc.data() as IChallengeAttempt),
-          id: doc.id,
-        })),
+        topAttempts: topAttempts.docs.map((doc) => {
+          const topAttempt: IChallengeAttempt = doc.data() as IChallengeAttempt;
+          const challengeTopAttempt: ChallengeTopAttempt = {
+            created: topAttempt.created,
+            medalIndex: topAttempt.medalIndex,
+            stats: topAttempt.stats,
+            status: topAttempt.status,
+            userId: topAttempt.userId,
+            readOnly: topAttempt.readOnly,
+            clientVersion: topAttempt.clientVersion,
+            id: doc.id,
+          };
+
+          return challengeTopAttempt;
+        }),
       },
     },
     ['readOnly.topAttempts']

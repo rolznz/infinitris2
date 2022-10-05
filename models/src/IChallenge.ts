@@ -16,13 +16,17 @@ export interface IRateable {
   readonly summedRating: number;
   readonly rating: number;
 }
+
+export type ChallengeTopAttempt = WithId<
+  Omit<IChallengeAttempt, 'recording' | 'challengeId'>
+>;
 export interface IChallengeReadOnlyProperties
   extends IEntityReadOnlyProperties,
     IRateable {
   readonly numAttempts: number;
   readonly thumbnail?: string;
   readonly user?: Pick<IUser['readOnly'], 'nickname'>;
-  readonly topAttempts?: WithId<IChallengeAttempt>[];
+  readonly topAttempts?: ChallengeTopAttempt[];
 }
 
 export type CreatableChallenge = Creatable<IChallenge>;

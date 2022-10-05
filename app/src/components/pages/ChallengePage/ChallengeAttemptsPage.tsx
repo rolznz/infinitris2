@@ -45,6 +45,9 @@ export function ChallengeAttemptsPage() {
     getChallengePath(challengeId)
   );
   const userId = useAuthStore((store) => store.user?.uid);
+  React.useEffect(() => {
+    resetCachedChallengeAttempts();
+  }, []);
   if (!challengeDoc) {
     return null;
   }
@@ -104,15 +107,18 @@ export function ChallengeAttemptsPage() {
 // TODO: add myAttempts option to show only the current player's best
 export type ChallengeAttemptsFilterType = 'all' | 'pbsOnly';
 
-const resetCachedChallengeAttempts = () => ({
-  all: [],
-  pbsOnly: [],
-});
+const resetCachedChallengeAttempts = () => {
+  cachedChallengeAttempts = {
+    all: [],
+    pbsOnly: [],
+  };
+};
 
 let cachedChallengeAttempts: Record<
   ChallengeAttemptsFilterType,
   QueryDocumentSnapshot<IChallengeAttempt>[]
-> = resetCachedChallengeAttempts();
+>;
+resetCachedChallengeAttempts();
 let cachedChallengeId: string;
 
 type ChallengeAttemptsTabProps = {
@@ -124,7 +130,7 @@ function ChallengeAttemptsTab({
   filterType,
 }: ChallengeAttemptsTabProps) {
   if (cachedChallengeId !== challengeId) {
-    cachedChallengeAttempts = resetCachedChallengeAttempts();
+    resetCachedChallengeAttempts();
     cachedChallengeId = challengeId;
   }
   const [challengeAttempts, setChallengeAttempts] = React.useState<

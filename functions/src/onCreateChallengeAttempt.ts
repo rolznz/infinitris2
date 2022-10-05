@@ -112,7 +112,7 @@ async function announceTopAttempt(
   }
 }
 
-async function updatePlayerTopChallengeAttempt(
+export async function updatePlayerTopChallengeAttempt(
   challengeAttempt: IChallengeAttempt,
   challengeAttemptRef: FirestoreDocRef
 ) {

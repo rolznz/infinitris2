@@ -203,6 +203,9 @@ export default class ClientApi implements IClientApi {
       const challengeClient = this.launchChallenge(
         challenge,
         {
+          onRecordPlayerUnexpectedEnd: () => {
+            alert('Unexpected end of recording');
+          },
           onAttempt: (attempt) => {
             if (
               attempt.status === 'success' &&

@@ -215,6 +215,24 @@ service cloud.firestore {
       allow delete: if false;
       allow read: if true;
     }
+    match /issueReports/{issueReportId} {
+      function isValidCollection() {
+        return request.resource.data.entityCollectionPath == 'challengeAttempts';
+      }
+    	function isValidIssueReport() {
+        let entity = getEntityFromCollection();
+      	return
+          baseRequestValid() &&
+          entityHasExpectedFields(['created', 'entityCollectionPath', 'entityId']) &&
+          issueReportId == getUniqueUserEntityId() &&
+          isValidCollection() &&
+          entity != null;
+      }
+      allow create: if isValidIssueReport();
+      allow update: if false;
+      allow delete: if false;
+      allow read: if false;
+    }
     match /purchases/{purchaseId} {
       function isValidCollection() {
         return request.resource.data.entityCollectionPath == 'characters';

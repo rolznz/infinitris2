@@ -99,7 +99,9 @@ export default class ChallengeClient
   onSimulationPreStep() {
     // TODO: shouldn't the simulation be paused while waiting for the next round?
     if (this._recording && !this._simulation?.round?.isWaitingForNextRound) {
-      this._recordPlayer.step();
+      if (!this._recordPlayer.step()) {
+        this._listener.onRecordPlayerUnexpectedEnd();
+      }
     }
   }
 

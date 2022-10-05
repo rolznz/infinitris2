@@ -9,6 +9,8 @@ import {
   ICharacter,
   stringToHex,
   getChallengeAttemptPath,
+  CreatableIssueReport,
+  getIssueReportPath,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
@@ -38,7 +40,13 @@ import useIncompleteChallenges from '@/components/hooks/useIncompleteChallenges'
 import Routes, { RouteSubPaths } from '@/models/Routes';
 import isMobile from '@/utils/isMobile';
 import { IChallengeAttempt } from 'infinitris2-models';
-import { addDoc, collection, getFirestore } from 'firebase/firestore';
+import {
+  addDoc,
+  collection,
+  doc,
+  getFirestore,
+  setDoc,
+} from 'firebase/firestore';
 import { challengeAttemptsPath } from 'infinitris2-models';
 import useAuthStore from '@/state/AuthStore';
 import removeUndefinedValues from '@/utils/removeUndefinedValues';
@@ -58,12 +66,24 @@ export const isTestChallenge = (challengeId?: string) => challengeId === 'test';
 let challengeClient: IChallengeClient | undefined;
 let recordedChallengeAttempt: IIngameChallengeAttempt | undefined;
 let lastCompletedGrid: IChallenge['grid'];
+let reportedChallengeAttemptIds: string[] = [];
 
 export default function ChallengePage() {
   const { id } = useParams<ChallengePageRouteParams>();
+  const [resetKey, _setResetKey] = React.useState(0);
+  const forceReset = React.useCallback(
+    () => _setResetKey((current) => current + 1),
+    []
+  );
 
   useReleaseClientOnExitPage(true);
-  return <ChallengePageInternal key={id} challengeId={id!} />;
+  return (
+    <ChallengePageInternal
+      key={id + resetKey}
+      forceReset={forceReset}
+      challengeId={id!}
+    />
+  );
 }
 
 export function getLastCompletedGrid() {
@@ -105,9 +125,13 @@ async function saveChallengeAttempt(
 
 type ChallengePageInternalProps = {
   challengeId: string;
+  forceReset(): void;
 };
 
-function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
+function ChallengePageInternal({
+  challengeId,
+  forceReset,
+}: ChallengePageInternalProps) {
   const appStore = useAppStore();
   const client = appStore.clientApi;
   const clientVersion = client?.getVersion();
@@ -324,6 +348,52 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
       challengeClient = launchChallenge(
         challenge,
         {
+          onRecordPlayerUnexpectedEnd: () => {
+            if (
+              launchReplayChallengeAttemptId &&
+              reportedChallengeAttemptIds.indexOf(
+                launchReplayChallengeAttemptId
+              ) < 0 &&
+              challengeClient?.recording &&
+              JSON.stringify(challengeClient.recording) ===
+                JSON.stringify(launchReplayChallengeAttempt!.data()?.recording)
+            ) {
+              reportedChallengeAttemptIds.push(launchReplayChallengeAttemptId);
+              enqueueSnackbar(
+                'Unexpected end of recording. Recording will be reported.',
+                { variant: 'error' }
+              );
+              if (userId) {
+                (async () => {
+                  try {
+                    const issueReport: CreatableIssueReport = {
+                      created: false,
+                      entityCollectionPath: 'challengeAttempts',
+                      entityId: launchReplayChallengeAttemptId,
+                      userId,
+                    };
+                    await setDoc(
+                      doc(
+                        getFirestore(),
+                        getIssueReportPath(
+                          issueReport.entityCollectionPath,
+                          issueReport.entityId,
+                          issueReport.userId
+                        )
+                      ),
+                      issueReport
+                    );
+                    return true;
+                  } catch (error) {
+                    console.error('Failed to report issue', error);
+                    return false;
+                  }
+                })();
+              }
+              history.replace(`${Routes.challenges}/${challengeId}`);
+              forceReset();
+            }
+          },
           onChallengeReady(simulation: ISimulation) {
             useIngameStore.getState().setSimulation(simulation);
           },
@@ -458,6 +528,8 @@ function ChallengePageInternal({ challengeId }: ChallengePageInternalProps) {
     enqueueSnackbar,
     launchReplayChallengeAttemptId,
     launchReplayChallengeAttempt,
+    history,
+    forceReset,
   ]);
 
   if (!hasLaunched || !challenge || !simulation) {

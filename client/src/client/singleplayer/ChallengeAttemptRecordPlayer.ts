@@ -12,9 +12,9 @@ export class ChallengeAttemptRecordPlayer {
     this._player = player;
   }
 
-  step() {
+  step(): boolean {
     if (!this._recording || this._frame >= this._recording.frames.length) {
-      return;
+      return false;
     }
     const frame = this._recording.frames[this._frame++];
     if (frame.actions) {
@@ -22,5 +22,6 @@ export class ChallengeAttemptRecordPlayer {
         this._player.fireActionNextFrame(action);
       }
     }
+    return true;
   }
 }

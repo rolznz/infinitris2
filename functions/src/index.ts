@@ -8,6 +8,7 @@ export * from './onCreateConversion';
 export * from './onCreateNickname';
 export * from './onCreatePurchase';
 export * from './onUpdateRoom';
+export * from './onCreateIssueReport';
 
 export * from './schedules';
 export * from './webhooks/index';

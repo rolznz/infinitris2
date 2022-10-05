@@ -65,7 +65,12 @@ export default class RockBehaviour implements ICellBehaviour {
 
   step(): void {
     const belowCell = this._grid.cells[this._cell.row + 1]?.[this._cell.column];
-    if (
+    if (belowCell?.blocks.length) {
+      for (const block of belowCell.blocks) {
+        block.die();
+      }
+      this._remove();
+    } else if (
       !belowCell ||
       !belowCell.isPassable ||
       !belowCell.behaviour.isReplaceable

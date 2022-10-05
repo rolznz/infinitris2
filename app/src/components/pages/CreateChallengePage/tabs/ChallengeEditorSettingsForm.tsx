@@ -34,7 +34,6 @@ import { createNewChallenge } from '@/components/pages/CreateChallengePage/creat
 import { useUser } from '@/components/hooks/useUser';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
-import { getLastCompletedGrid } from '@/components/pages/ChallengePage/ChallengePage';
 import { useSnackbar } from 'notistack';
 import {
   ChallengesPageSortType,
@@ -106,11 +105,20 @@ export function ChallengeEditorSettingsForm({
   challenge,
   updateFormKey,
 }: ChallengeEditorSettingsFormProps) {
-  const [setChallenge, setChallengeId, existingChallengeId] =
-    useChallengeEditorStore(
-      (store) => [store.setChallenge, store.setChallengeId, store.challengeId],
-      shallow
-    );
+  const [
+    setChallenge,
+    setChallengeId,
+    existingChallengeId,
+    setLastCompletedTestGrid,
+  ] = useChallengeEditorStore(
+    (store) => [
+      store.setChallenge,
+      store.setChallengeId,
+      store.challengeId,
+      store.setLastCompletedTestGrid,
+    ],
+    shallow
+  );
   const [isLoading, setIsLoading] = React.useState(false);
   const [challengeIdToPublish, setChallengeIdToPublish] = React.useState<
     string | undefined
@@ -164,6 +172,7 @@ export function ChallengeEditorSettingsForm({
       setChallengeIdToPublish(undefined);
       setChallenge(undefined);
       setChallengeId(undefined);
+      setLastCompletedTestGrid(undefined);
       setIsLoading(false);
       reset();
       enqueueSnackbar('Challenge Published Successfully!');
@@ -184,6 +193,7 @@ export function ChallengeEditorSettingsForm({
     enqueueSnackbar,
     challenge.isTemplate,
     challenge.isOfficial,
+    setLastCompletedTestGrid,
   ]);
 
   const { title } = watch();
@@ -218,8 +228,9 @@ export function ChallengeEditorSettingsForm({
       reset();
       setChallenge(undefined);
       setChallengeId(undefined);
+      setLastCompletedTestGrid(undefined);
     }
-  }, [reset, setChallenge, setChallengeId]);
+  }, [reset, setChallenge, setChallengeId, setLastCompletedTestGrid]);
 
   const onSubmit = React.useCallback(
     async (data: SettingsFormData) => {
@@ -229,7 +240,11 @@ export function ChallengeEditorSettingsForm({
       }
       setIsLoading(true);
 
-      if (getLastCompletedGrid() !== challenge.grid && !skipCompleteChallenge) {
+      if (
+        useChallengeEditorStore.getState().lastCompletedTestGrid !==
+          challenge.grid &&
+        !skipCompleteChallenge
+      ) {
         enqueueSnackbar(
           'Please test and complete the challenge first to ensure it is completable',
           { variant: 'error' }

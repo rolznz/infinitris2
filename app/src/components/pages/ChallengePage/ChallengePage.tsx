@@ -66,7 +66,6 @@ export const isTestChallenge = (challengeId?: string) => challengeId === 'test';
 
 let challengeClient: IChallengeClient | undefined;
 let recordedChallengeAttempt: IIngameChallengeAttempt | undefined;
-let lastCompletedGrid: IChallenge['grid'];
 let reportedChallengeAttemptIds: string[] = [];
 
 export default function ChallengePage() {
@@ -85,10 +84,6 @@ export default function ChallengePage() {
       challengeId={id!}
     />
   );
-}
-
-export function getLastCompletedGrid() {
-  return lastCompletedGrid;
 }
 
 async function saveChallengeAttempt(
@@ -431,8 +426,14 @@ function ChallengePageInternal({
                   }
                 })();
               }
-              if (attempt.status === 'success' && isTest) {
-                lastCompletedGrid = challenge.grid;
+              if (
+                attempt.status === 'success' &&
+                isTest &&
+                typeof challenge.grid === 'string'
+              ) {
+                useChallengeEditorStore
+                  .getState()
+                  .setLastCompletedTestGrid(challenge.grid);
               }
               if (attempt.status === 'success' && challenge.isOfficial) {
                 unlockFeature(user.unlockedFeatures, 'playTypePicker');

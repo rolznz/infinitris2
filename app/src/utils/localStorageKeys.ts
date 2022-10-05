@@ -4,6 +4,7 @@ const localStorageKeys = {
   loggedIn: `${prefix}loggedIn`,
   challenge: `${prefix}challenge`,
   challengeId: `${prefix}challengeId`,
+  lastCompletedTestGrid: `${prefix}lastCompletedTestGrid`,
   referredByAffiliateId: `${prefix}affiliateLinkRef`,
   cache: `${prefix}cache`,
 };

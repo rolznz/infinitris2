@@ -9,8 +9,10 @@ import create from 'zustand';
 type ChallengeEditorStore = {
   challenge?: IChallenge;
   challengeId?: string;
+  lastCompletedTestGrid?: string | undefined;
   setChallenge(challenge: IChallenge | undefined): void;
   setChallengeId(challengeId: string | undefined): void;
+  setLastCompletedTestGrid(lastCompletedTestGrid: string | undefined): void;
   isEditing?: boolean;
   setIsEditing(isEditing: boolean): void;
   editor?: IChallengeEditor;
@@ -40,6 +42,8 @@ const useChallengeEditorStore = create<ChallengeEditorStore>((set) => ({
   challengeCellType: ChallengeCellType.Full,
   challenge: loadExistingChallenge(),
   challengeId: loadExistingChallengeId(),
+  lastCompletedTestGrid:
+    localStorage.getItem(localStorageKeys.lastCompletedTestGrid) ?? undefined,
   setChallenge: (challenge: IChallenge | undefined) =>
     set((_) => {
       if (challenge) {
@@ -60,6 +64,18 @@ const useChallengeEditorStore = create<ChallengeEditorStore>((set) => ({
         localStorage.removeItem(localStorageKeys.challengeId);
       }
       return { challengeId };
+    }),
+  setLastCompletedTestGrid: (lastCompletedTestGrid: string | undefined) =>
+    set((_) => {
+      if (lastCompletedTestGrid) {
+        localStorage.setItem(
+          localStorageKeys.lastCompletedTestGrid,
+          lastCompletedTestGrid
+        );
+      } else {
+        localStorage.removeItem(localStorageKeys.lastCompletedTestGrid);
+      }
+      return { lastCompletedTestGrid };
     }),
   setIsEditing: (isEditing: boolean) => set((_) => ({ isEditing })),
   setEditor: (editor: IChallengeEditor | undefined) => set((_) => ({ editor })),

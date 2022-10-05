@@ -1,7 +1,8 @@
 import { INITIAL_FALL_DELAY } from '@core/block/Block';
-import { FRAME_LENGTH } from '@core/simulation/Simulation';
+import { FRAME_LENGTH } from '@core/simulation/simulationConstants';
 import CellType from '@models/CellType';
 import ChallengeCellType from '@models/ChallengeCellType';
+import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 import IGrid from '@models/IGrid';
@@ -58,14 +59,13 @@ export default class RockBehaviour implements ICellBehaviour {
       rockFilenames[Math.floor(Math.random() * rockFilenames.length)];
   }
 
+  onAddBlock(block: IBlock) {
+    block.die();
+  }
+
   step(): void {
     const belowCell = this._grid.cells[this._cell.row + 1]?.[this._cell.column];
-    if (belowCell?.blocks.length) {
-      for (const block of belowCell.blocks) {
-        block.die();
-      }
-      this._remove();
-    } else if (
+    if (
       !belowCell ||
       !belowCell.isPassable ||
       !belowCell.behaviour.isReplaceable

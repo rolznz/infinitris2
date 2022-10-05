@@ -1,5 +1,5 @@
 import { getScoreBasedFallDelay } from '@core/gameModes/InfinityGameMode';
-import { FRAME_LENGTH } from '@core/simulation/Simulation';
+import { IDEAL_FPS } from '@core/simulation/simulationConstants';
 import { GameModeEvent } from '@models/GameModeEvent';
 import { IGameMode } from '@models/IGameMode';
 import { IPlayer } from '@models/IPlayer';
@@ -190,8 +190,7 @@ export class GarbageDefenseGameMode
           cells: nextCellsToFill,
           isSynced: true,
         });
-        this._nextFillFrame =
-          this._simulation.frameNumber + (1000 / FRAME_LENGTH) * 1;
+        this._nextFillFrame = this._simulation.frameNumber + IDEAL_FPS * 1;
       }
     }
   }
@@ -232,9 +231,7 @@ export class GarbageDefenseGameMode
     // TODO: consider making the speed more variable?
     this._nextGarbageFrame =
       this._simulation.frameNumber +
-      (1000 / FRAME_LENGTH) *
-        10 *
-        (1 - Math.min(this._level, maxLevel - 1) / maxLevel);
+      IDEAL_FPS * 10 * (1 - Math.min(this._level, maxLevel - 1) / maxLevel);
   }
 
   private _getDeathRow(): number {

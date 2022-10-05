@@ -39,12 +39,8 @@ import { BattleGameMode } from '@core/gameModes/BattleGameMode';
 import { wrap, wrappedDistance } from '@core/utils/wrap';
 import { GarbageDefenseGameMode } from '@core/gameModes/GarbageDefenseGameMode';
 import { EscapeGameMode } from '@core/gameModes/EscapeGameMode/EscapeGameMode';
+import { FRAME_LENGTH, IDEAL_FPS } from '@core/simulation/simulationConstants';
 
-const IDEAL_FPS = 60;
-/**
- * The length of a single animation frame for the simulation.
- */
-export const FRAME_LENGTH: number = 1000 / IDEAL_FPS;
 /**
  * Multiple frames can be executed in one go in order
  * to attempt to run at 60fps

@@ -5,7 +5,7 @@ import IGrid from '@models/IGrid';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { IPlayer } from '@models/IPlayer';
 import { KeyedRandom } from '@core/simulation/KeyedRandom';
-import { FRAME_LENGTH } from '@core/simulation/Simulation';
+import { IDEAL_FPS } from '@core/simulation/simulationConstants';
 
 export const MAX_COLUMNS = 100000;
 export const MAX_ROWS = 100000;
@@ -139,8 +139,7 @@ export default class Grid implements IGrid {
     this._nextLinesToClear = [...this._nextLinesToClear, ...rowsToClear]
       .filter((row, i, rows) => rows.indexOf(row) === i) // get unique rows
       .sort((a, b) => b - a); // clear row closest to the ground first
-    this._nextLineClearFrame =
-      this._frameNumber + Math.floor(1000 / FRAME_LENGTH);
+    this._nextLineClearFrame = this._frameNumber + IDEAL_FPS;
   }
 
   clearLines(rowsToClear: number[]) {

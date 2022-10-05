@@ -60,12 +60,14 @@ export default class RockBehaviour implements ICellBehaviour {
   }
 
   onAddBlock(block: IBlock) {
-    block.die();
+    if (this._initialDelay <= 0) {
+      block.die();
+    }
   }
 
   step(): void {
     const belowCell = this._grid.cells[this._cell.row + 1]?.[this._cell.column];
-    if (belowCell?.blocks.length) {
+    if (belowCell?.blocks.length && this._initialDelay <= 0) {
       for (const block of belowCell.blocks) {
         block.die();
       }

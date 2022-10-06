@@ -115,6 +115,20 @@
       ]
     },
     {
+      "collectionGroup": "challenges",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isOfficial",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "title",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
       "collectionGroup": "characters",
       "queryScope": "COLLECTION",
       "fields": [

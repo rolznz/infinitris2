@@ -1,5 +1,5 @@
 import { UseCollectionOptions } from 'swr-firestore';
-import { challengesPath, IChallenge } from 'infinitris2-models';
+import { challengesPath, IChallenge, verifyProperty } from 'infinitris2-models';
 import React from 'react';
 
 import FlexBox from '../../ui/FlexBox';
@@ -25,12 +25,15 @@ import useSearchParam from 'react-use/lib/useSearchParam';
 import { InfiniteLoader } from '@/components/ui/InfiniteLoader';
 import { useIsLandscape } from '@/components/hooks/useIsLandscape';
 import useWindowSize from 'react-use/lib/useWindowSize';
+import TextField from '@mui/material/TextField';
+import { debounce } from 'ts-debounce';
 
 const ChallengesPageSortTypeValues = [
   'mostPlays',
   'mostRatings',
   'rating',
   'latest',
+  'search',
 ] as const;
 export type ChallengesPageSortType =
   typeof ChallengesPageSortTypeValues[number];
@@ -44,6 +47,7 @@ const cachedChallenges: Record<
   mostRatings: [],
   rating: [],
   latest: [],
+  search: [],
 };
 
 const challengesMostPlaysFilter: UseCollectionOptions = {
@@ -78,12 +82,36 @@ const challengesDateFilter: UseCollectionOptions = {
 
 function ChallengesPageChallengeList({
   sortType,
+  searchQuery,
 }: {
   sortType: ChallengesPageSortType;
+  searchQuery: string;
 }) {
   const [challenges, setChallenges] = React.useState<
     QueryDocumentSnapshot<IChallenge>[]
   >(cachedChallenges[sortType]);
+
+  React.useEffect(() => {
+    if (sortType === 'search') {
+      // reset challenges when search query changes
+      setChallenges([]);
+    }
+  }, [sortType, searchQuery]);
+
+  const searchChallengesFilter: UseCollectionOptions = React.useMemo(
+    () => ({
+      constraints: [
+        where('isOfficial', '==', false),
+        where(verifyProperty<IChallenge>('title'), '>=', searchQuery),
+        where(
+          verifyProperty<IChallenge>('title'),
+          '<=',
+          searchQuery + '\uf8ff'
+        ),
+      ],
+    }),
+    [searchQuery]
+  );
 
   const onNewItemsLoaded = React.useCallback(
     (newItems: QueryDocumentSnapshot<IChallenge>[]) => {
@@ -123,7 +151,9 @@ function ChallengesPageChallengeList({
           ? challengesMostRatingsFilter
           : sortType === 'rating'
           ? challengesRatingFilter
-          : challengesDateFilter
+          : sortType === 'latest'
+          ? challengesDateFilter
+          : searchChallengesFilter
       }
       justifyContent="center"
     />
@@ -141,6 +171,19 @@ export function ChallengesPage() {
     sortParam && ChallengesPageSortTypeValues.indexOf(sortParam) > -1
       ? sortParam
       : 'mostRatings'
+  );
+
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const updateSearchQuery = React.useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      cachedChallenges['search'] = [];
+      setSearchQuery(event.target.value);
+    },
+    []
+  );
+  const debouncedUpdateSearchQuery = React.useMemo(
+    () => debounce(updateSearchQuery, 500),
+    [updateSearchQuery]
   );
 
   //const isLandscape = useIsLandscape();
@@ -180,21 +223,40 @@ export function ChallengesPage() {
                   defaultMessage="Latest"
                   description="Challenges Page Latest filter"
                 />
-              ) : (
+              ) : filterType === 'rating' ? (
                 <FormattedMessage
                   defaultMessage="Highest Rated"
                   description="Challenges Page Highest Rated filter"
+                />
+              ) : (
+                <FormattedMessage
+                  defaultMessage="Search"
+                  description="Challenges Page Search filter"
                 />
               )}
             </MenuItem>
           ))}
         </Select>
       </FlexBox>
+      {sortType === 'search' && (
+        <FlexBox mb={2}>
+          <TextField
+            placeholder="Search"
+            variant="outlined"
+            defaultValue={searchQuery}
+            onChange={debouncedUpdateSearchQuery}
+          />
+        </FlexBox>
+      )}
 
       {/* use a unique list for each sort type */}
       {ChallengesPageSortTypeValues.map((value) =>
-        sortType === value ? (
-          <ChallengesPageChallengeList key={sortType} sortType={sortType} />
+        sortType === value && (value !== 'search' || searchQuery.length > 0) ? (
+          <ChallengesPageChallengeList
+            key={sortType}
+            sortType={sortType}
+            searchQuery={searchQuery}
+          />
         ) : null
       )}
     </Page>

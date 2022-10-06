@@ -300,7 +300,7 @@ function ChallengePageInternal({
     } else if (incompleteChallenges.length) {
       history.replace(`${Routes.challenges}/${incompleteChallenges[0].id}`);
     } else {
-      history.replace(Routes.home);
+      history.replace(Routes.worldComplete);
     }
   }, [
     hasContinued,

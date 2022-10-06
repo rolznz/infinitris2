@@ -28,6 +28,7 @@ enum Routes {
   play = '/play',
   pwa = '/pwa',
   storyMode = '/story-mode',
+  worldComplete = '/world-complete',
   premium = '/premium',
   trailerFeature = '/trailer-feature',
   trailerCharacter = '/trailer-character',

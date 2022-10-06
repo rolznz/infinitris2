@@ -46,6 +46,7 @@ import useRouterStore from '@/state/RouterStore';
 import { PremiumPage } from '@/components/pages/PremiumPage/PremiumPage';
 import useLoaderStore from '@/state/LoaderStore';
 import { TrailerCharacterPage } from '@/components/pages/TrailerFeaturePage/TrailerCharacterPage';
+import { WorldCompletePage } from '@/components/pages/StoryModePage/WorldCompletePage';
 
 const coinsDisplayPaths = [Routes.market, Routes.profile];
 
@@ -148,6 +149,9 @@ function RouterContents() {
         </Route>
         <Route exact path={Routes.storyMode}>
           <StoryModePage />
+        </Route>
+        <Route exact path={Routes.worldComplete}>
+          <WorldCompletePage />
         </Route>
         <Route exact path={Routes.comingSoon}>
           <ComingSoonPage />

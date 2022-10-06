@@ -12,6 +12,7 @@ import {
   CreatableIssueReport,
   getIssueReportPath,
   colors,
+  removeUndefinedValues,
 } from 'infinitris2-models';
 //import useForcedRedirect from '../../hooks/useForcedRedirect';
 import { useHistory, useParams } from 'react-router-dom';
@@ -50,7 +51,6 @@ import {
 } from 'firebase/firestore';
 import { challengeAttemptsPath } from 'infinitris2-models';
 import useAuthStore from '@/state/AuthStore';
-import removeUndefinedValues from '@/utils/removeUndefinedValues';
 import { DEFAULT_CHARACTER_ID } from '@/state/LocalUserStore';
 import { useSnackbar } from 'notistack';
 import useSearchParam from 'react-use/lib/useSearchParam';

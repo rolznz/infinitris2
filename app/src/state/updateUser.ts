@@ -18,8 +18,8 @@ import {
   UnlockableFeature,
   GridLineType,
   BlockShadowType,
+  removeUndefinedValues,
 } from 'infinitris2-models';
-import removeUndefinedValues from '../utils/removeUndefinedValues';
 import useAuthStore from './AuthStore';
 import useLocalUserStore, { LocalUser } from './LocalUserStore';
 import { getAuth, signOut as signOutAuthUser } from 'firebase/auth';

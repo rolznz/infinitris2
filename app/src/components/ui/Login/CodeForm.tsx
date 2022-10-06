@@ -19,12 +19,12 @@ import {
   getConversionPath,
   getUserPath,
   IConversion,
+  removeUndefinedValues,
 } from 'infinitris2-models';
 import Link from '@mui/material/Link';
 import useLocalUserStore, {
   DEFAULT_CHARACTER_ID,
 } from '@/state/LocalUserStore';
-import removeUndefinedValues from '@/utils/removeUndefinedValues';
 import { purchaseCharacter, setNickname } from '@/state/updateUser';
 import { useSnackbar } from 'notistack';
 

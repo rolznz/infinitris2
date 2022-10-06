@@ -73,7 +73,7 @@ const challengesRatingFilter: UseCollectionOptions = {
 const challengesDateFilter: UseCollectionOptions = {
   constraints: [
     where('isOfficial', '==', false),
-    orderBy('readOnly.createdTimestamp._seconds', 'desc'),
+    orderBy('readOnly.createdTimestamp', 'desc'),
   ],
 };
 

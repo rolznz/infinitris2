@@ -15,6 +15,7 @@ import {
   WorldVariationValues,
   GameModeTypeValues,
   getVariationHueRotation,
+  removeUndefinedValues,
 } from 'infinitris2-models';
 import useChallengeEditorStore from '@/state/ChallengeEditorStore';
 import FlexBox from '@/components/ui/FlexBox';
@@ -29,7 +30,6 @@ import { Link as RouterLink } from 'react-router-dom';
 import Select from '@mui/material/Select/Select';
 import MenuItem from '@mui/material/MenuItem';
 import shallow from 'zustand/shallow';
-import removeUndefinedValues from '@/utils/removeUndefinedValues';
 import { createNewChallenge } from '@/components/pages/CreateChallengePage/createNewChallenge';
 import { useUser } from '@/components/hooks/useUser';
 import Checkbox from '@mui/material/Checkbox';

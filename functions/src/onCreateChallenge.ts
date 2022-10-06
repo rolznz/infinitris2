@@ -42,22 +42,22 @@ export const onCreateChallenge = functions.firestore
       // apply update using current database instance
       await getDb()
         .doc(snapshot.ref.path)
-        .update(
-          removeUndefinedValues({
-            readOnly: {
-              ...getDefaultEntityReadOnlyProperties(),
-              userId,
-              numRatings: 0,
-              rating: 0,
-              summedRating: 0,
-              numAttempts: 0,
+        .update({
+          readOnly: {
+            ...getDefaultEntityReadOnlyProperties(),
+            userId,
+            numRatings: 0,
+            rating: 0,
+            summedRating: 0,
+            numAttempts: 0,
+            ...removeUndefinedValues({
               user: {
                 nickname: userData.readOnly?.nickname,
               },
-            },
-            created: true,
-          } as Pick<IChallenge, 'readOnly' | 'created'>)
-        );
+            }),
+          },
+          created: true,
+        } as Pick<IChallenge, 'readOnly' | 'created'>);
 
       if (!challenge.isOfficial && !challenge.isTemplate) {
         await postSimpleWebhook(

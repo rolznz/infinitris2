@@ -7,7 +7,6 @@ import {
   IChallengeAttempt,
   IIssueReport,
   objectToDotNotation,
-  removeUndefinedValues,
   verifyProperty,
 } from 'infinitris2-models';
 import {
@@ -86,14 +85,12 @@ export const onCreateIssueReport = functions.firestore
 
       await getDb()
         .doc(snapshot.ref.path)
-        .update(
-          removeUndefinedValues({
-            readOnly: {
-              ...getDefaultEntityReadOnlyProperties(),
-            },
-            created: true,
-          } as Pick<IChallengeAttempt, 'readOnly' | 'created'>)
-        );
+        .update({
+          readOnly: {
+            ...getDefaultEntityReadOnlyProperties(),
+          },
+          created: true,
+        } as Pick<IChallengeAttempt, 'readOnly' | 'created'>);
     } catch (error) {
       console.error(error);
     }

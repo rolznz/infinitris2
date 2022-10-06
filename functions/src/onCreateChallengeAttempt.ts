@@ -44,19 +44,20 @@ export const onCreateChallengeAttempt = functions.firestore
 
       await getDb()
         .doc(snapshot.ref.path)
-        .update(
-          removeUndefinedValues({
-            readOnly: {
-              ...getDefaultEntityReadOnlyProperties(),
-              userId,
+        .update({
+          readOnly: {
+            ...getDefaultEntityReadOnlyProperties(),
+            userId,
+
+            ...removeUndefinedValues({
               user: {
                 nickname: user.readOnly?.nickname,
                 selectedCharacterId: user.selectedCharacterId,
               },
-            },
-            created: true,
-          } as Pick<IChallengeAttempt, 'readOnly' | 'created'>)
-        );
+            }),
+          },
+          created: true,
+        } as Pick<IChallengeAttempt, 'readOnly' | 'created'>);
 
       await updatePlayerTopChallengeAttempt(challengeAttempt, snapshot.ref);
       await updateChallengeTopAttempts(

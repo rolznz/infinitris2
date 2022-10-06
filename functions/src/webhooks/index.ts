@@ -13,6 +13,7 @@ import { updateChallengePreviewImagesWebhook } from './migrations/updateChalleng
 import { updateChallengeAttemptTopPlayerAttemptsWebhook } from './migrations/updateChallengeAttemptTopPlayerAttemptsWebhook';
 import { updateChallengeTopAttemptsWebhook } from './migrations/updateChallengeTopAttemptsWebhook';
 import { updateChallengeAttemptUserDataWebhook } from './migrations/updateChallengeAttemptUserDataWebhook';
+import { fixTimestampsWebhook } from './migrations/fixTimestamps';
 
 const corsHandler = cors({ origin: true });
 
@@ -41,6 +42,7 @@ app.post(
   '/v1/migrations/challenges/top-attempts',
   updateChallengeTopAttemptsWebhook
 );
+app.post('/v1/migrations/fix-timestamps', fixTimestampsWebhook);
 app.post(
   '/v1/migrations/challenge-attempts/user-data',
   updateChallengeAttemptUserDataWebhook

@@ -3,7 +3,10 @@ import './helpers/extensions';
 import { IChallenge, IUser } from 'infinitris2-models';
 import dummyData from './helpers/dummyData';
 import { onUpdateEntity } from '../onUpdateEntity';
-import { RATE_LIMIT_USER_WRITE_RATE_CHANGE } from '../utils/updateUserRateLimit';
+import {
+  RATE_LIMIT_USER_CREATE_WRITE_RATE_CHANGE,
+  RATE_LIMIT_USER_UPDATE_WRITE_RATE_CHANGE,
+} from '../utils/updateUserRateLimit';
 import { onCreateEntity } from '../onCreateEntity';
 import { firestore } from '@firebase/rules-unit-testing';
 
@@ -121,7 +124,9 @@ test('rate limit updated when user creates an entity', async () => {
     prevTimestamp.seconds
   );
   // expect rate limit to increase because time since last write < RATE_LIMIT_MAX_SECONDS
-  expect(user.readOnly.writeRate).toBe(RATE_LIMIT_USER_WRITE_RATE_CHANGE);
+  expect(user.readOnly.writeRate).toBe(
+    RATE_LIMIT_USER_CREATE_WRITE_RATE_CHANGE
+  );
 });
 
 test('rate limit updated when user updates an entity', async () => {
@@ -165,5 +170,7 @@ test('rate limit updated when user updates an entity', async () => {
     prevTimestamp.seconds
   );
   // expect rate limit to increase because time since last write < RATE_LIMIT_MAX_SECONDS
-  expect(user.readOnly.writeRate).toBe(RATE_LIMIT_USER_WRITE_RATE_CHANGE);
+  expect(user.readOnly.writeRate).toBe(
+    RATE_LIMIT_USER_UPDATE_WRITE_RATE_CHANGE
+  );
 });

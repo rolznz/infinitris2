@@ -28,6 +28,16 @@ export function getCurrentTimestamp(): admin.firestore.Timestamp {
   return admin.firestore.Timestamp.now();
 }
 
+export function convertTimestampMapToObject({
+  _seconds,
+  _nanoseconds,
+}: {
+  _seconds: number;
+  _nanoseconds: number;
+}): admin.firestore.Timestamp {
+  return new admin.firestore.Timestamp(_seconds, _nanoseconds);
+}
+
 export function increment(n: number): number {
   return admin.firestore.FieldValue.increment(n) as any as number;
 }

@@ -3,7 +3,7 @@ import './helpers/extensions';
 import { IUser, Timestamp } from 'infinitris2-models';
 import dummyData from './helpers/dummyData';
 import {
-  RATE_LIMIT_USER_WRITE_RATE_CHANGE,
+  RATE_LIMIT_USER_CREATE_WRITE_RATE_CHANGE,
   updateUserRateLimit,
 } from '../utils/updateUserRateLimit';
 
@@ -29,7 +29,9 @@ test('rate limit increases when user writes rapidly', async () => {
   expect(user.readOnly.numWrites).toBe(1);
   expect(user.readOnly.lastWriteTimestamp).toEqual(timestamp);
   // expect rate limit to increase because time since last write < RATE_LIMIT_MAX_SECONDS
-  expect(user.readOnly.writeRate).toBe(RATE_LIMIT_USER_WRITE_RATE_CHANGE);
+  expect(user.readOnly.writeRate).toBe(
+    RATE_LIMIT_USER_CREATE_WRITE_RATE_CHANGE
+  );
 });
 
 test('user rate limit decreases when user writes less often', async () => {
@@ -37,7 +39,7 @@ test('user rate limit decreases when user writes less often', async () => {
     ...dummyData.existingUser,
     readOnly: {
       ...dummyData.existingUser.readOnly,
-      writeRate: RATE_LIMIT_USER_WRITE_RATE_CHANGE,
+      writeRate: RATE_LIMIT_USER_CREATE_WRITE_RATE_CHANGE,
     },
   };
 

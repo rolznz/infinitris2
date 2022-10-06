@@ -196,7 +196,6 @@ const character1: ICharacter = {
   patternFilename: '1.png',
   thumbnail: '1.png',
   color: '#ff0000',
-  id: characterId1,
   name: 'blah',
   created: true,
   userId: userId1,

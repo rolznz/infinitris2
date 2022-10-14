@@ -26,6 +26,8 @@ type EscapeGameModeState = {
   level: number;
 };
 
+export type EscapePlacementMode = 'restricted' | 'free';
+
 export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
   private _simulation: ISimulation;
   private _lastMoveWasMistake: { [playerId: number]: boolean };
@@ -40,13 +42,14 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
   private _level: number;
   private _difficulty: number;
   private _escapeObstacles: EscapeObstacle[];
-  private _nextFinishLineLocations: number[];
+  private _nextFinishLines: { rightColumn: number; numColumns: number }[];
+  private _placementMode: EscapePlacementMode;
 
   constructor(simulation: ISimulation) {
     this._simulation = simulation;
     this._lastMoveWasMistake = [];
     this._numMistakes = [];
-    this._nextFinishLineLocations = [];
+    this._nextFinishLines = [];
     this._deathLineColumn = 0;
     this._frontDeathLineColumn = 0;
     this._nextGenerationColumn = 0;
@@ -56,6 +59,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     this._nextObstaclePadding = 0;
     this._obstacleHistory = [];
     this._escapeObstacles = createEscapeObstacles(simulation.grid.numRows);
+    this._placementMode = 'restricted';
   }
 
   get deathLineColumn(): number {
@@ -63,6 +67,10 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
   }
   get frontDeathLineColumn(): number {
     return this._frontDeathLineColumn;
+  }
+
+  get placementMode(): EscapePlacementMode {
+    return this._placementMode;
   }
 
   get hasRounds(): boolean {
@@ -110,11 +118,11 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     }
     this._deathLineColumn += deathLineIncrease;
 
-    if (!this._nextFinishLineLocations.length) {
+    if (!this._nextFinishLines.length) {
       this._frontDeathLineColumn =
         lastDeathLineColumnFloored + this._simulation.grid.numColumns - 2;
     } else {
-      this._frontDeathLineColumn = this._nextFinishLineLocations[0];
+      this._frontDeathLineColumn = this._nextFinishLines[0].rightColumn;
     }
 
     for (const activePlayer of this._simulation.activePlayers) {
@@ -260,11 +268,13 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
             column.some((cell) => cell.type === ChallengeCellType.Finish)
           )
         ) {
-          this._nextFinishLineLocations.push(
-            this._nextGenerationColumn +
+          this._nextFinishLines.push({
+            rightColumn:
+              this._nextGenerationColumn +
               this._nextObstaclePadding +
-              this._obstacle.grid.length
-          );
+              this._obstacle.grid.length,
+            numColumns: this._obstacle.grid.length,
+          });
         }
       }
     }
@@ -284,23 +294,23 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
 
     let bumpBack = blockFrontColumn - this._frontDeathLineColumn;
 
-    if (block.row < 0) {
-      // don't allow the block to travel on top of the grid unless it's touching a finish cell
-      let touchingFinishCell = false;
-      for (let i = 0; i < block.width; i++) {
-        if (
-          this._simulation.grid.cells[0][
-            wrap(blockFrontColumn - (i + 1), this._simulation.grid.numColumns)
-          ].type === CellType.FinishChallenge
-        ) {
-          touchingFinishCell = true;
-          break;
-        }
-      }
-      if (!touchingFinishCell) {
-        bumpBack += RESET_COLUMNS;
-      }
-    }
+    // if (block.row < 0 && this._nextFinishLines.length) {
+    //   // don't allow the block to travel on top of the grid
+    //   let touchingFilledBlock = false;
+    //   for (let i = 0; i < block.width; i++) {
+    //     if (
+    //       !this._simulation.grid.cells[0][
+    //         wrap(blockFrontColumn - (i + 1), this._simulation.grid.numColumns)
+    //       ].isEmpty
+    //     ) {
+    //       touchingFilledBlock = true;
+    //       break;
+    //     }
+    //   }
+    //   if (!touchingFilledBlock) {
+    //     bumpBack += RESET_COLUMNS;
+    //   }
+    // }
 
     if (bumpBack > 0) {
       block.move(-1, 0, 0, true);
@@ -325,14 +335,36 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       this._simulation.addMessage('Level ' + this._level, undefined, false);
     }*/
     this._checkFinish(block);
-    this._checkBridge(block);
+    this._checkPartialClearActivation(block);
     //block.player.spawnLocation = this._getNextSpawnLocation(block.column);
     console.log('onBlockPlaced ' + (Date.now() - startTime) + 'ms');
   }
+  private _checkPartialClearActivation(block: IBlock) {
+    if (this._placementMode === 'free') {
+      return;
+    }
+    for (const cell of block.cells) {
+      for (const direction of [-1, 1]) {
+        if (
+          this._simulation.grid.getNeighbour(cell, direction, 0)?.type ===
+          CellType.PartialClear
+        ) {
+          this._placementMode = 'free';
+          return;
+        }
+      }
+    }
+  }
   private _checkFinish(block: IBlock) {
+    if (!this._nextFinishLines.length) {
+      return;
+    }
+    const currentFinishLine = this._nextFinishLines[0];
     if (block.cells.some((cell) => cell.type === CellType.FinishChallenge)) {
-      const start = Math.floor(this._frontDeathLineColumn - RESET_COLUMNS);
-      for (let column = 0; column < RESET_COLUMNS; column++) {
+      const start = Math.floor(
+        this._frontDeathLineColumn - currentFinishLine.numColumns
+      );
+      for (let column = 0; column < currentFinishLine.numColumns; column++) {
         const wrappedColumn = wrap(
           start + column,
           this._simulation.grid.numColumns
@@ -345,64 +377,12 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       // reset spawn delays
       this._numMistakes = [];
 
+      // reset placement type
+      this._placementMode = 'restricted';
+
       // advance next death line to next finish line location
-      this._nextFinishLineLocations.shift();
+      this._nextFinishLines.shift();
     }
-  }
-  private _checkBridge(block: IBlock) {
-    // FIXME: the bridge cell behaviour should handle this!
-
-    const bottomCellRow = block.cells.find(
-      (cell) => !block.cells.some((other) => other.row > cell.row)
-    )!.row;
-
-    const startTime = Date.now();
-    for (const cell of block.cells) {
-      if (cell.type !== CellType.BridgeCreator || cell.row !== bottomCellRow) {
-        continue;
-      }
-      for (const layer of [1, 4]) {
-        for (const direction of [-1, 1, -2, 2, -3, 3]) {
-          const areaCell =
-            this._simulation.grid.cells[
-              Math.min(cell.row + layer, this._simulation.grid.numRows - 1)
-            ][wrap(cell.column + direction, this._simulation.grid.numColumns)];
-          if (
-            areaCell &&
-            areaCell.isEmpty &&
-            areaCell.type === CellType.BridgeCreator
-          ) {
-            areaCell.place(block.player);
-          }
-        }
-      }
-      /*const areaSize = 5;
-      const areaColumn = Math.round(cell.column / areaSize) * areaSize;
-      const areaRow = Math.ceil(cell.row / areaSize) * areaSize;
-      for (const area of [
-        [-1, 0],
-        [1, 0],
-        //[0, 1],
-      ]) {
-        for (let column = 0; column < areaSize; column++) {
-          const areaCell =
-            this._simulation.grid.cells[areaRow + area[1] * areaSize]?.[
-              wrap(
-                areaColumn + area[0] * areaSize + column,
-                this._simulation.grid.numColumns
-              )
-            ];
-          if (
-            areaCell &&
-            areaCell.isEmpty &&
-            areaCell.type === CellType.BridgeCreator
-          ) {
-            areaCell.place(block.player);
-          }
-        }
-      }*/
-    }
-    console.log('CheckBridge ' + (Date.now() - startTime) + 'ms');
   }
 
   /*onPlayerDestroyed(player: IPlayer) {
@@ -484,7 +464,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     if (!this._simulation.nonSpectatorPlayers.length) {
       return;
     }
-    this._nextFinishLineLocations = [];
+    this._nextFinishLines = [];
     this._lastMoveWasMistake = [];
     this._numMistakes = [];
     this._level = 1;
@@ -493,6 +473,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     this._nextObstaclePadding = 4;
     this._obstacleHistory = [];
     this._obstacle = undefined;
+    this._placementMode = 'restricted';
 
     //this._simulation.grid.cells[0].forEach((cell) => cell.place(undefined));
 
@@ -519,6 +500,9 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
   checkMistake(player: IPlayer, cells: ICell[], isMistake: boolean): boolean {
     if (isMistake) {
       return true;
+    }
+    if (this._placementMode === 'free') {
+      return isMistake;
     }
 
     isMistake = true;
@@ -553,7 +537,7 @@ export function escapeCanPlace(
     return false;
   }
 
-  if (cell.type == CellType.Deadly) {
+  if (cell.type == CellType.Deadly || !cell.behaviour.isPassable) {
     return false;
   }
 

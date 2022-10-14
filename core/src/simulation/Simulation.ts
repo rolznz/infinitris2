@@ -40,6 +40,7 @@ import { wrap, wrappedDistance } from '@core/utils/wrap';
 import { GarbageDefenseGameMode } from '@core/gameModes/GarbageDefenseGameMode';
 import { EscapeGameMode } from '@core/gameModes/EscapeGameMode/EscapeGameMode';
 import { FRAME_LENGTH, IDEAL_FPS } from '@core/simulation/simulationConstants';
+import CellType from '@models/CellType';
 
 /**
  * Multiple frames can be executed in one go in order
@@ -528,11 +529,41 @@ export default class Simulation implements ISimulation {
    */
   onBlockPlaced(block: IBlock) {
     this._eventListeners.forEach((listener) => listener.onBlockPlaced?.(block));
+    this._checkBridge(block);
     this._grid.checkLineClears(
       block.cells
         .map((cell) => cell.row)
         .filter((row, i, rows) => rows.indexOf(row) === i)
     );
+  }
+
+  private _checkBridge(block: IBlock) {
+    const bottomCellRow = block.cells.find(
+      (cell) => !block.cells.some((other) => other.row > cell.row)
+    )!.row;
+
+    const startTime = Date.now();
+    for (const cell of block.cells) {
+      if (cell.type !== CellType.BridgeCreator || cell.row !== bottomCellRow) {
+        continue;
+      }
+      for (const layer of [1, 4]) {
+        for (const direction of [-1, 1, -2, 2, -3, 3]) {
+          const areaCell =
+            this._grid.cells[
+              Math.min(cell.row + layer, this._grid.numRows - 1)
+            ][wrap(cell.column + direction, this._grid.numColumns)];
+          if (
+            areaCell &&
+            areaCell.isEmpty &&
+            areaCell.type === CellType.BridgeCreator
+          ) {
+            areaCell.place(block.player);
+          }
+        }
+      }
+    }
+    console.log('CheckBridge ' + (Date.now() - startTime) + 'ms');
   }
 
   /**

@@ -5,19 +5,23 @@ import ChallengeCellType from '@models/ChallengeCellType';
 import IBlock from '@models/IBlock';
 import IGrid from '@models/IGrid';
 
-export default class BridgeCreatorBehaviour implements ICellBehaviour {
+export default class PartialClearBehaviour implements ICellBehaviour {
   private _cell: ICell;
   private _grid: IGrid;
+  private _alpha: number;
   constructor(cell: ICell, grid: IGrid) {
     this._cell = cell;
     this._grid = grid;
+    this._alpha = 0;
   }
-  step(): void {}
+  step(): void {
+    this._alpha += 0.05;
+  }
 
   onAddBlock(_block: IBlock) {}
 
   get alpha(): number {
-    return this._cell.player ? 1 : 0.25;
+    return 0.5 + (Math.sin(this._alpha) + 1) / 4;
   }
 
   get color(): number {
@@ -25,7 +29,7 @@ export default class BridgeCreatorBehaviour implements ICellBehaviour {
   }
 
   get isPassable(): boolean {
-    return true;
+    return false;
   }
 
   get isReplaceable(): boolean {
@@ -33,17 +37,17 @@ export default class BridgeCreatorBehaviour implements ICellBehaviour {
   }
 
   clone(forCell: ICell): ICellBehaviour {
-    return new BridgeCreatorBehaviour(forCell, this._grid);
+    return new PartialClearBehaviour(forCell, this._grid);
   }
 
   get type(): CellType {
-    return CellType.BridgeCreator;
+    return CellType.PartialClear;
   }
   toChallengeCellType() {
-    return ChallengeCellType.BridgeCreator;
+    return ChallengeCellType.PartialClear;
   }
   getImageFilename() {
-    return 'bridge_creator';
+    return 'partial_clear';
   }
   hasWorldImage() {
     return false;

@@ -34,6 +34,7 @@ enum ChallengeCellType {
   GestureRotateDownAnticlockwise = '8',
   Checkpoint = 'C',
   BridgeCreator = 'x',
+  PartialClear = 'p',
 }
 const duplicateChallengeCellTypeValue = Object.values(ChallengeCellType).find(
   (v, i, a) => a.indexOf(v) !== i
@@ -120,6 +121,8 @@ export function getChallengeCellTypeDescription(
       return 'Checkpoint';
     case ChallengeCellType.BridgeCreator:
       return 'Bridge Creator';
+    case ChallengeCellType.PartialClear:
+      return 'Partial Clear';
   }
 }
 

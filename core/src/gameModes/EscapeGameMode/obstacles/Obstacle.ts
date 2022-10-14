@@ -60,6 +60,31 @@ const reset2: EscapeObstacleTemplate = {
   difficulty: 6,
 };
 
+const partialLineClear1: EscapeObstacleTemplate = {
+  createGrid: () => [
+    [...new Array(5)].map((_, i) => ({
+      row: -(i + 1),
+      type: ChallengeCellType.PartialClear,
+    })),
+    ...[...new Array(RESET_COLUMNS)].map((_, c) => [
+      ...[...new Array(2)].map((_, i) => ({
+        row: -(i + 2),
+        type:
+          c % 2 === i % 2 ? ChallengeCellType.Empty : ChallengeCellType.Full,
+      })),
+      ...[...new Array(1)].map((_, i) => ({
+        row: -(i + 1),
+        type: ChallengeCellType.Finish,
+      })),
+    ]),
+    [...new Array(5)].map((_, i) => ({
+      row: -(i + 1),
+      type: ChallengeCellType.PartialClear,
+    })),
+  ],
+  difficulty: 1,
+};
+
 // const slice1: EscapeObstacleTemplate = {
 //   createGrid: () => [...new Array(10)].map((_, i) => [{ row: -4 }]),
 //   difficulty: 5,
@@ -119,6 +144,7 @@ export function createEscapeObstacles(numRows: number): EscapeObstacle[] {
     deadly3,
     deadly3b,
     deadly4,
+    partialLineClear1,
   ].map((template) => {
     const { createGrid, ...otherProps } = template;
     return {

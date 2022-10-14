@@ -6,9 +6,13 @@ import ICellBehaviour from '@models/ICellBehaviour';
 import { IPlayer } from '@models/IPlayer';
 import { KeyedRandom } from '@core/simulation/KeyedRandom';
 import { IDEAL_FPS } from '@core/simulation/simulationConstants';
+import CellType from '@models/CellType';
+import { wrap, wrappedDistance } from '@core/utils/wrap';
 
 export const MAX_COLUMNS = 100000;
 export const MAX_ROWS = 100000;
+
+type PartialClearRow = { row: number; columns: number[] };
 
 export default class Grid implements IGrid {
   private _cells: ICell[][];
@@ -16,6 +20,7 @@ export default class Grid implements IGrid {
   private _eventListeners: IGridEventListener[];
   private _cachedNumNonEmptyCells = 0;
   private _nextLinesToClear: number[];
+  private _nextPartialClears: PartialClearRow[];
   private _nextLineClearFrame: number;
   private _random: KeyedRandom;
   private _frameNumber: number;
@@ -37,6 +42,7 @@ export default class Grid implements IGrid {
     this.resize(numRows, numColumns);
     this._nextLineClearFrame = 0;
     this._nextLinesToClear = [];
+    this._nextPartialClears = [];
     this._random = new KeyedRandom(0);
   }
 
@@ -121,11 +127,13 @@ export default class Grid implements IGrid {
    * @param rows a list of rows affected by a change (e.g. block placement).
    */
   checkLineClears(rows: number[]) {
+    const partialClearRows: PartialClearRow[] = [];
     const rowsToClear = rows.filter(
       (row) =>
         row >= 0 &&
         row < this._cells.length &&
-        !this._cells[row].some((cell) => cell.isEmpty)
+        (!this._cells[row].some((cell) => cell.isEmpty) ||
+          this._checkPartialClear(row, partialClearRows))
     );
     if (!rowsToClear.length) {
       return;
@@ -139,14 +147,56 @@ export default class Grid implements IGrid {
     this._nextLinesToClear = [...this._nextLinesToClear, ...rowsToClear]
       .filter((row, i, rows) => rows.indexOf(row) === i) // get unique rows
       .sort((a, b) => b - a); // clear row closest to the ground first
+
+    this._nextPartialClears = [...this._nextPartialClears, ...partialClearRows];
     this._nextLineClearFrame = this._frameNumber + IDEAL_FPS;
+  }
+
+  private _checkPartialClear(
+    row: number,
+    partialClearRows: PartialClearRow[]
+  ): boolean {
+    const partialClearCells = this._cells[row].filter(
+      (cell) => cell.type === CellType.PartialClear
+    );
+    for (let i = 0; i < partialClearCells.length - 1; i++) {
+      let direction =
+        wrappedDistance(
+          partialClearCells[0].column,
+          partialClearCells[1].column,
+          this.numColumns
+        ) <=
+        this.numColumns / 2
+          ? 1
+          : -1;
+      let partial = true;
+      const columns: number[] = [];
+      for (
+        let j = partialClearCells[0].column + direction;
+        j !== partialClearCells[1].column;
+        j = wrap(j + direction, this.numColumns)
+      ) {
+        if (this._cells[row][j].isEmpty) {
+          partial = false;
+          break;
+        }
+        columns.push(j);
+      }
+      if (partial) {
+        partialClearRows.push({ row, columns });
+        return true;
+      }
+    }
+    return false;
   }
 
   clearLines(rowsToClear: number[]) {
     this._eventListeners.forEach((eventListener) =>
       eventListener.onClearLines(rowsToClear)
     );
+    const partialClears = this._nextPartialClears;
     this._nextLinesToClear = [];
+    this._nextPartialClears = [];
     for (const row of rowsToClear) {
       for (let c = 0; c < this._cells[row].length; c++) {
         if (this._cells[row][c].player) {
@@ -161,8 +211,19 @@ export default class Grid implements IGrid {
       this._eventListeners.forEach((eventListener) =>
         eventListener.onLineClear(rowToClear)
       );
+      let partialClearsForRow = partialClears.filter(
+        (clear) => clear.row === rowToClear
+      );
       for (let r = rowToClear; r >= 0; r--) {
         for (let c = 0; c < this._cells[0].length; c++) {
+          if (
+            partialClearsForRow.length &&
+            !partialClearsForRow.some(
+              (partialClear) => partialClear.columns.indexOf(c) >= 0
+            )
+          ) {
+            continue;
+          }
           if (r > 0) {
             if (this._cells[r][c].behaviour.isReplaceable) {
               if (this._cells[r - 1][c].behaviour.isReplaceable) {

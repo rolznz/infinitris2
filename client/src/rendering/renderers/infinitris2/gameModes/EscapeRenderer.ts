@@ -147,6 +147,7 @@ export class EscapeRenderer implements IGameModeRenderer {
     if (!simulation || !followingPlayer) {
       return;
     }
+    const gameMode = simulation.gameMode as EscapeGameMode;
 
     if (!this._distanceText) {
       this._distanceText = new PIXI.Text('', {
@@ -175,7 +176,7 @@ export class EscapeRenderer implements IGameModeRenderer {
         const cellIndex = cell.index;
         if (!this._freeRenderableCells[cellIndex]) {
           const freeCellContainer = new PIXI.Container();
-          freeCellContainer.zIndex = 1000;
+          //freeCellContainer.zIndex = 1000;
           this._renderer.world.addChild(freeCellContainer);
           this._freeRenderableCells[cellIndex] = {
             container: freeCellContainer,
@@ -183,17 +184,17 @@ export class EscapeRenderer implements IGameModeRenderer {
           };
         }
         const freeRenderableCell = this._freeRenderableCells[cellIndex];
+        freeRenderableCell.container.zIndex =
+          gameMode.placementMode === 'free' ? -1 : 1000;
 
         freeRenderableCell.container.x = this._renderer.getWrappedX(
           column * this._renderer.cellSize
         );
         freeRenderableCell.container.y = cell.row * this._renderer.cellSize;
-        const canPlace = escapeCanPlace(
-          followingPlayer,
-          simulation,
-          cell,
-          false
-        );
+        const canPlace =
+          gameMode.placementMode === 'free'
+            ? true
+            : escapeCanPlace(followingPlayer, simulation, cell, false);
         const cachedCanPlaceResult = this._cachedCanPlaceResults[cellIndex];
         this._cachedCanPlaceResults[cellIndex] = canPlace;
         if (canPlace === cachedCanPlaceResult) {

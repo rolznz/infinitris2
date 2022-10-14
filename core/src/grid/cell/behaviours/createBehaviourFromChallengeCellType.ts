@@ -18,6 +18,7 @@ import ReverseLockBehaviour from '@core/grid/cell/behaviours/ReverseLockBehaviou
 import CheckpointBehaviour from '@core/grid/cell/behaviours/CheckpointBehaviour';
 import SwitchBehaviour from '@core/grid/cell/behaviours/SwitchBehaviour';
 import BridgeCreatorBehaviour from '@core/grid/cell/behaviours/BridgeCreatorBehaviour';
+import PartialClearBehaviour from '@core/grid/cell/behaviours/PartialClearBehaviour';
 
 // currently keyColors must match lock colors and switch colors for behaviour to work (direct color match)
 export const keyColors = {
@@ -123,5 +124,7 @@ function getBehaviour(
       return new CheckpointBehaviour(cell);
     case ChallengeCellType.BridgeCreator:
       return new BridgeCreatorBehaviour(cell, grid);
+    case ChallengeCellType.PartialClear:
+      return new PartialClearBehaviour(cell, grid);
   }
 }

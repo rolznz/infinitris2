@@ -85,6 +85,7 @@ export function SinglePlayerOptionsPage() {
     formState: { errors },
     watch,
     reset,
+    setValue,
   } = useForm<SinglePlayerOptionsFormData>({
     defaultValues: formData,
     resolver: yupResolver(schema),
@@ -97,22 +98,39 @@ export function SinglePlayerOptionsPage() {
     reset(getSinglePlayerOptionsDefaultValues());
   }
 
-  const onSubmit = (data: SinglePlayerOptionsFormData) => {
-    playSound(SoundKey.click);
-    launchFullscreen();
-    setFormData(data);
-    launchSinglePlayer(history);
-  };
-
   const watchedValues = watch();
   const valuesSame = shallow(formData, watchedValues);
   React.useEffect(() => {
     if (!valuesSame) {
       setFormData(watchedValues);
+      if (
+        watchedValues.simulationSettings.gameModeType === 'escape' &&
+        watchedValues.simulationSettings.botSettings
+      ) {
+        // escape cannot have bots
+        setValue('simulationSettings.botSettings', undefined);
+      }
     }
-  }, [valuesSame, setFormData, watchedValues]);
+  }, [valuesSame, setFormData, watchedValues, setValue]);
   const watchedGameModeType = watch('simulationSettings.gameModeType');
   const watchedSpectate = watch('spectate');
+  const botsAllowed = watchedGameModeType !== 'escape';
+
+  const onSubmit = React.useCallback(
+    (data: SinglePlayerOptionsFormData) => {
+      if (!botsAllowed) {
+        data.simulationSettings = {
+          ...data.simulationSettings,
+          botSettings: undefined,
+        };
+      }
+      playSound(SoundKey.click);
+      launchFullscreen();
+      setFormData(data);
+      launchSinglePlayer(history);
+    },
+    [botsAllowed, history, setFormData]
+  );
 
   return (
     <Page
@@ -310,53 +328,60 @@ export function SinglePlayerOptionsPage() {
             />
           </FlexBox>
           <FlexBox flexDirection="row" flexWrap="wrap" gap={1}>
-            <Controller
-              name="simulationSettings.botSettings.numBots"
-              control={control}
-              render={({ field }) => (
-                <FormControl variant="standard">
-                  <InputLabel>Number of Bots</InputLabel>
-                  <Input {...field} />
-                  <p>
-                    {errors.simulationSettings?.botSettings?.numBots?.message}
-                  </p>
-                </FormControl>
-              )}
-            />
+            {botsAllowed && (
+              <>
+                <Controller
+                  name="simulationSettings.botSettings.numBots"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl variant="standard">
+                      <InputLabel>Number of Bots</InputLabel>
+                      <Input {...field} />
+                      <p>
+                        {
+                          errors.simulationSettings?.botSettings?.numBots
+                            ?.message
+                        }
+                      </p>
+                    </FormControl>
+                  )}
+                />
 
-            <Controller
-              name="simulationSettings.botSettings.botReactionDelay"
-              control={control}
-              render={({ field }) => (
-                <FormControl variant="standard">
-                  <InputLabel>Bot Reaction Delay</InputLabel>
-                  <Input {...field} />
-                  <p>
-                    {
-                      errors.simulationSettings?.botSettings?.botReactionDelay
-                        ?.message
-                    }
-                  </p>
-                </FormControl>
-              )}
-            />
+                <Controller
+                  name="simulationSettings.botSettings.botReactionDelay"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl variant="standard">
+                      <InputLabel>Bot Reaction Delay</InputLabel>
+                      <Input {...field} />
+                      <p>
+                        {
+                          errors.simulationSettings?.botSettings
+                            ?.botReactionDelay?.message
+                        }
+                      </p>
+                    </FormControl>
+                  )}
+                />
 
-            <Controller
-              name="simulationSettings.botSettings.botRandomReactionDelay"
-              control={control}
-              render={({ field }) => (
-                <FormControl variant="standard">
-                  <InputLabel>Bot Random Reaction Delay</InputLabel>
-                  <Input {...field} />
-                  <p>
-                    {
-                      errors.simulationSettings?.botSettings
-                        ?.botRandomReactionDelay?.message
-                    }
-                  </p>
-                </FormControl>
-              )}
-            />
+                <Controller
+                  name="simulationSettings.botSettings.botRandomReactionDelay"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControl variant="standard">
+                      <InputLabel>Bot Random Reaction Delay</InputLabel>
+                      <Input {...field} />
+                      <p>
+                        {
+                          errors.simulationSettings?.botSettings
+                            ?.botRandomReactionDelay?.message
+                        }
+                      </p>
+                    </FormControl>
+                  )}
+                />
+              </>
+            )}
 
             <Controller
               name="gridNumRows"

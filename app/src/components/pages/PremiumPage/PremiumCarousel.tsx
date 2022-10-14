@@ -67,7 +67,7 @@ const subtitles = [
     description="Account benefits subtext - save progress"
   />,
   <FormattedMessage
-    defaultMessage="Use your coins to purchase unique characters and stand out from other players"
+    defaultMessage="Use your coins to purchase unique characters and publish new challenges"
     description="Account benefits subtext - earn coins"
   />,
   <FormattedMessage

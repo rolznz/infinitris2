@@ -222,7 +222,7 @@ export default class Block implements IBlock {
     return maxWidth;
   }
 
-  // TODO: rename numColumns
+  // TODO: rename numRows
   get height(): number {
     return this._layout.length;
   }

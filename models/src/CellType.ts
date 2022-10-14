@@ -14,6 +14,7 @@ enum CellType {
   ReverseLock = 'ReverseLock',
   Checkpoint = 'Checkpoint',
   Switch = 'Switch',
+  BridgeCreator = 'BridgeCreator',
   // Water/Liquid?
 }
 

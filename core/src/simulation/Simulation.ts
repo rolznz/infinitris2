@@ -91,6 +91,9 @@ export default class Simulation implements ISimulation {
       gravityEnabled: true,
       instantDrops: true,
       gameModeType: 'infinity',
+      ...this._getDefaultGameModeSimulationSettings(
+        settings.gameModeType ?? 'infinity'
+      ),
       ...settings,
     };
     this._botSeed = this._settings?.botSettings?.seed ?? this._rootSeed;
@@ -113,6 +116,17 @@ export default class Simulation implements ISimulation {
     if (this._gameMode.hasRounds) {
       this._round = new Round(this);
     }
+  }
+  private _getDefaultGameModeSimulationSettings(
+    gameModeType: GameModeType
+  ): SimulationSettings {
+    switch (gameModeType) {
+      case 'escape':
+        return {
+          saveSpawnPositionOnDeath: false,
+        };
+    }
+    return {};
   }
 
   onSimulationInit(): void {

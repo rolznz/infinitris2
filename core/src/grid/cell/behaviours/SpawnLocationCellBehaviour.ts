@@ -3,11 +3,11 @@ import ChallengeCellType from '@models/ChallengeCellType';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
 
-export default class NormalCellBehaviour implements ICellBehaviour {
+export default class SpawnLocationCellBehaviour implements ICellBehaviour {
   constructor(_cell: ICell) {}
 
   clone(cell: ICell): ICellBehaviour {
-    return new NormalCellBehaviour(cell);
+    return new SpawnLocationCellBehaviour(cell);
   }
 
   get color(): number {

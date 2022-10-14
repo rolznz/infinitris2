@@ -461,21 +461,26 @@ export default class Infinitris2Renderer extends BaseRenderer {
           this._renderCell(cell);
           cell.requiresRerender = false;
         }
-        const renderableCell = this._getRenderableCell(cell);
-        renderableCell.container.alpha = cell.behaviour.alpha;
+        for (let i = 0; i <= this._numPaddingRows; i++) {
+          const renderableCell = this._getRenderableCell(cell, -i);
+          renderableCell.container.alpha = cell.behaviour.alpha;
 
-        // rotate non-player cell sprites around center (requires rotating each individually to support shadow and wrap rendering)
-        renderableCell.children.forEach((child) => {
-          if (child.renderableObject.patternSprite) {
-            const rotation = !cell.player ? cell.behaviour.rotation || 0 : 0;
-            child.renderableObject.patternSprite.rotation = rotation;
+          // rotate non-player cell sprites around center (requires rotating each individually to support shadow and wrap rendering)
+          renderableCell.children.forEach((child) => {
+            if (child.renderableObject.patternSprite) {
+              const rotation = !cell.player ? cell.behaviour.rotation || 0 : 0;
+              child.renderableObject.patternSprite.rotation = rotation;
+            }
+          });
+          // TODO: do not access cell type directly like this
+          if (cell.behaviour.type === CellType.Rock) {
+            renderableCell.container.y =
+              (cell.row + (cell.behaviour as RockBehaviour).offsetY) *
+              this._cellSize;
           }
-        });
-        // TODO: do not access cell type directly like this
-        if (cell.behaviour.type === CellType.Rock) {
-          renderableCell.container.y =
-            (cell.row + (cell.behaviour as RockBehaviour).offsetY) *
-            this._cellSize;
+          if (cell.row > 0) {
+            break;
+          }
         }
       }
     }
@@ -1440,26 +1445,12 @@ export default class Infinitris2Renderer extends BaseRenderer {
       return;
     }
     this._renderCells(this._simulation.grid.reducedCells);
-    this._renderTopPadding();
   }
 
-  private _renderTopPadding() {
-    if (
-      !this._simulation ||
-      (this.simulation?.settings.gameModeType || 'infinity') !== 'infinity'
-    ) {
-      // only fill in top paddings for challenges in the infinity game mode
-      // this is to prevent issues in the garbage defense game mode when the top row gets filled with garbage
-      // TODO: find a better solution
-      return;
-    }
+  private _extendTopRow(cell: ICell) {
     // extend top row to top of the screen
-    for (const cell of this._simulation.grid.cells[0]) {
-      if (!cell.isEmpty && !cell.player) {
-        for (let y = 1; y <= this._numPaddingRows; y++) {
-          this._renderCell(cell, -y);
-        }
-      }
+    for (let y = 1; y <= this._numPaddingRows; y++) {
+      this._renderCell(cell, -y);
     }
   }
 
@@ -1610,6 +1601,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     if (!this._simulation) {
       return;
     }
+
     const renderableCell = this._getRenderableCell(cell, rowOffset);
 
     renderableCell.container.x = this.getWrappedX(
@@ -1619,6 +1611,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
       (renderableCell.cell.row + rowOffset) * this._cellSize;
 
     this._renderCellCopies(renderableCell, cell, rowOffset);
+
+    if (cell.row === 0 && rowOffset === 0) {
+      this._extendTopRow(cell);
+    }
     //}
     /*else {
       renderableCell.children.forEach((child) => {
@@ -1823,22 +1819,23 @@ export default class Infinitris2Renderer extends BaseRenderer {
       cacheId: this._cacheId,
       type: cell.type,
     };
-    const cellIndexWithRowOffset = cell.index - rowOffset * MAX_COLUMNS;
-    const cachedCell = this._cachedRenderableCells[cellIndexWithRowOffset];
-    this._cachedRenderableCells[cellIndexWithRowOffset] = cellToCache;
-    if (
-      cachedCell &&
-      cellToCache.cacheId === cachedCell.cacheId &&
-      cellToCache.isEmpty === cachedCell.isEmpty &&
-      cellToCache.color === cachedCell.color &&
-      cellToCache.type === cachedCell.type &&
-      cellToCache.patternFilename === cachedCell.patternFilename &&
-      cellToCache.imageFilename === cachedCell.imageFilename &&
-      (cellToCache.isEmpty ||
-        JSON.stringify(cellToCache.connections) ===
-          JSON.stringify(cachedCell.connections))
-    ) {
-      return;
+    if (rowOffset === 0) {
+      const cachedCell = this._cachedRenderableCells[cell.index];
+      this._cachedRenderableCells[cell.index] = cellToCache;
+      if (
+        cachedCell &&
+        cellToCache.cacheId === cachedCell.cacheId &&
+        cellToCache.isEmpty === cachedCell.isEmpty &&
+        cellToCache.color === cachedCell.color &&
+        cellToCache.type === cachedCell.type &&
+        cellToCache.patternFilename === cachedCell.patternFilename &&
+        cellToCache.imageFilename === cachedCell.imageFilename &&
+        (cellToCache.isEmpty ||
+          JSON.stringify(cellToCache.connections) ===
+            JSON.stringify(cachedCell.connections))
+      ) {
+        return;
+      }
     }
 
     this.renderCopies(
@@ -1854,7 +1851,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
           renderableCell.container,
           renderableCell.cell.row,
           renderableCell.cell.column,
-          renderableCell.cell.isEmpty,
+          renderableCell.cell.isEmpty || (rowOffset < 0 && !cell.extendTopRow),
           color,
           patternFilename,
           connections,

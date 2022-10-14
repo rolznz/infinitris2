@@ -31,6 +31,8 @@ export default interface ICell {
   set rerenderDelay(rerenderDelay: number);
   get rerenderDelay(): number;
   get placementFrame(): number;
+  get extendTopRow(): boolean;
+  set extendTopRow(extendTopRow: boolean);
   addBlock(block: IBlock): void;
   removeBlock(block: IBlock): void;
   step(): void;

@@ -29,7 +29,7 @@ export type Wrappable = {
 
 // TODO: make these customizable
 const idealCellSize = 38;
-const minLandscapeCellCount = 18;
+const minLandscapeCellCount = 22;
 const maxCellCount = 32;
 
 export abstract class BaseRenderer implements IRenderer {

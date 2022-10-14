@@ -21,6 +21,7 @@ export default class Cell implements ICell {
   private _nextRerender: number;
   private _index: number;
   private _placementFrame: number;
+  private _extendTopRow: boolean;
   constructor(grid: IGrid, row: number, column: number) {
     this._grid = grid;
     this._row = row;
@@ -33,6 +34,7 @@ export default class Cell implements ICell {
     this._requiresRerender = true;
     this._nextRerender = 0;
     this._placementFrame = 0;
+    this._extendTopRow = false;
   }
 
   get grid(): IGrid {
@@ -87,6 +89,8 @@ export default class Cell implements ICell {
   set isEmpty(isEmpty: boolean) {
     if (isEmpty !== this._isEmpty) {
       this._isEmpty = isEmpty;
+      // TODO: maybe the behaviour should just listen to this?
+      // this._behaviour.onCellIsEmptyChanged?.();
       this._eventListener?.onCellIsEmptyChanged(this);
     }
   }
@@ -101,6 +105,8 @@ export default class Cell implements ICell {
   set behaviour(behaviour: ICellBehaviour) {
     const previousBehaviour = this._behaviour;
     this._behaviour = behaviour;
+    // TODO: maybe the behaviour should just listen to this?
+    // previousBehaviour.onCellBehaviourChanged?.();
     this._eventListener?.onCellBehaviourChanged(this, previousBehaviour);
   }
 
@@ -114,6 +120,13 @@ export default class Cell implements ICell {
 
   set player(player: IPlayer | undefined) {
     this._player = player;
+  }
+
+  get extendTopRow(): boolean {
+    return this._extendTopRow;
+  }
+  set extendTopRow(extendTopRow: boolean) {
+    this._extendTopRow = extendTopRow;
   }
 
   /**
@@ -141,6 +154,7 @@ export default class Cell implements ICell {
   reset(): void {
     this.makeEmpty();
     this.behaviour = new NormalCellBehaviour(this);
+    this._extendTopRow = false;
   }
 
   makeEmpty(): void {

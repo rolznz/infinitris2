@@ -17,6 +17,7 @@ import GestureBehaviour from '@core/grid/cell/behaviours/GestureBehaviour';
 import ReverseLockBehaviour from '@core/grid/cell/behaviours/ReverseLockBehaviour';
 import CheckpointBehaviour from '@core/grid/cell/behaviours/CheckpointBehaviour';
 import SwitchBehaviour from '@core/grid/cell/behaviours/SwitchBehaviour';
+import BridgeCreatorBehaviour from '@core/grid/cell/behaviours/BridgeCreatorBehaviour';
 
 // currently keyColors must match lock colors and switch colors for behaviour to work (direct color match)
 export const keyColors = {
@@ -34,6 +35,7 @@ export default function createBehaviourFromChallengeCellType(
   challengeCellType: ChallengeCellType
 ): void {
   cell.behaviour = getBehaviour(cell, grid, challengeCellType);
+  cell.extendTopRow = true;
   if (challengeCellType === ChallengeCellType.Full) {
     cell.isEmpty = false;
   } else if (challengeCellType === ChallengeCellType.Empty) {
@@ -119,5 +121,7 @@ function getBehaviour(
       return new GestureBehaviour(CustomizableInputAction.Drop);
     case ChallengeCellType.Checkpoint:
       return new CheckpointBehaviour(cell);
+    case ChallengeCellType.BridgeCreator:
+      return new BridgeCreatorBehaviour(cell, grid);
   }
 }

@@ -15,9 +15,11 @@ import ChallengeCellType from '@models/ChallengeCellType';
 import {
   EscapeObstacle,
   createEscapeObstacles,
+  RESET_COLUMNS,
 } from '@core/gameModes/EscapeGameMode/obstacles/Obstacle';
 import createBehaviourFromChallengeCellType from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
 import CellType from '@models/CellType';
+import NormalCellBehaviour from '@core/grid/cell/behaviours/NormalCellBehaviour';
 
 type EscapeGameModeState = {
   deathLineColumn: number;
@@ -27,6 +29,7 @@ type EscapeGameModeState = {
 export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
   private _simulation: ISimulation;
   private _lastMoveWasMistake: { [playerId: number]: boolean };
+  private _numMistakes: { [playerId: number]: number };
   private _deathLineColumn: number;
   private _frontDeathLineColumn: number;
   private _nextGenerationColumn: number;
@@ -37,10 +40,13 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
   private _level: number;
   private _difficulty: number;
   private _escapeObstacles: EscapeObstacle[];
+  private _nextFinishLineLocations: number[];
 
   constructor(simulation: ISimulation) {
     this._simulation = simulation;
     this._lastMoveWasMistake = [];
+    this._numMistakes = [];
+    this._nextFinishLineLocations = [];
     this._deathLineColumn = 0;
     this._frontDeathLineColumn = 0;
     this._nextGenerationColumn = 0;
@@ -74,6 +80,9 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
   get shouldNewPlayerSpectate(): boolean {
     return false;
   }
+  get level(): number {
+    return this._level;
+  }
   getMinPlayersForRound(): number {
     return 1;
   }
@@ -91,50 +100,58 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     ) {
       return;
     }
-
+    const startTime = Date.now();
+    const processes: string[] = [];
     const lastDeathLineColumnFloored = Math.floor(this._deathLineColumn);
     // TODO: sync
-    let deathLineIncrease = Math.min(0.02 + this._level * 0.00005, 1);
-    if (this._level - this._deathLineColumn > 12) {
-      deathLineIncrease += 0.025;
+    let deathLineIncrease = Math.min(0.01 + this._level * 0.000025, 1);
+    if (this._level - this._deathLineColumn > 16) {
+      deathLineIncrease += 0.01;
     }
     this._deathLineColumn += deathLineIncrease;
 
-    this._frontDeathLineColumn =
-      lastDeathLineColumnFloored + this._simulation.grid.numColumns - 2;
-    for (
-      let column = this._level;
-      column < this._level + this._simulation.grid.numColumns;
-      column++
-    ) {
-      const finishCell = this._simulation.grid.reducedCells.find(
-        (cell) =>
-          cell.column === wrap(column, this._simulation.grid.numColumns) &&
-          cell.type === CellType.FinishChallenge
-      );
-      if (finishCell) {
-        this._frontDeathLineColumn = Math.min(
-          finishCell.column + 1,
-          this._frontDeathLineColumn
-        );
-        // TODO: replace while loop with simple equation
-        while (this._frontDeathLineColumn < this._level) {
-          this._frontDeathLineColumn += this._simulation.grid.numColumns;
-        }
-        break;
-      }
+    if (!this._nextFinishLineLocations.length) {
+      this._frontDeathLineColumn =
+        lastDeathLineColumnFloored + this._simulation.grid.numColumns - 2;
+    } else {
+      this._frontDeathLineColumn = this._nextFinishLineLocations[0];
     }
 
     for (const activePlayer of this._simulation.activePlayers) {
       if (
         activePlayer.block &&
-        (activePlayer.block.column === lastDeathLineColumnFloored ||
-          activePlayer.block.column === this._frontDeathLineColumn)
+        activePlayer.block.column === lastDeathLineColumnFloored
       ) {
         activePlayer.block.die();
-        activePlayer.spawnLocation = { row: 0, column: this._level };
       }
     }
+
+    this._generateNewColumns();
+
+    // TODO: sync
+    if (Math.floor(this._deathLineColumn) !== lastDeathLineColumnFloored) {
+      const wrappedLastDeathLineColumn = wrap(
+        lastDeathLineColumnFloored,
+        this._simulation.grid.numColumns
+      );
+      for (let row = 0; row < this._simulation.grid.numRows; row++) {
+        this._simulation.grid.cells[row][wrappedLastDeathLineColumn].reset();
+      }
+      if (!this._simulation.grid.reducedCells.some((cell) => cell.player)) {
+        this._simulation.round!.end(undefined);
+      }
+      processes.push('death line advance');
+    }
+
+    const processTime = Date.now() - startTime;
+    if (processTime > 10) {
+      console.error(
+        'Long escape step frame: ' + processTime + 'ms: ' + processes.join(', ')
+      );
+    }
+  }
+  private _generateNewColumns() {
+    const lastDeathLineColumnFloored = Math.floor(this._deathLineColumn);
     while (
       this._nextGenerationColumn <
       lastDeathLineColumnFloored + this._simulation.grid.numColumns - 1
@@ -213,11 +230,20 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
           ++this._difficulty;
         }
 
+        // first get obstacles that have never been seen before
         const validObstacles = this._escapeObstacles.filter(
           (obstacle) =>
             obstacle.difficulty <= this._difficulty &&
-            obstacle !== this._obstacle
+            this._obstacleHistory.indexOf(obstacle) < 0
         );
+        if (!validObstacles.length) {
+          // fallback to any obstacle that isn't the same as the current one
+          validObstacles.push(
+            ...this._escapeObstacles.filter(
+              (obstacle) => obstacle !== this._obstacle
+            )
+          );
+        }
 
         this._obstacle =
           validObstacles[
@@ -226,87 +252,157 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
                 validObstacles.length
             )
           ];
-        this._obstacleHistory.push(this._obstacle);
         this._nextObstacleColumn = 0;
         this._nextObstaclePadding = 4;
-      }
-    }
-
-    // TODO: sync
-    if (Math.floor(this._deathLineColumn) !== lastDeathLineColumnFloored) {
-      const wrappedLastDeathLineColumn = wrap(
-        lastDeathLineColumnFloored,
-        this._simulation.grid.numColumns
-      );
-      for (let row = 0; row < this._simulation.grid.numRows; row++) {
-        this._simulation.grid.cells[row][wrappedLastDeathLineColumn].reset();
-      }
-      if (!this._simulation.grid.reducedCells.some((cell) => cell.player)) {
-        this._simulation.round!.end(undefined);
+        this._obstacleHistory.push(this._obstacle);
+        if (
+          this._obstacle.grid.some((column) =>
+            column.some((cell) => cell.type === ChallengeCellType.Finish)
+          )
+        ) {
+          this._nextFinishLineLocations.push(
+            this._nextGenerationColumn +
+              this._nextObstaclePadding +
+              this._obstacle.grid.length
+          );
+        }
       }
     }
   }
-  /*private _getNextSpawnLocation(column: number): {
-    row: number;
-    column: number;
-  } {
-    // FIXME: this needs to check a 4x4 grid for free space
-    let padding = 4;
-    let row = padding / 2;
-    let found = false;
-    while (!found) {
-      for (; row < this._simulation.grid.numRows - padding / 2; row++) {
-        found = true;
-        for (let x = 0; x < padding; x++) {
-          for (let y = -padding / 2; y < padding / 2; y++) {
-            if (
-              !this._simulation.grid.cells[row + y][
-                wrap(column + x, this._simulation.grid.numColumns)
-              ].isEmpty
-            ) {
-              found = false;
-            }
-          }
-        }
-        if (found) {
-          break;
-        }
-      }
-      if (!found) {
-        row = padding / 2;
-        --column;
-        if (column < this._deathLineColumn) {
-          break;
-        }
-      }
-    }
-    return {
-      column,
-      row,
-    };
-  }*/
+
+  onBlockCreated(block: IBlock) {
+    this._forceBlockBack(block);
+  }
 
   onBlockMoved(block: IBlock) {
-    for (const cell of block.cells.filter(
-      (cell) => cell.type === CellType.FinishChallenge
-    )) {
-      for (let row = 0; row < this._simulation.grid.numRows; row++) {
-        this._simulation.grid.cells[row][cell.column].reset();
+    this._forceBlockBack(block);
+  }
+  private _forceBlockBack(block: IBlock) {
+    // TODO: this should be part of the movement system
+    const blockFrontColumn =
+      Math.ceil(block.centreX) + Math.floor(block.width / 2);
+
+    let bumpBack = blockFrontColumn - this._frontDeathLineColumn;
+
+    if (block.row < 0) {
+      // don't allow the block to travel on top of the grid unless it's touching a finish cell
+      let touchingFinishCell = false;
+      for (let i = 0; i < block.width; i++) {
+        if (
+          this._simulation.grid.cells[0][
+            wrap(blockFrontColumn - (i + 1), this._simulation.grid.numColumns)
+          ].type === CellType.FinishChallenge
+        ) {
+          touchingFinishCell = true;
+          break;
+        }
       }
+      if (!touchingFinishCell) {
+        bumpBack += RESET_COLUMNS;
+      }
+    }
+
+    if (bumpBack > 0) {
+      block.move(-1, 0, 0, true);
     }
   }
 
   onBlockDied(block: IBlock) {
     this._lastMoveWasMistake[block.player.id] = true;
+    this._numMistakes[block.player.id] =
+      (this._numMistakes[block.player.id] || 0) + 1;
+    block.player.spawnLocation = { row: 0, column: this._level };
   }
   onBlockPlaced(block: IBlock) {
+    const startTime = Date.now();
     this._lastMoveWasMistake[block.player.id] = false;
     const prevLevel = this._level;
-    this._level = Math.max(this._level, block.column);
-    if (this._level > prevLevel) {
+    this._level = Math.max(
+      this._level,
+      Math.ceil(block.centreX) + Math.floor(block.width / 2)
+    );
+    /*if (this._level > prevLevel) {
       this._simulation.addMessage('Level ' + this._level, undefined, false);
-    }
+    }*/
+    this._checkFinish(block);
+    this._checkBridge(block);
     //block.player.spawnLocation = this._getNextSpawnLocation(block.column);
+    console.log('onBlockPlaced ' + (Date.now() - startTime) + 'ms');
+  }
+  private _checkFinish(block: IBlock) {
+    if (block.cells.some((cell) => cell.type === CellType.FinishChallenge)) {
+      const start = Math.floor(this._frontDeathLineColumn - RESET_COLUMNS);
+      for (let column = 0; column < RESET_COLUMNS; column++) {
+        const wrappedColumn = wrap(
+          start + column,
+          this._simulation.grid.numColumns
+        );
+        for (let row = 0; row < this._simulation.grid.numRows; row++) {
+          const cellToReplace = this._simulation.grid.cells[row][wrappedColumn];
+          cellToReplace.reset();
+        }
+      }
+      // reset spawn delays
+      this._numMistakes = [];
+
+      // advance next death line to next finish line location
+      this._nextFinishLineLocations.shift();
+    }
+  }
+  private _checkBridge(block: IBlock) {
+    // FIXME: the bridge cell behaviour should handle this!
+
+    const bottomCellRow = block.cells.find(
+      (cell) => !block.cells.some((other) => other.row > cell.row)
+    )!.row;
+
+    const startTime = Date.now();
+    for (const cell of block.cells) {
+      if (cell.type !== CellType.BridgeCreator || cell.row !== bottomCellRow) {
+        continue;
+      }
+      for (const layer of [1, 4]) {
+        for (const direction of [-1, 1, -2, 2, -3, 3]) {
+          const areaCell =
+            this._simulation.grid.cells[
+              Math.min(cell.row + layer, this._simulation.grid.numRows - 1)
+            ][wrap(cell.column + direction, this._simulation.grid.numColumns)];
+          if (
+            areaCell &&
+            areaCell.isEmpty &&
+            areaCell.type === CellType.BridgeCreator
+          ) {
+            areaCell.place(block.player);
+          }
+        }
+      }
+      /*const areaSize = 5;
+      const areaColumn = Math.round(cell.column / areaSize) * areaSize;
+      const areaRow = Math.ceil(cell.row / areaSize) * areaSize;
+      for (const area of [
+        [-1, 0],
+        [1, 0],
+        //[0, 1],
+      ]) {
+        for (let column = 0; column < areaSize; column++) {
+          const areaCell =
+            this._simulation.grid.cells[areaRow + area[1] * areaSize]?.[
+              wrap(
+                areaColumn + area[0] * areaSize + column,
+                this._simulation.grid.numColumns
+              )
+            ];
+          if (
+            areaCell &&
+            areaCell.isEmpty &&
+            areaCell.type === CellType.BridgeCreator
+          ) {
+            areaCell.place(block.player);
+          }
+        }
+      }*/
+    }
+    console.log('CheckBridge ' + (Date.now() - startTime) + 'ms');
   }
 
   /*onPlayerDestroyed(player: IPlayer) {
@@ -376,7 +472,9 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     }
   }
 
-  onEndRound() {}
+  onEndRound() {
+    this._simulation.grid.reset();
+  }
 
   onPlayerChangeStatus(player: IPlayer) {
     player.spawnLocation = { column: this._level, row: 0 };
@@ -386,7 +484,9 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     if (!this._simulation.nonSpectatorPlayers.length) {
       return;
     }
+    this._nextFinishLineLocations = [];
     this._lastMoveWasMistake = [];
+    this._numMistakes = [];
     this._level = 1;
     this._difficulty = 1;
     this._nextGenerationColumn = 0;
@@ -404,7 +504,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       player.spawnLocation = { column: this._level, row: 0 };
     }
 
-    this._deathLineColumn = -20;
+    this._deathLineColumn = -18;
   }
 
   serialize(): EscapeGameModeState {
@@ -417,10 +517,9 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
   }
 
   checkMistake(player: IPlayer, cells: ICell[], isMistake: boolean): boolean {
-    // disable default mistake detection
-    // if (isMistake) {
-    //   return true;
-    // }
+    if (isMistake) {
+      return true;
+    }
 
     isMistake = true;
     for (const cell of cells) {
@@ -434,7 +533,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
 
   getSpawnDelay(player: IPlayer) {
     if (this._lastMoveWasMistake[player.id]) {
-      return 1000;
+      return 1000 * this._numMistakes[player.id];
     } else {
       return 0;
     }
@@ -454,43 +553,35 @@ export function escapeCanPlace(
     return false;
   }
 
+  if (cell.type == CellType.Deadly) {
+    return false;
+  }
+
   let canPlace = false;
-  [-1, 1, 0].forEach((neighbourDirection) => {
+  for (const neighbourDirection of [
+    [-1, 0],
+    [1, 0],
+    [0, -1],
+    [0, 1],
+    [-1, -1],
+    [-1, 1],
+    [1, -1],
+    [1, 1],
+  ]) {
     const neighbourColumn = wrap(
-      cell.column + neighbourDirection,
+      cell.column + neighbourDirection[0],
       simulation.grid.numColumns
     );
-    for (
-      let row = 0;
-      row < Math.min(cell.row + 2, simulation.grid.numRows);
-      row++
-    ) {
-      const neighbour = simulation.grid.cells[row][neighbourColumn];
-      canPlace =
-        canPlace ||
-        ((neighbour.player?.color === player.color ||
-          (isForgiving &&
-            simulation.wasRecentlyPlaced(neighbour.placementFrame))) &&
-          // discard diagonal items
-          [
-            [-1, 0],
-            [1, 0],
-            [0, -1],
-          ].some((neighbourDirection) => {
-            const neighbourNeighbour = simulation.grid.getNeighbour(
-              neighbour,
-              neighbourDirection[0],
-              neighbourDirection[1]
-            );
-            return (
-              neighbourNeighbour?.isEmpty ||
-              (isForgiving &&
-                neighbourNeighbour &&
-                simulation.wasRecentlyPlaced(neighbourNeighbour.placementFrame))
-            );
-          }));
+
+    const neighbour =
+      simulation.grid.cells[cell.row + neighbourDirection[1]]?.[
+        neighbourColumn
+      ];
+    canPlace = neighbour && neighbour.player?.color === player.color;
+    if (canPlace) {
+      break;
     }
-  });
+  }
 
   return canPlace;
 }

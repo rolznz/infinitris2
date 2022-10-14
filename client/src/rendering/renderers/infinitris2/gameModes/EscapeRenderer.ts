@@ -15,6 +15,7 @@ import {
   EscapeGameMode,
 } from '@core/gameModes/EscapeGameMode/EscapeGameMode';
 import ICell from '@models/ICell';
+import { fontFamily } from '@models/ui';
 
 interface IRenderableFreeCell extends IRenderableEntity<PIXI.Graphics> {}
 
@@ -24,6 +25,7 @@ export class EscapeRenderer implements IGameModeRenderer {
   private _cachedCanPlaceResults: { [index: number]: boolean };
   private _debouncedRerender: () => void;
   private _deathLineGraphics: PIXI.Graphics[];
+  private _distanceText?: PIXI.Text;
 
   constructor(renderer: BaseRenderer) {
     this._freeRenderableCells = {};
@@ -37,6 +39,17 @@ export class EscapeRenderer implements IGameModeRenderer {
 
   tick() {
     this._updateDeathLine();
+    // TODO: only update on level change
+    this._updateDistanceText();
+  }
+  private _updateDistanceText() {
+    if (!this._renderer.simulation) {
+      return;
+    }
+    const gameMode = this._renderer.simulation.gameMode as EscapeGameMode;
+    if (this._distanceText) {
+      this._distanceText.text = gameMode.level + 'm';
+    }
   }
   private _updateDeathLine() {
     if (!this._renderer.simulation) {
@@ -135,12 +148,34 @@ export class EscapeRenderer implements IGameModeRenderer {
       return;
     }
 
+    if (!this._distanceText) {
+      this._distanceText = new PIXI.Text('', {
+        //stroke: '#000000',
+        //strokeThickness: 7,
+        fontFamily,
+        //fontSize: ,
+        dropShadow: true,
+        dropShadowAngle: Math.PI / 2,
+        dropShadowDistance: 1,
+        dropShadowBlur: 2,
+        dropShadowColor: '#000000',
+        fill: '#ffffff',
+      });
+      this._renderer.app.stage.addChild(this._distanceText);
+      this._distanceText.zIndex = 10000;
+      this._distanceText.anchor.set(0, 1);
+    }
+    this._distanceText.scale.set(this._renderer.cellSize * 0.03);
+    this._distanceText.x = this._renderer.appWidth * 0.05;
+    this._distanceText.y = this._renderer.appHeight * 0.95;
+
     for (let row = 0; row < simulation.grid.numRows; row++) {
       for (let column = 0; column < simulation.grid.numColumns; column++) {
         const cell = simulation.grid.cells[row][column];
         const cellIndex = cell.index;
         if (!this._freeRenderableCells[cellIndex]) {
           const freeCellContainer = new PIXI.Container();
+          freeCellContainer.zIndex = 1000;
           this._renderer.world.addChild(freeCellContainer);
           this._freeRenderableCells[cellIndex] = {
             container: freeCellContainer,

@@ -45,11 +45,11 @@ export default class BridgeCreatorBehaviour implements ICellBehaviour {
   // }
 
   get alpha(): number {
-    return this._cell.player ? 1 : 0.1;
+    return this._cell.player ? 1 : 0.25;
   }
 
   get color(): number {
-    return 0xff00ff;
+    return 0x666;
   }
 
   get isPassable(): boolean {
@@ -71,7 +71,7 @@ export default class BridgeCreatorBehaviour implements ICellBehaviour {
     return ChallengeCellType.BridgeCreator;
   }
   getImageFilename() {
-    return 'finish';
+    return 'bridge_creator';
   }
   hasWorldImage() {
     return false;

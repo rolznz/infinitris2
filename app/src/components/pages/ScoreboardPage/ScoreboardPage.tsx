@@ -110,7 +110,7 @@ function CountdownTimer({
   updateIntervalSeconds,
 }: CountdownTimerProps) {
   const [_, setCount] = React.useState(0);
-  useInterval(() => setCount((count) => count + 1));
+  useInterval(() => setCount((count) => count + 1), 1000);
   return <>{getTimeRemaining(lastUpdateTimestamp, updateIntervalSeconds)}</>;
 }
 

@@ -18,31 +18,31 @@ export default class BridgeCreatorBehaviour implements ICellBehaviour {
 
   onAddBlock(_block: IBlock) {}
 
-  onCellIsEmptyChanged() {
-    // if (this._cell.player) {
-    //   this._cell.behaviour = new NormalCellBehaviour(this._cell);
-    // }
-    // if (this._cell.player) {
-    //   [
-    //     [-1, 0],
-    //     [1, 0],
-    //     [0, -1],
-    //     [0, 1],
-    //   ].forEach((direction) => {
-    //     const neighbour =
-    //       this._grid.cells[this._cell.row + direction[1]]?.[
-    //         wrap(this._cell.column + direction[0], this._grid.numColumns)
-    //       ];
-    //     if (
-    //       neighbour &&
-    //       neighbour.isEmpty &&
-    //       neighbour.type === CellType.BridgeCreator
-    //     ) {
-    //       neighbour.place(this._cell.player);
-    //     }
-    //   });
-    // }
-  }
+  // onCellIsEmptyChanged() {
+  // if (this._cell.player) {
+  //   this._cell.behaviour = new NormalCellBehaviour(this._cell);
+  // }
+  // if (this._cell.player) {
+  //   [
+  //     [-1, 0],
+  //     [1, 0],
+  //     [0, -1],
+  //     [0, 1],
+  //   ].forEach((direction) => {
+  //     const neighbour =
+  //       this._grid.cells[this._cell.row + direction[1]]?.[
+  //         wrap(this._cell.column + direction[0], this._grid.numColumns)
+  //       ];
+  //     if (
+  //       neighbour &&
+  //       neighbour.isEmpty &&
+  //       neighbour.type === CellType.BridgeCreator
+  //     ) {
+  //       neighbour.place(this._cell.player);
+  //     }
+  //   });
+  // }
+  // }
 
   get alpha(): number {
     return this._cell.player ? 1 : 0.1;

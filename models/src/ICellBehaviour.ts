@@ -13,8 +13,8 @@ export default interface ICellBehaviour {
   getImageFilename?(): string | undefined;
   hasWorldImage?(): boolean;
   hasWorldVariationImage?(): boolean;
-  onCellBehaviourChanged?(): void;
-  onCellIsEmptyChanged?(): void;
+  // onCellBehaviourChanged?(): void;
+  // onCellIsEmptyChanged?(): void;
   hasTileset?(): boolean;
   getZIndex?(): number;
   color?: number;

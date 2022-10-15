@@ -13,7 +13,11 @@ import { GridFloor } from './GridFloor';
 import { FallbackLeaderboard } from './FallbackLeaderboard';
 import { SpawnDelayIndicator } from './SpawnDelayIndicator';
 //import { ScoreChangeIndicator } from './ScoreChangeIndicator';
-import IGrid, { GridLineType, BlockShadowType } from '@models/IGrid';
+import IGrid, {
+  GridLineType,
+  BlockShadowType,
+  PartialClearRow,
+} from '@models/IGrid';
 import ISimulation from '@models/ISimulation';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
 import { RendererQuality } from '@models/RendererQuality';
@@ -1425,7 +1429,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       ([] as number[]).concat(...partialClears.map((p) => p.columns))
     );
   }
-  onClearLines(rows: number[]) {
+  onClearLines(rows: number[], partialClears: PartialClearRow[]) {
     if (!this._simulation) {
       return;
     }
@@ -1437,13 +1441,13 @@ export default class Infinitris2Renderer extends BaseRenderer {
         row,
         []
       );
-      const partialClears = this._simulation.grid.nextPartialClears.filter(
+      const partialClearsForRow = partialClears.filter(
         (partialClear) => partialClear.row === row
       );
       for (const cell of this._simulation.grid.cells[row]) {
         if (
-          partialClears.length &&
-          !partialClears.some((p) => p.columns.indexOf(cell.column) >= 0)
+          partialClearsForRow.length &&
+          !partialClearsForRow.some((p) => p.columns.indexOf(cell.column) >= 0)
         ) {
           continue;
         }

@@ -108,7 +108,7 @@ export default class Grid implements IGrid {
       this._nextLinesToClear.length &&
       this._frameNumber > this._nextLineClearFrame
     ) {
-      this.clearLines(this._nextLinesToClear);
+      this.clearLines(this._nextLinesToClear, this._nextPartialClears);
     }
   }
 
@@ -193,11 +193,10 @@ export default class Grid implements IGrid {
     return false;
   }
 
-  clearLines(rowsToClear: number[]) {
+  clearLines(rowsToClear: number[], partialClears: PartialClearRow[]) {
     this._eventListeners.forEach((eventListener) =>
-      eventListener.onClearLines(rowsToClear)
+      eventListener.onClearLines(rowsToClear, partialClears)
     );
-    const partialClears = this._nextPartialClears;
     this._nextLinesToClear = [];
     this._nextPartialClears = [];
     for (const row of rowsToClear) {

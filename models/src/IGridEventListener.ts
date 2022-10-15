@@ -1,11 +1,11 @@
-import IGrid from './IGrid';
+import IGrid, { PartialClearRow } from './IGrid';
 import ICellEventListener from './ICellEventListener';
 
 export default interface IGridEventListener extends ICellEventListener {
   /**
    * Triggered when one or more grid lines are about to be cleared
    */
-  onClearLines(rows: number[]): void;
+  onClearLines(rows: number[], partialClears: PartialClearRow[]): void;
 
   /**
    * Triggered when one or more grid lines have been cleared

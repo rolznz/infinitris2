@@ -12,7 +12,7 @@ import Grid from '@core/grid/Grid';
 import IBlock from '@models/IBlock';
 import ICell from '@models/ICell';
 import ICellBehaviour from '@models/ICellBehaviour';
-import IGrid from '@models/IGrid';
+import IGrid, { PartialClearRow } from '@models/IGrid';
 import { IServerBlockCreatedEvent } from '@core/networking/server/IServerBlockCreatedEvent';
 import { IClientBlockMovedEvent } from '@core/networking/client/IClientBlockMovedEvent';
 import IServerBlockMovedEvent from '@core/networking/server/IServerBlockMovedEvent';
@@ -385,10 +385,11 @@ export default class Room implements Partial<ISimulationEventListener> {
     this._sendMessageToAllPlayersExcept(blockDroppedEvent, block.player.id);
   }
 
-  onClearLines(rows: number[]): void {
+  onClearLines(rows: number[], partialClears: PartialClearRow[]): void {
     const clearLinesEvent: IServerClearLinesEvent = {
       type: ServerMessageType.CLEAR_LINES,
       rows,
+      partialClears,
     };
     this._sendMessageToAllPlayers(clearLinesEvent);
   }

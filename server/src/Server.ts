@@ -108,10 +108,10 @@ export default class Server implements IServerSocketEventListener {
    * @inheritdoc
    */
   onClientMessage(socket: IClientSocket, message: IClientMessage) {
-    console.log(
+    /*console.log(
       'Received message from client ' + socket.id + ':',
       message.type + ' room: ' + socket.roomIndex
-    );
+    );*/
     try {
       if (socket.roomIndex === undefined) {
         if (message.type === ClientMessageType.JOIN_ROOM_REQUEST) {

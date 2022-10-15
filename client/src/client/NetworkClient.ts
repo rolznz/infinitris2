@@ -128,7 +128,7 @@ export default class NetworkClient
       return;
     }
     ++this._lastMessageId;
-    console.log('Received message: ', message);
+    // console.log('Received message: ', message);
     if (message.type === ServerMessageType.JOIN_ROOM_RESPONSE) {
       const joinResponse = message as IServerJoinRoomResponse;
       const joinResponseData = joinResponse.data;
@@ -317,7 +317,10 @@ export default class NetworkClient
           playerChangeStatusMessage.status;
       } else if (message.type === ServerMessageType.CLEAR_LINES) {
         const clearLinesMessage = message as IServerClearLinesEvent;
-        this._simulation.grid.clearLines(clearLinesMessage.rows);
+        this._simulation.grid.clearLines(
+          clearLinesMessage.rows,
+          clearLinesMessage.partialClears
+        );
       } else if (message.type === ServerMessageType.PLAYER_KILLED) {
         const playerKilledEvent = message as IServerPlayerKilledEvent;
         const victim = this._simulation.getPlayer(playerKilledEvent.victimId);
@@ -366,20 +369,6 @@ export default class NetworkClient
           const gameMode = this._simulation.gameMode as ConquestGameMode;
           const player = this._simulation.getPlayer(event.data.playerId);
           gameMode.assignPlayerToTeam(player, event.data.teamNumber);
-        } else if (
-          event.data.type === 'garbageWarning' ||
-          event.data.type === 'garbagePlaced'
-        ) {
-          if (this._simulation.settings.gameModeType !== 'garbage-defense') {
-            throw new Error(
-              'Unexpected game mode for event ' +
-                event.data.type +
-                ': ' +
-                this._simulation.settings.gameModeType
-            );
-          }
-        } else {
-          throw new Error('Unsupported game mode event: ' + event.data.type);
         }
       }
     }

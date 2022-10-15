@@ -8,7 +8,7 @@ import IBlock from '@models/IBlock';
 import ICellBehaviour from '@models/ICellBehaviour';
 import ICell from '@models/ICell';
 import { IPlayer, PlayerStatus } from '@models/IPlayer';
-import IGrid from '@models/IGrid';
+import IGrid, { PartialClearRow } from '@models/IGrid';
 import { IGameMode } from '@models/IGameMode';
 import { InfinityGameMode } from '@core/gameModes/InfinityGameMode';
 import { FpsCounter } from '@core/FpsCounter';
@@ -563,7 +563,7 @@ export default class Simulation implements ISimulation {
         }
       }
     }
-    console.log('CheckBridge ' + (Date.now() - startTime) + 'ms');
+    // console.log('CheckBridge ' + (Date.now() - startTime) + 'ms');
   }
 
   /**
@@ -669,8 +669,10 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
-  onClearLines(rows: number[]) {
-    this._eventListeners.forEach((listener) => listener.onClearLines?.(rows));
+  onClearLines(rows: number[], partialClears: PartialClearRow[]) {
+    this._eventListeners.forEach((listener) =>
+      listener.onClearLines?.(rows, partialClears)
+    );
   }
   /**
    * @inheritdoc

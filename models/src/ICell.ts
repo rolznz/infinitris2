@@ -3,10 +3,11 @@ import CellType from './CellType';
 import ICellBehaviour from './ICellBehaviour';
 import { IPlayer } from './IPlayer';
 import IGrid from '@models/IGrid';
+import ChallengeCellType from '@models/ChallengeCellType';
 
 export type NetworkCellInfo = {
   readonly playerId?: number;
-  readonly isEmpty: boolean;
+  readonly challengeCellType: ChallengeCellType;
 };
 
 export default interface ICell {

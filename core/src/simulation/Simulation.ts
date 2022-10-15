@@ -437,6 +437,19 @@ export default class Simulation implements ISimulation {
     const player = this._players[playerId];
     if (player) {
       player.destroy();
+      // find another player on the same team and give the cells to them instead so that they aren't reset
+      const allyPlayer = this.activePlayers.find(
+        (other) => other.color === player.color && other !== player
+      );
+      if (allyPlayer) {
+        const cellsToReplace = this.grid.reducedCells.filter(
+          (cell) => cell.player === player
+        );
+        for (const cell of cellsToReplace) {
+          cell.player = allyPlayer;
+        }
+      }
+
       this._grid.removePlayer(player);
       delete this._players[playerId];
       //this.onSimulationPlayerRemoved(player);

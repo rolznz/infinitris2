@@ -137,22 +137,6 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
       );
     }
   }
-  onPlayerDestroyed(player: IPlayer) {
-    if (this._simulation.isNetworkClient) {
-      return;
-    }
-    // TODO: this is copied in ConquestGameMode. Move to simulation
-    // find another player on the same team and give the cells to them instead so that they aren't reset
-    const allyPlayer = this._simulation.activePlayers.find(
-      (other) => other.color === player.color && other !== player
-    );
-    if (allyPlayer) {
-      const cellsToReplace = this._simulation.grid.reducedCells.filter(
-        (cell) => cell.player === player
-      );
-      this.fillCells(cellsToReplace, allyPlayer);
-    }
-  }
 
   fillCells(cellsToFill: ICell[], player: IPlayer) {
     this._simulation.onGameModeEvent({

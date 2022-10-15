@@ -47,7 +47,8 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
   private _escapeObstacles: EscapeObstacle[];
   private _nextFinishLines: { rightColumn: number; numColumns: number }[];
   private _placementMode: EscapePlacementMode;
-  private _lastEscapeStepSync: any;
+  private _lastEscapeStepNetworkSync: number;
+  private _finishHit: boolean;
 
   constructor(simulation: ISimulation) {
     this._simulation = simulation;
@@ -64,7 +65,8 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     this._obstacleHistory = [];
     this._escapeObstacles = createEscapeObstacles(simulation.grid.numRows);
     this._placementMode = 'restricted';
-    this._lastEscapeStepSync = 0;
+    this._lastEscapeStepNetworkSync = 0;
+    this._finishHit = false;
   }
 
   get deathLineColumn(): number {
@@ -107,6 +109,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
   }
 
   onGameModeEvent(event: EscapeEvent) {
+    // console.log('escape event', event);
     if (event.type === 'escapeStep') {
       if (this._simulation.isNetworkClient) {
         this._deathLineColumn = event.deathLineColumn;
@@ -127,6 +130,20 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       for (let row = 0; row < this._simulation.grid.numRows; row++) {
         this._simulation.grid.cells[row][event.column].reset();
       }
+    } else if (event.type === 'escapeFinishLineReached') {
+      for (let column = 0; column < event.numColumns; column++) {
+        const wrappedColumn = wrap(
+          event.start + column,
+          this._simulation.grid.numColumns
+        );
+
+        for (let row = 0; row < this._simulation.grid.numRows; row++) {
+          const cellToReplace = this._simulation.grid.cells[row][wrappedColumn];
+          cellToReplace.reset();
+        }
+      }
+      // reset placement type
+      this._placementMode = 'restricted';
     }
   }
 
@@ -134,6 +151,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     if (this._simulation.round!.isWaitingForNextRound) {
       return;
     }
+    const lastDeathLineColumnFloored = Math.floor(this._deathLineColumn);
     let deathLineIncrease = Math.min(0.01 + this._level * 0.000025, 1);
     if (this._level - this._deathLineColumn > 16) {
       deathLineIncrease += 0.01;
@@ -144,9 +162,6 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       return;
     }
     const startTime = Date.now();
-    const processes: string[] = [];
-    const lastDeathLineColumnFloored = Math.floor(this._deathLineColumn);
-    // TODO: sync
 
     if (!this._nextFinishLines.length) {
       this._frontDeathLineColumn =
@@ -166,7 +181,6 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
 
     this._generateNewColumns();
 
-    // TODO: sync
     if (Math.floor(this._deathLineColumn) !== lastDeathLineColumnFloored) {
       const wrappedLastDeathLineColumn = wrap(
         lastDeathLineColumnFloored,
@@ -181,17 +195,16 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       if (!this._simulation.grid.reducedCells.some((cell) => cell.player)) {
         this._simulation.round!.end(undefined);
       }
-      processes.push('death line advance');
     }
+
+    this._checkFinish();
 
     const processTime = Date.now() - startTime;
     if (processTime > 10) {
-      console.error(
-        'Long escape step frame: ' + processTime + 'ms: ' + processes.join(', ')
-      );
+      console.error('Long escape step frame: ' + processTime + 'ms');
     }
-    if (this._lastEscapeStepSync++ > IDEAL_FPS) {
-      this._lastEscapeStepSync = 0;
+    if (this._lastEscapeStepNetworkSync-- <= 0) {
+      this._lastEscapeStepNetworkSync = IDEAL_FPS;
       this._simulation.onGameModeEvent({
         type: 'escapeStep',
         deathLineColumn: this._deathLineColumn,
@@ -223,29 +236,6 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       if (this._nextObstaclePadding-- > 0) {
         continue;
       }
-      // const obstacleType = Math.floor(this._nextObstacleColumn / 4) % 4;
-      // if (obstacleType % 2 === 0) {
-      //   continue;
-      // }
-
-      // const rows =
-      //   obstacleType === 1
-      //     ? [...new Array(this._simulation.grid.numRows - 8)].map(
-      //         (_, index) => this._simulation.grid.numRows - 1 - index
-      //       )
-      //     : /*: obstacleType === 2
-      //     ? [...new Array(Math.floor(this._simulation.grid.numRows / 4))].map(
-      //         (_, index) =>
-      //           Math.floor(this._simulation.grid.numRows / 2) + index
-      //       )*/
-      //       /*[...new Array(this._simulation.grid.numRows - 8)].map(
-      //         (_, index) => index
-      //       );*/ [
-      //         ...new Array(Math.floor(this._simulation.grid.numRows / 2)),
-      //       ].map(
-      //         (_, index) =>
-      //           Math.floor(this._simulation.grid.numRows / 4) + index
-      //       );
 
       const rows = this._obstacle?.grid?.[this._nextObstacleColumn++];
       if (rows) {
@@ -334,24 +324,6 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
 
     let bumpBack = blockFrontColumn - this._frontDeathLineColumn;
 
-    // if (block.row < 0 && this._nextFinishLines.length) {
-    //   // don't allow the block to travel on top of the grid
-    //   let touchingFilledBlock = false;
-    //   for (let i = 0; i < block.width; i++) {
-    //     if (
-    //       !this._simulation.grid.cells[0][
-    //         wrap(blockFrontColumn - (i + 1), this._simulation.grid.numColumns)
-    //       ].isEmpty
-    //     ) {
-    //       touchingFilledBlock = true;
-    //       break;
-    //     }
-    //   }
-    //   if (!touchingFilledBlock) {
-    //     bumpBack += RESET_COLUMNS;
-    //   }
-    // }
-
     if (bumpBack > 0) {
       block.move(-1, 0, 0, true);
     }
@@ -364,21 +336,25 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     block.player.spawnLocation = { row: 0, column: this._level };
   }
   onBlockPlaced(block: IBlock) {
-    const startTime = Date.now();
+    //const startTime = Date.now();
     this._lastMoveWasMistake[block.player.id] = false;
-    const prevLevel = this._level;
+    //const prevLevel = this._level;
     this._level = Math.max(
       this._level,
       Math.ceil(block.centreX) + Math.floor(block.width / 2)
     );
-    /*if (this._level > prevLevel) {
-      this._simulation.addMessage('Level ' + this._level, undefined, false);
-    }*/
-    this._checkFinish(block);
     this._checkPartialClearActivation(block);
-    //block.player.spawnLocation = this._getNextSpawnLocation(block.column);
-    // console.log('onBlockPlaced ' + (Date.now() - startTime) + 'ms');
+    if (!this._simulation.isNetworkClient) {
+      // finish check is done after block has been placed, since otherwise receives events in different order (finish, then block placed)
+      // which will put the client out of sync
+      // TODO: find a more reliable way to do this
+
+      if (block.cells.some((cell) => cell.type === CellType.FinishChallenge)) {
+        this._finishHit = true;
+      }
+    }
   }
+
   private _checkPartialClearActivation(block: IBlock) {
     if (this._placementMode === 'free') {
       return;
@@ -395,74 +371,32 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       }
     }
   }
-  private _checkFinish(block: IBlock) {
+  private _checkFinish() {
+    if (!this._finishHit) {
+      return;
+    }
+    this._finishHit = false;
     if (!this._nextFinishLines.length) {
       return;
     }
     const currentFinishLine = this._nextFinishLines[0];
-    if (block.cells.some((cell) => cell.type === CellType.FinishChallenge)) {
-      const start = Math.floor(
-        this._frontDeathLineColumn - currentFinishLine.numColumns
-      );
-      for (let column = 0; column < currentFinishLine.numColumns; column++) {
-        const wrappedColumn = wrap(
-          start + column,
-          this._simulation.grid.numColumns
-        );
-        /*this._simulation.onGameModeEvent({
-          type: 'escapeDeathLineClear'
-        })*/ // FIXME: new event type, should include all columns and update placementMode
-        for (let row = 0; row < this._simulation.grid.numRows; row++) {
-          const cellToReplace = this._simulation.grid.cells[row][wrappedColumn];
-          cellToReplace.reset();
-        }
-      }
-      // reset spawn delays
-      this._numMistakes = [];
+    const start = Math.floor(
+      this._frontDeathLineColumn - currentFinishLine.numColumns
+    );
 
-      // reset placement type
-      this._placementMode = 'restricted';
-
-      // advance next death line to next finish line location
-      this._nextFinishLines.shift();
-    }
-  }
-
-  /*
-
-  fillCells(cellsToFill: ICell[], player: IPlayer) {
     this._simulation.onGameModeEvent({
-      type: 'cellsCaptured',
-      playerId: player.id,
-      cells: cellsToFill.map((cell) => ({
-        row: cell.row,
-        column: cell.column,
-      })),
+      type: 'escapeFinishLineReached',
+      start,
+      numColumns: currentFinishLine.numColumns,
       isSynced: true,
     });
 
-    const lineClearRowsToCheck: number[] = [];
+    // reset spawn delays
+    this._numMistakes = [];
 
-    for (const cellToFill of cellsToFill) {
-      // only re-fire event if color changed
-      // (same color is player transfer when someone exits the game)
-      if (cellToFill.player?.color !== player.color) {
-        this._simulation.onGameModeEvent({
-          type: 'cellCaptured',
-          column: cellToFill.column,
-          row: cellToFill.row,
-          color: player.color,
-        });
-        this._delayRerender(cellToFill);
-      }
-      cellToFill.place(player);
-      lineClearRowsToCheck.push(cellToFill.row);
-    }
-    this._simulation.grid.checkLineClears(
-      lineClearRowsToCheck.filter((row, i, rows) => rows.indexOf(row) === i)
-    );
-    this._debouncedCalculatePlayerScores();
-  }*/
+    // advance next death line to next finish line location
+    this._nextFinishLines.shift();
+  }
 
   onPlayerCreated(player: IPlayer) {
     // make all players share the same color and pattern
@@ -478,6 +412,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
         });
       }
     }
+    player.spawnLocation = { column: this._level, row: 0 };
   }
 
   onEndRound() {
@@ -502,7 +437,8 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     this._obstacleHistory = [];
     this._obstacle = undefined;
     this._placementMode = 'restricted';
-    this._lastEscapeStepSync = 0;
+    this._lastEscapeStepNetworkSync = 0;
+    this._finishHit = false;
 
     //this._simulation.grid.cells[0].forEach((cell) => cell.place(undefined));
 
@@ -515,6 +451,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     }
 
     this._deathLineColumn = -18;
+    this._frontDeathLineColumn = 100;
   }
 
   serialize(): EscapeGameModeState {

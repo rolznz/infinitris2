@@ -146,7 +146,7 @@ export default class Room implements Partial<ISimulationEventListener> {
           numColumns: this._simulation.grid.numColumns,
           reducedCells: this._simulation.grid.reducedCells.map((cell) => ({
             playerId: cell.player?.id,
-            isEmpty: cell.isEmpty,
+            challengeCellType: cell.behaviour.toChallengeCellType(),
           })),
         },
         blocks: this._simulation.players

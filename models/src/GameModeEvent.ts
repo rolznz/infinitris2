@@ -38,6 +38,11 @@ export type EscapeEvent =
   | ({
       type: 'escapeDeathLineClear';
       column: number;
+    } & SyncedGameModeEvent)
+  | ({
+      type: 'escapeFinishLineReached';
+      start: number;
+      numColumns: number;
     } & SyncedGameModeEvent);
 
 export type ConquestEvent =

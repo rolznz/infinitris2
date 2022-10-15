@@ -49,6 +49,7 @@ import IClientToggleChatEvent from '@core/networking/client/IClientToggleChatEve
 import { IServerPlayerToggleChatEvent } from '@core/networking/server/IServerPlayerToggleChatEvent';
 import { IServerSimulationMessage } from '@models/networking/server/IServerSimulationMessage';
 import { GarbageDefenseGameMode } from '@core/gameModes/GarbageDefenseGameMode';
+import createBehaviourFromChallengeCellType from '@core/grid/cell/behaviours/createBehaviourFromChallengeCellType';
 
 export default class NetworkClient
   extends BaseClient
@@ -205,8 +206,15 @@ export default class NetworkClient
             cellPlayerId !== undefined
               ? this._simulation.getPlayer(cellPlayerId)
               : undefined;
-          if (!cellInfo.isEmpty) {
-            this._simulation.grid.cells[row][column].place(player);
+
+          const cell = this._simulation.grid.cells[row][column];
+          createBehaviourFromChallengeCellType(
+            cell,
+            this._simulation.grid,
+            cellInfo.challengeCellType
+          );
+          if (player) {
+            cell.player = player;
           }
         }
         for (let block of joinResponseData.blocks) {

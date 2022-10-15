@@ -23,7 +23,6 @@ export class EscapeRenderer implements IGameModeRenderer {
   private _freeRenderableCells!: { [rowColumnId: number]: IRenderableFreeCell };
   private _renderer: BaseRenderer;
   private _cachedCanPlaceResults: { [index: number]: boolean };
-  private _debouncedRerender: () => void;
   private _deathLineGraphics: PIXI.Graphics[];
   private _distanceText?: PIXI.Text;
 
@@ -32,7 +31,6 @@ export class EscapeRenderer implements IGameModeRenderer {
     this._renderer = renderer;
     this._renderer.simulation!.addEventListener(this);
     this._cachedCanPlaceResults = {};
-    this._debouncedRerender = debounce(this._rerender, 100);
     this._deathLineGraphics = [0, 1].map((_) => new PIXI.Graphics());
     this._renderer.app.stage.addChild(...this._deathLineGraphics);
   }
@@ -71,7 +69,7 @@ export class EscapeRenderer implements IGameModeRenderer {
   }
 
   onCellIsEmptyChanged(cell: ICell) {
-    this._debouncedRerender();
+    this._rerender();
     if (cell.isEmpty) {
       for (let i = 0; i < 10; i++) {
         this._renderer.emitParticle(
@@ -85,39 +83,30 @@ export class EscapeRenderer implements IGameModeRenderer {
   }
 
   onSimulationStart() {
-    // FIXME: why is a timeout needed to render correctly?
-    setTimeout(() => {
-      this._debouncedRerender();
-    }, 1000);
+    this._rerender();
   }
   onNextRound() {
-    setTimeout(() => {
-      this._cachedCanPlaceResults = {};
-      this._debouncedRerender();
-    }, 1);
+    this._cachedCanPlaceResults = {};
+    this._rerender();
   }
   onEndRound() {
     this._cachedCanPlaceResults = {};
-    this._debouncedRerender();
+    this._rerender();
   }
 
   onBlockRemoved() {
-    setTimeout(() => {
-      this._debouncedRerender();
-    }, 1);
+    this._rerender();
   }
   onLinesCleared() {
-    setTimeout(() => {
-      this._debouncedRerender();
-    }, 1);
+    this._rerender();
   }
   onPlayerChangeStatus() {
-    this._debouncedRerender();
+    this._rerender();
   }
 
   resize() {
     this._cachedCanPlaceResults = {};
-    this._debouncedRerender();
+    this._rerender();
 
     for (let i = 0; i < this._deathLineGraphics.length; i++) {
       const graphics = this._deathLineGraphics[i];
@@ -198,9 +187,9 @@ export class EscapeRenderer implements IGameModeRenderer {
             : escapeCanPlace(followingPlayer, simulation, cell, false);
         const cachedCanPlaceResult = this._cachedCanPlaceResults[cellIndex];
         this._cachedCanPlaceResults[cellIndex] = canPlace;
-        if (canPlace === cachedCanPlaceResult) {
-          continue;
-        }
+        // if (canPlace === cachedCanPlaceResult) {
+        //   continue;
+        // }
 
         this._renderer.renderCopies(
           freeRenderableCell,

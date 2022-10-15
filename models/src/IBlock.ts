@@ -39,6 +39,7 @@ export default interface IBlock {
   get id(): number;
   get isAlive(): boolean;
   get hadPlacementAtSpawn(): boolean;
+  get wasPlaced(): boolean;
   hasPlacement(): boolean;
   update(): void;
   canMove(

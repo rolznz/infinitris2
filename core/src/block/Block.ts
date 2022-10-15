@@ -38,6 +38,7 @@ export default class Block implements IBlock {
   private _layoutId: number;
   private _id: number;
   private _hadPlacementAtSpawn: boolean;
+  private _wasPlaced: boolean;
 
   constructor(
     id: number,
@@ -225,6 +226,10 @@ export default class Block implements IBlock {
   // TODO: rename numRows
   get height(): number {
     return this._layout.length;
+  }
+
+  get wasPlaced(): boolean {
+    return this._wasPlaced;
   }
 
   die() {
@@ -442,6 +447,7 @@ export default class Block implements IBlock {
       cell.place(this._player);
     });
     this._eventListener?.onBlockPlaced(this);
+    this._wasPlaced = true;
   }
 
   /**

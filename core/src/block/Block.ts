@@ -70,6 +70,7 @@ export default class Block implements IBlock {
     this._slowdownAmount = 0;
     this._isAlive = true;
     this._simulation = simulation;
+    this._wasPlaced = false;
     this._resetTimers();
 
     if (!force) {

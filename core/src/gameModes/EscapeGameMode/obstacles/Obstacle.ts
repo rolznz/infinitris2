@@ -82,7 +82,34 @@ const partialLineClear1: EscapeObstacleTemplate = {
       type: ChallengeCellType.PartialClear,
     })),
   ],
-  difficulty: 1,
+  difficulty: 7,
+};
+
+const partialLineClear2: EscapeObstacleTemplate = {
+  createGrid: () => [
+    [...new Array(8)].map((_, i) => ({
+      row: -(i + 1),
+      type: ChallengeCellType.PartialClear,
+    })),
+    ...[...new Array(RESET_COLUMNS * 2)].map((_, c) => [
+      ...[...new Array(4)].map((_, i) => ({
+        row: -(i + 2),
+        type:
+          c % 2 === i % 2 || c % 4 === i % 3
+            ? ChallengeCellType.Empty
+            : ChallengeCellType.Full,
+      })),
+      ...[...new Array(1)].map((_, i) => ({
+        row: -(i + 1),
+        type: ChallengeCellType.Finish,
+      })),
+    ]),
+    [...new Array(8)].map((_, i) => ({
+      row: -(i + 1),
+      type: ChallengeCellType.PartialClear,
+    })),
+  ],
+  difficulty: 10,
 };
 
 // const slice1: EscapeObstacleTemplate = {
@@ -145,6 +172,7 @@ export function createEscapeObstacles(numRows: number): EscapeObstacle[] {
     deadly3b,
     deadly4,
     partialLineClear1,
+    partialLineClear2,
   ].map((template) => {
     const { createGrid, ...otherProps } = template;
     return {

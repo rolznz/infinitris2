@@ -171,11 +171,16 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     }
 
     for (const activePlayer of this._simulation.activePlayers) {
-      if (
-        activePlayer.block &&
-        activePlayer.block.column === lastDeathLineColumnFloored
-      ) {
-        activePlayer.block.die();
+      if (activePlayer.block) {
+        const blockFrontColumn =
+          Math.ceil(activePlayer.block.centreX) +
+          Math.floor(activePlayer.block.width / 2);
+        if (
+          activePlayer.block &&
+          blockFrontColumn === lastDeathLineColumnFloored
+        ) {
+          activePlayer.block.die();
+        }
       }
     }
 

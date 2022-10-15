@@ -28,7 +28,6 @@ import { ClientApiConfig } from '@models/IClientApi';
 import { wrap } from '@core/utils/wrap';
 import { fontFamily, secondaryFontFamily } from '@models/ui';
 import { TowerIndicator } from '@src/rendering/renderers/infinitris2/TowerIndicator';
-import { LineClearingIndicator } from '@src/rendering/renderers/infinitris2/LineClearingIndicator';
 import { GameModeEvent } from '@models/GameModeEvent';
 import {
   getCellBehaviourImageFilename,
@@ -46,6 +45,8 @@ import { GarbageDefenseRenderer } from '@src/rendering/renderers/infinitris2/gam
 import LayoutUtils from '@core/block/layout/LayoutUtils';
 import Cell from '@core/grid/cell/Cell';
 import { EscapeRenderer } from '@src/rendering/renderers/infinitris2/gameModes/EscapeRenderer';
+import { FullLineClearIndicator } from '@src/rendering/renderers/infinitris2/FullLineClearIndicator';
+import { PartialLineClearIndicator } from '@src/rendering/renderers/infinitris2/PartialLineClearIndicator';
 
 const healthbarOuterUrl = `${imagesDirectory}/healthbar/healthbar.png`;
 const healthbarInnerUrl = `${imagesDirectory}/healthbar/healthbar_inner.png`;
@@ -169,7 +170,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
   private _fallbackLeaderboard: FallbackLeaderboard | undefined;
   //private _scoreChangeIndicator!: ScoreChangeIndicator;
   private _towerIndicator!: TowerIndicator;
-  private _lineClearingIndicator!: LineClearingIndicator;
+  private _fullLineClearIndicator!: FullLineClearIndicator;
+  private _partialLineClearIndicator!: PartialLineClearIndicator;
   private _worldType: WorldType;
   private _worldVariation: WorldVariation;
 
@@ -275,7 +277,8 @@ export default class Infinitris2Renderer extends BaseRenderer {
       this._worldVariation
     );
     this._towerIndicator = new TowerIndicator(this._app);
-    this._lineClearingIndicator = new LineClearingIndicator(this._app);
+    this._fullLineClearIndicator = new FullLineClearIndicator(this._app);
+    this._partialLineClearIndicator = new PartialLineClearIndicator(this);
     //this._app.loader.add(faceUrl);
 
     //this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
@@ -398,7 +401,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
       }
     }
 
-    this._lineClearingIndicator.update(
+    this._fullLineClearIndicator.update(
       !this._hasScrollY ? this._gridLines.y : this._world.y,
       this._cellSize
     );
@@ -614,7 +617,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this._app.stage.addChild(this._world);
 
     this._towerIndicator.create();
-    this._lineClearingIndicator.create();
+    this._fullLineClearIndicator.create();
 
     // TODO: support chat as well
     if (this._useFallbackUI) {
@@ -1409,7 +1412,18 @@ export default class Infinitris2Renderer extends BaseRenderer {
   }
 
   onLineClearing(row: number) {
-    this._lineClearingIndicator.setLineClearing(row, true);
+    if (!this._simulation) {
+      return;
+    }
+    const partialClears = this._simulation.grid.nextPartialClears.filter(
+      (partialClear) => partialClear.row === row
+    );
+    this._fullLineClearIndicator.setLineClearing(row, !partialClears?.length);
+    this._partialLineClearIndicator.setLineClearing(
+      this._simulation,
+      row,
+      ([] as number[]).concat(...partialClears.map((p) => p.columns))
+    );
   }
   onClearLines(rows: number[]) {
     if (!this._simulation) {
@@ -1417,8 +1431,22 @@ export default class Infinitris2Renderer extends BaseRenderer {
     }
     const numSegments = 2;
     for (const row of rows) {
-      this._lineClearingIndicator.setLineClearing(row, false);
+      this._fullLineClearIndicator.setLineClearing(row, false);
+      this._partialLineClearIndicator.setLineClearing(
+        this._simulation,
+        row,
+        []
+      );
+      const partialClears = this._simulation.grid.nextPartialClears.filter(
+        (partialClear) => partialClear.row === row
+      );
       for (const cell of this._simulation.grid.cells[row]) {
+        if (
+          partialClears.length &&
+          !partialClears.some((p) => p.columns.indexOf(cell.column) >= 0)
+        ) {
+          continue;
+        }
         for (let x = 0; x < numSegments; x++) {
           for (let y = 0; y < numSegments; y++) {
             this.emitParticle(
@@ -1497,7 +1525,7 @@ export default class Infinitris2Renderer extends BaseRenderer {
     this.rerenderGrid();
 
     this._towerIndicator.render(this._cellSize);
-    this._lineClearingIndicator.render(
+    this._fullLineClearIndicator.render(
       this.simulation!.grid.numRows,
       this._cellSize,
       this._worldBackground.config.floorColor,

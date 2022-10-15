@@ -1,7 +1,7 @@
 import Cell from './cell/Cell';
 import IGridEventListener from '@models/IGridEventListener';
 import ICell from '@models/ICell';
-import IGrid from '@models/IGrid';
+import IGrid, { PartialClearRow } from '@models/IGrid';
 import ICellBehaviour from '@models/ICellBehaviour';
 import { IPlayer } from '@models/IPlayer';
 import { KeyedRandom } from '@core/simulation/KeyedRandom';
@@ -11,8 +11,6 @@ import { wrap, wrappedDistance } from '@core/utils/wrap';
 
 export const MAX_COLUMNS = 100000;
 export const MAX_ROWS = 100000;
-
-type PartialClearRow = { row: number; columns: number[] };
 
 export default class Grid implements IGrid {
   private _cells: ICell[][];
@@ -44,6 +42,10 @@ export default class Grid implements IGrid {
     this._nextLinesToClear = [];
     this._nextPartialClears = [];
     this._random = new KeyedRandom(0);
+  }
+
+  get nextPartialClears(): PartialClearRow[] {
+    return this._nextPartialClears;
   }
 
   get cells(): ICell[][] {
@@ -138,11 +140,6 @@ export default class Grid implements IGrid {
     if (!rowsToClear.length) {
       return;
     }
-    for (let i = 0; i < rowsToClear.length; i++) {
-      this._eventListeners.forEach((eventListener) =>
-        eventListener.onLineClearing(rowsToClear[i])
-      );
-    }
 
     this._nextLinesToClear = [...this._nextLinesToClear, ...rowsToClear]
       .filter((row, i, rows) => rows.indexOf(row) === i) // get unique rows
@@ -150,6 +147,12 @@ export default class Grid implements IGrid {
 
     this._nextPartialClears = [...this._nextPartialClears, ...partialClearRows];
     this._nextLineClearFrame = this._frameNumber + IDEAL_FPS;
+
+    for (let i = 0; i < rowsToClear.length; i++) {
+      this._eventListeners.forEach((eventListener) =>
+        eventListener.onLineClearing(rowsToClear[i])
+      );
+    }
   }
 
   private _checkPartialClear(

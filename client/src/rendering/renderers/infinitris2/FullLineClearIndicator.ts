@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js-legacy';
 
-export class LineClearingIndicator {
+export class FullLineClearIndicator {
   private _lines: {
     graphics: PIXI.Graphics;
     isClearing: boolean;
@@ -21,11 +21,7 @@ export class LineClearingIndicator {
     for (let i = 0; i < this._lines.length; i++) {
       const line = this._lines[i];
       line.graphics.y = gridY + i * cellSize;
-      (line.graphics.alpha = line.isClearing ? 1 : 0),
-        /*Math.max(
-        Math.min(1, line.graphics.alpha + (line.isClearing ? 1 : -1) * 0.05),
-        0
-      )*/ 1;
+      line.graphics.alpha = line.isClearing ? 1 : 0;
     }
   }
 

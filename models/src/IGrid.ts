@@ -20,6 +20,8 @@ export type NetworkGridInfo = {
   readonly reducedCells: NetworkCellInfo[];
 };
 
+export type PartialClearRow = { row: number; columns: number[] };
+
 export default interface IGrid extends ICellEventListener {
   get isEmpty(): boolean;
   get reducedCells(): ICell[];
@@ -28,6 +30,7 @@ export default interface IGrid extends ICellEventListener {
   get numColumns(): number;
   get nextLinesToClear(): number[];
   get frameNumber(): number;
+  get nextPartialClears(): PartialClearRow[];
   nextRandom(key: string): number;
   getNeighbour(cell: ICell, dx: number, dy: number): ICell | undefined;
   removePlayer(player: IPlayer): void;

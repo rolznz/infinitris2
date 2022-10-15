@@ -97,6 +97,7 @@ export class EscapeRenderer implements IGameModeRenderer {
     }, 1);
   }
   onEndRound() {
+    this._cachedCanPlaceResults = {};
     this._debouncedRerender();
   }
 

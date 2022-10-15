@@ -19,4 +19,10 @@ export const spawnDelayListener: Partial<ISimulationEventListener> = {
   onPlayerSpawnDelayChanged: updateSpawnDelay,
   onBlockCreated: (block) => updateSpawnDelay(block.player),
   onBlockDestroyed: (block) => updateSpawnDelay(block.player),
+  onEndRound: () => {
+    const player = useIngameStore.getState().simulation?.followingPlayer;
+    if (player) {
+      updateSpawnDelay(player);
+    }
+  },
 };

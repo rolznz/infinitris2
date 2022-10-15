@@ -81,6 +81,10 @@ export function getCellTypePreviewImageUrl(
       return getChallengeTypeUrlInternal('gesture_rotate_down_clockwise');
     case ChallengeCellType.GestureRotateDownAnticlockwise:
       return getChallengeTypeUrlInternal('gesture_rotate_down_anticlockwise');
+    case ChallengeCellType.BridgeCreator:
+      return getChallengeTypeUrlInternal('bridge_creator');
+    case ChallengeCellType.PartialClear:
+      return getChallengeTypeUrlInternal('partial_clear');
     default:
       return undefined;
   }

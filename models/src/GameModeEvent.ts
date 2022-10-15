@@ -1,3 +1,5 @@
+import ChallengeCellType from '@models/ChallengeCellType';
+
 type SyncedGameModeEvent = { isSynced: true };
 
 export type GameModeTeamEvent = {
@@ -21,6 +23,23 @@ export type GarbageDefenseEvent =
       cells: { row: number; column: number }[];
     } & SyncedGameModeEvent);
 
+export type EscapeEvent =
+  | ({
+      type: 'escapeStep';
+      deathLineColumn: number;
+      frontDeathLineColumn: number;
+    } & SyncedGameModeEvent)
+  | ({
+      type: 'escapeCellGeneration';
+      cellType: ChallengeCellType | undefined;
+      column: number;
+      row: number;
+    } & SyncedGameModeEvent)
+  | ({
+      type: 'escapeDeathLineClear';
+      column: number;
+    } & SyncedGameModeEvent);
+
 export type ConquestEvent =
   | {
       type: 'cellCaptured';
@@ -42,6 +61,7 @@ export type GameModeEvent = (
   | ConquestEvent
   | GarbageDefenseEvent
   | GameModeTeamEvent
+  | EscapeEvent
 ) & {
   isSynced?: boolean;
 };

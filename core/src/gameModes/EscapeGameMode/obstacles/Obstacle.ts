@@ -17,6 +17,62 @@ export type EscapeObstacle = Omit<EscapeObstacleTemplate, 'createGrid'> & {
   grid: EscapeObstacleGrid;
 };
 
+// FIXME: replace Math.random with simulation nextRandom for replayability
+function createPartialLineClear(
+  numRows: number,
+  numColumns: number,
+  emptyProportion: number,
+  nextRandom: () => number
+): EscapeObstacleTemplate {
+  const partialClearRows = numRows + 2;
+  const garbageAndFinish = [...new Array(numColumns)].map(() => [
+    ...[...new Array(numRows)].map((_, i) => ({
+      row: -(i + 2),
+      type:
+        nextRandom() < emptyProportion
+          ? ChallengeCellType.Empty
+          : ChallengeCellType.Full,
+    })),
+    ...[...new Array(1)].map((_, i) => ({
+      row: -(i + 1),
+      type: ChallengeCellType.Finish,
+    })),
+  ]);
+  // make sure each garbage row has at least one space free (otherwise the line will be full and unclearable)
+  for (let row = 0; row < numRows; row++) {
+    let isFull = true;
+    for (let c = 0; c < numColumns; c++) {
+      if (garbageAndFinish[c][row].type !== ChallengeCellType.Full) {
+        isFull = false;
+        break;
+      }
+    }
+    if (isFull) {
+      garbageAndFinish[Math.floor(nextRandom() * numColumns)][row].type =
+        ChallengeCellType.Empty;
+    }
+  }
+
+  const obstacle = {
+    createGrid: () => [
+      [...new Array(partialClearRows)].map((_, i) => ({
+        row: -(i + 1),
+        type: ChallengeCellType.PartialClear,
+      })),
+      ...garbageAndFinish,
+      [...new Array(partialClearRows)].map((_, i) => ({
+        row: -(i + 1),
+        type: ChallengeCellType.PartialClear,
+      })),
+    ],
+    difficulty: Math.ceil(
+      numRows * numColumns * (1 / Math.max(emptyProportion, 0.1)) * 0.5
+    ),
+  };
+
+  return obstacle;
+}
+
 const pole1: EscapeObstacleTemplate = {
   createGrid: () => [[...new Array(1)].map((_, i) => ({ row: -(i + 1) }))],
   difficulty: 1,
@@ -26,12 +82,8 @@ const pole2: EscapeObstacleTemplate = {
   difficulty: 2,
 };
 const pole3: EscapeObstacleTemplate = {
-  createGrid: () => [[...new Array(3)].map((_, i) => ({ row: -(i + 1) }))],
-  difficulty: 3,
-};
-const pole4: EscapeObstacleTemplate = {
   createGrid: () => [
-    [...new Array(4)].map((_, i) => ({ row: -(i + 1) })),
+    [...new Array(3)].map((_, i) => ({ row: -(i + 1) })),
     [{ row: -1 }],
   ],
   difficulty: 4,
@@ -58,58 +110,6 @@ const reset2: EscapeObstacleTemplate = {
       })),
     ]),
   difficulty: 6,
-};
-
-const partialLineClear1: EscapeObstacleTemplate = {
-  createGrid: () => [
-    [...new Array(5)].map((_, i) => ({
-      row: -(i + 1),
-      type: ChallengeCellType.PartialClear,
-    })),
-    ...[...new Array(RESET_COLUMNS)].map((_, c) => [
-      ...[...new Array(2)].map((_, i) => ({
-        row: -(i + 2),
-        type:
-          c % 2 === i % 2 ? ChallengeCellType.Empty : ChallengeCellType.Full,
-      })),
-      ...[...new Array(1)].map((_, i) => ({
-        row: -(i + 1),
-        type: ChallengeCellType.Finish,
-      })),
-    ]),
-    [...new Array(5)].map((_, i) => ({
-      row: -(i + 1),
-      type: ChallengeCellType.PartialClear,
-    })),
-  ],
-  difficulty: 7,
-};
-
-const partialLineClear2: EscapeObstacleTemplate = {
-  createGrid: () => [
-    [...new Array(8)].map((_, i) => ({
-      row: -(i + 1),
-      type: ChallengeCellType.PartialClear,
-    })),
-    ...[...new Array(RESET_COLUMNS * 2)].map((_, c) => [
-      ...[...new Array(4)].map((_, i) => ({
-        row: -(i + 2),
-        type:
-          c % 2 === i % 2 || c % 4 === i % 3
-            ? ChallengeCellType.Empty
-            : ChallengeCellType.Full,
-      })),
-      ...[...new Array(1)].map((_, i) => ({
-        row: -(i + 1),
-        type: ChallengeCellType.Finish,
-      })),
-    ]),
-    [...new Array(8)].map((_, i) => ({
-      row: -(i + 1),
-      type: ChallengeCellType.PartialClear,
-    })),
-  ],
-  difficulty: 10,
 };
 
 // const slice1: EscapeObstacleTemplate = {
@@ -160,19 +160,25 @@ const deadly4: EscapeObstacleTemplate = {
   bridgePadding: 1,
 };
 
-export function createEscapeObstacles(numRows: number): EscapeObstacle[] {
+export function createEscapeObstacles(
+  numRows: number,
+  nextRandom: () => number
+): EscapeObstacle[] {
+  const partialLineClears = [...new Array(6)].map((_, numRows) =>
+    [...new Array(6)].map((_, numColumns) =>
+      createPartialLineClear(numRows + 2, numColumns + 2, 0.4, nextRandom)
+    )
+  );
   return [
     pole1,
     pole2,
     pole3,
-    pole4,
     reset1,
     reset2,
     deadly3,
     deadly3b,
     deadly4,
-    partialLineClear1,
-    partialLineClear2,
+    ...([] as EscapeObstacleTemplate[]).concat(...partialLineClears),
   ].map((template) => {
     const { createGrid, ...otherProps } = template;
     return {

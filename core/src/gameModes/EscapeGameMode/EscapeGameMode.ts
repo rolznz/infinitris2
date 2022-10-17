@@ -63,7 +63,9 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     this._nextObstacleColumn = 0;
     this._nextObstaclePadding = 0;
     this._obstacleHistory = [];
-    this._escapeObstacles = createEscapeObstacles(simulation.grid.numRows);
+    this._escapeObstacles = createEscapeObstacles(simulation.grid.numRows, () =>
+      simulation.nextRandom('escapeInitialObstacleCreation')
+    );
     this._placementMode = 'restricted';
     this._lastEscapeStepNetworkSync = 0;
     this._finishHit = false;
@@ -263,11 +265,14 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
           }
         }
       } else {
-        if (
+        while (
           !this._escapeObstacles.some(
             (obstacle) =>
               obstacle.difficulty === this._difficulty &&
               this._obstacleHistory.indexOf(obstacle) < 0
+          ) &&
+          this._escapeObstacles.some(
+            (obstacle) => obstacle.difficulty > this._difficulty
           )
         ) {
           ++this._difficulty;
@@ -278,6 +283,10 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
           (obstacle) =>
             obstacle.difficulty <= this._difficulty &&
             this._obstacleHistory.indexOf(obstacle) < 0
+        );
+        console.log(
+          'Valid obstacles: ',
+          validObstacles.map((o) => o.difficulty)
         );
         if (!validObstacles.length) {
           // fallback to any obstacle that isn't the same as the current one
@@ -291,7 +300,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
         this._obstacle =
           validObstacles[
             Math.floor(
-              this._simulation.nextRandom('escape-obstacle') *
+              this._simulation.nextRandom('escapeNextObstacle') *
                 validObstacles.length
             )
           ];

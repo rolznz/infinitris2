@@ -160,6 +160,7 @@ export class EscapeRenderer implements IGameModeRenderer {
         this._renderer.appHeight
       );
       if (i === 0) {
+        graphics.beginFill(0xff0000, 1);
         graphics.drawRect(
           this._renderer.cellSize,
           0,

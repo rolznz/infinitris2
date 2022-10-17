@@ -518,7 +518,9 @@ export function escapeCanPlace(
 ): boolean {
   if (
     !cell.isEmpty &&
-    (!isForgiving || !simulation.wasRecentlyPlaced(cell.placementFrame))
+    (!isForgiving ||
+      !simulation.wasRecentlyPlaced(cell.placementFrame) ||
+      !cell.player)
   ) {
     return false;
   }

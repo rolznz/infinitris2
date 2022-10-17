@@ -163,31 +163,27 @@ export default class Grid implements IGrid {
       (cell) => cell.type === CellType.PartialClear
     );
     for (let i = 0; i < partialClearCells.length - 1; i++) {
-      let direction =
-        wrappedDistance(
-          partialClearCells[0].column,
-          partialClearCells[1].column,
-          this.numColumns
-        ) <=
-        this.numColumns / 2
-          ? 1
-          : -1;
-      let partial = true;
-      const columns: number[] = [];
-      for (
-        let j = partialClearCells[0].column + direction;
-        j !== partialClearCells[1].column;
-        j = wrap(j + direction, this.numColumns)
-      ) {
-        if (this._cells[row][j].isEmpty) {
-          partial = false;
-          break;
+      const partialClearCell1 = partialClearCells[i];
+      const partialClearCell2 =
+        partialClearCells[wrap(i + 1, partialClearCells.length)];
+      for (const direction of [-1, 1]) {
+        let partial = true;
+        const columns: number[] = [];
+        for (
+          let j = wrap(partialClearCell1.column + direction, this.numColumns);
+          j !== partialClearCell2.column;
+          j = wrap(j + direction, this.numColumns)
+        ) {
+          if (this._cells[row][j].isEmpty) {
+            partial = false;
+            break;
+          }
+          columns.push(j);
         }
-        columns.push(j);
-      }
-      if (partial) {
-        partialClearRows.push({ row, columns });
-        return true;
+        if (partial) {
+          partialClearRows.push({ row, columns });
+          return true;
+        }
       }
     }
     return false;

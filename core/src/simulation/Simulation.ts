@@ -725,6 +725,15 @@ export default class Simulation implements ISimulation {
   /**
    * @inheritdoc
    */
+  onGridAbortLineClears(grid: IGrid): void {
+    this._eventListeners.forEach((listener) =>
+      listener.onGridAbortLineClears?.(grid)
+    );
+  }
+
+  /**
+   * @inheritdoc
+   */
   onCellBehaviourChanged(cell: ICell, previousBehaviour: ICellBehaviour) {
     this._eventListeners.forEach((listener) =>
       listener.onCellBehaviourChanged?.(cell, previousBehaviour)

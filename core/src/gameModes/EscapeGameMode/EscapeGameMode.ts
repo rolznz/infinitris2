@@ -146,6 +146,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       }
       // reset placement type
       this._placementMode = 'restricted';
+      this._simulation.grid.abortLineClears();
     }
   }
 

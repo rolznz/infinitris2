@@ -31,4 +31,12 @@ export default interface IGridEventListener extends ICellEventListener {
    * Triggered when the number of rows or columns in the grid changes
    */
   onGridResize(grid: IGrid): void;
+
+  /**
+   * (Escape game mode) finish reached and we no longer want to show line clears
+   * since the cells have been reset
+   *
+   * TODO: this should be detected when a cell in a line clear is reset, so it can be used in other game modes
+   */
+  onGridAbortLineClears(grid: IGrid): void;
 }

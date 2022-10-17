@@ -282,7 +282,10 @@ export default class Infinitris2Renderer extends BaseRenderer {
     );
     this._towerIndicator = new TowerIndicator(this._app);
     this._fullLineClearIndicator = new FullLineClearIndicator(this._app);
-    this._partialLineClearIndicator = new PartialLineClearIndicator(this);
+    this._partialLineClearIndicator = new PartialLineClearIndicator(
+      this,
+      this._worldBackground.config.floorColor
+    );
     //this._app.loader.add(faceUrl);
 
     //this._scoreChangeIndicator = new ScoreChangeIndicator(this._app);
@@ -1413,6 +1416,20 @@ export default class Infinitris2Renderer extends BaseRenderer {
 
   onNextRound() {
     this.rerenderGrid();
+  }
+
+  onGridAbortLineClears() {
+    if (!this._simulation) {
+      return;
+    }
+    for (let row = 0; row < this._simulation.grid.numRows; row++) {
+      this._partialLineClearIndicator.setLineClearing(
+        this._simulation,
+        row,
+        []
+      );
+      this._fullLineClearIndicator.setLineClearing(row, false);
+    }
   }
 
   onLineClearing(row: number) {

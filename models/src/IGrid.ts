@@ -39,4 +39,5 @@ export default interface IGrid extends ICellEventListener {
   checkLineClears(rows: number[]): void;
   clearLines(rows: number[], partialClears: PartialClearRow[]): void;
   resize(rows: number, cols: number, atRow: number, atColumn: number): void;
+  abortLineClears(): void;
 }

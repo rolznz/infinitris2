@@ -72,6 +72,10 @@ export class EscapeRenderer implements IGameModeRenderer {
     );
   }
 
+  onGridAbortLineClears() {
+    this._rerender();
+  }
+
   private _updateDistanceText() {
     if (!this._renderer.simulation) {
       return;

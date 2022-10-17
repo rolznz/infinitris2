@@ -8,9 +8,11 @@ interface IPartialLineCell extends IRenderableEntity<PIXI.Graphics> {}
 export class PartialLineClearIndicator {
   private _partialLineCells!: { [cellId: number]: IPartialLineCell };
   private _renderer: BaseRenderer;
-  constructor(renderer: BaseRenderer) {
+  private _lineClearColor: number;
+  constructor(renderer: BaseRenderer, lineClearColor: number) {
     this._partialLineCells = {};
     this._renderer = renderer;
+    this._lineClearColor = lineClearColor;
   }
 
   setLineClearing(simulation: ISimulation, row: number, columns: number[]) {
@@ -48,7 +50,7 @@ export class PartialLineClearIndicator {
           graphics.clear();
 
           if (isClearing) {
-            graphics.beginFill(0x00ff00, 0.5);
+            graphics.beginFill(this._lineClearColor, 0.5);
             graphics.drawRect(
               0,
               0,

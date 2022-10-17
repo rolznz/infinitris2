@@ -247,6 +247,14 @@ export default class Grid implements IGrid {
     );
   }
 
+  abortLineClears() {
+    this._nextLinesToClear = [];
+    this._nextPartialClears = [];
+    this._eventListeners.forEach((listener) =>
+      listener.onGridAbortLineClears(this)
+    );
+  }
+
   reset() {
     for (let cell of this._reducedCells) {
       cell.reset();

@@ -152,7 +152,7 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       return;
     }
     const lastDeathLineColumnFloored = Math.floor(this._deathLineColumn);
-    let deathLineIncrease = Math.min(0.01 + this._level * 0.000025, 1);
+    let deathLineIncrease = 0.005; //Math.min(0.01 + this._level * 0.000025, 1);
     if (this._level - this._deathLineColumn > 16) {
       deathLineIncrease += 0.01;
     }

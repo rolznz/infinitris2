@@ -341,6 +341,16 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
     block.player.spawnLocation = { row: 0, column: this._level };
   }
   onBlockPlaced(block: IBlock) {
+    for (const cell of block.cells) {
+      const cellUnwrappedColumn =
+        cell.column +
+        Math.floor(block.column / this._simulation.grid.numColumns) *
+          this._simulation.grid.numColumns;
+      if (cellUnwrappedColumn < Math.floor(this._deathLineColumn)) {
+        // don't allow cells to be placed behind the death line
+        cell.reset();
+      }
+    }
     //const startTime = Date.now();
     this._lastMoveWasMistake[block.player.id] = false;
     //const prevLevel = this._level;

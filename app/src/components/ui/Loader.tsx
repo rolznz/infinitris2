@@ -226,7 +226,7 @@ const LoaderProgress = React.memo(
         >
           loading {progressPercent}%
         </Typography>
-        <Box width="100%">
+        <Box width="100%" mb={1}>
           <LinearProgress
             key={key}
             color="primary"
@@ -235,6 +235,18 @@ const LoaderProgress = React.memo(
             value={steps.length === 0 ? 0 : progressPercent}
           />
         </Box>
+        {steps
+          .filter((s) => stepsCompleted.indexOf(s) < 0)
+          .map((step) => (
+            <Typography
+              key={step}
+              variant="caption"
+              color="textPrimary"
+              style={{ textTransform: 'uppercase' }}
+            >
+              {step}
+            </Typography>
+          ))}
       </FlexBox>
     );
   },

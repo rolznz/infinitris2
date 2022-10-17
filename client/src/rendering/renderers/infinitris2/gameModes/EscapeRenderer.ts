@@ -16,6 +16,7 @@ import {
 } from '@core/gameModes/EscapeGameMode/EscapeGameMode';
 import ICell from '@models/ICell';
 import { fontFamily } from '@models/ui';
+import { interpolate } from '@core/utils/interpolate';
 
 interface IRenderableFreeCell extends IRenderableEntity<PIXI.Graphics> {}
 
@@ -25,6 +26,7 @@ export class EscapeRenderer implements IGameModeRenderer {
   private _cachedCanPlaceResults: { [index: number]: boolean };
   private _deathLineGraphics: PIXI.Graphics[];
   private _distanceText?: PIXI.Text;
+  private _warningOverlay: PIXI.Graphics;
 
   constructor(renderer: BaseRenderer) {
     this._freeRenderableCells = {};
@@ -32,14 +34,44 @@ export class EscapeRenderer implements IGameModeRenderer {
     this._renderer.simulation!.addEventListener(this);
     this._cachedCanPlaceResults = {};
     this._deathLineGraphics = [0, 1].map((_) => new PIXI.Graphics());
+    this._warningOverlay = new PIXI.Graphics();
     this._renderer.app.stage.addChild(...this._deathLineGraphics);
+    this._renderer.app.stage.addChild(this._warningOverlay);
   }
 
   tick() {
     this._updateDeathLine();
     // TODO: only update on level change
     this._updateDistanceText();
+
+    this._updateWarningOverlay();
   }
+  private _updateWarningOverlay() {
+    if (!this._renderer.simulation) {
+      return;
+    }
+    const gameMode = this._renderer.simulation.gameMode as EscapeGameMode;
+    let position = gameMode.level;
+    if (this._renderer.simulation.followingPlayer?.block) {
+      position = Math.min(
+        position,
+        this._renderer.simulation.followingPlayer.block.column
+      );
+    }
+    const maxDistance = 6;
+    const distance = Math.min(
+      Math.max(position - gameMode.deathLineColumn, 0),
+      maxDistance
+    );
+    let newWarningOverlayAlpha = Math.min(1 - distance / maxDistance, 0.9);
+
+    this._warningOverlay.alpha = interpolate(
+      this._warningOverlay.alpha,
+      newWarningOverlayAlpha,
+      0.01
+    );
+  }
+
   private _updateDistanceText() {
     if (!this._renderer.simulation) {
       return;
@@ -107,6 +139,15 @@ export class EscapeRenderer implements IGameModeRenderer {
   resize() {
     this._cachedCanPlaceResults = {};
     this._rerender();
+
+    this._warningOverlay.clear();
+    this._warningOverlay.beginFill(0xff0000);
+    this._warningOverlay.drawRect(
+      0,
+      0,
+      this._renderer.appWidth,
+      this._renderer.appHeight
+    );
 
     for (let i = 0; i < this._deathLineGraphics.length; i++) {
       const graphics = this._deathLineGraphics[i];

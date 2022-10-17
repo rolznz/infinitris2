@@ -45,7 +45,7 @@ export function PremiumPage() {
               if (
                 (premiumSettings?.data()?.freeAccountsRemaining ?? 0) > 0 ||
                 window.confirm(
-                  'No free accounts remaining, would you like to purchase an account?'
+                  'No free accounts remaining, would you like to purchase an account?\n\nIf you have a premium account already, please ignore this message.'
                 )
               ) {
                 setGetPremium(true);

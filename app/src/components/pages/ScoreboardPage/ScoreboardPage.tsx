@@ -31,7 +31,7 @@ const scoreboardCollectionOptions: UseCollectionOptions = {
 
 export default function ScoreboardPage() {
   const intl = useIntl();
-  const { data: scoreboardSetting } = useDocument<ScoreboardSettings>(
+  const { data: scoreboardSettings } = useDocument<ScoreboardSettings>(
     getSettingPath('scoreboard')
   );
   const { data: scoreboardEntries } = useCollection<IScoreboardEntry>(
@@ -49,7 +49,7 @@ export default function ScoreboardPage() {
       useGradient
       paddingX={0}
     >
-      {scoreboardSetting && (
+      {scoreboardSettings && (
         <Typography variant="body1" align="center">
           <FormattedMessage
             defaultMessage="Next update in {nextUpdate}"
@@ -60,7 +60,7 @@ export default function ScoreboardPage() {
                   lastUpdateTimestamp={{
                     nanoseconds: 0,
                     seconds:
-                      scoreboardSetting.data()!.lastUpdatedTimestamp.seconds,
+                      scoreboardSettings.data()!.lastUpdatedTimestamp.seconds,
                   }}
                   updateIntervalSeconds={
                     12 * 60 * 60 /* update every 12 hours*/

@@ -24,18 +24,26 @@ type LoginFormData = {
 };
 
 export function EmailForm() {
-  const [setIsLoading, setCodeSent, setPaymentId, setInvoice, setEmail, email] =
-    useLoginStore(
-      (store) => [
-        store.setIsLoading,
-        store.setCodeSent,
-        store.setPaymentId,
-        store.setInvoice,
-        store.setEmail,
-        store.email,
-      ],
-      shallow
-    );
+  const [
+    setIsLoading,
+    setCodeSent,
+    setPaymentId,
+    setInvoice,
+    setEmail,
+    email,
+    setHasCreatedNewUser,
+  ] = useLoginStore(
+    (store) => [
+      store.setIsLoading,
+      store.setCodeSent,
+      store.setPaymentId,
+      store.setInvoice,
+      store.setEmail,
+      store.email,
+      store.setHasCreatedNewUser,
+    ],
+    shallow
+  );
   const [formData, setFormData] = React.useState<LoginFormData>({
     email,
   });
@@ -72,7 +80,7 @@ export function EmailForm() {
         } else if (loginResponse.status === 429) {
           alert('Please try again in a minute.');
         } else if (loginResponse.status === 404) {
-          const createUserResponse = (await (
+          const createUserResponse = await (
             await fetch(`${process.env.REACT_APP_API_URL}/v1/users`, {
               method: 'POST',
               headers: {
@@ -80,9 +88,12 @@ export function EmailForm() {
               },
               body: JSON.stringify(data),
             })
-          ).json()) as any;
+          ).json();
           console.log('Create user response', createUserResponse);
-          if (createUserResponse.invoice) {
+          if (createUserResponse.isFreeSignup) {
+            setHasCreatedNewUser(true);
+            setCodeSent(true);
+          } else if (createUserResponse.invoice) {
             setPaymentId(createUserResponse.paymentId);
             setInvoice(createUserResponse.invoice);
           } else {
@@ -101,7 +112,14 @@ export function EmailForm() {
         setIsLoading(false);
       }
     },
-    [setEmail, setIsLoading, setCodeSent, setPaymentId, setInvoice]
+    [
+      setEmail,
+      setIsLoading,
+      setCodeSent,
+      setPaymentId,
+      setInvoice,
+      setHasCreatedNewUser,
+    ]
   );
 
   return (

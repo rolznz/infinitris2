@@ -3,17 +3,10 @@ import { Request, Response } from 'express';
 
 import { StatusCodes } from 'http-status-codes';
 import { getDefaultEntityReadOnlyProperties } from '../utils/getDefaultEntityReadOnlyProperties';
-import { createFirebaseUser, getDb, increment } from '../utils/firebase';
-import {
-  getPaymentPath,
-  getUserPath,
-  InvoiceData,
-  IPayment,
-  IUser,
-  objectToDotNotation,
-} from 'infinitris2-models';
-import { sendLoginCode } from '../utils/sendLoginCode';
-import { generateLoginCode } from '../utils/generateLoginCode';
+import { getDb } from '../utils/firebase';
+import { getPaymentPath, InvoiceData, IPayment } from 'infinitris2-models';
+import { processCreateUser } from '../utils/processCreateUser';
+import { processBuyCoins } from '../utils/processBuyCoins';
 
 export type PaidInvoice = {
   // eslint-disable-next-line camelcase
@@ -99,29 +92,4 @@ async function processPayment(data: InvoiceData, paymentHash: string) {
     };
     await getDb().doc(getPaymentPath(paymentHash)).update(paymentUpdate);
   }
-}
-async function processCreateUser(
-  data: InvoiceData & { type: 'createUser' }
-): Promise<void> {
-  console.log('create user: ' + JSON.stringify(data));
-  await createFirebaseUser(data.email);
-  const loginCode = await generateLoginCode(data.email);
-  await sendLoginCode(data.email, loginCode.code);
-}
-
-async function processBuyCoins(
-  data: InvoiceData & { type: 'buyCoins' }
-): Promise<void> {
-  console.log('buy coins: ' + JSON.stringify(data));
-  const userRef = getDb().doc(getUserPath(data.userId));
-  const updateUserCoins = objectToDotNotation<IUser>(
-    {
-      readOnly: {
-        coins: increment(data.amount),
-      },
-    },
-    ['readOnly.coins']
-  );
-
-  await userRef.update(updateUserCoins);
 }

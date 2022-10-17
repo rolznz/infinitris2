@@ -1,5 +1,6 @@
 import * as admin from 'firebase-admin';
 import { FirebaseError, firestore } from 'firebase-admin';
+import { processCreateUser } from './processCreateUser';
 
 let _app: admin.app.App;
 let _db: firestore.Firestore;
@@ -57,9 +58,30 @@ export function createFirebaseUser(
   }
 }
 
-export async function createCustomLoginToken(email: string): Promise<string> {
+export async function createCustomAuthToken(
+  email: string,
+  allowUserCreation = false
+): Promise<string | null> {
   try {
-    const { uid } = (await getUserByEmail(email))!;
+    let uid = (await getUserByEmail(email))?.uid;
+    if (!uid && allowUserCreation) {
+      // case when user does free signup - they have authenticated their email but don't have a user yet
+      const newUser = await processCreateUser(
+        {
+          email: email,
+          type: 'createUser',
+        },
+        false
+      );
+      if (!newUser) {
+        throw new Error('Failed to create new user for email ' + email);
+      }
+
+      uid = newUser.uid;
+    }
+    if (!uid) {
+      return null;
+    }
 
     return admin.auth().createCustomToken(uid);
   } catch (error) {

@@ -4,4 +4,5 @@ export type LoginCode = {
   code: string;
   createdDateTime: Timestamp;
   numAttempts: number;
+  allowUserCreation?: boolean;
 };

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import { getLoginCodePath, LoginRequest, LoginCode } from 'infinitris2-models';
 import {
-  createCustomLoginToken,
+  createCustomAuthToken,
   getCurrentTimestamp,
   getDb,
   getUserByEmail,
@@ -42,9 +42,17 @@ export const loginWebhook = async (req: Request, res: Response) => {
       loginCode.numAttempts < 3
     ) {
       await loginCodeRef.delete();
-      const customToken = await createCustomLoginToken(loginRequest.email);
-      res.status(StatusCodes.CREATED);
-      return res.json(customToken);
+      const customToken = await createCustomAuthToken(
+        loginRequest.email,
+        loginCode.allowUserCreation
+      );
+      if (customToken) {
+        res.status(StatusCodes.CREATED);
+        return res.json(customToken);
+      } else {
+        res.status(StatusCodes.NOT_FOUND);
+        return res.send();
+      }
     } else if (!loginCode || !loginRequest.code) {
       if (
         loginCode &&

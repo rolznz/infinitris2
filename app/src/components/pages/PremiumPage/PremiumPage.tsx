@@ -8,6 +8,11 @@ import Routes from '@/models/Routes';
 import { useHistory } from 'react-router-dom';
 import useAuthStore from '@/state/AuthStore';
 import Button from '@mui/material/Button/Button';
+import Typography from '@mui/material/Typography';
+import { useDocument } from 'swr-firestore';
+import { getSettingPath, PremiumSettings } from 'infinitris2-models';
+import FlexBox from '@/components/ui/FlexBox';
+import { CountdownTimer } from '@/components/ui/CountdownTimer';
 
 export function PremiumPage() {
   const intl = useIntl();
@@ -18,6 +23,9 @@ export function PremiumPage() {
   });
   const userId = useAuthStore((store) => store.user?.uid);
   const [getPremium, setGetPremium] = React.useState(false);
+  const { data: premiumSettings } = useDocument<PremiumSettings>(
+    getSettingPath('premium')
+  );
 
   const goToProfile = React.useCallback(() => {
     history.push(Routes.profile);
@@ -28,21 +36,52 @@ export function PremiumPage() {
       <FullPageCarouselTitle>{title}</FullPageCarouselTitle>
       {!userId && getPremium && <Login onLogin={goToProfile} />}
       {!userId && !getPremium && (
-        <Button
-          color="primary"
-          variant="contained"
-          size="large"
-          onClick={() => setGetPremium(true)}
-          sx={{
-            position: 'absolute',
-            bottom: 100,
-          }}
-        >
-          <FormattedMessage
-            defaultMessage="Get Premium"
-            description="Premium Page - Get Premium"
-          />
-        </Button>
+        <FlexBox position="absolute" bottom={100}>
+          <Button
+            color="primary"
+            variant="contained"
+            size="large"
+            onClick={() => {
+              if (
+                (premiumSettings?.data()?.freeAccountsRemaining ?? 0) > 0 ||
+                window.confirm(
+                  'No free accounts remaining, would you like to purchase an account?'
+                )
+              ) {
+                setGetPremium(true);
+              }
+            }}
+          >
+            <FormattedMessage
+              defaultMessage="Login"
+              description="Premium Page - Login"
+            />
+          </Button>
+          {premiumSettings && (
+            <Typography variant="caption" mt={1}>
+              <FormattedMessage
+                defaultMessage="{freeAccountsRemaining} free premium accounts remaining! More in {nextUpdate}"
+                description="Premium Page - Free premium"
+                values={{
+                  freeAccountsRemaining:
+                    premiumSettings.data()!.freeAccountsRemaining,
+                  nextUpdate: (
+                    <CountdownTimer
+                      lastUpdateTimestamp={{
+                        nanoseconds: 0,
+                        seconds:
+                          premiumSettings.data()!.lastUpdatedTimestamp.seconds,
+                      }}
+                      updateIntervalSeconds={
+                        24 * 60 * 60 /* update every 24 hours*/
+                      }
+                    />
+                  ),
+                }}
+              />
+            </Typography>
+          )}
+        </FlexBox>
       )}
     </Page>
   );

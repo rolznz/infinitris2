@@ -24,18 +24,26 @@ type LoginFormData = {
 };
 
 export function EmailForm() {
-  const [setIsLoading, setCodeSent, setPaymentId, setInvoice, setEmail, email] =
-    useLoginStore(
-      (store) => [
-        store.setIsLoading,
-        store.setCodeSent,
-        store.setPaymentId,
-        store.setInvoice,
-        store.setEmail,
-        store.email,
-      ],
-      shallow
-    );
+  const [
+    setIsLoading,
+    setCodeSent,
+    setPaymentId,
+    setInvoice,
+    setEmail,
+    email,
+    setHasCreatedNewUser,
+  ] = useLoginStore(
+    (store) => [
+      store.setIsLoading,
+      store.setCodeSent,
+      store.setPaymentId,
+      store.setInvoice,
+      store.setEmail,
+      store.email,
+      store.setHasCreatedNewUser,
+    ],
+    shallow
+  );
   const [formData, setFormData] = React.useState<LoginFormData>({
     email,
   });
@@ -82,7 +90,10 @@ export function EmailForm() {
             })
           ).json()) as CreateUserResponse;
           console.log('Create user response', createUserResponse);
-          if (createUserResponse.invoice) {
+          if (createUserResponse.isFreeSignup) {
+            setHasCreatedNewUser(true);
+            setCodeSent(true);
+          } else if (createUserResponse.invoice) {
             setPaymentId(createUserResponse.paymentId);
             setInvoice(createUserResponse.invoice);
           } else {
@@ -101,7 +112,14 @@ export function EmailForm() {
         setIsLoading(false);
       }
     },
-    [setEmail, setIsLoading, setCodeSent, setPaymentId, setInvoice]
+    [
+      setEmail,
+      setIsLoading,
+      setCodeSent,
+      setPaymentId,
+      setInvoice,
+      setHasCreatedNewUser,
+    ]
   );
 
   return (

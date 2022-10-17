@@ -63,18 +63,21 @@ export async function createCustomAuthToken(
   allowUserCreation = false
 ): Promise<string | null> {
   try {
-    let { uid } = (await getUserByEmail(email))!;
+    let uid = (await getUserByEmail(email))?.uid;
     if (!uid && allowUserCreation) {
       // case when user does free signup - they have authenticated their email but don't have a user yet
-      uid = (
-        await processCreateUser(
-          {
-            email: email,
-            type: 'createUser',
-          },
-          false
-        )
-      ).uid;
+      const newUser = await processCreateUser(
+        {
+          email: email,
+          type: 'createUser',
+        },
+        false
+      );
+      if (!newUser) {
+        throw new Error('Failed to create new user for email ' + email);
+      }
+
+      uid = newUser.uid;
     }
     if (!uid) {
       return null;

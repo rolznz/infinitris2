@@ -296,7 +296,7 @@ export class ConquestGameMode implements IGameMode<ConquestGameModeState> {
             ).canPlace
         );
         if (!playerHasPlacableCell) {
-          if (this._lastPlayerPlaced) {
+          if (this._lastPlayerPlaced && this._lastPlayerPlaced !== player) {
             this._simulation.onPlayerKilled(
               this._simulation,
               player,

@@ -7,7 +7,7 @@ import {
   ScoreboardSettings,
 } from 'infinitris2-models';
 import dummyData from './helpers/dummyData';
-import updateScoreboard from '../utils/updateScoreboard';
+import updateScoreboard from '../schedules/updateScoreboard';
 import { getCurrentTimestamp } from '../utils/firebase';
 
 describe('Update Scoreboard', () => {

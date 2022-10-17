@@ -1,4 +1,4 @@
-import { getDb } from './firebase';
+import { getDb } from '../utils/firebase';
 import { IUser, objectToDotNotation, usersPath } from 'infinitris2-models';
 
 /**

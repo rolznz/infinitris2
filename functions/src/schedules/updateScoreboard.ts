@@ -6,7 +6,7 @@ import {
   ScoreboardSettings,
   usersPath,
 } from 'infinitris2-models';
-import { getCurrentTimestamp, getDb } from './firebase';
+import { getCurrentTimestamp, getDb } from '../utils/firebase';
 import * as admin from 'firebase-admin';
 
 /**
@@ -32,7 +32,7 @@ export default async function updateScoreboard() {
     lastUpdatedTimestamp: getCurrentTimestamp(),
   };
 
-  await getDb().doc(getSettingPath('scoreboard')).set(settings);
+  await getDb().doc(getSettingPath('scoreboard')).update(settings);
 }
 
 function updateUserScoreboardEntry(

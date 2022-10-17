@@ -33,6 +33,7 @@
     "firebase:deploy:functions:onCreatePurchase": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreatePurchase",
     "firebase:deploy:functions:webhooks": "firebase --config firebase.functions-deploy.json deploy --only functions:webhooks",
     "firebase:deploy:functions:onUpdateScoreboardSchedule": "firebase --config firebase.functions-deploy.json deploy --only functions:onUpdateScoreboardSchedule",
+    "firebase:deploy:functions:onUpdateFreePremiumSignupsSchedule": "firebase --config firebase.functions-deploy.json deploy --only functions:onUpdateFreePremiumSignupsSchedule",
     "firebase:deploy:functions:onFirestoreExportSchedule": "firebase --config firebase.functions-deploy.json deploy --only functions:onFirestoreExportSchedule",
     "firebase:deploy:functions:onDailyCreditAwardSchedule": "firebase --config firebase.functions-deploy.json deploy --only functions:onDailyCreditAwardSchedule",
     "firebase:deploy:functions:onCreateRating": "firebase --config firebase.functions-deploy.json deploy --only functions:onCreateRating",

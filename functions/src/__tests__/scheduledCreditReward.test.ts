@@ -2,7 +2,7 @@ import { setup, teardown } from './helpers/setup';
 import './helpers/extensions';
 import { IUser } from 'infinitris2-models';
 import dummyData from './helpers/dummyData';
-import scheduledCreditReward from '../utils/scheduledCreditReward';
+import scheduledCreditReward from '../schedules/scheduledCreditReward';
 
 describe('Scheduled Credit Reward', () => {
   afterEach(async () => {

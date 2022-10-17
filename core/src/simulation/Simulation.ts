@@ -553,7 +553,7 @@ export default class Simulation implements ISimulation {
   private _checkBridge(block: IBlock) {
     const bottomCellRow = block.cells.find(
       (cell) => !block.cells.some((other) => other.row > cell.row)
-    )!.row;
+    )?.row;
 
     const startTime = Date.now();
     for (const cell of block.cells) {

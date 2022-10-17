@@ -10,7 +10,7 @@ import Input from '@mui/material/Input';
 import Button from '@mui/material/Button';
 import useLoginStore from '@/state/LoginStore';
 import shallow from 'zustand/shallow';
-import { CreateUserResponse } from 'infinitris2-models';
+// import { CreateUserResponse } from 'infinitris2-models';
 import { keepUnderlineClassName } from '@/theme/theme';
 
 const schema = yup
@@ -80,7 +80,7 @@ export function EmailForm() {
               },
               body: JSON.stringify(data),
             })
-          ).json()) as CreateUserResponse;
+          ).json()) as any;
           console.log('Create user response', createUserResponse);
           if (createUserResponse.invoice) {
             setPaymentId(createUserResponse.paymentId);

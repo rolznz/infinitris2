@@ -8,6 +8,7 @@ import Routes from '@/models/Routes';
 import { useHistory } from 'react-router-dom';
 import useAuthStore from '@/state/AuthStore';
 import Button from '@mui/material/Button/Button';
+const PREMIUM_ENABLED = false;
 
 export function PremiumPage() {
   const intl = useIntl();
@@ -27,7 +28,7 @@ export function PremiumPage() {
     <Page title={title} showTitle={false} background={<PremiumCarousel />}>
       <FullPageCarouselTitle>{title}</FullPageCarouselTitle>
       {!userId && getPremium && <Login onLogin={goToProfile} />}
-      {!userId && !getPremium && (
+      {!userId && !getPremium && PREMIUM_ENABLED && (
         <Button
           color="primary"
           variant="contained"

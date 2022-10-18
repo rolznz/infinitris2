@@ -180,13 +180,13 @@ export default class Grid implements IGrid {
           }
           columns.push(j);
         }
-        if (partial) {
+        if (partial && columns.length) {
+          // console.log('PARTIAL CLEAR: ', columns.length);
           partialClearRows.push({ row, columns });
-          return true;
         }
       }
     }
-    return false;
+    return partialClearRows.length > 0;
   }
 
   clearLines(rowsToClear: number[], partialClears: PartialClearRow[]) {

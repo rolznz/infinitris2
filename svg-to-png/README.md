@@ -13,3 +13,5 @@ Example commands
 - ASSETS_DIRECTORY=cells READ_CHILD_DIRECTORIES=false GENERATE_VARIATIONS=false OUTPUT_SIZE=64 yarn start
 - ASSETS_DIRECTORY=nickname READ_CHILD_DIRECTORIES=false GENERATE_VARIATIONS=false yarn start
 - ASSETS_DIRECTORY=challenge-previews READ_CHILD_DIRECTORIES=false GENERATE_VARIATIONS=false yarn start
+- EXTENSION=.jpg ASSETS_DIRECTORY=../../../app/src/components/pages/PremiumPage/assets READ_CHILD_DIRECTORIES=false GENERATE_VARIATIONS=false yarn start
+- EXTENSION=.jpg ASSETS_DIRECTORY=../../../app/src/components/ui/GameModePicker READ_CHILD_DIRECTORIES=false GENERATE_VARIATIONS=false yarn start

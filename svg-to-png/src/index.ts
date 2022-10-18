@@ -4,14 +4,12 @@ import jimp from 'jimp';
 import { getVariationHueRotation } from 'infinitris2-models';
 
 const pngExt = '.png';
-const jpgExt = '.jpg';
 
 const chosenExt = process.env.EXTENSION || pngExt;
 
-const assetsDirectory =
-  chosenExt === pngExt
-    ? `../client/www/images/${process.env.ASSETS_DIRECTORY || 'worlds'}`
-    : '../app/src/components/ui/GameModePicker';
+const assetsDirectory = `../client/www/images/${
+  process.env.ASSETS_DIRECTORY || 'worlds'
+}`;
 
 const childAssetDirectories =
   process.env.READ_CHILD_DIRECTORIES !== 'false'

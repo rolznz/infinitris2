@@ -1,4 +1,3 @@
-import React from 'react';
 import { SvgIcon, Typography } from '@mui/material';
 import { ReactComponent as ImpactIcon } from '@/icons/impact.svg';
 import FlexBox from '../../ui/FlexBox';
@@ -8,7 +7,6 @@ import {
   IScoreboardEntry,
   scoreboardEntriesPath,
   ScoreboardSettings,
-  Timestamp,
 } from 'infinitris2-models';
 import {
   useCollection,
@@ -19,10 +17,8 @@ import { Page } from '../../ui/Page';
 import { ScoreboardCard } from './ScoreboardCard';
 import { orderBy } from 'firebase/firestore';
 import useAuthStore from '@/state/AuthStore';
-import { intervalToDuration } from 'date-fns';
-import useInterval from 'react-use/lib/useInterval';
 import { PremiumLink } from '@/components/ui/PremiumLink';
-import { Timestamp as FirestoreTimestamp } from 'firebase/firestore';
+import { CountdownTimer } from '@/components/ui/CountdownTimer';
 
 const scoreboardCollectionOptions: UseCollectionOptions = {
   constraints: [orderBy('placing', 'asc')],
@@ -97,48 +93,5 @@ export default function ScoreboardPage() {
         </FlexBox>
       )}
     </Page>
-  );
-}
-
-type CountdownTimerProps = {
-  lastUpdateTimestamp: Timestamp;
-  updateIntervalSeconds: number;
-};
-
-function CountdownTimer({
-  lastUpdateTimestamp,
-  updateIntervalSeconds,
-}: CountdownTimerProps) {
-  const [_, setCount] = React.useState(0);
-  useInterval(() => setCount((count) => count + 1), 1000);
-  return <>{getTimeRemaining(lastUpdateTimestamp, updateIntervalSeconds)}</>;
-}
-
-function getTimeRemaining(
-  lastUpdateTimestamp: Timestamp,
-  updateIntervalSeconds: number,
-  repeatable = true
-): React.ReactNode {
-  let nextTime = lastUpdateTimestamp.seconds;
-  while (nextTime < FirestoreTimestamp.now().seconds) {
-    nextTime += updateIntervalSeconds;
-    if (!repeatable) {
-      break;
-    }
-  }
-  const date = new Date(0);
-  date.setSeconds(nextTime);
-
-  let duration = intervalToDuration({
-    start: new Date(),
-    end: date,
-  });
-
-  return (
-    String(duration.hours).padStart(2, '0') +
-    ':' +
-    String(duration.minutes).padStart(2, '0') +
-    ':' +
-    String(duration.seconds).padStart(2, '0')
   );
 }

@@ -24,11 +24,11 @@ export function SpawnDelayDisplay() {
   const estimatedSpawnDelaySeconds = Math.ceil(
     (simulation?.controllablePlayer?.estimatedSpawnDelay || 0) / 1000
   );
-  console.log(
-    'Re-render spawn delay display',
-    spawnDelayDisplayVisible,
-    estimatedSpawnDelaySeconds
-  );
+  // console.log(
+  //   'Re-render spawn delay display',
+  //   spawnDelayDisplayVisible,
+  //   estimatedSpawnDelaySeconds
+  // );
 
   if (!spawnDelayDisplayVisible || estimatedSpawnDelaySeconds <= 0) {
     return null;

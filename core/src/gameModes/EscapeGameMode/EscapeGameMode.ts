@@ -147,6 +147,9 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       // reset placement type
       this._placementMode = 'restricted';
       this._simulation.grid.abortLineClears();
+
+      // reset spawn delays
+      this._numMistakes = [];
     }
   }
 
@@ -415,9 +418,6 @@ export class EscapeGameMode implements IGameMode<EscapeGameModeState> {
       numColumns: currentFinishLine.numColumns,
       isSynced: true,
     });
-
-    // reset spawn delays
-    this._numMistakes = [];
 
     // advance next death line to next finish line location
     this._nextFinishLines.shift();

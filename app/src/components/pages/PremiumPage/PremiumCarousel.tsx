@@ -14,6 +14,8 @@ import rateChallengesImage from './assets/rate_challenges.svg';
 import rateChallengesImageMobile from './assets/rate_challenges_mobile.svg';
 import competeInCommunityChallengesImage from './assets/compete_community_challenges.svg';
 import competeInCommunityChallengesImageMobile from './assets/compete_community_challenges_mobile.svg';
+import publishChallengesImage from './assets/publish_challenges.svg';
+import publishChallengesImageMobile from './assets/publish_challenges_mobile.svg';
 import earnImpactImage from './assets/earn_impact.svg';
 import earnImpactImageMobile from './assets/earn_impact_mobile.svg';
 import comingSoonImage from './assets/coming_soon.svg';
@@ -106,7 +108,7 @@ const titleColors = [
   '#FFA800',
   '#FFE600',
   '#FFA800',
-  '#FFA800',
+  '#E5FD6A',
   '#D2A1F8',
   '#FFA800',
   '#FFA800',
@@ -123,7 +125,7 @@ export function PremiumCarousel() {
             competeInCommunityChallengesImage,
             rateChallengesImage,
             comingSoonImage,
-            comingSoonImage,
+            publishChallengesImage,
             earnImpactImage,
             comingSoonImage,
             comingSoonImage,
@@ -134,7 +136,7 @@ export function PremiumCarousel() {
             competeInCommunityChallengesImageMobile,
             rateChallengesImageMobile,
             comingSoonImageMobile,
-            comingSoonImageMobile,
+            publishChallengesImageMobile,
             earnImpactImageMobile,
             comingSoonImageMobile,
             comingSoonImageMobile,

@@ -157,12 +157,13 @@ export default class Grid implements IGrid {
 
   private _checkPartialClear(
     row: number,
-    partialClearRows: PartialClearRow[]
+    existingPartialClearRows: PartialClearRow[]
   ): boolean {
+    const partialClearRows: PartialClearRow[] = [];
     const partialClearCells = this._cells[row].filter(
       (cell) => cell.type === CellType.PartialClear
     );
-    for (let i = 0; i < partialClearCells.length - 1; i++) {
+    for (let i = 0; i < partialClearCells.length; i++) {
       const partialClearCell1 = partialClearCells[i];
       const partialClearCell2 =
         partialClearCells[wrap(i + 1, partialClearCells.length)];
@@ -181,11 +182,12 @@ export default class Grid implements IGrid {
           columns.push(j);
         }
         if (partial && columns.length) {
-          // console.log('PARTIAL CLEAR: ', columns.length);
+          // console.log('PARTIAL CLEAR' + row + ': ', columns.join(','));
           partialClearRows.push({ row, columns });
         }
       }
     }
+    existingPartialClearRows.push(...partialClearRows);
     return partialClearRows.length > 0;
   }
 
@@ -209,17 +211,16 @@ export default class Grid implements IGrid {
       this._eventListeners.forEach((eventListener) =>
         eventListener.onLineClear(rowToClear)
       );
-      let partialClearsForRow = partialClears.filter(
-        (clear) => clear.row === rowToClear
+      const partialClearColumns = ([] as number[]).concat(
+        ...partialClears
+          .filter((clear) => clear.row === rowToClear)
+          .map((clear) => clear.columns)
       );
+      const isPartialClear = !!partialClearColumns.length;
+
       for (let r = rowToClear; r >= 0; r--) {
         for (let c = 0; c < this._cells[0].length; c++) {
-          if (
-            partialClearsForRow.length &&
-            !partialClearsForRow.some(
-              (partialClear) => partialClear.columns.indexOf(c) >= 0
-            )
-          ) {
+          if (isPartialClear && partialClearColumns.indexOf(c) < 0) {
             continue;
           }
           if (r > 0) {

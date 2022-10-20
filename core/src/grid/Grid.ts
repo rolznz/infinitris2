@@ -246,6 +246,11 @@ export default class Grid implements IGrid {
     this._eventListeners.forEach((eventListener) =>
       eventListener.onLinesCleared(rowsToClear)
     );
+    if (partialClears.length) {
+      // re-check entire grid for line clears in case lines are above partial line clear and fall in, should also be cleared
+      // this is because partial line clears don't have to extend right to the roof
+      this.checkLineClears([...new Array(this.numRows)].map((_, i) => i));
+    }
   }
 
   abortLineClears() {

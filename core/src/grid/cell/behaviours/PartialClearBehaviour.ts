@@ -21,7 +21,7 @@ export default class PartialClearBehaviour implements ICellBehaviour {
   onAddBlock(_block: IBlock) {}
 
   get alpha(): number {
-    return 0.5 + (Math.sin(this._alpha) + 1) / 4;
+    return 1; //0.5 + (Math.sin(this._alpha) + 1) / 4;
   }
 
   get color(): number {
@@ -47,7 +47,7 @@ export default class PartialClearBehaviour implements ICellBehaviour {
     return ChallengeCellType.PartialClear;
   }
   getImageFilename() {
-    return 'partial_clear';
+    return 'barrier';
   }
   hasWorldImage() {
     return false;
